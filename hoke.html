@@ -3,20 +3,21 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no" />
-<title>MOB CHALLENGE – 1st Stage (power→announce→standby, balls visible)</title>
+<title>MOB CHALLENGE – 1st Stage</title>
 <style>
   :root{
-    /* === ゲージ（枠ga.pngの白面に合わせる） === */
+    /* ga.png の白面に合わせる（微調整は±0.5%） */
     --gL: 5.2%;
     --gR: 5.2%;
     --gT: 18%;
     --gB: 18%;
-    --guard: 9.5%; /* 右端のマスコット保護 */
+    /* 右端マスコット保護：白面右を追加で削る */
+    --guard: 10.2%;
 
-    /* === レース（スマホ最適化） === */
-    --laneBottom: 13vh;   /* レーン位置 */
+    /* レース（スマホ最適化） */
+    --laneBottom: 13vh;   /* レーン位置（下から） */
     --runnerVW: 9vw;      /* ボール幅（小さめ） */
-    --cameraTarget: 0.40; /* 画面の何割高さで追従 */
+    --cameraTarget: 0.40; /* 画面高に対する追従位置（0=上端〜1=下端） */
   }
 
   html,body{margin:0;height:100%;background:#fff;font-family:system-ui,-apple-system,Segoe UI,Roboto,"Hiragino Sans","Yu Gothic",sans-serif;}
@@ -33,11 +34,21 @@
   .wrap{position:relative;width:min(94vw,820px);height:100%;display:grid;place-items:center}
   .label{position:absolute;top:.6vh;left:50%;transform:translate(-50%,-100%);font-size:clamp(10px,3.4vw,12px);background:#fff;padding:.3em .8em;border-radius:999px;border:1px solid #e5e7eb}
 
+  /* 下：空（ga.png） */
   .base{position:absolute;inset:0;background:url('ga.png') center/contain no-repeat;z-index:1}
-  .inner{position:absolute;inset:var(--gT) calc(var(--gR) + var(--guard)) var(--gB) var(--gL);z-index:2;overflow:hidden;border-radius:8px}
+  /* 白面：右側を guard でさらに削る（マスコット保護） */
+  .inner{
+    position:absolute; inset:var(--gT) calc(var(--gR) + var(--guard)) var(--gB) var(--gL);
+    z-index:2; overflow:hidden; border-radius:8px;
+  }
+  /* tamax を左→右で露出（白面の内側だけ） */
   .reveal{position:absolute;left:0;top:0;height:100%;width:0;overflow:hidden}
   .reveal>img{height:100%;width:100%;object-fit:cover;display:block}
-  .cursor{position:absolute;width:3px;border-radius:2px;background:#111;box-shadow:0 0 0 1px #fff;z-index:3;top:var(--gT);bottom:var(--gB);left:var(--gL)}
+  /* カーソル（白面内のみ移動） */
+  .cursor{
+    position:absolute;width:3px;border-radius:2px;background:#111;box-shadow:0 0 0 1px #fff;z-index:3;
+    top:var(--gT); bottom:var(--gB); left:var(--gL);
+  }
   .row.inactive .cursor{opacity:.35;filter:grayscale(1)}
   #tip{font-size:clamp(10px,3.4vw,12px);opacity:.8;text-align:center}
 
@@ -51,29 +62,36 @@
   .icon img{width:clamp(36px,8.2vw,60px);height:auto;image-rendering:pixelated;filter:drop-shadow(0 2px 5px rgba(0,0,0,.18))}
   .icon span{font-size:clamp(9px,3vw,11px);opacity:.9}
 
-  /* ===== レース（背景をフルで映す＆ボール小さめ） ===== */
-  #worldWrap{position:fixed;left:0;right:0;top:44px;bottom:0;display:none}
+  /* ===== レース（背景をフルで映し、前面にボール） ===== */
+  #worldWrap{ position:fixed; left:0; right:0; top:44px; bottom:0; display:none; z-index:20; }
   #world{
-    position:absolute;left:0;right:0;top:0; /* 高さはJSで与える */
+    position:absolute; left:0; right:0; top:0; /* 高さはJSで設定 */
     background-image:url('geji.png');
     background-repeat:repeat-y;
     background-position:center top;
-    background-size:100% auto;  /* 横幅を画面にフィット＝“映し切る” */
+    background-size:100% auto;   /* 横幅を画面にフィット＝“映し切る” */
     will-change:transform;
-    z-index:10;
+    z-index:21;                  /* 背景レイヤー */
+    transform-style:preserve-3d; /* 合成面分離 */
   }
-  .goal{position:absolute;left:50%;top:10vh;transform:translateX(-50%);width:70vw;max-width:520px;height:9px;background:#ffd400;border-radius:6px;box-shadow:0 0 10px #ff0}
-  .start{position:absolute;left:50%;bottom:var(--laneBottom);transform:translateX(-50%);width:56vw;max-width:420px;height:5px;background:#ff3e63;border-radius:3px;box-shadow:0 0 8px #f66}
-  #lane{position:absolute;left:0;right:0;bottom:var(--laneBottom);display:flex;gap:min(3vw,14px);justify-content:center;z-index:12}
-  .runner{position:relative}
-  .runner img{width:min(var(--runnerVW),76px);image-rendering:pixelated;filter:drop-shadow(0 4px 8px rgba(0,0,0,.22))}
+  .goal{position:absolute;left:50%;top:10vh;transform:translateX(-50%);width:70vw;max-width:520px;height:9px;background:#ffd400;border-radius:6px;box-shadow:0 0 10px #ff0; z-index:22;}
+  .start{position:absolute;left:50%;bottom:var(--laneBottom);transform:translateX(-50%);width:56vw;max-width:420px;height:5px;background:#ff3e63;border-radius:3px;box-shadow:0 0 8px #f66; z-index:22;}
+  #lane{
+    position:absolute; left:0; right:0; bottom:var(--laneBottom);
+    display:flex; gap:min(3vw,14px); justify-content:center;
+    z-index:22;                 /* ボール列は背景より前 */
+    pointer-events:none;        /* タップ邪魔しない */
+    transform:translateZ(0);    /* 描画抜け防止 */
+  }
+  .runner{ position:relative; z-index:23; transform:translateZ(0); }
+  .runner img{ width:min(var(--runnerVW),76px); display:block; image-rendering:pixelated; filter:drop-shadow(0 4px 8px rgba(0,0,0,.22)); }
   .name{position:absolute;left:50%;top:calc(100% + 4px);transform:translateX(-50%);font-size:clamp(9px,3vw,11px);background:rgba(255,255,255,.9);padding:2px 6px;border-radius:999px;border:1px solid #e5e7eb}
 
   #standbyHint{position:absolute;left:50%;bottom:calc(var(--laneBottom) + 7vh);transform:translateX(-50%);
-    background:rgba(255,255,255,.95);color:#111;padding:6px 10px;border-radius:10px;border:1px solid #e5e7eb;font-weight:700;display:none;z-index:20}
+    background:rgba(255,255,255,.95);color:#111;padding:6px 10px;border-radius:10px;border:1px solid #e5e7eb;font-weight:700;display:none;z-index:24}
 
   /* オーバーレイ（トースト/カウントダウン） */
-  #ov{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.18);backdrop-filter:blur(1px);z-index:50}
+  #ov{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.18);backdrop-filter:blur(1px);z-index:50; pointer-events:none;}
   #ov.show{display:flex}
   .toast{font-weight:900;font-size:min(12vw,56px);padding:.3em .7em;background:#fff;border:1px solid #e5e7eb;border-radius:14px;color:#111}
 
@@ -235,13 +253,13 @@ function stopGauge(){
   human.values[idx]=cur; idx++;
   if(idx<=2){ setActive(idx); speed+=.28; }
   else{
-    // ▼ ここで即座に“パワー決定→発射予告”を順に表示してから Standby へ
+    // パワー決定 → 発射予告 → スタンバイ → カウントダウン（1度だけ）
     phase='announce';
     (async ()=>{
       await toast('パワーゲージ決定！', 850);
       await toast('間もなくボール発射開始！', 950);
-      await enterStandby();             // ← スタンバイへ移動（横一列に並べる）
-      startCountdown();                 // ← ここでのみ開始（再入不可）
+      await enterStandby();
+      startCountdown(); // 再入不可
     })();
   }
 }
@@ -258,12 +276,12 @@ function toast(text, ms){
 
 /* ===== スタンバイ（発射画面へ遷移） ===== */
 async function enterStandby(){
-  // CPU のゲージ値を確定（不可視でプレイ）
+  // CPU 値を確定（不可視でプレイ）
   PLAYERS.forEach(p=>{
     if(p!==human) p.values=[0,0,0].map(()=>clamp((CPU_SKILL.mean + (Math.random()*2-1)*CPU_SKILL.spread),0,1));
   });
 
-  // 背景の高さ＝ゴール＋画面高（最後まで追尾できる）
+  // 背景の高さ＝ゴール＋画面高（最後まで追尾可）
   const H = Math.max(window.innerHeight, document.documentElement.clientHeight);
   world.style.height = (WORLD.goalY + H) + 'px';
 
@@ -273,7 +291,7 @@ async function enterStandby(){
   standbyHint.style.display='block';
   world.style.transform='translate3d(0,0,0)';
 
-  // 横一列へ（ボールが“映らない”問題対策：z-indexとサイズを厳密指定）
+  // 横一列整列（前面で確実に見えるように #lane を z-index:22 に）
   lane.innerHTML='';
   runners=PLAYERS.map(p=>{
     const r=document.createElement('div'); r.className='runner';
@@ -375,7 +393,7 @@ document.getElementById('btnStart').addEventListener('click',()=>{
   phase='gauge'; idx=0; cur=0; dir=1; speed=1.22; setActive(0);
 });
 
-/* 端末回転などで背景高さを維持 */
+/* 端末回転などで背景高さを維持（フル表示） */
 addEventListener('resize', ()=>{
   const H=Math.max(window.innerHeight, document.documentElement.clientHeight);
   world.style.height = (WORLD.goalY + H) + 'px';
