@@ -1,204 +1,631 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=1,user-scalable=no">
-<title>Hockey Race</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=1,user-scalable=no" />
+<title>MOB Hockey Race</title>
 <style>
-  body { margin:0; background:#000; overflow:hidden; touch-action:none; }
-  #gameCanvas { display:block; margin:0 auto; background:#111; }
-  #overlay {
-    position:fixed; inset:0; display:flex; align-items:center; justify-content:center;
-    background:rgba(0,0,0,0.7); color:#fff; font-size:2rem; flex-direction:column; z-index:10;
+  :root{
+    --ui:#0b0c10; --panel:#141822; --fg:#e9eef7; --dim:#9aa3b2; --accent:#13c4ff; --warn:#ffb020; --ok:#25d366;
   }
-  button { margin:8px; padding:12px 24px; font-size:1.2rem; }
+  html,body{ margin:0; height:100%; background:#000; color:var(--fg); font-family:system-ui,-apple-system,Segoe UI,Roboto,"Hiragino Sans","Yu Gothic",sans-serif; }
+  #wrap{ position:fixed; inset:0; display:flex; }
+  #cv{ width:100%; height:100%; display:block; touch-action:none; background:#000; }
+  /* 画面オーバーレイ */
+  #overlay{
+    position:fixed; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:16px; background:rgba(0,0,0,.72); z-index:30; text-align:center; padding:16px;
+  }
+  #overlay h1{ margin:0; font-size:2rem; letter-spacing:.02em; }
+  #overlay .row{ display:flex; gap:12px; flex-wrap:wrap; justify-content:center; }
+  .btn{
+    background:#1b2235; color:#fff; border:1px solid #2a3552; padding:12px 18px; border-radius:12px; min-width:120px;
+    font-size:1.05rem;
+  }
+  .btn:active{ transform:translateY(1px); }
+  #hud{
+    position:fixed; left:8px; top:8px; z-index:20; background:rgba(0,0,0,.4); backdrop-filter:blur(4px);
+    border:1px solid rgba(255,255,255,.08); border-radius:10px; padding:6px 10px; font-size:.9rem; color:#dfe6f5;
+  }
+  #touchHint{
+    position:fixed; left:0; right:0; bottom:0; height:28%; z-index:10; pointer-events:none;
+    display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; padding:10px;
+    opacity:.35; color:#fff; font-weight:600;
+  }
+  .zone{
+    border:1px dashed rgba(255,255,255,.35); border-radius:12px; display:flex; align-items:center; justify-content:center;
+    user-select:none;
+  }
+  /* リザルト / ランキング */
+  #result{
+    position:fixed; inset:0; display:none; flex-direction:column; align-items:center; justify-content:center; z-index:40;
+    background:rgba(0,0,0,.75); gap:14px; padding:16px; text-align:center;
+  }
+  #result h2{ margin:0; font-size:2.1rem; letter-spacing:.03em; }
+  #result .tbl{ background:rgba(0,0,0,.35); border:1px solid rgba(255,255,255,.08); border-radius:12px; padding:10px; }
+  #result table{ border-collapse:collapse; font-size:1rem; }
+  #result td{ padding:6px 12px; border-bottom:1px solid rgba(255,255,255,.08); }
+  #result tr:last-child td{ border-bottom:none; }
+  #loading{
+    position:fixed; inset:0; display:flex; align-items:center; justify-content:center; z-index:50;
+    background:#000; color:#fff; font-size:1.1rem;
+  }
 </style>
 </head>
 <body>
-<div id="overlay">
-  <div>ゲーム開始しますか？</div>
-  <div>
-    <button onclick="startGame()">はい</button>
-    <button onclick="location.reload()">いいえ</button>
+<div id="wrap">
+  <canvas id="cv"></canvas>
+  <div id="hud">RACE: <span id="raceNum">1</span> / 3</div>
+  <div id="overlay">
+    <h1>ゲーム開始しますか？</h1>
+    <div class="row">
+      <button class="btn" id="okBtn">はい</button>
+      <button class="btn" id="noBtn">いいえ</button>
+    </div>
+    <div style="font-size:.95rem;color:#9fb3d9">プレイヤー：赤（左右＋上） / 他はCPU<br>プレイヤーがゴール後は3倍速で進行</div>
   </div>
+  <div id="touchHint">
+    <div class="zone">←</div>
+    <div class="zone">↑</div>
+    <div class="zone">→</div>
+  </div>
+  <div id="result">
+    <h2 id="resultTitle">FINISH!</h2>
+    <div class="tbl"><table id="resultTable"></table></div>
+    <div class="row">
+      <button class="btn" id="nextBtn">次のレース</button>
+      <button class="btn" id="restartBtn" style="display:none">最初から</button>
+    </div>
+  </div>
+  <div id="loading">Loading...</div>
 </div>
-<canvas id="gameCanvas"></canvas>
 
 <script>
-const canvas = document.getElementById("gameCanvas");
-const ctx = canvas.getContext("2d");
-resize();
-window.addEventListener("resize", resize);
-function resize(){
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-}
+(() => {
+  // ====== Canvas & DPR ======
+  const cv = document.getElementById('cv');
+  const cx = cv.getContext('2d',{ alpha:false });
+  let DPR = Math.max(1, Math.min(2.5, window.devicePixelRatio || 1));
+  function resize(){
+    const w = Math.floor(window.innerWidth * DPR);
+    const h = Math.floor(window.innerHeight * DPR);
+    cv.width = w; cv.height = h;
+    cv.style.width = window.innerWidth + 'px';
+    cv.style.height = window.innerHeight + 'px';
+  }
+  window.addEventListener('resize', () => { DPR = Math.max(1, Math.min(2.5, window.devicePixelRatio||1)); resize(); });
+  resize();
 
-let images = {};
-let imageFiles = {
-  red:"red.png", blue:"blue.png", yellow:"yellow.png", black:"black.png",
-  pink:"pink.png", orange:"orange.png", green:"green.png", mura:"mura.png",
-  contena:"contena.png", gomi:"gomi.png", hoke:"hoke.png"
-};
-for(let key in imageFiles){
-  images[key] = new Image();
-  images[key].src = imageFiles[key];
-}
+  // ====== Assets ======
+  const files = {
+    red:'red.png', blue:'blue.png', yellow:'yellow.png', black:'black.png',
+    pink:'pink.png', orange:'orange.png', green:'green.png', mura:'mura.png',
+    contena:'contena.png', gomi:'gomi.png', hoke:'hoke.png'
+  };
+  const img = {};
+  function loadImage(src){ return new Promise((res,rej)=>{ const i=new Image(); i.onload=()=>res(i); i.onerror=rej; i.src=src; }); }
+  async function loadAll(){
+    for(const k in files){ img[k] = await loadImage(files[k]); }
+  }
 
-class Ball{
-  constructor(color,x){
-    this.color=color;
-    this.x=x; this.y=canvas.height-60;
-    this.w=40; this.h=40;
-    this.vx=0; this.vy=-1;
-    this.speed=0; this.finished=false; this.rank=null; this.points=0;
-  }
-  update(){
-    if(this.finished) return;
-    this.speed += 0.002;
-    this.vy = -this.speed;
-    this.x += this.vx;
-    this.y += this.vy;
-    if(this.x<0) { this.x=0; this.vx*=-0.5; }
-    if(this.x+this.w>canvas.width) { this.x=canvas.width-this.w; this.vx*=-0.5; }
-    if(this.y<0){ this.finished=true; this.y=0; finishers.push(this); }
-  }
-  draw(){
-    ctx.drawImage(images[this.color],this.x,this.y,this.w,this.h);
-  }
-}
+  // ====== World / Track (uses hoke.png as collision mask) ======
+  // World width = canvas width in CSS pixels * DPR; height scales with hoke.png aspect
+  let WORLD_W = cv.width, WORLD_H = cv.height * 2.2; // temporary; will sync to hoke
+  const maskC = document.createElement('canvas'); const maskX = maskC.getContext('2d');
+  const TMP = document.createElement('canvas'); const TX = TMP.getContext('2d');
 
-class Obstacle{
-  constructor(type,x,y){
-    this.type=type;
-    this.x=x; this.y=y;
-    this.w=(type=="contena")?80:60;
-    this.h=(type=="contena")?80:80;
-    this.vx=(type=="gomi")?1.5:0;
+  // Pixel -> wall test (true if wall)
+  let wallData = null, wallW = 0, wallH = 0;
+  // brightness threshold (tweakable). lower = darker is wall.
+  const WALL_THRESHOLD = 85; // 壁は暗め想定（細い線でもOK）
+  function buildWallMask(){
+    // world size follows background image aspect to avoid distortion
+    const ratio = img.hoke.height / img.hoke.width;
+    WORLD_W = cv.width;
+    WORLD_H = Math.max(cv.height * 1.8, Math.floor(WORLD_W * ratio));
+    maskC.width = WORLD_W; maskC.height = WORLD_H;
+    maskX.clearRect(0,0,WORLD_W,WORLD_H);
+    // Draw hoke.png scaled to world
+    maskX.drawImage(img.hoke, 0, 0, WORLD_W, WORLD_H);
+    // Read pixels
+    const d = maskX.getImageData(0,0,WORLD_W,WORLD_H);
+    wallData = d.data; wallW = WORLD_W; wallH = WORLD_H;
   }
-  update(){
-    if(this.type=="gomi"){
-      this.x+=this.vx;
-      if(this.x<0||this.x+this.w>canvas.width) this.vx*=-1;
+  function isWall(px, py){
+    // out of bounds are treated as wall (safety)
+    if(px<0||py<0||px>=wallW||py>=wallH) return true;
+    const idx = ((py|0)*wallW + (px|0)) * 4;
+    const r = wallData[idx], g = wallData[idx+1], b = wallData[idx+2], a = wallData[idx+3];
+    // decide by brightness (dark = wall). Transparent parts are NOT walls.
+    const bright = (r*0.299 + g*0.587 + b*0.114);
+    return (a>12 && bright < WALL_THRESHOLD);
+  }
+  // AABB area test against wall with sample grid
+  function rectTouchesWall(x,y,w,h, step=6){
+    // sample perimeter (thin wall対応のため細かめに)
+    for(let sx=x; sx<=x+w; sx+=step){
+      if(isWall(sx, y)) return true;
+      if(isWall(sx, y+h)) return true;
     }
-  }
-  draw(){
-    ctx.drawImage(images[this.type],this.x,this.y,this.w,this.h);
-  }
-}
-
-let balls=[], obstacles=[], finishers=[], race=1, totalPoints={};
-let keys={}, touch={left:false,right:false,up:false};
-document.addEventListener("keydown",e=>keys[e.key]=true);
-document.addEventListener("keyup",e=>keys[e.key]=false);
-canvas.addEventListener("touchstart",e=>{
-  let x=e.touches[0].clientX;
-  let y=e.touches[0].clientY;
-  if(y>canvas.height*0.7){
-    if(x<canvas.width/3) touch.left=true;
-    else if(x>canvas.width*2/3) touch.right=true;
-    else touch.up=true;
-  }
-});
-canvas.addEventListener("touchend",()=>{ touch.left=false; touch.right=false; touch.up=false; });
-
-function initRace(){
-  balls=[]; obstacles=[]; finishers=[];
-  let colors=["red","blue","yellow","black","pink","orange","green","mura"];
-  for(let i=0;i<colors.length;i++){
-    balls.push(new Ball(colors[i],i*canvas.width/8));
-  }
-  // 障害物配置
-  for(let i=0;i<6;i++){
-    let type=(i%2==0)?"contena":"gomi";
-    let x=Math.random()*(canvas.width-100);
-    let y=Math.random()*canvas.height*0.8;
-    obstacles.push(new Obstacle(type,x,y));
-  }
-}
-
-let started=false, countdown=3, gameOver=false, fastMode=false;
-
-function startGame(){
-  document.getElementById("overlay").style.display="none";
-  initRace();
-  let cInt=setInterval(()=>{
-    countdown--;
-    if(countdown==0){ clearInterval(cInt); started=true; }
-  },1000);
-}
-
-function update(){
-  if(!started||gameOver) return;
-  for(let o of obstacles) o.update();
-  for(let b of balls){
-    if(b.color=="red"){
-      if(keys["ArrowLeft"]||touch.left) b.vx=-2;
-      else if(keys["ArrowRight"]||touch.right) b.vx=2;
-      else b.vx*=0.9;
-      if((keys["ArrowUp"]||touch.up)&&b.vy>-5) b.vy-=0.5;
-    } else {
-      b.vx+=(Math.random()-0.5)*0.2;
+    for(let sy=y; sy<=y+h; sy+=step){
+      if(isWall(x, sy)) return true;
+      if(isWall(x+w, sy)) return true;
     }
-    b.update();
-    for(let o of obstacles){
-      if(b.x<b.x+40 && b.x+40>o.x && b.y<b.y+40 && b.y+40>o.y){
-        b.vx*=-0.5; b.vy*=-0.5; 
+    // also sample center points to catch thin lines inside
+    for(let sx=x+step; sx<x+w; sx+=step){
+      for(let sy=y+step; sy<y+h; sy+=step){
+        if(isWall(sx, sy)) return true;
+      }
+    }
+    return false;
+  }
+
+  // ====== Game Entities ======
+  const COLORS = ['red','blue','yellow','black','pink','orange','green','mura'];
+  const COLOR_LABEL = { red:'赤', blue:'青', yellow:'黄', black:'黒', pink:'ピンク', orange:'オレンジ', green:'緑', mura:'紫' };
+  const balls = [];
+  const obstacles = []; // {type:'contena'|'gomi', x,y,w,h,vx}
+  const FINISH_Y = 24; // ゴール判定（上端からの距離）
+  const BALL_SZ = 36; const BALL_R = BALL_SZ/2;
+  const GOMI_W = 68, GOMI_H = 82;
+  const CONT_W = 92, CONT_H = 80;
+  let finishOrder = []; // {color,time}
+  let raceNo = 1;
+  const totalPoints = {}; COLORS.forEach(c => totalPoints[c]=0);
+
+  // Camera
+  let camY = 0;
+
+  // Input
+  const keys = Object.create(null);
+  document.addEventListener('keydown', e => { keys[e.key] = true; });
+  document.addEventListener('keyup',   e => { keys[e.key] = false; });
+  // Touch zones (bottom 28%)
+  let tLeft=false,tRight=false,tUp=false;
+  function touchHandler(e,down){
+    for(const t of e.changedTouches){
+      const x = t.clientX, y = t.clientY;
+      if(y >= window.innerHeight*0.72){
+        if(x < window.innerWidth/3){ tLeft = down; }
+        else if(x > window.innerWidth*2/3){ tRight = down; }
+        else { tUp = down; }
       }
     }
   }
-  // 衝突（ボール同士）
-  for(let i=0;i<balls.length;i++){
-    for(let j=i+1;j<balls.length;j++){
-      let a=balls[i], b=balls[j];
-      let dx=a.x-b.x, dy=a.y-b.y;
-      if(Math.abs(dx)<40 && Math.abs(dy)<40){
-        a.vx*=-0.5; b.vx*=-0.5;
+  cv.addEventListener('touchstart', e => { touchHandler(e,true); }, {passive:true});
+  cv.addEventListener('touchend',   e => { touchHandler(e,false); }, {passive:true});
+  cv.addEventListener('touchcancel',e => { tLeft=tRight=tUp=false; }, {passive:true});
+
+  function rnd(a,b){ return a + Math.random()*(b-a); }
+
+  // spawn helpers: ensure not overlapping walls/obstacles and keep margin from walls
+  function areaClear(x,y,w,h){
+    if(rectTouchesWall(x,y,w,h,6)) return false;
+    for(const o of obstacles){
+      if(!(x+w<o.x || o.x+o.w<x || y+h<o.y || o.y+o.h<y)) return false;
+    }
+    return true;
+  }
+
+  // Place obstacles with rules:
+  // - never overlap wall or each other
+  // - garbage can (gomi) moves horizontally with large travel; keep travel inside corridor
+  // - create a "bottleneck" mid-course with multiple containers but leave a safe gap
+  function placeObstacles(){
+    obstacles.length = 0;
+    const marginX = Math.max(24, WORLD_W * 0.05);
+    const startSafeY = WORLD_H - 260; // スタートすぐは安全
+    const endSafeY   = WORLD_H - 80;
+
+    // helper to try N times
+    function tryPlace(type,w,h, yRange){
+      for(let tries=0; tries<120; tries++){
+        const x = rnd(marginX, WORLD_W - marginX - w);
+        const y = rnd(yRange[0], yRange[1]-h);
+        if(y > startSafeY && y < endSafeY) continue; // スタート帯は空ける
+        if(areaClear(x,y,w,h)){
+          obstacles.push({type, x,y,w,h, vx: (type==='gomi'? (Math.random()<.5?1:-1)*rnd(0.5,1.2) : 0)});
+          return true;
+        }
+      }
+      return false;
+    }
+
+    // Regular containers
+    const contCount = 6;
+    for(let i=0;i<contCount;i++){
+      tryPlace('contena', CONT_W, CONT_H, [WORLD_H*0.25, WORLD_H*0.92]);
+    }
+
+    // Moving garbage cans (big horizontal travel)
+    const gomiCount = 3;
+    for(let i=0;i<gomiCount;i++){
+      tryPlace('gomi', GOMI_W, GOMI_H, [WORLD_H*0.18, WORLD_H*0.78]);
+    }
+
+    // Bottleneck zone: dense containers but ensure a gap (not at extreme edges)
+    const botY0 = WORLD_H*0.45, botY1 = WORLD_H*0.28;
+    const gapW = Math.max(90, WORLD_W * 0.16);
+    const gapX = rnd(marginX + 60, WORLD_W - marginX - 60 - gapW);
+    const rows = 3, cols = 4;
+    const cellW = (WORLD_W - marginX*2) / cols;
+    const cellH = (botY0 - botY1) / rows;
+    for(let r=0;r<rows;r++){
+      for(let c=0;c<cols;c++){
+        const x0 = marginX + c*cellW + (cellW - CONT_W)/2;
+        const y0 = botY0 - (r+1)*cellH + (cellH - CONT_H)/2;
+        // leave a vertical gap corridor
+        const cx = x0 + CONT_W/2;
+        if(cx > gapX && cx < gapX + gapW) continue;
+        // check & place (shift slightly if inside wall)
+        let x = x0, y = y0, placed = false;
+        for(let t=0;t<40;t++){
+          if(areaClear(x,y,CONT_W,CONT_H)){ obstacles.push({type:'contena',x,y,w:CONT_W,h:CONT_H,vx:0}); placed=true; break; }
+          x += (Math.random()-0.5)*14; y += (Math.random()-0.5)*14;
+        }
       }
     }
   }
-  if(finishers.length==balls.length){
-    showResult();
+
+  // ====== Balls ======
+  function makeBall(color, x, y){
+    return {
+      color, x, y, vx:0, vy:-0.6, spd:0.9, // base upward speed
+      w:BALL_SZ, h:BALL_SZ, finished:false, tFinish:0
+    };
   }
-}
 
-function draw(){
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  ctx.drawImage(images.hoke,0,0,canvas.width,canvas.height);
-  for(let o of obstacles) o.draw();
-  for(let b of balls) b.draw();
-  if(!started){
-    ctx.fillStyle="#fff"; ctx.font="40px sans-serif";
-    ctx.fillText(countdown>0?countdown:"GO!",canvas.width/2-40,canvas.height/2);
+  function resetRace(){
+    finishOrder.length = 0;
+    obstacles.length = 0;
+    balls.length = 0;
+    camY = Math.max(0, WORLD_H - cv.height);
+
+    // start line: find passable band near bottom by sampling across width
+    const startY = WORLD_H - 120 - BALL_SZ;
+    const band = [];
+    const step = 10;
+    let segStart = null;
+    for(let x=0; x<WORLD_W; x+=step){
+      const inside = !rectTouchesWall(x, startY, step, BALL_SZ, 6);
+      if(inside && segStart===null) segStart = x;
+      if((!inside || x>=WORLD_W-step) && segStart!==null){
+        const segEnd = inside && x>=WORLD_W-step? WORLD_W : x;
+        if(segEnd - segStart >= BALL_SZ*9){ band.push([segStart, segEnd]); }
+        segStart = null;
+      }
+    }
+    const lane = band.length? band[Math.floor(band.length/2)] : [BALL_SZ*2, WORLD_W - BALL_SZ*2];
+    const usableW = Math.max(BALL_SZ*9, lane[1]-lane[0]-BALL_SZ);
+    for(let i=0;i<COLORS.length;i++){
+      const x = lane[0] + (usableW/(COLORS.length+1))*(i+1) - BALL_R;
+      const y = startY + (i%2)*BALL_SZ*0.2; // slight zigzag
+      balls.push(makeBall(COLORS[i], x, y));
+    }
+
+    placeObstacles();
   }
-}
 
-function loop(){
-  update();
-  draw();
-  requestAnimationFrame(loop);
-}
-loop();
+  // physics helpers
+  function clamp(v, a, b){ return v<a?a : (v>b?b:v); }
 
-function showResult(){
-  gameOver=true;
-  ctx.fillStyle="yellow"; ctx.font="60px sans-serif";
-  ctx.fillText("FINISH!",canvas.width/2-120,canvas.height/2);
-  setTimeout(()=>{
-    finishers.forEach((b,i)=>{
-      let pts=[10,7,5,3,1][i]||0;
-      totalPoints[b.color]=(totalPoints[b.color]||0)+pts;
+  // Elastic collision (equal mass) for discs approximation
+  function collideBalls(a,b){
+    const ax=a.x+BALL_R, ay=a.y+BALL_R, bx=b.x+BALL_R, by=b.y+BALL_R;
+    let dx=bx-ax, dy=by-ay;
+    const dist2 = dx*dx+dy*dy;
+    const minD = BALL_SZ*0.9;
+    if(dist2 > minD*minD) return;
+    const d = Math.sqrt(Math.max(0.0001,dist2));
+    const nx = dx/d, ny = dy/d;
+    // separate
+    const overlap = (minD - d)*0.5;
+    a.x -= nx*overlap; a.y -= ny*overlap;
+    b.x += nx*overlap; b.y += ny*overlap;
+    // swap normal components
+    const avn = a.vx*nx + a.vy*ny;
+    const bvn = b.vx*nx + b.vy*ny;
+    const diff = bvn - avn;
+    a.vx += diff*nx; a.vy += diff*ny;
+    b.vx -= diff*nx; b.vy -= diff*ny;
+    // dampen a bit
+    a.vx*=0.9; a.vy*=0.9; b.vx*=0.9; b.vy*=0.9;
+  }
+
+  // Bounce against rectangle obstacle
+  function bounceRect(b, o){
+    const prevX = b.x - b.vx, prevY = b.y - b.vy;
+    // decide side by previous position
+    const hitFromLeft = prevX + b.w <= o.x;
+    const hitFromRight= prevX >= o.x + o.w;
+    const hitFromTop  = prevY + b.h <= o.y;
+    const hitFromBottom=prevY >= o.y + o.h;
+    const bx = b.x + b.w/2, by = b.y + b.h/2;
+    const ox = o.x + o.w/2, oy = o.y + o.h/2;
+    const dx = (bx-ox)/(o.w/2), dy=(by-oy)/(o.h/2);
+    if(Math.abs(dx) > Math.abs(dy)){
+      // hit horizontally
+      if(dx>0){ b.x = o.x + o.w; } else { b.x = o.x - b.w; }
+      b.vx *= -0.7;
+      b.vy *=  0.85;
+    }else{
+      // vertical
+      if(dy>0){ b.y = o.y + o.h; } else { b.y = o.y - b.h; }
+      b.vy *= -0.7;
+      b.vx *=  0.85;
+    }
+  }
+
+  // Bounce vs wall mask (sample 4 corners and step back)
+  function bounceWall(b){
+    if(!rectTouchesWall(b.x,b.y,b.w,b.h,6)) return false;
+    // step back along velocity until not colliding or max steps
+    let steps=0;
+    while(rectTouchesWall(b.x,b.y,b.w,b.h,4) && steps<12){
+      b.x -= b.vx*0.5; b.y -= b.vy*0.5; steps++;
+    }
+    // reflect on the axis that resolves first (probe offset)
+    const testX = rectTouchesWall(b.x + Math.sign(b.vx)*4, b.y, b.w,b.h,6);
+    const testY = rectTouchesWall(b.x, b.y + Math.sign(b.vy)*4, b.w,b.h,6);
+    if(!testX){ b.vx *= -0.75; b.vy *= 0.9; }
+    else if(!testY){ b.vy *= -0.75; b.vx *= 0.9; }
+    else { b.vx *= -0.7; b.vy *= -0.7; }
+    return true;
+  }
+
+  // ====== Game State ======
+  let gameStarted=false, inCountdown=false, countdown=3, lastTs=0, fastMode=false, playerFinished=false;
+  const overlay = document.getElementById('overlay');
+  const raceNumEl = document.getElementById('raceNum');
+  const resultView = document.getElementById('result');
+  const resultTitle = document.getElementById('resultTitle');
+  const resultTable = document.getElementById('resultTable');
+  const nextBtn = document.getElementById('nextBtn');
+  const restartBtn = document.getElementById('restartBtn');
+  const loadingEl = document.getElementById('loading');
+
+  // Buttons
+  document.getElementById('okBtn').onclick = () => {
+    overlay.style.display='none';
+    startCountdown();
+  };
+  document.getElementById('noBtn').onclick = () => { location.reload(); };
+
+  function startCountdown(){
+    inCountdown=true; countdown=3;
+    setTimeout(()=>{ countdown=2; },1000);
+    setTimeout(()=>{ countdown=1; },2000);
+    setTimeout(()=>{ countdown=0; },3000);
+    setTimeout(()=>{ gameStarted=true; inCountdown=false; },3400);
+  }
+
+  // ====== Update & Draw ======
+  function update(dt){
+    if(!gameStarted) return;
+    // Move obstacles (gomi)
+    for(const o of obstacles){
+      if(o.type==='gomi'){
+        // try to move; reverse if wall hit
+        const nx = o.x + o.vx * (fastMode?3:1);
+        if(nx < 8 || nx+o.w > WORLD_W-8 || rectTouchesWall(nx,o.y,o.w,o.h,6)){
+          o.vx *= -1;
+        } else {
+          o.x = nx;
+        }
+      }
+    }
+
+    // Balls move upward with gradual acceleration (摩擦で徐々に加速するイメージ)
+    for(const b of balls){
+      if(b.finished) continue;
+
+      const isPlayer = (b.color==='red');
+      const controlLeft  = keys['ArrowLeft']  || tLeft;
+      const controlRight = keys['ArrowRight'] || tRight;
+      const controlUp    = keys['ArrowUp']    || tUp;
+
+      // base forward speed (upward negative vy)
+      const targetSpd = (fastMode? 3.2 : 1.1) + (isPlayer? 0.08: 0.0); // CPUと僅差
+      b.spd += (targetSpd - b.spd) * 0.01; // 慣性でじわっと
+      // lateral intent
+      let ax = 0;
+      if(isPlayer){
+        if(controlLeft)  ax -= 0.10;
+        if(controlRight) ax += 0.10;
+        if(controlUp)    b.spd += 0.02; // 上キーは前進ブースト
+      }else{
+        // CPU 簡易AI：少し蛇行＋壁を避ける
+        ax += (Math.random()-0.5)*0.05;
+        // probe left/right against walls ahead
+        const aheadY = b.y - 24;
+        const leftWall  = rectTouchesWall(b.x-8, aheadY, b.w, b.h, 6);
+        const rightWall = rectTouchesWall(b.x+8, aheadY, b.w, b.h, 6);
+        if(leftWall && !rightWall) ax += 0.12;
+        if(rightWall && !leftWall) ax -= 0.12;
+      }
+
+      // integrate velocity
+      b.vx += ax;
+      b.vx = clamp(b.vx, -2.4, 2.4);
+      b.vy = -b.spd * (fastMode?3:1);
+
+      // try move, then collide
+      b.x += b.vx; b.y += b.vy;
+
+      // World bounds (fallback guard)
+      if(b.x<0){ b.x=0; b.vx*=-0.6; } 
+      if(b.x+b.w>WORLD_W){ b.x=WORLD_W-b.w; b.vx*=-0.6; }
+
+      // Wall collision
+      bounceWall(b);
+
+      // Obstacles collision
+      for(const o of obstacles){
+        if(!(b.x+b.w<o.x || o.x+o.w<b.x || b.y+b.h<o.y || o.y+o.h<b.y)){
+          bounceRect(b, o);
+        }
+      }
+
+      // Finish?
+      if(b.y <= FINISH_Y){
+        b.finished = true;
+        b.tFinish = performance.now();
+        finishOrder.push(b);
+        if(isPlayer && !playerFinished){
+          playerFinished=true; fastMode=true; // プレイヤーがゴールしたら高速モード突入
+        }
+      }
+    }
+
+    // Ball vs Ball
+    for(let i=0;i<balls.length;i++){
+      for(let j=i+1;j<balls.length;j++){
+        collideBalls(balls[i], balls[j]);
+      }
+    }
+
+    // Camera follows player (clamped)
+    const player = balls.find(b => b.color==='red');
+    if(player){
+      const targetCam = clamp(player.y - cv.height*0.55, 0, Math.max(0, WORLD_H - cv.height));
+      camY += (targetCam - camY) * 0.08;
+    }
+
+    // All finished?
+    if(finishOrder.length === balls.length){
+      // delay 2s for big FINISH!
+      gameStarted = false;
+      showResultAfterFinish();
+    }
+  }
+
+  function draw(){
+    cx.setTransform(1,0,0,1,0,0);
+    cx.clearRect(0,0,cv.width,cv.height);
+    // camera
+    cx.setTransform(1,0,0,1, 0, -camY);
+
+    // Background (hoke.png)
+    cx.imageSmoothingEnabled = false;
+    cx.drawImage(img.hoke, 0, 0, WORLD_W, WORLD_H);
+
+    // Obstacles
+    for(const o of obstacles){
+      cx.drawImage(img[o.type], o.x, o.y, o.w, o.h);
+    }
+
+    // Balls
+    for(const b of balls){
+      cx.drawImage(img[b.color], b.x, b.y, b.w, b.h);
+    }
+
+    // Countdown / GO
+    if(inCountdown){
+      cx.setTransform(1,0,0,1,0,0);
+      cx.fillStyle = 'rgba(0,0,0,.35)';
+      cx.fillRect(0,0,cv.width,cv.height);
+      cx.fillStyle = '#fff';
+      cx.font = 'bold ' + Math.floor(cv.width*0.22) + 'px system-ui';
+      cx.textAlign='center';
+      const txt = countdown>0 ? String(countdown) : 'GO!';
+      cx.fillText(txt, cv.width/2, cv.height*0.55);
+    }
+
+    // FINISH splash (during 2s window before result)
+    if(!gameStarted && finishOrder.length===balls.length && finishSplash){
+      cx.setTransform(1,0,0,1,0,0);
+      cx.fillStyle = 'rgba(0,0,0,.35)';
+      cx.fillRect(0,0,cv.width,cv.height);
+      cx.fillStyle = '#ffe66d';
+      cx.font = 'bold ' + Math.floor(cv.width*0.16) + 'px system-ui';
+      cx.textAlign='center';
+      cx.fillText('FINISH!', cv.width/2, cv.height*0.52);
+    }
+  }
+
+  // Result handling
+  let finishSplash = false;
+  function showResultAfterFinish(){
+    finishSplash = true;
+    setTimeout(()=>{ finishSplash=false; showResult(); }, 2000);
+  }
+
+  function awardPoints(){
+    // 1位10, 2位7, 3位5, 4位3, 5位1
+    const award = [10,7,5,3,1];
+    for(let i=0;i<finishOrder.length;i++){
+      const b = finishOrder[i];
+      const pts = award[i] || 0;
+      totalPoints[b.color] += pts;
+    }
+  }
+
+  function showResult(){
+    awardPoints();
+    // Per-race ranking table
+    finishOrder.sort((a,b)=> a.tFinish - b.tFinish);
+    resultTable.innerHTML = '';
+    const trH = (html) => { const tr = document.createElement('tr'); tr.innerHTML = html; return tr; };
+    resultTable.appendChild(trH(`<td style="opacity:.8">順位</td><td>色</td><td>ポイント</td>`));
+    const award = [10,7,5,3,1];
+    finishOrder.forEach((b,i)=>{
+      const pts = award[i]||0;
+      const colorLabel = COLOR_LABEL[b.color]||b.color;
+      resultTable.appendChild(trH(`<td style="text-align:right">${i+1}</td><td>${colorLabel}</td><td style="text-align:right">${pts}</td>`));
     });
-    if(race<3){ race++; started=false; gameOver=false; countdown=3; startGame();}
-    else{
-      ctx.fillStyle="#fff"; ctx.font="30px sans-serif";
-      let y=100;
-      for(let c in totalPoints){
-        ctx.fillText(c+" : "+totalPoints[c],50,y); y+=40;
-      }
+
+    resultTitle.textContent = (raceNo<3)? `RACE ${raceNo} 結果` : '最終結果';
+    resultView.style.display = 'flex';
+    nextBtn.style.display = (raceNo<3)? 'inline-block' : 'none';
+    restartBtn.style.display = (raceNo<3)? 'none' : 'inline-block';
+
+    if(raceNo>=3){
+      // add total standings
+      resultTable.appendChild(trH(`<td colspan="3" style="padding-top:8px"></td>`));
+      resultTable.appendChild(trH(`<td style="opacity:.8">総合</td><td>色</td><td>合計</td>`));
+      const totals = Object.entries(totalPoints).sort((a,b)=> b[1]-a[1]);
+      totals.forEach(([c,pt],i)=>{
+        resultTable.appendChild(trH(`<td style="text-align:right">${i+1}</td><td>${COLOR_LABEL[c]}</td><td style="text-align:right">${pt}</td>`));
+      });
     }
-  },2000);
-}
+  }
+
+  nextBtn.onclick = () => {
+    resultView.style.display='none';
+    raceNo++;
+    raceNumEl.textContent = raceNo;
+    // reset state
+    fastMode=false; playerFinished=false;
+    resetRace();
+    startCountdown();
+  };
+  restartBtn.onclick = () => { location.reload(); };
+
+  // ====== Main Loop ======
+  function frame(ts){
+    if(!lastTs) lastTs = ts;
+    const dt = Math.min(32, ts-lastTs); // ms（最大制限）
+    lastTs = ts;
+    update(dt);
+    draw();
+    requestAnimationFrame(frame);
+  }
+
+  // ====== Init ======
+  (async function(){
+    try{
+      await loadAll();
+      buildWallMask(); // 背景から壁マスク生成（壁＝暗い部分）
+      resetRace();
+      loadingEl.style.display='none';
+      requestAnimationFrame(frame);
+    }catch(e){
+      loadingEl.textContent = '画像が読み込めません。ファイル名と配置を確認してください。';
+      console.error(e);
+    }
+  })();
+
+})();
 </script>
 </body>
 </html>
