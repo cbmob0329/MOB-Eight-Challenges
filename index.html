@@ -124,17 +124,29 @@
           <span class="pill warn">BETA</span>
         </div>
       </button>
+
+      <!-- ★ 追加：MOB balloon -->
+      <button class="btn" data-link="MOB balloon.html" data-name="MOB balloon">
+        <div>
+          <div>MOB balloon をプレイ</div>
+          <div class="tag">ファイル: <b>MOB balloon.html</b></div>
+        </div>
+        <div class="right">
+          <span class="pill">BALLOON</span>
+        </div>
+      </button>
     </div>
 
     <div class="hint">
-      使い方：ボタンをタップ / Enter で決定・↑↓で移動・<span class="kbd">H</span> / <span class="kbd">T</span> のショートカットも可。<br>
-      直下に <b>hoke.html</b> と <b>test.html</b> を置いてください（同じリポジトリ直下）。
+      使い方：ボタンをタップ / Enter で決定・↑↓で移動・
+      <span class="kbd">H</span>/<span class="kbd">T</span>/<span class="kbd">B</span> のショートカットも可。<br>
+      リポジトリ直下に <b>hoke.html</b>・<b>test.html</b>・<b>MOB balloon.html</b> を置いてください。
     </div>
   </div>
 
   <div class="footer">
     <div>© MOB ARTIST</div>
-    <div class="ver">v1.0</div>
+    <div class="ver">v1.1</div>
   </div>
 </div>
 
@@ -147,7 +159,8 @@
       const link = btn.dataset.link;
       const name = btn.dataset.name || link;
       try { localStorage.setItem(LS_KEY, JSON.stringify({link, name, t: Date.now()})); } catch(e){}
-      location.href = link;
+      // スペース入りファイル名に備えてエンコード
+      location.href = encodeURI(link);
     });
   });
 
@@ -160,25 +173,29 @@
       const cname = document.getElementById("continueName");
       cname.textContent = saved.name || saved.link;
       cbtn.dataset.link = saved.link;
-      cbtn.addEventListener("click", ()=> location.href = saved.link);
+      cbtn.addEventListener("click", ()=> location.href = encodeURI(saved.link));
       box.style.display = "";
     }
   }catch(e){}
 
-  // ===== キー操作（↑↓/Enter と H/T ショートカット）=====
+  // ===== キー操作（↑↓/Enter と H/T/B ショートカット）=====
   let focusIdx = 0;
   const focusBtn = (idx)=>{
     focusIdx = (idx+btns.length)%btns.length;
     btns[focusIdx].focus({preventScroll:true});
   };
   focusBtn(0);
+
+  const jumpTo = (file)=>document.querySelector(`.btn[data-link="${file}"]`)?.click();
+
   window.addEventListener("keydown", (ev)=>{
     const k = ev.key.toLowerCase();
     if(k === "arrowdown"){ ev.preventDefault(); focusBtn(focusIdx+1); }
     else if(k === "arrowup"){ ev.preventDefault(); focusBtn(focusIdx-1); }
     else if(k === "enter" || k === " "){ ev.preventDefault(); btns[focusIdx].click(); }
-    else if(k === "h"){ document.querySelector('.btn[data-link="hoke.html"]')?.click(); }
-    else if(k === "t"){ document.querySelector('.btn[data-link="test.html"]')?.click(); }
+    else if(k === "h"){ jumpTo("hoke.html"); }
+    else if(k === "t"){ jumpTo("test.html"); }
+    else if(k === "b"){ jumpTo("MOB balloon.html"); }
   });
 
   // ===== iOS で 100vh 問題の微補正（任意）=====
