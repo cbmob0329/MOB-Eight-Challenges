@@ -5,20 +5,48 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=1,user-scalable=no">
 <title>MOB Hockey Race</title>
 <style>
-  :root{ --fg:#e9eef7; --dim:#9aa3b2; }
+  :root{
+    --fg:#e9eef7; --dim:#9aa3b2;
+    --glass:rgba(20,24,34,.45);
+    --stroke:rgba(255,255,255,.12);
+    --active:rgba(255,255,255,.85);
+  }
   html,body{margin:0;height:100%;background:#000;color:var(--fg);font-family:system-ui,-apple-system,Segoe UI,Roboto,"Hiragino Sans","Yu Gothic",sans-serif}
   #cv{width:100%;height:100%;display:block;touch-action:none;background:#000}
-  #overlay{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:rgba(0,0,0,.72);z-index:20}
+  #hud{position:fixed;left:8px;top:8px;background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:6px 10px;font-size:.9rem;z-index:15}
+  /* Overlay */
+  #overlay{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:rgba(0,0,0,.72);z-index:30;text-align:center}
   #overlay h1{margin:0;font-size:2rem}
   .btn{background:#1b2235;color:#fff;border:1px solid #2a3552;padding:12px 18px;border-radius:12px;min-width:120px;font-size:1.05rem}
-  #hud{position:fixed;left:8px;top:8px;background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:6px 10px;font-size:.9rem;z-index:15}
-  #touchHint{position:fixed;left:0;right:0;bottom:0;height:28%;display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;padding:10px;opacity:.35;pointer-events:none;z-index:10}
-  .zone{border:1px dashed rgba(255,255,255,.35);border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:700}
-  #result{position:fixed;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:rgba(0,0,0,.75);z-index:25}
+  /* On-screen D-Pad */
+  #pad{position:fixed;left:0;right:0;bottom:0;z-index:20;pointer-events:none;padding:12px 12px calc(env(safe-area-inset-bottom,0)+12px);}
+  .padRow{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;align-items:end}
+  .padBtn{
+    pointer-events:auto; user-select:none; -webkit-user-select:none; touch-action:none;
+    display:flex; align-items:center; justify-content:center;
+    background:var(--glass); border:1px solid var(--stroke);
+    border-radius:16px; height:84px;
+    backdrop-filter:blur(6px);
+    transition:transform .05s ease, background .05s ease;
+  }
+  .padBtn svg{width:44px;height:44px;opacity:.9}
+  .padBtn.small{height:76px}
+  .padBtn:active{transform:translateY(1px); background:rgba(255,255,255,.08)}
+  .padBtn.active{background:var(--active)}
+  /* 左右は端寄せ */
+  #leftWrap{display:flex;justify-content:flex-start}
+  #rightWrap{display:flex;justify-content:flex-end}
+  #upWrap{display:flex;justify-content:center}
+  /* Result */
+  #result{position:fixed;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:rgba(0,0,0,.75);z-index:40;text-align:center;padding:12px}
   #result table{border-collapse:collapse}
   #result td{padding:6px 12px;border-bottom:1px solid rgba(255,255,255,.1)}
   #result tr:last-child td{border-bottom:none}
-  #loading{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:#000;color:#fff;z-index:30}
+  #loading{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:#000;color:#fff;z-index:50}
+  /* 小さめ端末で少し縮める */
+  @media (max-width:380px){
+    .padBtn{height:72px} .padBtn svg{width:36px;height:36px}
+  }
 </style>
 </head>
 <body>
@@ -32,10 +60,23 @@
     <button class="btn" id="okBtn">はい</button>
     <button class="btn" id="noBtn">いいえ</button>
   </div>
-  <div style="font-size:.95rem;color:#9fb3d9">操作は ← / → / ↑（中央タップで↑）<br>プレイヤー：赤。他はCPU。</div>
+  <div style="font-size:.95rem;color:#9fb3d9">操作：左（←）/ 右（→）/ 上（前進ブースト）<br>プレイヤー＝赤。他はCPU。</div>
 </div>
 
-<div id="touchHint"><div class="zone">←</div><div class="zone">↑</div><div class="zone">→</div></div>
+<!-- 画面下の大きな← ↑ → -->
+<div id="pad" aria-hidden="false">
+  <div class="padRow">
+    <div id="leftWrap"><div class="padBtn" id="btnLeft" aria-label="Left">
+      <svg viewBox="0 0 24 24"><path fill="currentColor" d="M15.5 3.87L13.73 2.1L4.84 11l8.89 8.9l1.77-1.77L8.38 11z"/></svg>
+    </div></div>
+    <div id="upWrap"><div class="padBtn" id="btnUp" aria-label="Up">
+      <svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 4l-8 8h5v8h6v-8h5z"/></svg>
+    </div></div>
+    <div id="rightWrap"><div class="padBtn" id="btnRight" aria-label="Right">
+      <svg viewBox="0 0 24 24"><path fill="currentColor" d="M8.5 20.13L10.27 21.9L19.16 13L10.27 4.1L8.5 5.87L15.62 13z"/></svg>
+    </div></div>
+  </div>
+</div>
 
 <div id="result">
   <h2 id="resultTitle">FINISH!</h2>
@@ -72,7 +113,7 @@ async function loadAll(){for(const k in files){img[k]=await loadImage(files[k]);
 let WORLD_W=cv.width, WORLD_H=cv.height*2;
 const maskC=document.createElement('canvas'), maskX=maskC.getContext('2d');
 let wallData=null, wallW=0, wallH=0;
-const WALL_THRESHOLD=85; // 暗い部分を壁として採用（細線OK）
+const WALL_THRESHOLD=85; // 暗い部分＝壁
 
 function buildWallMask(){
   const ratio = img.hoke.height / img.hoke.width;
@@ -97,7 +138,7 @@ function isWall(px,py){
 function rectTouchesWall(x,y,w,h,step=5){
   for(let sx=x; sx<=x+w; sx+=step){ if(isWall(sx,y) || isWall(sx,y+h)) return true; }
   for(let sy=y; sy<=y+h; sy+=step){ if(isWall(x,sy) || isWall(x+w,sy)) return true; }
-  // 中も軽くサンプル（極細壁の取りこぼし対策）
+  // まばらな極細壁も拾う
   for(let sx=x+step; sx<x+w; sx+=step){ for(let sy=y+step; sy<y+h; sy+=step){ if(isWall(sx,sy)) return true; } }
   return false;
 }
@@ -114,36 +155,37 @@ let raceNo=1, fastMode=false, playerFinished=false;
 const totalPts={}; COLORS.forEach(c=>totalPts[c]=0);
 let camY=0;
 
-function makeBall(color,x,y){
-  return {color,x,y,w:BALL_SZ,h:BALL_SZ,vx:0,vy:-0.6,spd:0.9,finished:false,tFinish:0};
-}
-
-// ===== Inputs (← → ↑ のみ) =====
+// ===== Input (← → ↑) =====
 const keys=Object.create(null);
 addEventListener('keydown',e=>{if(['ArrowLeft','ArrowRight','ArrowUp'].includes(e.key)) keys[e.key]=true;});
 addEventListener('keyup',e=>{if(['ArrowLeft','ArrowRight','ArrowUp'].includes(e.key)) keys[e.key]=false;});
-let tLeft=false,tRight=false,tUp=false;
-function touchHandler(e,down){
-  for(const t of e.changedTouches){
-    const x=t.clientX,y=t.clientY;
-    if(y>=innerHeight*0.72){
-      if(x<innerWidth/3){tLeft=down;}
-      else if(x>innerWidth*2/3){tRight=down;}
-      else {tUp=down;}
-    }
-  }
-}
-cv.addEventListener('touchstart',e=>touchHandler(e,true),{passive:true});
-cv.addEventListener('touchend',e=>touchHandler(e,false),{passive:true});
-cv.addEventListener('touchcancel',()=>{tLeft=tRight=tUp=false;},{passive:true});
 
-// ===== Geometry helpers =====
+// On-screen pad
+const btnL=document.getElementById('btnLeft');
+const btnR=document.getElementById('btnRight');
+const btnU=document.getElementById('btnUp');
+let tLeft=false,tRight=false,tUp=false;
+function bindBtn(btn, setter){
+  const on=()=>{ setter(true); btn.classList.add('active'); };
+  const off=()=>{ setter(false); btn.classList.remove('active'); };
+  // touch
+  btn.addEventListener('touchstart', e=>{e.preventDefault(); on();},{passive:false});
+  btn.addEventListener('touchend',   e=>{e.preventDefault(); off();},{passive:false});
+  btn.addEventListener('touchcancel',e=>{e.preventDefault(); off();},{passive:false});
+  // mouse (PC検証用)
+  btn.addEventListener('mousedown', e=>{e.preventDefault(); on();});
+  addEventListener('mouseup', off);
+}
+bindBtn(btnL, v=>tLeft=v);
+bindBtn(btnR, v=>tRight=v);
+bindBtn(btnU, v=>tUp=v);
+
+// ===== Helpers =====
 function clamp(v,a,b){return v<a?a:(v>b?b:v);}
 function aabbOverlap(ax,ay,aw,ah,bx,by,bw,bh){return !(ax+aw<=bx || bx+bw<=ax || ay+ah<=by || by+bh<=ay);}
 
 // 円と矩形の当たり（反射）
 function circleRectBounce(b,o){
-  // 最近点
   const cx=b.x+R, cy=b.y+R;
   const nx=clamp(cx,o.x,o.x+o.w);
   const ny=clamp(cy,o.y,o.y+o.h);
@@ -151,15 +193,11 @@ function circleRectBounce(b,o){
   const dist2=dx*dx+dy*dy;
   if(dist2>R*R) return false;
   const d=Math.sqrt(Math.max(0.0001,dist2));
-  const nxn=dx/d, nyn=dy/d; // 法線
-  // 押し出し
+  const nxn=dx/d, nyn=dy/d;
   const overlap=R-d+0.5;
-  b.x += nxn*overlap;
-  b.y += nyn*overlap;
-  // 速度反射（法線反転）
+  b.x += nxn*overlap; b.y += nyn*overlap;
   const vn=b.vx*nxn + b.vy*nyn;
-  b.vx -= 1.8*vn*nxn;
-  b.vy -= 1.8*vn*nyn;
+  b.vx -= 1.8*vn*nxn; b.vy -= 1.8*vn*nyn;
   b.vx*=0.9; b.vy*=0.9;
   return true;
 }
@@ -167,8 +205,9 @@ function circleRectBounce(b,o){
 // 円と円の弾性反発
 function circleCircleBounce(a,b){
   const ax=a.x+R, ay=a.y+R, bx=b.x+R, by=b.y+R;
-  let dx=bx-ax, dy=by-ay;
-  const dist2=dx*dx+dy*dy, minD=R*2*0.95;
+  const dx=bx-ax, dy=by-ay;
+  const minD=R*2*0.95;
+  const dist2=dx*dx+dy*dy;
   if(dist2>minD*minD) return false;
   const d=Math.sqrt(Math.max(0.0001,dist2));
   const nx=dx/d, ny=dy/d;
@@ -187,10 +226,8 @@ function circleCircleBounce(a,b){
 // 壁反射（マスク）
 function bounceWall(b){
   if(!rectTouchesWall(b.x,b.y,b.w,b.h,4)) return false;
-  // 少し戻して接触面を推定
   let steps=0;
   while(rectTouchesWall(b.x,b.y,b.w,b.h,3)&&steps<12){ b.x-=b.vx*0.5; b.y-=b.vy*0.5; steps++; }
-  // 法線近似：左右/上下へ微小プローブ
   const hitX = rectTouchesWall(b.x+Math.sign(b.vx)*3,b.y,b.w,b.h,4);
   const hitY = rectTouchesWall(b.x,b.y+Math.sign(b.vy)*3,b.w,b.h,4);
   if(!hitX){ b.vx*=-0.8; b.vy*=0.9; }
@@ -206,27 +243,27 @@ function clearForRect(x,y,w,h){
   return true;
 }
 
+function tryPlace(type,w,h,yTop,yBottom,maxTry=220){
+  const marginX=Math.max(24,WORLD_W*0.05);
+  for(let t=0;t<maxTry;t++){
+    const x = marginX + Math.random()*(WORLD_W - marginX*2 - w);
+    const y = yBottom + Math.random()*(yTop - yBottom - h);
+    if(clearForRect(x,y,w,h)){
+      obstacles.push({type,x,y,w,h,vx:(type==='gomi'? (Math.random()<.5?-1:1)*Math.random()*1.2 : 0)});
+      return true;
+    }
+  }
+  return false;
+}
+
 function placeObstacles(){
   obstacles.length=0;
+  // 前半〜中盤：控えめ
+  for(let i=0;i<7;i++) tryPlace('contena',CONT_W,CONT_H,WORLD_H*0.92,WORLD_H*0.45);
+  for(let i=0;i<3;i++) tryPlace('gomi',GOMI_W,GOMI_H,WORLD_H*0.78,WORLD_H*0.50);
+  // 中盤の絞り（通路確保）
   const marginX=Math.max(24,WORLD_W*0.05);
-  // 通常コンテナ
-  const targetCont=6, targetGomi=3;
-  function tryPlace(type,w,h,y0,y1){
-    for(let t=0;t<200;t++){
-      const x = marginX + Math.random()*(WORLD_W - marginX*2 - w);
-      const y = y1 + Math.random()*(y0 - y1 - h);
-      if(clearForRect(x,y,w,h)){
-        obstacles.push({type,x,y,w,h,vx:(type==='gomi'? (Math.random()<.5?-1:1)*Math.random()*1.2 : 0)});
-        return true;
-      }
-    }
-    return false;
-  }
-  for(let i=0;i<targetCont;i++) tryPlace('contena',CONT_W,CONT_H,WORLD_H*0.92,WORLD_H*0.25);
-  for(let i=0;i<targetGomi;i++) tryPlace('gomi',GOMI_W,GOMI_H,WORLD_H*0.78,WORLD_H*0.18);
-
-  // 中盤のボトルネック：縦の抜け道を必ず確保
-  const botY0=WORLD_H*0.50, botY1=WORLD_H*0.30;
+  const botY0=WORLD_H*0.55, botY1=WORLD_H*0.35;
   const gapW=Math.max(90,WORLD_W*0.16);
   const gapX=marginX+60+Math.random()*(WORLD_W - marginX*2 - 120 - gapW);
   const rows=3, cols=4;
@@ -237,14 +274,17 @@ function placeObstacles(){
       const x0=marginX + c*cellW + (cellW-CONT_W)/2;
       const y0=botY0 - (r+1)*cellH + (cellH-CONT_H)/2;
       const cx=x0+CONT_W/2;
-      if(cx>gapX && cx<gapX+gapW) continue; // 縦の通路
-      let placed=false, x=x0, y=y0;
+      if(cx>gapX && cx<gapX+gapW) continue;
+      let x=x0,y=y0,ok=false;
       for(let t=0;t<60;t++){
-        if(clearForRect(x,y,CONT_W,CONT_H)){ obstacles.push({type:'contena',x,y,w:CONT_W,h:CONT_H,vx:0}); placed=true; break; }
-        x += (Math.random()-0.5)*16; y += (Math.random()-0.5)*16;
+        if(clearForRect(x,y,CONT_W,CONT_H)){ obstacles.push({type:'contena',x,y,w:CONT_W,h:CONT_H,vx:0}); ok=true; break; }
+        x+=(Math.random()-0.5)*16; y+=(Math.random()-0.5)*16;
       }
     }
   }
+  // ★ 終盤：障害物増量（ゴール35%→上部）
+  for(let i=0;i<6;i++) tryPlace('contena',CONT_W,CONT_H,WORLD_H*0.35,WORLD_H*0.12);
+  for(let i=0;i<3;i++) tryPlace('gomi',GOMI_W,GOMI_H,WORLD_H*0.30,WORLD_H*0.10);
 }
 
 // ===== Race init =====
@@ -252,16 +292,54 @@ function resetRace(){
   finishOrder.length=0; balls.length=0; fastMode=false; playerFinished=false;
   camY=Math.max(0, WORLD_H - cv.height);
 
-  // 下部に確実に並べる
+  // スタート整列（下部）
   const startY=WORLD_H-120-BALL_SZ;
-  const laneL=R*2, laneR=WORLD_W-R*2;
-  const span=laneR-laneL;
+  const laneL=R*2, laneR=WORLD_W-R*2, span=laneR-laneL;
   for(let i=0;i<COLORS.length;i++){
     const x = laneL + (span/(COLORS.length+1))*(i+1) - R;
     const y = startY + (i%2)*6;
-    balls.push(makeBall(COLORS[i],x,y));
+    balls.push({color:COLORS[i],x,y,w:BALL_SZ,h:BALL_SZ,vx:0,vy:-0.6,spd:0.9,finished:false,tFinish:0});
   }
   placeObstacles();
+}
+
+// ===== CPU Steering =====
+function cpuSteer(b){
+  // サンプルオフセット（左右の候補）
+  const lateral=[-42,-24,0,24,42];
+  let best={score:-1, dir:0};
+  const aheadDist=64; // 先読み距離
+  for(const off of lateral){
+    const rx=b.x+off, ry=b.y- aheadDist;
+    // コリジョン評価（壁・障害物）
+    let penalty=0;
+    // 壁
+    if(rectTouchesWall(rx, ry, b.w, b.h, 4)) penalty+=5;
+    // 障害物近さ
+    for(const o of obstacles){
+      const near = aabbOverlap(rx,ry,b.w,b.h,o.x-8,o.y-8,o.w+16,o.h+16);
+      if(near) penalty+=4;
+      // 動くゴミ箱は予測（1/2秒先）
+      if(o.type==='gomi'){
+        const predX = o.x + o.vx* (fastMode? 3:1) * 30;
+        if(aabbOverlap(rx,ry,b.w,b.h,predX-10,o.y-10,o.w+20,o.h+20)) penalty+=3;
+      }
+    }
+    // 他ボール密度（渋滞回避）
+    for(const other of balls){
+      if(other===b || other.finished) continue;
+      const dx=(other.x - rx), dy=(other.y - ry);
+      if(Math.abs(dx)<40 && dy<60 && dy>-20) penalty+=0.6;
+    }
+    const score = 10 - penalty - Math.abs(off)*0.02;
+    if(score > best.score) best={score, dir:off};
+  }
+  // 目標に向けて軸加速
+  let ax = 0;
+  if(best.dir < -6) ax -= 0.11;
+  else if(best.dir > 6) ax += 0.11;
+  else ax += (Math.random()-0.5)*0.02; // 微小ノイズ
+  return ax;
 }
 
 // ===== Game State =====
@@ -285,18 +363,16 @@ function startCountdown(){
   setTimeout(()=>{inCountdown=false; started=true;},3400);
 }
 
-// ===== Update / Draw =====
 const FINISH_Y=24;
 
 function update(dt){
   if(!started) return;
 
-  // gomi 移動（進行中も重なり/壁を監視）
+  // gomi 移動（折り返しには壁と他障害物の両方を考慮）
   for(const o of obstacles){
     if(o.type==='gomi'){
       const mv=(fastMode?3:1);
       let nx=o.x + o.vx*mv;
-      // 壁 or 端 or コンテナ衝突で反転
       let reverse = (nx<4 || nx+o.w>WORLD_W-4) || rectTouchesWall(nx,o.y,o.w,o.h,4);
       if(!reverse){
         for(const p of obstacles){
@@ -317,19 +393,18 @@ function update(dt){
     const U = keys['ArrowUp']||tUp;
 
     const base = (fastMode?3.2:1.1);
-    b.spd += ((isPlayer? base+0.08 : base) - b.spd)*0.01;
+    b.spd += ((isPlayer? base+0.08 : base) - b.spd)*0.012; // 摩擦風にじわっと
+    let ax = 0;
     if(isPlayer){
-      if(L) b.vx-=0.11;
-      if(Rr) b.vx+=0.11;
-      if(U) b.spd+=0.02; // 上キーは前進のみ
+      if(L) ax -= 0.11;
+      if(Rr) ax += 0.11;
+      if(U)  b.spd += 0.02; // 上＝前進ブーストのみ
     }else{
-      // 簡易AI：壁を避けつつ蛇行
-      b.vx += (Math.random()-0.5)*0.05;
-      const aheadY=b.y-20;
-      if(rectTouchesWall(b.x-8,aheadY,b.w,b.h,4)) b.vx+=0.12;
-      if(rectTouchesWall(b.x+8,aheadY,b.w,b.h,4)) b.vx-=0.12;
+      ax += cpuSteer(b);
     }
-    b.vx=clamp(b.vx,-2.4,2.4);
+
+    b.vx += ax;
+    b.vx = clamp(b.vx, -2.4, 2.4);
     b.vy = -b.spd*(fastMode?3:1);
 
     b.x += b.vx; b.y += b.vy;
@@ -355,7 +430,7 @@ function update(dt){
     }
   }
 
-  // 円同士衝突
+  // 円同士衝突（回避も多少効くが最終的には反発）
   for(let i=0;i<balls.length;i++){
     for(let j=i+1;j<balls.length;j++){
       circleCircleBounce(balls[i],balls[j]);
@@ -365,7 +440,7 @@ function update(dt){
   // カメラ（プレイヤー追従）
   const player=balls.find(x=>x.color==='red');
   if(player){
-    const target=clamp(player.y - cv.height*0.55, 0, Math.max(0,WORLD_H-cv.height));
+    const target=clamp(player.y - cv.height*0.56, 0, Math.max(0,WORLD_H-cv.height));
     camY += (target-camY)*0.1;
   }
 
@@ -423,12 +498,7 @@ function awardPoints(){
   finishOrder.sort((a,b)=>a.tFinish-b.tFinish);
   finishOrder.forEach((b,i)=>{ totalPts[b.color]+= (award[i]||0); });
 }
-const resultView=document.getElementById('result');
-const resultTitle=document.getElementById('resultTitle');
-const resultTable=document.getElementById('resultTable');
-const nextBtn=document.getElementById('nextBtn');
-const restartBtn=document.getElementById('restartBtn');
-nextBtn.onclick=()=>{ resultView.style.display='none'; raceNo++; document.getElementById('raceNum').textContent=raceNo; resetRace(); startCountdown(); };
+nextBtn.onclick=()=>{ resultView.style.display='none'; raceNo++; raceNumEl.textContent=raceNo; resetRace(); startCountdown(); };
 restartBtn.onclick=()=>location.reload();
 
 function showResult(){
@@ -460,10 +530,10 @@ function buildIfReady(){ if(img.hoke){ buildWallMask(); resetRace(); } }
   try{
     await loadAll();
     buildWallMask(); resetRace();
-    document.getElementById('loading').style.display='none';
+    loadingEl.style.display='none';
     requestAnimationFrame(loop);
   }catch(e){
-    document.getElementById('loading').textContent='画像の読み込みに失敗しました。ファイル名と配置を確認してください。';
+    loadingEl.textContent='画像の読み込みに失敗しました。ファイル名と配置を確認してください。';
     console.error(e);
   }
 })();
