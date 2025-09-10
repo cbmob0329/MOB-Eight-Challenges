@@ -1,358 +1,204 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="utf-8" />
-<title>Hockey Balls Race - Ver.5.1.1 Mobile Hotfix</title>
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=1,user-scalable=no" />
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=1,user-scalable=no">
+<title>Hockey Race</title>
 <style>
-  :root{ --ui-bg: rgba(18,20,26,.82); --ui-br: rgba(255,255,255,.12); }
-  html,body{height:100%;margin:0;background:#000;color:#fff;font-family:system-ui,-apple-system,Segoe UI,Roboto,"Hiragino Sans","Yu Gothic",sans-serif}
-  #wrap{position:fixed;inset:0;display:flex;flex-direction:column}
-  #cv{flex:1;display:block;width:100%;height:100%;touch-action:none;background:#000}
-  #hud{position:fixed;top:0;left:0;right:0;display:flex;gap:8px;justify-content:space-between;align-items:center;padding:6px 10px;font-size:12px;background:linear-gradient(180deg,rgba(0,0,0,.55),rgba(0,0,0,.15));pointer-events:none;z-index:5}
-  .pill{background:rgba(0,0,0,.55);padding:4px 8px;border-radius:999px;border:1px solid rgba(255,255,255,.1)}
-  #overlay{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:10}
-  .card{background:var(--ui-bg);border:1px solid var(--ui-br);border-radius:16px;padding:16px 18px;box-shadow:0 12px 38px rgba(0,0,0,.6);max-width:min(92vw,720px)}
-  .title{font-weight:800;letter-spacing:.05em;margin-bottom:8px}
-  button{background:#1f2430;color:#fff;border:1px solid var(--ui-br);padding:12px 16px;border-radius:12px;font-size:16px;cursor:pointer}
-  button:active{transform:scale(.98)}
-  .hidden{display:none}
-  #controls{position:fixed;inset:auto 0 8px 0;display:flex;justify-content:space-between;align-items:center;padding:0 10px;z-index:6;gap:10px}
-  .pad{display:flex;gap:10px}
-  .btn{min-width:84px;min-height:54px;border-radius:14px;background:var(--ui-bg);border:1px solid var(--ui-br);font-weight:700}
-  .btn:active{filter:brightness(1.2)}
-  @media (min-width:860px){ #controls{display:none} }
+  body { margin:0; background:#000; overflow:hidden; touch-action:none; }
+  #gameCanvas { display:block; margin:0 auto; background:#111; }
+  #overlay {
+    position:fixed; inset:0; display:flex; align-items:center; justify-content:center;
+    background:rgba(0,0,0,0.7); color:#fff; font-size:2rem; flex-direction:column; z-index:10;
+  }
+  button { margin:8px; padding:12px 24px; font-size:1.2rem; }
 </style>
 </head>
 <body>
-<div id="wrap">
-  <canvas id="cv"></canvas>
-
-  <div id="hud">
-    <div class="pill">TIME <span id="time">0.0</span>s</div>
-    <div class="pill">PROGRESS <span id="prog">0%</span></div>
-    <div class="pill">RACE <span id="raceNo">1</span> / 3</div>
-  </div>
-
-  <div id="controls">
-    <div class="pad">
-      <button id="btnLeft"  class="btn" aria-label="左">⟵</button>
-      <button id="btnRight" class="btn" aria-label="右">⟶</button>
-    </div>
-    <button id="btnBoost" class="btn" aria-label="加速">BOOST</button>
-  </div>
-
-  <div id="overlay">
-    <div id="menu" class="card">
-      <div class="title">ゲーム開始しますか？</div>
-      <div>操作：左右＋上（押している間は少し加速）／スマホは下のボタン</div>
-      <div style="margin-top:12px"><button id="btnYes" autofocus>はい</button></div>
-      <div style="opacity:.75;margin-top:6px">※画面どこでもタップ/クリック/キー入力で開始</div>
-    </div>
-
-    <div id="count" class="card hidden" style="font-size:44px;text-align:center;font-weight:900">3</div>
-    <div id="finishFlash" class="card hidden" style="font-size:40px;font-weight:900;background:linear-gradient(135deg,#ff4d6d,#f59e0b);border:none">FINISH!</div>
-
-    <div id="raceResult" class="card hidden">
-      <div class="title">レース結果</div>
-      <ol id="rankList" style="padding-left:18px;margin:8px 0 14px"></ol>
-      <div style="display:flex;gap:8px">
-        <button id="btnNextRace">次のレース</button>
-        <button id="btnShowSeries" class="hidden">最終結果</button>
-      </div>
-    </div>
-
-    <div id="seriesResult" class="card hidden">
-      <div class="title">最終順位（3レース合計点）</div>
-      <ol id="seriesList" style="padding-left:18px;margin:8px 0 14px"></ol>
-      <button id="btnRestart">リスタート</button>
-    </div>
+<div id="overlay">
+  <div>ゲーム開始しますか？</div>
+  <div>
+    <button onclick="startGame()">はい</button>
+    <button onclick="location.reload()">いいえ</button>
   </div>
 </div>
+<canvas id="gameCanvas"></canvas>
 
 <script>
-(()=>{
-// ============ Canvas & DPR ============
-const cv=document.getElementById('cv'), ctx=cv.getContext('2d');
-let DPR = Math.max(1, Math.min(3, window.devicePixelRatio||1));
-function resize(){ DPR=Math.max(1,Math.min(3,window.devicePixelRatio||1));
-  const w=cv.clientWidth,h=cv.clientHeight; cv.width=Math.round(w*DPR); cv.height=Math.round(h*DPR);
-  ctx.setTransform(DPR,0,0,DPR,0,0); computeResponsive();
-}
-addEventListener('resize', resize, {passive:true}); resize();
-
-// ============ UI refs ============
-const elTime=document.getElementById('time');
-const elProg=document.getElementById('prog');
-const elRaceNo=document.getElementById('raceNo');
-const overlay=document.getElementById('overlay');
-const menu=document.getElementById('menu');
-const countCard=document.getElementById('count');
-const finishFlash=document.getElementById('finishFlash');
-const rankList=document.getElementById('rankList');
-const raceResult=document.getElementById('raceResult');
-const seriesResult=document.getElementById('seriesResult');
-const seriesList=document.getElementById('seriesList');
-const btnYes=document.getElementById('btnYes');
-const btnNextRace=document.getElementById('btnNextRace');
-const btnShowSeries=document.getElementById('btnShowSeries');
-const btnRestart=document.getElementById('btnRestart');
-const btnLeft=document.getElementById('btnLeft');
-const btnRight=document.getElementById('btnRight');
-const btnBoost=document.getElementById('btnBoost');
-
-// ============ Assets ============
-let bgOK=false, contOK=false, gomOK=false;
-const bg=new Image();   bg.src='hoke.png';     bg.onload=()=>bgOK=true;
-const cont=new Image(); cont.src='contena.png';cont.onload=()=>contOK=true;
-const gomi=new Image(); gomi.src='gomi.png';   gomi.onload=()=>gomOK=true;
-const puckMeta=[
-  {name:"RED",file:"red.png",color:"#f33"},
-  {name:"BLUE",file:"blue.png",color:"#29f"},
-  {name:"YELLOW",file:"yellow.png",color:"#ff0"},
-  {name:"BLACK",file:"black.png",color:"#222"},
-  {name:"PINK",file:"pink.png",color:"#f6c"},
-  {name:"ORANGE",file:"orange.png",color:"#fa3"},
-  {name:"GREEN",file:"green.png",color:"#3d7"},
-  {name:"PURPLE",file:"mura.png",color:"#a6f"}
-];
-puckMeta.forEach(p=>{p.img=new Image();p.img.src=p.file});
-
-// ============ Responsive tuning ============
-const track={ widthRatio:0.62, startY:1700, finishY:150, scroll:0 };
-let SCALE=1, PUCK_R=30, SPEED={BASE:1.4, STEER:1.5, BOOST:1.22};
-let OB_SIZE={CONT_W:180, CONT_H:130, BIN_W:60, BIN_H:75};
-let COUNTS={CONT_MID:4, BINS:10};
-let GAP_TUNING={sidePad:22, barricadeGap:120};
-function computeResponsive(){
-  const W=cv.clientWidth;
-  SCALE = Math.min(1.25, Math.max(0.78, Math.min(W, 540)/480));
-  track.widthRatio = (W<520? 0.78 : 0.66);
-  PUCK_R = Math.round(30*SCALE);
-  OB_SIZE.CONT_W = Math.round(180*SCALE);
-  OB_SIZE.CONT_H = Math.round(130*SCALE);
-  OB_SIZE.BIN_W  = Math.round(60*SCALE);
-  OB_SIZE.BIN_H  = Math.round(75*SCALE);
-  COUNTS.CONT_MID = (W<420? 3 : 4);
-  COUNTS.BINS     = (W<420? 8 : 10);
-  GAP_TUNING.sidePad = Math.max(18, Math.round(22*SCALE));
-  GAP_TUNING.barricadeGap = Math.round((W<420? 160:120) * SCALE);
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
+resize();
+window.addEventListener("resize", resize);
+function resize(){
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
 }
 
-// ============ State ============
-const STATE={MENU:0,COUNT:1,RUN:2,RACE:3,SERIES:4};
-let state=STATE.MENU, raceIndex=1;
-let pucks=[],obstacles=[],finished=0,time=0;
-const points=[10,7,5,3,1,0,0,0];
-let seriesPts=puckMeta.map((_,i)=>({id:i+1,name:puckMeta[i].name,color:puckMeta[i].color,pts:0}));
-
-// ============ Input ============
-const keys={left:false,right:false,up:false};
-addEventListener('keydown',e=>{ if(state!==STATE.RUN) return;
-  if(e.key==='ArrowLeft') keys.left=true;
-  if(e.key==='ArrowRight') keys.right=true;
-  if(e.key==='ArrowUp') keys.up=true;
-});
-addEventListener('keyup',e=>{ if(state!==STATE.RUN) return;
-  if(e.key==='ArrowLeft') keys.left=false;
-  if(e.key==='ArrowRight') keys.right=false;
-  if(e.key==='ArrowUp') keys.up=false;
-});
-function holdButton(el,on,off){ let t=false;
-  const down=(ev)=>{ev.preventDefault(); if(!t){t=true; on();}};
-  const up  =(ev)=>{ev.preventDefault(); t=false; off();};
-  el.addEventListener('pointerdown',down); el.addEventListener('pointerup',up);
-  el.addEventListener('pointercancel',up); el.addEventListener('pointerleave',up);
+let images = {};
+let imageFiles = {
+  red:"red.png", blue:"blue.png", yellow:"yellow.png", black:"black.png",
+  pink:"pink.png", orange:"orange.png", green:"green.png", mura:"mura.png",
+  contena:"contena.png", gomi:"gomi.png", hoke:"hoke.png"
+};
+for(let key in imageFiles){
+  images[key] = new Image();
+  images[key].src = imageFiles[key];
 }
-holdButton(btnLeft, ()=>keys.left=true,  ()=>keys.left=false);
-holdButton(btnRight,()=>keys.right=true, ()=>keys.right=false);
-holdButton(btnBoost,()=>keys.up=true,    ()=>keys.up=false);
 
-// ============ Helpers ============
-function bounds(){ const W=cv.clientWidth, tw=W*track.widthRatio, x0=(W-tw)/2;
-  return {L:x0+GAP_TUNING.sidePad, R:x0+tw-GAP_TUNING.sidePad, W:tw-2*GAP_TUNING.sidePad, CX:x0+tw/2};
-}
-function addOb(type,x,y,w,h,opt={}){ obstacles.push({...opt,type,x,y,w,h}); }
-
-// ============ Obstacles ============
-function buildObstacles(){
-  obstacles.length=0;
-  const {L,R,W,CX}=bounds();
-  const CW=OB_SIZE.CONT_W, CH=OB_SIZE.CONT_H, BW=OB_SIZE.BIN_W, BH=OB_SIZE.BIN_H;
-
-  // 端封じ（段差配置）
-  const edgeStep = Math.round(260 * SCALE);
-  for(let y=track.startY-200, i=0; y>track.finishY+Math.round(380*SCALE); y-=edgeStep, i++){
-    addOb('contena', L+6, y,  Math.round(CW*0.48), Math.round(CH*0.55));
-    addOb('contena', R-6-Math.round(CW*0.48), y - (i%2? Math.round(40*SCALE):0), Math.round(CW*0.48), Math.round(CH*0.55));
+class Ball{
+  constructor(color,x){
+    this.color=color;
+    this.x=x; this.y=canvas.height-60;
+    this.w=40; this.h=40;
+    this.vx=0; this.vy=-1;
+    this.speed=0; this.finished=false; this.rank=null; this.points=0;
   }
-
-  // 中央寄りランダムコンテナ
-  for(let i=0;i<COUNTS.CONT_MID;i++){
-    const y = track.startY - Math.round(420*SCALE) - i*Math.round(300*SCALE);
-    const x = L + W*(0.22 + Math.random()*0.56) - CW/2;
-    addOb('contena', Math.max(L, Math.min(R-CW, x)), y, CW, CH);
+  update(){
+    if(this.finished) return;
+    this.speed += 0.002;
+    this.vy = -this.speed;
+    this.x += this.vx;
+    this.y += this.vy;
+    if(this.x<0) { this.x=0; this.vx*=-0.5; }
+    if(this.x+this.w>canvas.width) { this.x=canvas.width-this.w; this.vx*=-0.5; }
+    if(this.y<0){ this.finished=true; this.y=0; finishers.push(this); }
   }
-
-  // ゴミ箱（中央寄り・大振幅・ゆっくり）
-  for(let i=0;i<COUNTS.BINS;i++){
-    const y = track.startY - Math.round(300*SCALE) - Math.random()*Math.round(1200*SCALE);
-    const baseX = L + W*(0.28 + Math.random()*0.44);
-    addOb('gomi', baseX, y, BW, BH, {amp:Math.round((180+Math.random()*60)*SCALE), phase:Math.random()*6, speed:0.4+Math.random()*0.3, baseX});
-  }
-
-  // ゴール前バリケード（中央スリット広め）
-  const barY = track.finishY + Math.round(320*SCALE);
-  const gap = GAP_TUNING.barricadeGap;
-  addOb('contena', L, barY, (W-gap)/2, Math.round(120*SCALE));
-  addOb('contena', L+(W+gap)/2, barY, (W-gap)/2, Math.round(120*SCALE));
-}
-
-// ============ Pucks ============
-function resetPucks(){
-  pucks.length=0;
-  const {L,R}=bounds(), band=R-L, gap=(band-PUCK_R*2)/7, y=track.startY;
-  for(let i=0;i<8;i++){
-    const m=puckMeta[i], x=L+PUCK_R+gap*i;
-    pucks.push({id:i+1,name:m.name,color:m.color,img:m.img,x,y,vx:0,vy:-SPEED.BASE,finished:false,finish:0});
+  draw(){
+    ctx.drawImage(images[this.color],this.x,this.y,this.w,this.h);
   }
 }
 
-// ============ Physics ============
-function circleRect(p,o){
-  if(o.type==='gomi'){
-    o.phase += (o.speed||0.5) * (1/60);
-    o.x = (o.baseX||o.x) + Math.sin(o.phase) * (o.amp||50);
-    const {L,R}=bounds(); o.x = Math.max(L, Math.min(R - o.w, o.x));
+class Obstacle{
+  constructor(type,x,y){
+    this.type=type;
+    this.x=x; this.y=y;
+    this.w=(type=="contena")?80:60;
+    this.h=(type=="contena")?80:80;
+    this.vx=(type=="gomi")?1.5:0;
   }
-  const nx=Math.max(o.x,Math.min(p.x,o.x+o.w));
-  const ny=Math.max(o.y,Math.min(p.y,o.y+o.h));
-  const dx=p.x-nx, dy=p.y-ny, r2=PUCK_R*PUCK_R;
-  if(dx*dx+dy*dy < r2){
-    if(Math.abs(dx)>Math.abs(dy)) p.vx*=-1.12; else p.vy*=-1.12;
-    const d=Math.hypot(dx,dy)||1; p.x+=dx/d*(PUCK_R-d+0.5); p.y+=dy/d*(PUCK_R-d+0.5);
-  }
-}
-function collidePucks(a,b){
-  const dx=b.x-a.x, dy=b.y-a.y, d=Math.hypot(dx,dy), m=PUCK_R*2;
-  if(d<m){
-    const nx=dx/d, ny=dy/d, ov=(m-d)*0.6;
-    a.x-=nx*ov/2; b.x+=nx*ov/2; a.y-=ny*ov/2; b.y+=ny*ov/2;
-    const tx=-ny, ty=nx;
-    const avn=a.vx*nx+a.vy*ny, bvn=b.vx*nx+b.vy*ny;
-    const avt=a.vx*tx+a.vy*ty, bvt=b.vx*tx+b.vy*ty;
-    const e=1.12;
-    const avn2=bvn*e, bvn2=avn*e;
-    a.vx=avn2*nx+avt*tx; a.vy=avn2*ny+avt*ty;
-    b.vx=bvn2*nx+bvt*tx; b.vy=bvn2*ny+bvt*ty;
-  }
-}
-
-// ============ BG ============
-function drawBG(){
-  const W=cv.clientWidth, H=cv.clientHeight;
-  if(bgOK && bg.complete){
-    const scale=W/bg.width; const tileH=Math.max(1,Math.round(bg.height*scale));
-    const off=((track.scroll%tileH)+tileH)%tileH;
-    for(let y=-off; y<H+tileH; y+=tileH) ctx.drawImage(bg,0,y,W,tileH);
-  }else{
-    const g=ctx.createLinearGradient(0,0,0,H); g.addColorStop(0,'#9adcf0'); g.addColorStop(1,'#67c3dd');
-    ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
-    const sideW=Math.max(12, W*(1-track.widthRatio)/2); ctx.fillStyle='rgba(0,0,0,.15)';
-    ctx.fillRect(0,0,sideW,H); ctx.fillRect(W-sideW,0,sideW,H);
-  }
-}
-
-// ============ Start flow (堅牢版) ============
-const SAFE = { started:false };
-function beginGame(){
-  if(SAFE.started) return;
-  SAFE.started = true;
-  try{ menu.classList.add('hidden'); }catch(_){}
-  try{ startCountdown(); }catch(e){ console.error(e); /* 失敗しても再試行 */ setTimeout(()=>{ SAFE.started=false; beginGame(); }, 0); }
-}
-btnYes.addEventListener('click', (e)=>{ e.preventDefault(); beginGame(); });
-overlay.addEventListener('click',   (e)=>{ if(state===STATE.MENU){ e.preventDefault(); beginGame(); }});
-window.addEventListener('touchstart',(e)=>{ if(state===STATE.MENU){ beginGame(); }}, {passive:false});
-window.addEventListener('pointerdown',(e)=>{ if(state===STATE.MENU){ beginGame(); }});
-window.addEventListener('keydown',(e)=>{ if(state===STATE.MENU){ const k=e.key; if(k==='Enter'||k===' '||k==='ArrowUp'||k==='ArrowLeft'||k==='ArrowRight'){ e.preventDefault(); beginGame(); }}});
-
-// ============ Countdown & loop ============
-function startCountdown(){
-  time=0; finished=0;
-  resetPucks(); buildObstacles();
-  const targetStart = pucks[0].y - cv.clientHeight*0.65;
-  track.scroll = Math.max(track.finishY-80, Math.min(targetStart, track.startY));
-  state=STATE.COUNT;
-  let n=3; countCard.textContent=n; countCard.classList.remove('hidden');
-  const tick=()=>{ n--; if(n>0){ countCard.textContent=n; setTimeout(tick,800); }
-    else{ countCard.textContent='GO!'; setTimeout(()=>countCard.classList.add('hidden'),500); state=STATE.RUN; overlay.classList.add('hidden'); }};
-  setTimeout(tick,800);
-}
-
-if(btnRestart) btnRestart.onclick=()=>{ seriesPts.forEach(s=>s.pts=0); raceIndex=1; elRaceNo.textContent=raceIndex; seriesResult.classList.add('hidden'); overlay.classList.remove('hidden'); menu.classList.remove('hidden'); state=STATE.MENU; SAFE.started=false; };
-if(btnNextRace) btnNextRace.onclick=()=>{ raceResult.classList.add('hidden'); raceIndex++; elRaceNo.textContent=raceIndex; SAFE.started=false; startCountdown(); };
-if(btnShowSeries) btnShowSeries.onclick=()=>{ raceResult.classList.add('hidden'); showSeries(); };
-
-let last=performance.now();
-requestAnimationFrame(function loop(now){
-  const dt=Math.min(0.033,(now-last)/1000); last=now;
-  if(state===STATE.RUN) step(dt);
-  draw(); requestAnimationFrame(loop);
-});
-
-function step(dt){
-  time+=dt; elTime.textContent=time.toFixed(1);
-  const {L,R}=bounds(), xL=L+PUCK_R, xR=R-PUCK_R;
-
-  for(const o of obstacles){ if(o.type==='gomi'){ o.phase += (o.speed||0.5)*dt*60; o.x=(o.baseX||o.x)+Math.sin(o.phase)*(o.amp||60); o.x=Math.max(L,Math.min(R-o.w,o.x)); } }
-
-  for(let i=0;i<pucks.length;i++){
-    const p=pucks[i]; if(p.finished) continue;
-    p.vy = -SPEED.BASE*1.2 * (i===0 && keys.up ? SPEED.BOOST : 1);
-    if(i===0){ if(keys.left) p.vx -= SPEED.STEER * dt * 60; if(keys.right) p.vx += SPEED.STEER * dt * 60; }
-    else { const center=(L+R)/2; p.vx += (p.x<center? 0.5 : -0.5) * dt * 40; }
-
-    p.x += p.vx; p.y += p.vy; p.vx *= 0.90;
-
-    if(p.x<xL){ p.x=xL; p.vx=Math.abs(p.vx)*1.2+0.8; p.vy-=0.3; }
-    if(p.x>xR){ p.x=xR; p.vx=-Math.abs(p.vx)*1.2-0.8; p.vy-=0.3; }
-
-    for(const o of obstacles) circleRect(p,o);
-    for(let j=i+1;j<pucks.length;j++) collidePucks(p,pucks[j]);
-
-    if(p.y<=track.finishY && !p.finished){ p.finished=true; p.finish=time; finished++;
-      if(i===0){ finishFlash.classList.remove('hidden'); setTimeout(()=>finishFlash.classList.add('hidden'),1200); }
+  update(){
+    if(this.type=="gomi"){
+      this.x+=this.vx;
+      if(this.x<0||this.x+this.w>canvas.width) this.vx*=-1;
     }
   }
-
-  const target=Math.max(track.finishY-80, Math.min(pucks[0].y - cv.clientHeight*0.65, track.startY));
-  track.scroll += (target - track.scroll) * 0.14;
-
-  const prog=(1 - (pucks[0].y - track.finishY) / (track.startY - track.finishY));
-  elProg.textContent = Math.max(0, Math.min(100, prog*100)).toFixed(0)+'%';
-
-  if(finished===pucks.length){ setTimeout(()=>showRace(), 200); state=STATE.RACE; }
+  draw(){
+    ctx.drawImage(images[this.type],this.x,this.y,this.w,this.h);
+  }
 }
 
-// ======= Results =======
-function showRace(){
-  const sorted=[...pucks].sort((a,b)=>a.finish-b.finish);
-  rankList.innerHTML='';
-  sorted.forEach((p,i)=>{ const add=points[i]||0; seriesPts[p.id-1].pts+=add;
-    const li=document.createElement('li'); li.textContent=`${i+1}. ${p.name}  ${p.finish.toFixed(1)}s  (+${add})`; li.style.color=p.color; rankList.appendChild(li);
-  });
-  btnNextRace.classList.toggle('hidden', raceIndex>=3);
-  btnShowSeries.classList.toggle('hidden', raceIndex<3);
-  raceResult.classList.remove('hidden');
+let balls=[], obstacles=[], finishers=[], race=1, totalPoints={};
+let keys={}, touch={left:false,right:false,up:false};
+document.addEventListener("keydown",e=>keys[e.key]=true);
+document.addEventListener("keyup",e=>keys[e.key]=false);
+canvas.addEventListener("touchstart",e=>{
+  let x=e.touches[0].clientX;
+  let y=e.touches[0].clientY;
+  if(y>canvas.height*0.7){
+    if(x<canvas.width/3) touch.left=true;
+    else if(x>canvas.width*2/3) touch.right=true;
+    else touch.up=true;
+  }
+});
+canvas.addEventListener("touchend",()=>{ touch.left=false; touch.right=false; touch.up=false; });
+
+function initRace(){
+  balls=[]; obstacles=[]; finishers=[];
+  let colors=["red","blue","yellow","black","pink","orange","green","mura"];
+  for(let i=0;i<colors.length;i++){
+    balls.push(new Ball(colors[i],i*canvas.width/8));
+  }
+  // 障害物配置
+  for(let i=0;i<6;i++){
+    let type=(i%2==0)?"contena":"gomi";
+    let x=Math.random()*(canvas.width-100);
+    let y=Math.random()*canvas.height*0.8;
+    obstacles.push(new Obstacle(type,x,y));
+  }
 }
-function showSeries(){
-  const final=[...seriesPts].sort((a,b)=>b.pts-a.pts);
-  seriesList.innerHTML='';
-  final.forEach((s,i)=>{ const li=document.createElement('li'); li.textContent=`${i+1}. ${s.name}  ${s.pts} pts`; li.style.color=s.color; seriesList.appendChild(li); });
-  seriesResult.classList.remove('hidden');
+
+let started=false, countdown=3, gameOver=false, fastMode=false;
+
+function startGame(){
+  document.getElementById("overlay").style.display="none";
+  initRace();
+  let cInt=setInterval(()=>{
+    countdown--;
+    if(countdown==0){ clearInterval(cInt); started=true; }
+  },1000);
 }
-})();
+
+function update(){
+  if(!started||gameOver) return;
+  for(let o of obstacles) o.update();
+  for(let b of balls){
+    if(b.color=="red"){
+      if(keys["ArrowLeft"]||touch.left) b.vx=-2;
+      else if(keys["ArrowRight"]||touch.right) b.vx=2;
+      else b.vx*=0.9;
+      if((keys["ArrowUp"]||touch.up)&&b.vy>-5) b.vy-=0.5;
+    } else {
+      b.vx+=(Math.random()-0.5)*0.2;
+    }
+    b.update();
+    for(let o of obstacles){
+      if(b.x<b.x+40 && b.x+40>o.x && b.y<b.y+40 && b.y+40>o.y){
+        b.vx*=-0.5; b.vy*=-0.5; 
+      }
+    }
+  }
+  // 衝突（ボール同士）
+  for(let i=0;i<balls.length;i++){
+    for(let j=i+1;j<balls.length;j++){
+      let a=balls[i], b=balls[j];
+      let dx=a.x-b.x, dy=a.y-b.y;
+      if(Math.abs(dx)<40 && Math.abs(dy)<40){
+        a.vx*=-0.5; b.vx*=-0.5;
+      }
+    }
+  }
+  if(finishers.length==balls.length){
+    showResult();
+  }
+}
+
+function draw(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.drawImage(images.hoke,0,0,canvas.width,canvas.height);
+  for(let o of obstacles) o.draw();
+  for(let b of balls) b.draw();
+  if(!started){
+    ctx.fillStyle="#fff"; ctx.font="40px sans-serif";
+    ctx.fillText(countdown>0?countdown:"GO!",canvas.width/2-40,canvas.height/2);
+  }
+}
+
+function loop(){
+  update();
+  draw();
+  requestAnimationFrame(loop);
+}
+loop();
+
+function showResult(){
+  gameOver=true;
+  ctx.fillStyle="yellow"; ctx.font="60px sans-serif";
+  ctx.fillText("FINISH!",canvas.width/2-120,canvas.height/2);
+  setTimeout(()=>{
+    finishers.forEach((b,i)=>{
+      let pts=[10,7,5,3,1][i]||0;
+      totalPoints[b.color]=(totalPoints[b.color]||0)+pts;
+    });
+    if(race<3){ race++; started=false; gameOver=false; countdown=3; startGame();}
+    else{
+      ctx.fillStyle="#fff"; ctx.font="30px sans-serif";
+      let y=100;
+      for(let c in totalPoints){
+        ctx.fillText(c+" : "+totalPoints[c],50,y); y+=40;
+      }
+    }
+  },2000);
+}
 </script>
 </body>
 </html>
