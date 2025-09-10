@@ -7,23 +7,25 @@
 <meta name="theme-color" content="#0b0c10" />
 <style>
   :root{
-    --bg:#0b0c10; --panel:#121621; --panel2:#171c2a; --fg:#e9eef7; --dim:#9aa3b2; --accent:#13c4ff; --accent2:#ff3e7f; --ok:#25d366; --warn:#ffb020;
+    --bg:#0b0c10; --panel:#121621; --panel2:#171c2a; --fg:#e9eef7; --dim:#9aa3b2;
+    --accent:#13c4ff; --accent2:#ff3e7f; --ok:#25d366; --warn:#ffb020;
   }
   html,body{height:100%; margin:0; background:var(--bg); color:var(--fg); font-family:system-ui,-apple-system,Segoe UI,Roboto,"Hiragino Sans","Yu Gothic",sans-serif;}
   #app-wrap{ position:fixed; inset:0; display:grid; place-items:center; }
 
-  /* スマホ固定ビュー（PCでも同一見た目） */
+  /* スマホ固定ビュー（PCでも同じ見た目） */
   #phone{
-    width: 390px; /* スマホ幅基準 */
+    width: 390px; /* iPhone系幅 */
     height: 780px;
     background:linear-gradient(160deg,#0b0c10,#0e1220 60%,#0b0c10);
     border-radius: 24px;
     box-shadow: 0 10px 40px rgba(0,0,0,.45), inset 0 0 0 1px rgba(255,255,255,.06);
     overflow:hidden;
-    position:relative;
     display:flex; flex-direction:column;
+    position:relative;
   }
 
+  /* 上：バー、中央：ステージ、下：十字キー の3分割 */
   #topbar{
     flex:0 0 48px; display:flex; align-items:center; justify-content:space-between;
     padding:0 12px; background:var(--panel); border-bottom:1px solid rgba(255,255,255,.06);
@@ -32,12 +34,15 @@
   #hud{ display:flex; gap:10px; align-items:center; font-size:12px; color:var(--dim); }
   #hud b{ color:var(--fg); font-weight:700; }
 
-  #stage-wrap{ position:relative; flex:1; display:grid; place-items:center; background:var(--panel2); }
+  /* ステージは中央・正方形。下の十字キー分のスペースを確保するため flex:1 で可変 */
+  #stage-wrap{
+    flex:1; display:flex; justify-content:center; align-items:center; background:var(--panel2);
+    padding: 8px 8px 4px 8px; /* 上寄せ気味 */
+  }
   #stage{
-    width: min(92vw, calc(100vh - 160px));
+    width: min(94%, calc(100% - 16px));
     aspect-ratio: 1 / 1;
-    max-width: calc(100% - 16px);
-    max-height: calc(100% - 16px);
+    max-height: 100%;
     background:#000;
     border-radius: 12px;
     box-shadow: inset 0 0 0 1px rgba(255,255,255,.08);
@@ -45,7 +50,7 @@
   }
   canvas{ width:100%; height:100%; display:block; border-radius:12px; image-rendering: pixelated; }
 
-  /* オーバーレイ */
+  /* オーバーレイ（スタート/カウント/結果） */
   .overlay{ position:absolute; inset:0; display:grid; place-items:center; pointer-events:none; }
   .center-panel{
     background:rgba(10,12,20,.85);
@@ -65,42 +70,38 @@
   .pill{ padding:2px 8px; border-radius:999px; background:#1f2a44; border:1px solid rgba(255,255,255,.12); font-size:11px; }
   .muted{ color:var(--dim); }
 
-  /* ==== 十字キー：ステージ上・下部に半透明オーバーレイ（押しやすい＆ホームバー回避） ==== */
+  /* 十字キーを画面最下部に固定（phone内の下部領域） */
   #controls{
-    position:absolute;
-    left:0; right:0;
-    bottom: calc(8px + env(safe-area-inset-bottom));
+    flex:0 0 170px; /* 高さ固定 */
     display:flex; justify-content:center; align-items:center; gap:16px;
-    pointer-events:none; /* 背景タッチは通す */
-    z-index: 5;
+    padding:10px 10px calc(10px + env(safe-area-inset-bottom)) 10px;
+    background:var(--panel); border-top:1px solid rgba(255,255,255,.06);
   }
   .dpad{
-    width: 200px; height: 200px; position:relative;
+    width: 210px; height: 210px; position:relative;
     background: rgba(10,12,20,.25);
     border:1px solid rgba(255,255,255,.15);
     border-radius: 16px;
     backdrop-filter: blur(6px);
-    pointer-events:auto; /* ボタンは押せる */
     touch-action:none;
   }
   .dpad button{
-    position:absolute; width:64px; height:64px; border-radius:14px;
+    position:absolute; width:68px; height:68px; border-radius:14px;
     background:#1c2334; border:1px solid rgba(255,255,255,.18);
     color:#cfe7ff; font-weight:900; font-size:18px;
     touch-action:none;
   }
   .dpad button:active{ background:#24304a; transform: translateY(1px); }
-  .up{left:68px; top:8px}
-  .down{left:68px; bottom:8px}
-  .left{left:8px; top:68px}
-  .right{right:8px; top:68px}
+  .up{left:71px; top:8px}
+  .down{left:71px; bottom:8px}
+  .left{left:8px; top:71px}
+  .right{right:8px; top:71px}
   .legend{
     background: rgba(10,12,20,.35);
     border:1px solid rgba(255,255,255,.15);
     border-radius: 12px;
     padding:6px 10px;
     font-size:12px; color:#cfe7ff;
-    pointer-events:none;
   }
 
   /* テーブル */
@@ -115,6 +116,7 @@
 <body>
 <div id="app-wrap">
   <div id="phone" aria-label="MOB balloon - mobile fixed view">
+    <!-- 上：バー -->
     <div id="topbar">
       <div>MOB balloon</div>
       <div id="hud">
@@ -125,11 +127,12 @@
       </div>
     </div>
 
+    <!-- 中央：ステージ（正方形） -->
     <div id="stage-wrap">
       <div id="stage">
         <canvas id="cv" width="1000" height="1000"></canvas>
 
-        <!-- オーバーレイ -->
+        <!-- スタート -->
         <div class="overlay" id="startOverlay">
           <div class="center-panel">
             <div class="title">MOB balloon</div>
@@ -137,11 +140,11 @@
             <button class="btn" id="btnStart">ゲームスタート</button>
           </div>
         </div>
-
+        <!-- カウント -->
         <div class="overlay" id="countOverlay" style="display:none;">
           <div class="counter" id="countLabel">3</div>
         </div>
-
+        <!-- ラウンド結果（2秒のみ表示して自動移行） -->
         <div class="overlay" id="roundOverlay" style="display:none;">
           <div class="center-panel" id="roundPanel">
             <div class="title">ラウンド結果</div>
@@ -150,7 +153,7 @@
             <div class="muted" style="margin-top:8px;">次のラウンドへ移動中…</div>
           </div>
         </div>
-
+        <!-- 最終結果（2秒表示→タイトルへ） -->
         <div class="overlay" id="finalOverlay" style="display:none;">
           <div class="center-panel">
             <div class="title">総合結果</div>
@@ -159,25 +162,24 @@
             <div class="muted" style="margin-top:8px;">新しいゲームを開始します…</div>
           </div>
         </div>
-
-        <!-- 十字キー（押しやすい下部オーバーレイ） -->
-        <div id="controls">
-          <div class="dpad" aria-label="directional pad">
-            <button class="up" data-dir="up">▲</button>
-            <button class="down" data-dir="down">▼</button>
-            <button class="left" data-dir="left">◀</button>
-            <button class="right" data-dir="right">▶</button>
-          </div>
-          <div class="legend">十字キーで移動／PCは矢印キーも可</div>
-        </div>
-
       </div>
+    </div>
+
+    <!-- 下：十字キー（画面最下部固定） -->
+    <div id="controls">
+      <div class="dpad" aria-label="directional pad">
+        <button class="up" data-dir="up">▲</button>
+        <button class="down" data-dir="down">▼</button>
+        <button class="left" data-dir="left">◀</button>
+        <button class="right" data-dir="right">▶</button>
+      </div>
+      <div class="legend">十字キーで移動／PCは矢印キーも可</div>
     </div>
   </div>
 </div>
 
 <script>
-/* ========== 画像（同階層・大文字小文字厳守） ========== */
+/* ===== 画像ファイル（同階層・大文字小文字厳守） ===== */
 const ASSETS = {
   bg: "MOBhai.png",
   crowR: "karasu1.png",
@@ -195,7 +197,7 @@ const ASSETS = {
 };
 const balloonOrder = ["Red","BlueTypo","Green","Purple","Orange","Pink","Yellow","Black"];
 
-/* ========== 基本DOM ========== */
+/* ===== DOM ===== */
 const cv = document.getElementById('cv');
 const ctx = cv.getContext('2d');
 const startOverlay = document.getElementById('startOverlay');
@@ -216,7 +218,7 @@ const STAGE_SIZE = 1000;
 let images = {};
 let ready = false;
 
-/* ========== 進行/スコア ========== */
+/* ===== 進行/スコア ===== */
 const MAX_PLAYERS = 8;
 const ROUNDS_MAX = 3;
 const POINTS_MAP = [15,10,7,5,3,1,0,0];
@@ -246,7 +248,7 @@ class Crow{
   }
 }
 
-/* ========== 状態 ========== */
+/* ===== 状態 ===== */
 let balloons = [];
 let crows = [];
 let gameTime = 0;
@@ -258,7 +260,7 @@ let ended = false;
 let placements = [];
 let playerBalloon = null;
 
-/* ========== 入力 ========== */
+/* ===== 入力（十字キー/キーボード） ===== */
 const input = {up:false,down:false,left:false,right:false};
 function bindDPad(){
   const controls = document.querySelectorAll('.dpad button');
@@ -288,7 +290,7 @@ window.addEventListener('keyup', e=>{
   if(e.key==="ArrowRight") input.right=false;
 });
 
-/* ========== 画像ロード ========== */
+/* ===== 画像ロード ===== */
 function loadImage(src){
   return new Promise((res,rej)=>{
     const img = new Image();
@@ -316,7 +318,7 @@ async function loadAssets(){
   ready = true;
 }
 
-/* ========== 色ユーティリティ ========== */
+/* ===== 色ユーティリティ ===== */
 function colorToImageKey(colorKey){
   switch(colorKey){
     case 'Black': return 'bBlack';
@@ -334,7 +336,7 @@ function nameFromColor(colorKey){
   return {Black:'Black', BlueTypo:'Blue', Green:'Green', Purple:'Purple', Orange:'Orange', Pink:'Pink', Red:'Red', Yellow:'Yellow'}[colorKey] || colorKey;
 }
 
-/* ========== セットアップ ========== */
+/* ===== セットアップ ===== */
 function setupPlayers(){
   balloons = [];
   const others = balloonOrder.filter(k=>k!=="Red");
@@ -353,7 +355,7 @@ function setupPlayers(){
     if(isPlayer) playerBalloon = b;
   }
 
-  // 横一列（スタート位置はランダム順）
+  // 横一列（ランダム順）
   const order = [...Array(MAX_PLAYERS).keys()];
   for (let i=order.length-1;i>0;i--){
     const j = (Math.random()* (i+1))|0;
@@ -386,7 +388,7 @@ function resetRound(){
   speedTag.textContent = "通常";
 }
 
-/* ========== カウントダウン ========== */
+/* ===== カウントダウン ===== */
 function startCountdown(){
   counting = true;
   startOverlay.style.display="none";
@@ -403,7 +405,7 @@ function startCountdown(){
   tick();
 }
 
-/* ========== 物理＆AI（速度強化版） ========== */
+/* ===== 物理＆AI（スピード強化版） ===== */
 function clamp(v,min,max){ return v<min?min:(v>max?max:v); }
 function step(dt){
   if(!playing) return;
@@ -415,7 +417,7 @@ function step(dt){
   dt *= simSpeed;
   gameTime += dt;
 
-  // カラス追加
+  // カラス追加（10秒ごと）
   if(gameTime >= nextCrowTime){
     const c = new Crow();
     const edge = Math.random()<0.5 ? 'x' : 'y';
@@ -431,7 +433,7 @@ function step(dt){
 
   // 入力（風船スピードUP）
   if(playerBalloon && playerBalloon.alive && !playerBalloon.popping){
-    const acc= 260; // ←UP
+    const acc= 260;
     playerBalloon.ax = (playerBalloon.control.right?1:0) - (playerBalloon.control.left?1:0);
     playerBalloon.ay = (playerBalloon.control.down?1:0) - (playerBalloon.control.up?1:0);
     const len = Math.hypot(playerBalloon.ax, playerBalloon.ay) || 1;
@@ -454,7 +456,7 @@ function step(dt){
         const bias = Math.atan2(avoidY,avoidX);
         b.aiTargetAngle = isFinite(bias)? bias + (Math.random()*1.4-0.7) : Math.random()*Math.PI*2;
       }
-      const acc= 230; // ←UP
+      const acc= 230;
       b.ax = Math.cos(b.aiTargetAngle)*acc;
       b.ay = Math.sin(b.aiTargetAngle)*acc;
       const margin=90, centerPull=140;
@@ -466,8 +468,8 @@ function step(dt){
   });
 
   // 速度更新（ドラッグ弱め、最高速UP）
-  const drag = 0.94;   // ←UP（減速しにくい）
-  const vmax = 360;    // ←UP（最高速）
+  const drag = 0.94;   // 減速しにくい
+  const vmax = 360;    // 最高速
   balloons.forEach(b=>{
     if(!b.alive) return;
     if(b.popping){
@@ -549,13 +551,13 @@ function step(dt){
   const aliveCount = balloons.filter(b=>b.alive || b.popping).length;
   aliveEl.textContent = aliveCount;
 
-  // 最後の1人になった時点でラウンド終了
+  // 最後の1人になった瞬間に終了→2秒表示→自動進行
   if(!ended){
     const live = balloons.filter(b=>b.alive || b.popping);
     if(live.length<=1){
       const winner = live[0] || null;
       if(winner && winner.rank==null){ winner.rank = 1; placements.push(winner); }
-      endRoundAuto(); // ←即終了＆自動進行
+      endRoundAuto();
     }
   }
 
@@ -567,7 +569,7 @@ function registerElimination(b){
   placements.push(b);
 }
 
-/* ========== 描画 ========== */
+/* ===== 描画 ===== */
 function draw(){
   ctx.clearRect(0,0,cv.width,cv.height);
   if(images.bg){ ctx.drawImage(images.bg, 0,0, STAGE_SIZE, STAGE_SIZE); }
@@ -609,7 +611,7 @@ function draw(){
   }
 }
 
-/* ========== ラウンド終了 → 2秒表示 → 自動次ラウンド/最終結果 ========== */
+/* ===== ラウンド終了 → 2秒表示 → 自動で次へ/最終結果 ===== */
 function endRoundAuto(){
   ended = true; playing = false;
 
@@ -666,7 +668,7 @@ function showFinalAuto(){
   `;
   finalOverlay.style.display="grid";
 
-  // 2秒後にタイトルへ戻り（自動で新規ゲーム待機）
+  // 2秒後にタイトルへ戻す
   setTimeout(()=>{
     finalOverlay.style.display="none";
     leaderboard = []; roundIndex = 0; roundNumEl.textContent = 1;
@@ -674,7 +676,7 @@ function showFinalAuto(){
   }, 2000);
 }
 
-/* ========== ループ ========== */
+/* ===== ループ ===== */
 let last=0;
 function loop(t){
   if(!ready){ requestAnimationFrame(loop); return; }
@@ -686,20 +688,20 @@ function loop(t){
   requestAnimationFrame(loop);
 }
 
-/* ========== 初期化 ========== */
+/* ===== 初期化 ===== */
 bindDPad();
 loadAssets().then(()=>{ requestAnimationFrame(loop); }).catch(err=>{
   console.error(err);
   alert("画像の読み込みに失敗しました。ファイル名の大文字/小文字と配置を確認してください。");
 });
 
-/* スクロール防止（iOS） */
-document.addEventListener('gesturestart', e=>e.preventDefault());
+/* ===== スクロール/ジェスチャ抑止（iOS向け） ===== */
+document.addEventListener('gesturestart', e=>e.preventDefault(), {passive:false});
 document.addEventListener('touchmove', e=>{
   if(e.target.closest('.dpad') || e.target.closest('#stage')) e.preventDefault();
 },{passive:false});
 
-/* スタート */
+/* ===== スタート ===== */
 btnStart.addEventListener('click', ()=>{ resetRound(); startCountdown(); });
 </script>
 </body>
