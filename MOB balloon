@@ -6,62 +6,37 @@
 <title>MOB balloon</title>
 <meta name="theme-color" content="#0a0b0e">
 <style>
-  :root{
-    --ui-bg:#0b0f16; --ui-fg:#eaf3ff; --ui-dim:#98a4b8; --accent:#13c4ff; --danger:#ff4d6d;
-  }
-  html{height:-webkit-fill-available;}
+  :root{ --fg:#eaf3ff; --dim:#9fb0c9; --accent:#13c4ff; --danger:#ff4d6d; }
+  html{height:-webkit-fill-available}
   body{
-    margin:0; background:#000; color:var(--ui-fg);
+    margin:0; background:#000; color:var(--fg);
     height:100vh; height:-webkit-fill-available; overflow:hidden;
     font-family:"Hiragino Sans","Yu Gothic",system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
     -webkit-tap-highlight-color:transparent;
   }
-  #wrap{position:fixed; inset:0; display:grid; grid-template-rows: auto 1fr auto;}
-  header, footer{
-    padding:8px 12px; background:rgba(10,12,18,.75); backdrop-filter: blur(6px);
-    display:flex; align-items:center; justify-content:space-between; gap:8px; z-index:10;
-  }
+  #wrap{position:fixed; inset:0; display:grid; grid-template-rows:auto 1fr auto}
+  header,footer{padding:8px 12px; background:rgba(8,10,16,.75); backdrop-filter:blur(6px); display:flex; align-items:center; justify-content:space-between; gap:8px; z-index:10}
   header .ttl{font-weight:800; letter-spacing:.03em}
   header .ttl b{color:#ff4d6d}
-  header .info{font-size:12px; color:var(--ui-dim)}
-  #game{position:relative; overflow:hidden;}
-  canvas{position:absolute; inset:0; width:100%; height:100%; image-rendering: pixelated; touch-action:none;}
-  /* Overlay texts */
-  .overlay{
-    position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
-    font-weight:900; text-shadow:0 4px 24px rgba(0,0,0,.6);
-    pointer-events:none; z-index:8;
-  }
-  .count{font-size: clamp(36px, 14vw, 120px);}
-  .go{color:#44ff88}
-  .msgbox{
-    position:absolute; inset-inline:0; bottom:18%; display:flex; justify-content:center; pointer-events:none;
-  }
-  .chip{
-    background:rgba(0,0,0,.65); border:1px solid rgba(255,255,255,.15);
-    padding:6px 10px; border-radius:12px; font-size:13px; color:#cfe5ff;
-  }
-  /* Virtual joystick */
-  #joy{position:absolute; left:16px; bottom:16px; width:140px; height:140px; z-index:12; touch-action:none;}
-  #joy .base, #joy .stick{
-    position:absolute; border-radius:999px; transform:translate(-50%,-50%); left:50%; top:50%;
-  }
-  #joy .base{width:140px; height:140px; background:radial-gradient(circle at 50% 50%, #1b2235, #101522); border:1px solid #2a3550; opacity:.9;}
-  #joy .stick{width:76px; height:76px; background:radial-gradient(circle at 45% 40%, #3a4b75, #1d2740); border:1px solid #4e6299;}
-  /* Buttons */
-  #btns{position:absolute; right:16px; bottom:16px; display:flex; flex-direction:column; gap:10px; z-index:12;}
-  .btn{
-    appearance:none; border:none; border-radius:12px; padding:10px 14px; font-weight:800;
-    background:#162035; color:#cfe5ff; border:1px solid #33436a; box-shadow:0 8px 20px rgba(0,0,0,.3);
-  }
-  .btn:active{transform:translateY(1px);}
+  header .info{font-size:12px; color:var(--dim)}
+  #game{position:relative; overflow:hidden}
+  canvas{position:absolute; inset:0; width:100%; height:100%; image-rendering:pixelated; touch-action:none}
+  .overlay{position:absolute; inset:0; display:flex; align-items:center; justify-content:center; pointer-events:none; z-index:8}
+  .count{font-weight:900; font-size:clamp(36px,14vw,120px); text-shadow:0 4px 24px rgba(0,0,0,.6)}
+  .go{color:#64f38b}
+  .msgbox{position:absolute; inset-inline:0; bottom:18%; display:flex; justify-content:center; pointer-events:none}
+  .chip{background:rgba(0,0,0,.6); border:1px solid rgba(255,255,255,.15); color:#cfe5ff; padding:6px 10px; border-radius:12px; font-size:13px}
+  /* joystick */
+  #joy{position:absolute; left:16px; bottom:16px; width:140px; height:140px; z-index:12; touch-action:none}
+  #joy .base,#joy .stick{position:absolute; border-radius:999px; transform:translate(-50%,-50%); left:50%; top:50%}
+  #joy .base{width:140px; height:140px; background:radial-gradient(circle at 50% 50%, #1b2235, #101522); border:1px solid #2a3550; opacity:.9}
+  #joy .stick{width:76px; height:76px; background:radial-gradient(circle at 45% 40%, #3a4b75, #1d2740); border:1px solid #4e6299}
+  #btns{position:absolute; right:16px; bottom:16px; display:flex; flex-direction:column; gap:10px; z-index:12}
+  .btn{appearance:none; border:none; border-radius:12px; padding:10px 14px; font-weight:800; background:#162035; color:#cfe5ff; border:1px solid #33436a; box-shadow:0 8px 20px rgba(0,0,0,.3)}
+  .btn:active{transform:translateY(1px)}
   .btn.red{background:#34121a; color:#ffd1d9; border-color:#612331}
-  footer{font-size:12px; color:var(--ui-dim)}
-  .bar{display:flex; gap:10px; align-items:center;}
-  .dot{width:10px; height:10px; border-radius:50%; display:inline-block; margin-right:6px}
-  .dot.red{background:#ff4d6d;}
-  .dot.green{background:#64f38b;}
-  .dot.gray{background:#8aa0c0;}
+  footer{font-size:12px; color:var(--dim)}
+  .dot{width:10px; height:10px; border-radius:50%; display:inline-block; margin-right:6px; background:#ff4d6d}
   .fast{color:#ffe08a}
 </style>
 </head>
@@ -74,14 +49,13 @@
     </div>
   </header>
 
-  <div id="game" role="application" aria-label="MOB balloon game">
+  <div id="game" role="application" aria-label="MOB balloon">
     <canvas id="cv"></canvas>
     <div class="overlay"><div id="count" class="count"></div></div>
-    <div class="msgbox"><div id="tip" class="chip">仮想スティックで操作 / カラスに触れると割れます</div></div>
+    <div class="msgbox"><div class="chip">下から上へ進みます。カラスに当たると破裂。</div></div>
 
     <div id="joy" aria-hidden="false">
-      <div class="base"></div>
-      <div class="stick"></div>
+      <div class="base"></div><div class="stick"></div>
     </div>
     <div id="btns">
       <button id="btnStart" class="btn">START</button>
@@ -90,503 +64,432 @@
   </div>
 
   <footer>
-    <div class="bar">
-      <span class="dot red"></span>あなた（赤）／ CPU x7
-      <span id="statusNote"></span>
-    </div>
+    <div><span class="dot"></span>あなた（赤）／ CPU x7 <span id="statusNote"></span></div>
     <div>© MOB ARTIST</div>
   </footer>
 </div>
 
 <script>
-(() => {
-  // ====== Helpers ======
-  const clamp = (v, a, b) => v < a ? a : (v > b ? b : v);
-  const rand = (a,b)=> a + Math.random()*(b-a);
-  const randi = (a,b)=> (a + Math.floor(Math.random()*(b-a+1)));
-  const shuffle = arr => { for(let i=arr.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [arr[i],arr[j]]=[arr[j],arr[i]]; } return arr; };
+(()=>{
+// ===== Canvas / Resize =====
+const cv = document.getElementById('cv');
+const ctx = cv.getContext('2d',{alpha:true});
+let W=0,H=0,DPR=1;
+function resize(){
+  DPR = Math.max(1, Math.min(3, window.devicePixelRatio||1));
+  W = Math.floor(cv.clientWidth*DPR);
+  H = Math.floor(cv.clientHeight*DPR);
+  cv.width=W; cv.height=H;
+  ctx.imageSmoothingEnabled=false;
+  setSizes();
+  buildBgTile(); // 再スケール
+}
+window.addEventListener('resize', resize);
 
-  // ====== Canvas/Resize ======
-  const cv = document.getElementById('cv');
-  const ctx = cv.getContext('2d', { alpha:true });
-  let W=0, H=0, DPR=1;
-  function resize(){
-    DPR = Math.max(1, Math.min(3, window.devicePixelRatio || 1));
-    W = Math.floor(cv.clientWidth * DPR);
-    H = Math.floor(cv.clientHeight * DPR);
-    cv.width = W; cv.height = H;
-    ctx.imageSmoothingEnabled = false;
-    prepareBackground();
-    setSizes();
-  }
-  window.addEventListener('resize', resize);
+// ===== Assets =====
+const BG = new Image(); BG.src='krace.png';
+const K1 = new Image(); K1.src='karasu1.png';
+const K2 = new Image(); K2.src='karasu2.png';
 
-  // ====== Assets ======
-  const imgBG = new Image(); imgBG.src = 'krace.png';
-  const imgK1 = new Image(); imgK1.src = 'karasu1.png';
-  const imgK2 = new Image(); imgK2.src = 'karasu2.png';
-  let bgReady=false, k1Ready=false, k2Ready=false;
-  imgBG.onload = ()=>{ bgReady=true; prepareBackground(); };
-  imgK1.onload = ()=>{ k1Ready=true; };
-  imgK2.onload = ()=>{ k2Ready=true; };
+const balloonFiles = {
+  red: 'Redb.png',
+  blue: 'Blueb.png',
+  green:'Greenb.png',
+  purple:'murab.png',
+  orange:'Orangeb.png',
+  pink:'Pinkb.png',
+  black:'Blackb.png',
+  yellow:'yellowb.png'
+};
+const BIMG = {};
+for(const k in balloonFiles){ const im=new Image(); im.src = balloonFiles[k]; BIMG[k]=im; }
 
-  // ====== Background + Wall sampling (blue=wall) ======
-  let bgCanvas=null, bgCtx=null, bgScale=1, bgOffX=0, bgOffY=0, canSample=false;
-  function prepareBackground(){
-    if(!W || !H) return;
-    if(!bgCanvas){ bgCanvas=document.createElement('canvas'); bgCtx=bgCanvas.getContext('2d', { willReadFrequently:true }); }
-    bgCanvas.width=W; bgCanvas.height=H;
-    bgCtx.clearRect(0,0,W,H);
+// ===== 背景をタイル化（縦方向リピート）＆壁サンプリング =====
+let tileCanvas=null, tileCtx=null, tileH=0, canSample=false;
+function buildBgTile(){
+  if(!W || !H) return;
+  if(!tileCanvas){ tileCanvas=document.createElement('canvas'); tileCtx=tileCanvas.getContext('2d',{willReadFrequently:true}); }
+  canSample=false;
+  if(BG.complete && BG.naturalWidth){
+    const r = W / BG.naturalWidth; // 幅合わせ
+    tileH = Math.max(1, Math.floor(BG.naturalHeight * r));
+    tileCanvas.width = W; tileCanvas.height = tileH;
+    tileCtx.imageSmoothingEnabled=false;
+    tileCtx.clearRect(0,0,W,tileH);
+    tileCtx.drawImage(BG, 0,0,BG.naturalWidth,BG.naturalHeight, 0,0, W, tileH);
+    try{ tileCtx.getImageData(0,0,1,1); canSample=true; }catch(e){ canSample=false; }
+  }else{
+    tileCanvas.width=W; tileCanvas.height=H;
+    tileCtx.clearRect(0,0,W,H);
     canSample=false;
-    if(bgReady){
-      // cover fit
-      const iw=imgBG.width, ih=imgBG.height;
-      const r = Math.max(W/iw, H/ih);
-      bgScale=r; bgOffX = (W - iw*r)/2; bgOffY = (H - ih*r)/2;
-      bgCtx.imageSmoothingEnabled=false;
-      bgCtx.drawImage(imgBG, 0,0,iw,ih, bgOffX, bgOffY, iw*r, ih*r);
-      try{
-        // Try reading one pixel to confirm CORS ok (should be ok for same origin)
-        bgCtx.getImageData(0,0,1,1);
-        canSample=true;
-      }catch(e){
-        canSample=false;
+  }
+}
+BG.onload = buildBgTile;
+
+// world座標→壁判定
+function isWallWorld(x,y){
+  // yは上向き正。タイル下端がy=0に合うようにモジュロ
+  if(!canSample){
+    const m=10*DPR;
+    return (x<m || x>W-m); // フォールバック：左右端だけ壁
+  }
+  const xi = Math.max(0, Math.min(W-1, Math.floor(x)));
+  // タイルの下端がy=0。上向きに進むので上下反転mod
+  let yi = ((tileH-1) - (Math.floor(y)%tileH));
+  if(yi<0) yi += tileH * (1 + Math.floor((-yi)/tileH));
+  yi %= tileH;
+  const d = tileCtx.getImageData(xi, yi, 1,1).data;
+  const r=d[0], g=d[1], b=d[2], a=d[3];
+  if(a<10) return false;
+  return (b>140 && b>r+30 && b>g+30); // 「青っぽい」＝壁
+}
+// 円が壁に触れているか簡易チェック
+function circleHitWall(x,y,r){
+  const a = 0.707;
+  const pts = [
+    [x+r,y], [x-r,y], [x,y+r], [x,y-r],
+    [x+r*a,y+r*a], [x-r*a,y+r*a], [x+r*a,y-r*a], [x-r*a,y-r*a]
+  ];
+  for(const [px,py] of pts){ if(isWallWorld(px,py)) return true; }
+  return false;
+}
+
+// ===== Game parameters =====
+const STATE={TITLE:0,COUNT:1,PLAY:2,FAST:3,RESULT:4};
+let state=STATE.TITLE;
+let R=18, SPEED=160, MAXS=320, FRICTION=0.985, BOUNCE=0.55;
+let elapsed=0, camY=0, speedMul=1;
+function setSizes(){
+  const base=Math.min(W,H);
+  R = Math.round(base*0.035);
+  SPEED = base*0.18;
+  MAXS = base*0.33;
+}
+
+// ===== Entities =====
+const players=[];
+const cpuKeys=['blue','green','purple','orange','pink','black','yellow'];
+function initPlayers(){
+  players.length=0;
+  // スタート行（画面下部）にある「走行可能帯」を探す
+  const yStartWorld = R*2; // y=0が一番下。少し上をスタート高さに
+  // 横方向で非壁の最大連続区間を探索
+  let segs=[], inRun=false, s=0;
+  for(let x=0;x<W;x++){
+    const wall = isWallWorld(x, yStartWorld);
+    if(!wall && !inRun){ inRun=true; s=x; }
+    if((wall || x===W-1) && inRun){ segs.push([s, wall? x-1 : x]); inRun=false; }
+  }
+  // 最大幅を選ぶ
+  let best=[Math.floor(W*0.15), Math.floor(W*0.85)];
+  if(segs.length){
+    best = segs.reduce((m,a)=> (a[1]-a[0] > m[1]-m[0] ? a : m), segs[0]);
+  }
+  const margin = R*1.6;
+  const L = Math.max(best[0]+margin, margin);
+  const Rg = Math.min(best[1]-margin, W-margin);
+  const slots = 8;
+  const xs = [];
+  for(let i=0;i<slots;i++){
+    xs.push(Math.round(L + (i+1)*(Rg-L)/(slots+1)));
+  }
+  // シャッフルしてランダム並び
+  for(let i=xs.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [xs[i],xs[j]]=[xs[j],xs[i]]; }
+
+  // プレイヤー(赤)
+  players.push(makeBalloon(0,true,'red', xs[0], yStartWorld));
+  // CPU7体
+  for(let i=1;i<8;i++){
+    const key=cpuKeys[(i-1)%cpuKeys.length];
+    players.push(makeBalloon(i,false,key, xs[i], yStartWorld));
+  }
+}
+function makeBalloon(id,isYou,key,x,y){
+  const img=BIMG[key];
+  return {id,you:isYou,key,img,alive:true,x,y,vx:0,vy:0,r:R,maxY:y,aiT:0,pop:0};
+}
+
+// カラス
+const crows=[];
+function spawnCrow(){
+  const dir = Math.random()<0.5? -1 : 1;
+  const w = Math.round(56*DPR), h=Math.round(38*DPR);
+  // 画面の少し上に出す（プレイヤー視点より先行）
+  const y = camY + H*0.2 + Math.random()*H*1.1;
+  const x = dir<0 ? W + 60*DPR : -60*DPR;
+  const sp = 90 + Math.random()*80;
+  crows.push({x,y,w,h,dir,sp,alive:true});
+}
+function wantCrowCount(){
+  // 経過で増える（序盤から出現）
+  return Math.min(20, 3 + Math.floor(elapsed/10));
+}
+
+// ===== Input (joystick + keyboard) =====
+const joy=document.getElementById('joy');
+const stick=joy.querySelector('.stick');
+let joyActive=false, joyVec={x:0,y:0};
+const jRect = ()=> joy.getBoundingClientRect();
+function setStick(dx,dy){ const lim=40; const len=Math.hypot(dx,dy); const s=len>lim? lim/len:1; const sx=dx*s, sy=dy*s; stick.style.left=`calc(50% + ${sx}px)`; stick.style.top=`calc(50% + ${sy}px)`; joyVec.x = sx/lim; joyVec.y = -sy/lim; } // 上で+Y
+function resetStick(){ setStick(0,0); joyVec.x=joyVec.y=0; }
+joy.addEventListener('pointerdown', e=>{ joyActive=true; joy.setPointerCapture(e.pointerId); const r=jRect(); setStick(e.clientX-(r.left+r.width/2), e.clientY-(r.top+r.height/2)); });
+joy.addEventListener('pointermove', e=>{ if(!joyActive) return; const r=jRect(); setStick(e.clientX-(r.left+r.width/2), e.clientY-(r.top+r.height/2)); });
+const endP=e=>{ joyActive=false; resetStick(); try{joy.releasePointerCapture(e.pointerId)}catch(_){ } };
+joy.addEventListener('pointerup', endP); joy.addEventListener('pointercancel', endP);
+
+const keys={}; window.addEventListener('keydown',e=>{keys[e.key.toLowerCase()]=true}); window.addEventListener('keyup',e=>{keys[e.key.toLowerCase()]=false});
+function inputVec(){
+  if(joyActive) return {...joyVec};
+  let x=0,y=0;
+  if(keys['arrowleft']||keys['a']) x-=1;
+  if(keys['arrowright']||keys['d']) x+=1;
+  if(keys['arrowup']||keys['w']) y+=1;      // 上で+Y
+  if(keys['arrowdown']||keys['s']) y-=1;
+  if(x||y){ const l=Math.hypot(x,y)||1; x/=l; y/=l; }
+  return {x,y};
+}
+
+// ===== UI & State =====
+const STATE_TXT={FAST:'<span class="fast">FAST FORWARD（プレイヤー脱落）</span>'};
+const btnStart=document.getElementById('btnStart');
+const btnRetry=document.getElementById('btnRetry');
+const countEl=document.getElementById('count');
+const leftInfo=document.getElementById('leftInfo');
+const distInfo=document.getElementById('distInfo');
+const speedInfo=document.getElementById('speedInfo');
+const statusNote=document.getElementById('statusNote');
+
+let player=null, startY=0;
+
+function resetGame(){
+  state=STATE.TITLE; elapsed=0; speedMul=1; statusNote.textContent='';
+  crows.length=0;
+  initPlayers();
+  player = players[0];
+  startY = player.y;
+  camY = 0; // カメラの原点＝画面下
+  btnStart.style.display=''; btnRetry.style.display='none';
+  countEl.textContent='';
+  leftInfo.textContent='残り: 8'; distInfo.textContent='距離: 0 m'; speedInfo.textContent='x1';
+  resetStick();
+}
+function startCountdown(){
+  state=STATE.COUNT; btnStart.style.display='none';
+  let n=3; countEl.textContent='3';
+  const step=()=>{ if(n===0){ countEl.textContent='GO'; setTimeout(()=>{countEl.textContent=''; startPlay();},500); return;} countEl.textContent=String(n); n--; setTimeout(step,650); };
+  setTimeout(step,650);
+}
+function startPlay(){
+  state=STATE.PLAY; elapsed=0; speedMul=1;
+  while(crows.length<wantCrowCount()) spawnCrow(); // 序盤から出現
+}
+function setFast(){
+  if(state===STATE.PLAY){ state=STATE.FAST; speedMul=3; speedInfo.textContent='x3'; statusNote.innerHTML=STATE_TXT.FAST; }
+}
+function finishGame(){ state=STATE.RESULT; btnRetry.style.display=''; statusNote.textContent='レース終了'; }
+
+btnStart.addEventListener('click', startCountdown);
+btnRetry.addEventListener('click', resetGame);
+
+// ===== Physics / AI =====
+function update(dt){
+  if(state===STATE.TITLE || state===STATE.COUNT || state===STATE.RESULT) return;
+  const sdt = dt * (state===STATE.FAST? 3:1);
+  elapsed += sdt;
+
+  // プレイヤー入力（上向きが正）
+  if(player.alive){
+    const v = inputVec();
+    const acc=SPEED*0.9;
+    player.vx += v.x*acc*dt;
+    player.vy += v.y*acc*dt;
+  }
+
+  // CPU
+  for(const p of players){
+    if(p.you || !p.alive) continue;
+    // 基本は上へ進む
+    let ax=0, ay=0.9;
+    // カラスを回避
+    let ne=null, nd=1e9;
+    for(const k of crows){
+      const cx=k.x + (k.dir<0? k.w*0.2:k.w*0.8), cy=k.y + k.h*0.5;
+      const d2=(p.x-cx)*(p.x-cx)+(p.y-cy)*(p.y-cy);
+      if(d2<nd){ nd=d2; ne=k; }
+    }
+    if(ne){
+      const cx=ne.x+(ne.dir<0? ne.w*0.2:ne.w*0.8), cy=ne.y+ne.h*0.5;
+      const dx=p.x-cx, dy=p.y-cy, d=Math.hypot(dx,dy)||1;
+      if(d<220*DPR){ ax+=(dx/d)*1.2; ay+=(dy/d)*1.2; }
+    }
+    ax += Math.sin((elapsed*0.8 + p.id))*0.2;
+    const acc=SPEED*0.75;
+    p.vx += ax*acc*dt; p.vy += ay*acc*dt;
+  }
+
+  // 摩擦・速度制限・移動＆壁バウンド
+  for(const p of players){
+    if(!p.alive) continue;
+    p.vx *= FRICTION; p.vy *= FRICTION;
+    const v = Math.hypot(p.vx,p.vy), LIM=MAXS; if(v>LIM){ p.vx=p.vx/v*LIM; p.vy=p.vy/v*LIM; }
+    // x
+    let nx=p.x + p.vx*dt, ny=p.y + p.vy*dt;
+    if(circleHitWall(nx, p.y, p.r)){ p.vx*=-BOUNCE; nx=p.x + p.vx*dt; }
+    if(circleHitWall(p.x, ny, p.r)){ p.vy*=-BOUNCE; ny=p.y + p.vy*dt; }
+    p.x=nx; p.y=ny;
+    if(p.y>p.maxY) p.maxY=p.y;
+  }
+
+  // 風船同士の反発
+  for(let i=0;i<players.length;i++){
+    const a=players[i]; if(!a.alive) continue;
+    for(let j=i+1;j<players.length;j++){
+      const b=players[j]; if(!b.alive) continue;
+      const dx=b.x-a.x, dy=b.y-a.y, d=Math.hypot(dx,dy), min=a.r+b.r;
+      if(d>0 && d<min){
+        const nx=dx/d, ny=dy/d, push=(min-d)*0.6;
+        a.x-=nx*push*0.5; a.y-=ny*push*0.5;
+        b.x+=nx*push*0.5; b.y+=ny*push*0.5;
+        const rvx=b.vx-a.vx, rvy=b.vy-a.vy, rel=rvx*nx+rvy*ny;
+        if(rel>0){ const imp=rel*0.5; a.vx+=nx*imp*BOUNCE; a.vy+=ny*imp*BOUNCE; b.vx-=nx*imp*BOUNCE; b.vy-=ny*imp*BOUNCE; }
       }
     }
   }
-  // Consider pixel as wall if blue component dominates strongly
-  function isWallPixel(px, py){
-    if(!canSample){ // fallback: edges are walls only
-      const margin = 8*DPR;
-      return (px<margin || py<margin || px>W-margin || py>H-margin);
-    }
-    const x = clamp(Math.floor(px), 0, W-1);
-    const y = clamp(Math.floor(py), 0, H-1);
-    const d = bgCtx.getImageData(x,y,1,1).data;
-    const r=d[0], g=d[1], b=d[2], a=d[3];
-    // Treat very transparent as not wall
-    if(a < 10) return false;
-    // blue zone heuristic (tune if必要)
-    return (b > 140 && b > r+30 && b > g+30);
+
+  // カラス：左右移動＋端で反転、古いものは破棄
+  const want=wantCrowCount();
+  while(crows.length<want) spawnCrow();
+  for(const k of crows){
+    if(!k.alive) continue;
+    const spMul = 1 + Math.min(2.0, elapsed/35);
+    k.x += k.dir * k.sp * spMul * dt;
+    // 壁近傍で反転
+    const leftWall = isWallWorld(k.x, k.y + k.h*0.5);
+    const rightWall = isWallWorld(k.x+k.w, k.y + k.h*0.5);
+    if(leftWall && k.dir<0) k.dir=1;
+    if(rightWall && k.dir>0) k.dir=-1;
+    // 画面から遥か下へ去ったら消す
+    if(k.y < camY - H*0.8) k.alive=false;
   }
-  function circleHitsWall(x,y,r){
-    // sample 8 directions (cheap)
-    const k = 1;
-    const pts = [
-      [x+r, y], [x-r, y], [x, y+r], [x, y-r],
-      [x+r*0.707, y+r*0.707], [x-r*0.707, y+r*0.707],
-      [x+r*0.707, y-r*0.707], [x-r*0.707, y-r*0.707],
-    ];
-    for(const [sx,sy] of pts){
-      if(isWallPixel(sx, sy)) return true;
-    }
-    return false;
-  }
+  // 先行スポーン位置を少し上へ補充
+  while(crows.filter(k=>k.alive && k.y > camY + H*1.2).length < Math.max(1, want/2)){ spawnCrow(); }
 
-  // ====== Game State ======
-  const STATE = { TITLE:0, COUNT:1, PLAY:2, FAST:3, RESULT:4 };
-  let state = STATE.TITLE;
-
-  // world/scale
-  let R_PLAYER = 18; // px (device-scaled later)
-  let R_CPU = 18;
-  let SPEED = 150;   // base pixels/sec
-  let MAX_SPEED = 280;
-  let BOUNCE = 0.55; // bounce reduction
-  let FRICTION = 0.98;
-  let CROW_BASE = 2;
-  let CROW_MAX = 18;
-  let elapsed = 0;
-  let speedMul = 1;
-
-  function setSizes(){
-    const base = Math.min(W,H);
-    R_PLAYER = Math.round(base*0.035);
-    R_CPU = R_PLAYER;
-    SPEED = base*0.18;
-    MAX_SPEED = base*0.35;
-  }
-
-  // Players
-  const players=[];
-  const colorsCPU = ['#5adcff','#ffd166','#80ff8a','#ff9de6','#c9a7ff','#8ef','#f7ff80'];
-  const YOU_COLOR = '#ff4d6d';
-
-  const startLineY = Math.round(H*0.55); // 一列に並ぶY
-  function initPlayers(){
-    players.length=0;
-    const count = 8;
-    // 等間隔x位置→シャッフルしてランダム順
-    const xs = [];
-    for(let i=0;i<count;i++){
-      xs.push(Math.round((i+1)*(W/(count+1))));
-    }
-    shuffle(xs);
-    for(let i=0;i<count;i++){
-      const isYou = i===0; // 0番がプレイヤー
-      const color = isYou ? YOU_COLOR : colorsCPU[(i-1)%colorsCPU.length];
-      const r = isYou?R_PLAYER:R_CPU;
-      players.push({
-        id:i, you:isYou, color, r, alive:true,
-        x: xs[i], y: startLineY,
-        vx:0, vy:0,
-        maxX: xs[i],
-        name: isYou? 'YOU' : `CPU${i}`,
-        aiTimer:0,
-        pop:0, // 0..1 破裂アニメ
-      });
-    }
-  }
-
-  // Crows
-  const crows=[];
-  function spawnCrow(){
-    const dir = Math.random()<0.5 ? -1 : 1; // -1:→左, 1:→右 (内部では速度に掛ける)
-    const y = rand(H*0.2, H*0.8);
-    const x = dir<0 ? W+40*DPR : -40*DPR;
-    const sp = rand(80, 140);
-    crows.push({ x, y, w:48*DPR, h:32*DPR, dir, sp, frame:0, alive:true });
-  }
-  function desiredCrows(){
-    // 経過時間で段階的に増える
-    const t = elapsed; // sec
-    const add = Math.floor(t/12); // 12秒ごとに+1
-    return clamp(CROW_BASE + add, CROW_BASE, CROW_MAX);
-  }
-
-  // Input (virtual joystick + keyboard)
-  const joy = document.getElementById('joy');
-  const stick = joy.querySelector('.stick');
-  let joyActive=false, joyVec={x:0,y:0};
-
-  const joyRect = ()=> joy.getBoundingClientRect();
-  function setStick(dx,dy){
-    const lim = 40;
-    const len = Math.hypot(dx,dy);
-    const s = len>lim ? lim/len : 1;
-    const sx = dx*s, sy = dy*s;
-    stick.style.left = `calc(50% + ${sx}px)`;
-    stick.style.top  = `calc(50% + ${sy}px)`;
-    joyVec.x = sx/lim; joyVec.y = sy/lim;
-  }
-  function resetStick(){ setStick(0,0); joyVec.x=joyVec.y=0; }
-  joy.addEventListener('pointerdown', e=>{
-    joyActive=true; joy.setPointerCapture(e.pointerId);
-    const r=joyRect(); setStick(e.clientX-(r.left+r.width/2), e.clientY-(r.top+r.height/2));
-  });
-  joy.addEventListener('pointermove', e=>{
-    if(!joyActive) return;
-    const r=joyRect(); setStick(e.clientX-(r.left+r.width/2), e.clientY-(r.top+r.height/2));
-  });
-  const endPtr = e=>{ joyActive=false; resetStick(); try{joy.releasePointerCapture(e.pointerId)}catch(_){ } };
-  joy.addEventListener('pointerup', endPtr);
-  joy.addEventListener('pointercancel', endPtr);
-  // Keyboard
-  const keys={};
-  window.addEventListener('keydown', e=>{ keys[e.key.toLowerCase()]=true; });
-  window.addEventListener('keyup', e=>{ keys[e.key.toLowerCase()]=false; });
-
-  function getInputVec(){
-    // if joystick active prefer that, else keyboard
-    if(joyActive) return {...joyVec};
-    let x=0,y=0;
-    if(keys['arrowleft']||keys['a']) x-=1;
-    if(keys['arrowright']||keys['d']) x+=1;
-    if(keys['arrowup']||keys['w']) y-=1;
-    if(keys['arrowdown']||keys['s']) y+=1;
-    if(x||y){ const l=Math.hypot(x,y)||1; x/=l; y/=l; }
-    return {x,y};
-  }
-
-  // ====== Game Flow ======
-  const btnStart = document.getElementById('btnStart');
-  const btnRetry = document.getElementById('btnRetry');
-  const countEl = document.getElementById('count');
-  const leftInfo = document.getElementById('leftInfo');
-  const distInfo = document.getElementById('distInfo');
-  const speedInfo = document.getElementById('speedInfo');
-  const statusNote = document.getElementById('statusNote');
-
-  let timer=0, last=0;
-  let player=null;
-  let startX=0;
-  function resetGame(){
-    state = STATE.TITLE;
-    elapsed = 0; speedMul=1;
-    crows.length=0;
-    initPlayers();
-    player = players[0];
-    startX = player.x;
-    btnStart.style.display='';
-    btnRetry.style.display='none';
-    countEl.textContent = '';
-    statusNote.textContent='';
-    distInfo.textContent='距離: 0 m';
-    leftInfo.textContent='残り: 8';
-    speedInfo.textContent='x1';
-    resetStick();
-  }
-
-  function startCountdown(){
-    state = STATE.COUNT;
-    btnStart.style.display='none';
-    countEl.textContent='3';
-    let n=3;
-    const tick = ()=>{
-      if(n===0){ countEl.textContent='GO'; setTimeout(()=>{ countEl.textContent=''; startPlay(); }, 500); return; }
-      countEl.textContent = (n===1) ? '1' : String(n);
-      n--;
-      setTimeout(tick, 650);
-    };
-    setTimeout(tick, 650);
-  }
-
-  function startPlay(){
-    state = STATE.PLAY;
-    elapsed = 0; speedMul=1;
-    // 初期からカラスを出す
-    while(crows.length < desiredCrows()) spawnCrow();
-  }
-
-  function setFastForward(){
-    if(state===STATE.PLAY){
-      state = STATE.FAST;
-      speedMul = 3;
-      speedInfo.textContent='x3';
-      statusNote.innerHTML = '<span class="fast">FAST FORWARD（プレイヤー脱落）</span>';
-    }
-  }
-
-  function finishGame(){
-    state = STATE.RESULT;
-    btnRetry.style.display='';
-    statusNote.textContent='レース終了';
-  }
-
-  btnStart.addEventListener('click', startCountdown);
-  btnRetry.addEventListener('click', resetGame);
-
-  // ====== Physics & AI ======
-  function update(dt){
-    if(state===STATE.TITLE) return;
-    if(state===STATE.COUNT) return;
-    if(state===STATE.RESULT) return;
-
-    const sdt = dt * (state===STATE.FAST ? speedMul : 1);
-    elapsed += sdt;
-
-    // Desired crows (difficulty curve)
-    const want = desiredCrows();
-    if(crows.length < want) spawnCrow();
-
-    // ---- Input for player ----
-    if(player.alive && state!==STATE.COUNT){
-      const dir = getInputVec();
-      const acc = SPEED * 0.9;
-      player.vx += dir.x * acc * dt;
-      player.vy += dir.y * acc * dt;
-    }
-
-    // ---- AI for CPUs ----
-    for(const p of players){
-      if(p.you || !p.alive) continue;
-      p.aiTimer -= sdt;
-      let ax=0, ay=0;
-      // basic goal: move right gently
-      ax += 0.6;
-      // avoid nearest crow
-      let nearest=null, nd=1e9;
-      for(const k of crows){
-        const cx = k.x + (k.w/2)*k.dir; // roughly beak
-        const cy = k.y + k.h*0.5;
-        const d2 = (p.x-cx)*(p.x-cx) + (p.y-cy)*(p.y-cy);
-        if(d2<nd){ nd=d2; nearest=k; }
-      }
-      if(nearest){
-        const cx = nearest.x + (nearest.dir<0? nearest.w*0.2 : nearest.w*0.8);
-        const cy = nearest.y + nearest.h*0.5;
-        const dx = p.x - cx, dy = p.y - cy;
-        const d = Math.hypot(dx,dy) + 1e-3;
-        if(d < 220*DPR){
-          ax += (dx/d)*1.2; ay += (dy/d)*1.2; // flee
-        }
-      }
-      // slight random sway
-      ax += Math.sin((elapsed*0.8 + p.id*1.3))*0.15;
-      ay += Math.cos((elapsed*0.6 + p.id*1.1))*0.15;
-
-      const acc = SPEED * 0.8;
-      p.vx += ax * acc * dt;
-      p.vy += ay * acc * dt;
-    }
-
-    // ---- Clamp speed, friction ----
-    for(const p of players){
-      if(!p.alive) continue;
-      // friction
-      p.vx *= FRICTION; p.vy *= FRICTION;
-      // limit
-      const v = Math.hypot(p.vx,p.vy);
-      const lim = MAX_SPEED;
-      if(v>lim){ p.vx = p.vx/v*lim; p.vy = p.vy/v*lim; }
-      // move and wall collision
-      const nx = p.x + p.vx*dt, ny = p.y + p.vy*dt;
-      let hit=false;
-      if(circleHitsWall(nx, p.y, p.r)){ p.vx*=-BOUNCE; hit=true; } else { p.x = nx; }
-      if(circleHitsWall(p.x, ny, p.r)){ p.vy*=-BOUNCE; hit=true; } else { p.y = ny; }
-      if(hit){ /* small damping already via BOUNCE */ }
-      if(p.x>p.maxX) p.maxX = p.x;
-    }
-
-    // ---- Balloon vs Balloon bounce ----
-    for(let i=0;i<players.length;i++){
-      const a = players[i]; if(!a.alive) continue;
-      for(let j=i+1;j<players.length;j++){
-        const b = players[j]; if(!b.alive) continue;
-        const dx=b.x-a.x, dy=b.y-a.y;
-        const dist=Math.hypot(dx,dy), min=a.r+b.r;
-        if(dist>0 && dist<min){
-          // separate
-          const nx=dx/dist, ny=dy/dist;
-          const overlap = (min-dist)*0.6;
-          a.x -= nx*overlap*0.5; a.y -= ny*overlap*0.5;
-          b.x += nx*overlap*0.5; b.y += ny*overlap*0.5;
-          // bounce
-          const rvx=b.vx-a.vx, rvy=b.vy-a.vy;
-          const rel = rvx*nx + rvy*ny;
-          if(rel>0){
-            const imp = rel*0.5;
-            a.vx += nx*imp*BOUNCE; a.vy += ny*imp*BOUNCE;
-            b.vx -= nx*imp*BOUNCE; b.vy -= ny*imp*BOUNCE;
-          }
-        }
-      }
-    }
-
-    // ---- Crows ----
+  // カラス衝突
+  for(const p of players){
+    if(!p.alive) continue;
     for(const k of crows){
       if(!k.alive) continue;
-      const spMul = 1 + Math.min(2.0, elapsed/35); // 段階的に速く
-      k.x += k.dir * k.sp * spMul * dt;
-      // 端で反転
-      if(k.x < -120*DPR){ k.dir = 1; }
-      if(k.x > W + 120*DPR){ k.dir = -1; }
-    }
-
-    // ---- Crow collision with balloons ----
-    for(const p of players){
-      if(!p.alive) continue;
-      for(const k of crows){
-        if(!k.alive) continue;
-        const cx=k.x + k.w*0.5, cy=k.y + k.h*0.5;
-        // circle vs AABB quick check
-        const rx = clamp(p.x, k.x, k.x+k.w);
-        const ry = clamp(p.y, k.y, k.y+k.h);
-        const d2 = (p.x-rx)*(p.x-rx) + (p.y-ry)*(p.y-ry);
-        if(d2 < (p.r*p.r*0.9)){ // hit
-          // Pop this balloon
-          p.alive=false; p.pop=0;
-          if(p===player) setFastForward();
-          break;
-        }
+      const rx = Math.max(k.x, Math.min(p.x, k.x+k.w));
+      const ry = Math.max(k.y, Math.min(p.y, k.y+k.h));
+      const d2 = (p.x-rx)*(p.x-rx) + (p.y-ry)*(p.y-ry);
+      if(d2 < (p.r*p.r*0.75)){
+        p.alive=false; p.pop=0;
+        if(p===player) setFast();
+        break;
       }
-    }
-
-    // ---- Update player distance & survivors ----
-    if(player){
-      const distM = Math.max(0, (player.maxX - startX)/ (40*DPR)); // ざっくり40px=1m換算
-      distInfo.textContent = '距離: ' + distM.toFixed(1) + ' m';
-    }
-    const left = players.filter(p=>p.alive).length;
-    leftInfo.textContent = '残り: ' + left;
-
-    if(left<=1 && (state===STATE.PLAY || state===STATE.FAST)){
-      finishGame();
     }
   }
 
-  // ====== Rendering ======
-  function draw(){
-    // background
-    if(bgReady){
-      ctx.drawImage(bgCanvas, 0,0);
+  // 情報
+  const distM = Math.max(0, (player.maxY - startY)/(40*DPR));
+  distInfo.textContent = '距離: ' + distM.toFixed(1) + ' m';
+  leftInfo.textContent = '残り: ' + players.filter(p=>p.alive).length;
+
+  // カメラ追従（自分中心より少し上寄せ）
+  const target = Math.max(0, player.y - H*0.45);
+  camY += (target - camY) * 0.12;
+
+  // 終了判定
+  if(players.filter(p=>p.alive).length<=1 && (state===STATE.PLAY || state===STATE.FAST)){
+    finishGame();
+  }
+}
+
+// ===== Rendering =====
+function drawBackground(){
+  if(tileCanvas && tileH>0){
+    // camYに合わせて下端合わせでタイル描画
+    const offset = ((camY % tileH) + tileH) % tileH;
+    // 画面に被るよう2枚以上敷く
+    for(let y=-offset; y<H; y+=tileH){
+      ctx.drawImage(tileCanvas, 0, Math.floor(H - (y+tileH)), W, tileH, 0, Math.floor(H - (y+tileH)), W, tileH);
+    }
+  }else{
+    const g=ctx.createLinearGradient(0,H,0,0);
+    g.addColorStop(0,'#0b1020'); g.addColorStop(1,'#1a2338');
+    ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+    ctx.fillStyle='#163a7a'; ctx.fillRect(0,0,10*DPR,H); ctx.fillRect(W-10*DPR,0,10*DPR,H);
+  }
+}
+function worldToScreenY(y){ return Math.floor(H - (y - camY)); }
+
+function draw(){
+  drawBackground();
+
+  // カラス
+  for(const k of crows){
+    if(!k.alive) continue;
+    const sy = worldToScreenY(k.y);
+    const img = k.dir<0 ? K1 : K2;
+    if(img && img.complete && img.naturalWidth){
+      ctx.drawImage(img, Math.floor(k.x), Math.floor(sy - k.h), Math.floor(k.w), Math.floor(k.h));
     }else{
-      // fallback gradient
-      const g=ctx.createLinearGradient(0,0,0,H);
-      g.addColorStop(0,'#1a2235'); g.addColorStop(1,'#0b0f16');
-      ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
-      // side walls
-      ctx.fillStyle='#153a7a'; ctx.fillRect(0,0,10*DPR,H); ctx.fillRect(W-10*DPR,0,10*DPR,H);
+      ctx.fillStyle='#222'; ctx.fillRect(k.x, sy-k.h, k.w, k.h);
+      ctx.fillStyle='#f90'; ctx.fillRect(k.x + (k.dir<0? k.w*0.7: k.w*0.1), sy-k.h*0.65, k.w*0.2, k.h*0.2);
     }
+  }
 
-    // crows
-    for(const k of crows){
-      if(!k.alive) continue;
-      const img = k.dir<0 ? (k1Ready?imgK1:null) : (k2Ready?imgK2:null);
-      if(img){
-        ctx.drawImage(img, Math.floor(k.x), Math.floor(k.y), Math.floor(k.w), Math.floor(k.h));
-      }else{
-        // fallback drawing
-        ctx.fillStyle='#222';
-        ctx.fillRect(k.x, k.y, k.w, k.h);
-        ctx.fillStyle='#f90';
-        ctx.fillRect(k.x + (k.dir<0? k.w*0.7: k.w*0.1), k.y + k.h*0.35, k.w*0.2, k.h*0.2);
+  // 風船
+  for(const p of players){
+    const sy = worldToScreenY(p.y);
+    if(!p.alive){
+      if(p.pop<1){
+        p.pop += 0.03 * (state===STATE.FAST?3:1);
+        const a = Math.max(0, 1-p.pop), s=1+p.pop*1.2;
+        ctx.save(); ctx.globalAlpha=a; ctx.translate(p.x, sy); ctx.scale(s,s);
+        drawBalloon(p,0,0,true); ctx.restore();
       }
+      continue;
     }
-
-    // balloons
-    for(const p of players){
-      if(!p.alive){
-        // pop animation (fade & scale)
-        if(p.pop<1){
-          p.pop += 0.03 * (state===STATE.FAST?3:1);
-          const a = Math.max(0, 1 - p.pop);
-          const s = 1 + p.pop*1.2;
-          ctx.save();
-          ctx.globalAlpha = a;
-          ctx.translate(p.x, p.y);
-          ctx.scale(s,s);
-          drawBalloon(0,0,p.r,p.color,true);
-          ctx.restore();
-        }
-        continue;
-      }
-      drawBalloon(p.x, p.y, p.r, p.color, false);
-    }
+    drawBalloon(p, p.x, sy, false);
   }
-  function drawBalloon(x,y,r,color,isPop){
-    // string
-    ctx.strokeStyle='#444'; ctx.lineWidth=Math.max(1, 2*DPR);
-    ctx.beginPath(); ctx.moveTo(x, y+r*0.6); ctx.lineTo(x, y+r*1.4); ctx.stroke();
-    // body
-    ctx.fillStyle=color;
-    ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI*2); ctx.fill();
-    // glossy
-    ctx.fillStyle='rgba(255,255,255,.15)';
-    ctx.beginPath(); ctx.arc(x-r*0.3, y-r*0.35, r*0.35, 0, Math.PI*2); ctx.fill();
-    // player mark
-    if(color===YOU_COLOR){
-      ctx.fillStyle='#111'; ctx.font = `${Math.round(r*0.9)}px sans-serif`;
-      ctx.textAlign='center'; ctx.textBaseline='middle';
-      ctx.fillText('M', x, y);
-    }
-  }
+}
+function drawBalloon(p, sx, sy, isPop){
+  // ヒモ
+  ctx.strokeStyle='rgba(255,255,255,.2)'; ctx.lineWidth=Math.max(1, 2*DPR);
+  ctx.beginPath(); ctx.moveTo(sx, sy+p.r*0.6); ctx.lineTo(sx, sy+p.r*1.4); ctx.stroke();
 
-  // ====== Main loop ======
-  function loop(t){
-    if(!last) last=t;
-    const dt = Math.min(0.033, (t-last)/1000);
-    last=t;
-    update(dt);
-    draw();
-    requestAnimationFrame(loop);
+  const img = p.img;
+  const size = Math.round(p.r*2.2);
+  if(img && img.complete && img.naturalWidth){
+    ctx.drawImage(img, Math.floor(sx-size/2), Math.floor(sy-size/2), size, size);
+  }else{
+    // 代替円
+    ctx.fillStyle = p.you ? '#ff4d6d' : '#7fd0ff';
+    ctx.beginPath(); ctx.arc(sx, sy, p.r, 0, Math.PI*2); ctx.fill();
   }
+  // 自分マーク
+  if(p.you){
+    ctx.fillStyle='#111'; ctx.font=`${Math.round(p.r*0.9)}px sans-serif`;
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    ctx.fillText('M', sx, sy);
+  }
+}
 
-  // ====== Start ======
-  resize();
-  resetGame();
+// ===== Main loop =====
+let last=0;
+function loop(t){
+  if(!last) last=t;
+  const dt = Math.min(0.033, (t-last)/1000); last=t;
+  update(dt);
+  draw();
   requestAnimationFrame(loop);
+}
 
+// ===== Boot =====
+resize();
+resetGame();
+requestAnimationFrame(loop);
 })();
 </script>
 </body>
