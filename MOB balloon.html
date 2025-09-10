@@ -16,7 +16,7 @@
     -webkit-touch-callout:none; -webkit-user-select:none; user-select:none;
     touch-action:manipulation;
   }
-  #app-wrap{ position:fixed; inset:0; display:grid; place-items:center; }
+  #app-wrap{ position:fixed; inset:0; display:grid; place-items:center; padding-bottom: calc(20px + env(safe-area-inset-bottom)); }
 
   /* スマホ固定ビュー（PCでも同じ見た目） */
   #phone{
@@ -39,7 +39,7 @@
 
   #stage-wrap{
     flex:1; display:flex; justify-content:center; align-items:center; background:var(--panel2);
-    padding: 8px 8px 4px 8px; /* 上寄せ気味 */
+    padding: 6px 8px 4px 8px; /* できるだけ上寄せ */
   }
   #stage{
     width: min(94%, calc(100% - 16px));
@@ -72,15 +72,16 @@
   .pill{ padding:2px 8px; border-radius:999px; background:#1f2a44; border:1px solid rgba(255,255,255,.12); font-size:11px; }
   .muted{ color:var(--dim); }
 
-  /* ===== 十字キー（最下部・3×3グリッドで均等配置） ===== */
+  /* ===== 十字キー（最下部／被らないよう大きく持ち上げ） ===== */
   #controls{
-    flex:0 0 190px; /* 十字キー領域の高さ */
+    flex:0 0 210px; /* 十字キー領域の高さを増やす */
     display:flex; justify-content:center; align-items:center; gap:16px;
-    padding: 10px 12px calc(24px + env(safe-area-inset-bottom)) 12px; /* ←下から持ち上げる */
+    padding: 10px 12px calc(70px + env(safe-area-inset-bottom)) 12px; /* ←下からしっかり持ち上げる */
     background:var(--panel); border-top:1px solid rgba(255,255,255,.06);
   }
+  /* 3×3グリッドで完全対称・各セル全体がボタン */
   .dpad{
-    width: 232px; height: 232px; display:grid;
+    width: 240px; height: 240px; display:grid;
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(3, 1fr);
     gap: 10px;
@@ -98,12 +99,10 @@
     touch-action:none;
   }
   .dpad button:active{ background:#24304a; transform: translateY(1px); }
-  /* 配置：完全対称 */
   .up   { grid-area: 1 / 2; }
   .left { grid-area: 2 / 1; }
   .right{ grid-area: 2 / 3; }
   .down { grid-area: 3 / 2; }
-  /* 中央セルは空（親指の逃げ場） */
   .legend{
     background: rgba(10,12,20,.35);
     border:1px solid rgba(255,255,255,.15);
@@ -115,7 +114,7 @@
   /* テーブル */
   table{ width:100%; border-collapse:collapse; color:#eaf2ff; }
   th,td{ padding:6px 8px; border-bottom:1px dashed rgba(255,255,255,.12); font-size:13px; text-align:left; }
-  th{ color:#9fb6d5; font-weight:700; }
+  th{ color:#9bb3d6; font-weight:700; }
   .rank1{ color:#ffd54a; font-weight:800; }
   .rank2{ color:#c6d7ff; font-weight:800; }
   .rank3{ color:#ffb48a; font-weight:800; }
@@ -405,7 +404,7 @@ function startCountdown(){
   tick();
 }
 
-/* ===== 物理＆AI（スピード強化版／最後1人で即終了） ===== */
+/* ===== 物理＆AI（スピード強化／最後1人で即終了） ===== */
 function clamp(v,min,max){ return v<min?min:(v>max?max:v); }
 function step(dt){
   if(!playing) return;
@@ -433,7 +432,7 @@ function step(dt){
 
   // 入力（風船スピードUP）
   if(playerBalloon && playerBalloon.alive && !playerBalloon.popping){
-    const acc= 260;
+    const acc= 360; // ←UP
     playerBalloon.ax = (playerBalloon.control.right?1:0) - (playerBalloon.control.left?1:0);
     playerBalloon.ay = (playerBalloon.control.down?1:0) - (playerBalloon.control.up?1:0);
     const len = Math.hypot(playerBalloon.ax, playerBalloon.ay) || 1;
@@ -456,7 +455,7 @@ function step(dt){
         const bias = Math.atan2(avoidY,avoidX);
         b.aiTargetAngle = isFinite(bias)? bias + (Math.random()*1.4-0.7) : Math.random()*Math.PI*2;
       }
-      const acc= 230;
+      const acc= 320; // ←UP
       b.ax = Math.cos(b.aiTargetAngle)*acc;
       b.ay = Math.sin(b.aiTargetAngle)*acc;
       const margin=90, centerPull=140;
@@ -468,7 +467,7 @@ function step(dt){
   });
 
   // 速度更新（ドラッグ弱め、最高速UP）
-  const drag = 0.94, vmax = 360;
+  const drag = 0.94, vmax = 460; // ←UP
   balloons.forEach(b=>{
     if(!b.alive) return;
     if(b.popping){
