@@ -17,7 +17,7 @@
   }
   #app-wrap{ position:fixed; inset:0; display:grid; place-items:center; }
 
-  /* スマホ固定ビュー（PCでも同じ見た目） */
+  /* デモ用にスマホ寸法固定（実機でもそのままOK） */
   #phone{
     width:390px; height:780px;
     background:linear-gradient(160deg,#0b0c10,#0e1220 60%,#0b0c10);
@@ -110,7 +110,7 @@
       </div>
     </div>
 
-    <div id="legend">画面タップ/スライドで移動（PCは矢印キーでも可）</div>
+    <div id="legend">画面タップ/スライドで移動（PCはマウス/矢印キーも可）</div>
   </div>
 </div>
 
@@ -170,7 +170,7 @@ class Balloon{
     this.alive=true; this.popping=false; this.popTimer=0; this.timeAlive=0; this.rank=null;
     this.aiTargetAngle = Math.random()*Math.PI*2;
     this.aiChangeT = Math.random()*0.6+0.6;
-    this.touchTarget = null; // ←プレイヤー用タッチ目標
+    this.touchTarget = null; // プレイヤー：タッチ目標
   }
   reset(x,y){
     this.x=x; this.y=y; this.vx=this.vy=0; this.ax=this.ay=0;
@@ -181,7 +181,7 @@ class Balloon{
 class Crow{
   constructor(){
     this.x=Math.random()*600+200; this.y=Math.random()*600+200;
-    this.vx=0; this.vy=0; this.speed=110; this.size=52; this.dirR=true;
+    this.vx=0; this.vy=0; this.speed=180; this.size=52; this.dirR=true; // 強め
   }
 }
 
@@ -193,11 +193,12 @@ let simSpeed = 1.0;
 let playing = false;
 let counting = false;
 let nextCrowTime = 0;
+let crowInterval = 8; // 8秒→40s後は6秒
 let ended = false;
 let placements = [];
 let playerBalloon = null;
 
-/* ===== 入力：タップで移動（キャンバス座標に追従） ===== */
+/* ===== 入力：タップ/ドラッグで目標移動 ===== */
 function stageToCanvasPos(clientX, clientY){
   const rect = cv.getBoundingClientRect();
   const x = (clientX - rect.left) / rect.width * STAGE_SIZE;
@@ -209,19 +210,15 @@ function bindTouch(){
     if(!playerBalloon) return;
     const t = e.touches ? e.touches[0] : e;
     const p = stageToCanvasPos(t.clientX, t.clientY);
-    playerBalloon.touchTarget = p;
-    e.preventDefault();
+    playerBalloon.touchTarget = p; e.preventDefault();
   };
   const onMove = (e)=>{
     if(!playerBalloon) return;
     const t = e.touches ? e.touches[0] : e;
     const p = stageToCanvasPos(t.clientX, t.clientY);
-    playerBalloon.touchTarget = p;
-    e.preventDefault();
+    playerBalloon.touchTarget = p; e.preventDefault();
   };
-  const onEnd = ()=>{
-    if(playerBalloon) playerBalloon.touchTarget = null;
-  };
+  const onEnd = ()=>{ if(playerBalloon) playerBalloon.touchTarget = null; };
   cv.addEventListener('touchstart', onStartMove, {passive:false});
   cv.addEventListener('touchmove', onMove, {passive:false});
   cv.addEventListener('touchend', onEnd);
@@ -313,7 +310,8 @@ function setupCrows(){
   c.x = STAGE_SIZE/2 + (Math.random()*240-120);
   c.y = STAGE_SIZE*0.75 + (Math.random()*100-50);
   crows.push(c);
-  nextCrowTime = 10;
+  nextCrowTime = 8; // 最初の増員
+  crowInterval = 8;
 }
 function resetRound(){
   gameTime = 0; simSpeed = 1.0; playing=false; counting=false; ended=false;
@@ -330,19 +328,16 @@ function startCountdown(){
   counting = true;
   startOverlay.style.display="none";
   countOverlay.style.display="grid";
-  let seq = [3,2,1,"GO"];
-  let i=0;
+  let seq = [3,2,1,"GO"]; let i=0;
   const tick=()=>{
     countLabel.textContent = seq[i++];
-    if(i<seq.length){ setTimeout(tick, 700); }
-    else{
-      setTimeout(()=>{ countOverlay.style.display="none"; playing = true; counting = false; }, 400);
-    }
+    if(i<seq.length){ setTimeout(tick, 650); }
+    else{ setTimeout(()=>{ countOverlay.style.display="none"; playing = true; counting = false; }, 380); }
   };
   tick();
 }
 
-/* ===== 物理＆AI（タップ追従＋高速化） ===== */
+/* ===== 物理＆AI（CPU強化） ===== */
 function step(dt){
   if(!playing) return;
 
@@ -353,23 +348,24 @@ function step(dt){
   dt *= simSpeed;
   gameTime += dt;
 
-  // カラス追加（10秒ごと）
+  // カラス増員（経過で短周期化）
   if(gameTime >= nextCrowTime){
     const c = new Crow();
     const edge = Math.random()<0.5 ? 'x' : 'y';
     if(edge==='x'){ c.x = Math.random()<0.5 ? 40 : STAGE_SIZE-40; c.y = Math.random()* (STAGE_SIZE-240)+120; }
     else{ c.x = Math.random()* (STAGE_SIZE-240)+120; c.y = Math.random()<0.5 ? 40 : STAGE_SIZE-40; }
-    c.speed = 110 + Math.min(160, gameTime*1.6);
+    c.speed = 180 + Math.min(220, gameTime*2.0);
     crows.push(c);
-    nextCrowTime += 10;
+    crowInterval = (gameTime > 40) ? 6 : 8; // 40s以降は6秒ごと
+    nextCrowTime += crowInterval;
   }
-  // 後半スピードアップ微増
-  const speedBoost = 1 + Math.min(1.2, Math.max(0, (gameTime-25)/50));
-  crows.forEach(cr=> cr.speed *= (0.999 + 0.001*speedBoost));
 
-  // プレイヤー：タッチ目標に向けて加速（速く）
+  // 60秒以降サドンデス（カラス全体1.5倍）
+  const sudden = gameTime > 60 ? 1.5 : 1.0;
+
+  // プレイヤー：タッチ目標に向けて加速（高速）
   if(playerBalloon && playerBalloon.alive && !playerBalloon.popping){
-    const accP = 520; // 速い
+    const accP = 580;
     if(playerBalloon.touchTarget){
       const dx = playerBalloon.touchTarget.x - playerBalloon.x;
       const dy = playerBalloon.touchTarget.y - playerBalloon.y;
@@ -381,35 +377,43 @@ function step(dt){
     }
   }
 
-  // CPU：避け・中心寄せ＋高速
+  // CPU：強化（広範囲回避・高加速・壁離れ）
   balloons.forEach(b=>{
     if(!b.isPlayer && b.alive && !b.popping){
       b.aiChangeT -= dt;
       if(b.aiChangeT<=0){
-        b.aiChangeT = Math.random()*0.45+0.45;
-        let avoidX=0, avoidY=0;
+        // 近いカラス方向を検知し、反対側へ逃げるベクトル
+        let avoidX=0, avoidY=0, nearestD2=1e12, nearDX=0, nearDY=0;
         crows.forEach(c=>{
           const dx = b.x - c.x, dy = b.y - c.y;
           const d2 = dx*dx+dy*dy;
-          if(d2< 260*260){ avoidX += dx; avoidY += dy; }
+          if(d2< nearestD2){ nearestD2=d2; nearDX=dx; nearDY=dy; }
+          if(d2< 320*320){ avoidX += dx; avoidY += dy; } // 逃げ始め早め（320）
         });
-        const bias = Math.atan2(avoidY,avoidX);
-        b.aiTargetAngle = isFinite(bias)? bias + (Math.random()*1.2-0.6) : Math.random()*Math.PI*2;
+        // 壁から離れる力（強め）
+        const m=130, pull=240;
+        if(b.x<m) avoidX += pull;
+        if(b.x>STAGE_SIZE-m) avoidX -= pull;
+        if(b.y<m) avoidY += pull;
+        if(b.y>STAGE_SIZE-m) avoidY -= pull;
+
+        const angle = Math.atan2(avoidY,avoidX);
+        const err = (Math.random()*0.6-0.3); // 誤差小（±0.3）
+        b.aiTargetAngle = isFinite(angle) ? angle + err : Math.atan2(nearDY,nearDX) + Math.PI + err;
+
+        // 切替は短めに細かく調整
+        b.aiChangeT = 0.35 + Math.random()*0.25;
       }
-      const acc= 420;
-      b.ax = Math.cos(b.aiTargetAngle)*acc;
-      b.ay = Math.sin(b.aiTargetAngle)*acc;
-      const margin=90, centerPull=160;
-      if(b.x<margin) b.ax += centerPull;
-      if(b.x>STAGE_SIZE-margin) b.ax -= centerPull;
-      if(b.y<margin) b.ay += centerPull;
-      if(b.y>STAGE_SIZE-margin) b.ay -= centerPull;
+
+      const accCPU = 540; // 高加速
+      b.ax = Math.cos(b.aiTargetAngle)*accCPU;
+      b.ay = Math.sin(b.aiTargetAngle)*accCPU;
     }
   });
 
-  // 速度更新（ドラッグ弱・最高速高め）
+  // 速度更新
   const drag = 0.93;
-  const vmax = 640;
+  const vmax = 660;
   balloons.forEach(b=>{
     if(!b.alive) return;
     if(b.popping){
@@ -452,7 +456,7 @@ function step(dt){
     }
   }
 
-  // カラス追尾＆ヒット
+  // カラス追尾＆ヒット（判定やや広め、終盤は凶悪化）
   crows.forEach(cr=>{
     let target=null, best=1e9;
     balloons.forEach(b=>{
@@ -465,25 +469,25 @@ function step(dt){
       const dx=target.x-cr.x, dy=target.y-cr.y;
       const dist = Math.hypot(dx,dy)||1;
       const ux=dx/dist, uy=dy/dist;
-      const sp = cr.speed;
+      const sp = cr.speed * sudden;
       cr.vx = ux*sp; cr.vy=uy*sp;
       cr.x += cr.vx*dt; cr.y += cr.vy*dt;
       cr.dirR = cr.vx>=0;
 
-      // 壁
+      // 壁反射
       if(cr.x<30){ cr.x=30; cr.vx = Math.abs(cr.vx); }
       if(cr.x>STAGE_SIZE-30){ cr.x=STAGE_SIZE-30; cr.vx = -Math.abs(cr.vx); }
       if(cr.y<30){ cr.y=30; cr.vy = Math.abs(cr.vy); }
       if(cr.y>STAGE_SIZE-30){ cr.y=STAGE_SIZE-30; cr.vy = -Math.abs(cr.vy); }
 
-      // ヒット
+      // ヒット（0.7倍スケール）
       balloons.forEach(b=>{
         if(!b.alive || b.popping) return;
         const d = Math.hypot(b.x-cr.x, b.y-cr.y);
-        if(d < (b.r + cr.size*0.6)){
+        if(d < (b.r + cr.size*0.7)){
           b.popping = true; b.popTimer=0;
           const nx = (b.x-cr.x)/(d||1), ny=(b.y-cr.y)/(d||1);
-          b.vx += nx*280; b.vy += ny*280;
+          b.vx += nx*300; b.vy += ny*300;
         }
       });
     }
@@ -493,7 +497,7 @@ function step(dt){
   const aliveCount = balloons.filter(b=>b.alive || b.popping).length;
   aliveEl.textContent = aliveCount;
 
-  // 最後の1人でラウンド終了
+  // ラスト1人で確実に終了
   if(!ended){
     const live = balloons.filter(b=>b.alive || b.popping);
     if(live.length<=1){
@@ -591,8 +595,8 @@ function endRoundAuto(){
 
 function renderRoundTable(roundRanks, points){
   const you = roundRanks.find(r=>r.id===playerBalloon.id);
-  const tAlive = playerBalloon.timeAlive.toFixed(1);
-  roundSummary.innerHTML = `あなたの順位：<b>${you.rank}</b> 位　／　生存時間：<b>${tAlive}</b> 秒`;
+  const tAlive = (playerBalloon?.timeAlive ?? 0).toFixed(1);
+  roundSummary.innerHTML = `あなたの順位：<b>${you?.rank ?? '-'}</b> 位　／　生存時間：<b>${tAlive}</b> 秒`;
   roundTable.innerHTML = `
     <tr><th>順位</th><th>名前</th><th>ポイント</th></tr>
     ${ roundRanks.map(r=>{
