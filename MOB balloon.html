@@ -9,38 +9,32 @@
   :root{
     --bg:#0b0c10; --panel:#121621; --panel2:#171c2a; --fg:#e9eef7; --dim:#9aa3b2; --accent:#13c4ff; --accent2:#ff3e7f; --ok:#25d366; --warn:#ffb020;
   }
-  /* ====== 固定スマホビュー（PCでも同じ見た目） ====== */
   html,body{height:100%; margin:0; background:var(--bg); color:var(--fg); font-family:system-ui,-apple-system,Segoe UI,Roboto,"Hiragino Sans","Yu Gothic",sans-serif;}
-  #app-wrap{
-    position:fixed; inset:0; display:grid; place-items:center;
-  }
-  /* iPhone系に近い縦長プレビュー領域（PCでも同一UIサイズ） */
-  /* 必要なら下の width/height を調整（幅基準で拡大縮小されます） */
+  #app-wrap{ position:fixed; inset:0; display:grid; place-items:center; }
+
+  /* スマホ固定ビュー（PCでも同一見た目） */
   #phone{
-    width: 390px; /* iPhone 12/13/14 付近 */
+    width: 390px; /* スマホ幅基準 */
     height: 780px;
     background:linear-gradient(160deg,#0b0c10,#0e1220 60%,#0b0c10);
     border-radius: 24px;
     box-shadow: 0 10px 40px rgba(0,0,0,.45), inset 0 0 0 1px rgba(255,255,255,.06);
     overflow:hidden;
+    position:relative;
     display:flex; flex-direction:column;
   }
-  /* 実ゲーム領域 */
+
   #topbar{
     flex:0 0 48px; display:flex; align-items:center; justify-content:space-between;
     padding:0 12px; background:var(--panel); border-bottom:1px solid rgba(255,255,255,.06);
     font-weight:600; letter-spacing:.3px;
   }
-  #hud{
-    display:flex; gap:10px; align-items:center; font-size:12px; color:var(--dim);
-  }
+  #hud{ display:flex; gap:10px; align-items:center; font-size:12px; color:var(--dim); }
   #hud b{ color:var(--fg); font-weight:700; }
-  #stage-wrap{
-    position:relative; flex:1; display:grid; place-items:center; background:var(--panel2);
-  }
-  /* ステージは常に正方形。内部キャンバスをCSS拡大して鮮明に表示 */
+
+  #stage-wrap{ position:relative; flex:1; display:grid; place-items:center; background:var(--panel2); }
   #stage{
-    width: min(92vw, calc(100vh - 160px)); /* 念のための保険（phone枠外で使った時も四角を維持） */
+    width: min(92vw, calc(100vh - 160px));
     aspect-ratio: 1 / 1;
     max-width: calc(100% - 16px);
     max-height: calc(100% - 16px);
@@ -50,10 +44,9 @@
     position:relative;
   }
   canvas{ width:100%; height:100%; display:block; border-radius:12px; image-rendering: pixelated; }
-  /* オーバーレイUI */
-  .overlay{
-    position:absolute; inset:0; display:grid; place-items:center; pointer-events:none;
-  }
+
+  /* オーバーレイ */
+  .overlay{ position:absolute; inset:0; display:grid; place-items:center; pointer-events:none; }
   .center-panel{
     background:rgba(10,12,20,.85);
     border:1px solid rgba(255,255,255,.12);
@@ -68,39 +61,55 @@
     color:#001018; font-weight:800; padding:12px 16px; border-radius:12px; cursor:pointer; width:100%;
     box-shadow: 0 8px 18px rgba(19,196,255,.35);
   }
-  .btn:active{ transform: translateY(1px); }
-  .ghost{ background:transparent; color:var(--fg); border:1px solid rgba(255,255,255,.2); box-shadow:none; }
-  .counter{
-    font-size:56px; font-weight:900; letter-spacing:1px; text-shadow:0 4px 18px rgba(0,0,0,.6);
-  }
-  /* 十字キー（スマホ前提。PCでは矢印キーも可） */
+  .counter{ font-size:56px; font-weight:900; letter-spacing:1px; text-shadow:0 4px 18px rgba(0,0,0,.6); }
+  .pill{ padding:2px 8px; border-radius:999px; background:#1f2a44; border:1px solid rgba(255,255,255,.12); font-size:11px; }
+  .muted{ color:var(--dim); }
+
+  /* ==== 十字キー：ステージ上・下部に半透明オーバーレイ（押しやすい＆ホームバー回避） ==== */
   #controls{
-    flex:0 0 120px; display:flex; align-items:center; justify-content:center; gap:18px;
-    background:var(--panel); border-top:1px solid rgba(255,255,255,.06);
+    position:absolute;
+    left:0; right:0;
+    bottom: calc(8px + env(safe-area-inset-bottom));
+    display:flex; justify-content:center; align-items:center; gap:16px;
+    pointer-events:none; /* 背景タッチは通す */
+    z-index: 5;
   }
   .dpad{
-    width:156px; height:156px; position:relative;
-  }
-  .dpad button{
-    position:absolute; width:48px; height:48px; border-radius:12px; background:#1c2334; border:1px solid rgba(255,255,255,.1);
-    color:#cfe7ff; font-weight:900;
+    width: 200px; height: 200px; position:relative;
+    background: rgba(10,12,20,.25);
+    border:1px solid rgba(255,255,255,.15);
+    border-radius: 16px;
+    backdrop-filter: blur(6px);
+    pointer-events:auto; /* ボタンは押せる */
     touch-action:none;
   }
-  .dpad button:active{ background:#24304a; }
-  .up{left:54px; top:0}
-  .down{left:54px; bottom:0}
-  .left{left:0; top:54px}
-  .right{right:0; top:54px}
-  .legend{ font-size:11px; color:var(--dim); }
-  /* スコアボード */
+  .dpad button{
+    position:absolute; width:64px; height:64px; border-radius:14px;
+    background:#1c2334; border:1px solid rgba(255,255,255,.18);
+    color:#cfe7ff; font-weight:900; font-size:18px;
+    touch-action:none;
+  }
+  .dpad button:active{ background:#24304a; transform: translateY(1px); }
+  .up{left:68px; top:8px}
+  .down{left:68px; bottom:8px}
+  .left{left:8px; top:68px}
+  .right{right:8px; top:68px}
+  .legend{
+    background: rgba(10,12,20,.35);
+    border:1px solid rgba(255,255,255,.15);
+    border-radius: 12px;
+    padding:6px 10px;
+    font-size:12px; color:#cfe7ff;
+    pointer-events:none;
+  }
+
+  /* テーブル */
   table{ width:100%; border-collapse:collapse; color:#eaf2ff; }
   th,td{ padding:6px 8px; border-bottom:1px dashed rgba(255,255,255,.12); font-size:13px; text-align:left; }
   th{ color:#9fb6d5; font-weight:700; }
   .rank1{ color:#ffd54a; font-weight:800; }
   .rank2{ color:#c6d7ff; font-weight:800; }
   .rank3{ color:#ffb48a; font-weight:800; }
-  .pill{ padding:2px 8px; border-radius:999px; background:#1f2a44; border:1px solid rgba(255,255,255,.12); font-size:11px; }
-  .muted{ color:var(--dim); }
 </style>
 </head>
 <body>
@@ -120,7 +129,7 @@
       <div id="stage">
         <canvas id="cv" width="1000" height="1000"></canvas>
 
-        <!-- タイトル/スタート -->
+        <!-- オーバーレイ -->
         <div class="overlay" id="startOverlay">
           <div class="center-panel">
             <div class="title">MOB balloon</div>
@@ -129,60 +138,53 @@
           </div>
         </div>
 
-        <!-- カウントダウン -->
         <div class="overlay" id="countOverlay" style="display:none;">
           <div class="counter" id="countLabel">3</div>
         </div>
 
-        <!-- ラウンド結果 -->
         <div class="overlay" id="roundOverlay" style="display:none;">
           <div class="center-panel" id="roundPanel">
             <div class="title">ラウンド結果</div>
             <div class="sub" id="roundSummary">…</div>
             <table id="roundTable"></table>
-            <div style="display:flex; gap:8px; margin-top:12px;">
-              <button class="btn" id="btnNext">次のラウンド</button>
-              <button class="btn ghost" id="btnRetry">やり直す</button>
-            </div>
+            <div class="muted" style="margin-top:8px;">次のラウンドへ移動中…</div>
           </div>
         </div>
 
-        <!-- 総合結果 -->
         <div class="overlay" id="finalOverlay" style="display:none;">
           <div class="center-panel">
             <div class="title">総合結果</div>
             <div class="sub">全3ラウンドの合計ポイント</div>
             <table id="finalTable"></table>
-            <div style="display:flex; gap:8px; margin-top:12px;">
-              <button class="btn" id="btnAgain">もう一度</button>
-            </div>
+            <div class="muted" style="margin-top:8px;">新しいゲームを開始します…</div>
           </div>
         </div>
-      </div>
-    </div>
 
-    <!-- 十字キー -->
-    <div id="controls">
-      <div class="dpad" aria-label="directional pad">
-        <button class="up" data-dir="up">▲</button>
-        <button class="down" data-dir="down">▼</button>
-        <button class="left" data-dir="left">◀</button>
-        <button class="right" data-dir="right">▶</button>
+        <!-- 十字キー（押しやすい下部オーバーレイ） -->
+        <div id="controls">
+          <div class="dpad" aria-label="directional pad">
+            <button class="up" data-dir="up">▲</button>
+            <button class="down" data-dir="down">▼</button>
+            <button class="left" data-dir="left">◀</button>
+            <button class="right" data-dir="right">▶</button>
+          </div>
+          <div class="legend">十字キーで移動／PCは矢印キーも可</div>
+        </div>
+
       </div>
-      <div class="legend">十字キーで移動（PCは矢印キーも可）</div>
     </div>
   </div>
 </div>
 
 <script>
-/* ========== 画像読み込み（同階層・ファイル名厳守） ========== */
+/* ========== 画像（同階層・大文字小文字厳守） ========== */
 const ASSETS = {
   bg: "MOBhai.png",
   crowR: "karasu1.png",
   crowL: "karasu2.png",
   balloons: {
     Black: "Blackb.png",
-    BlueTypo: "Buleb.png", // 指定どおり（綴り注意）
+    BlueTypo: "Buleb.png",
     Green: "Greenb.png",
     Purple: "murab.png",
     Orange: "Orangeb.png",
@@ -196,7 +198,6 @@ const balloonOrder = ["Red","BlueTypo","Green","Purple","Orange","Pink","Yellow"
 /* ========== 基本DOM ========== */
 const cv = document.getElementById('cv');
 const ctx = cv.getContext('2d');
-
 const startOverlay = document.getElementById('startOverlay');
 const countOverlay = document.getElementById('countOverlay');
 const countLabel = document.getElementById('countLabel');
@@ -205,78 +206,59 @@ const roundTable = document.getElementById('roundTable');
 const roundSummary = document.getElementById('roundSummary');
 const finalOverlay = document.getElementById('finalOverlay');
 const finalTable = document.getElementById('finalTable');
-
 const roundNumEl = document.getElementById('roundNum');
 const aliveEl = document.getElementById('alive');
 const timeEl = document.getElementById('time');
 const speedTag = document.getElementById('speedTag');
-
 const btnStart = document.getElementById('btnStart');
-const btnNext = document.getElementById('btnNext');
-const btnRetry = document.getElementById('btnRetry');
-const btnAgain = document.getElementById('btnAgain');
 
-/* ========== ステージ設定 ========== */
-const STAGE_SIZE = 1000; // 物理ロジック座標は常に正方形1000x1000
-const HALF = STAGE_SIZE / 2;
+const STAGE_SIZE = 1000;
 let images = {};
 let ready = false;
 
-/* ========== ゲーム進行 ========== */
+/* ========== 進行/スコア ========== */
 const MAX_PLAYERS = 8;
 const ROUNDS_MAX = 3;
-const POINTS_MAP = [15,10,7,5,3,1,0,0]; // 1位～8位
+const POINTS_MAP = [15,10,7,5,3,1,0,0];
 let roundIndex = 0;
-let leaderboard = []; // {id,name,total}
-let colorsForRound = []; // 各ラウンド色割り当て（Redはプレイヤー）
-
-/* ========== エンティティ ========== */
-function rand(min,max){ return Math.random()*(max-min)+min; }
-function clamp(v,min,max){ return v<min?min:(v>max?max:v); }
+let leaderboard = [];
+let colorsForRound = [];
 
 class Balloon{
   constructor(id, name, colorKey, isPlayer){
     this.id=id; this.name=name; this.colorKey=colorKey; this.isPlayer=isPlayer;
-    this.r = 26; // 風船半径（描画時に画像サイズへ変換）
-    this.x=0; this.y=0;
-    this.vx=0; this.vy=0;
-    this.ax=0; this.ay=0;
-    this.alive=true;
-    this.popping=false; this.popTimer=0;
-    this.timeAlive=0;
-    this.rank=null; // 1=優勝（最後まで残った）
+    this.r = 26;
+    this.x=0; this.y=0; this.vx=0; this.vy=0; this.ax=0; this.ay=0;
+    this.alive=true; this.popping=false; this.popTimer=0; this.timeAlive=0; this.rank=null;
     this.control = {up:false,down:false,left:false,right:false};
-    this.aiTargetAngle = rand(0,Math.PI*2);
-    this.aiChangeT = rand(0.6,1.2);
+    this.aiTargetAngle = Math.random()*Math.PI*2;
+    this.aiChangeT = Math.random()*0.6+0.6;
   }
   reset(x,y){
     this.x=x; this.y=y; this.vx=this.vy=0; this.ax=this.ay=0;
     this.alive=true; this.popping=false; this.popTimer=0; this.timeAlive=0; this.rank=null;
   }
 }
-
 class Crow{
   constructor(){
-    this.x=rand(200,800); this.y=rand(200,800);
-    this.vx=0; this.vy=0;
-    this.speed=75; // 初速（後半加速）
-    this.size = 52; // 風船2個分くらいの見た目（描画側で少し拡大）
-    this.dirR = true; // 右向きか
+    this.x=Math.random()*600+200; this.y=Math.random()*600+200;
+    this.vx=0; this.vy=0; this.speed=95; this.size=52; this.dirR=true;
   }
 }
 
-/* ========== ゲーム状態 ========== */
+/* ========== 状態 ========== */
 let balloons = [];
 let crows = [];
-let gameTime = 0; // 現ラウンドの経過（秒）
-let simSpeed = 1.0; // プレイヤー撃沈後 3.0 に
+let gameTime = 0;
+let simSpeed = 1.0;
 let playing = false;
 let counting = false;
 let nextCrowTime = 0;
 let ended = false;
-let placements = []; // 敗退順の逆（残った順）を記録 → ラウンド終了時にrank付与
+let placements = [];
+let playerBalloon = null;
 
-/* ========== 入力（十字キー + キーボード） ========== */
+/* ========== 入力 ========== */
 const input = {up:false,down:false,left:false,right:false};
 function bindDPad(){
   const controls = document.querySelectorAll('.dpad button');
@@ -334,8 +316,7 @@ async function loadAssets(){
   ready = true;
 }
 
-/* ========== 設定とユーティリティ ========== */
-let playerBalloon = null;
+/* ========== 色ユーティリティ ========== */
 function colorToImageKey(colorKey){
   switch(colorKey){
     case 'Black': return 'bBlack';
@@ -350,18 +331,13 @@ function colorToImageKey(colorKey){
   return 'bRed';
 }
 function nameFromColor(colorKey){
-  return {
-    Black:'Black', BlueTypo:'Blue', Green:'Green', Purple:'Purple',
-    Orange:'Orange', Pink:'Pink', Red:'Red', Yellow:'Yellow'
-  }[colorKey] || colorKey;
+  return {Black:'Black', BlueTypo:'Blue', Green:'Green', Purple:'Purple', Orange:'Orange', Pink:'Pink', Red:'Red', Yellow:'Yellow'}[colorKey] || colorKey;
 }
 
-/* ========== ラウンド構築 ========== */
+/* ========== セットアップ ========== */
 function setupPlayers(){
   balloons = [];
-  // 色割り当て：常にプレイヤーはRed。他は残りから
   const others = balloonOrder.filter(k=>k!=="Red");
-  // シャッフル
   for (let i=others.length-1;i>0;i--){
     const j = (Math.random()* (i+1))|0;
     [others[i],others[j]]=[others[j],others[i]];
@@ -377,7 +353,7 @@ function setupPlayers(){
     if(isPlayer) playerBalloon = b;
   }
 
-  // 横一列：Y固定、Xは幅全体に等間隔＋並び順をランダム
+  // 横一列（スタート位置はランダム順）
   const order = [...Array(MAX_PLAYERS).keys()];
   for (let i=order.length-1;i>0;i--){
     const j = (Math.random()* (i+1))|0;
@@ -392,32 +368,25 @@ function setupPlayers(){
     b.reset(x,y);
   });
 }
-
 function setupCrows(){
   crows = [];
   const c = new Crow();
-  c.x = STAGE_SIZE/2 + rand(-120,120);
-  c.y = STAGE_SIZE*0.75 + rand(-50,50);
+  c.x = STAGE_SIZE/2 + (Math.random()*240-120);
+  c.y = STAGE_SIZE*0.75 + (Math.random()*100-50);
   crows.push(c);
-  nextCrowTime = 10; // 10秒ごとに1匹ずつ増える
+  nextCrowTime = 10;
 }
-
 function resetRound(){
-  gameTime = 0;
-  simSpeed = 1.0;
-  playing = false;
-  counting = false;
-  ended = false;
-  placements = []; // 最後に残った順で push していく（勝者が最後に入る）
-
+  gameTime = 0; simSpeed = 1.0; playing=false; counting=false; ended=false;
+  placements = [];
   setupPlayers();
   setupCrows();
-
   aliveEl.textContent = MAX_PLAYERS;
   timeEl.textContent = "0.0";
   speedTag.textContent = "通常";
 }
 
+/* ========== カウントダウン ========== */
 function startCountdown(){
   counting = true;
   startOverlay.style.display="none";
@@ -425,88 +394,70 @@ function startCountdown(){
   let seq = [3,2,1,"GO"];
   let i=0;
   const tick=()=>{
-    countLabel.textContent = seq[i];
-    i++;
-    if(i<seq.length){
-      setTimeout(tick, 700);
-    }else{
-      setTimeout(()=>{
-        countOverlay.style.display="none";
-        playing = true;
-        counting = false;
-      }, 400);
+    countLabel.textContent = seq[i++];
+    if(i<seq.length){ setTimeout(tick, 700); }
+    else{
+      setTimeout(()=>{ countOverlay.style.display="none"; playing = true; counting = false; }, 400);
     }
   };
   tick();
 }
 
-/* ========== 物理とAI ========== */
+/* ========== 物理＆AI（速度強化版） ========== */
+function clamp(v,min,max){ return v<min?min:(v>max?max:v); }
 function step(dt){
   if(!playing) return;
 
-  // プレイヤー死亡 → 高速モード突入（3倍）
+  // プレイヤー死亡 → 高速3倍
   if(playerBalloon && (!playerBalloon.alive || playerBalloon.popping)){
-    simSpeed = 3.0;
-    speedTag.textContent = "高速×3";
+    simSpeed = 3.0; speedTag.textContent = "高速×3";
   }
-
   dt *= simSpeed;
   gameTime += dt;
 
-  // 10秒ごとにカラス追加
+  // カラス追加
   if(gameTime >= nextCrowTime){
     const c = new Crow();
-    // 端付近から登場
     const edge = Math.random()<0.5 ? 'x' : 'y';
-    if(edge==='x'){
-      c.x = Math.random()<0.5 ? 40 : STAGE_SIZE-40;
-      c.y = rand(120, STAGE_SIZE-120);
-    }else{
-      c.x = rand(120, STAGE_SIZE-120);
-      c.y = Math.random()<0.5 ? 40 : STAGE_SIZE-40;
-    }
-    // 後半ほど最初から速い
-    c.speed = 75 + Math.min(90, gameTime*1.2);
+    if(edge==='x'){ c.x = Math.random()<0.5 ? 40 : STAGE_SIZE-40; c.y = Math.random()* (STAGE_SIZE-240)+120; }
+    else{ c.x = Math.random()* (STAGE_SIZE-240)+120; c.y = Math.random()<0.5 ? 40 : STAGE_SIZE-40; }
+    c.speed = 95 + Math.min(120, gameTime*1.4);
     crows.push(c);
     nextCrowTime += 10;
   }
+  // 後半スピードアップ
+  const speedBoost = 1 + Math.min(1.0, Math.max(0, (gameTime-25)/55));
+  crows.forEach(cr=> cr.speed *= (0.999 + 0.001*speedBoost));
 
-  // 後半は全カラスの速度をじわ上げ
-  const speedBoost = 1 + Math.min(0.8, Math.max(0, (gameTime-30)/60)); // 30秒後から徐々に最大+80%
-  crows.forEach(cr=> cr.speed *= (0.999 + 0.001*speedBoost)); // なだらかに
-
-  // 入力→プレイヤー加速度
+  // 入力（風船スピードUP）
   if(playerBalloon && playerBalloon.alive && !playerBalloon.popping){
-    const acc= 170; // フワフワ感を維持する加速
+    const acc= 260; // ←UP
     playerBalloon.ax = (playerBalloon.control.right?1:0) - (playerBalloon.control.left?1:0);
     playerBalloon.ay = (playerBalloon.control.down?1:0) - (playerBalloon.control.up?1:0);
-    // 斜め補正
     const len = Math.hypot(playerBalloon.ax, playerBalloon.ay) || 1;
     playerBalloon.ax = (playerBalloon.ax/len)*acc;
     playerBalloon.ay = (playerBalloon.ay/len)*acc;
   }
 
-  // CPUのゆらぎAI（カラスと他風船を避けつつフワフワ）
+  // CPU
   balloons.forEach(b=>{
     if(!b.isPlayer && b.alive && !b.popping){
       b.aiChangeT -= dt;
       if(b.aiChangeT<=0){
-        b.aiChangeT = rand(0.5,1.2);
-        // たまに目標角度を変える（ランダム＋カラス回避）
+        b.aiChangeT = Math.random()*0.5+0.5;
         let avoidX=0, avoidY=0;
         crows.forEach(c=>{
           const dx = b.x - c.x, dy = b.y - c.y;
           const d2 = dx*dx+dy*dy;
-          if(d2< 220*220){ avoidX += dx; avoidY += dy; } // 近い時は離れる
+          if(d2< 240*240){ avoidX += dx; avoidY += dy; }
         });
         const bias = Math.atan2(avoidY,avoidX);
-        b.aiTargetAngle = isFinite(bias)? bias + rand(-0.7,0.7) : rand(0,Math.PI*2);
+        b.aiTargetAngle = isFinite(bias)? bias + (Math.random()*1.4-0.7) : Math.random()*Math.PI*2;
       }
-      const acc= 150;
+      const acc= 230; // ←UP
       b.ax = Math.cos(b.aiTargetAngle)*acc;
       b.ay = Math.sin(b.aiTargetAngle)*acc;
-      // 壁に近いと中心へバイアス
-      const margin=90, centerPull=120;
+      const margin=90, centerPull=140;
       if(b.x<margin) b.ax += centerPull;
       if(b.x>STAGE_SIZE-margin) b.ax -= centerPull;
       if(b.y<margin) b.ay += centerPull;
@@ -514,40 +465,32 @@ function step(dt){
     }
   });
 
-  // 速度更新（空気抵抗）
-  const drag = 0.88;
-  const vmax = 240;
+  // 速度更新（ドラッグ弱め、最高速UP）
+  const drag = 0.94;   // ←UP（減速しにくい）
+  const vmax = 360;    // ←UP（最高速）
   balloons.forEach(b=>{
     if(!b.alive) return;
-    // ポップ中は動かさない
     if(b.popping){
       b.popTimer += dt;
-      if(b.popTimer>=0.6){
-        b.alive=false;
-        registerElimination(b);
-      }
+      if(b.popTimer>=0.6){ b.alive=false; registerElimination(b); }
       return;
     }
-    // 加速度→速度
     b.vx = (b.vx + b.ax*dt)*drag;
     b.vy = (b.vy + b.ay*dt)*drag;
-    // 上限
     const sp = Math.hypot(b.vx,b.vy);
     if(sp>vmax){ b.vx = b.vx/sp*vmax; b.vy = b.vy/sp*vmax; }
-    // 位置
-    b.x += b.vx*dt;
-    b.y += b.vy*dt;
-    // 壁反射（見えない壁）
+    b.x += b.vx*dt; b.y += b.vy*dt;
+
     const r = b.r;
-    if(b.x<r){ b.x=r; b.vx = Math.abs(b.vx)*0.6; } // 弾かれる少し
-    if(b.x>STAGE_SIZE-r){ b.x=STAGE_SIZE-r; b.vx = -Math.abs(b.vx)*0.6; }
-    if(b.y<r){ b.y=r; b.vy = Math.abs(b.vy)*0.6; }
-    if(b.y>STAGE_SIZE-r){ b.y=STAGE_SIZE-r; b.vy = -Math.abs(b.vy)*0.6; }
+    if(b.x<r){ b.x=r; b.vx = Math.abs(b.vx)*0.7; }
+    if(b.x>STAGE_SIZE-r){ b.x=STAGE_SIZE-r; b.vx = -Math.abs(b.vx)*0.7; }
+    if(b.y<r){ b.y=r; b.vy = Math.abs(b.vy)*0.7; }
+    if(b.y>STAGE_SIZE-r){ b.y=STAGE_SIZE-r; b.vy = -Math.abs(b.vy)*0.7; }
 
     b.timeAlive += dt;
   });
 
-  // 風船同士の弾き
+  // 風船同士弾き
   for(let i=0;i<balloons.length;i++){
     const a = balloons[i]; if(!a.alive || a.popping) continue;
     for(let j=i+1;j<balloons.length;j++){
@@ -560,17 +503,15 @@ function step(dt){
         const overlap = (min - dist)*0.6;
         a.x -= nx*overlap*0.5; a.y -= ny*overlap*0.5;
         b.x += nx*overlap*0.5; b.y += ny*overlap*0.5;
-        // 反射（少しだけ）
-        const bounce = 140;
+        const bounce = 160;
         a.vx -= nx*bounce; a.vy -= ny*bounce;
         b.vx += nx*bounce; b.vy += ny*bounce;
       }
     }
   }
 
-  // カラスAI（最も近い生存風船を狙う）
+  // カラス追尾＆ヒット
   crows.forEach(cr=>{
-    // 目標：一番近い生存風船
     let target=null, best=1e9;
     balloons.forEach(b=>{
       if(!b.alive || b.popping) return;
@@ -586,96 +527,71 @@ function step(dt){
       cr.vx = ux*sp; cr.vy=uy*sp;
       cr.x += cr.vx*dt; cr.y += cr.vy*dt;
       cr.dirR = cr.vx>=0;
-      // 壁には出られない（反射）
+
       if(cr.x<30){ cr.x=30; cr.vx = Math.abs(cr.vx); }
       if(cr.x>STAGE_SIZE-30){ cr.x=STAGE_SIZE-30; cr.vx = -Math.abs(cr.vx); }
       if(cr.y<30){ cr.y=30; cr.vy = Math.abs(cr.vy); }
       if(cr.y>STAGE_SIZE-30){ cr.y=STAGE_SIZE-30; cr.vy = -Math.abs(cr.vy); }
-      // 風船ヒット判定
+
       balloons.forEach(b=>{
         if(!b.alive || b.popping) return;
         const d = Math.hypot(b.x-cr.x, b.y-cr.y);
-        if(d < (b.r + cr.size*0.6)){ // 少し広め
-          // バーン！ -> 破裂フェードアウト
+        if(d < (b.r + cr.size*0.6)){
           b.popping = true; b.popTimer=0;
-          // 当たった瞬間に少し押す
           const nx = (b.x-cr.x)/(d||1), ny=(b.y-cr.y)/(d||1);
-          b.vx += nx*260; b.vy += ny*260;
+          b.vx += nx*280; b.vy += ny*280;
         }
       });
     }
   });
 
-  // 生存数カウント
+  // 生存数
   const aliveCount = balloons.filter(b=>b.alive || b.popping).length;
   aliveEl.textContent = aliveCount;
 
-  // ラウンド終了判定（最後の1人が決まったら）
+  // 最後の1人になった時点でラウンド終了
   if(!ended){
     const live = balloons.filter(b=>b.alive || b.popping);
     if(live.length<=1){
-      // 最後の1人（aliveのまま or popping中でも最後なら勝者）
       const winner = live[0] || null;
-      if(winner && winner.rank==null){
-        winner.rank = 1;
-        placements.push(winner);
-      }
-      endRound();
+      if(winner && winner.rank==null){ winner.rank = 1; placements.push(winner); }
+      endRoundAuto(); // ←即終了＆自動進行
     }
   }
 
-  // HUD時間（プレイヤー生存時間）
   timeEl.textContent = (playerBalloon? playerBalloon.timeAlive : 0).toFixed(1);
 }
 
 function registerElimination(b){
-  if(b.rank!=null) return; // 二重防止
-  // 残存人数に応じて rank を後で付与したいので、順番記録のみ
+  if(b.rank!=null) return;
   placements.push(b);
-  // rank はラウンド終了時に確定させる
 }
 
 /* ========== 描画 ========== */
 function draw(){
   ctx.clearRect(0,0,cv.width,cv.height);
-  // 背景（正方形にトリムされた MOBhai.png を全面に）
-  if(images.bg){
-    ctx.drawImage(images.bg, 0,0, STAGE_SIZE, STAGE_SIZE);
-  }else{
-    ctx.fillStyle="#0a0e18";
-    ctx.fillRect(0,0,STAGE_SIZE,STAGE_SIZE);
-  }
+  if(images.bg){ ctx.drawImage(images.bg, 0,0, STAGE_SIZE, STAGE_SIZE); }
+  else{ ctx.fillStyle="#0a0e18"; ctx.fillRect(0,0,STAGE_SIZE,STAGE_SIZE); }
 
-  // 枠（見えない壁だが視覚的な薄枠）
   ctx.strokeStyle = "rgba(255,255,255,.15)";
-  ctx.lineWidth = 4;
-  ctx.strokeRect(2,2,STAGE_SIZE-4,STAGE_SIZE-4);
+  ctx.lineWidth = 4; ctx.strokeRect(2,2,STAGE_SIZE-4,STAGE_SIZE-4);
 
-  // カラス
   crows.forEach(cr=>{
     const img = cr.dirR ? images.crowR : images.crowL;
-    if(img){
-      const s = cr.size*2.0; // “風船2個分くらい”が分かるよう少し大きめ表示
-      ctx.drawImage(img, cr.x - s*0.5, cr.y - s*0.5, s, s);
-    }else{
-      ctx.fillStyle="#000";
-      ctx.beginPath(); ctx.arc(cr.x,cr.y, cr.size, 0, Math.PI*2); ctx.fill();
-    }
+    const s = cr.size*2.0;
+    if(img) ctx.drawImage(img, cr.x - s*0.5, cr.y - s*0.5, s, s);
+    else{ ctx.fillStyle="#000"; ctx.beginPath(); ctx.arc(cr.x,cr.y, cr.size, 0, Math.PI*2); ctx.fill(); }
   });
 
-  // 風船
   balloons.forEach(b=>{
     if(!b.alive && !b.popping) return;
     const key = colorToImageKey(b.colorKey);
     const img = images[key];
-    let scale = 2.0; // 画像基準拡大（スマホ見やすさ）
+    const scale = 2.0;
     if(b.popping){
-      // 破裂フェードアウト（拡大＋透明）
-      const t = clamp(b.popTimer/0.6, 0, 1);
-      const alpha = 1 - t;
-      const blow = 1 + t*0.6;
-      ctx.save();
-      ctx.globalAlpha = alpha;
+      const t = Math.min(1, Math.max(0, b.popTimer/0.6));
+      const alpha = 1 - t; const blow = 1 + t*0.6;
+      ctx.save(); ctx.globalAlpha = alpha;
       const s = b.r*2*scale*blow;
       if(img) ctx.drawImage(img, b.x - s*0.5, b.y - s*0.5, s, s);
       else{ ctx.fillStyle="rgba(255,255,255,"+alpha+")"; ctx.beginPath(); ctx.arc(b.x,b.y,b.r*blow,0,Math.PI*2); ctx.fill(); }
@@ -687,91 +603,75 @@ function draw(){
     }
   });
 
-  // カウントダウン中は半透明ベール
   if(counting){
     ctx.fillStyle="rgba(0,0,0,.2)";
     ctx.fillRect(0,0,STAGE_SIZE,STAGE_SIZE);
   }
 }
 
-/* ========== ラウンド終了処理＆スコア ========== */
-function endRound(){
-  ended = true;
-  playing = false;
+/* ========== ラウンド終了 → 2秒表示 → 自動次ラウンド/最終結果 ========== */
+function endRoundAuto(){
+  ended = true; playing = false;
 
-  // placements は “脱落していった順”なので、最後の勝者が end 判定時に追加済み
-  // rank 付与（最後のpushが1位、最初のpushが最下位）
-  // 末尾から 1位, 2位, ... とする
   const order = placements.slice().reverse(); // 残った順
-  order.forEach((b,i)=> b.rank = i+1);
+  order.forEach((b,i)=> b.rank = b.rank ?? (i+1));
 
-  // ポイント計算
-  const roundRanks = order.map(b=>({ id:b.id, name:b.name, rank:b.rank, color:b.colorKey }));
   const points = new Map();
-  roundRanks.forEach(rr=>{
+  order.forEach(rr=>{
     const p = POINTS_MAP[(rr.rank-1)] || 0;
     points.set(rr.id, p);
-  });
-
-  // リーダーボード加算
-  roundRanks.forEach(rr=>{
     let row = leaderboard.find(x=>x.id===rr.id);
-    if(!row){
-      row = {id:rr.id, name:rr.name, total:0, color:rr.color};
-      leaderboard.push(row);
-    }
-    row.total += (points.get(rr.id)||0);
+    if(!row){ row = {id:rr.id, name:rr.name, total:0, color:rr.colorKey}; leaderboard.push(row); }
+    row.total += p;
   });
 
   // 表示
-  renderRoundTable(roundRanks, points);
+  renderRoundTable(order, points);
   roundOverlay.style.display="grid";
 
-  // ラウンド数更新
-  roundIndex++;
-  roundNumEl.textContent = Math.min(roundIndex+1, ROUNDS_MAX);
+  // 2秒後に自動遷移
+  setTimeout(()=>{
+    roundOverlay.style.display="none";
+    roundIndex++;
+    roundNumEl.textContent = Math.min(roundIndex+1, ROUNDS_MAX);
+    if(roundIndex >= ROUNDS_MAX){
+      showFinalAuto();
+    }else{
+      resetRound(); startCountdown();
+    }
+  }, 2000);
 }
 
 function renderRoundTable(roundRanks, points){
-  // あなたの順位＆生存時間
   const you = roundRanks.find(r=>r.id===playerBalloon.id);
   roundSummary.innerHTML = `あなたの順位：<b>${you.rank}</b> 位　／　生存時間：<b>${playerBalloon.timeAlive.toFixed(1)}</b> 秒`;
-
-  // テーブル
   roundTable.innerHTML = `
     <tr><th>順位</th><th>名前</th><th>ポイント</th></tr>
-    ${
-      roundRanks.map(r=>{
+    ${ roundRanks.map(r=>{
         const pt = points.get(r.id)||0;
         const cls = r.rank===1?'rank1':(r.rank===2?'rank2':(r.rank===3?'rank3':''));
-        return `<tr>
-          <td class="${cls}">${r.rank}</td>
-          <td>${r.name}</td>
-          <td>${pt}</td>
-        </tr>`;
-      }).join('')
-    }
+        return `<tr><td class="${cls}">${r.rank}</td><td>${r.name}</td><td>${pt}</td></tr>`;
+      }).join('') }
   `;
 }
 
-/* ========== 総合結果表示 ========== */
-function showFinal(){
-  // 合計ソート
+function showFinalAuto(){
   const sorted = leaderboard.slice().sort((a,b)=>b.total-a.total);
   finalTable.innerHTML = `
     <tr><th>総合</th><th>名前</th><th>合計</th></tr>
-    ${
-      sorted.map((r,i)=>{
+    ${ sorted.map((r,i)=>{
         const cls = i===0?'rank1':(i===1?'rank2':(i===2?'rank3':''));
-        return `<tr>
-          <td class="${cls}">${i+1}</td>
-          <td>${r.name}</td>
-          <td>${r.total}</td>
-        </tr>`;
-      }).join('')
-    }
+        return `<tr><td class="${cls}">${i+1}</td><td>${r.name}</td><td>${r.total}</td></tr>`;
+      }).join('') }
   `;
   finalOverlay.style.display="grid";
+
+  // 2秒後にタイトルへ戻り（自動で新規ゲーム待機）
+  setTimeout(()=>{
+    finalOverlay.style.display="none";
+    leaderboard = []; roundIndex = 0; roundNumEl.textContent = 1;
+    startOverlay.style.display="grid";
+  }, 2000);
 }
 
 /* ========== ループ ========== */
@@ -781,66 +681,26 @@ function loop(t){
   const now = t/1000;
   const dt = Math.min(0.033, now-last || 0.016);
   last = now;
-
   step(dt);
   draw();
-
   requestAnimationFrame(loop);
 }
 
-/* ========== ボタン動作 ========== */
-btnStart.addEventListener('click', ()=>{
-  resetRound();
-  startCountdown();
-});
-
-btnNext.addEventListener('click', ()=>{
-  roundOverlay.style.display="none";
-  if(roundIndex>=ROUNDS_MAX){
-    showFinal();
-  }else{
-    // 次ラウンドへ
-    resetRound();
-    startCountdown();
-    roundNumEl.textContent = (roundIndex+1);
-  }
-});
-
-btnRetry.addEventListener('click', ()=>{
-  // やり直し：スコアもリセット
-  leaderboard = [];
-  roundIndex = 0;
-  roundNumEl.textContent = 1;
-  roundOverlay.style.display="none";
-  resetRound();
-  startCountdown();
-});
-
-btnAgain.addEventListener('click', ()=>{
-  // もう一度：全リセット
-  finalOverlay.style.display="none";
-  leaderboard = [];
-  roundIndex = 0;
-  roundNumEl.textContent = 1;
-  startOverlay.style.display="grid";
-});
-
 /* ========== 初期化 ========== */
 bindDPad();
-loadAssets().then(()=>{
-  // タイトル待ち
-  requestAnimationFrame(loop);
-}).catch(err=>{
+loadAssets().then(()=>{ requestAnimationFrame(loop); }).catch(err=>{
   console.error(err);
   alert("画像の読み込みに失敗しました。ファイル名の大文字/小文字と配置を確認してください。");
 });
 
-/* ========== スクロール防止（iOS） ========== */
+/* スクロール防止（iOS） */
 document.addEventListener('gesturestart', e=>e.preventDefault());
 document.addEventListener('touchmove', e=>{
-  // ステージ・D-Pad操作中はスクロール禁止
-  if(e.target.closest('#stage') || e.target.closest('.dpad')) e.preventDefault();
+  if(e.target.closest('.dpad') || e.target.closest('#stage')) e.preventDefault();
 },{passive:false});
+
+/* スタート */
+btnStart.addEventListener('click', ()=>{ resetRound(); startCountdown(); });
 </script>
 </body>
 </html>
