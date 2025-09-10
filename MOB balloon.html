@@ -1,202 +1,212 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no" />
+<meta charset="utf-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
 <title>MOB balloon</title>
-<meta name="theme-color" content="#0a0b0e" />
+<meta name="theme-color" content="#0a0b0e">
 <style>
-  :root{ --fg:#eaf3ff; --dim:#9fb0c9; --accent:#13c4ff; --danger:#ff4d6d; }
-  html{height:-webkit-fill-available}
+  /* ===== スマホ最適化：縦画面固定の“ビューポート”をデスクトップでも再現 ===== */
+  :root{ --phone-w: 420px; }
+  html, body { height: 100%; }
   body{
-    margin:0; background:#000; color:var(--fg);
-    height:100vh; height:-webkit-fill-available; overflow:hidden;
-    font-family:"Hiragino Sans","Yu Gothic",system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
-    -webkit-tap-highlight-color:transparent;
+    margin:0; background:#0b0e16; color:#eaf3ff; font-family: "Hiragino Sans","Yu Gothic",system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+    -webkit-tap-highlight-color: transparent;
+    display:flex; align-items:center; justify-content:center;
   }
-  #wrap{position:fixed; inset:0; display:grid; grid-template-rows:auto 1fr auto}
+  #phone{
+    width: min(var(--phone-w), 100vw);
+    height: 100vh;
+    max-height: 100svh;
+    background:#000; position:relative; overflow:hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,.55);
+  }
+
   header, footer{
-    padding:8px 12px; background:rgba(10,12,18,.75); backdrop-filter:blur(6px);
-    display:flex; align-items:center; justify-content:space-between; gap:8px; z-index:10
+    position:absolute; inset-inline:0; z-index:10; display:flex; align-items:center; justify-content:space-between; gap:8px;
+    padding:8px 12px; background:rgba(10,12,18,.75); backdrop-filter: blur(6px);
+    color:#9fb0c9; font-size:12px;
   }
-  header .ttl{font-weight:800; letter-spacing:.03em}
-  header .ttl b{color:#ff4d6d}
-  header .info{font-size:12px; color:var(--dim)}
-  #game{position:relative; overflow:hidden}
-  canvas{position:absolute; inset:0; width:100%; height:100%; image-rendering:pixelated; touch-action:none}
+  header{ top:0; }
+  footer{ bottom:0; }
+  header .ttl{ color:#eaf3ff; font-weight:800; letter-spacing:.02em }
+  header .ttl b{ color:#ff4d6d; }
 
-  .overlay{position:absolute; inset:0; display:flex; align-items:center; justify-content:center; pointer-events:none; z-index:8}
-  .count{font-weight:900; font-size:clamp(36px,14vw,120px); text-shadow:0 4px 24px rgba(0,0,0,.6)}
-  .msgbox{position:absolute; inset-inline:0; bottom:18%; display:flex; justify-content:center; pointer-events:none}
-  .chip{background:rgba(0,0,0,.6); border:1px solid rgba(255,255,255,.15); color:#cfe5ff; padding:6px 10px; border-radius:12px; font-size:13px}
+  #game { position:absolute; inset:40px 0 56px 0; } /* 上40/下56はヘッダ・フッタ分 */
+  canvas { position:absolute; inset:0; width:100%; height:100%; image-rendering: pixelated; touch-action:none; }
 
-  /* ===== 十字キー（見た目が“+”の一体型） ===== */
+  /* オーバーレイ */
+  .overlay{ position:absolute; inset:0; display:flex; align-items:center; justify-content:center; pointer-events:none; z-index:8 }
+  .count{ font-weight:900; font-size: clamp(40px, 12vw, 96px); text-shadow:0 4px 24px rgba(0,0,0,.6) }
+  .go{ color:#64f38b }
+  .centerbox{
+    position:absolute; inset:0; display:flex; align-items:center; justify-content:center; z-index:12;
+  }
+  .panel{
+    background: rgba(0,0,0,.75); border:1px solid rgba(255,255,255,.14);
+    border-radius:16px; padding:14px 16px; min-width:70%; color:#d8e6ff;
+  }
+  .panel h2{ margin:0 0 8px 0; font-size:18px }
+  .panel p{ margin:6px 0; font-size:14px; color:#a9bedc }
+  .panel .row{ display:flex; justify-content:space-between; gap:8px; font-size:14px; padding:3px 0; }
+  .panel .row .rank{ width:2.2em; text-align:center; font-weight:800 }
+  .panel .row.you{ color:#ffe6ee }
+  .panel .btns{ display:flex; gap:8px; justify-content:flex-end; margin-top:10px }
+  .btn{
+    appearance:none; border:none; border-radius:12px; padding:10px 14px; font-weight:800;
+    background:#162035; color:#cfe5ff; border:1px solid #33436a; box-shadow:0 8px 18px rgba(0,0,0,.3);
+  }
+  .btn.red{ background:#34121a; color:#ffd1d9; border-color:#612331 }
+
+  /* 十字キー（見た目は“+”の一体型） */
   #cross{
-    position:absolute; left:16px; bottom:16px; width:168px; height:168px; z-index:12; touch-action:none;
-    display:grid; grid-template-columns:56px 56px 56px; grid-template-rows:56px 56px 56px;
-  }
-  #cross .hit{background:transparent}
-  #cross .key{
-    background:#162033; border:1px solid #2d3d60; color:#cfe5ff; font-weight:800;
-    display:flex; align-items:center; justify-content:center; user-select:none; border-radius:12px;
-    box-shadow:0 8px 18px rgba(0,0,0,.32);
+    position:absolute; left:10px; bottom:10px; width:156px; height:156px; z-index:12; touch-action:none;
+    display:grid; grid-template-columns:52px 52px 52px; grid-template-rows:52px 52px 52px;
   }
   #cross:before{
     content:""; position:absolute; inset:0;
-    background:
-      linear-gradient(#1a2540,#0f1730);
+    background: linear-gradient(#1a2540,#0f1730);
     clip-path: polygon(33% 0, 66% 0, 66% 33%, 100% 33%, 100% 66%, 66% 66%, 66% 100%, 33% 100%, 33% 66%, 0 66%, 0 33%, 33% 33%);
-    border-radius:18px; border:1px solid #2d3d60;
-    box-shadow:inset 0 0 0 1px rgba(255,255,255,.05);
-    z-index:-1;
+    border-radius:18px; border:1px solid #2d3d60; box-shadow:inset 0 0 0 1px rgba(255,255,255,.05);
   }
-  .key:active{transform:translateY(1px)}
-  .key.invis{background:transparent; border:none; box-shadow:none}
+  .padbtn{ background:#162033; border:1px solid #2d3d60; color:#cfe5ff; font-weight:800; border-radius:12px; display:flex; align-items:center; justify-content:center; user-select:none; box-shadow:0 8px 18px rgba(0,0,0,.32) }
+  .padbtn.invis{ background:transparent; border:none; box-shadow:none }
+  .padbtn:active{ transform: translateY(1px) }
 
-  #btns{position:absolute; right:16px; bottom:16px; display:flex; flex-direction:column; gap:10px; z-index:12}
-  .btn{appearance:none; border:none; border-radius:12px; padding:10px 14px; font-weight:800; background:#162035; color:#cfe5ff; border:1px solid #33436a; box-shadow:0 8px 20px rgba(0,0,0,.3)}
-  .btn:active{transform:translateY(1px)}
-  .btn.red{background:#34121a; color:#ffd1d9; border-color:#612331}
-  footer{font-size:12px; color:var(--dim)}
-  .dot{width:10px; height:10px; border-radius:50%; display:inline-block; margin-right:6px; background:#ff4d6d}
-  .fast{color:#ffe08a}
+  /* 右下の操作ボタン */
+  #uiBtns{ position:absolute; right:10px; bottom:10px; display:flex; flex-direction:column; gap:8px; z-index:12 }
+
+  /* 情報テキスト */
+  .tag{ color:#9fb0c9 }
+  .you{ color:#ff99b1 }
+
+  /* スコア表 */
+  .table{ margin-top:6px; width:100%; border-collapse:collapse; font-size:14px }
+  .table th, .table td{ padding:4px 6px; border-bottom:1px solid rgba(255,255,255,.08) }
+  .table th{ color:#a9bedc; text-align:left; font-weight:700 }
+  .table td.r{ text-align:right }
 </style>
 </head>
 <body>
-<div id="wrap">
-  <header>
-    <div class="ttl">MOB <b>balloon</b></div>
-    <div class="info"><span id="leftInfo">残り: 8</span> ｜ <span id="distInfo">距離: 0 m</span> ｜ <span id="speedInfo">x1</span></div>
-  </header>
+  <div id="phone">
+    <header>
+      <div class="ttl">MOB <b>balloon</b></div>
+      <div>
+        <span id="roundInfo">Round 1 / 3</span> ｜ <span id="leftInfo">残り: 8</span> ｜ <span id="timeInfo">生存: 0.0s</span> ｜ <span id="speedInfo">x1</span>
+      </div>
+    </header>
 
-  <div id="game" role="application" aria-label="MOB balloon">
-    <canvas id="cv"></canvas>
-    <div class="overlay"><div id="count" class="count"></div></div>
-    <div class="msgbox"><div class="chip">下→上。青＝壁。カラスは散らして出現。</div></div>
+    <div id="game">
+      <canvas id="cv"></canvas>
+      <div class="overlay"><div id="count" class="count"></div></div>
 
-    <!-- 十字キー：見た目は“+”だが、上下左右4領域のヒットを持つ -->
-    <div id="cross" aria-hidden="false">
-      <div class="hit"></div>          <div id="up"    class="key">▲</div> <div class="hit"></div>
-      <div id="left"  class="key">◀</div><div class="key invis"></div>     <div id="right" class="key">▶</div>
-      <div class="hit"></div>          <div id="down"  class="key">▼</div> <div class="hit"></div>
+      <!-- 十字キー -->
+      <div id="cross" aria-hidden="false">
+        <div class="padbtn invis"></div>    <div id="up"    class="padbtn">▲</div> <div class="padbtn invis"></div>
+        <div id="left"  class="padbtn">◀</div><div class="padbtn invis"></div>     <div id="right" class="padbtn">▶</div>
+        <div class="padbtn invis"></div>    <div id="down"  class="padbtn">▼</div> <div class="padbtn invis"></div>
+      </div>
+
+      <div id="uiBtns">
+        <button id="btnStart" class="btn">ゲームスタート</button>
+        <button id="btnRetry" class="btn red" style="display:none">リトライ</button>
+      </div>
     </div>
 
-    <div id="btns">
-      <button id="btnStart" class="btn">START</button>
-      <button id="btnRetry" class="btn red" style="display:none">RETRY</button>
+    <footer>
+      <div class="tag">▲前進／▼後退／◀▶で左右。カラス接触で破裂（フェードアウト）。</div>
+      <div>© MOB ARTIST</div>
+    </footer>
+
+    <!-- ラウンド結果／最終結果 -->
+    <div id="modal" class="centerbox" style="display:none">
+      <div class="panel" id="modalInner"></div>
     </div>
   </div>
 
-  <footer>
-    <div><span class="dot"></span>あなた（赤）／ CPU x7 <span id="statusNote"></span></div>
-    <div>© MOB ARTIST</div>
-  </footer>
-</div>
-
 <script>
-(()=>{
-/* =================== 基本セットアップ =================== */
+(() => {
+/* ======= キャンバス基本 ======= */
 const cv = document.getElementById('cv');
-const ctx = cv.getContext('2d',{alpha:true});
-let W=0,H=0,DPR=1;
+const ctx = cv.getContext('2d', { alpha:true });
+let W=0, H=0, DPR=1;
 function resize(){
-  DPR = Math.max(1, Math.min(3, window.devicePixelRatio||1));
-  W = Math.floor(cv.clientWidth*DPR);
-  H = Math.floor(cv.clientHeight*DPR);
-  cv.width=W; cv.height=H;
-  ctx.imageSmoothingEnabled=false;
+  DPR = Math.max(1, Math.min(3, window.devicePixelRatio || 1));
+  const rect = cv.getBoundingClientRect();
+  W = Math.floor(rect.width * DPR);
+  H = Math.floor(rect.height * DPR);
+  cv.width = W; cv.height = H;
+  ctx.imageSmoothingEnabled = false;
   setSizes();
-  buildTileAndMask();  // 壁マスク再構築
+  buildTileAndMask();
 }
 window.addEventListener('resize', resize);
 
-/* =================== アセット =================== */
-const BG = new Image(); BG.crossOrigin="anonymous"; BG.src='krace.png';
-const K1 = new Image(); K1.crossOrigin="anonymous"; K1.src='karasu1.png';
-const K2 = new Image(); K2.crossOrigin="anonymous"; K2.src='karasu2.png';
+/* ======= アセット ======= */
+const BG = new Image(); BG.src = 'krace.png';
+const K1 = new Image(); K1.src = 'karasu1.png';
+const K2 = new Image(); K2.src = 'karasu2.png';
 const balloonFiles = {
-  red: 'Redb.png', blue: 'Blueb.png', green:'Greenb.png', purple:'murab.png',
+  red: 'Redb.png', blue:'Blueb.png', green:'Greenb.png', purple:'murab.png',
   orange:'Orangeb.png', pink:'Pinkb.png', black:'Blackb.png', yellow:'yellowb.png'
 };
-const BIMG={}; for(const k in balloonFiles){ const im=new Image(); im.crossOrigin="anonymous"; im.src=balloonFiles[k]; BIMG[k]=im; }
+const B = {};
+for(const k in balloonFiles){ const im=new Image(); im.src = balloonFiles[k]; B[k]=im; }
 
-/* =================== 背景タイル & 壁マスク ===================
-   - 画像を幅Wに合わせて拡大縮小（縦は比率）
-   - ピクセルごとに「青い」なら1（壁）/ 0（通行）
-   - 列方向に軽い膨張処理（壁を太らせて見逃し防止）
-   - 行単位の“通行セグメント表”も作成（CPUの経路判断に使用）
-============================================================= */
-let tileCanvas=null,tileCtx=null,tileH=0,mask=null,bgReady=false,segTable=null;
-function isBlueish(r,g,b){
-  const B=b, R=r, G=g;
-  return (B >= 120 && B - Math.max(R,G) >= 18); // しきい値やや緩め
-}
+/* ======= 背景：幅フィット + “青”を壁にする2Dマスク ======= */
+let tileCanvas=null, tileCtx=null, tileH=0, mask=null, bgReady=false, segTable=null;
+function isBlueish(r,g,b){ return (b>=120 && b > r+18 && b > g+18); }
 function buildTileAndMask(){
-  if(!W || !H) return;
   if(!tileCanvas){ tileCanvas=document.createElement('canvas'); tileCtx=tileCanvas.getContext('2d',{willReadFrequently:true}); }
-  bgReady=false; mask=null; segTable=null;
-  if(BG.complete && BG.naturalWidth){
-    const r = W / BG.naturalWidth;            // 画面幅にフィット
-    tileH = Math.max(1, Math.floor(BG.naturalHeight * r));
-    tileCanvas.width=W; tileCanvas.height=tileH;
-    tileCtx.imageSmoothingEnabled=false;
-    tileCtx.clearRect(0,0,W,tileH);
-    tileCtx.drawImage(BG, 0,0,BG.naturalWidth,BG.naturalHeight, 0,0, W, tileH);
+  bgReady=false; mask=null; segTable=null; tileH=0;
+  if(!W||!H||!BG.complete||!BG.naturalWidth) return;
+  const r = W / BG.naturalWidth;
+  tileH = Math.max(1, Math.floor(BG.naturalHeight * r));
+  tileCanvas.width=W; tileCanvas.height=tileH;
+  tileCtx.imageSmoothingEnabled=false;
+  tileCtx.clearRect(0,0,W,tileH);
+  tileCtx.drawImage(BG, 0,0,BG.naturalWidth,BG.naturalHeight, 0,0, W, tileH);
+  try{
+    const data = tileCtx.getImageData(0,0,W,tileH).data;
+    mask = new Uint8Array(W*tileH);
+    for(let y=0;y<tileH;y++){
+      for(let x=0;x<W;x++){
+        const i=(y*W+x)*4;
+        const r=data[i], g=data[i+1], b=data[i+2], a=data[i+3];
+        mask[y*W+x] = (a>=10 && isBlueish(r,g,b)) ? 1 : 0;
+      }
+    }
+    // 列方向に1px膨張（取りこぼし防止）
+    const dil=new Uint8Array(mask.length);
+    for(let y=0;y<tileH;y++){
+      for(let x=0;x<W;x++){
+        if(mask[y*W+x]){ dil[y*W+x]=1; if(x>0)dil[y*W+x-1]=1; if(x<W-1)dil[y*W+x+1]=1; }
+      }
+    }
+    mask=dil;
 
-    try{
-      const data = tileCtx.getImageData(0,0,W,tileH).data;
-      mask = new Uint8Array(W*tileH);
-      // 初期判定
-      for(let y=0;y<tileH;y++){
-        for(let x=0;x<W;x++){
-          const i=(y*W+x)*4; const r=data[i], g=data[i+1], b=data[i+2], a=data[i+3];
-          mask[y*W+x] = (a>=10 && isBlueish(r,g,b)) ? 1 : 0;
-        }
+    // y行ごとの通行セグメントを前計算（CPU経路で使用）
+    segTable = new Array(tileH);
+    for(let y=0;y<tileH;y++){
+      const segs=[]; let s=null;
+      for(let x=0;x<W;x++){
+        if(mask[y*W+x]===0){ if(s===null) s=x; }
+        else if(s!==null){ segs.push([s,x-1]); s=null; }
       }
-      // 列方向の軽い膨張（壁を太らせる）
-      const dil = new Uint8Array(mask.length);
-      for(let y=0;y<tileH;y++){
-        for(let x=0;x<W;x++){
-          if(mask[y*W+x]){ dil[y*W+x]=1;
-            if(x>0) dil[y*W+x-1]=1;
-            if(x<W-1) dil[y*W+x+1]=1;
-          }
-        }
-      }
-      mask = dil;
-
-      // 行ごとの通行セグメント表
-      segTable = new Array(tileH);
-      for(let y=0;y<tileH;y++){
-        const segs=[]; let s=null;
-        for(let x=0;x<W;x++){
-          if(mask[y*W+x]===0){ if(s===null) s=x; }
-          else if(s!==null){ segs.push([s,x-1]); s=null; }
-        }
-        if(s!==null) segs.push([s,W-1]);
-        segTable[y]=segs;
-      }
-      bgReady=true;
-    }catch(e){ bgReady=false; mask=null; segTable=null; }
-  }else{
-    tileCanvas.width=W; tileCanvas.height=H;
-    tileCtx.clearRect(0,0,W,H); bgReady=false; mask=null; segTable=null;
-  }
+      if(s!==null) segs.push([s,W-1]);
+      segTable[y]=segs;
+    }
+    bgReady=true;
+  }catch(e){ bgReady=false; mask=null; segTable=null; }
 }
-// world座標→タイルy（描画と同期した向き）
 function worldToTileY(y){
-  // 画面下がworld基準y=camY。タイルは上から下へ描画している。
-  // 画面y = H - (y - camY)。タイルの上端は (-(camY % tileH)) で始まる。
-  // よって、タイル内y = ((H - (y - camY)) - (-(camY % tileH))) mod tileH
-  //               = (H - y + camY + (camY % tileH)) mod tileH  （定数Hはmodの中では意味を持たないのでOK）
-  const m = ((H - y + (camY % tileH)) % tileH + tileH) % tileH;
-  return m|0;
+  // 画面Y = H - (y - camY) ; タイルの開始オフセット = -(camY % tileH)
+  return (((H - y + (camY % tileH)) % tileH) + tileH) % tileH | 0;
 }
 function isWallWorld(x,y){
   const xi = Math.max(0, Math.min(W-1, Math.floor(x)));
-  if(!mask){ // フォールバック：左右端だけ壁
-    const m=10*DPR; return (xi<m || xi>W-m);
-  }
+  if(!mask){ const m=10*DPR; return (xi<m || xi>W-m); }
   const yi = worldToTileY(Math.floor(y));
   return mask[yi*W + xi] === 1;
 }
@@ -209,18 +219,16 @@ function circleHitWall(x,y,r){
   for(const [px,py] of pts){ if(isWallWorld(px,py)) return true; }
   return false;
 }
-// 指定world yでの“通行セグメント”取得
 function openSegmentsAtY(y){
-  if(!segTable){ return [[Math.floor(W*0.18), Math.floor(W*0.82)]]; }
+  if(!segTable) return [[Math.floor(W*0.18), Math.floor(W*0.82)]];
   const yi = worldToTileY(Math.floor(y));
   return segTable[yi] && segTable[yi].length ? segTable[yi] : [[Math.floor(W*0.18), Math.floor(W*0.82)]];
 }
 
-/* =================== パラメータ =================== */
-const STATE={TITLE:0,COUNT:1,PLAY:2,FAST:3,RESULT:4};
-let state=STATE.TITLE;
+/* ======= パラメータ ======= */
+const STATE={TITLE:0,COUNT:1,PLAY:2,FAST:3,ROUNDEND:4,FINAL:5};
+let state=STATE.TITLE, speedMul=1;
 let R=18, SPEED=160, MAXS=320, FRICTION=0.985, BOUNCE=0.55;
-let elapsed=0, camY=0, speedMul=1;
 function setSizes(){
   const base=Math.min(W,H);
   R = Math.round(base*0.035);
@@ -228,143 +236,203 @@ function setSizes(){
   MAXS = base*0.33;
 }
 
-/* =================== エンティティ =================== */
+/* ======= エンティティ ======= */
 const players=[];
 const cpuKeys=['blue','green','purple','orange','pink','black','yellow'];
 function makeBalloon(id,isYou,key,x,y){
-  return {id,you:isYou,key,img:BIMG[key],alive:true,x,y,vx:0,vy:0,r:R,maxY:y,aiT:0,pop:0};
-}
-// 壁の内側で横一列スタート
-function initPlayers(){
-  players.length=0;
-  let yStart = R*2;
-  for(let t=0;t<10 && openSegmentsAtY(yStart).length===0; t++) yStart += R*0.8;
-  const segs = openSegmentsAtY(yStart);
-  let best = segs.reduce((m,a)=> (a[1]-a[0]>m[1]-m[0]?a:m), segs[0]);
-  const margin = Math.max(R*2, 14*DPR);
-  const L = Math.max(best[0]+margin, margin);
-  const Rg = Math.min(best[1]-margin, W-margin);
-  const xs=[];
-  for(let i=0;i<8;i++) xs.push(Math.round(L + (i+1)*(Rg-L)/(8+1)));
-  for(let i=xs.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [xs[i],xs[j]]=[xs[j],xs[i]]; }
-  players.push(makeBalloon(0,true,'red', xs[0], yStart));
-  for(let i=1;i<8;i++) players.push(makeBalloon(i,false, cpuKeys[(i-1)%cpuKeys.length], xs[i], yStart));
+  return {id,you:isYou,key,img:B[key],alive:true,x,y,vx:0,vy:0,r:R,pop:0, survive:0};
 }
 
-/* =================== カラス：数を大幅抑制＆散布 =================== */
-const crows=[];
-let crowSpawnTimer=0, lastCrowY=0;
-function crowMinDist(){ return 150*DPR; } // さらに広げる
-function wantCrowCount(){ return Math.min(3, 1 + Math.floor(elapsed/20)); } // 最大3体
-function spawnCrow(){
-  const w = Math.round(56*DPR), h=Math.round(38*DPR);
-  const dir = Math.random()<0.5? -1 : 1;
-  const yMin = camY + H*0.5, yMax = camY + H*1.7; // 画面の上側〜かなり先に
-  let placed=false, tries=0;
-  while(!placed && tries<40){
-    tries++;
-    const y = yMin + Math.random()*(yMax-yMin);
-    // 壁内側のセグメントからランダム選択（カラス幅＋余白が入るところ）
-    const segs = openSegmentsAtY(y).filter(s => (s[1]-s[0]) >= w*2.2);
-    if(!segs.length) continue;
-    const seg = segs[Math.floor(Math.random()*segs.length)];
-    const margin = Math.max(16*DPR, w*0.8);
-    const x = Math.round(seg[0]+margin + Math.random()*(seg[1]-margin - (seg[0]+margin)));
-    // 既存カラスと距離
-    let ok=true;
-    for(const k of crows){
-      if(!k.alive) continue;
-      const dx=k.x - x, dy=(k.y - y); if(dx*dx+dy*dy < crowMinDist()*crowMinDist()){ ok=false; break; }
-    }
-    if(!ok) continue;
-    crows.push({x: dir<0? x+w : x-w, y, w, h, dir, sp: 60 + Math.random()*50, alive:true});
-    placed=true; lastCrowY = y;
-  }
-}
+/* ======= ラウンド／ポイント ======= */
+const POINTS = [15,10,7,5,3,1,0,0];
+let roundIdx=1, totalRounds=3;
+const totals = new Array(8).fill(0);
 
-/* =================== 入力（十字キー＋物理キー） =================== */
+/* ======= UI 取得 ======= */
+const roundInfo = document.getElementById('roundInfo');
+const leftInfo = document.getElementById('leftInfo');
+const timeInfo = document.getElementById('timeInfo');
+const speedInfo = document.getElementById('speedInfo');
+const countEl = document.getElementById('count');
+const btnStart = document.getElementById('btnStart');
+const btnRetry = document.getElementById('btnRetry');
+const modal = document.getElementById('modal');
+const modalInner = document.getElementById('modalInner');
+
+/* ======= 入力（十字キー＋物理キー） ======= */
 const dpad={up:false,down:false,left:false,right:false};
-function bindKey(id, k){
+function bindPad(id, k){
   const el=document.getElementById(id);
-  const on = (e)=>{ e.preventDefault(); dpad[k]=true; };
-  const off= (e)=>{ e.preventDefault(); dpad[k]=false; };
+  const on=(e)=>{ e.preventDefault(); dpad[k]=true; };
+  const off=(e)=>{ e.preventDefault(); dpad[k]=false; };
   el.addEventListener('pointerdown', on); el.addEventListener('pointerup', off);
   el.addEventListener('pointerleave', off); el.addEventListener('pointercancel', off);
   el.addEventListener('touchstart', on, {passive:false}); el.addEventListener('touchend', off);
 }
-bindKey('up','up'); bindKey('down','down'); bindKey('left','left'); bindKey('right','right');
-
+bindPad('up','up'); bindPad('down','down'); bindPad('left','left'); bindPad('right','right');
 const keys={}; window.addEventListener('keydown',e=>{ keys[e.key.toLowerCase()]=true; });
 window.addEventListener('keyup',e=>{ keys[e.key.toLowerCase()]=false; });
 function inputVec(){
   let x=0,y=0;
   if(dpad.left || keys['arrowleft'] || keys['a']) x-=1;
   if(dpad.right|| keys['arrowright']|| keys['d']) x+=1;
-  if(dpad.up   || keys['arrowup']   || keys['w']) y+=1; // 上が+Y
+  if(dpad.up   || keys['arrowup']   || keys['w']) y+=1;     // 上が+Y
   if(dpad.down || keys['arrowdown'] || keys['s']) y-=1;
   if(x||y){ const l=Math.hypot(x,y)||1; x/=l; y/=l; }
   return {x,y};
 }
 
-/* =================== UI / 状態 =================== */
-const STATE_TXT={FAST:'<span class="fast">FAST FORWARD（プレイヤー脱落）</span>'};
-const btnStart=document.getElementById('btnStart');
-const btnRetry=document.getElementById('btnRetry');
-const countEl=document.getElementById('count');
-const leftInfo=document.getElementById('leftInfo');
-const distInfo=document.getElementById('distInfo');
-const speedInfo=document.getElementById('speedInfo');
-const statusNote=document.getElementById('statusNote');
-let player=null, startY=0;
+/* ======= ゲーム進行 ======= */
+let camY=0, elapsed=0, last=0, player=null, startY=0;
+const crows=[];
+let crowSpawnT=0;
 
-function resetGame(){
-  state=STATE.TITLE; elapsed=0; speedMul=1; statusNote.textContent='';
-  crows.length=0; crowSpawnTimer=0; lastCrowY=0;
-  initPlayers(); player=players[0]; startY=player.y; camY=0;
+function resetRound(){
+  state=STATE.TITLE; speedMul=1; speedInfo.textContent='x1';
+  crows.length=0; crowSpawnT=0;
+  players.length=0;
+  // スタート：最下部から少し上の“開いている帯”の中央で等間隔。順番はランダム。
+  const yStart = R*2;
+  let segs = openSegmentsAtY(yStart);
+  if(!segs.length) segs=[[Math.floor(W*0.18), Math.floor(W*0.82)]];
+  const best = segs.reduce((m,a)=>(a[1]-a[0]>m[1]-m[0]?a:m), segs[0]);
+  const margin = Math.max(R*2, 14*DPR);
+  const Lx = Math.max(best[0]+margin, margin);
+  const Rx = Math.min(best[1]-margin, W-margin);
+  const xs=[];
+  for(let i=0;i<8;i++) xs.push(Math.round(Lx + (i+1)*(Rx-Lx)/(8+1)));
+  for(let i=xs.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [xs[i],xs[j]]=[xs[j],xs[i]]; }
+
+  players.push(makeBalloon(0,true,'red', xs[0], yStart));
+  for(let i=1;i<8;i++) players.push(makeBalloon(i,false, cpuKeys[(i-1)%cpuKeys.length], xs[i], yStart));
+
+  player = players[0]; startY = player.y;
+  camY = 0; elapsed=0; last=0;
+  timeInfo.textContent='生存: 0.0s';
+  leftInfo.textContent='残り: 8';
+  roundInfo.textContent = `Round ${roundIdx} / ${totalRounds}`;
   btnStart.style.display=''; btnRetry.style.display='none';
-  countEl.textContent=''; leftInfo.textContent='残り: 8'; distInfo.textContent='距離: 0 m'; speedInfo.textContent='x1';
+  countEl.textContent='';
+  hideModal();
 }
 function startCountdown(){
   state=STATE.COUNT; btnStart.style.display='none';
   let n=3; countEl.textContent='3';
-  const step=()=>{ if(n===0){ countEl.textContent='GO'; setTimeout(()=>{countEl.textContent=''; startPlay();},500); return;} countEl.textContent=String(n); n--; setTimeout(step,650); };
-  setTimeout(step,650);
+  const tick=()=>{ if(n===0){ countEl.textContent='GO'; setTimeout(()=>{countEl.textContent=''; startPlay();},500); return; } countEl.textContent=String(n); n--; setTimeout(tick,650); };
+  setTimeout(tick,650);
 }
 function startPlay(){
-  state=STATE.PLAY; elapsed=0; speedMul=1;
-  while(crows.filter(k=>k.alive).length<wantCrowCount()) spawnCrow();
+  state=STATE.PLAY; elapsed=0; speedMul=1; speedInfo.textContent='x1';
+  // 初期カラスは1体（仕様）
+  while(crows.length < 1) spawnCrow();
 }
-function setFast(){
-  if(state===STATE.PLAY){ state=STATE.FAST; speedMul=3; speedInfo.textContent='x3'; statusNote.innerHTML=STATE_TXT.FAST; }
-}
-function finishGame(){ state=STATE.RESULT; btnRetry.style.display=''; statusNote.textContent='レース終了'; }
-btnStart.addEventListener('click', startCountdown);
-btnRetry.addEventListener('click', resetGame);
 
-/* =================== CPU AI（強化） ===================
-   1) 基本は上へ
-   2) 現在位置より少し先のyで“開いている帯”を見て、そこに含まれる最近傍の中心へステア
-   3) 壁クリアランス（近い側から離れる）
-   4) カラス予測回避
-   5) 仲間と分離（密集回避）
-====================================================== */
+/* ======= カラス ======= */
+function crowTargetSpeed(){
+  // “少し遅め” → ベースは画面基準。後半は加速。
+  const base = Math.min(W,H) * 0.17; // px/s
+  const boost = 1 + Math.min(1.4, elapsed / 45); // 徐々に上げる
+  return base * boost;
+}
+function crowSize(){
+  // “風船2個分くらい” 直径=2R → 幅はおよそ4R、縦は2.8Rくらい
+  return { w: Math.round(R*4.0), h: Math.round(R*2.8) };
+}
+function wantCrowCount(){ return 1 + Math.floor(elapsed / 5); } // 5秒に1体増加
+function spawnCrow(){
+  const {w,h} = crowSize();
+  // 画面の上側〜かなり先に、壁の内側帯からスポーン
+  const yMin = camY + H*0.45, yMax = camY + H*1.6;
+  let tries=0;
+  while(tries++ < 40){
+    const y = yMin + Math.random()*(yMax-yMin);
+    const segs = openSegmentsAtY(y).filter(s => (s[1]-s[0]) >= w*1.8);
+    if(!segs.length) continue;
+    const seg = segs[Math.floor(Math.random()*segs.length)];
+    const margin = Math.max(10*DPR, w*0.6);
+    const x = Math.round(seg[0]+margin + Math.random()*((seg[1]-margin) - (seg[0]+margin)));
+    const dir = Math.random()<0.5? -1 : 1;
+    crows.push({ x, y, w, h, vx: dir*10, vy: 0, dir, alive:true, frame:0 });
+    return;
+  }
+}
+
+/* ======= モーダル ======= */
+function showModal(html){ modalInner.innerHTML=html; modal.style.display=''; }
+function hideModal(){ modal.style.display='none'; }
+
+/* ======= ラウンド終了処理（順位・ポイント） ======= */
+function endRound(){
+  state=STATE.ROUNDEND; btnRetry.style.display=''; speedMul=1; speedInfo.textContent='x1';
+  // 生存時間で順位付け（長い方が上）
+  const order = players.map(p=>({id:p.id,you:p.you,key:p.key, t:p.survive})).sort((a,b)=>b.t-a.t);
+  const pts = order.map((o,i)=> POINTS[i] || 0);
+  for(let i=0;i<order.length;i++) totals[order[i].id] += pts[i];
+
+  // ラウンド結果表示
+  let html = `<h2>Round ${roundIdx} 結果</h2>`;
+  html += `<table class="table"><thead><tr><th>順位</th><th>名前</th><th class="r">生存</th><th class="r">点</th><th class="r">合計</th></tr></thead><tbody>`;
+  for(let i=0;i<order.length;i++){
+    const o=order[i], you=o.you?' you':'', name=o.you?'YOU(赤)':'CPU'+o.id;
+    html += `<tr class="${you}"><td>${i+1}</td><td>${name}</td><td class="r">${o.t.toFixed(1)}s</td><td class="r">${pts[i]}</td><td class="r">${totals[o.id]}</td></tr>`;
+  }
+  html += `</tbody></table><div class="btns">`;
+  if(roundIdx < totalRounds){
+    html += `<button class="btn" id="nextRound">次のレースへ</button>`;
+  }else{
+    html += `<button class="btn" id="finalBtn">最終結果を見る</button>`;
+  }
+  html += `</div>`;
+  showModal(html);
+  const nr = document.getElementById('nextRound');
+  if(nr) nr.addEventListener('click', ()=>{ roundIdx++; resetRound(); });
+  const fb = document.getElementById('finalBtn');
+  if(fb) fb.addEventListener('click', showFinal);
+}
+function showFinal(){
+  state=STATE.FINAL;
+  // 合計で順位
+  const order = totals.map((sc,id)=>({id,sc,you:id===0})).sort((a,b)=>b.sc-a.sc);
+  let html = `<h2>最終結果（3レース合計）</h2>`;
+  html += `<table class="table"><thead><tr><th>順位</th><th>名前</th><th class="r">合計点</th></tr></thead><tbody>`;
+  for(let i=0;i<order.length;i++){
+    const o=order[i], you=o.you?' you':'', name=o.you?'YOU(赤)':'CPU'+o.id;
+    html += `<tr class="${you}"><td>${i+1}</td><td>${name}</td><td class="r">${o.sc}</td></tr>`;
+  }
+  html += `</tbody></table><div class="btns"><button class="btn" id="again">最初から</button></div>`;
+  showModal(html);
+  document.getElementById('again').addEventListener('click', ()=>{
+    // リセット
+    for(let i=0;i<totals.length;i++) totals[i]=0;
+    roundIdx=1; hideModal(); resetRound();
+  });
+}
+
+/* ======= CPU AI（強化） ======= */
 function clearanceLR(x,y,limit){
-  let L=0,Rd=0;
+  let L=0,R=0;
   for(let dx=1; dx<=limit; dx++){
     if(!L && isWallWorld(x-dx,y)) L=dx;
-    if(!Rd && isWallWorld(x+dx,y)) Rd=dx;
-    if(L && Rd) break;
+    if(!R && isWallWorld(x+dx,y)) R=dx;
+    if(L && R) break;
   }
-  return {left:L||limit+1, right:Rd||limit+1};
+  return {left: L||limit+1, right: R||limit+1};
 }
 
-/* =================== Update =================== */
+/* ======= 更新 ======= */
 function update(dt){
-  if(state===STATE.TITLE || state===STATE.COUNT || state===STATE.RESULT) return;
+  if(state===STATE.TITLE || state===STATE.COUNT || state===STATE.ROUNDEND || state===STATE.FINAL) return;
   const sdt = dt * (state===STATE.FAST? 3:1);
   elapsed += sdt;
+  crowSpawnT += sdt;
 
-  // プレイヤー
+  // カラス数制御（5秒毎に+1）
+  const targetCrows = wantCrowCount();
+  if(crows.filter(k=>k.alive).length < targetCrows && crowSpawnT >= 1.0){
+    spawnCrow(); crowSpawnT = 0;
+  }
+
+  // プレイヤー入力（ふわふわ慣性）
   if(player.alive){
     const v=inputVec();
     const acc=SPEED*0.95;
@@ -372,72 +440,64 @@ function update(dt){
     player.vy += v.y*acc*dt;
   }
 
-  // CPU
+  // CPU: 上へ + 帯の中心を追う + 壁クリアランス + カラス回避 + 分離
   for(const p of players){
     if(p.you || !p.alive) continue;
-    let ax=0, ay=0;
-
-    // (1) 上へ
-    ay += 1.0;
-
-    // (2) 先読みして帯の中心を追う
+    let ax=0, ay=1.0; // 基本は上へ
+    // 少し先のYで開いている帯中心へ
     const look = p.y + Math.max(120*DPR, Math.min(300*DPR, Math.hypot(p.vx,p.vy)*0.4));
     const segs = openSegmentsAtY(look);
     let targetX = p.x;
-    // いま居る帯を優先、なければ最近傍の帯中心
     let inSeg = segs.find(s => p.x>=s[0] && p.x<=s[1]);
     if(inSeg){ targetX = (inSeg[0]+inSeg[1])/2; }
     else{
-      let best=Infinity, cx=p.x;
+      let best=1e9, cx=p.x;
       for(const s of segs){ const c=(s[0]+s[1])/2; const d=Math.abs(c-p.x); if(d<best){best=d; cx=c;} }
       targetX = cx;
     }
-    ax += (targetX - p.x) * 0.0048;   // 追従係数
+    ax += (targetX - p.x) * 0.0048;
 
-    // (3) 壁クリアランス
+    // 壁クリアランス（近い側から離れる）
     const clr = clearanceLR(p.x,p.y, Math.round(160*DPR));
     ax += (clr.right - clr.left) * 0.006;
 
-    // (4) カラス回避（先読み）
+    // カラス回避（先読み）
     let rx=0, ry=0, cnt=0;
     for(const k of crows){
       if(!k.alive) continue;
-      const px = k.x + k.dir*k.sp*0.7, py=k.y;
+      const px=k.x + Math.sign(k.vx||k.dir)*40, py=k.y;
       const dx=p.x-px, dy=p.y-py, d2=dx*dx+dy*dy;
       if(d2 < (260*DPR)*(260*DPR)){ const d=Math.sqrt(d2)||1; rx += dx/d; ry += dy/d; cnt++; }
     }
     if(cnt){ ax += (rx/cnt)*0.9; ay += (ry/cnt)*0.9; }
 
-    // (5) 分離
+    // 分離
     rx=0; ry=0; cnt=0;
     for(const q of players){
       if(q===p || !q.alive) continue;
-      const dx=p.x-q.x, dy=p.y-q.y, d2=dx*dx+dy*dy, minD=(p.r+q.r)*2.7;
+      const dx=p.x-q.x, dy=p.y-q.y, d2=dx*dx+dy*dy, minD=(p.r+q.r)*2.6;
       if(d2 < minD*minD){ const d=Math.sqrt(d2)||1; rx += dx/d; ry += dy/d; cnt++; }
     }
     if(cnt){ ax += (rx/cnt)*0.55; ay += (ry/cnt)*0.55; }
 
-    // 少ノイズ
-    ax += Math.sin((elapsed*0.7 + p.id))*0.12;
-
+    // 反映
     const acc=SPEED*0.78;
     p.vx += ax*acc*dt; p.vy += ay*acc*dt;
   }
 
-  // 速度・移動・壁バウンド
+  // 速度・壁反発・移動
   for(const p of players){
     if(!p.alive) continue;
     p.vx *= FRICTION; p.vy *= FRICTION;
     const v = Math.hypot(p.vx,p.vy), LIM=MAXS; if(v>LIM){ p.vx=p.vx/v*LIM; p.vy=p.vy/v*LIM; }
-
     let nx=p.x + p.vx*dt, ny=p.y + p.vy*dt;
     if(circleHitWall(nx, p.y, p.r)){ p.vx*=-BOUNCE; nx=p.x + p.vx*dt; }
     if(circleHitWall(p.x, ny, p.r)){ p.vy*=-BOUNCE; ny=p.y + p.vy*dt; }
     p.x=nx; p.y=ny;
-    if(p.y>p.maxY) p.maxY=p.y;
+    p.survive += sdt;
   }
 
-  // 風船反発
+  // 風船同士の反発
   for(let i=0;i<players.length;i++){
     const a=players[i]; if(!a.alive) continue;
     for(let j=i+1;j<players.length;j++){
@@ -453,64 +513,64 @@ function update(dt){
     }
   }
 
-  // カラス：数制限＋散布（タイマー制御）
-  const aliveCrows = crows.filter(k=>k.alive).length;
-  crowSpawnTimer += sdt;
-  const want = wantCrowCount();
-  if(aliveCrows < want && crowSpawnTimer > 1.2){ // 最短1.2秒間隔
-    spawnCrow(); crowSpawnTimer = 0;
-  }
+  // カラス：追尾＆壁コリジョン
+  const sp = crowTargetSpeed();
   for(const k of crows){
     if(!k.alive) continue;
-    const spMul = 1 + Math.min(1.1, elapsed/60);
-    k.x += k.dir * k.sp * spMul * dt;
-
-    // 壁に近づいたら反転（余裕を持って）
-    if(isWallWorld(k.x - 4, k.y) && k.dir<0) k.dir=1;
-    if(isWallWorld(k.x + k.w + 4, k.y) && k.dir>0) k.dir=-1;
-
-    // 近すぎるカラス同士を分散
-    for(const m of crows){
-      if(m===k || !m.alive) continue;
-      const dx=k.x-m.x, dy=k.y-m.y, d2=dx*dx+dy*dy;
-      const md = crowMinDist()*0.9;
-      if(d2 < md*md){ const inv = 18*dt/Math.sqrt(d2+1e-3); k.x += dx*inv; }
+    // 狙い：最も近い生存風船
+    let tgt=null, nd=1e12;
+    for(const p of players){ if(!p.alive) continue; const dx=p.x-k.x, dy=p.y-k.y; const d2=dx*dx+dy*dy; if(d2<nd){ nd=d2; tgt=p; } }
+    if(tgt){
+      const dx=tgt.x-k.x, dy=tgt.y-k.y, d=Math.hypot(dx,dy)||1;
+      const desiredX = dx/d * sp, desiredY = dy/d * sp*0.9; // やや縦弱め
+      // 慣性付きステアリング
+      k.vx += (desiredX - k.vx) * 0.08;
+      k.vy += (desiredY - k.vy) * 0.08;
+      // 向き
+      k.dir = (k.vx>=0)? 1 : -1;
     }
+    // 壁衝突は強く弾く（入れない）
+    let nx=k.x + k.vx*dt, ny=k.y + k.vy*dt;
+    if(isWallWorld(nx + Math.sign(k.vx)*k.w*0.5, k.y)) { k.vx*=-0.9; nx=k.x + k.vx*dt; }
+    if(isWallWorld(k.x, ny + Math.sign(k.vy)*k.h*0.5)) { k.vy*=-0.9; ny=k.y + k.vy*dt; }
+    k.x=nx; k.y=ny;
 
+    // 画面より十分下に去ったカラスは消去
     if(k.y < camY - H*0.9) k.alive=false;
   }
 
-  // カラス衝突
+  // カラス衝突判定（AABB vs 円）
   for(const p of players){
     if(!p.alive) continue;
     for(const k of crows){
       if(!k.alive) continue;
-      const rx = Math.max(k.x, Math.min(p.x, k.x+k.w));
-      const ry = Math.max(k.y, Math.min(p.y, k.y+k.h));
+      const rx = Math.max(k.x-k.w*0.5, Math.min(p.x, k.x+k.w*0.5));
+      const ry = Math.max(k.y-k.h*0.5, Math.min(p.y, k.y+k.h*0.5));
       const d2 = (p.x-rx)*(p.x-rx) + (p.y-ry)*(p.y-ry);
-      if(d2 < (p.r*p.r*0.7)){
+      if(d2 < (p.r*p.r*0.78)){
         p.alive=false; p.pop=0;
-        if(p===player) setFast();
-        break;
+        if(p===player && state===STATE.PLAY){ state=STATE.FAST; speedMul=3; speedInfo.textContent='x3'; }
       }
     }
   }
 
-  // 情報表示
-  const distM = Math.max(0, (player.maxY - startY)/(40*DPR));
-  distInfo.textContent = '距離: ' + distM.toFixed(1) + ' m';
-  leftInfo.textContent = '残り: ' + players.filter(p=>p.alive).length;
-
-  // カメラ（自分の少し上）
+  // 情報表示とカメラ
+  const alive = players.filter(p=>p.alive).length;
+  leftInfo.textContent = '残り: ' + alive;
+  timeInfo.textContent = '生存: ' + player.survive.toFixed(1) + 's';
   const target = Math.max(0, player.y - H*0.45);
   camY += (target - camY) * 0.12;
 
-  // 終了
-  if(players.filter(p=>p.alive).length<=1 && (state===STATE.PLAY || state===STATE.FAST)) finishGame();
+  // 終了：最後の1人
+  if(alive<=1 && (state===STATE.PLAY || state===STATE.FAST)){
+    // 全員分の生存時間が確定するよう最後の1人にも現在時刻を付与
+    for(const p of players){ if(p.alive) p.survive = Math.max(p.survive, elapsed); }
+    endRound();
+  }
 }
 
-/* =================== 描画 =================== */
-function drawBackground(){
+/* ======= 描画 ======= */
+function drawBG(){
   if(tileCanvas && tileH>0){
     const off = - (camY % tileH);
     for(let y=off; y<H; y+=tileH){ ctx.drawImage(tileCanvas, 0, Math.floor(y)); }
@@ -518,46 +578,48 @@ function drawBackground(){
     const g=ctx.createLinearGradient(0,H,0,0);
     g.addColorStop(0,'#0b1020'); g.addColorStop(1,'#1a2338');
     ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
-    ctx.fillStyle='#163a7a'; ctx.fillRect(0,0,10*DPR,H); ctx.fillRect(W-10*DPR,0,10*DPR,H);
   }
 }
-function worldToScreenY(y){ return Math.floor(H - (y - camY)); }
-
+function wy(y){ return Math.floor(H - (y - camY)); }
 function draw(){
-  drawBackground();
+  drawBG();
 
   // カラス
   for(const k of crows){
     if(!k.alive) continue;
-    const sy = worldToScreenY(k.y);
+    const sy = wy(k.y);
     const img = k.dir<0 ? K1 : K2;
+    const w = Math.floor(k.w), h = Math.floor(k.h);
     if(img && img.complete && img.naturalWidth){
-      ctx.drawImage(img, Math.floor(k.x), Math.floor(sy - k.h), Math.floor(k.w), Math.floor(k.h));
+      ctx.drawImage(img, Math.floor(k.x - w*0.5), Math.floor(sy - h*0.5), w, h);
     }else{
-      ctx.fillStyle='#222'; ctx.fillRect(k.x, sy-k.h, k.w, k.h);
-      ctx.fillStyle='#f90'; ctx.fillRect(k.x + (k.dir<0? k.w*0.7: k.w*0.1), sy-k.h*0.65, k.w*0.2, k.h*0.2);
+      ctx.fillStyle='#222'; ctx.fillRect(k.x-w*0.5, sy-h*0.5, w, h);
+      ctx.fillStyle='#f90'; ctx.fillRect(k.x + (k.dir<0? 0.1*w : -0.3*w), sy-0.1*h, 0.2*w, 0.2*h);
     }
   }
 
-  // 風船（破裂アニメ含む）
+  // 風船
   for(const p of players){
-    const sy = worldToScreenY(p.y);
+    const sy = wy(p.y);
     if(!p.alive){
       if(p.pop<1){
         p.pop += 0.03 * (state===STATE.FAST?3:1);
         const a = Math.max(0, 1-p.pop), s=1+p.pop*1.2;
         ctx.save(); ctx.globalAlpha=a; ctx.translate(p.x, sy); ctx.scale(s,s);
-        drawBalloon(p,0,0,true); ctx.restore();
+        drawBalloon(p,0,0); ctx.restore();
       }
       continue;
     }
-    drawBalloon(p, p.x, sy, false);
+    drawBalloon(p, p.x, sy);
   }
 }
 function drawBalloon(p, sx, sy){
+  // ヒモ
   ctx.strokeStyle='rgba(255,255,255,.2)'; ctx.lineWidth=Math.max(1, 2*DPR);
   ctx.beginPath(); ctx.moveTo(sx, sy+p.r*0.6); ctx.lineTo(sx, sy+p.r*1.4); ctx.stroke();
-  const img=p.img, size=Math.round(p.r*2.2);
+  // 本体（画像 or 代替円）
+  const size = Math.round(p.r*2.2);
+  const img = p.img;
   if(img && img.complete && img.naturalWidth){
     ctx.drawImage(img, Math.floor(sx-size/2), Math.floor(sy-size/2), size, size);
   }else{
@@ -571,8 +633,7 @@ function drawBalloon(p, sx, sy){
   }
 }
 
-/* =================== ループ =================== */
-let last=0;
+/* ======= ループ ======= */
 function loop(t){
   if(!last) last=t;
   const dt = Math.min(0.033, (t-last)/1000); last=t;
@@ -581,11 +642,12 @@ function loop(t){
   requestAnimationFrame(loop);
 }
 
-/* =================== 起動 =================== */
+/* ======= 起動 ======= */
 resize();
-buildTileAndMask();
-initPlayers();
 requestAnimationFrame(loop);
+btnStart.addEventListener('click', startCountdown);
+btnRetry.addEventListener('click', resetRound);
+resetRound();
 })();
 </script>
 </body>
