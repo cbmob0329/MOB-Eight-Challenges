@@ -2,49 +2,38 @@
 <html lang="ja">
 <head>
 <meta charset="utf-8" />
-<title>Hockey Balls Race - Ver.5.1 Mobile</title>
+<title>Hockey Balls Race - Ver.5.1.1 Mobile Hotfix</title>
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=1,user-scalable=no" />
 <style>
-  :root{
-    --ui-bg: rgba(18,20,26,.82);
-    --ui-br: rgba(255,255,255,.12);
-  }
+  :root{ --ui-bg: rgba(18,20,26,.82); --ui-br: rgba(255,255,255,.12); }
   html,body{height:100%;margin:0;background:#000;color:#fff;font-family:system-ui,-apple-system,Segoe UI,Roboto,"Hiragino Sans","Yu Gothic",sans-serif}
   #wrap{position:fixed;inset:0;display:flex;flex-direction:column}
   #cv{flex:1;display:block;width:100%;height:100%;touch-action:none;background:#000}
-  /* HUD */
   #hud{position:fixed;top:0;left:0;right:0;display:flex;gap:8px;justify-content:space-between;align-items:center;padding:6px 10px;font-size:12px;background:linear-gradient(180deg,rgba(0,0,0,.55),rgba(0,0,0,.15));pointer-events:none;z-index:5}
   .pill{background:rgba(0,0,0,.55);padding:4px 8px;border-radius:999px;border:1px solid rgba(255,255,255,.1)}
-  /* Overlay cards */
   #overlay{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;z-index:10}
   .card{background:var(--ui-bg);border:1px solid var(--ui-br);border-radius:16px;padding:16px 18px;box-shadow:0 12px 38px rgba(0,0,0,.6);max-width:min(92vw,720px)}
   .title{font-weight:800;letter-spacing:.05em;margin-bottom:8px}
   button{background:#1f2430;color:#fff;border:1px solid var(--ui-br);padding:12px 16px;border-radius:12px;font-size:16px;cursor:pointer}
   button:active{transform:scale(.98)}
   .hidden{display:none}
-
-  /* Mobile controls */
-  #controls{position:fixed;inset:auto 0 8px 0;display:flex;justify-content:space-between;align-items:center;padding:0 10px;z-index:6;gap:10px;pointer-events:auto}
+  #controls{position:fixed;inset:auto 0 8px 0;display:flex;justify-content:space-between;align-items:center;padding:0 10px;z-index:6;gap:10px}
   .pad{display:flex;gap:10px}
   .btn{min-width:84px;min-height:54px;border-radius:14px;background:var(--ui-bg);border:1px solid var(--ui-br);font-weight:700}
   .btn:active{filter:brightness(1.2)}
-  @media (min-width:860px){
-    #controls{display:none} /* PCはキーボード優先 */
-  }
+  @media (min-width:860px){ #controls{display:none} }
 </style>
 </head>
 <body>
 <div id="wrap">
   <canvas id="cv"></canvas>
 
-  <!-- HUD -->
   <div id="hud">
     <div class="pill">TIME <span id="time">0.0</span>s</div>
     <div class="pill">PROGRESS <span id="prog">0%</span></div>
     <div class="pill">RACE <span id="raceNo">1</span> / 3</div>
   </div>
 
-  <!-- Touch Controls -->
   <div id="controls">
     <div class="pad">
       <button id="btnLeft"  class="btn" aria-label="左">⟵</button>
@@ -53,13 +42,12 @@
     <button id="btnBoost" class="btn" aria-label="加速">BOOST</button>
   </div>
 
-  <!-- Overlays -->
   <div id="overlay">
     <div id="menu" class="card">
       <div class="title">ゲーム開始しますか？</div>
-      <div>操作：左右＋上（押している間は少し加速）<br>スマホ：画面下のボタン</div>
+      <div>操作：左右＋上（押している間は少し加速）／スマホは下のボタン</div>
       <div style="margin-top:12px"><button id="btnYes" autofocus>はい</button></div>
-      <div style="opacity:.75;margin-top:6px">※画面どこでもタップ/クリックで開始</div>
+      <div style="opacity:.75;margin-top:6px">※画面どこでもタップ/クリック/キー入力で開始</div>
     </div>
 
     <div id="count" class="card hidden" style="font-size:44px;text-align:center;font-weight:900">3</div>
@@ -84,20 +72,16 @@
 
 <script>
 (()=>{
-// ======= Canvas & DPR =======
+// ============ Canvas & DPR ============
 const cv=document.getElementById('cv'), ctx=cv.getContext('2d');
 let DPR = Math.max(1, Math.min(3, window.devicePixelRatio||1));
-function resize(){
-  DPR = Math.max(1, Math.min(3, window.devicePixelRatio||1));
-  const w=cv.clientWidth, h=cv.clientHeight;
-  cv.width=Math.round(w*DPR); cv.height=Math.round(h*DPR);
-  ctx.setTransform(DPR,0,0,DPR,0,0);
-  // レイアウト依存の値を再構築
-  computeResponsive();
+function resize(){ DPR=Math.max(1,Math.min(3,window.devicePixelRatio||1));
+  const w=cv.clientWidth,h=cv.clientHeight; cv.width=Math.round(w*DPR); cv.height=Math.round(h*DPR);
+  ctx.setTransform(DPR,0,0,DPR,0,0); computeResponsive();
 }
 addEventListener('resize', resize, {passive:true}); resize();
 
-// ======= UI refs =======
+// ============ UI refs ============
 const elTime=document.getElementById('time');
 const elProg=document.getElementById('prog');
 const elRaceNo=document.getElementById('raceNo');
@@ -113,17 +97,15 @@ const btnYes=document.getElementById('btnYes');
 const btnNextRace=document.getElementById('btnNextRace');
 const btnShowSeries=document.getElementById('btnShowSeries');
 const btnRestart=document.getElementById('btnRestart');
-
-// touch buttons
 const btnLeft=document.getElementById('btnLeft');
 const btnRight=document.getElementById('btnRight');
 const btnBoost=document.getElementById('btnBoost');
 
-// ======= Assets =======
+// ============ Assets ============
 let bgOK=false, contOK=false, gomOK=false;
-const bg=new Image();   bg.src='hoke.png';    bg.onload=()=>{bgOK=true;}
-const cont=new Image(); cont.src='contena.png'; cont.onload=()=>{contOK=true;}
-const gomi=new Image(); gomi.src='gomi.png';  gomi.onload=()=>{gomOK=true;}
+const bg=new Image();   bg.src='hoke.png';     bg.onload=()=>bgOK=true;
+const cont=new Image(); cont.src='contena.png';cont.onload=()=>contOK=true;
+const gomi=new Image(); gomi.src='gomi.png';   gomi.onload=()=>gomOK=true;
 const puckMeta=[
   {name:"RED",file:"red.png",color:"#f33"},
   {name:"BLUE",file:"blue.png",color:"#29f"},
@@ -134,43 +116,37 @@ const puckMeta=[
   {name:"GREEN",file:"green.png",color:"#3d7"},
   {name:"PURPLE",file:"mura.png",color:"#a6f"}
 ];
-puckMeta.forEach(p=>{p.img=new Image(); p.img.src=p.file;});
+puckMeta.forEach(p=>{p.img=new Image();p.img.src=p.file});
 
-// ======= Responsive tuning =======
+// ============ Responsive tuning ============
 const track={ widthRatio:0.62, startY:1700, finishY:150, scroll:0 };
-let SCALE=1, PUCK_R=30, SPEED={BASE:1.4, MAX:4.4, ACCEL:0.16, FRICTION:0.002, STEER:1.5, BOOST:1.22};
+let SCALE=1, PUCK_R=30, SPEED={BASE:1.4, STEER:1.5, BOOST:1.22};
 let OB_SIZE={CONT_W:180, CONT_H:130, BIN_W:60, BIN_H:75};
 let COUNTS={CONT_MID:4, BINS:10};
 let GAP_TUNING={sidePad:22, barricadeGap:120};
-
 function computeResponsive(){
-  const W=cv.clientWidth, H=cv.clientHeight;
-  // 基準 480px を1.0としたスケール
+  const W=cv.clientWidth;
   SCALE = Math.min(1.25, Math.max(0.78, Math.min(W, 540)/480));
-  // 走路を広げる（スマホは広め）
   track.widthRatio = (W<520? 0.78 : 0.66);
-  // オブジェクトサイズ
-  PUCK_R = Math.round(30 * SCALE);
-  OB_SIZE.CONT_W = Math.round(180 * SCALE);
-  OB_SIZE.CONT_H = Math.round(130 * SCALE);
-  OB_SIZE.BIN_W  = Math.round(60  * SCALE);
-  OB_SIZE.BIN_H  = Math.round(75  * SCALE);
-  // 数も軽く調整（狭い画面は減らす）
+  PUCK_R = Math.round(30*SCALE);
+  OB_SIZE.CONT_W = Math.round(180*SCALE);
+  OB_SIZE.CONT_H = Math.round(130*SCALE);
+  OB_SIZE.BIN_W  = Math.round(60*SCALE);
+  OB_SIZE.BIN_H  = Math.round(75*SCALE);
   COUNTS.CONT_MID = (W<420? 3 : 4);
   COUNTS.BINS     = (W<420? 8 : 10);
-  // バリケードの隙間を広げる（スマホ配慮）
-  GAP_TUNING.sidePad = Math.max(18, Math.round(22 * SCALE));
+  GAP_TUNING.sidePad = Math.max(18, Math.round(22*SCALE));
   GAP_TUNING.barricadeGap = Math.round((W<420? 160:120) * SCALE);
 }
 
-// ======= State =======
+// ============ State ============
 const STATE={MENU:0,COUNT:1,RUN:2,RACE:3,SERIES:4};
 let state=STATE.MENU, raceIndex=1;
-let pucks=[], obstacles=[], finished=0, time=0;
+let pucks=[],obstacles=[],finished=0,time=0;
 const points=[10,7,5,3,1,0,0,0];
 let seriesPts=puckMeta.map((_,i)=>({id:i+1,name:puckMeta[i].name,color:puckMeta[i].color,pts:0}));
 
-// ======= Input =======
+// ============ Input ============
 const keys={left:false,right:false,up:false};
 addEventListener('keydown',e=>{ if(state!==STATE.RUN) return;
   if(e.key==='ArrowLeft') keys.left=true;
@@ -182,9 +158,7 @@ addEventListener('keyup',e=>{ if(state!==STATE.RUN) return;
   if(e.key==='ArrowRight') keys.right=false;
   if(e.key==='ArrowUp') keys.up=false;
 });
-// touch helper
-function holdButton(el, on, off){
-  let t=false;
+function holdButton(el,on,off){ let t=false;
   const down=(ev)=>{ev.preventDefault(); if(!t){t=true; on();}};
   const up  =(ev)=>{ev.preventDefault(); t=false; off();};
   el.addEventListener('pointerdown',down); el.addEventListener('pointerup',up);
@@ -194,77 +168,69 @@ holdButton(btnLeft, ()=>keys.left=true,  ()=>keys.left=false);
 holdButton(btnRight,()=>keys.right=true, ()=>keys.right=false);
 holdButton(btnBoost,()=>keys.up=true,    ()=>keys.up=false);
 
-// ======= Helpers =======
-function bounds(){
-  const W=cv.clientWidth, tw=W*track.widthRatio, x0=(W-tw)/2;
+// ============ Helpers ============
+function bounds(){ const W=cv.clientWidth, tw=W*track.widthRatio, x0=(W-tw)/2;
   return {L:x0+GAP_TUNING.sidePad, R:x0+tw-GAP_TUNING.sidePad, W:tw-2*GAP_TUNING.sidePad, CX:x0+tw/2};
 }
 function addOb(type,x,y,w,h,opt={}){ obstacles.push({...opt,type,x,y,w,h}); }
 
-// ======= Obstacles (4.9ベースをモバイル最適化) =======
+// ============ Obstacles ============
 function buildObstacles(){
   obstacles.length=0;
   const {L,R,W,CX}=bounds();
   const CW=OB_SIZE.CONT_W, CH=OB_SIZE.CONT_H, BW=OB_SIZE.BIN_W, BH=OB_SIZE.BIN_H;
 
-  // 端封じ（等間隔だと詰むので段差配置＆数を画面で調整）
+  // 端封じ（段差配置）
   const edgeStep = Math.round(260 * SCALE);
   for(let y=track.startY-200, i=0; y>track.finishY+Math.round(380*SCALE); y-=edgeStep, i++){
     addOb('contena', L+6, y,  Math.round(CW*0.48), Math.round(CH*0.55));
     addOb('contena', R-6-Math.round(CW*0.48), y - (i%2? Math.round(40*SCALE):0), Math.round(CW*0.48), Math.round(CH*0.55));
   }
 
-  // 中盤：中央寄りでバラけさせる
+  // 中央寄りランダムコンテナ
   for(let i=0;i<COUNTS.CONT_MID;i++){
     const y = track.startY - Math.round(420*SCALE) - i*Math.round(300*SCALE);
     const x = L + W*(0.22 + Math.random()*0.56) - CW/2;
     addOb('contena', Math.max(L, Math.min(R-CW, x)), y, CW, CH);
   }
 
-  // ゴミ箱（中央寄り・ゆっくり・大振幅）…総数は縮小
+  // ゴミ箱（中央寄り・大振幅・ゆっくり）
   for(let i=0;i<COUNTS.BINS;i++){
     const y = track.startY - Math.round(300*SCALE) - Math.random()*Math.round(1200*SCALE);
     const baseX = L + W*(0.28 + Math.random()*0.44);
     addOb('gomi', baseX, y, BW, BH, {amp:Math.round((180+Math.random()*60)*SCALE), phase:Math.random()*6, speed:0.4+Math.random()*0.3, baseX});
   }
 
-  // ゴール前バリケード（中央スリットはスマホで広め）
+  // ゴール前バリケード（中央スリット広め）
   const barY = track.finishY + Math.round(320*SCALE);
   const gap = GAP_TUNING.barricadeGap;
   addOb('contena', L, barY, (W-gap)/2, Math.round(120*SCALE));
   addOb('contena', L+(W+gap)/2, barY, (W-gap)/2, Math.round(120*SCALE));
 }
 
-// ======= Puck reset（横一列・密集） =======
+// ============ Pucks ============
 function resetPucks(){
   pucks.length=0;
-  const {L,R}=bounds(), band=R-L;
-  const gap=(band - PUCK_R*2)/7;
-  const y=track.startY;
+  const {L,R}=bounds(), band=R-L, gap=(band-PUCK_R*2)/7, y=track.startY;
   for(let i=0;i<8;i++){
-    const m=puckMeta[i]; const x=L+PUCK_R+gap*i;
-    pucks.push({id:i+1,name:m.name,color:m.color,img:m.img,x,y,vx:0,vy:-SPEED.BASE,finished:false,finish:0,stuck:0});
+    const m=puckMeta[i], x=L+PUCK_R+gap*i;
+    pucks.push({id:i+1,name:m.name,color:m.color,img:m.img,x,y,vx:0,vy:-SPEED.BASE,finished:false,finish:0});
   }
 }
 
-// ======= Physics =======
+// ============ Physics ============
 function circleRect(p,o){
-  // ゴミ箱の横移動
   if(o.type==='gomi'){
     o.phase += (o.speed||0.5) * (1/60);
     o.x = (o.baseX||o.x) + Math.sin(o.phase) * (o.amp||50);
-    // 走路外に出ないようクランプ
-    const {L,R}=bounds();
-    o.x = Math.max(L, Math.min(R - o.w, o.x));
+    const {L,R}=bounds(); o.x = Math.max(L, Math.min(R - o.w, o.x));
   }
-  // 円-矩形衝突
   const nx=Math.max(o.x,Math.min(p.x,o.x+o.w));
   const ny=Math.max(o.y,Math.min(p.y,o.y+o.h));
   const dx=p.x-nx, dy=p.y-ny, r2=PUCK_R*PUCK_R;
   if(dx*dx+dy*dy < r2){
     if(Math.abs(dx)>Math.abs(dy)) p.vx*=-1.12; else p.vy*=-1.12;
-    const d=Math.hypot(dx,dy)||1, ox=(dx/d)*(PUCK_R-d+0.5), oy=(dy/d)*(PUCK_R-d+0.5);
-    p.x+=ox; p.y+=oy;
+    const d=Math.hypot(dx,dy)||1; p.x+=dx/d*(PUCK_R-d+0.5); p.y+=dy/d*(PUCK_R-d+0.5);
   }
 }
 function collidePucks(a,b){
@@ -282,7 +248,7 @@ function collidePucks(a,b){
   }
 }
 
-// ======= BG =======
+// ============ BG ============
 function drawBG(){
   const W=cv.clientWidth, H=cv.clientHeight;
   if(bgOK && bg.complete){
@@ -297,30 +263,37 @@ function drawBG(){
   }
 }
 
-// ======= Flow =======
+// ============ Start flow (堅牢版) ============
+const SAFE = { started:false };
+function beginGame(){
+  if(SAFE.started) return;
+  SAFE.started = true;
+  try{ menu.classList.add('hidden'); }catch(_){}
+  try{ startCountdown(); }catch(e){ console.error(e); /* 失敗しても再試行 */ setTimeout(()=>{ SAFE.started=false; beginGame(); }, 0); }
+}
+btnYes.addEventListener('click', (e)=>{ e.preventDefault(); beginGame(); });
+overlay.addEventListener('click',   (e)=>{ if(state===STATE.MENU){ e.preventDefault(); beginGame(); }});
+window.addEventListener('touchstart',(e)=>{ if(state===STATE.MENU){ beginGame(); }}, {passive:false});
+window.addEventListener('pointerdown',(e)=>{ if(state===STATE.MENU){ beginGame(); }});
+window.addEventListener('keydown',(e)=>{ if(state===STATE.MENU){ const k=e.key; if(k==='Enter'||k===' '||k==='ArrowUp'||k==='ArrowLeft'||k==='ArrowRight'){ e.preventDefault(); beginGame(); }}});
+
+// ============ Countdown & loop ============
 function startCountdown(){
-  // 初期化
   time=0; finished=0;
   resetPucks(); buildObstacles();
-  // カメラ位置
   const targetStart = pucks[0].y - cv.clientHeight*0.65;
   track.scroll = Math.max(track.finishY-80, Math.min(targetStart, track.startY));
-  // カウント
-  state=STATE.COUNT; let n=3; countCard.textContent=n; countCard.classList.remove('hidden');
+  state=STATE.COUNT;
+  let n=3; countCard.textContent=n; countCard.classList.remove('hidden');
   const tick=()=>{ n--; if(n>0){ countCard.textContent=n; setTimeout(tick,800); }
-    else{ countCard.textContent='GO!'; setTimeout(()=>countCard.classList.add('hidden'),500); state=STATE.RUN; overlay.classList.add('hidden'); } };
+    else{ countCard.textContent='GO!'; setTimeout(()=>countCard.classList.add('hidden'),500); state=STATE.RUN; overlay.classList.add('hidden'); }};
   setTimeout(tick,800);
 }
 
-function startFromMenu(){ menu.classList.add('hidden'); startCountdown(); }
-btnYes.onclick=startFromMenu;
-overlay.addEventListener('pointerdown', ()=>{ if(state===STATE.MENU) startFromMenu(); });
-
-if(btnRestart) btnRestart.onclick=()=>{ seriesPts.forEach(s=>s.pts=0); raceIndex=1; elRaceNo.textContent=raceIndex; seriesResult.classList.add('hidden'); overlay.classList.remove('hidden'); menu.classList.remove('hidden'); state=STATE.MENU; };
-if(btnNextRace) btnNextRace.onclick=()=>{ raceResult.classList.add('hidden'); raceIndex++; elRaceNo.textContent=raceIndex; startCountdown(); };
+if(btnRestart) btnRestart.onclick=()=>{ seriesPts.forEach(s=>s.pts=0); raceIndex=1; elRaceNo.textContent=raceIndex; seriesResult.classList.add('hidden'); overlay.classList.remove('hidden'); menu.classList.remove('hidden'); state=STATE.MENU; SAFE.started=false; };
+if(btnNextRace) btnNextRace.onclick=()=>{ raceResult.classList.add('hidden'); raceIndex++; elRaceNo.textContent=raceIndex; SAFE.started=false; startCountdown(); };
 if(btnShowSeries) btnShowSeries.onclick=()=>{ raceResult.classList.add('hidden'); showSeries(); };
 
-// ======= Loop =======
 let last=performance.now();
 requestAnimationFrame(function loop(now){
   const dt=Math.min(0.033,(now-last)/1000); last=now;
@@ -330,87 +303,36 @@ requestAnimationFrame(function loop(now){
 
 function step(dt){
   time+=dt; elTime.textContent=time.toFixed(1);
-
   const {L,R}=bounds(), xL=L+PUCK_R, xR=R-PUCK_R;
 
-  // update bins
   for(const o of obstacles){ if(o.type==='gomi'){ o.phase += (o.speed||0.5)*dt*60; o.x=(o.baseX||o.x)+Math.sin(o.phase)*(o.amp||60); o.x=Math.max(L,Math.min(R-o.w,o.x)); } }
 
   for(let i=0;i<pucks.length;i++){
     const p=pucks[i]; if(p.finished) continue;
-
-    // forward speed
     p.vy = -SPEED.BASE*1.2 * (i===0 && keys.up ? SPEED.BOOST : 1);
-    // steering
-    if(i===0){
-      if(keys.left)  p.vx -= SPEED.STEER * dt * 60;
-      if(keys.right) p.vx += SPEED.STEER * dt * 60;
-    } else {
-      // 簡易AI（中央寄りに）
-      const center = (L+R)/2;
-      p.vx += (p.x<center? 0.5 : -0.5) * dt * 40;
-    }
+    if(i===0){ if(keys.left) p.vx -= SPEED.STEER * dt * 60; if(keys.right) p.vx += SPEED.STEER * dt * 60; }
+    else { const center=(L+R)/2; p.vx += (p.x<center? 0.5 : -0.5) * dt * 40; }
 
     p.x += p.vx; p.y += p.vy; p.vx *= 0.90;
 
-    // side walls (強め＋少し上へ)
     if(p.x<xL){ p.x=xL; p.vx=Math.abs(p.vx)*1.2+0.8; p.vy-=0.3; }
     if(p.x>xR){ p.x=xR; p.vx=-Math.abs(p.vx)*1.2-0.8; p.vy-=0.3; }
 
-    // obstacles
     for(const o of obstacles) circleRect(p,o);
-    // puck vs puck
     for(let j=i+1;j<pucks.length;j++) collidePucks(p,pucks[j]);
 
-    // finish
-    if(p.y<=track.finishY && !p.finished){
-      p.finished=true; p.finish=time; finished++;
+    if(p.y<=track.finishY && !p.finished){ p.finished=true; p.finish=time; finished++;
       if(i===0){ finishFlash.classList.remove('hidden'); setTimeout(()=>finishFlash.classList.add('hidden'),1200); }
     }
   }
 
-  // camera
   const target=Math.max(track.finishY-80, Math.min(pucks[0].y - cv.clientHeight*0.65, track.startY));
   track.scroll += (target - track.scroll) * 0.14;
 
-  // progress
-  const prog = (1 - (pucks[0].y - track.finishY) / (track.startY - track.finishY));
+  const prog=(1 - (pucks[0].y - track.finishY) / (track.startY - track.finishY));
   elProg.textContent = Math.max(0, Math.min(100, prog*100)).toFixed(0)+'%';
 
   if(finished===pucks.length){ setTimeout(()=>showRace(), 200); state=STATE.RACE; }
-}
-
-function draw(){
-  const W=cv.clientWidth,H=cv.clientHeight;
-  ctx.clearRect(0,0,W,H);
-  drawBG();
-
-  ctx.save(); ctx.translate(0,-track.scroll);
-
-  // finish line
-  ctx.fillStyle='rgba(255,255,255,.75)';
-  ctx.fillRect(W*(1-track.widthRatio)/2, track.finishY-2, W*track.widthRatio, 4);
-
-  // obstacles
-  for(const o of obstacles){
-    if(o.type==='contena'){
-      if(contOK && cont.complete) ctx.drawImage(cont,o.x,o.y,o.w,o.h);
-      else { ctx.fillStyle='#9aa3b2'; ctx.fillRect(o.x,o.y,o.w,o.h); }
-    }else{
-      if(gomOK && gomi.complete) ctx.drawImage(gomi,o.x,o.y,o.w,o.h);
-      else { ctx.fillStyle='#6b7280'; ctx.fillRect(o.x,o.y,o.w,o.h); }
-    }
-  }
-
-  // pucks
-  for(const p of pucks){
-    ctx.save(); ctx.translate(p.x,p.y);
-    const s=PUCK_R*2;
-    if(p.img && p.img.complete && p.img.width) ctx.drawImage(p.img,-s/2,-s/2,s,s);
-    else { ctx.fillStyle=p.color; ctx.beginPath(); ctx.arc(0,0,PUCK_R,0,Math.PI*2); ctx.fill(); }
-    ctx.restore();
-  }
-  ctx.restore();
 }
 
 // ======= Results =======
@@ -430,8 +352,6 @@ function showSeries(){
   final.forEach((s,i)=>{ const li=document.createElement('li'); li.textContent=`${i+1}. ${s.name}  ${s.pts} pts`; li.style.color=s.color; seriesList.appendChild(li); });
   seriesResult.classList.remove('hidden');
 }
-
-// start from menu by tap
 })();
 </script>
 </body>
