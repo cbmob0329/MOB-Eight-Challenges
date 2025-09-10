@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<title>Hockey Balls Race - 完全版 Ver.4.8（端寄り解消／非重複／ゆっくりゴミ箱）</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no" />
+<style>
+  html,body{height:100%;margin:0;background:#000;color:#fff;font-family:system-ui,-apple-system,Segoe UI,Roboto,"Hiragino Sans","Yu Gothic",sans-serif}
+  #wrap{position:fixed;inset:0;display:flex;flex-direction:column}
+  #cv{flex:1;display:block;width:100%;height:100%;touch-action:none;background:#000;z-index:1;position:relative}
+  #hud{position:fixed;top:0;left:0;right:0;display:flex;gap:8px;justify-content:space-between;align-items:center;padding:6px 10px;font-size:12px;background:linear-gradient(180deg,rgba(0,0,0,.55),rgba(0,0,0,.15));pointer-events:none;z-index:5}
+  .pill{background:rgba(0,0,0,.55);padding:4px 8px;border-radius:999px;border:1px solid rgba(255,255,255,.08)}
+  #overlay{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:auto;z-index:9999}
+  .card{pointer-events:auto;background:rgba(15,17,21,.92);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:16px;box-shadow:0 12px 40px rgba(0,0,0,.6);max-width:min(92vw,700px)}
+  .title{font-weight:800;letter-spacing:.05em;margin-bottom:8px}
+  .row{display:flex;gap:8px;flex-wrap:wrap}
+  button, select{background:#1f2430;color:#fff;border:1px solid rgba(255,255,255,.12);padding:10px 14px;border-radius:12px;font-size:16px;cursor:pointer}
+  button:hover{background:#2a3040}
+  select{pointer-events:auto}
+  .hint{opacity:.8;margin-bottom:10px;font-size:13px}
+  .hidden{display:none}
+</style>
+</head>
+<body>
+<div id="wrap">
+  <canvas id="cv"></canvas>
+
+  <!-- HUD -->
+  <div id="hud">
+    <div class="pill">TIME <span id="time">0.0</span>s</div>
+    <div class="pill">PROGRESS <span id="prog">0%</span></div>
+    <div class="pill">RACE <span id="raceNo">1</span> / 3</div>
+    <div class="pill">DIFF <span id="diffName">HARD</span></div>
+  </div>
+
+  <!-- Overlays -->
+  <div id="overlay">
+    <div id="menu" class="card">
+      <div class="title">ゲーム開始しますか？</div>
+      <div class="hint">操作：左右＋上（押している間は少し加速）</div>
+      <div class="row" style="align-items:center;margin-bottom:8px">
+        <span style="font-size:14px;opacity:.85">難易度：</span>
+        <select id="diffSel" aria-label="難易度">
+          <option value="easy">かんたん</option>
+          <option value="normal">ふつう</option>
+          <option value="hard" selected>むずかしい</option>
+        </select>
+      </div>
+      <div class="row"><button id="btnYes" type="button" autofocus>はい</button></div>
+      <div class="hint">※ボタンが効かなくても画面のどこをクリック/タップしても開始します。</div>
+    </div>
+
+    <div id="count" class="card hidden" style="font-size:44px;text-align:center;font-weight:900">3</div>
+    <div id="finishFlash" class="card hidden" style="font-size:40px;font-weight:900;background:linear-gradient(135deg,#ff4d6d,#f59e0b);border:none">FINISH!</div>
+
+    <div id="raceResult" class="card hidden">
+      <div class="title">レース結果（ポイント加算）</div>
+      <ol id="rankList" style="padding-left:18px;margin:8px 0 14px 0"></ol>
+      <div class="row">
+        <button id="btnNextRace" type="button">次のレース</button>
+        <button id="btnShowSeries" type="button" class="hidden">最終結果</button>
+      </div>
+    </div>
+
+    <div id="seriesResult" class="card hidden">
+      <div class="title">最終順位（3レース合計点）</div>
+      <ol id="seriesList" style="padding-left:18px;margin:8px 0 14px 0"></ol>
+      <button id="btnRestart" type="button">リスタート</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(()=>{
+// ======= 安定フラグ =======
+const USE_COLOR_WALL = false; // まずは確実起動。必要ならtrueに戻せます
+
+// ======= Canvas =======
+const cv = document.getElementById('cv');
+const ctx = cv.getContext('2d');
+const DPR = Math.max(1, Math.min(3, window.devicePixelRatio || 1));
+function resize(){ const w=cv.clientWidth, h=cv.clientHeight; cv.width=Math.round(w*DPR); cv.height=Math.round(h*DPR); ctx.setTransform(DPR,0,0,DPR,0,0); if(USE_COLOR_WALL) bakeMask(); }
+addEventListener('resize', resize, {passive:true}); resize();
+
+// ======= UI =======
+const elTime=document.getElementById('time');
+const elProg=document.getElementById('prog');
+const elRaceNo=document.getElementById('raceNo');
+const elDiffName=document.getElementById('diffName');
+const overlay=document.getElementById('overlay');
+const menu=document.getElementById('menu');
+const diffSel=document.getElementById('diffSel');
+const countBox=document.getElementById('count');
+const finishFlash=document.getElementById('finishFlash');
+const raceResult=document.getElementById('raceResult');
+const seriesResult=document.getElementById('seriesResult');
+const rankList=document.getElementById('rankList');
+const seriesList=document.getElementById('seriesList');
+const btnYes=document.getElementById('btnYes');
+const btnNextRace=document.getElementById('btnNextRace');
+const btnShowSeries=document.getElementById('btnShowSeries');
+const btnRestart=document.getElementById('btnRestart');
+
+// ======= 画像 =======
+let bgOK=false, contOK=false, gomOK=false;
+const bgImg = new Image(); bgImg.src = 'hoke.png';
+bgImg.onload = ()=>{ bgOK=true; if(USE_COLOR_WALL) bakeMask(); };
+bgImg.onerror= ()=>{ bgOK=false; };
+
+const contenaImg = new Image(); contenaImg.src = 'contena.png';
+contenaImg.onload=()=>{ contOK=true; };
+contenaImg.onerror=()=>{ contOK=false; };
+
+const gomiImg = new Image(); gomiImg.src = 'gomi.png';
+gomiImg.onload=()=>{ gomOK=true; };
+gomiImg.onerror=()=>{ gomOK=false; };
+
+const puckMeta = [
+  {name:"RED",file:"red.png",color:"#f33"},
+  {name:"BLUE",file:"blue.png",color:"#29f"},
+  {name:"YELLOW",file:"yellow.png",color:"#ff0"},
+  {name:"BLACK",file:"black.png",color:"#222"},
+  {name:"PINK",file:"pink.png",color:"#f6c"},
+  {name:"ORANGE",file:"orange.png",color:"#fa3"},
+  {name:"GREEN",file:"green.png",color:"#3d7"},
+  {name:"PURPLE",file:"mura.png",color:"#a6f"}
+];
+puckMeta.forEach(p=>{ const img=new Image(); img.src=p.file; p.img=img; });
+
+// ======= 難易度 =======
+const DIFFS = {
+  easy:   { GOMI:8,  CURTAINS:3, SQUEEZE_ROWS:2 },
+  normal: { GOMI:10, CURTAINS:4, SQUEEZE_ROWS:3 },
+  hard:   { GOMI:12, CURTAINS:5, SQUEEZE_ROWS:4 }
+};
+let DIFF = DIFFS.hard;
+
+// ======= 定数 =======
+const POINTS = [10,7,5,3,1,0,0,0];
+const SERIES_TOTAL = 3;
+const PUCK_R = 30;
+const BASE_SPEED = 1.4, MAX_SPEED = 4.4, ACCEL = 0.16, FRICTION = 0.002, STEER = 1.5, BOOST = 1.22;
+const SPEED_CAP = MAX_SPEED * 1.25;
+const track = { widthRatio:0.62, startY:1700, finishY:150, scroll:0 };
+const GRACE_AFTER_FIRST = 7.0;
+const HARD_TIME_LIMIT  = 75.0;
+
+// ======= 状態 =======
+const STATE = { MENU:0, COUNT:1, RUN:2, RACE_RESULT:3, SERIES_RESULT:4 };
+let state = STATE.MENU, raceIndex = 1;
+let seriesPoints = puckMeta.map((p,i)=>({id:i+1, name:p.name, color:p.color, pts:0}));
+let pucks = [], obstacles = [];
+let gameClock = 0, finishedCount = 0, firstFinishTime = null;
+const keys = { left:false, right:false, up:false };
+addEventListener('keydown', e=>{ if(state!==STATE.RUN) return; if(e.key==='ArrowLeft')keys.left=true; if(e.key==='ArrowRight')keys.right=true; if(e.key==='ArrowUp')keys.up=true; });
+addEventListener('keyup', e=>{ if(state!==STATE.RUN) return; if(e.key==='ArrowLeft')keys.left=false; if(e.key==='ArrowRight')keys.right=false; if(e.key==='ArrowUp')keys.up=false; });
+
+// ======= 背景（画像 or フェイルバック）=======
+function drawBG(){
+  const W=cv.clientWidth, H=cv.clientHeight;
+  if(bgOK && bgImg.complete && bgImg.width>0){
+    const scale = W / bgImg.width;
+    const tileH = Math.max(1, Math.round(bgImg.height * scale));
+    const off = ((track.scroll % tileH) + tileH) % tileH;
+    for(let y=-off; y<H+tileH; y+=tileH){ ctx.drawImage(bgImg, 0, y, W, tileH); }
+  }else{
+    const g=ctx.createLinearGradient(0,0,0,H);
+    g.addColorStop(0,'#9adcf0'); g.addColorStop(1,'#67c3dd');
+    ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+    ctx.fillStyle='rgba(0,0,0,.15)';
+    const sideW=Math.max(16, W*(1-track.widthRatio)/2);
+    ctx.fillRect(0,0,sideW,H); ctx.fillRect(W-sideW,0,sideW,H);
+  }
+}
+
+// ======= マスク（任意）=======
+let maskW=0, maskH=0, maskPixels=null;
+function bakeMask(){
+  if(!USE_COLOR_WALL || !bgImg.complete || !bgImg.width) return;
+  const W=cv.clientWidth;
+  maskW = W;
+  maskH = Math.max(1, Math.round(bgImg.height * (W / bgImg.width)));
+  const off = document.createElement('canvas');
+  off.width = maskW; off.height = maskH;
+  const octx = off.getContext('2d');
+  octx.drawImage(bgImg, 0, 0, maskW, maskH);
+  maskPixels = octx.getImageData(0,0,maskW,maskH);
+}
+function isIceColor(r,g,b){ const br=(r+g+b)/3; const bd=b-Math.max(r,g); return (bd>20)&&(br>110); }
+function isSolidAt(x, yWorld){
+  if(!USE_COLOR_WALL || !maskPixels) return false;
+  const y = Math.floor(((yWorld % maskH) + maskH) % maskH);
+  const ix = Math.floor(x);
+  if(ix<0 || ix>=maskW) return true;
+  const idx = (y*maskW + ix) * 4;
+  const r=maskPixels.data[idx], g=maskPixels.data[idx+1], b=maskPixels.data[idx+2], a=maskPixels.data[idx+3];
+  if(a<10) return true;
+  return !isIceColor(r,g,b);
+}
+
+// ======= ヘルパー =======
+function corridorBounds(){
+  const W=cv.clientWidth, trackW=W*track.widthRatio, x0=(W-trackW)/2;
+  const safePad = 26;
+  return { left: x0 + safePad, right: x0 + trackW - safePad };
+}
+function rectOverlap(a,b, pad=20){ // ← 重なり厳しめ
+  return (a.x < b.x + b.w + pad) && (a.x + a.w + pad > b.x) &&
+         (a.y < b.y + b.h + pad) && (a.y + a.h + pad > b.y);
+}
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+
+// 非重複で配置（中央寄りバイアス）
+function tryPlace(objs, cand, tries=60){
+  const {left, right} = corridorBounds();
+  const width = right - left;
+  const centralL = left + width*0.20;   // 端から20%は避ける
+  const centralR = right - width*0.20;
+  cand.x = clamp(cand.x ?? (centralL + Math.random()*(centralR - cand.w - centralL + centralL)), centralL, centralR - cand.w);
+  for(let t=0;t<tries;t++){
+    let ok=true;
+    for(const o of objs){ if(rectOverlap(o, cand, 18)) { ok=false; break; } }
+    if(ok){ objs.push({...cand}); return true; }
+    // 中央寄りからランダムウォーク
+    const step = 28;
+    const dir = (Math.random()<0.5?-1:1);
+    cand.x = clamp(cand.x + dir*(Math.random()*step), centralL, centralR - cand.w);
+    cand.y += (Math.random()*18-9);
+  }
+  return false;
+}
+
+// ゴミ箱の「振れ幅全域」で非重複を保証
+function swingOverlapAABB(baseX, w, amp){
+  const minX = baseX - amp;
+  const maxX = baseX + w + amp;
+  return {x:minX, y:0, w:(maxX-minX), h:0}; // y,hは後で埋める
+}
+function placeSweeper(objs, y, w, h, ampWant, speedTier){
+  const {left, right} = corridorBounds();
+  const width = right - left;
+  const centralL = left + width*0.20;
+  const centralR = right - width*0.20 - w;
+  if(centralR <= centralL) return false;
+
+  // ゆっくり速度（ご要望）
+  const speedSet = { slow:0.4, normal:0.6, fast:0.8 };
+  const speed = speedSet[speedTier] || speedSet.normal;
+
+  // 何度かトライ：振れ幅全域AABBと既存物体のAABBが重ならないように
+  for(let t=0;t<60;t++){
+    const baseX = clamp(centralL + Math.random()*(centralR-centralL), centralL, centralR);
+    const amp   = ampWant * (0.9 + Math.random()*0.2); // ±10%揺らぎ
+    const sweep = swingOverlapAABB(baseX, w, amp);
+    sweep.y = y; sweep.h = h;
+
+    let ok=true;
+    for(const o of objs){
+      if(rectOverlap(sweep, o, 10)){ ok=false; break; }
+    }
+    if(ok){
+      const ob = {type:'gomi', x:baseX, y:y, w:w, h:h, phase:Math.random()*6,
+                  amp:amp, baseX:baseX, speed:speed};
+      // 将来の移動で端や障害物に入らないよう、許容x範囲を保存
+      ob.minX = Math.max(baseX - amp, centralL);
+      ob.maxX = Math.min(baseX + amp, centralR);
+      objs.push(ob);
+      return true;
+    }
+  }
+  return false;
+}
+
+// ======= 障害物生成 =======
+function buildObstacles(){
+  obstacles.length=0;
+  const {left:safeL, right:safeR} = corridorBounds();
+  const width = safeR - safeL;
+  const centralL = safeL + width*0.20;
+  const centralR = safeR - width*0.20;
+
+  // --- 前半〜中盤：中央寄りでジグザグ、列間隔ランダム ---
+  let y = track.startY - 180;
+  const big = ()=>({w:210+Math.random()*26, h:150+Math.random()*22});
+  const rows = Math.max(3, DIFF.SQUEEZE_ROWS + 1);
+  for(let r=0; r<rows; r++){
+    const L = big(), R = big();
+    const freeRatio = 0.86 + Math.random()*0.12; // 0.86〜0.98
+    const freeW = width * freeRatio;
+
+    // 端に寄らないよう中央帯にバイアス
+    const bandL = centralL + (width - freeW)*0.5;
+    const bandR = centralR - (width - freeW)*0.5;
+
+    const leftX  = clamp(bandL - (L.w-30*Math.random()), centralL, centralR - L.w);
+    const rightX = clamp(bandR - R.w + (30*Math.random()), centralL, centralR - R.w);
+
+    tryPlace(obstacles,{type:'contena',x:leftX ,y:y,w:L.w ,h:L.h});
+    tryPlace(obstacles,{type:'contena',x:rightX,y:y,w:R.w,h:R.h});
+
+    // たまに中央にも単体（難所づくり）※端に寄らない
+    if(Math.random()<0.35){
+      const C = big();
+      const cx = clamp((centralL+centralR-C.w)/2 + (Math.random()*120-60), centralL, centralR - C.w);
+      tryPlace(obstacles,{type:'contena',x:cx,y:y-90-(Math.random()*40),w:C.w*0.78,h:C.h*0.9});
+    }
+
+    y -= 170 + Math.random()*50;
+  }
+
+  // --- ゴミ箱：小さめ・大振幅・ゆっくり、中央帯のみでスイング全域非重複 ---
+  const TOTAL_GOMI = DIFF.GOMI;
+  const gW=60, gH=75;
+  const AMP_MIN=180, AMP_MAX=260;
+  const yMin = track.finishY+260, yMax = track.startY-200;
+  for(let i=0;i<TOTAL_GOMI;i++){
+    const gy = yMax - Math.random()*(yMax-yMin);
+    const amp = AMP_MIN + Math.random()*(AMP_MAX-AMP_MIN);
+    const tier = (Math.random()<0.5)? 'slow' : (Math.random()<0.75?'normal':'fast');
+    placeSweeper(obstacles, gy, gW, gH, amp, tier);
+  }
+
+  // --- 終盤強化：ゴール前 300〜900px（蛇行レーン＋横断ゴミ箱） ---
+  const endTop = track.finishY + 900;
+  const endBot = track.finishY + 300;
+  let ey = endTop;
+  const endRows = 3 + (Math.random()<0.6?1:0);
+  for(let i=0;i<endRows;i++){
+    const B = big();
+    const wiggle = (i%2===0? -1:1) * (60 + Math.random()*80);
+    const ex = clamp((centralL + centralR - B.w)/2 + wiggle, centralL, centralR - B.w);
+    tryPlace(obstacles, {type:'contena', x:ex, y:ey, w:B.w*1.05, h:B.h*1.05});
+    ey -= 160 + Math.random()*30;
+  }
+  const endBins = 2 + (Math.random()<0.5?1:0);
+  for(let k=0;k<endBins;k++){
+    const gy = endBot + (k+0.5)*( (endTop-endBot)/(endBins+1) );
+    const amp = AMP_MAX + 40 + Math.random()*40;
+    placeSweeper(obstacles, gy, gW, gH, amp, (k%2===0?'slow':'normal'));
+  }
+}
+
+// ======= スタート配置（密集横一列） =======
+function resetPucks(){
+  pucks.length=0;
+  const W=cv.clientWidth, trackW=W*track.widthRatio, x0=(W-trackW)/2;
+  const band = trackW*0.55, xL = x0 + (trackW-band)/2, gap = (band - PUCK_R*2) / 7;
+  const y0  = track.startY;
+  for(let i=0;i<8;i++){
+    const m=puckMeta[i], jitter = (Math.random()*8-4);
+    const x = xL + PUCK_R + gap*i + jitter;
+    pucks.push({ id:i+1, name:m.name, color:m.color, img:m.img, x, y:y0, vx:0, vy:-BASE_SPEED, speed:BASE_SPEED, finished:false, finishTime:0, stuckTimer:0 });
+  }
+}
+
+// ======= 物理 =======
+const clamp01=(v,a,b)=>Math.max(a,Math.min(b,v));
+
+function colorWallResolve(p){
+  if(!USE_COLOR_WALL || !maskPixels) return;
+  const samples = 12;
+  let hit=0, nx=0, ny=0;
+  for(let k=0;k<samples;k++){
+    const ang = (Math.PI*2/samples)*k;
+    const sx = p.x + Math.cos(ang)*PUCK_R;
+    const sy = p.y + Math.sin(ang)*PUCK_R;
+    const y = Math.floor(((sy % maskH) + maskH) % maskH);
+    const ix = Math.floor(sx);
+    if(ix<0 || ix>=maskW) { hit++; nx += Math.cos(ang); ny += Math.sin(ang); continue; }
+    const idx = (y*maskW + ix) * 4;
+    const r=maskPixels.data[idx], g=maskPixels.data[idx+1], b=maskPixels.data[idx+2], a=maskPixels.data[idx+3];
+    const solid = (a<10) || !isIceColor(r,g,b);
+    if(solid){ hit++; nx += Math.cos(ang); ny += Math.sin(ang); }
+  }
+  if(hit>0){
+    const len = Math.hypot(nx,ny) || 1, nX=nx/len, nY=ny/len;
+    p.x -= nX*2.0; p.y -= nY*2.0;
+    const vDotN = p.vx*nX + p.vy*nY;
+    p.vx = p.vx - (1.6)*vDotN*nX;
+    p.vy = p.vy - (1.6)*vDotN*nY - 0.2;
+    p.vx = clamp01(p.vx,-SPEED_CAP,SPEED_CAP);
+    p.vy = clamp01(p.vy,-SPEED_CAP,SPEED_CAP);
+  }
+}
+
+function circleRectResolve(p, ob){
+  // ゴミ箱の横移動：将来の重なり回避のため minX〜maxX の範囲でのみ振る
+  if(ob.type==='gomi'){
+    ob.phase += (ob.speed||0.6) * (1/60);
+    const nx = (ob.baseX||ob.x) + Math.sin(ob.phase) * (ob.amp||50);
+    // 許容範囲でクランプ（配置時に計算済み）
+    if(ob.minX!==undefined && ob.maxX!==undefined){
+      ob.x = clamp(nx, ob.minX, ob.maxX);
+    }else{
+      const {left, right} = corridorBounds();
+      ob.x = clamp(nx, left, right - ob.w);
+    }
+  }
+
+  // 円-矩形衝突
+  const nx=Math.max(ob.x, Math.min(p.x, ob.x+ob.w));
+  const ny=Math.max(ob.y, Math.min(p.y, ob.y+ob.h));
+  const dx=p.x-nx, dy=p.y-ny, d2=dx*dx+dy*dy, rr=PUCK_R*PUCK_R;
+  if(d2<rr){
+    if(Math.abs(dx) > Math.abs(dy)){
+      if(dx>0) p.x = ob.x + ob.w + PUCK_R + 0.6; else p.x = ob.x - PUCK_R - 0.6;
+      p.vx *= -0.98;
+    }else{
+      if(dy>0) p.y = ob.y + ob.h + PUCK_R + 0.6;
+      else p.y = ob.y - PUCK_R - 0.6;
+      p.vy *= -0.98;
+    }
+    p.vx = clamp01(p.vx,-SPEED_CAP,SPEED_CAP);
+    p.vy = clamp01(p.vy,-SPEED_CAP,SPEED_CAP);
+  }
+}
+
+function collidePucks(p,q){
+  const dx=q.x-p.x, dy=q.y-p.y;
+  const dist=Math.hypot(dx,dy); if(dist===0) return;
+  const minDist=PUCK_R*2;
+  if(dist<minDist){
+    const nx=dx/dist, ny=dy/dist, overlap=(minDist-dist)*2.0;
+    p.x-=nx*overlap*0.5; p.y-=ny*overlap*0.5;
+    q.x+=nx*overlap*0.5; q.y+=ny*overlap*0.5;
+    const e=1.12, vp=p.vx*nx + p.vy*ny, vq=q.vx*nx + q.vy*ny;
+    const vp_after = vq*e, vq_after = vp*e;
+    const tx=-ny, ty=nx, vpt=p.vx*tx + p.vy*ty, vqt=q.vx*tx + q.vy*ty, rand=(Math.random()-0.5)*3.0;
+    p.vx = vp_after*nx + (vpt+rand)*tx; p.vy = vp_after*ny + (vpt+rand)*ty;
+    q.vx = vq_after*nx + (vqt-rand)*tx; q.vy = vq_after*ny + (vqt-rand)*ty;
+    const cap=v=>clamp01(v,-SPEED_CAP,SPEED_CAP);
+    p.vx=cap(p.vx); p.vy=cap(p.vy); q.vx=cap(q.vx); q.vy=cap(q.vy);
+  }
+}
+
+// ======= CPU =======
+function corridorFreePreference(p){
+  const W=cv.clientWidth, trackW=W*track.widthRatio, x0=(W-trackW)/2;
+  const leftBound=x0+PUCK_R, rightBound=x0+trackW-PUCK_R;
+  const aheadY = p.y - 180, bandH=150;
+  let freeL=0, freeR=0;
+  for(const ob of obstacles){
+    if(ob.y+ob.h < aheadY-bandH || ob.y > aheadY+bandH) continue;
+    if(ob.x < p.x){ freeL += Math.max(0, (p.x - ob.x - ob.w)); }
+    if((ob.x+ob.w) > p.x){ freeR += Math.max(0, (ob.x - p.x)); }
+  }
+  freeL -= Math.max(0, (p.x - leftBound));
+  freeR -= Math.max(0, (rightBound - p.x));
+  return (freeR - freeL);
+}
+function aiControl(p, dt){
+  const pref = corridorFreePreference(p);
+  let steer = Math.sign(pref);
+  const W=cv.clientWidth, center=W/2;
+  steer += (p.x<center? 0.35 : -0.35);
+  if(Math.random()<0.012) steer += (Math.random()-0.5)*0.7;
+  if(Math.abs(p.vx)<0.05 && Math.abs(p.vy)<0.5) p.stuckTimer+=dt; else p.stuckTimer=0;
+  if(p.stuckTimer>0.5){ steer += (Math.random()<0.5? -1:1)*1.8; p.vx += (Math.random()<0.5? -1:1)*0.7; p.stuckTimer=0.2; }
+  p.vx += steer * 1.4 * dt;
+}
+
+// ======= Flow =======
+function setDiff(key){ DIFF = DIFFS[key] || DIFFS.hard; elDiffName.textContent = (key==='easy'?'EASY':key==='normal'?'NORMAL':'HARD'); }
+function startRaceCountdown(){
+  gameClock=0; finishedCount=0; firstFinishTime=null;
+  resetPucks(); buildObstacles();
+  const targetStart = pucks[0].y - cv.clientHeight*0.65;
+  track.scroll = Math.max(track.finishY-80, Math.min(targetStart, track.startY));
+  countBox.textContent='3'; countBox.classList.remove('hidden'); state=STATE.COUNT;
+  let step=3;
+  const tick=()=>{ if(state!==STATE.COUNT) return;
+    step--;
+    if(step>0){ countBox.textContent=String(step); setTimeout(tick,800); }
+    else{ countBox.textContent='GO!'; setTimeout(()=>{countBox.classList.add('hidden'); state=STATE.RUN; overlay.classList.add('hidden'); },500); }
+  };
+  setTimeout(tick,800);
+}
+function safeStart(){ try{ setDiff(diffSel.value);}catch(e){} menu.classList.add('hidden'); startRaceCountdown(); }
+
+// どこでも開始
+overlay.addEventListener('pointerdown', ()=>{ if(state===STATE.MENU){ safeStart(); }});
+if (btnYes){
+  btnYes.addEventListener('click', (e)=>{ e.stopPropagation(); safeStart(); });
+  setTimeout(()=>{ try{ btnYes.focus({preventScroll:true}); }catch(_){} }, 0);
+}
+addEventListener('keydown', (e)=>{ if(state===STATE.MENU && (e.key==='Enter' || e.key===' ')){ e.preventDefault(); safeStart(); }});
+
+if (btnRestart) btnRestart.onclick = ()=>{
+  seriesPoints.forEach(s=>s.pts=0);
+  raceIndex=1; elRaceNo.textContent=raceIndex;
+  seriesResult.classList.add('hidden');
+  menu.classList.remove('hidden');
+  overlay.classList.remove('hidden');
+  state=STATE.MENU;
+};
+if (btnNextRace) btnNextRace.onclick = ()=>{
+  raceResult.classList.add('hidden');
+  raceIndex++; elRaceNo.textContent=raceIndex;
+  startRaceCountdown();
+};
+if (btnShowSeries) btnShowSeries.onclick = ()=>{
+  raceResult.classList.add('hidden');
+  showSeriesResult();
+};
+
+// ======= ループ =======
+let last=performance.now();
+requestAnimationFrame(function loop(now){
+  const dt=Math.min(0.033,(now-last)/1000); last=now;
+  if(state===STATE.RUN){ gameClock+=dt; stepGame(dt); elTime.textContent=gameClock.toFixed(1); }
+  draw(); requestAnimationFrame(loop);
+});
+
+function forceFinishRemaining(){
+  const remain = pucks.filter(p=>!p.finished).sort((a,b)=>a.y-b.y);
+  let add=0; for(const p of remain){ p.finished=true; p.finishTime = gameClock + (add+=0.01); finishedCount++; }
+}
+
+function stepGame(dt){
+  const W=cv.clientWidth, trackW=W*track.widthRatio, xL=(W-trackW)/2 + PUCK_R, xR=(W+trackW)/2 - PUCK_R;
+
+  for(let i=0;i<pucks.length;i++){
+    const p=pucks[i]; if(p.finished) continue;
+
+    p.speed = Math.min(MAX_SPEED, p.speed + ACCEL*dt);
+    let vy = -p.speed * ((i===0 && keys.up)? BOOST : 1);
+
+    if(i===0){ if(keys.left) p.vx -= STEER*dt; if(keys.right) p.vx += STEER*dt; }
+    else { aiControl(p, dt); }
+
+    p.vx *= (1 - FRICTION);
+    p.vy = vy;
+    p.x  += p.vx;
+    p.y  += p.vy;
+
+    // 左右の物理壁（強反発＋少し上へ）
+    if(p.x < xL){ p.x=xL; p.vx = Math.abs(p.vx)*1.2 + 0.8; p.vy -= 0.3; }
+    if(p.x > xR){ p.x=xR; p.vx = -Math.abs(p.vx)*1.2 - 0.8; p.vy -= 0.3; }
+
+    colorWallResolve(p);
+
+    for(const ob of obstacles) circleRectResolve(p, ob);
+
+    if(p.y <= track.finishY && !p.finished){
+      p.finished=true; p.finishTime=gameClock; finishedCount++;
+      if(firstFinishTime===null) firstFinishTime=gameClock;
+      if(i===0){ finishFlash.classList.remove('hidden'); setTimeout(()=>finishFlash.classList.add('hidden'),1500); }
+    }
+  }
+
+  for(let i=0;i<pucks.length;i++) for(let j=i+1;j<pucks.length;j++) collidePucks(pucks[i],pucks[j]);
+
+  if(firstFinishTime!==null && (gameClock-firstFinishTime)>=GRACE_AFTER_FIRST) forceFinishRemaining();
+  if(gameClock>=HARD_TIME_LIMIT) forceFinishRemaining();
+
+  const target = Math.max(track.finishY-80, Math.min(pucks[0].y - cv.clientHeight*0.65, track.startY));
+  track.scroll += (target - track.scroll) * 0.14;
+
+  const prog = (1 - (pucks[0].y - track.finishY) / (track.startY - track.finishY));
+  elProg.textContent = Math.max(0, Math.min(100, prog*100)).toFixed(0)+'%';
+
+  if(finishedCount===pucks.length && state===STATE.RUN){ setTimeout(()=>showRaceResult(), 300); state=STATE.RACE_RESULT; }
+}
+
+// ======= 描画 =======
+function draw(){
+  const W=cv.clientWidth,H=cv.clientHeight;
+  ctx.clearRect(0,0,W,H);
+  drawBG();
+
+  ctx.save();
+  ctx.translate(0, -track.scroll);
+
+  // フィニッシュライン
+  ctx.fillStyle='rgba(255,255,255,.7)';
+  ctx.fillRect(W*0.19, track.finishY-2, W*0.62, 4);
+
+  // 障害物
+  for(const ob of obstacles){
+    if(ob.type==='contena'){
+      if(contOK && contenaImg.complete) ctx.drawImage(contenaImg, ob.x, ob.y, ob.w, ob.h);
+      else { ctx.fillStyle='#9aa3b2'; ctx.fillRect(ob.x,ob.y,ob.w,ob.h); }
+    }else{
+      if(gomOK && gomiImg.complete) ctx.drawImage(gomiImg, ob.x, ob.y, ob.w, ob.h);
+      else { ctx.fillStyle='#6b7280'; ctx.fillRect(ob.x,ob.y,ob.w,ob.h); }
+    }
+  }
+
+  // パック
+  for(const p of pucks){
+    ctx.save(); ctx.translate(p.x,p.y);
+    const size=PUCK_R*2;
+    if(p.img && p.img.complete && p.img.width>0) ctx.drawImage(p.img, -size/2, -size/2, size, size);
+    else { ctx.fillStyle=p.color; ctx.beginPath(); ctx.arc(0,0,PUCK_R,0,Math.PI*2); ctx.fill(); }
+    ctx.restore();
+  }
+
+  ctx.restore();
+}
+
+// ======= リザルト =======
+function showRaceResult(){
+  const sorted=[...pucks].sort((a,b)=>a.finishTime-b.finishTime);
+  rankList.innerHTML='';
+  sorted.forEach((p,i)=>{ const add=POINTS[i]||0; const sp=seriesPoints.find(s=>s.id===p.id); sp.pts+=add;
+    const li=document.createElement('li'); li.textContent=`${i+1}. ${p.name}  ${p.finishTime.toFixed(2)}s  (+${add})`; li.style.color=p.color; rankList.appendChild(li); });
+  btnNextRace.classList.toggle('hidden', raceIndex>=SERIES_TOTAL);
+  btnShowSeries.classList.toggle('hidden', raceIndex<SERIES_TOTAL);
+  raceResult.classList.remove('hidden');
+}
+function showSeriesResult(){
+  const final=[...seriesPoints].sort((a,b)=>b.pts-a.pts);
+  seriesList.innerHTML='';
+  final.forEach((s,i)=>{ const li=document.createElement('li'); li.textContent=`${i+1}. ${s.name}   ${s.pts} pts`; li.style.color=s.color; });
+  seriesResult.classList.remove('hidden'); state=STATE.SERIES_RESULT;
+}
+
+// 初期HUD
+elRaceNo.textContent = raceIndex;
+elDiffName.textContent = "HARD";
+})();
+</script>
+</body>
+</html>
