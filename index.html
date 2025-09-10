@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no" />
+<title>MOB GAME HUB</title>
+<meta name="theme-color" content="#0b0c10" />
+<style>
+  :root{
+    --bg:#0b0c10; --panel:#141822; --panel2:#1a2030; --fg:#e9eef7; --dim:#9aa3b2; --accent:#13c4ff; --accent2:#ff3e7f;
+    --btn:#20283a; --btnActive:#2b3550; --ok:#25d366; --warn:#ffb020;
+  }
+  /* iOSのアドレスバーで高さが変わる対策 */
+  html { height: -webkit-fill-available; }
+  body {
+    margin:0; background:linear-gradient(160deg,#0b0c10 0%, #0c111a 60%, #0b0c10 100%);
+    color:var(--fg); font-family: "Segoe UI", "Hiragino Sans", "Yu Gothic", system-ui, -apple-system, Roboto, sans-serif;
+    min-height:100vh; min-height:-webkit-fill-available;
+  }
+  * { box-sizing:border-box; }
+  .wrap{
+    position:fixed; inset:0; display:flex; flex-direction:column; padding: max(16px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(16px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
+    gap:16px;
+  }
+  .frame{
+    flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:28px;
+    border-radius:24px; background: radial-gradient(1200px 600px at 50% 0%, #182033 0%, transparent 60%) , linear-gradient(180deg, var(--panel) 0%, var(--panel2) 100%);
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,.04), 0 20px 60px rgba(0,0,0,.55);
+    padding:24px;
+  }
+  .logo{
+    user-select:none; -webkit-user-select:none;
+    font-weight:800; letter-spacing:.04em; text-align:center;
+    display:flex; flex-direction:column; gap:8px; align-items:center;
+  }
+  .logo .main{
+    font-size: clamp(28px, 6vw, 56px);
+    line-height:1.05;
+    text-shadow: 0 0 0 transparent, 0 3px 24px rgba(19,196,255,.28);
+  }
+  .logo .sub{
+    font-size: clamp(12px, 2.4vw, 16px);
+    color:var(--dim);
+  }
+  .menu{
+    width:min(680px, 94vw);
+    display:grid; grid-template-columns:1fr; gap:14px;
+  }
+  .btn{
+    appearance:none; border:none; width:100%;
+    background:linear-gradient(180deg, var(--btn) 0%, #232c42 100%);
+    color:var(--fg); padding:18px 20px; border-radius:18px;
+    font-size: clamp(16px, 3.8vw, 20px); font-weight:700; letter-spacing:.02em;
+    box-shadow: 0 2px 0 #0c1220, 0 14px 30px rgba(0,0,0,.35);
+    display:flex; align-items:center; justify-content:space-between; gap:12px;
+    transition: transform .06s ease, box-shadow .12s ease, background .12s ease;
+    outline:none;
+  }
+  .btn:focus-visible { box-shadow: 0 0 0 3px rgba(19,196,255,.45); }
+  .btn:hover{ transform: translateY(-2px); }
+  .btn:active{ transform: translateY(0); background:linear-gradient(180deg, var(--btnActive) 0%, #2a3550 100%); }
+
+  .tag{ font-size:.8em; color:#cbd6ff; opacity:.9; }
+  .pill{
+    padding:.42em .76em; border-radius:999px; font-size:.8em; font-weight:800;
+    background:#152238; color:#bfe9ff; border:1px solid rgba(19,196,255,.25);
+  }
+  .pill.ok{ background: #112a1e; color:#b9ffd6; border-color: rgba(37,211,102,.3); }
+  .pill.warn{ background:#2a2111; color:#ffe3b6; border-color: rgba(255,176,32,.35); }
+  .right{ display:flex; align-items:center; gap:10px; }
+  .hint{
+    text-align:center; color:var(--dim); font-size:13px; opacity:.9;
+  }
+  .footer{
+    display:flex; justify-content:space-between; align-items:center; gap:8px; opacity:.9; color:var(--dim);
+    font-size:12px; padding:0 2px;
+  }
+  .kbd{ background:#111722; color:#cde4ff; border:1px solid #27314a; border-bottom-width:2px; padding:.1em .5em; border-radius:8px; font-weight:700; }
+  .ver{ color:#6f7d95; }
+  /* 小さめ画面でメニューを2段にしたい場合は以下を有効化
+  @media (min-width:520px){
+    .menu{ grid-template-columns:1fr 1fr; }
+  }
+  */
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="frame" role="application" aria-label="ゲーム選択メインメニュー">
+    <div class="logo" aria-hidden="true">
+      <div class="main">MOB GAME HUB</div>
+      <div class="sub">遊ぶゲームを選んでください</div>
+    </div>
+
+    <div id="continueBox" class="menu" style="display:none">
+      <button id="continueBtn" class="btn" data-link="">
+        <div>
+          <div>前回のゲームを続ける</div>
+          <div class="tag">Last Played</div>
+        </div>
+        <div class="right">
+          <span id="continueName" class="pill ok">-</span>
+        </div>
+      </button>
+    </div>
+
+    <div class="menu">
+      <button class="btn" data-link="hoke.html" data-name="HOKE">
+        <div>
+          <div>HOKE をプレイ</div>
+          <div class="tag">ファイル: <b>hoke.html</b></div>
+        </div>
+        <div class="right">
+          <span class="pill">NEW</span>
+        </div>
+      </button>
+
+      <button class="btn" data-link="test.html" data-name="TEST">
+        <div>
+          <div>TEST をプレイ</div>
+          <div class="tag">ファイル: <b>test.html</b></div>
+        </div>
+        <div class="right">
+          <span class="pill warn">BETA</span>
+        </div>
+      </button>
+    </div>
+
+    <div class="hint">
+      使い方：ボタンをタップ / Enter で決定・↑↓で移動・<span class="kbd">H</span> / <span class="kbd">T</span> のショートカットも可。<br>
+      直下に <b>hoke.html</b> と <b>test.html</b> を置いてください（同じリポジトリ直下）。
+    </div>
+  </div>
+
+  <div class="footer">
+    <div>© MOB ARTIST</div>
+    <div class="ver">v1.0</div>
+  </div>
+</div>
+
+<script>
+  // ===== 使い勝手向上：最後に遊んだゲームを保存・復帰 =====
+  const LS_KEY = "mobhub:lastGame";
+  const btns = [...document.querySelectorAll(".btn[data-link]")];
+  btns.forEach(btn=>{
+    btn.addEventListener("click", ()=>{
+      const link = btn.dataset.link;
+      const name = btn.dataset.name || link;
+      try { localStorage.setItem(LS_KEY, JSON.stringify({link, name, t: Date.now()})); } catch(e){}
+      location.href = link;
+    });
+  });
+
+  // 前回続きボタン
+  try{
+    const saved = JSON.parse(localStorage.getItem(LS_KEY) || "null");
+    if(saved && saved.link){
+      const box = document.getElementById("continueBox");
+      const cbtn = document.getElementById("continueBtn");
+      const cname = document.getElementById("continueName");
+      cname.textContent = saved.name || saved.link;
+      cbtn.dataset.link = saved.link;
+      cbtn.addEventListener("click", ()=> location.href = saved.link);
+      box.style.display = "";
+    }
+  }catch(e){}
+
+  // ===== キー操作（↑↓/Enter と H/T ショートカット）=====
+  let focusIdx = 0;
+  const focusBtn = (idx)=>{
+    focusIdx = (idx+btns.length)%btns.length;
+    btns[focusIdx].focus({preventScroll:true});
+  };
+  focusBtn(0);
+  window.addEventListener("keydown", (ev)=>{
+    const k = ev.key.toLowerCase();
+    if(k === "arrowdown"){ ev.preventDefault(); focusBtn(focusIdx+1); }
+    else if(k === "arrowup"){ ev.preventDefault(); focusBtn(focusIdx-1); }
+    else if(k === "enter" || k === " "){ ev.preventDefault(); btns[focusIdx].click(); }
+    else if(k === "h"){ document.querySelector('.btn[data-link="hoke.html"]')?.click(); }
+    else if(k === "t"){ document.querySelector('.btn[data-link="test.html"]')?.click(); }
+  });
+
+  // ===== iOS で 100vh 問題の微補正（任意）=====
+  const setVh = ()=> {
+    const vh = window.innerHeight * 0.01;
+    document.documentElement.style.setProperty('--vh', `${vh}px`);
+  };
+  setVh();
+  window.addEventListener('resize', setVh);
+</script>
+</body>
+</html>
