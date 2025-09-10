@@ -3,21 +3,20 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no" />
-<title>MOB CHALLENGE – 1st Stage (fine guard, single countdown, fullscreen race)</title>
+<title>MOB CHALLENGE – 1st Stage (power→announce→standby, balls visible)</title>
 <style>
   :root{
-    /* ga.png の白面に合わせた内側余白（必要なら±0.5%で微調整） */
+    /* === ゲージ（枠ga.pngの白面に合わせる） === */
     --gL: 5.2%;
     --gR: 5.2%;
     --gT: 18%;
     --gB: 18%;
-    /* マスコット保護：白面の右側を“ほんの少し”だけ追加で削る */
-    --guard: 9.5%; /* ← 以前より 1.5% だけ増やしました（はみ出し防止） */
+    --guard: 9.5%; /* 右端のマスコット保護 */
 
-    /* レース画面（スマホ最適化） */
+    /* === レース（スマホ最適化） === */
     --laneBottom: 13vh;   /* レーン位置 */
-    --runnerVW: 10vw;     /* ボールの相対幅（小さめに） */
-    --cameraTarget: 0.40; /* 画面の何割の高さでロック（0=上端〜1=下端） */
+    --runnerVW: 9vw;      /* ボール幅（小さめ） */
+    --cameraTarget: 0.40; /* 画面の何割高さで追従 */
   }
 
   html,body{margin:0;height:100%;background:#fff;font-family:system-ui,-apple-system,Segoe UI,Roboto,"Hiragino Sans","Yu Gothic",sans-serif;}
@@ -28,29 +27,17 @@
   #top{position:fixed;inset:0 0 auto 0;height:44px;display:flex;align-items:center;justify-content:space-between;padding:0 12px;background:#fff;border-bottom:1px solid #e5e7eb;z-index:30}
   #hint{font-size:12px;opacity:.7}
 
-  /* ===== ゲージ ===== */
+  /* ===== ゲージ画面 ===== */
   #gaugeStage{position:fixed;left:0;right:0;top:44px;bottom:10.5vh;display:flex;flex-direction:column;gap:1vh;padding:1vh;background:#f4f5f7}
   .row{position:relative;flex:1 1 auto;min-height:12vh;display:grid;place-items:center}
   .wrap{position:relative;width:min(94vw,820px);height:100%;display:grid;place-items:center}
   .label{position:absolute;top:.6vh;left:50%;transform:translate(-50%,-100%);font-size:clamp(10px,3.4vw,12px);background:#fff;padding:.3em .8em;border-radius:999px;border:1px solid #e5e7eb}
 
-  /* 下：空 */
   .base{position:absolute;inset:0;background:url('ga.png') center/contain no-repeat;z-index:1}
-
-  /* 白面（右側は guard を追加で削る＝マスコットに一切かからない） */
-  .inner{
-    position:absolute;
-    inset:var(--gT) calc(var(--gR) + var(--guard)) var(--gB) var(--gL);
-    z-index:2; overflow:hidden; border-radius:8px;
-  }
-  /* tamax を左→右で露出（白面の中だけ） */
+  .inner{position:absolute;inset:var(--gT) calc(var(--gR) + var(--guard)) var(--gB) var(--gL);z-index:2;overflow:hidden;border-radius:8px}
   .reveal{position:absolute;left:0;top:0;height:100%;width:0;overflow:hidden}
   .reveal>img{height:100%;width:100%;object-fit:cover;display:block}
-  /* カーソル（白面内のみ移動） */
-  .cursor{
-    position:absolute;width:3px;border-radius:2px;background:#111;box-shadow:0 0 0 1px #fff;z-index:3;
-    top:var(--gT); bottom:var(--gB); left:var(--gL);
-  }
+  .cursor{position:absolute;width:3px;border-radius:2px;background:#111;box-shadow:0 0 0 1px #fff;z-index:3;top:var(--gT);bottom:var(--gB);left:var(--gL)}
   .row.inactive .cursor{opacity:.35;filter:grayscale(1)}
   #tip{font-size:clamp(10px,3.4vw,12px);opacity:.8;text-align:center}
 
@@ -64,28 +51,28 @@
   .icon img{width:clamp(36px,8.2vw,60px);height:auto;image-rendering:pixelated;filter:drop-shadow(0 2px 5px rgba(0,0,0,.18))}
   .icon span{font-size:clamp(9px,3vw,11px);opacity:.9}
 
-  /* ===== レース（フルスクリーンで背景を“映し切る”） ===== */
+  /* ===== レース（背景をフルで映す＆ボール小さめ） ===== */
   #worldWrap{position:fixed;left:0;right:0;top:44px;bottom:0;display:none}
   #world{
-    position:absolute;left:0;right:0;top:0; /* 高さはJSで設定 */
-    /* 横は常に端まで見切れないよう 100% 幅、縦はスクロールで repeat */
+    position:absolute;left:0;right:0;top:0; /* 高さはJSで与える */
     background-image:url('geji.png');
     background-repeat:repeat-y;
     background-position:center top;
-    background-size:100% auto;  /* ← 幅を基準に“映し切る” */
+    background-size:100% auto;  /* 横幅を画面にフィット＝“映し切る” */
     will-change:transform;
+    z-index:10;
   }
   .goal{position:absolute;left:50%;top:10vh;transform:translateX(-50%);width:70vw;max-width:520px;height:9px;background:#ffd400;border-radius:6px;box-shadow:0 0 10px #ff0}
   .start{position:absolute;left:50%;bottom:var(--laneBottom);transform:translateX(-50%);width:56vw;max-width:420px;height:5px;background:#ff3e63;border-radius:3px;box-shadow:0 0 8px #f66}
-  #lane{position:absolute;left:0;right:0;bottom:var(--laneBottom);display:flex;gap:min(3vw,14px);justify-content:center}
+  #lane{position:absolute;left:0;right:0;bottom:var(--laneBottom);display:flex;gap:min(3vw,14px);justify-content:center;z-index:12}
   .runner{position:relative}
-  .runner img{width:min(var(--runnerVW),80px);image-rendering:pixelated;filter:drop-shadow(0 5px 10px rgba(0,0,0,.22))}
-  .name{position:absolute;left:50%;top:calc(100% + 4px);transform:translateX(-50%);font-size:clamp(9px,3vw,11px);background:rgba(255,255,255,.85);padding:2px 6px;border-radius:999px;border:1px solid #e5e7eb}
+  .runner img{width:min(var(--runnerVW),76px);image-rendering:pixelated;filter:drop-shadow(0 4px 8px rgba(0,0,0,.22))}
+  .name{position:absolute;left:50%;top:calc(100% + 4px);transform:translateX(-50%);font-size:clamp(9px,3vw,11px);background:rgba(255,255,255,.9);padding:2px 6px;border-radius:999px;border:1px solid #e5e7eb}
 
   #standbyHint{position:absolute;left:50%;bottom:calc(var(--laneBottom) + 7vh);transform:translateX(-50%);
-    background:rgba(255,255,255,.95);color:#111;padding:6px 10px;border-radius:10px;border:1px solid #e5e7eb;font-weight:700;display:none}
+    background:rgba(255,255,255,.95);color:#111;padding:6px 10px;border-radius:10px;border:1px solid #e5e7eb;font-weight:700;display:none;z-index:20}
 
-  /* オーバーレイ */
+  /* オーバーレイ（トースト/カウントダウン） */
   #ov{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(0,0,0,.18);backdrop-filter:blur(1px);z-index:50}
   #ov.show{display:flex}
   .toast{font-weight:900;font-size:min(12vw,56px);padding:.3em .7em;background:#fff;border:1px solid #e5e7eb;border-radius:14px;color:#111}
@@ -131,7 +118,7 @@
         <div class="cursor"></div>
       </div>
     </div>
-    <div id="tip">※ 右端は <b>--guard=9.5%</b> を追加で削っているので、マスコット側へはみ出しません。</div>
+    <div id="tip">※ 枠内だけで露出。右端は <b>--guard</b> 分削ってマスコットへはみ出しません。</div>
   </div>
 
   <!-- 下部：ホッケーボール -->
@@ -153,7 +140,7 @@
   <!-- スタート -->
   <div id="start">
     <div style="font-size:22px;font-weight:900;color:#111">MOB CHALLENGE</div>
-    <div style="opacity:.9;color:#111;font-size:14px">ゲージ3回 → スタンバイ → 3,2,1,GO!（下→上）</div>
+    <div style="opacity:.9;color:#111;font-size:14px">ゲージ3回 → パワー決定 → スタンバイ → 3,2,1,GO!（下→上）</div>
     <button id="btnStart">スタート</button>
   </div>
 
@@ -185,7 +172,8 @@ const CPU_SKILL={mean:.70,spread:.20};
 const laneBottomPx = (()=> {
   const v = getComputedStyle(document.documentElement).getPropertyValue('--laneBottom').trim();
   const m = v.match(/([\d.]+)vh/);
-  return m ? (parseFloat(m[1]) * Math.max(window.innerHeight, document.documentElement.clientHeight) / 100) : 120;
+  const H = Math.max(window.innerHeight, document.documentElement.clientHeight);
+  return m ? (parseFloat(m[1]) * H / 100) : 120;
 })();
 const WORLD={startY:laneBottomPx, goalY:2100, shotDur:3000};
 
@@ -204,22 +192,20 @@ const resultBox=document.getElementById('result'); const listEl=document.getElem
 const pucksBar=document.getElementById('pucksBar');
 
 /* 状態 */
-let phase='idle', idx=0, tPrev=0, cur=0, dir=1, speed=1.25;
+let phase='idle', idx=0, tPrev=0, cur=0, dir=1, speed=1.22;
 let runners=[];
 const human=PLAYERS[0]; human.values=[0,0,0];
 
-/* 再入防止フラグ（カウントダウン二重発火の根本対策） */
+/* 再入防止（カウントダウン重複対策） */
 let countdownStarted=false;
-let countdownTimer=null;
 
 /* Util */
 const clamp=(v,a,b)=>v<a?a:v>b?b:v;
 const lerp=(a,b,t)=>a+(b-a)*t;
 const ease=(t)=> (t<.5)?(2*t*t):(1-Math.pow(-2*t+2,2)/2);
 
-/* ===================== UI 構築 ===================== */
+/* ===== UI ===== */
 function setActive(i){ rows.forEach((r,k)=>r.classList.toggle('inactive',k!==i)); }
-
 function buildIcons(){
   pucksBar.innerHTML='';
   PLAYERS.forEach(p=>{
@@ -229,54 +215,65 @@ function buildIcons(){
   });
 }
 
-/* ゲージ適用：tamax を白面内で露出（右端は guard 手前まで） */
+/* ゲージ表示（tamax を白面内で露出） */
 function applyGauge(i,t){
   t = clamp(t,0,1);
   const inner = inners[i], rev = reveals[i], curEl=cursors[i];
   const rect = inner.getBoundingClientRect();
   const w = rect.width * t;
-
   rev.style.width = w + 'px';
   const img = rev.firstElementChild;
   img.style.width  = rect.width + 'px';
   img.style.height = '100%';
-
-  const cursorX = Math.min(w - 1.5, rect.width - 1.5); // 右端超え防止
+  const cursorX = Math.min(w - 1.5, rect.width - 1.5);
   curEl.style.left = `calc(var(--gL) + ${Math.max(0,cursorX)}px)`;
 }
 
-/* ===================== 入力 ===================== */
+/* ===== 入力 ===== */
 function stopGauge(){
   if(phase!=='gauge') return;
-  human.values[idx]=cur;
-  idx++;
+  human.values[idx]=cur; idx++;
   if(idx<=2){ setActive(idx); speed+=.28; }
   else{
-    phase='standby';
-    enterStandby().then(()=>{ if(!countdownStarted) startCountdown(); });
+    // ▼ ここで即座に“パワー決定→発射予告”を順に表示してから Standby へ
+    phase='announce';
+    (async ()=>{
+      await toast('パワーゲージ決定！', 850);
+      await toast('間もなくボール発射開始！', 950);
+      await enterStandby();             // ← スタンバイへ移動（横一列に並べる）
+      startCountdown();                 // ← ここでのみ開始（再入不可）
+    })();
   }
 }
 addEventListener('pointerdown', stopGauge, {passive:true});
 addEventListener('keydown', e=>{ if(e.code==='Space'){ e.preventDefault(); stopGauge(); }});
 
-/* ===================== フロー ===================== */
+/* ===== トースト ===== */
+function toast(text, ms){
+  return new Promise(res=>{
+    ovt.textContent=text; ov.classList.add('show');
+    setTimeout(()=>{ ov.classList.remove('show'); setTimeout(res,140); }, ms);
+  });
+}
+
+/* ===== スタンバイ（発射画面へ遷移） ===== */
 async function enterStandby(){
-  // CPU を不可視でプレイ
+  // CPU のゲージ値を確定（不可視でプレイ）
   PLAYERS.forEach(p=>{
     if(p!==human) p.values=[0,0,0].map(()=>clamp((CPU_SKILL.mean + (Math.random()*2-1)*CPU_SKILL.spread),0,1));
   });
 
-  // 背景の高さ＝ゴール＋画面高（最後まで追従できる）
-  const vh = Math.max(window.innerHeight, document.documentElement.clientHeight);
-  world.style.height = (WORLD.goalY + vh) + 'px';
+  // 背景の高さ＝ゴール＋画面高（最後まで追尾できる）
+  const H = Math.max(window.innerHeight, document.documentElement.clientHeight);
+  world.style.height = (WORLD.goalY + H) + 'px';
 
-  // 切替
+  // 画面切替
   document.getElementById('gaugeStage').style.display='none';
   worldWrap.style.display='block';
   standbyHint.style.display='block';
   world.style.transform='translate3d(0,0,0)';
 
-  // 横一列整列（小さめ）
+  // 横一列へ（ボールが“映らない”問題対策：z-indexとサイズを厳密指定）
   lane.innerHTML='';
   runners=PLAYERS.map(p=>{
     const r=document.createElement('div'); r.className='runner';
@@ -286,28 +283,23 @@ async function enterStandby(){
     p._y=WORLD.startY; p._t0=0; p._dur=0;
     return {p,el:r};
   });
-
-  ovt.textContent='スタンバイ…'; ov.classList.add('show');
-  setTimeout(()=>ov.classList.remove('show'),600);
 }
 
-/* === カウントダウン（再入不可） === */
+/* ===== カウントダウン（再入不可） ===== */
 function startCountdown(){
   if(countdownStarted) return;
   countdownStarted=true;
-  phase='countdown'; standbyHint.style.display='none';
-
+  phase='countdown';
+  standbyHint.style.display='none';
   const seq=['3','2','1','GO!']; let i=0;
-  const step=()=>{
-    if(phase!=='countdown') return;        // 念のため
-    if(i>=seq.length){ ov.classList.remove('show'); startRace(); countdownTimer=null; return; }
+  (function step(){
+    if(i>=seq.length){ ov.classList.remove('show'); startRace(); return; }
     ovt.textContent=seq[i++]; ov.classList.add('show');
-    countdownTimer=setTimeout(step,580);
-  };
-  step();
+    setTimeout(step, 580);
+  })();
 }
 
-/* === レース開始 === */
+/* ===== レース開始 ===== */
 function startRace(){
   runners.forEach(({p})=>{
     p._t0=performance.now();
@@ -316,20 +308,20 @@ function startRace(){
   phase='shot';
 }
 
-/* === カメラ：赤を画面 (--cameraTarget) にロック（最後まで追従） === */
+/* ===== カメラ（最後まで追従） ===== */
 function updateCamera(){
   const red=PLAYERS[0];
-  const targetRatio = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--cameraTarget'))||0.40;
-  const vh = Math.max(window.innerHeight, document.documentElement.clientHeight);
-  const targetY = vh * targetRatio;
-  const baseY   = vh - laneBottomPx;
+  const ratio=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--cameraTarget'))||0.40;
+  const H=Math.max(window.innerHeight, document.documentElement.clientHeight);
+  const targetY = H * ratio;
+  const baseY   = H - laneBottomPx;
   const P       = red._y - WORLD.startY;
   let offsetY   = (targetY - baseY) + P;
-  if(offsetY > 0) offsetY = 0; // 下方向は禁止
+  if(offsetY > 0) offsetY = 0; // 下方向は動かさない
   world.style.transform = `translate3d(0,${offsetY}px,0)`;
 }
 
-/* === リザルト === */
+/* ===== リザルト ===== */
 function showResult(){
   const arr=[...PLAYERS].sort((a,b)=>(b._y||0)-(a._y||0));
   listEl.innerHTML='';
@@ -343,7 +335,7 @@ function showResult(){
   resultBox.style.display='flex';
 }
 
-/* === ループ === */
+/* ===== ループ ===== */
 function loop(t){
   const dt=(tPrev?(t-tPrev):16.6); tPrev=t;
 
@@ -367,8 +359,7 @@ function loop(t){
     updateCamera();
     if(allDone){
       phase='finish';
-      ovt.textContent='フィニッシュ！'; ov.classList.add('show');
-      setTimeout(()=>{ ov.classList.remove('show'); showResult(); },1000);
+      toast('フィニッシュ！', 900).then(showResult);
     }
   }
 
@@ -376,18 +367,18 @@ function loop(t){
 }
 requestAnimationFrame(loop);
 
-/* === 起動 === */
+/* ===== 起動 ===== */
 document.getElementById('btnStart').addEventListener('click',()=>{
   buildIcons();
   for(let i=0;i<3;i++) applyGauge(i,0);  // 空で可視化
   startBox.style.display='none';
-  phase='gauge'; idx=0; cur=0; dir=1; speed=1.25; setActive(0);
+  phase='gauge'; idx=0; cur=0; dir=1; speed=1.22; setActive(0);
 });
 
-/* 端末回転時もフルスクリーン背景が崩れないように */
+/* 端末回転などで背景高さを維持 */
 addEventListener('resize', ()=>{
-  const vh = Math.max(window.innerHeight, document.documentElement.clientHeight);
-  world.style.height = (WORLD.goalY + vh) + 'px';
+  const H=Math.max(window.innerHeight, document.documentElement.clientHeight);
+  world.style.height = (WORLD.goalY + H) + 'px';
 });
 </script>
 </body>
