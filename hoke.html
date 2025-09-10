@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport"
       content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
-<title>MOB CHALLENGE – 1st Stage (New Game)</title>
+<title>MOB CHALLENGE – 1st Stage (fix: gauge clip & race visibility)</title>
 <style>
   :root{
     /* === ゲージ白面の内側（ga.png の白）を切り出す微調整 === */
@@ -12,7 +12,8 @@
     --gR: 5.0%;    /* 右余白 */
     --gT: 18.0%;   /* 上余白 */
     --gB: 18.0%;   /* 下余白 */
-    --guard: 9.5%; /* 右端のマスコット保護（白面右をさらに削る％） */
+    /* 右端マスコット保護（白面右をさらに削る％）。はみ出しが見える場合は +0.5% ずつ増やしてください。 */
+    --guard: 12.0%;
 
     /* === スマホ最適化 === */
     --squareSize: min(92vw, 92vh); /* MOBhai の正方形枠サイズ */
@@ -30,7 +31,7 @@
   /* ヘッダ（R数・総合ポイント） */
   #top{position:fixed;left:0;right:0;top:0;height:44px;display:flex;gap:8px;
     align-items:center;justify-content:space-between;padding:0 12px;background:#fff;
-    border-bottom:1px solid #e5e7eb;z-index:40}
+    border-bottom:1px solid #e5e7eb;z-index:100}
   #stageInfo{display:flex;gap:10px;font-weight:800;font-size:13px}
   #hint{font-size:12px;opacity:.7}
 
@@ -40,43 +41,39 @@
   #sq{width:var(--squareSize);height:var(--squareSize);position:relative;
     background:url('MOBhai.png') center/cover no-repeat;border-radius:16px;
     box-shadow:0 8px 28px rgba(0,0,0,.15);overflow:hidden}
-  /* 正方形の中：上にホッケー、中央にゲージ、下に「ゲーム開始」 */
-  #sqPucks{position:absolute;left:0;right:0;top:4%;display:flex;gap:8px;
-    justify-content:center;flex-wrap:wrap}
-  #sqPucks img{width:clamp(40px,10vw,60px);height:auto;image-rendering:pixelated;
-    filter:drop-shadow(0 3px 6px rgba(0,0,0,.18))}
-  #sqGauges{position:absolute;left:3%;right:3%;top:30%;bottom:18%;
-    display:flex;flex-direction:column;gap:1.8vh}
+  #sqPucks{position:absolute;left:0;right:0;top:4%;display:flex;gap:8px;justify-content:center;flex-wrap:wrap;z-index:2}
+  #sqPucks img{width:clamp(40px,10vw,60px);height:auto;image-rendering:pixelated;filter:drop-shadow(0 3px 6px rgba(0,0,0,.18))}
+  #sqGauges{position:absolute;left:3%;right:3%;top:30%;bottom:18%;display:flex;flex-direction:column;gap:1.8vh;z-index:3}
   .sqRow{position:relative;flex:1;display:grid;place-items:center;min-height:64px}
-  .sqWrap{position:relative;width:100%;height:100%;display:grid;place-items:center}
+  .sqWrap{position:relative;width:100%;height:100%;display:grid;place-items:center;contain:layout paint}
   .sqBase{position:absolute;inset:0;background:url('ga.png') center/contain no-repeat;z-index:1}
   .sqInner{position:absolute;inset:var(--gT) calc(var(--gR) + var(--guard)) var(--gB) var(--gL);
-    z-index:2;overflow:hidden;border-radius:8px}
+    z-index:2;overflow:hidden;border-radius:10px;contain:paint}
   .sqFillBox{position:absolute;left:0;top:0;height:100%;width:0;overflow:hidden}
-  .sqFillBox>img{height:100%;width:100%;object-fit:cover;display:block}
+  .sqFillBox>img{height:100%;width:100%;object-fit:cover;display:block;image-rendering:crisp-edges}
   .sqCursor{position:absolute;width:3px;border-radius:2px;background:#111;
     box-shadow:0 0 0 1px #fff;z-index:3;top:var(--gT);bottom:var(--gB);left:var(--gL)}
   .sqRow.inactive .sqCursor{opacity:.35;filter:grayscale(1)}
-  #sqStart{position:absolute;left:50%;bottom:5%;transform:translateX(-50%);}
+  #sqStart{position:absolute;left:50%;bottom:5%;transform:translateX(-50%);z-index:4}
 
   /* ======= フェーズB：ゲージ（縦長・全画面） ======= */
-  #gauge{position:fixed;left:0;right:0;top:44px;bottom:0;display:none;
-    background:#eef1f5;padding:1.2vh;z-index:12}
+  #gauge{position:fixed;left:0;right:0;top:44px;bottom:0;display:none;background:#eef1f5;padding:1.2vh;z-index:20}
   #gBox{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
     width:min(92vw,820px);height:78vh;display:flex;flex-direction:column;gap:1.4vh}
   .gRow{position:relative;flex:1;min-height:110px;display:grid;place-items:center}
-  .gWrap{position:relative;width:100%;height:100%;display:grid;place-items:center}
+  .gWrap{position:relative;width:100%;height:100%;display:grid;place-items:center;contain:layout paint}
   .gBase{position:absolute;inset:0;background:url('ga.png') center/contain no-repeat;z-index:1}
   .gInner{position:absolute;inset:var(--gT) calc(var(--gR) + var(--guard)) var(--gB) var(--gL);
-    z-index:2;overflow:hidden;border-radius:10px}
+    z-index:2;overflow:hidden;border-radius:10px;contain:paint}
   .gFillBox{position:absolute;left:0;top:0;height:100%;width:0;overflow:hidden}
-  .gFillBox>img{height:100%;width:100%;object-fit:cover;display:block}
+  .gFillBox>img{height:100%;width:100%;object-fit:cover;display:block;image-rendering:crisp-edges}
   .gCursor{position:absolute;width:3px;border-radius:2px;background:#111;
     box-shadow:0 0 0 1px #fff;z-index:3;top:var(--gT);bottom:var(--gB);left:var(--gL)}
   .gRow.inactive .gCursor{opacity:.35;filter:grayscale(1)}
 
   /* ======= フェーズC/D：スタンバイ＆レース ======= */
-  #worldWrap{ position:fixed; left:0; right:0; top:44px; bottom:0; display:none; z-index:20; }
+  /* スタッキング順を明確化：背景(1) < レーン(3) < UI(50+) */
+  #worldWrap{ position:fixed; left:0; right:0; top:44px; bottom:0; display:none; z-index:30; }
   #world{
     position:absolute; left:0; right:0; top:0; /* 高さはJSで設定 */
     background-image:url('geji.png');
@@ -84,16 +81,16 @@
     background-position:center top;
     background-size:100% auto;   /* 横幅でフィット＝映し切る */
     will-change:transform;
-    z-index:21;
+    z-index:31;
     transform-style:preserve-3d;
   }
   #lane{
     position:absolute; left:0; right:0; bottom:var(--laneBottom);
     display:flex; gap:min(3vw,14px); justify-content:center;
-    z-index:22; pointer-events:none; transform:translateZ(0);
+    z-index:33; pointer-events:none; transform:translateZ(0);
   }
-  .runner{ position:relative; z-index:23; transform:translateZ(0); }
-  .runner img{ width:min(var(--runnerVW),76px); display:block; image-rendering:pixelated;
+  .runner{ position:relative; z-index:34; transform:translateZ(0); }
+  .runner img{ width:clamp(44px, var(--runnerVW), 80px); height:auto; display:block; image-rendering:pixelated;
                filter:drop-shadow(0 4px 8px rgba(0,0,0,.22)); }
   .name{position:absolute;left:50%;top:calc(100% + 4px);transform:translateX(-50%);
         font-size:clamp(9px,3vw,11px);background:rgba(255,255,255,.9);padding:2px 6px;
@@ -108,7 +105,7 @@
 
   /* 結果カード */
   #result{position:fixed;inset:0;display:none;align-items:center;justify-content:center;
-          background:rgba(0,0,0,.25);backdrop-filter:blur(2px);z-index:55}
+          background:rgba(0,0,0,.25);backdrop-filter:blur(2px);z-index:60}
   #card{background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:18px 16px;
         width:min(92vw,520px);box-shadow:0 10px 24px rgba(0,0,0,.2)}
   #card h3{margin:0 0 10px}
@@ -118,7 +115,7 @@
 
   /* スタートオーバーレイ（最初だけ） */
   #first{position:fixed;inset:44px 0 0 0;display:flex;align-items:center;justify-content:center;
-         background:rgba(255,255,255,.72);backdrop-filter:blur(2px);z-index:35;flex-direction:column;gap:12px}
+         background:rgba(255,255,255,.72);backdrop-filter:blur(2px);z-index:55;flex-direction:column;gap:12px}
 </style>
 </head>
 <body>
@@ -294,7 +291,7 @@ function applyGauge(rowsKey, i, t){
 function toast(msg, ms=900){
   return new Promise(res=>{
     ovt.textContent=msg; ov.classList.add('show');
-    setTimeout(()=>{ ov.classList.remove('show'); setTimeout(res,140);}, ms);
+    setTimeout(()=>{ ov.classList.remove('show'); setTimeout(res,120);}, ms);
   });
 }
 
@@ -323,7 +320,7 @@ async function doCountdown(seq=['3','2','1','GO!'], stepMs=600){
     await new Promise(r=>setTimeout(r, stepMs));
   }
   ov.classList.remove('show');
-  await new Promise(r=>setTimeout(r,120));
+  await new Promise(r=>setTimeout(r,100));
   counting=false;
 }
 
@@ -377,7 +374,6 @@ function stopOne(){
 function enterStandby(){
   // 背景高さ（最後まで追従できるように）
   const H=Math.max(innerHeight, document.documentElement.clientHeight);
-  // ラウンド距離は端末に依存させず固定寄り（見やすさ）
   WORLD.goalY = 2200;
   world.style.height = (WORLD.goalY + H) + 'px';
 
@@ -386,7 +382,7 @@ function enterStandby(){
   worldWrap.style.display='block';
   world.style.transform='translate3d(0,0,0)';
 
-  // 並べる
+  // 並べる（前面に見えるように #lane が z-index:33）
   lane.innerHTML='';
   runners = PLAYERS.map(p=>{
     const el=document.createElement('div'); el.className='runner';
@@ -447,7 +443,6 @@ function roundResult(){
     li.innerHTML=`<span>${i+1}位 ${p.name}</span><span>記録 ${meters.toFixed(2)} m　/　+${pt}pt</span>`;
     listEl.appendChild(li);
   });
-  // ヘッダの合計ポイントは自分（赤）を表示
   totalPoint = scoreboard['red'];
   topTotal.textContent = totalPoint.toString();
 }
@@ -508,12 +503,10 @@ btnNext.addEventListener('click', ()=>{
     topRound.textContent = String(round);
     setupRound();
   }else{
-    // 総合結果
     rtitle.textContent='総合結果';
     finalResult();
     result.style.display='flex';
     btnNext.textContent='もう一度';
-    // もう一度 → リロード相当の再初期化
     btnNext.onclick=()=>location.reload();
   }
 });
