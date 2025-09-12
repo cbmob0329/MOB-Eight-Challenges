@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
-<title>Balloon Smash 30 – スタート修正版</title>
+<title>Balloon Smash 30 – 動作確認版</title>
 <style>
   body,html{margin:0;height:100%;background:#000;overflow:hidden}
   canvas{width:100%;height:100%;display:block;touch-action:none}
@@ -30,27 +30,34 @@ let W,H,DPR=window.devicePixelRatio||1;
 function resize(){W=cv.clientWidth;H=cv.clientHeight;cv.width=W*DPR;cv.height=H*DPR;ctx.setTransform(DPR,0,0,DPR,0,0);}
 resize();addEventListener("resize",resize);
 
+// 画像
 const bg=new Image();bg.src="MOBhai.png";
 const smashImg=new Image();smashImg.src="smash.png";
 const ballImg=new Image();ballImg.src="red.png";
 const balloonImg=new Image();balloonImg.src="Redb.png";
 
+// ゲームオブジェクト
 let smasher={x:0,y:0,r:40,drag:false};
 let ball={x:0,y:0,r:16,vx:0,vy:0};
 let balloons=[];
 let running=false,finished=false,score=0,timeLeft=30,last=0;
 
+// 初期化
 function initGame(){
   score=0;timeLeft=30;finished=false;
   smasher.x=W/2;smasher.y=H*0.88;
   ball.x=W/2;ball.y=smasher.y-50;ball.vx=ball.vy=0;
   balloons=[];
   for(let i=0;i<30;i++){
-    balloons.push({x:Math.random()*(W-60)+30,y:Math.random()*(H*0.6)+30,
-      r:16,alive:true,phase:Math.random()*6});
+    balloons.push({
+      x:Math.random()*(W-60)+30,
+      y:Math.random()*(H*0.5)+30,
+      r:16,alive:true,phase:Math.random()*6
+    });
   }
 }
 
+// スマッシャー操作
 cv.addEventListener("touchstart",e=>{
   const t=e.touches[0];
   if(Math.hypot(t.clientX-smasher.x,t.clientY-smasher.y)<60) smasher.drag=true;
@@ -63,22 +70,25 @@ cv.addEventListener("touchmove",e=>{
 });
 cv.addEventListener("touchend",()=>{smasher.drag=false;});
 
+// スタート
 function startGame(){
   initGame();
-  document.getElementById("overlay").textContent="3";
   let cnt=3;
+  document.getElementById("overlay").textContent=cnt;
   const id=setInterval(()=>{
     cnt--;
-    document.getElementById("overlay").textContent=cnt>0?cnt:(cnt===0?"GO":"");
-    if(cnt<0){clearInterval(id);running=true;last=performance.now();}
+    if(cnt>0){document.getElementById("overlay").textContent=cnt;}
+    else if(cnt===0){document.getElementById("overlay").textContent="GO";}
+    else{clearInterval(id);document.getElementById("overlay").textContent="";running=true;last=performance.now();}
   },1000);
 }
 document.getElementById("start").onclick=startGame;
 document.getElementById("restart").onclick=()=>{document.getElementById("restart").style.display="none";startGame();};
 
+// 更新
 function update(dt){
   timeLeft-=dt;if(timeLeft<=0){endGame();}
-  // ボール移動
+  // ボール
   ball.x+=ball.vx*dt;ball.y+=ball.vy*dt;
   ball.vx*=0.995;ball.vy*=0.995;
   if(ball.x-ball.r<0){ball.x=ball.r;ball.vx*=-1;}
@@ -91,7 +101,7 @@ function update(dt){
     let nx=dx/dist,ny=dy/dist;let dot=ball.vx*nx+ball.vy*ny;
     ball.vx-=2*dot*nx;ball.vy-=2*dot*ny;
   }
-  // 風船ふわふわ（ゆっくり）
+  // 風船（常にゆっくり）
   for(const b of balloons){
     if(!b.alive)continue;
     b.phase+=dt*0.5;
@@ -102,6 +112,8 @@ function update(dt){
     }
   }
 }
+
+// 描画
 function render(){
   ctx.clearRect(0,0,W,H);
   if(bg.complete)ctx.drawImage(bg,0,0,W,H);
@@ -121,6 +133,8 @@ function render(){
   if(smashImg.complete)ctx.drawImage(smashImg,smasher.x-smasher.r,smasher.y-smasher.r,smasher.r*2,smasher.r*2);
   else{ctx.fillStyle="#0ff";ctx.beginPath();ctx.arc(smasher.x,smasher.y,smasher.r,0,Math.PI*2);ctx.fill();}
 }
+
+// ループ
 function loop(ts){
   if(running&&!finished){
     let dt=(ts-last)/1000;last=ts;
