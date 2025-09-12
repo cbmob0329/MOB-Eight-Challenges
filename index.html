@@ -1,156 +1,48 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
-<title>Balloon Smash 30 – 動作確認版</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>MOB GAME HUB</title>
 <style>
-  body,html{margin:0;height:100%;background:#000;overflow:hidden}
-  canvas{width:100%;height:100%;display:block;touch-action:none}
-  #hud{position:fixed;top:0;left:0;right:0;display:flex;justify-content:space-between;
-       padding:8px 12px;background:rgba(0,0,0,0.5);color:#fff;font-family:sans-serif;font-weight:700;z-index:5}
-  #overlay{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;
-           font-size:12vw;color:#fff;font-weight:900;text-shadow:0 0 15px #000;z-index:10}
-  #restart{display:none;position:fixed;bottom:20px;left:50%;transform:translateX(-50%);
-           padding:12px 20px;border:none;border-radius:10px;background:#13c4ff;color:#000;font-weight:900;z-index:5}
+  html,body{
+    margin:0;padding:0;height:100%;
+    background:#0d0d0f;color:#fff;
+    font-family:"Press Start 2P",system-ui,monospace;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .menu{
+    display:flex;flex-direction:column;gap:20px;
+    text-align:center;
+  }
+  .game-btn{
+    font-size:20px;
+    padding:20px 30px;
+    border:3px solid #13c4ff;
+    border-radius:12px;
+    background:#111;
+    color:#13c4ff;
+    cursor:pointer;
+    text-decoration:none;
+    transition:.15s;
+  }
+  .game-btn:hover{
+    background:#13c4ff;
+    color:#111;
+  }
+  h1{margin-bottom:40px;color:#f5f5f5;font-size:28px}
 </style>
 </head>
 <body>
-<div id="hud">
-  <div id="time">TIME 30.0</div>
-  <div id="score">SCORE 0</div>
-  <button id="start">▶ START</button>
-</div>
-<canvas id="cv"></canvas>
-<div id="overlay"></div>
-<button id="restart">🔁 リスタート</button>
-<script>
-const cv=document.getElementById("cv"),ctx=cv.getContext("2d");
-let W,H,DPR=window.devicePixelRatio||1;
-function resize(){W=cv.clientWidth;H=cv.clientHeight;cv.width=W*DPR;cv.height=H*DPR;ctx.setTransform(DPR,0,0,DPR,0,0);}
-resize();addEventListener("resize",resize);
-
-// 画像
-const bg=new Image();bg.src="MOBhai.png";
-const smashImg=new Image();smashImg.src="smash.png";
-const ballImg=new Image();ballImg.src="red.png";
-const balloonImg=new Image();balloonImg.src="Redb.png";
-
-// ゲームオブジェクト
-let smasher={x:0,y:0,r:40,drag:false};
-let ball={x:0,y:0,r:16,vx:0,vy:0};
-let balloons=[];
-let running=false,finished=false,score=0,timeLeft=30,last=0;
-
-// 初期化
-function initGame(){
-  score=0;timeLeft=30;finished=false;
-  smasher.x=W/2;smasher.y=H*0.88;
-  ball.x=W/2;ball.y=smasher.y-50;ball.vx=ball.vy=0;
-  balloons=[];
-  for(let i=0;i<30;i++){
-    balloons.push({
-      x:Math.random()*(W-60)+30,
-      y:Math.random()*(H*0.5)+30,
-      r:16,alive:true,phase:Math.random()*6
-    });
-  }
-}
-
-// スマッシャー操作
-cv.addEventListener("touchstart",e=>{
-  const t=e.touches[0];
-  if(Math.hypot(t.clientX-smasher.x,t.clientY-smasher.y)<60) smasher.drag=true;
-});
-cv.addEventListener("touchmove",e=>{
-  if(!smasher.drag)return;
-  const t=e.touches[0];
-  smasher.x=Math.max(50,Math.min(W-50,t.clientX));
-  smasher.y=Math.max(H*0.75,Math.min(H-50,t.clientY));
-});
-cv.addEventListener("touchend",()=>{smasher.drag=false;});
-
-// スタート
-function startGame(){
-  initGame();
-  let cnt=3;
-  document.getElementById("overlay").textContent=cnt;
-  const id=setInterval(()=>{
-    cnt--;
-    if(cnt>0){document.getElementById("overlay").textContent=cnt;}
-    else if(cnt===0){document.getElementById("overlay").textContent="GO";}
-    else{clearInterval(id);document.getElementById("overlay").textContent="";running=true;last=performance.now();}
-  },1000);
-}
-document.getElementById("start").onclick=startGame;
-document.getElementById("restart").onclick=()=>{document.getElementById("restart").style.display="none";startGame();};
-
-// 更新
-function update(dt){
-  timeLeft-=dt;if(timeLeft<=0){endGame();}
-  // ボール
-  ball.x+=ball.vx*dt;ball.y+=ball.vy*dt;
-  ball.vx*=0.995;ball.vy*=0.995;
-  if(ball.x-ball.r<0){ball.x=ball.r;ball.vx*=-1;}
-  if(ball.x+ball.r>W){ball.x=W-ball.r;ball.vx*=-1;}
-  if(ball.y+ball.r>H){ball.y=H-ball.r;ball.vy*=-1;}
-  if(ball.y<-50){ball.x=smasher.x;ball.y=smasher.y-50;ball.vx=ball.vy=0;}
-  // パドル反射
-  let dx=ball.x-smasher.x,dy=ball.y-smasher.y,dist=Math.hypot(dx,dy);
-  if(dist<ball.r+smasher.r){
-    let nx=dx/dist,ny=dy/dist;let dot=ball.vx*nx+ball.vy*ny;
-    ball.vx-=2*dot*nx;ball.vy-=2*dot*ny;
-  }
-  // 風船（常にゆっくり）
-  for(const b of balloons){
-    if(!b.alive)continue;
-    b.phase+=dt*0.5;
-    b.x+=Math.sin(b.phase)*0.5;
-    b.y-=dt*5;
-    if(Math.hypot(ball.x-b.x,ball.y-b.y)<ball.r+b.r && (ball.vx*ball.vx+ball.vy*ball.vy)>200*200){
-      b.alive=false;score++;
-    }
-  }
-}
-
-// 描画
-function render(){
-  ctx.clearRect(0,0,W,H);
-  if(bg.complete)ctx.drawImage(bg,0,0,W,H);
-  else{ctx.fillStyle="#123";ctx.fillRect(0,0,W,H);}
-  // 壁
-  ctx.fillStyle="rgba(20,40,80,0.8)";
-  ctx.fillRect(0,H-10,W,10);ctx.fillRect(0,0,10,H);ctx.fillRect(W-10,0,10,H);
-  // 風船
-  for(const b of balloons){if(!b.alive)continue;
-    if(balloonImg.complete)ctx.drawImage(balloonImg,b.x-b.r,b.y-b.r,b.r*2,b.r*2);
-    else{ctx.fillStyle="red";ctx.beginPath();ctx.arc(b.x,b.y,b.r,0,Math.PI*2);ctx.fill();}
-  }
-  // ボール
-  if(ballImg.complete)ctx.drawImage(ballImg,ball.x-ball.r,ball.y-ball.r,ball.r*2,ball.r*2);
-  else{ctx.fillStyle="#f33";ctx.beginPath();ctx.arc(ball.x,ball.y,ball.r,0,Math.PI*2);ctx.fill();}
-  // スマッシャー
-  if(smashImg.complete)ctx.drawImage(smashImg,smasher.x-smasher.r,smasher.y-smasher.r,smasher.r*2,smasher.r*2);
-  else{ctx.fillStyle="#0ff";ctx.beginPath();ctx.arc(smasher.x,smasher.y,smasher.r,0,Math.PI*2);ctx.fill();}
-}
-
-// ループ
-function loop(ts){
-  if(running&&!finished){
-    let dt=(ts-last)/1000;last=ts;
-    update(dt);
-    document.getElementById("time").textContent="TIME "+timeLeft.toFixed(1);
-    document.getElementById("score").textContent="SCORE "+score;
-  }
-  render();
-  requestAnimationFrame(loop);
-}
-function endGame(){
-  finished=true;running=false;
-  document.getElementById("overlay").textContent="終了！ SCORE "+score;
-  document.getElementById("restart").style.display="block";
-}
-requestAnimationFrame(loop);
-</script>
+  <div class="menu">
+    <h1>MOB GAME HUB</h1>
+    <!-- タイトル1 -->
+    <a href="MOB hockey.html" class="game-btn">MOB Hockey</a>
+    <!-- タイトルを増やしたいときはここに追加 -->
+    <!--
+    <a href="MOB kart.html" class="game-btn">MOB Kart</a>
+    <a href="MOB darby.html" class="game-btn">MOB Darby</a>
+    -->
+  </div>
 </body>
 </html>
