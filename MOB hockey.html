@@ -3,504 +3,154 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
-<title>Balloon Smash 30 – スマホ最適化版</title>
+<title>Balloon Smash 30 – 動作確認版</title>
 <style>
-  :root{
-    --bg:#0b0e14; --panel:#111827; --accent:#13c4ff; --good:#34d399; --bad:#ef4444; --text:#e5e7eb; --muted:#9ca3af;
-  }
-  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
-  html,body{height:100%;margin:0;background:var(--bg);color:var(--text);font-family: system-ui, -apple-system, "Hiragino Sans", "Yu Gothic", Roboto, Segoe UI, sans-serif;}
-  #wrap{position:fixed; inset:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left); display:flex; flex-direction:column;}
-  #hud{flex:0 0 auto; display:flex; align-items:center; justify-content:space-between; gap:8px; padding:10px 12px; background:linear-gradient(180deg, rgba(0,0,0,.35), rgba(0,0,0,.1)); backdrop-filter: blur(8px);}
-  #hud .pill{padding:6px 10px; border-radius:999px; background:#1f2937; font-weight:600; min-width:88px; text-align:center}
-  #hud .btn{padding:8px 14px; border-radius:10px; background:#111827; border:1px solid #222; font-weight:700}
-  #stageWrap{position:relative; flex:1 1 auto; display:flex; align-items:center; justify-content:center; padding:10px;}
-  #stage{width:100%; max-width:100vmin; aspect-ratio:1/1; background:#0a0d14; border:2px solid #1f2937; border-radius:16px; box-shadow: 0 10px 30px rgba(0,0,0,.45) inset;}
-  #overlay{position:absolute; inset:0; display:flex; align-items:center; justify-content:center; pointer-events:none;}
-  .countdown{font-size:14vw; font-weight:900; text-shadow:0 6px 20px rgba(0,0,0,.6)}
-  .go{color:var(--good)}
-  .end{font-size:10vw; font-weight:900; color:#fff; text-shadow:0 6px 30px rgba(0,0,0,.8); text-align:center; line-height:1.15}
-  #bigBtn{position:absolute; left:50%; bottom:12px; transform:translateX(-50%); padding:14px 18px; border-radius:14px; background:var(--accent); color:#001018; font-weight:900; box-shadow:0 8px 24px rgba(19,196,255,.35); border:none}
-  #leader{position:absolute; inset:0; display:none; align-items:center; justify-content:center; background:rgba(0,0,0,.6);}
-  #leader .card{width:min(92vw,720px); max-height:80vh; overflow:auto; background:#0f1623; border:1px solid #233; border-radius:18px; padding:18px;}
-  #leader h2{margin:0 0 8px 0; font-size:7vw; line-height:1; text-align:center}
-  #leader table{width:100%; border-collapse:collapse; font-size:4.2vw}
-  #leader th,#leader td{padding:8px 6px; border-bottom:1px solid #233; text-align:left}
-  #leader tr.me{background:rgba(19,196,255,.08)}
-  #leader .pos{width:1%;}
-  #leader .score{text-align:right}
-  #restart{display:none; margin-top:12px; width:100%; padding:12px; border-radius:12px; background:#162235; color:#dbeafe; font-weight:800; border:1px solid #234}
-  .rankBig{font-size:16vw; font-weight:900; text-align:center; margin:4px 0 6px 0}
-  .rankBig small{font-size:6vw; font-weight:700; color:#9fb3d1}
-  .hint{position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-size:3.8vw; color:var(--muted); text-align:center}
-  @media (min-width:540px){
-    #leader h2{font-size:40px}
-    #leader table{font-size:18px}
-    .end{font-size:52px}
-    .countdown{font-size:72px}
-    .rankBig{font-size:80px}
-    .rankBig small{font-size:28px}
-  }
+  body,html{margin:0;height:100%;background:#000;overflow:hidden}
+  canvas{width:100%;height:100%;display:block;touch-action:none}
+  #hud{position:fixed;top:0;left:0;right:0;display:flex;justify-content:space-between;
+       padding:8px 12px;background:rgba(0,0,0,0.5);color:#fff;font-family:sans-serif;font-weight:700;z-index:5}
+  #overlay{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;
+           font-size:12vw;color:#fff;font-weight:900;text-shadow:0 0 15px #000;z-index:10}
+  #restart{display:none;position:fixed;bottom:20px;left:50%;transform:translateX(-50%);
+           padding:12px 20px;border:none;border-radius:10px;background:#13c4ff;color:#000;font-weight:900;z-index:5}
 </style>
 </head>
 <body>
-<div id="wrap">
-  <div id="hud">
-    <div class="pill" id="timePill">TIME 30.0</div>
-    <div class="pill" id="scorePill">SCORE 0</div>
-    <button id="startBtn" class="btn">▶ ゲームスタート</button>
-  </div>
-  <div id="stageWrap">
-    <canvas id="stage"></canvas>
-    <div id="overlay"></div>
-    <div class="hint" id="hint">画面下のスマッシャーをドラッグして狙い、<br>指を離すと<strong>ショット</strong>します</div>
-    <button id="bigBtn" style="display:none">長押しで狙って、指を離してショット！</button>
-    <div id="leader">
-      <div class="card">
-        <div class="end" id="endText" style="margin-bottom:6px;">終了！</div>
-        <div class="rankBig" id="rankBig"></div>
-        <h2>順位 & 記録</h2>
-        <table id="rankTable"></table>
-        <button id="restart">🔁 リスタート</button>
-      </div>
-    </div>
-  </div>
+<div id="hud">
+  <div id="time">TIME 30.0</div>
+  <div id="score">SCORE 0</div>
+  <button id="start">▶ START</button>
 </div>
-
+<canvas id="cv"></canvas>
+<div id="overlay"></div>
+<button id="restart">🔁 リスタート</button>
 <script>
-/* ====== 基本セットアップ（スマホ最適化） ====== */
-const DPR = Math.max(1, Math.min(3, window.devicePixelRatio || 1));
-const canvas = document.getElementById('stage');
-const ctx = canvas.getContext('2d');
-const overlay = document.getElementById('overlay');
-const timePill = document.getElementById('timePill');
-const scorePill = document.getElementById('scorePill');
-const startBtn = document.getElementById('startBtn');
-const hint = document.getElementById('hint');
-const bigBtn = document.getElementById('bigBtn');
-const leader = document.getElementById('leader');
-const rankTable = document.getElementById('rankTable');
-const restartBtn = document.getElementById('restart');
-const endText = document.getElementById('endText');
-const rankBig = document.getElementById('rankBig');
+const cv=document.getElementById("cv"),ctx=cv.getContext("2d");
+let W,H,DPR=window.devicePixelRatio||1;
+function resize(){W=cv.clientWidth;H=cv.clientHeight;cv.width=W*DPR;cv.height=H*DPR;ctx.setTransform(DPR,0,0,DPR,0,0);}
+resize();addEventListener("resize",resize);
 
-let W=0,H=0, stageSize=0;
-function resize(){
-  const rect = canvas.getBoundingClientRect();
-  stageSize = Math.floor(Math.min(rect.width, rect.height));
-  W = H = stageSize;
-  canvas.width = Math.floor(W * DPR);
-  canvas.height = Math.floor(H * DPR);
-  ctx.setTransform(DPR,0,0,DPR,0,0);
-}
-addEventListener('resize', resize, {passive:true});
-resize();
+// 画像
+const bg=new Image();bg.src="MOBhai.png";
+const smashImg=new Image();smashImg.src="smash.png";
+const ballImg=new Image();ballImg.src="red.png";
+const balloonImg=new Image();balloonImg.src="Redb.png";
 
-/* ====== アセット読み込み（存在しない場合はフォールバック描画） ====== */
-function loadImage(src){
-  return new Promise((resolve)=>{
-    const img = new Image();
-    img.onload = ()=>resolve(img);
-    img.onerror = ()=>resolve(null);
-    img.src = src;
-  });
-}
-const assets = { smasher:null, ball:null, balloon:null };
-(async ()=>{
-  assets.smasher = await loadImage('smash.png'); // プレイヤー（スマッシャー）
-  assets.ball    = await loadImage('red.png');   // ホッケーのボール
-  // 風船画像は任意: Redb.png があれば使用、無ければ描画で代替
-  assets.balloon = await loadImage('Redb.png');
-})();
+// ゲームオブジェクト
+let smasher={x:0,y:0,r:40,drag:false};
+let ball={x:0,y:0,r:16,vx:0,vy:0};
+let balloons=[];
+let running=false,finished=false,score=0,timeLeft=30,last=0;
 
-/* ====== ゲーム定数 ====== */
-const GAME_TIME = 30.0; // 秒
-const BALLOON_COUNT = 30;
-const SHOT_MIN_POP_SPEED = 220; // これ未満の速度では風船は割れない（px/s）
-const FRICTION = 0.992; // フレーム毎の減衰
-const RESET_SPEED_STOP = 25; // これ未満になったら「止まった」とみなす（px/s）
-const WALL_LEFT = 0, WALL_RIGHT = ()=>W, WALL_BOTTOM = ()=>H; // 上だけ壁なし
-const SMASHER_Y = ()=>H*0.86;
-
-/* ====== ゲーム状態 ====== */
-let running = false, countdownRunning=false, finished=false;
-let timeLeft = GAME_TIME;
-let lastTs = 0;
-let score = 0;
-let balloons = [];
-let smasher = {x:0, y:0, r:28, aiming:false, aimStart:{x:0,y:0}, aimNow:{x:0,y:0}};
-let ball = {x:0, y:0, vx:0, vy:0, r:14};
-let needResetAfterExit = false;
-
-/* ====== CPU（7人） ====== */
-const cpuNames = ['CPU-1','CPU-2','CPU-3','CPU-4','CPU-5','CPU-6','CPU-7'];
-let cpuScores = {};
-let cpuSkill = {};
-function initCPU(){
-  cpuScores = {}; cpuSkill = {};
-  cpuNames.forEach(n=>{
-    const base = 0.6 + Math.random()*0.7; // 0.6〜1.3割/秒
-    const clutch = 0.15 + Math.random()*0.35; // 終盤伸び
-    cpuSkill[n] = {base, clutch};
-    cpuScores[n] = 0;
-  });
-}
-function updateCPU(dt){
-  const progress = 1 - (timeLeft/GAME_TIME); // 0→1
-  for(const n of cpuNames){
-    const rate = cpuSkill[n].base + cpuSkill[n].clutch*progress;
-    const expected = dt * rate;
-    const burst = Math.random() < expected*0.35 ? 1 : 0;
-    cpuScores[n] += (expected + burst);
+// 初期化
+function initGame(){
+  score=0;timeLeft=30;finished=false;
+  smasher.x=W/2;smasher.y=H*0.88;
+  ball.x=W/2;ball.y=smasher.y-50;ball.vx=ball.vy=0;
+  balloons=[];
+  for(let i=0;i<30;i++){
+    balloons.push({
+      x:Math.random()*(W-60)+30,
+      y:Math.random()*(H*0.5)+30,
+      r:16,alive:true,phase:Math.random()*6
+    });
   }
 }
 
-/* ====== 初期化 ====== */
-function resetLevel(){
-  // 風船再配置
-  balloons = [];
-  for(let i=0;i<BALLOON_COUNT;i++){
-    const x = 20 + Math.random()*(W-40);
-    const y = 20 + Math.random()*(H*0.75-40);
-    const r = 16 + Math.random()*8;
-    const sway = Math.random()*Math.PI*2;
-    const vy = 6 + Math.random()*10;
-    balloons.push({x,y,r,alive:true,phase:sway,vy});
-  }
-  // ボール初期位置（スマッシャー前）
-  smasher.x = W*0.5;
-  smasher.y = SMASHER_Y();
-  ball.x = smasher.x;
-  ball.y = smasher.y - 36;
-  ball.vx = 0; ball.vy = 0;
-  needResetAfterExit = false;
-}
-function fullReset(){
-  score = 0;
-  timeLeft = GAME_TIME;
-  finished = false;
-  running = false;
-  countdownRunning = false;
-  initCPU();
-  resetLevel();
-  updateHUD();
-}
-fullReset();
+// スマッシャー操作
+cv.addEventListener("touchstart",e=>{
+  const t=e.touches[0];
+  if(Math.hypot(t.clientX-smasher.x,t.clientY-smasher.y)<60) smasher.drag=true;
+});
+cv.addEventListener("touchmove",e=>{
+  if(!smasher.drag)return;
+  const t=e.touches[0];
+  smasher.x=Math.max(50,Math.min(W-50,t.clientX));
+  smasher.y=Math.max(H*0.75,Math.min(H-50,t.clientY));
+});
+cv.addEventListener("touchend",()=>{smasher.drag=false;});
 
-/* ====== HUD ====== */
-function updateHUD(){
-  timePill.textContent = `TIME ${timeLeft.toFixed(1)}`;
-  scorePill.textContent = `SCORE ${score}`;
+// スタート
+function startGame(){
+  initGame();
+  let cnt=3;
+  document.getElementById("overlay").textContent=cnt;
+  const id=setInterval(()=>{
+    cnt--;
+    if(cnt>0){document.getElementById("overlay").textContent=cnt;}
+    else if(cnt===0){document.getElementById("overlay").textContent="GO";}
+    else{clearInterval(id);document.getElementById("overlay").textContent="";running=true;last=performance.now();}
+  },1000);
 }
+document.getElementById("start").onclick=startGame;
+document.getElementById("restart").onclick=()=>{document.getElementById("restart").style.display="none";startGame();};
 
-/* ====== 入力（片手操作） ====== */
-let touchId = null;
-function getCanvasPosFromPoint(clientX, clientY){
-  const rect = canvas.getBoundingClientRect();
-  const tx = clientX - rect.left;
-  const ty = clientY - rect.top;
-  return {x: Math.max(0, Math.min(W, tx)), y: Math.max(0, Math.min(H, ty))};
-}
-function getCanvasPos(e){
-  if('touches' in e){
-    const t = e.touches[0];
-    return getCanvasPosFromPoint(t.clientX, t.clientY);
-  }else{
-    return getCanvasPosFromPoint(e.clientX, e.clientY);
+// 更新
+function update(dt){
+  timeLeft-=dt;if(timeLeft<=0){endGame();}
+  // ボール
+  ball.x+=ball.vx*dt;ball.y+=ball.vy*dt;
+  ball.vx*=0.995;ball.vy*=0.995;
+  if(ball.x-ball.r<0){ball.x=ball.r;ball.vx*=-1;}
+  if(ball.x+ball.r>W){ball.x=W-ball.r;ball.vx*=-1;}
+  if(ball.y+ball.r>H){ball.y=H-ball.r;ball.vy*=-1;}
+  if(ball.y<-50){ball.x=smasher.x;ball.y=smasher.y-50;ball.vx=ball.vy=0;}
+  // パドル反射
+  let dx=ball.x-smasher.x,dy=ball.y-smasher.y,dist=Math.hypot(dx,dy);
+  if(dist<ball.r+smasher.r){
+    let nx=dx/dist,ny=dy/dist;let dot=ball.vx*nx+ball.vy*ny;
+    ball.vx-=2*dot*nx;ball.vy-=2*dot*ny;
   }
-}
-function startAim(e){
-  if(finished || !running) return;
-  if('touches' in e){
-    if(touchId!==null) return;
-    touchId = e.touches[0].identifier;
-  }
-  const p = getCanvasPos(e);
-  smasher.aiming = true;
-  smasher.aimStart = p;
-  smasher.aimNow = p;
-  e.preventDefault?.();
-}
-function moveAim(e){
-  if(!smasher.aiming) return;
-  if('touches' in e){
-    if(touchId===null) return;
-    const t = Array.from(e.touches).find(t=>t.identifier===touchId);
-    if(!t) return;
-    smasher.aimNow = getCanvasPosFromPoint(t.clientX, t.clientY);
-  }else{
-    smasher.aimNow = getCanvasPos(e);
-  }
-}
-function releaseAim(e){
-  if(!smasher.aiming) return;
-  if('changedTouches' in e){
-    const t = Array.from(e.changedTouches).find(t=>t.identifier===touchId);
-    if(!t) return;
-    touchId = null;
-  }
-  smasher.aiming = false;
-  const dx = smasher.aimStart.x - smasher.aimNow.x;
-  const dy = smasher.aimStart.y - smasher.aimNow.y;
-  const power = Math.hypot(dx,dy);
-  if(power<10) return; // 小さ過ぎる操作は無視
-  const scale = 3.2; // 指の移動→初速
-  ball.vx = dx * scale;
-  ball.vy = dy * scale;
-  ball.x = smasher.x;
-  ball.y = smasher.y - 36;
-}
-
-/* ====== ゲームループ ====== */
-function step(ts){
-  if(!lastTs) lastTs = ts;
-  const dt = Math.min(0.05, (ts-lastTs)/1000);
-  lastTs = ts;
-
-  if(running && !finished){
-    timeLeft = Math.max(0, timeLeft - dt);
-    updateCPU(dt);
-
-    // 風船ふわふわ
-    for(const b of balloons){
-      if(!b.alive) continue;
-      b.phase += dt;
-      b.x += Math.sin(b.phase*1.2)*0.25;
-      b.y -= b.vy*dt*0.5;
-      if(b.y < 10) b.y = 10;
-      if(b.x < 10) b.x = 10;
-      if(b.x > W-10) b.x = W-10;
+  // 風船（常にゆっくり）
+  for(const b of balloons){
+    if(!b.alive)continue;
+    b.phase+=dt*0.5;
+    b.x+=Math.sin(b.phase)*0.5;
+    b.y-=dt*5;
+    if(Math.hypot(ball.x-b.x,ball.y-b.y)<ball.r+b.r && (ball.vx*ball.vx+ball.vy*ball.vy)>200*200){
+      b.alive=false;score++;
     }
-
-    // ボール移動
-    ball.x += ball.vx * dt;
-    ball.y += ball.vy * dt;
-
-    // 壁反射（上は壁なし）
-    if(ball.x - ball.r < WALL_LEFT){ ball.x = WALL_LEFT + ball.r; ball.vx *= -1; }
-    if(ball.x + ball.r > WALL_RIGHT()){ ball.x = WALL_RIGHT() - ball.r; ball.vx *= -1; }
-    if(ball.y + ball.r > WALL_BOTTOM()){ ball.y = WALL_BOTTOM() - ball.r; ball.vy *= -1; }
-
-    // 上に抜けたらリセットフラグ
-    if(ball.y + ball.r < 0){ needResetAfterExit = true; }
-
-    // 風船ヒット（速度しきい値で破裂）
-    const speed = Math.hypot(ball.vx, ball.vy);
-    for(const b of balloons){
-      if(!b.alive) continue;
-      const d = Math.hypot(ball.x - b.x, ball.y - b.y);
-      if(d < ball.r + b.r){
-        if(speed >= SHOT_MIN_POP_SPEED){
-          b.alive = false;
-          score += 1;
-        }
-        // 貫通（反射しない）
-      }
-    }
-
-    // 摩擦
-    ball.vx *= FRICTION;
-    ball.vy *= FRICTION;
-
-    // 停止または上抜け後のリセット
-    if(speed < RESET_SPEED_STOP || needResetAfterExit){
-      resetLevel();
-    }
-
-    if(timeLeft<=0){
-      finishGame();
-    }
-
-    updateHUD();
-  }
-
-  render();
-  requestAnimationFrame(step);
-}
-requestAnimationFrame(step);
-
-/* ====== 描画 ====== */
-function drawSmasher(){
-  const x = smasher.x, y = smasher.y, r = smasher.r;
-  if(assets.smasher){
-    const w = 70, h = 70;
-    ctx.drawImage(assets.smasher, x - w/2, y - h/2, w, h);
-  }else{
-    ctx.save();
-    ctx.translate(x,y);
-    ctx.fillStyle = '#2dd4bf';
-    ctx.beginPath();
-    ctx.arc(0,0,r,Math.PI*0.1,Math.PI*0.9,false);
-    ctx.lineTo(0,0);
-    ctx.closePath();
-    ctx.fill();
-    ctx.restore();
   }
 }
-function drawBall(){
-  const {x,y,r} = ball;
-  if(assets.ball){
-    const w = r*2, h = r*2;
-    ctx.drawImage(assets.ball, x-r, y-r, w, h);
-  }else{
-    ctx.beginPath();
-    ctx.fillStyle='#ef4444';
-    ctx.arc(x,y,r,0,Math.PI*2);
-    ctx.fill();
-  }
-}
-function drawBalloon(b){
-  if(!b.alive) return;
-  if(assets.balloon){
-    const d = b.r*2;
-    ctx.drawImage(assets.balloon, b.x-b.r, b.y-b.r, d, d);
-  }else{
-    const g = ctx.createRadialGradient(b.x-4,b.y-6,4,b.x,b.y,b.r);
-    g.addColorStop(0,'#ffb3b3'); g.addColorStop(1,'#c1121f');
-    ctx.fillStyle = g;
-    ctx.beginPath(); ctx.arc(b.x,b.y,b.r,0,Math.PI*2); ctx.fill();
-    ctx.fillStyle='rgba(255,255,255,.35)';
-    ctx.beginPath(); ctx.ellipse(b.x-6,b.y-8, b.r*0.35, b.r*0.22, -0.6, 0, Math.PI*2); ctx.fill();
-  }
-}
-function drawWalls(){
-  ctx.strokeStyle='#1f2937';
-  ctx.lineWidth=4;
-  ctx.beginPath();
-  // 左縦
-  ctx.moveTo(2,2); ctx.lineTo(2,H-2);
-  // 右縦
-  ctx.moveTo(W-2,2); ctx.lineTo(W-2,H-2);
-  // 下
-  ctx.moveTo(2,H-2); ctx.lineTo(W-2,H-2);
-  ctx.stroke();
-}
-function drawAim(){
-  if(!smasher.aiming) return;
-  const s = smasher.aimStart, p = smasher.aimNow;
-  const dx = s.x - p.x, dy = s.y - p.y;
-  const len = Math.hypot(dx,dy);
-  if(len<6) return;
-  const maxLen = Math.min(200, len);
-  const ang = Math.atan2(dy,dx);
-  ctx.save();
-  ctx.globalAlpha = 0.9;
-  ctx.translate(smasher.x, smasher.y - 36);
-  ctx.rotate(ang);
-  ctx.fillStyle='rgba(19,196,255,.22)';
-  ctx.strokeStyle='rgba(19,196,255,.8)';
-  ctx.lineWidth=2;
-  ctx.beginPath();
-  ctx.moveTo(0,0);
-  ctx.lineTo(maxLen,0);
-  ctx.stroke();
-  ctx.beginPath();
-  ctx.moveTo(maxLen,0);
-  ctx.lineTo(maxLen-14,-8);
-  ctx.lineTo(maxLen-14,8);
-  ctx.closePath();
-  ctx.fill();
-  ctx.restore();
-}
+
+// 描画
 function render(){
   ctx.clearRect(0,0,W,H);
-  const g = ctx.createLinearGradient(0,0,0,H);
-  g.addColorStop(0,'#0c1220'); g.addColorStop(1,'#060a12');
-  ctx.fillStyle = g;
-  ctx.fillRect(0,0,W,H);
-  drawWalls();
-  for(const b of balloons) drawBalloon(b);
-  drawBall();
-  drawSmasher();
-  drawAim();
+  if(bg.complete)ctx.drawImage(bg,0,0,W,H);
+  else{ctx.fillStyle="#123";ctx.fillRect(0,0,W,H);}
+  // 壁
+  ctx.fillStyle="rgba(20,40,80,0.8)";
+  ctx.fillRect(0,H-10,W,10);ctx.fillRect(0,0,10,H);ctx.fillRect(W-10,0,10,H);
+  // 風船
+  for(const b of balloons){if(!b.alive)continue;
+    if(balloonImg.complete)ctx.drawImage(balloonImg,b.x-b.r,b.y-b.r,b.r*2,b.r*2);
+    else{ctx.fillStyle="red";ctx.beginPath();ctx.arc(b.x,b.y,b.r,0,Math.PI*2);ctx.fill();}
+  }
+  // ボール
+  if(ballImg.complete)ctx.drawImage(ballImg,ball.x-ball.r,ball.y-ball.r,ball.r*2,ball.r*2);
+  else{ctx.fillStyle="#f33";ctx.beginPath();ctx.arc(ball.x,ball.y,ball.r,0,Math.PI*2);ctx.fill();}
+  // スマッシャー
+  if(smashImg.complete)ctx.drawImage(smashImg,smasher.x-smasher.r,smasher.y-smasher.r,smasher.r*2,smasher.r*2);
+  else{ctx.fillStyle="#0ff";ctx.beginPath();ctx.arc(smasher.x,smasher.y,smasher.r,0,Math.PI*2);ctx.fill();}
 }
 
-/* ====== カウントダウン → スタート ====== */
-function showCountdown(cb){
-  countdownRunning = true;
-  overlay.innerHTML = '';
-  overlay.style.pointerEvents = 'none';
-  const el = document.createElement('div');
-  el.className = 'countdown';
-  overlay.appendChild(el);
-  const seq = ['3','2','1','<span class="go">GO</span>'];
-  let i=0;
-  const tick = ()=>{
-    el.innerHTML = seq[i];
-    i++;
-    if(i<seq.length){ setTimeout(tick, 700); }
-    else{
-      setTimeout(()=>{
-        overlay.innerHTML='';
-        countdownRunning=false;
-        cb && cb();
-      }, 300);
-    }
-  };
-  tick();
+// ループ
+function loop(ts){
+  if(running&&!finished){
+    let dt=(ts-last)/1000;last=ts;
+    update(dt);
+    document.getElementById("time").textContent="TIME "+timeLeft.toFixed(1);
+    document.getElementById("score").textContent="SCORE "+score;
+  }
+  render();
+  requestAnimationFrame(loop);
 }
-
-/* ====== 終了処理・順位表示 ====== */
-function finishGame(){
-  finished = true; running = false;
-  // CPUスコアを整数化
-  const finalCPU = cpuNames.map(n=>({name:n, score:Math.max(0, Math.round(cpuScores[n]))}));
-  const me = {name:'YOU', score:score};
-  const all = [me, ...finalCPU].sort((a,b)=>b.score-a.score);
-  const pos = all.findIndex(p=>p.name==='YOU')+1;
-
-  leader.style.display='flex';
-  endText.textContent = '終了！';
-  rankBig.innerHTML = `あなたは <br><span style="color:#fff">${pos} 位</span> <small>/ 8人</small>`;
-
-  rankTable.innerHTML = `
-    <tr><th class="pos">#</th><th>プレイヤー</th><th class="score">スコア</th></tr>
-    ${all.map((p,i)=>`
-      <tr class="${p.name==='YOU'?'me':''}">
-        <td class="pos">${i+1}</td>
-        <td>${p.name}${p.name==='YOU'?'（あなた）':''}</td>
-        <td class="score">${p.score}</td>
-      </tr>
-    `).join('')}
-  `;
-  setTimeout(()=>{ restartBtn.style.display='block'; }, 3000);
+function endGame(){
+  finished=true;running=false;
+  document.getElementById("overlay").textContent="終了！ SCORE "+score;
+  document.getElementById("restart").style.display="block";
 }
-
-/* ====== スタート・リスタート ====== */
-function startGame(){
-  if(countdownRunning) return;
-  startBtn.disabled = true;
-  leader.style.display='none';
-  restartBtn.style.display='none';
-  bigBtn.style.display='block';
-  hint.style.display='none';
-  fullReset();
-  showCountdown(()=>{
-    running = true;
-  });
-}
-startBtn.addEventListener('click', startGame);
-restartBtn.addEventListener('click', startGame);
-
-/* ====== 入力バインド（タッチ/マウス） ====== */
-canvas.addEventListener('touchstart', startAim, {passive:false});
-canvas.addEventListener('touchmove',  moveAim,  {passive:false});
-canvas.addEventListener('touchend',   releaseAim, {passive:false});
-canvas.addEventListener('mousedown',  startAim);
-addEventListener('mousemove',  moveAim);
-addEventListener('mouseup',    releaseAim);
-
-// 画面下中央の誘導ボタン（指を置きやすくするだけ）
-bigBtn.addEventListener('touchstart',(e)=>{ e.preventDefault(); startAim(e); });
-bigBtn.addEventListener('touchmove',(e)=>{ e.preventDefault(); moveAim(e); });
-bigBtn.addEventListener('touchend',(e)=>{ e.preventDefault(); releaseAim(e); });
-bigBtn.addEventListener('mousedown',(e)=>{ startAim(e); });
-bigBtn.addEventListener('mousemove',(e)=>{ moveAim(e); });
-bigBtn.addEventListener('mouseup',(e)=>{ releaseAim(e); });
-
-/* ====== 自動リサイズ補正（向き変更など） ====== */
-const ro = new ResizeObserver(()=>{ resize(); resetLevel(); render(); });
-ro.observe(document.getElementById('stageWrap'));
+requestAnimationFrame(loop);
 </script>
 </body>
 </html>
