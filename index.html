@@ -3,16 +3,16 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
-<title>Balloon Smash 30 – 修正版</title>
+<title>Balloon Smash 30 – スタート修正版</title>
 <style>
   body,html{margin:0;height:100%;background:#000;overflow:hidden}
   canvas{width:100%;height:100%;display:block;touch-action:none}
   #hud{position:fixed;top:0;left:0;right:0;display:flex;justify-content:space-between;
-       padding:8px 12px;background:rgba(0,0,0,0.5);color:#fff;font-family:sans-serif;font-weight:700}
+       padding:8px 12px;background:rgba(0,0,0,0.5);color:#fff;font-family:sans-serif;font-weight:700;z-index:5}
   #overlay{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;
-           font-size:12vw;color:#fff;font-weight:900;text-shadow:0 0 15px #000}
+           font-size:12vw;color:#fff;font-weight:900;text-shadow:0 0 15px #000;z-index:10}
   #restart{display:none;position:fixed;bottom:20px;left:50%;transform:translateX(-50%);
-           padding:12px 20px;border:none;border-radius:10px;background:#13c4ff;color:#000;font-weight:900}
+           padding:12px 20px;border:none;border-radius:10px;background:#13c4ff;color:#000;font-weight:900;z-index:5}
 </style>
 </head>
 <body>
@@ -50,7 +50,6 @@ function initGame(){
       r:16,alive:true,phase:Math.random()*6});
   }
 }
-initGame();
 
 cv.addEventListener("touchstart",e=>{
   const t=e.touches[0];
@@ -65,12 +64,13 @@ cv.addEventListener("touchmove",e=>{
 cv.addEventListener("touchend",()=>{smasher.drag=false;});
 
 function startGame(){
-  initGame();running=true;last=performance.now();
+  initGame();
+  document.getElementById("overlay").textContent="3";
   let cnt=3;
-  document.getElementById("overlay").textContent=cnt;
   const id=setInterval(()=>{
-    cnt--;document.getElementById("overlay").textContent=cnt?cnt:"GO";
-    if(cnt<0){clearInterval(id);document.getElementById("overlay").textContent="";}
+    cnt--;
+    document.getElementById("overlay").textContent=cnt>0?cnt:(cnt===0?"GO":"");
+    if(cnt<0){clearInterval(id);running=true;last=performance.now();}
   },1000);
 }
 document.getElementById("start").onclick=startGame;
