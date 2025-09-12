@@ -1,210 +1,479 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no" />
-<title>MOB GAME HUB</title>
-<meta name="theme-color" content="#0b0c10" />
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
+<title>Balloon Smash 30 – エアホッケー版（スマホ最適化）</title>
 <style>
   :root{
-    --bg:#0b0c10; --panel:#141822; --panel2:#1a2030; --fg:#e9eef7; --dim:#9aa3b2; --accent:#13c4ff; --accent2:#ff3e7f;
-    --btn:#20283a; --btnActive:#2b3550; --ok:#25d366; --warn:#ffb020;
+    --bg:#0b0e14; --accent:#13c4ff; --good:#34d399; --text:#e5e7eb; --muted:#9ca3af;
+    --wall:#1f2a44; --wallGlow:#2a3a62;
   }
-  /* iOSのアドレスバーで高さが変わる対策 */
-  html { height: -webkit-fill-available; }
-  body {
-    margin:0; background:linear-gradient(160deg,#0b0c10 0%, #0c111a 60%, #0b0c10 100%);
-    color:var(--fg); font-family: "Segoe UI", "Hiragino Sans", "Yu Gothic", system-ui, -apple-system, Roboto, sans-serif;
-    min-height:100vh; min-height:-webkit-fill-available;
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent}
+  html,body{height:100%;margin:0;background:var(--bg);color:var(--text);font-family: system-ui, -apple-system, "Hiragino Sans", "Yu Gothic", Roboto, Segoe UI, sans-serif;}
+  #wrap{position:fixed; inset:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left); display:flex; flex-direction:column;}
+  #hud{flex:0 0 auto; display:flex; align-items:center; justify-content:space-between; gap:8px; padding:10px 12px; background:linear-gradient(180deg, rgba(0,0,0,.35), rgba(0,0,0,.1)); backdrop-filter: blur(8px);}
+  #hud .pill{padding:6px 10px; border-radius:999px; background:#111827; border:1px solid #222; font-weight:700; min-width:88px; text-align:center}
+  #hud .btn{padding:8px 14px; border-radius:10px; background:#0f172a; border:1px solid #243045; font-weight:800}
+  #stageWrap{position:relative; flex:1 1 auto; display:flex; align-items:center; justify-content:center; padding:10px;}
+  #stage{width:100%; max-width:100vmin; aspect-ratio:1/1; background:#0a0d14; border-radius:16px; box-shadow: 0 10px 30px rgba(0,0,0,.45) inset;}
+  #overlay{position:absolute; inset:0; display:flex; align-items:center; justify-content:center; pointer-events:none;}
+  .countdown{font-size:14vw; font-weight:900; text-shadow:0 6px 20px rgba(0,0,0,.6)}
+  .go{color:var(--good)}
+  #leader{position:absolute; inset:0; display:none; align-items:center; justify-content:center; background:rgba(0,0,0,.6);}
+  #leader .card{width:min(92vw,720px); max-height:80vh; overflow:auto; background:#0f1623; border:1px solid #233; border-radius:18px; padding:18px;}
+  #leader h2{margin:0 0 8px 0; font-size:7vw; line-height:1; text-align:center}
+  #leader table{width:100%; border-collapse:collapse; font-size:4.2vw}
+  #leader th,#leader td{padding:8px 6px; border-bottom:1px solid #233; text-align:left}
+  #leader tr.me{background:rgba(19,196,255,.08)}
+  #leader .pos{width:1%;}
+  #leader .score{text-align:right}
+  #restart{display:none; margin-top:12px; width:100%; padding:12px; border-radius:12px; background:#162235; color:#dbeafe; font-weight:800; border:1px solid #234}
+  .rankBig{font-size:16vw; font-weight:900; text-align:center; margin:4px 0 6px 0}
+  .rankBig small{font-size:6vw; font-weight:700; color:#9fb3d1}
+  /* スマッシャー可動域ガイド（下部帯） */
+  #zoneHint{position:absolute; left:50%; transform:translateX(-50%); bottom:12px; padding:6px 10px; border-radius:10px; background:rgba(0,0,0,.35); font-size:3.6vw; color:#cbd5e1}
+  @media (min-width:540px){
+    #leader h2{font-size:40px}
+    #leader table{font-size:18px}
+    .countdown{font-size:72px}
+    .rankBig{font-size:80px}
+    .rankBig small{font-size:28px}
+    #zoneHint{font-size:16px}
   }
-  * { box-sizing:border-box; }
-  .wrap{
-    position:fixed; inset:0; display:flex; flex-direction:column; padding: max(16px, env(safe-area-inset-top)) max(16px, env(safe-area-inset-right)) max(16px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
-    gap:16px;
-  }
-  .frame{
-    flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:28px;
-    border-radius:24px; background: radial-gradient(1200px 600px at 50% 0%, #182033 0%, transparent 60%) , linear-gradient(180deg, var(--panel) 0%, var(--panel2) 100%);
-    box-shadow: inset 0 0 0 1px rgba(255,255,255,.04), 0 20px 60px rgba(0,0,0,.55);
-    padding:24px;
-  }
-  .logo{
-    user-select:none; -webkit-user-select:none;
-    font-weight:800; letter-spacing:.04em; text-align:center;
-    display:flex; flex-direction:column; gap:8px; align-items:center;
-  }
-  .logo .main{
-    font-size: clamp(28px, 6vw, 56px);
-    line-height:1.05;
-    text-shadow: 0 0 0 transparent, 0 3px 24px rgba(19,196,255,.28);
-  }
-  .logo .sub{
-    font-size: clamp(12px, 2.4vw, 16px);
-    color:var(--dim);
-  }
-  .menu{
-    width:min(680px, 94vw);
-    display:grid; grid-template-columns:1fr; gap:14px;
-  }
-  .btn{
-    appearance:none; border:none; width:100%;
-    background:linear-gradient(180deg, var(--btn) 0%, #232c42 100%);
-    color:var(--fg); padding:18px 20px; border-radius:18px;
-    font-size: clamp(16px, 3.8vw, 20px); font-weight:700; letter-spacing:.02em;
-    box-shadow: 0 2px 0 #0c1220, 0 14px 30px rgba(0,0,0,.35);
-    display:flex; align-items:center; justify-content:space-between; gap:12px;
-    transition: transform .06s ease, box-shadow .12s ease, background .12s ease;
-    outline:none;
-  }
-  .btn:focus-visible { box-shadow: 0 0 0 3px rgba(19,196,255,.45); }
-  .btn:hover{ transform: translateY(-2px); }
-  .btn:active{ transform: translateY(0); background:linear-gradient(180deg, var(--btnActive) 0%, #2a3550 100%); }
-
-  .tag{ font-size:.8em; color:#cbd6ff; opacity:.9; }
-  .pill{
-    padding:.42em .76em; border-radius:999px; font-size:.8em; font-weight:800;
-    background:#152238; color:#bfe9ff; border:1px solid rgba(19,196,255,.25);
-  }
-  .pill.ok{ background: #112a1e; color:#b9ffd6; border-color: rgba(37,211,102,.3); }
-  .pill.warn{ background:#2a2111; color:#ffe3b6; border-color: rgba(255,176,32,.35); }
-  .right{ display:flex; align-items:center; gap:10px; }
-  .hint{
-    text-align:center; color:var(--dim); font-size:13px; opacity:.9;
-  }
-  .footer{
-    display:flex; justify-content:space-between; align-items:center; gap:8px; opacity:.9; color:var(--dim);
-    font-size:12px; padding:0 2px;
-  }
-  .kbd{ background:#111722; color:#cde4ff; border:1px solid #27314a; border-bottom-width:2px; padding:.1em .5em; border-radius:8px; font-weight:700; }
-  .ver{ color:#6f7d95; }
-  /* 小さめ画面でメニューを2段にしたい場合は以下を有効化
-  @media (min-width:520px){
-    .menu{ grid-template-columns:1fr 1fr; }
-  }
-  */
 </style>
 </head>
 <body>
-<div class="wrap">
-  <div class="frame" role="application" aria-label="ゲーム選択メインメニュー">
-    <div class="logo" aria-hidden="true">
-      <div class="main">MOB GAME HUB</div>
-      <div class="sub">遊ぶゲームを選んでください</div>
-    </div>
-
-    <div id="continueBox" class="menu" style="display:none">
-      <button id="continueBtn" class="btn" data-link="">
-        <div>
-          <div>前回のゲームを続ける</div>
-          <div class="tag">Last Played</div>
-        </div>
-        <div class="right">
-          <span id="continueName" class="pill ok">-</span>
-        </div>
-      </button>
-    </div>
-
-    <div class="menu">
-      <button class="btn" data-link="hoke.html" data-name="HOKE">
-        <div>
-          <div>HOKE をプレイ</div>
-          <div class="tag">ファイル: <b>hoke.html</b></div>
-        </div>
-        <div class="right">
-          <span class="pill">NEW</span>
-        </div>
-      </button>
-
-      <button class="btn" data-link="test.html" data-name="TEST">
-        <div>
-          <div>TEST をプレイ</div>
-          <div class="tag">ファイル: <b>test.html</b></div>
-        </div>
-        <div class="right">
-          <span class="pill warn">BETA</span>
-        </div>
-      </button>
-
-      <!-- ★ 追加：MOB balloon -->
-      <button class="btn" data-link="MOB hockey.html" data-name="MOB hockey">
-        <div>
-          <div>MOB balloon をプレイ</div>
-          <div class="tag">ファイル: <b>MOB hockey</b></div>
-        </div>
-        <div class="right">
-          <span class="pill">BALLOON</span>
-        </div>
-      </button>
-    </div>
-
-    <div class="hint">
-      使い方：ボタンをタップ / Enter で決定・↑↓で移動・
-      <span class="kbd">H</span>/<span class="kbd">T</span>/<span class="kbd">B</span> のショートカットも可。<br>
-      リポジトリ直下に <b>hoke.html</b>・<b>test.html</b>・<b>MOB balloon.html</b> を置いてください。
-    </div>
+<div id="wrap">
+  <div id="hud">
+    <div class="pill" id="timePill">TIME 30.0</div>
+    <div class="pill" id="scorePill">SCORE 0</div>
+    <button id="startBtn" class="btn">▶ ゲームスタート</button>
   </div>
-
-  <div class="footer">
-    <div>© MOB ARTIST</div>
-    <div class="ver">v1.1</div>
+  <div id="stageWrap">
+    <canvas id="stage"></canvas>
+    <div id="overlay"></div>
+    <div id="leader">
+      <div class="card">
+        <div class="rankBig" id="rankBig"></div>
+        <h2>順位 & 記録</h2>
+        <table id="rankTable"></table>
+        <button id="restart">🔁 リスタート</button>
+      </div>
+    </div>
+    <div id="zoneHint">下部ゾーンでスマッシャーをドラッグして打つ（上には行きません）</div>
   </div>
 </div>
 
 <script>
-  // ===== 使い勝手向上：最後に遊んだゲームを保存・復帰 =====
-  const LS_KEY = "mobhub:lastGame";
-  const btns = [...document.querySelectorAll(".btn[data-link]")];
-  btns.forEach(btn=>{
-    btn.addEventListener("click", ()=>{
-      const link = btn.dataset.link;
-      const name = btn.dataset.name || link;
-      try { localStorage.setItem(LS_KEY, JSON.stringify({link, name, t: Date.now()})); } catch(e){}
-      // スペース入りファイル名に備えてエンコード
-      location.href = encodeURI(link);
-    });
-  });
+/* ====== 基本セットアップ ====== */
+const DPR = Math.max(1, Math.min(3, window.devicePixelRatio || 1));
+const canvas = document.getElementById('stage');
+const ctx = canvas.getContext('2d');
+const overlay = document.getElementById('overlay');
+const timePill = document.getElementById('timePill');
+const scorePill = document.getElementById('scorePill');
+const startBtn = document.getElementById('startBtn');
+const leader = document.getElementById('leader');
+const rankTable = document.getElementById('rankTable');
+const restartBtn = document.getElementById('restart');
+const rankBig = document.getElementById('rankBig');
 
-  // 前回続きボタン
-  try{
-    const saved = JSON.parse(localStorage.getItem(LS_KEY) || "null");
-    if(saved && saved.link){
-      const box = document.getElementById("continueBox");
-      const cbtn = document.getElementById("continueBtn");
-      const cname = document.getElementById("continueName");
-      cname.textContent = saved.name || saved.link;
-      cbtn.dataset.link = saved.link;
-      cbtn.addEventListener("click", ()=> location.href = encodeURI(saved.link));
-      box.style.display = "";
+let W=0,H=0;
+function resize(){
+  const rect = canvas.getBoundingClientRect();
+  const size = Math.floor(Math.min(rect.width, rect.height));
+  W = H = size;
+  canvas.width = Math.floor(W * DPR);
+  canvas.height = Math.floor(H * DPR);
+  ctx.setTransform(DPR,0,0,DPR,0,0);
+}
+addEventListener('resize', resize, {passive:true});
+resize();
+
+/* ====== アセット ====== */
+function loadImage(src){
+  return new Promise((resolve)=>{
+    const img = new Image();
+    img.onload = ()=>resolve(img);
+    img.onerror = ()=>resolve(null);
+    img.src = src;
+  });
+}
+const assets = { smasher:null, ball:null, balloon:null, bg:null };
+(async ()=>{
+  assets.smasher = await loadImage('smash.png'); // スマッシャー
+  assets.ball    = await loadImage('red.png');   // ホッケー球
+  assets.balloon = await loadImage('Redb.png');  // 風船（任意）
+  assets.bg      = await loadImage('MOBhai.png'); // 背景
+})();
+
+/* ====== 定数 ====== */
+const GAME_TIME = 30.0; // 秒
+const BALLOON_COUNT = 30;
+const WALL = {left: 10, right: ()=>W-10, bottom: ()=>H-10}; // 上は無し（抜けたらリセット）
+const PADDLE_ZONE_TOP = ()=>H*0.72;  // スマッシャー可動域の上端（風船と干渉しない）
+const PADDLE_ZONE_BOTTOM = ()=>H*0.92;
+const SMASHER_R = 28;
+const BALL_R = 14;
+const FRICTION = 0.992;             // ボール減衰
+const RESET_SPEED_STOP = 25;         // これ未満で停止扱い
+const POP_SPEED_MIN = 220;           // 風船が割れる最低速度
+const PADDLE_HIT_BOOST = 1.03;       // 反射後の微加速
+const PADDLE_IMPART = 0.38;          // スマッシャー移動速度の付与率
+
+/* ====== 状態 ====== */
+let running=false, finished=false, timeLeft=GAME_TIME, lastTs=0, score=0;
+let balloons=[], smasher, ball, needResetAfterExit=false;
+
+/* ====== CPU（7人） ====== */
+const cpuNames = ['CPU-1','CPU-2','CPU-3','CPU-4','CPU-5','CPU-6','CPU-7'];
+let cpuScores = {}, cpuSkill = {};
+function initCPU(){
+  cpuScores = {}; cpuSkill = {};
+  cpuNames.forEach(n=>{
+    const base = 0.6 + Math.random()*0.7;   // 0.6〜1.3/秒
+    const clutch = 0.15 + Math.random()*0.35;
+    cpuSkill[n] = {base, clutch};
+    cpuScores[n] = 0;
+  });
+}
+function updateCPU(dt){
+  const progress = 1 - (timeLeft/GAME_TIME);
+  for(const n of cpuNames){
+    const rate = cpuSkill[n].base + cpuSkill[n].clutch*progress;
+    const expected = dt * rate;
+    const burst = Math.random() < expected*0.35 ? 1 : 0;
+    cpuScores[n] += (expected + burst);
+  }
+}
+
+/* ====== 初期化 ====== */
+function resetLevel(){
+  // 風船を均一で穏やかに（開始直後だけ速い等をなくす）
+  balloons = [];
+  for(let i=0;i<BALLOON_COUNT;i++){
+    const x = WALL.left + 20 + Math.random()*(W-2*WALL.left-40);
+    const y = 20 + Math.random()*(H*0.60-40); // 常に上側に配置（パドル帯と被らない）
+    const r = 16 + Math.random()*8;
+    const phase = Math.random()*Math.PI*2;
+    const swayAmp = 0.35 + Math.random()*0.25; // 横揺れは小さめで一定
+    const drift = 8; // px/s（常に穏やか）
+    balloons.push({x,y,r,alive:true,phase,swayAmp,drift});
+  }
+  // スマッシャー
+  smasher = {
+    x: W*0.5, y: PADDLE_ZONE_BOTTOM()-8, r:SMASHER_R,
+    lastX: W*0.5, lastY: PADDLE_ZONE_BOTTOM()-8, vx:0, vy:0, dragging:false, touchId:null
+  };
+  // ボール（手前中央から）
+  ball = {x: W*0.5, y: smasher.y-36, vx: 0, vy: 0, r:BALL_R};
+  needResetAfterExit = false;
+}
+function fullReset(){
+  score = 0; timeLeft = GAME_TIME; finished=false; running=false; lastTs=0;
+  initCPU(); resetLevel(); updateHUD();
+}
+fullReset();
+
+/* ====== HUD ====== */
+function updateHUD(){
+  timePill.textContent = `TIME ${timeLeft.toFixed(1)}`;
+  scorePill.textContent = `SCORE ${score}`;
+}
+
+/* ====== 入力：スマッシャーをドラッグ ====== */
+function canvasPointFromEvent(e){
+  const rect = canvas.getBoundingClientRect();
+  const cx = ('touches' in e ? e.touches[0].clientX : e.clientX) - rect.left;
+  const cy = ('touches' in e ? e.touches[0].clientY : e.clientY) - rect.top;
+  return {x: Math.max(WALL.left+SMASHER_R, Math.min(WALL.right()-SMASHER_R, cx)),
+          y: Math.max(PADDLE_ZONE_TOP()+SMASHER_R, Math.min(PADDLE_ZONE_BOTTOM()-SMASHER_R, cy))};
+}
+function onDown(e){
+  if(!running || finished) return;
+  if('touches' in e){
+    if(smasher.touchId!==null) return;
+    smasher.touchId = e.touches[0].identifier;
+  }
+  smasher.dragging = true;
+  const p = canvasPointFromEvent(e);
+  smasher.lastX = smasher.x; smasher.lastY = smasher.y;
+  smasher.x = p.x; smasher.y = p.y;
+  e.preventDefault?.();
+}
+function onMove(e){
+  if(!smasher.dragging) return;
+  if('touches' in e){
+    const t = Array.from(e.touches).find(t=>t.identifier===smasher.touchId);
+    if(!t) return;
+  }
+  const p = canvasPointFromEvent(e);
+  smasher.vx = (p.x - smasher.x) * 60; // ドラッグ速度を毎秒換算（適度に強め）
+  smasher.vy = (p.y - smasher.y) * 60;
+  smasher.lastX = smasher.x; smasher.lastY = smasher.y;
+  smasher.x = p.x; smasher.y = p.y;
+}
+function onUp(e){
+  if(!smasher.dragging) return;
+  smasher.dragging = false;
+  smasher.touchId = null;
+}
+canvas.addEventListener('touchstart', onDown, {passive:false});
+canvas.addEventListener('touchmove',  onMove,  {passive:false});
+canvas.addEventListener('touchend',   onUp,    {passive:false});
+canvas.addEventListener('mousedown',  onDown);
+addEventListener('mousemove', onMove);
+addEventListener('mouseup',   onUp);
+
+/* ====== 物理 ====== */
+function reflectWalls(){
+  if(ball.x - ball.r < WALL.left){ ball.x = WALL.left + ball.r; ball.vx *= -1; ball.vx *= 1.0; }
+  if(ball.x + ball.r > WALL.right()){ ball.x = WALL.right() - ball.r; ball.vx *= -1; ball.vx *= 1.0; }
+  if(ball.y + ball.r > WALL.bottom()){ ball.y = WALL.bottom() - ball.r; ball.vy *= -1; ball.vy *= 1.0; }
+  if(ball.y + ball.r < 0){ needResetAfterExit = true; }
+}
+function collidePaddle(){
+  // エアホッケー風：重なったら法線反射 + パドル移動速度を一部加算
+  const dx = ball.x - smasher.x;
+  const dy = ball.y - smasher.y;
+  const dist = Math.hypot(dx,dy);
+  const minDist = ball.r + smasher.r*0.9; // ほんの少し甘め
+  if(dist < minDist){
+    const nx = dx / (dist || 1);
+    const ny = dy / (dist || 1);
+    // 速度の法線・接線分解
+    const vDotN = ball.vx*nx + ball.vy*ny;
+    // パドルへの押し戻し
+    const overlap = (minDist - dist);
+    ball.x += nx * overlap;
+    ball.y += ny * overlap;
+    // 反射（法線成分を反転）
+    ball.vx -= 2 * vDotN * nx;
+    ball.vy -= 2 * vDotN * ny;
+    // パドルの移動速度を多少のせる
+    ball.vx += smasher.vx * PADDLE_IMPART;
+    ball.vy += smasher.vy * PADDLE_IMPART;
+    // 軽くブースト
+    ball.vx *= PADDLE_HIT_BOOST;
+    ball.vy *= PADDLE_HIT_BOOST;
+  }
+}
+function updateBalloons(dt){
+  // 常に同じ穏やかな速度（開始直後だけ速い問題を排除）
+  for(const b of balloons){
+    if(!b.alive) continue;
+    b.phase += dt;
+    b.x += Math.sin(b.phase*1.2) * b.swayAmp; // 小さな左右揺れ
+    b.y -= b.drift*dt*0.5;                    // ゆっくり上方向へ
+    // 端で跳ね返らず、位置を軽く戻す（見た目の制御）
+    if(b.x < WALL.left + b.r) b.x = WALL.left + b.r;
+    if(b.x > WALL.right() - b.r) b.x = WALL.right() - b.r;
+    if(b.y < 12 + b.r) b.y = 12 + b.r;
+  }
+}
+function hitBalloons(){
+  const speed = Math.hypot(ball.vx, ball.vy);
+  for(const b of balloons){
+    if(!b.alive) continue;
+    const d = Math.hypot(ball.x - b.x, ball.y - b.y);
+    if(d < ball.r + b.r){
+      if(speed >= POP_SPEED_MIN){
+        b.alive = false;
+        score += 1;
+      }
+      // 貫通（ボールは止めない）
     }
-  }catch(e){}
+  }
+}
 
-  // ===== キー操作（↑↓/Enter と H/T/B ショートカット）=====
-  let focusIdx = 0;
-  const focusBtn = (idx)=>{
-    focusIdx = (idx+btns.length)%btns.length;
-    btns[focusIdx].focus({preventScroll:true});
+/* ====== ループ ====== */
+function step(ts){
+  if(!lastTs) lastTs = ts;
+  const dt = Math.min(0.05, (ts-lastTs)/1000);
+  lastTs = ts;
+
+  if(running && !finished){
+    timeLeft = Math.max(0, timeLeft - dt);
+    updateCPU(dt);
+    // ボール移動
+    ball.x += ball.vx * dt;
+    ball.y += ball.vy * dt;
+
+    reflectWalls();
+    collidePaddle();
+    updateBalloons(dt);
+    hitBalloons();
+
+    // 減衰
+    ball.vx *= FRICTION;
+    ball.vy *= FRICTION;
+
+    // 停止 or 上抜けでリセット
+    const speed = Math.hypot(ball.vx, ball.vy);
+    if(speed < RESET_SPEED_STOP || needResetAfterExit){
+      resetLevel();
+    }
+
+    if(timeLeft<=0){
+      finishGame();
+    }
+
+    updateHUD();
+  }
+
+  render();
+  requestAnimationFrame(step);
+}
+requestAnimationFrame(step);
+
+/* ====== 描画 ====== */
+function drawBackground(){
+  if(assets.bg){
+    // MOBhai.png を全面にフィット（トリミング少なめ）
+    const iw = assets.bg.width, ih = assets.bg.height;
+    const rCanvas = W/H, rImg = iw/ih;
+    let dw, dh, dx, dy;
+    if(rImg > rCanvas){ // 画像が横長
+      dh = H; dw = ih * rCanvas;
+      const scale = H/ih; dw = iw*scale; dh = ih*scale;
+    }else{
+      dw = W; const scale = W/iw; dh = ih*scale;
+    }
+    dx = (W - dw)/2; dy = (H - dh)/2;
+    ctx.drawImage(assets.bg, dx, dy, dw, dh);
+  }else{
+    // フォールバック
+    const g = ctx.createLinearGradient(0,0,0,H);
+    g.addColorStop(0,'#0e1322'); g.addColorStop(1,'#070b13');
+    ctx.fillStyle = g; ctx.fillRect(0,0,W,H);
+  }
+}
+function drawWalls(){
+  // 左・右・下に壁（上は開放）。壁の色と縁取りでステージ感
+  ctx.save();
+  ctx.strokeStyle = 'rgba(0,0,0,0)';
+  ctx.lineWidth = 0;
+  // 壁本体
+  ctx.fillStyle = '#0b1222aa';
+  // 左
+  ctx.fillRect(0,0, WALL.left, H);
+  // 右
+  ctx.fillRect(WALL.right(),0, W - WALL.right(), H);
+  // 下
+  ctx.fillRect(0, WALL.bottom(), W, H - WALL.bottom());
+  // 内側の光
+  ctx.fillStyle = 'rgba(42,58,98,0.55)';
+  ctx.fillRect(WALL.left-3,0,3,H);
+  ctx.fillRect(WALL.right(),0,3,H);
+  ctx.fillRect(0,WALL.bottom(),W,3);
+  ctx.restore();
+}
+function drawBalloon(b){
+  if(!b.alive) return;
+  if(assets.balloon){
+    const d = b.r*2;
+    ctx.drawImage(assets.balloon, b.x-b.r, b.y-b.r, d, d);
+  }else{
+    // 赤風船
+    const g = ctx.createRadialGradient(b.x-4,b.y-6,4,b.x,b.y,b.r);
+    g.addColorStop(0,'#ffb3b3'); g.addColorStop(1,'#c1121f');
+    ctx.fillStyle = g;
+    ctx.beginPath(); ctx.arc(b.x,b.y,b.r,0,Math.PI*2); ctx.fill();
+    ctx.fillStyle='rgba(255,255,255,.35)';
+    ctx.beginPath(); ctx.ellipse(b.x-6,b.y-8, b.r*0.35, b.r*0.22, -0.6, 0, Math.PI*2); ctx.fill();
+  }
+}
+function drawSmasher(){
+  const x = smasher.x, y = smasher.y, r = smasher.r;
+  if(assets.smasher){
+    const d = r*2.2;
+    ctx.drawImage(assets.smasher, x-d/2, y-d/2, d, d);
+  }else{
+    // 扇形パドル
+    ctx.save();
+    ctx.translate(x,y);
+    ctx.fillStyle = '#2dd4bf';
+    ctx.beginPath();
+    ctx.arc(0,0,r,Math.PI*0.1,Math.PI*0.9,false);
+    ctx.lineTo(0,0);
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+  }
+}
+function drawBall(){
+  if(assets.ball){
+    ctx.drawImage(assets.ball, ball.x-ball.r, ball.y-ball.r, ball.r*2, ball.r*2);
+  }else{
+    ctx.beginPath();
+    ctx.fillStyle='#ef4444';
+    ctx.arc(ball.x,ball.y,ball.r,0,Math.PI*2);
+    ctx.fill();
+  }
+}
+function render(){
+  ctx.clearRect(0,0,W,H);
+  drawBackground();
+  drawWalls();
+  // 風船
+  for(const b of balloons) drawBalloon(b);
+  // ボールとスマッシャー
+  drawBall();
+  drawSmasher();
+}
+
+/* ====== カウントダウン ====== */
+function showCountdown(cb){
+  overlay.innerHTML = '';
+  const el = document.createElement('div');
+  el.className = 'countdown';
+  overlay.appendChild(el);
+  const seq = ['3','2','1','<span class="go">GO</span>'];
+  let i=0;
+  const tick = ()=>{
+    el.innerHTML = seq[i++];
+    if(i<seq.length){ setTimeout(tick, 700); }
+    else{
+      setTimeout(()=>{ overlay.innerHTML=''; cb&&cb(); }, 300);
+    }
   };
-  focusBtn(0);
+  tick();
+}
 
-  const jumpTo = (file)=>document.querySelector(`.btn[data-link="${file}"]`)?.click();
+/* ====== 終了 ====== */
+function finishGame(){
+  finished = true; running = false;
+  const finalCPU = cpuNames.map(n=>({name:n, score:Math.max(0, Math.round(cpuScores[n]))}));
+  const me = {name:'YOU', score:score};
+  const all = [me, ...finalCPU].sort((a,b)=>b.score-a.score);
+  const pos = all.findIndex(p=>p.name==='YOU')+1;
 
-  window.addEventListener("keydown", (ev)=>{
-    const k = ev.key.toLowerCase();
-    if(k === "arrowdown"){ ev.preventDefault(); focusBtn(focusIdx+1); }
-    else if(k === "arrowup"){ ev.preventDefault(); focusBtn(focusIdx-1); }
-    else if(k === "enter" || k === " "){ ev.preventDefault(); btns[focusIdx].click(); }
-    else if(k === "h"){ jumpTo("hoke.html"); }
-    else if(k === "t"){ jumpTo("test.html"); }
-    else if(k === "b"){ jumpTo("MOB balloon.html"); }
-  });
+  leader.style.display='flex';
+  rankBig.innerHTML = `終了！<br>あなたは <span style="color:#fff">${pos} 位</span> <small>/ 8人</small>`;
+  rankTable.innerHTML = `
+    <tr><th class="pos">#</th><th>プレイヤー</th><th class="score">スコア</th></tr>
+    ${all.map((p,i)=>`
+      <tr class="${p.name==='YOU'?'me':''}">
+        <td class="pos">${i+1}</td>
+        <td>${p.name}${p.name==='YOU'?'（あなた）':''}</td>
+        <td class="score">${p.score}</td>
+      </tr>
+    `).join('')}
+  `;
+  setTimeout(()=>{ restartBtn.style.display='block'; }, 3000);
+}
 
-  // ===== iOS で 100vh 問題の微補正（任意）=====
-  const setVh = ()=> {
-    const vh = window.innerHeight * 0.01;
-    document.documentElement.style.setProperty('--vh', `${vh}px`);
-  };
-  setVh();
-  window.addEventListener('resize', setVh);
+/* ====== スタート ====== */
+function startGame(){
+  startBtn.disabled = true;
+  leader.style.display='none';
+  restartBtn.style.display='none';
+  fullReset();
+  showCountdown(()=>{ running = true; });
+}
+startBtn.addEventListener('click', startGame);
+restartBtn.addEventListener('click', startGame);
 </script>
 </body>
 </html>
