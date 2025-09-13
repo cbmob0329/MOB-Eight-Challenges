@@ -60,7 +60,7 @@
 
 <!-- オーバーレイ表示 -->
 <div class="overlay center" id="intro"><div class="msg big">パワーを溜めて遠くまで飛ばせ！</div></div>
-<div class="overlay top" id="hint"><div class="msg small">横長ゲージ：左列 上→中→下 → 次に右列 上→中→下（右列は難しい）</div></div>
+<div class="overlay top" id="hint"><div class="msg small">横長ゲージ：左列 上→中→下 → 次に右列 上→中→下（右列は超速で難しい）</div></div>
 <div class="overlay center" id="chargeDone"><div class="msg big">チャージ完了！</div></div>
 <div class="overlay center" id="countdown"><div class="msg big" id="cdText"></div></div>
 <div class="overlay top" id="distanceWrap"><div class="distance" id="distText">0.0 m</div></div>
@@ -120,12 +120,11 @@
   fit();
 
   // 背景スケール・ループ
-  let bgScale=1, bgW=0, bgH=0;
+  let bgW=0, bgH=0;
   function updateBgScale(){
     if (!bgImg.complete || !bgImg.naturalWidth) return;
     const sw = bgImg.naturalWidth, sh = bgImg.naturalHeight;
     const scale = Math.max(W/sw, H/sh);
-    bgScale = scale;
     bgW = sw*scale; bgH = sh*scale;
   }
   bgImg.onload = updateBgScale;
@@ -143,8 +142,8 @@
     for(let i=0;i<6;i++){
       const isRight = i>=3;
       gauges.push({
-        value: Math.random(), dir: 1,       // 0..1（左→右）
-        speed: isRight ? 1.35 : 0.9,        // 右は速い＝難しい
+        value: Math.random(), dir: 1,             // 0..1（左→右）
+        speed: isRight ? 3.2 : 1.8,               // ★ 大幅高速化（右は超速）
         locked: false
       });
     }
@@ -153,9 +152,9 @@
 
   function drawGauges(){
     // 2列×3行の「横長」ゲージを中央に配置
-    const totalW = Math.min(W*0.94, 620*DPR);
-    const totalH = Math.min(H*0.6, 360*DPR);
-    const colGap = 36*DPR, rowGap = 16*DPR;
+    const totalW = Math.min(W*0.94, 640*DPR);
+    const totalH = Math.min(H*0.62, 380*DPR);
+    const colGap = 34*DPR, rowGap = 16*DPR;
     const colW = (totalW - colGap)/2;
     const rowH = (totalH - rowGap*2)/3;
 
@@ -180,17 +179,17 @@
       ctx.fill();
 
       // 中央スイートゾーン（右列は狭い）
-      const sweet = (i>=3) ? 0.22 : 0.32;
+      const sweet = (i>=3) ? 0.20 : 0.30;
       const sweetW = innerW * sweet;
       const sweetX = innerX + innerW*(0.5 - sweet/2);
       ctx.fillStyle = 'rgba(38,208,255,0.22)';
       roundRect(ctx, sweetX, innerY+2*DPR, sweetW, innerH-4*DPR, 6*DPR);
       ctx.fill();
 
-      // 現在位置カーソル（縦8pxのスライダー）
+      // 現在位置カーソル（高速でも視認しやすい細スライダー）
       const g = gauges[i];
       const cx = innerX + g.value*innerW;
-      const cursorW = 8*DPR;
+      const cursorW = 6*DPR;
       const cursorH = innerH - 6*DPR;
       ctx.fillStyle = g.locked ? 'rgba(255,90,138,0.95)' : 'rgba(255,255,255,0.95)';
       roundRect(ctx, cx - cursorW/2, innerY+3*DPR, cursorW, cursorH, 4*DPR);
@@ -213,7 +212,8 @@
     for(let i=0;i<6;i++){
       const g = gauges[i];
       if (g.locked || i!==currentGaugeIndex) continue;
-      g.value += g.dir * g.speed * dt * 0.6;
+      // ★ 超高速往復
+      g.value += g.dir * g.speed * dt * 1.1;
       if (g.value>1){ g.value=1; g.dir=-1; }
       if (g.value<0){ g.value=0; g.dir=1; }
     }
@@ -229,22 +229,23 @@
     }
   }
 
-  // ======= 飛行（上へ進み続ける：重力なし・減衰のみ） =======
+  // ======= 飛行（完全に上方向のみ＝落下ゼロの見た目） =======
   let ball = null;
-  let camY = 0;
-  let bgScroll = 0;
-  let totalDist = 0;
+  let anchorY = 0;     // 画面内でボールを固定する高さ
+  let bgScroll = 0;    // 背景の縦オフセット（上へ進むほど増える）
+  let totalDist = 0;   // m
   let countdownT = 0;
   let introTimer = 0;
   let doneTimer = 0;
   let recordTimer = 0;
   let resultsTimer = 0;
-  let launchV0 = 0;
+  let launchSpeed = 0; // 正の値（上方向の見た目の速度）
 
   function initBall(){
     const radius = Math.round(Math.min(W,H)*0.045);
-    ball = { x: W/2, y: H*0.72, r: radius, vy: 0, shaking: false };
-    camY = 0; bgScroll = 0; totalDist = 0;
+    ball = { x: W/2, y: H*0.72, r: radius };
+    anchorY = Math.round(H * 0.40); // 画面上側40%あたりに固定表示
+    bgScroll = 0; totalDist = 0;
   }
 
   function chargePower(){
@@ -260,9 +261,9 @@
       score += unit * weight;
     }
     const norm = Math.min(1, score / 6.75);
-    // 初速度（上向き）
-    const v0 = (H * 1.1) * (0.65 + 1.25*norm);
-    return v0;
+    // 初期上昇速度（画面スケール基準の正値）
+    const s0 = (H * 1.25) * (0.65 + 1.25*norm);
+    return s0;
   }
 
   function beginIntro(){
@@ -283,21 +284,20 @@
     state = State.CHARGE_DONE;
     show($hint,false); show($done,true);
     doneTimer = 2.0;
-    launchV0 = chargePower();
+    launchSpeed = chargePower(); // 正値（上へ）
   }
 
   function beginCountdown(){
     state = State.COUNTDOWN;
     show($done,false); show($cd,true);
     countdownT = 3.2; // 3→2→1→GO
-    ball.shaking = true;
   }
 
   function beginFlying(){
     state = State.FLYING;
     show($cd,false); show($distWrap,true);
-    ball.shaking = false;
-    ball.vy = -launchV0; // 上へ。以後、重力はかけない
+    // ボールの表示位置を固定（以後 ball.y は固定で動かさない）
+    ball.y = anchorY;
   }
 
   function stopAndRecord(){
@@ -325,9 +325,7 @@
     resultsTimer = 3.0;
   }
 
-  function showRestart(){
-    $restart.style.display = 'block';
-  }
+  function showRestart(){ $restart.style.display = 'block'; }
 
   function makeCPUResults(playerDist){
     const arr = [];
@@ -341,9 +339,7 @@
 
   // 入力
   function onTap(){
-    if (state===State.GAUGE){
-      stopCurrentGauge();
-    }
+    if (state===State.GAUGE) stopCurrentGauge();
   }
   cvs.addEventListener('pointerdown', onTap);
   $restart.addEventListener('click', ()=>{ beginIntro(); });
@@ -357,11 +353,11 @@
     updateBgScale();
     ctx.clearRect(0,0,W,H);
 
-    drawBg();
+    drawBg(); // 背景
 
     switch(state){
       case State.INTRO:
-        drawBallAtRest();
+        drawBall(ball.x, ball.y, Math.round(Math.min(W,H)*0.045)); // 待機中は足元に
         introTimer -= dt;
         if (introTimer<=0) beginGauge();
         break;
@@ -369,17 +365,18 @@
       case State.GAUGE:
         updateGauges(dt);
         drawGauges();
-        drawBallAtRest();
+        drawBall(ball.x, ball.y, Math.round(Math.min(W,H)*0.045));
         break;
 
       case State.CHARGE_DONE:
-        drawBallAtRest();
+        drawBall(ball.x, ball.y, Math.round(Math.min(W,H)*0.045));
         doneTimer -= dt;
         if (doneTimer<=0) beginCountdown();
         break;
 
       case State.COUNTDOWN:
-        drawBallAtRest(true);
+        // 小刻みな震え演出（表示位置固定のまま）
+        drawBallShaking(ball.x, ball.y, Math.round(Math.min(W,H)*0.045));
         countdownT -= dt;
         renderCountdown(countdownT);
         if (countdownT<=0) beginFlying();
@@ -387,17 +384,17 @@
 
       case State.FLYING:
         updateFlight(dt);
-        drawFlight();
+        drawBall(ball.x, anchorY, Math.round(Math.min(W,H)*0.045)); // 常に固定位置
         break;
 
       case State.STOPPED:
-        drawFlight(true);
+        drawBall(ball.x, anchorY, Math.round(Math.min(W,H)*0.045));
         recordTimer -= dt;
         if (recordTimer<=0) showResults();
         break;
 
       case State.RESULTS:
-        drawFlight(true);
+        drawBall(ball.x, anchorY, Math.round(Math.min(W,H)*0.045));
         resultsTimer -= dt;
         if (resultsTimer<=0) showRestart();
         break;
@@ -407,28 +404,18 @@
   }
   requestAnimationFrame(loop);
 
-  // ======= 背景・ボール描画 =======
+  // ======= 背景／ボール描画 =======
   function drawBg(){
     if (!bgW || !bgH){ ctx.fillStyle='#000'; ctx.fillRect(0,0,W,H); return; }
     const offset = (bgScroll % bgH + bgH) % bgH;
-    ctx.drawImage(bgImg, 0, -offset, bgW, bgH);
-    ctx.drawImage(bgImg, 0, -offset + bgH, bgW, bgH);
+    // 上へ進む＝背景が下から上へ流れる見た目
+    ctx.drawImage(bgImg, 0, -offset,           bgW, bgH);
+    ctx.drawImage(bgImg, 0, -offset + bgH,     bgW, bgH);
     if (bgW<W){
       ctx.fillStyle='#000';
       const pad = Math.floor((W-bgW)/2);
       ctx.fillRect(0,0,pad,H); ctx.fillRect(W-pad,0,pad,H);
     }
-  }
-
-  function drawBallAtRest(shake=false){
-    const x = ball.x;
-    const y = ball.y;
-    let dx=0, dy=0;
-    if (shake){
-      dx = (Math.random()*2-1) * ball.r*0.08;
-      dy = (Math.random()*2-1) * ball.r*0.08;
-    }
-    drawBall(x+dx, y+dy, ball.r);
   }
 
   function drawBall(x,y,r){
@@ -442,6 +429,11 @@
       ctx.beginPath(); ctx.arc(x,y,r,0,Math.PI*2); ctx.fill();
     }
   }
+  function drawBallShaking(x,y,r){
+    const dx = (Math.random()*2-1) * r*0.08;
+    const dy = (Math.random()*2-1) * r*0.08;
+    drawBall(x+dx, y+dy, r);
+  }
 
   // カウントダウンUI
   function renderCountdown(t){
@@ -450,44 +442,28 @@
     else if (t>1) text='2';
     else if (t>0) text='1';
     else text='GO!';
-    $cdText.textContent = text;
+    document.getElementById('cdText').textContent = text;
   }
 
-  // 「上に進み続ける」挙動（重力0、速度は減衰するが正方向に戻らない）
+  // ★ 完全上方向：ボールは固定、背景だけ流す（落下演出ゼロ）
+  //    速度は指数的に減衰し、一定以下になったら記録。
   function updateFlight(dt){
-    const drag = 0.22;            // 減衰（値を上げると減りが早い）
-    const minUp = 40 * DPR;       // 最低上昇速度（これ以下になったら記録）
-    // 減衰適用（vyは常に負）。負の値に対して徐々に0へ近づく
-    ball.vy += ball.vy * drag * dt;
-    // 速度の絶対値が閾値以下になったら停止（下がらない）
-    if (-ball.vy < minUp){
-      ball.vy = -minUp * 0.0; // ほぼ0に
-    }
-    ball.y += ball.vy * dt;
+    // 速度（正の値）を減衰
+    const decay = 0.32;                // 減衰率（上げると早く減る）
+    const minSpeed = 28 * DPR;         // 記録判定の下限（px/s）
+    launchSpeed *= Math.max(0, 1 - decay*dt);
 
-    // カメラ追従
-    const followY = H*0.4;
-    if (ball.y < followY){
-      const dy = followY - ball.y;
-      ball.y += dy;
-      camY += dy;
-      bgScroll += dy;
-      totalDist += dy / (100*DPR);
-      $distText.textContent = `${totalDist.toFixed(1)} m`;
-    }
+    // スクロール量
+    const dy = Math.max(launchSpeed, minSpeed) * dt; // 下限以下なら下限で伸びるが、すぐ記録へ
 
-    // 記録判定：十分遅くなったら（かつ上向き維持のまま）フィニッシュ
-    if (Math.abs(ball.vy) < 8){
+    // 背景＆距離更新
+    bgScroll += dy;
+    totalDist += dy / (100*DPR);
+    $distText.textContent = `${totalDist.toFixed(1)} m`;
+
+    // 実質的に停止（minSpeed未満）を検知
+    if (launchSpeed < minSpeed){
       stopAndRecord();
-    }
-  }
-
-  function drawFlight(freeze=false){
-    drawBall(ball.x, ball.y, ball.r);
-    if (freeze){
-      ctx.strokeStyle='rgba(255,255,255,0.35)';
-      ctx.lineWidth = 2*DPR;
-      ctx.beginPath(); ctx.arc(ball.x, ball.y, ball.r*1.25, 0, Math.PI*2); ctx.stroke();
     }
   }
 
