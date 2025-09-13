@@ -3,14 +3,14 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
-<title>Balloon Smash 30 – 確実スタート/風船停止</title>
+<title>Balloon Smash 30 – 風船完全停止版</title>
 <style>
   html,body{margin:0;height:100%;background:#000;overflow:hidden}
   canvas{position:fixed;inset:0;display:block;width:100%;height:100%;touch-action:none}
 
   /* HUD */
   #hud{
-    position:fixed; top:0; left:0; right:0; z-index:30; /* ← ボタンを最前面に */
+    position:fixed; top:0; left:0; right:0; z-index:30;
     display:flex; gap:8px; justify-content:space-between; align-items:center;
     padding:8px 12px; color:#fff; font-family:system-ui,-apple-system,"Hiragino Sans","Yu Gothic",sans-serif;
     background:linear-gradient(180deg, rgba(0,0,0,.55), rgba(0,0,0,.15));
@@ -23,13 +23,11 @@
   }
   #restart{ position:fixed; left:50%; transform:translateX(-50%); bottom:16px; z-index:30; display:none; }
 
-  /* カウントダウンや終了表示（Startの邪魔をしない） */
+  /* カウントダウン/終了表示（ボタン操作を邪魔しない） */
   #overlay{
     position:fixed; inset:0; z-index:15; display:flex; align-items:center; justify-content:center;
     font-size:14vw; font-weight:900; color:#fff; text-shadow:0 0 18px rgba(0,0,0,.75);
-    pointer-events:none; /* ← これでボタンをブロックしない */
-    text-align:center;
-    line-height:1.1;
+    pointer-events:none; text-align:center; line-height:1.1;
   }
   @media (min-width:540px){ #overlay{font-size:72px} }
 
@@ -41,7 +39,7 @@
   }
   #gaugeFill{height:100%; width:0%; background:linear-gradient(90deg,#1ad1ff,#5cfcc3);}
 
-  /* 角度ラインのヒント */
+  /* ヒント */
   #angleHint{
     position:fixed; left:50%; transform:translateX(-50%); bottom:34px;
     color:#cbd5e1; font-size:12px; font-weight:700; font-family:system-ui,-apple-system,"Hiragino Sans","Yu Gothic",sans-serif;
@@ -112,7 +110,7 @@ function resetLevel(){
     const r=16+Math.random()*6;
     const x=WALL.L+r+Math.random()*(WALL.R()-WALL.L-r*2);
     const y=20+r+Math.random()*((H*0.60)-r*2);
-    balloons.push({x,y,r,alive:true});
+    balloons.push({x,y,r,alive:true}); // ← 位置は固定。以後一切更新しない
   }
   const o=SHOOT_ORIGIN(); ball.x=o.x; ball.y=o.y-40; ball.vx=0; ball.vy=0;
   needResetAfterExit=false;
@@ -165,11 +163,17 @@ function step(ts){
 
   if(running && !finished){
     timeLeft=Math.max(0,timeLeft-dt); updateCPU(dt);
+
+    // 球のみ更新。風船は一切更新しない。
     ball.x+=ball.vx*dt; ball.y+=ball.vy*dt;
-    reflectWalls(); hitBalloons();
+
+    reflectWalls();
+    hitBalloons();
+
     ball.vx*=FRICTION; ball.vy*=FRICTION;
+
     const speed=Math.hypot(ball.vx,ball.vy);
-    if(speed<STOP_SPEED || needResetAfterExit){ resetLevel(); }
+    if(speed<STOP_SPEED || needResetAfterExit){ resetLevel(); } // リセットで位置だけ再配列
     if(timeLeft<=0){ finishGame(); }
     updateHUD();
   }
@@ -221,10 +225,10 @@ function render(){
   drawBackground(); drawWalls();
   for(const b of balloons) drawBalloon(b);
   drawBall(); drawAimLine();
-  const o=SHOOT_ORIGIN(); ctx.fillStyle='rgba(255,255,255,.18)'; ctx.beginPath(); ctx.arc(o.x,o.y,10,0,Math.PI*2); ctx.fill();
+  const o=SHOOT_ORIGIN(); ctx.fillStyle='rgba(255,255,255,.18)'; ctx.beginPath(); ctx.arc(o.x, o.y, 10, 0, Math.PI*2); ctx.fill();
 }
 
-/* ========= カウントダウン（確実に実行される直列版） ========= */
+/* ========= カウントダウン（確実実行） ========= */
 function countdownThen(startCb){
   overlay.textContent='3';
   setTimeout(()=>{ overlay.textContent='2';
@@ -238,15 +242,14 @@ function countdownThen(startCb){
 
 /* ========= スタート/終了 ========= */
 function startGame(){
-  // ボタンは“開始確定”まで無効化しない（端末固有のバグ回避）
   restartBtn.style.display='none';
   fullReset(); resize(); resetLevel(); render();
   countdownThen(()=>{
-    running=true;               // ← ここで必ず起動
+    running=true;               // ← ここで確実に開始
     lastTs=performance.now();
     angleHint.style.display='block';
     gaugeWrap.style.display='none';
-    startBtn.disabled=true;     // 起動後に無効化
+    startBtn.disabled=true;
   });
 }
 startBtn.addEventListener('click', startGame);
