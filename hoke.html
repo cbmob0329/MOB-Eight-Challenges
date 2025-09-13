@@ -9,11 +9,10 @@
     --ui-bg:#0b0d12; --ui-fg:#fff; --ui-dim:#9aa3b2; --accent:#26d0ff; --accent2:#ff5a8a;
   }
   html,body{margin:0;height:100%;background:#000;color:var(--ui-fg);font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Hiragino Sans","Noto Sans JP",sans-serif}
-  /* 100vh対策（iOS Safari） */
   #app{position:fixed;inset:0;display:flex;flex-direction:column;background:#000}
   #safe{position:relative;flex:1;padding-top:env(safe-area-inset-top);padding-bottom:env(safe-area-inset-bottom)}
   #game{position:absolute;inset:0;display:block;width:100%;height:100%;touch-action:none;background:#000}
-  /* オーバーレイUI */
+
   .overlay{position:fixed;left:0;right:0;display:flex;justify-content:center;pointer-events:none}
   .top{top:calc(env(safe-area-inset-top) + 6px)}
   .center{top:0;bottom:0;align-items:center}
@@ -30,7 +29,6 @@
     background:rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.18);
     border-radius:999px;padding:6px 12px;font-weight:700
   }
-  /* リスタートボタン */
   #restart{
     position:fixed;left:50%;transform:translateX(-50%);
     bottom:calc(env(safe-area-inset-bottom) + 18px);
@@ -40,9 +38,8 @@
     display:none
   }
   #restart:active{transform:translateX(-50%) scale(.98)}
-  /* ゲージ説明（上部） */
   #hint{display:none}
-  /* ランキング表 */
+
   #board{
     position:fixed;left:12px;right:12px;top:50%;transform:translateY(-50%);
     background:rgba(9,11,16,.82);backdrop-filter:blur(8px);
@@ -63,7 +60,7 @@
 
 <!-- オーバーレイ表示 -->
 <div class="overlay center" id="intro"><div class="msg big">パワーを溜めて遠くまで飛ばせ！</div></div>
-<div class="overlay top" id="hint"><div class="msg small">左列 上→中→下 → 次に右列 上→中→下（右列は難しい）</div></div>
+<div class="overlay top" id="hint"><div class="msg small">横長ゲージ：左列 上→中→下 → 次に右列 上→中→下（右列は難しい）</div></div>
 <div class="overlay center" id="chargeDone"><div class="msg big">チャージ完了！</div></div>
 <div class="overlay center" id="countdown"><div class="msg big" id="cdText"></div></div>
 <div class="overlay top" id="distanceWrap"><div class="distance" id="distText">0.0 m</div></div>
@@ -91,7 +88,7 @@
   const State = {
     INTRO:'intro', GAUGE:'gauge', CHARGE_DONE:'chargeDone',
     COUNTDOWN:'countdown', FLYING:'flying', STOPPED:'stopped',
-    RESULTS:'results', IDLE:'idle'
+    RESULTS:'results'
   };
   let state = State.INTRO;
 
@@ -126,19 +123,18 @@
   let bgScale=1, bgW=0, bgH=0;
   function updateBgScale(){
     if (!bgImg.complete || !bgImg.naturalWidth) return;
-    // 画面に収まるようフィット（cover寄りだが縦ループ前提）
     const sw = bgImg.naturalWidth, sh = bgImg.naturalHeight;
-    const scale = Math.max(W/sw, H/sh); // 画面全体を覆う
+    const scale = Math.max(W/sw, H/sh);
     bgScale = scale;
     bgW = sw*scale; bgH = sh*scale;
   }
   bgImg.onload = updateBgScale;
 
-  // ======= ゲージ関連 =======
-  const gauges = []; // 6本（左3→右3）
+  // ======= ゲージ（横長×6：縦3行×横2列） =======
+  const gauges = [];
   const gaugeOrder = [
-    {col:0,row:0},{col:0,row:1},{col:0,row:2},
-    {col:1,row:0},{col:1,row:1},{col:1,row:2}
+    {col:0,row:0},{col:0,row:1},{col:0,row:2}, // 左列 上→中→下
+    {col:1,row:0},{col:1,row:1},{col:1,row:2}  // 右列 上→中→下
   ];
   let currentGaugeIndex = 0;
 
@@ -147,8 +143,8 @@
     for(let i=0;i<6;i++){
       const isRight = i>=3;
       gauges.push({
-        value: Math.random(), dir: 1,
-        speed: isRight ? 1.2 : 0.8, // 右は速い＝難しい
+        value: Math.random(), dir: 1,       // 0..1（左→右）
+        speed: isRight ? 1.35 : 0.9,        // 右は速い＝難しい
         locked: false
       });
     }
@@ -156,68 +152,68 @@
   }
 
   function drawGauges(){
-    // 画面中央に2列×3行の縦ゲージ
-    const totalW = Math.min(W*0.9, 520*DPR);
-    const colGap = 48*DPR, rowGap = 22*DPR;
-    const gaugeW = 30*DPR;
-    const gaugeH = Math.min(H*0.6, 360*DPR);
-    const areaW = gaugeW*2 + colGap;
-    const startX = (W - areaW)/2;
-    const startY = (H - (gaugeH*3 + rowGap*2))/2;
+    // 2列×3行の「横長」ゲージを中央に配置
+    const totalW = Math.min(W*0.94, 620*DPR);
+    const totalH = Math.min(H*0.6, 360*DPR);
+    const colGap = 36*DPR, rowGap = 16*DPR;
+    const colW = (totalW - colGap)/2;
+    const rowH = (totalH - rowGap*2)/3;
+
+    const areaX = (W - totalW)/2;
+    const areaY = (H - totalH)/2;
 
     for(let i=0;i<6;i++){
       const col = i<3 ? 0 : 1;
       const row = i%3;
-      const x = startX + col*(gaugeW + colGap);
-      const y = startY + row*(gaugeH + rowGap);
+      const x = areaX + col*(colW + colGap);
+      const y = areaY + row*(rowH + rowGap);
 
       // 背板
       ctx.fillStyle = 'rgba(255,255,255,0.08)';
-      roundRect(ctx, x, y, gaugeW, gaugeH, 12*DPR);
+      roundRect(ctx, x, y, colW, rowH, 12*DPR);
       ctx.fill();
 
-      // メーター導線
-      const pad = 6*DPR;
-      const innerX = x+pad, innerY = y+pad, innerW = gaugeW-pad*2, innerH = gaugeH-pad*2;
+      const pad = 8*DPR;
+      const innerX = x+pad, innerY = y+pad, innerW = colW-pad*2, innerH = rowH-pad*2;
       ctx.fillStyle = 'rgba(255,255,255,0.12)';
       roundRect(ctx, innerX, innerY, innerW, innerH, 8*DPR);
       ctx.fill();
 
-      // 判定スイートゾーン（右列ほど狭い）
+      // 中央スイートゾーン（右列は狭い）
       const sweet = (i>=3) ? 0.22 : 0.32;
-      const sweetH = innerH * sweet;
-      const sweetY = innerY + innerH*(0.5 - sweet/2);
+      const sweetW = innerW * sweet;
+      const sweetX = innerX + innerW*(0.5 - sweet/2);
       ctx.fillStyle = 'rgba(38,208,255,0.22)';
-      roundRect(ctx, innerX+2*DPR, sweetY, innerW-4*DPR, sweetH, 6*DPR);
+      roundRect(ctx, sweetX, innerY+2*DPR, sweetW, innerH-4*DPR, 6*DPR);
       ctx.fill();
 
-      // 現在位置バー
+      // 現在位置カーソル（縦8pxのスライダー）
       const g = gauges[i];
-      const cy = innerY + (1-g.value)*innerH;
-      ctx.fillStyle = g.locked ? 'rgba(255,90,138,0.9)' : 'rgba(255,255,255,0.9)';
-      roundRect(ctx, innerX+3*DPR, cy-4*DPR, innerW-6*DPR, 8*DPR, 4*DPR);
+      const cx = innerX + g.value*innerW;
+      const cursorW = 8*DPR;
+      const cursorH = innerH - 6*DPR;
+      ctx.fillStyle = g.locked ? 'rgba(255,90,138,0.95)' : 'rgba(255,255,255,0.95)';
+      roundRect(ctx, cx - cursorW/2, innerY+3*DPR, cursorW, cursorH, 4*DPR);
       ctx.fill();
 
       // 枠＆番号
       ctx.strokeStyle = (i===currentGaugeIndex) ? '#26d0ff' : 'rgba(255,255,255,0.28)';
       ctx.lineWidth = (i===currentGaugeIndex) ? 3*DPR : 1*DPR;
-      roundRect(ctx, x, y, gaugeW, gaugeH, 12*DPR);
+      roundRect(ctx, x, y, colW, rowH, 12*DPR);
       ctx.stroke();
 
       ctx.fillStyle = 'rgba(255,255,255,0.85)';
       ctx.font = `${12*DPR}px system-ui, sans-serif`;
-      ctx.textAlign = 'center'; ctx.textBaseline = 'top';
-      ctx.fillText(`${i+1}`, x+gaugeW/2, y-18*DPR);
+      ctx.textAlign = 'left'; ctx.textBaseline = 'bottom';
+      ctx.fillText(`${i+1}`, x+4*DPR, y-4*DPR);
     }
   }
 
   function updateGauges(dt){
     for(let i=0;i<6;i++){
       const g = gauges[i];
-      if (g.locked) continue;
-      // 現在操作中のゲージのみ動かす
-      if (i!==currentGaugeIndex) continue;
-      g.value += g.dir * g.speed * dt * 0.5;
+      if (g.locked || i!==currentGaugeIndex) continue;
+      g.value += g.dir * g.speed * dt * 0.6;
       if (g.value>1){ g.value=1; g.dir=-1; }
       if (g.value<0){ g.value=0; g.dir=1; }
     }
@@ -229,52 +225,43 @@
     g.locked = true;
     currentGaugeIndex++;
     if (currentGaugeIndex>=6){
-      // 全確定 → チャージ完了
       beginChargeDone();
     }
   }
 
-  // ======= 飛行関連 =======
+  // ======= 飛行（上へ進み続ける：重力なし・減衰のみ） =======
   let ball = null;
-  let camY = 0;      // カメラのスクロール量（上向き）
-  let bgScroll = 0;  // 背景描画用オフセット
-  let totalDist = 0; // m
+  let camY = 0;
+  let bgScroll = 0;
+  let totalDist = 0;
   let countdownT = 0;
   let introTimer = 0;
   let doneTimer = 0;
   let recordTimer = 0;
   let resultsTimer = 0;
+  let launchV0 = 0;
 
   function initBall(){
     const radius = Math.round(Math.min(W,H)*0.045);
-    ball = {
-      x: W/2,
-      y: H*0.72,
-      r: radius,
-      vy: 0,
-      shaking: false
-    };
+    ball = { x: W/2, y: H*0.72, r: radius, vy: 0, shaking: false };
     camY = 0; bgScroll = 0; totalDist = 0;
   }
 
   function chargePower(){
-    // 左列は「甘め」、右列は「難しい」＝スイートゾーン中心に近いほど高評価に
-    // value: 0..1（上=1）
+    // 中央寄せほど高評価、右列に重み
     let score = 0;
     for(let i=0;i<6;i++){
       const v = gauges[i].value;
       const center = 0.5;
       const diff = Math.abs(v - center);
-      const tight = (i>=3) ? 0.20 : 0.30; // 右は狭い
+      const tight = (i>=3) ? 0.20 : 0.30;
       const unit = Math.max(0, 1 - diff/(tight));
-      // 右列は重みアップ
       const weight = (i>=3) ? 1.25 : 1.0;
       score += unit * weight;
     }
-    // 最大理論値 = 左:3*1.0 + 右:3*1.25 = 6.75
     const norm = Math.min(1, score / 6.75);
-    // 初速度（上）m/s的な仮値（画面スケールに合わせる）
-    const v0 = (H * 0.9) * (0.75 + 1.1*norm); // 画面高ベース
+    // 初速度（上向き）
+    const v0 = (H * 1.1) * (0.65 + 1.25*norm);
     return v0;
   }
 
@@ -296,7 +283,6 @@
     state = State.CHARGE_DONE;
     show($hint,false); show($done,true);
     doneTimer = 2.0;
-    // 初速度計算だけ先に
     launchV0 = chargePower();
   }
 
@@ -311,7 +297,7 @@
     state = State.FLYING;
     show($cd,false); show($distWrap,true);
     ball.shaking = false;
-    ball.vy = -launchV0; // 上方向を負で扱う
+    ball.vy = -launchV0; // 上へ。以後、重力はかけない
   }
 
   function stopAndRecord(){
@@ -326,7 +312,6 @@
     state = State.RESULTS;
     show($record,false);
     const cpu = makeCPUResults(totalDist);
-    // ランキング生成
     const all = [{name:'あなた', d:totalDist, you:true}, ...cpu];
     all.sort((a,b)=>b.d-a.d);
     let idx = 1, html='';
@@ -345,10 +330,9 @@
   }
 
   function makeCPUResults(playerDist){
-    // プレイヤーを中心に±20%程度で4人作成
     const arr = [];
     for(let i=1;i<=4;i++){
-      const delta = (Math.random()*0.4 - 0.2); // -20%..+20%
+      const delta = (Math.random()*0.4 - 0.2);
       const d = Math.max(5, playerDist * (1 + delta));
       arr.push({id:i, d});
     }
@@ -362,15 +346,10 @@
     }
   }
   cvs.addEventListener('pointerdown', onTap);
-
-  // リスタート
-  $restart.addEventListener('click', ()=>{
-    beginIntro();
-  });
+  $restart.addEventListener('click', ()=>{ beginIntro(); });
 
   // メインループ
   let last = performance.now();
-  let launchV0 = 0;
 
   function loop(now){
     const dt = Math.min(0.033, (now - last)/1000);
@@ -378,7 +357,6 @@
     updateBgScale();
     ctx.clearRect(0,0,W,H);
 
-    // 背景描画（縦ループ）
     drawBg();
 
     switch(state){
@@ -401,7 +379,6 @@
         break;
 
       case State.COUNTDOWN:
-        // 震えアニメ
         drawBallAtRest(true);
         countdownT -= dt;
         renderCountdown(countdownT);
@@ -430,17 +407,12 @@
   }
   requestAnimationFrame(loop);
 
-  // ======= 描画ヘルパ =======
+  // ======= 背景・ボール描画 =======
   function drawBg(){
     if (!bgW || !bgH){ ctx.fillStyle='#000'; ctx.fillRect(0,0,W,H); return; }
-    // カメラYに合わせて下方向へ流す（ボール上昇の見た目）
-    // オフセットを正方向で増やし、テクスチャを下から上へ送る
     const offset = (bgScroll % bgH + bgH) % bgH;
-    // 2枚でシームレス
     ctx.drawImage(bgImg, 0, -offset, bgW, bgH);
     ctx.drawImage(bgImg, 0, -offset + bgH, bgW, bgH);
-    // 余白が出ないよう横整列（中央寄せ）
-    // 既に bgW==W になるように scale 設定しているが、微小誤差は塗りで隠す
     if (bgW<W){
       ctx.fillStyle='#000';
       const pad = Math.floor((W-bgW)/2);
@@ -471,6 +443,7 @@
     }
   }
 
+  // カウントダウンUI
   function renderCountdown(t){
     let text='';
     if (t>2) text='3';
@@ -480,44 +453,38 @@
     $cdText.textContent = text;
   }
 
+  // 「上に進み続ける」挙動（重力0、速度は減衰するが正方向に戻らない）
   function updateFlight(dt){
-    // 簡易物理：上向き負、重力は正
-    const g = H * 0.9; // 画面高基準の重力感
-    // 空気抵抗的な減衰
-    const drag = 0.12;
-    ball.vy += g * dt;      // 加速度（下向き）
-    ball.vy += ball.vy * drag * dt; // 減衰（上向きの速度を早く失わせる）
+    const drag = 0.22;            // 減衰（値を上げると減りが早い）
+    const minUp = 40 * DPR;       // 最低上昇速度（これ以下になったら記録）
+    // 減衰適用（vyは常に負）。負の値に対して徐々に0へ近づく
+    ball.vy += ball.vy * drag * dt;
+    // 速度の絶対値が閾値以下になったら停止（下がらない）
+    if (-ball.vy < minUp){
+      ball.vy = -minUp * 0.0; // ほぼ0に
+    }
     ball.y += ball.vy * dt;
 
-    // カメラ追従：ボールが画面下60%より上に来たら上方向へスクロール
+    // カメラ追従
     const followY = H*0.4;
     if (ball.y < followY){
       const dy = followY - ball.y;
       ball.y += dy;
       camY += dy;
-      bgScroll += dy; // 背景も同量だけ流す（縦ループ）
-      totalDist += dy / (100*DPR); // m換算（適度にスケール）
-      // 距離表示更新
+      bgScroll += dy;
+      totalDist += dy / (100*DPR);
       $distText.textContent = `${totalDist.toFixed(1)} m`;
     }
 
-    // 頂点で停止：上向き（vy<0）から下向きへ転じた瞬間に終了
-    if (ball.vy >= 0){
-      ball.vy = 0;
+    // 記録判定：十分遅くなったら（かつ上向き維持のまま）フィニッシュ
+    if (Math.abs(ball.vy) < 8){
       stopAndRecord();
     }
   }
 
   function drawFlight(freeze=false){
-    // ボール描画
     drawBall(ball.x, ball.y, ball.r);
-
-    // 距離表示位置（ボールと被らないように中央やや上、距離UIはDOMで位置固定）
-    // DOMの距離バッジは画面上部センター固定。ボールが重なる場合はDOMを少し下げたいが、
-    // 重なり回避として十分余白（上部）に配置しているためここでは省略。
-
     if (freeze){
-      // 停止中は軽いハイライト
       ctx.strokeStyle='rgba(255,255,255,0.35)';
       ctx.lineWidth = 2*DPR;
       ctx.beginPath(); ctx.arc(ball.x, ball.y, ball.r*1.25, 0, Math.PI*2); ctx.stroke();
@@ -535,26 +502,11 @@
     c.closePath();
   }
 
-  // ゲーム開始
+  // 開始
   let started = false;
-  function kickstart(){
-    if (started) return;
-    started = true;
-    beginIntro();
-  }
+  function kickstart(){ if (started) return; started = true; beginIntro(); }
   document.addEventListener('visibilitychange', ()=>{ if (document.visibilityState==='visible') fit(); });
   window.addEventListener('load', kickstart);
-
-  // タイマー的に遷移
-  function stepTimers(dt){
-    if (state===State.INTRO){
-      // handled in loop
-    } else if (state===State.COUNTDOWN){
-      // handled in loop
-    }
-  }
-
-  // メイン開始済み
 })();
 </script>
 </body>
