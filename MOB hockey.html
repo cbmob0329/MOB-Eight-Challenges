@@ -3,10 +3,11 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
-<title>Balloon Smash 30 – ライン照準＋ゲージショット版（スマホ最適化）</title>
+<title>Balloon Smash 30 – 角度ライン＋ゲージ（超スロー風船）</title>
 <style>
   html,body{margin:0;height:100%;background:#000;overflow:hidden}
   canvas{position:fixed;inset:0;display:block;width:100%;height:100%;touch-action:none}
+
   /* HUD */
   #hud{
     position:fixed; top:0; left:0; right:0; z-index:20;
@@ -26,22 +27,19 @@
   #overlay{
     position:fixed; inset:0; z-index:15; display:flex; align-items:center; justify-content:center;
     font-size:14vw; font-weight:900; color:#fff; text-shadow:0 0 18px rgba(0,0,0,.75);
-    pointer-events:none;
+    pointer-events:none; /* ← 重要：Startボタンのクリックを邪魔しない */
   }
   @media (min-width:540px){
     #overlay{font-size:72px}
   }
 
-  /* 画面下のゲージUI（視覚的補助） */
+  /* 画面下のゲージUI（視覚補助） */
   #gaugeWrap{
     position:fixed; left:50%; transform:translateX(-50%);
     bottom:10px; width:min(86vw, 520px); height:16px; border-radius:10px; overflow:hidden;
-    background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.15); z-index:12;
-    display:none;
+    background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.15); z-index:12; display:none;
   }
-  #gaugeFill{
-    height:100%; width:0%; background:linear-gradient(90deg,#1ad1ff,#5cfcc3);
-  }
+  #gaugeFill{height:100%; width:0%; background:linear-gradient(90deg,#1ad1ff,#5cfcc3);}
 
   /* 角度ラインのヒント（下部中央） */
   #angleHint{
@@ -62,13 +60,13 @@
   <div id="overlay"></div>
   <button id="restart">🔁 リスタート</button>
 
-  <div id="angleHint">指で角度を決めて、長押しでゲージを溜めてショット！</div>
+  <div id="angleHint">画面をタップして角度を決め、押し続けるとゲージが溜まります。離してショット！</div>
   <div id="gaugeWrap"><div id="gaugeFill"></div></div>
 
 <script>
 /* ===================== 基本セットアップ ===================== */
 const cv = document.getElementById('cv');
-const ctx = cv.getContext('2d', { alpha:false }); // 残像防止で不透明キャンバス
+const ctx = cv.getContext('2d', { alpha:false }); // 不透明で残像防止
 const overlay = document.getElementById('overlay');
 const timeP = document.getElementById('timePill');
 const scoreP = document.getElementById('scorePill');
@@ -90,7 +88,7 @@ function resize(){
 addEventListener('resize', resize, {passive:true});
 resize();
 
-/* ===================== 画像（存在しなくてもOKなフォールバック描画） ===================== */
+/* ===================== 画像（存在しなくてもOKなフォールバック） ===================== */
 function loadImage(src){
   return new Promise(res=>{
     const img = new Image();
@@ -117,13 +115,13 @@ const WALL = {L:10, R:()=>W-10, B:()=>H-10};
 function SHOOT_ORIGIN(){ return {x: W*0.5, y: H*0.88}; }
 
 const BALL_R  = 16;
-const FRICTION = 0.994;        // 球の減衰（弱め）
+const FRICTION = 0.994;        // 球の減衰
 const STOP_SPEED = 25;         // これ未満で停止扱い（リセット）
 const POP_SPEED  = 220;        // 風船が割れる最低速度（px/s）
 
-// ショット強さ
-const POWER_MIN = 420;         // 低めの初速
-const POWER_MAX = 1200;        // 強ショット上限
+// ショット強さ（長押しで0→MAX）
+const POWER_MIN = 420;
+const POWER_MAX = 1200;
 const CHARGE_TIME = 1200;      // 0→MAXまで約1.2秒（ミリ秒）
 
 /* ===================== 状態 ===================== */
@@ -160,16 +158,19 @@ function updateCPU(dt){
 
 /* ===================== 初期化 ===================== */
 function resetLevel(){
-  // 風船：常に「ゆっくり」＆「一定」挙動（残像級に速くしない）
+  // 風船：超スロー＆一定挙動（「ほんの少し」）
+  // 加算式ではなく、初期位置を中心とした“目標位置”描画にすることで暴れを防止
   balloons = [];
   for(let i=0;i<BALLOON_COUNT;i++){
     const r = 16 + Math.random()*6;
-    const x = WALL.L + r + Math.random()*(WALL.R()-WALL.L - r*2);
-    const y = 20 + r + Math.random()*((H*0.60) - r*2); // 上半分付近
-    const phase = Math.random()*Math.PI*2;
-    const swayAmp = 0.45;               // 横ふらつきは小さめで固定
-    const driftY  = 8;                  // 常にゆっくり上（px/s）
-    balloons.push({x,y,r,alive:true,phase,swayAmp,driftY});
+    const x0 = WALL.L + r + Math.random()*(WALL.R()-WALL.L - r*2);
+    const y0 = 20 + r + Math.random()*((H*0.60) - r*2); // 上半分付近
+    balloons.push({
+      x0, y0, r, alive:true,
+      phase: Math.random()*Math.PI*2,
+      swayAmp: 0.8,        // 最大±0.8px
+      driftY: 1.5          // 1.5px/s 上方向
+    });
   }
 
   // 球：シューター原点から少し上
@@ -204,21 +205,18 @@ cv.addEventListener('pointerdown', (e)=>{
   gaugeWrap.style.display = 'block';
   const p = canvasPoint(e);
   const o = SHOOT_ORIGIN();
-  aimAngle = Math.atan2(p.y - o.y, p.x - o.x); // 原点→ポインタ
+  aimAngle = Math.atan2(p.y - o.y, p.x - o.x);
   chargeStart = performance.now();
-  // 初期ゲージ表示
   gaugeFill.style.width = '0%';
 });
 cv.addEventListener('pointermove', (e)=>{
   if(!aiming) return;
   const p = canvasPoint(e);
   const o = SHOOT_ORIGIN();
-  // 角度は原点基準、上方向を主に使いたいので、下方向は制限
   let ang = Math.atan2(p.y - o.y, p.x - o.x);
-  // 下方向（約45°より下）は禁じる → 少し上向き〜真上〜斜め上のみ
-  const minAng = -Math.PI * 0.95; // 左上寄り
-  const maxAng = -Math.PI * 0.05; // 右上寄り
-  // 角度を[-170°, -10°]にクランプ（真上=-90°）
+  // 下方向は制限（-170°〜-10°のみ許可）
+  const minAng = -Math.PI * 0.95;
+  const maxAng = -Math.PI * 0.05;
   if(ang < minAng) ang = minAng;
   if(ang > maxAng) ang = maxAng;
   aimAngle = ang;
@@ -228,11 +226,9 @@ addEventListener('pointerup', ()=>{
   aiming = false;
   angleHint.style.display = 'none';
   gaugeWrap.style.display = 'none';
-  // パワー決定
   const t = performance.now() - chargeStart;
   const rate = Math.max(0, Math.min(1, t / CHARGE_TIME));
   const power = POWER_MIN + (POWER_MAX - POWER_MIN) * rate;
-  // 発射
   ball.vx = Math.cos(aimAngle) * power;
   ball.vy = Math.sin(aimAngle) * power;
 });
@@ -245,15 +241,16 @@ function reflectWalls(){
   if(ball.y + ball.r < 0){ needResetAfterExit = true; }
 }
 function updateBalloons(dt){
+  // “ほんの少し”動く：位相をゆっくり進めるだけ
   for(const b of balloons){
     if(!b.alive) continue;
-    b.phase += dt * 0.6;                 // さらにゆっくり
-    b.x += Math.sin(b.phase)*b.swayAmp;   // 小さく左右に
-    b.y -= b.driftY * dt * 0.5;           // ごく緩やかに上
-    // 画面内に軽く戻す
-    if(b.x < WALL.L + b.r) b.x = WALL.L + b.r;
-    if(b.x > WALL.R() - b.r) b.x = WALL.R() - b.r;
-    if(b.y < 12 + b.r) b.y = 12 + b.r;
+    b.phase += dt * 0.12; // 0.12rad/s とても遅い
+    const x = b.x0 + Math.sin(b.phase) * b.swayAmp;
+    const y = b.y0 - b.driftY * dt;  // 1.5px/s を dt で積分
+    // y0 を更新して少しずつ上に流す（累積はy0側へ）
+    b.y0 = y;
+    b.drawX = x;
+    b.drawY = y;
   }
 }
 function hitBalloons(){
@@ -261,7 +258,9 @@ function hitBalloons(){
   const need = POP_SPEED * POP_SPEED;
   for(const b of balloons){
     if(!b.alive) continue;
-    const d = Math.hypot(ball.x - b.x, ball.y - b.y);
+    const dx = ball.x - b.drawX;
+    const dy = ball.y - b.drawY;
+    const d = Math.hypot(dx, dy);
     if(d < ball.r + b.r){
       if(sp2 >= need){
         b.alive = false;
@@ -306,7 +305,7 @@ function step(ts){
     updateHUD();
   }
 
-  render(dt);
+  render();
   requestAnimationFrame(step);
 }
 requestAnimationFrame(step);
@@ -314,34 +313,25 @@ requestAnimationFrame(step);
 /* ===================== 描画 ===================== */
 function drawBackground(){
   if(assets.bg){
-    // cover的にフィット
+    // cover 的にフィット
     const iw = assets.bg.width, ih = assets.bg.height;
     const rImg = iw/ih, rCv = W/H;
     let dw, dh;
-    if(rImg > rCv){ // 横長 → 高さ基準
-      dh = H; dw = dh * rImg;
-    }else{          // 縦長 → 幅基準
-      dw = W; dh = dw / rImg;
-    }
+    if(rImg > rCv){ dh = H; dw = dh * rImg; } else { dw = W; dh = dw / rImg; }
     const dx = (W - dw)/2, dy = (H - dh)/2;
     ctx.drawImage(assets.bg, dx, dy, dw, dh);
   }else{
-    // フォールバック背景
     const g = ctx.createLinearGradient(0,0,0,H);
     g.addColorStop(0,'#0e1322'); g.addColorStop(1,'#070b13');
     ctx.fillStyle = g; ctx.fillRect(0,0,W,H);
   }
 }
 function drawWalls(){
-  // 左・右・下の壁。色帯＋薄い光
+  // 左・右・下の壁（上は開放）
   ctx.fillStyle = 'rgba(12,25,45,0.90)';
-  // 左
   ctx.fillRect(0,0, WALL.L, H);
-  // 右
   ctx.fillRect(WALL.R(),0, W - WALL.R(), H);
-  // 下
   ctx.fillRect(0, WALL.B(), W, H - WALL.B());
-
   ctx.fillStyle = 'rgba(42,58,98,0.55)';
   ctx.fillRect(WALL.L-3,0,3,H);
   ctx.fillRect(WALL.R(),0,3,H);
@@ -349,17 +339,19 @@ function drawWalls(){
 }
 function drawBalloon(b){
   if(!b.alive) return;
+  const x = b.drawX ?? b.x0;
+  const y = b.drawY ?? b.y0;
   if(assets.balloon){
     const d = b.r*2;
-    ctx.drawImage(assets.balloon, b.x-b.r, b.y-b.r, d, d);
+    ctx.drawImage(assets.balloon, x-b.r, y-b.r, d, d);
   }else{
     // フォールバック（赤い風船）
-    const g = ctx.createRadialGradient(b.x-4,b.y-6,4,b.x,b.y,b.r);
+    const g = ctx.createRadialGradient(x-4,y-6,4,x,y,b.r);
     g.addColorStop(0,'#ffb3b3'); g.addColorStop(1,'#c1121f');
     ctx.fillStyle = g;
-    ctx.beginPath(); ctx.arc(b.x,b.y,b.r,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(x,y,b.r,0,Math.PI*2); ctx.fill();
     ctx.fillStyle='rgba(255,255,255,.35)';
-    ctx.beginPath(); ctx.ellipse(b.x-6,b.y-8, b.r*0.35, b.r*0.22, -0.6, 0, Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(x-6,y-8, b.r*0.35, b.r*0.22, -0.6, 0, Math.PI*2); ctx.fill();
   }
 }
 function drawBall(){
@@ -374,7 +366,10 @@ function drawBall(){
 function drawAimLine(){
   if(!aiming) return;
   const o = SHOOT_ORIGIN();
-  const len = Math.min(220, Math.max(120, (performance.now()-chargeStart)*0.12));
+  const t = performance.now() - chargeStart;
+  const rate = Math.max(0, Math.min(1, t / CHARGE_TIME));
+  // 視覚的長さ（角度確認しやすい程度）
+  const len = 160 + 60*rate;
   const ex = o.x + Math.cos(aimAngle)*len;
   const ey = o.y + Math.sin(aimAngle)*len;
 
@@ -394,8 +389,6 @@ function drawAimLine(){
   ctx.restore();
 
   // ゲージUI更新
-  const t = performance.now() - chargeStart;
-  const rate = Math.max(0, Math.min(1, t / CHARGE_TIME));
   gaugeFill.style.width = `${rate*100}%`;
 }
 function render(){
@@ -414,7 +407,7 @@ function render(){
   // 照準ライン
   drawAimLine();
 
-  // シューター原点（控えめな表示）
+  // シューター原点
   const o = SHOOT_ORIGIN();
   ctx.fillStyle = 'rgba(255,255,255,.18)';
   ctx.beginPath(); ctx.arc(o.x, o.y, 10, 0, Math.PI*2); ctx.fill();
@@ -442,10 +435,10 @@ function startCountdownThenRun(){
 function startGame(){
   startBtn.disabled = true;
   restartBtn.style.display = 'none';
-  fullReset();      // スコアと時間を戻して配置を作り直す
-  resize();         // 念のため最新の画面サイズでキャンバス確定
-  resetLevel();     // 風船と球を安全範囲に再配置
-  render();         // 事前に一度描画
+  fullReset();
+  resize();
+  resetLevel();
+  render(); // 事前に一度描画（風船が見えることを保証）
   startCountdownThenRun();
 }
 startBtn.addEventListener('click', startGame);
@@ -465,46 +458,43 @@ function finishGame(){
   restartBtn.style.display = 'block';
 }
 
-/* ===================== ループ開始 ===================== */
-function update(dt){
-  timeLeft = Math.max(0, timeLeft - dt);
-  updateCPU(dt);
-
-  // 球の更新
-  ball.x += ball.vx * dt;
-  ball.y += ball.vy * dt;
-
-  reflectWalls();
-  updateBalloons(dt);
-  hitBalloons();
-
-  // 摩擦
-  ball.vx *= FRICTION;
-  ball.vy *= FRICTION;
-
-  const speed = Math.hypot(ball.vx, ball.vy);
-  if(speed < STOP_SPEED || needResetAfterExit){
-    resetLevel();
-  }
-
-  if(timeLeft <= 0){
-    finishGame();
-  }
-
-  updateHUD();
-}
+/* ===================== メインループ開始 ===================== */
 (function loop(ts){
   if(!lastTs) lastTs = ts;
   const dt = Math.min(0.05, (ts - lastTs)/1000);
   lastTs = ts;
 
   if(running && !finished){
-    update(dt);
+    // update() と render() を分離
+    timeLeft = Math.max(0, timeLeft - dt);
+    updateCPU(dt);
+
+    // 球
+    ball.x += ball.vx * dt;
+    ball.y += ball.vy * dt;
+
+    reflectWalls();
+    updateBalloons(dt);
+    hitBalloons();
+
+    // 摩擦
+    ball.vx *= FRICTION;
+    ball.vy *= FRICTION;
+
+    const speed = Math.hypot(ball.vx, ball.vy);
+    if(speed < STOP_SPEED || needResetAfterExit){
+      resetLevel();
+    }
+    if(timeLeft <= 0){
+      finishGame();
+    }
+    updateHUD();
   }
 
   render();
   requestAnimationFrame(loop);
 })();
+
 </script>
 </body>
 </html>
