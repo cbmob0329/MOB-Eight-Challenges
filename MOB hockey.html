@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
-<title>Balloon Smash 30 – 角度ライン＋ゲージ / 超スロー風船</title>
+<title>Balloon Smash 30 – 角度ライン＋ゲージ（ゲーム開始後は風船停止）</title>
 <style>
   html,body{margin:0;height:100%;background:#000;overflow:hidden}
   canvas{position:fixed;inset:0;display:block;width:100%;height:100%;touch-action:none}
@@ -58,13 +58,13 @@
   <div id="overlay"></div>
   <button id="restart">🔁 リスタート</button>
 
-  <div id="angleHint">画面をタップして角度を決め、押し続けてゲージを溜め、離してショット！</div>
+  <div id="angleHint">画面をタップして角度を決め、押し続けてゲージ、離してショット！</div>
   <div id="gaugeWrap"><div id="gaugeFill"></div></div>
 
 <script>
 /* ========= 基本セットアップ ========= */
 const cv = document.getElementById('cv');
-const ctx = cv.getContext('2d', { alpha:false }); // 不透明キャンバスで残像防止
+const ctx = cv.getContext('2d', { alpha:false }); // 不透明で残像防止
 const overlay = document.getElementById('overlay');
 const timeP = document.getElementById('timePill');
 const scoreP = document.getElementById('scorePill');
@@ -86,7 +86,7 @@ function resize(){
 addEventListener('resize', resize, {passive:true});
 resize();
 
-/* ========= 画像（無くてもフォールバック描画） ========= */
+/* ========= 画像（無くてもフォールバック可） ========= */
 function loadImage(src){
   return new Promise(res=>{
     const img = new Image();
@@ -132,8 +132,8 @@ let aiming = false;
 let aimAngle = -Math.PI/2; // 真上
 let chargeStart = 0;
 
-// 風船の経過時間（「打つ前と打った後で同じ速度」を保証）
-let balloonElapsed = 0;
+// 風船の（プレゲームのみ）緩やか演出用
+let preFloatPhase = 0;
 
 /* ========= CPU（7人） ========= */
 const cpuNames = ['CPU-1','CPU-2','CPU-3','CPU-4','CPU-5','CPU-6','CPU-7'];
@@ -159,21 +159,13 @@ function updateCPU(dt){
 
 /* ========= 初期化 ========= */
 function resetLevel(){
-  // 超スロー＆一定挙動。X/Yとも「目標位置方式」＋「1フレームの最大変位クランプ」
+  // 風船：ゲームが始まってからは「動かない」＝固定座標のみ使用
   balloons = [];
   for(let i=0;i<BALLOON_COUNT;i++){
     const r = 16 + Math.random()*6;
-    const x0 = WALL.L + r + Math.random()*(WALL.R()-WALL.L - r*2);
-    const y0 = 20 + r + Math.random()*((H*0.60) - r*2); // 上側に配置
-    balloons.push({
-      // “基準”
-      baseX:x0, baseY:y0,
-      // 表示座標（前回描画位置）
-      x:x0, y:y0, r, alive:true,
-      phase: Math.random()*Math.PI*2,
-      amp: 0.3,       // 横揺れ最大 ±0.3px（ほんの少し）
-      drift: 0.4,     // 上昇 0.4px/s（かなり遅い）
-    });
+    const x = WALL.L + r + Math.random()*(WALL.R()-WALL.L - r*2);
+    const y = 20 + r + Math.random()*((H*0.60) - r*2); // 上側に配置
+    balloons.push({x, y, r, alive:true});
   }
 
   // 球：シューター原点から少し上
@@ -181,7 +173,7 @@ function resetLevel(){
   ball.x = o.x; ball.y = o.y - 40; ball.vx = 0; ball.vy = 0;
 
   needResetAfterExit = false;
-  balloonElapsed = 0; // フェーズの“経過時間”もリセット（常に同じ速度）
+  preFloatPhase = 0;
 }
 
 function fullReset(){
@@ -209,9 +201,11 @@ cv.addEventListener('pointerdown', (e)=>{
   gaugeWrap.style.display = 'block';
   const p = canvasPoint(e);
   const o = SHOOT_ORIGIN();
-  aimAngle = Math.atan2(p.y - o.y, p.x - o.x);
+  let ang = Math.atan2(p.y - o.y, p.x - o.x);
   // 下向きは禁止（-170°〜-10°のみ許可）
-  aimAngle = Math.max(-Math.PI*0.95, Math.min(-Math.PI*0.05, aimAngle));
+  const minAng = -Math.PI*0.95, maxAng = -Math.PI*0.05;
+  ang = Math.max(minAng, Math.min(maxAng, ang));
+  aimAngle = ang;
   chargeStart = performance.now();
   gaugeFill.style.width = '0%';
 });
@@ -220,7 +214,7 @@ cv.addEventListener('pointermove', (e)=>{
   const p = canvasPoint(e);
   const o = SHOOT_ORIGIN();
   let ang = Math.atan2(p.y - o.y, p.x - o.x);
-  const minAng = -Math.PI * 0.95, maxAng = -Math.PI * 0.05;
+  const minAng = -Math.PI*0.95, maxAng = -Math.PI*0.05;
   if(ang < minAng) ang = minAng; if(ang > maxAng) ang = maxAng;
   aimAngle = ang;
 });
@@ -243,38 +237,6 @@ function reflectWalls(){
   if(ball.y + ball.r > WALL.B()){ ball.y = WALL.B() - ball.r; ball.vy *= -1; }
   if(ball.y + ball.r < 0){ needResetAfterExit = true; }
 }
-
-// 風船：目標位置方式＋最大変位クランプ（dtの跳ねによる暴れを抑止）
-function updateBalloons(dt){
-  balloonElapsed += dt;
-
-  // 目標値の更新に dt を使用（“同じ速度”を保証）
-  for(const b of balloons){
-    if(!b.alive) continue;
-
-    // 角速度（超低速）：0.04rad/s
-    b.phase += dt * 0.04;
-
-    // 目標位置
-    const targetX = b.baseX + Math.sin(b.phase) * b.amp;               // ±0.3px
-    const targetY = b.baseY - b.drift * balloonElapsed;                 // 0.4px/s 上昇
-
-    // 1フレーム最大移動量を厳格に制限（px/frame）
-    const maxStep = 0.30; // ← ここが「残像消し」の決め手
-    const dx = Math.max(-maxStep, Math.min(maxStep, targetX - b.x));
-    const dy = Math.max(-maxStep, Math.min(maxStep, targetY - b.y));
-    b.x += dx;
-    b.y += dy;
-
-    // 画面内クランプ（跳ね返らない：ガタつき防止）
-    const minX = WALL.L + b.r, maxX = WALL.R() - b.r;
-    const minY = 12 + b.r;
-    if(b.x < minX) b.x = minX;
-    if(b.x > maxX) b.x = maxX;
-    if(b.y < minY) b.y = minY;
-  }
-}
-
 function hitBalloons(){
   const sp2 = ball.vx*ball.vx + ball.vy*ball.vy;
   const need = POP_SPEED * POP_SPEED;
@@ -286,7 +248,7 @@ function hitBalloons(){
         b.alive = false;
         score += 1;
       }
-      // 球は減速せず貫通
+      // 球は貫通
     }
   }
 }
@@ -294,7 +256,7 @@ function hitBalloons(){
 /* ========= ループ ========= */
 function step(ts){
   if(!lastTs) lastTs = ts;
-  const dt = Math.min(0.05, (ts - lastTs)/1000); // フリーズ後の暴走抑止
+  const dt = Math.min(0.05, (ts - lastTs)/1000);
   lastTs = ts;
 
   if(running && !finished){
@@ -306,7 +268,7 @@ function step(ts){
     ball.y += ball.vy * dt;
 
     reflectWalls();
-    updateBalloons(dt);
+    // ★ゲーム開始後は風船を更新しない（停止）
     hitBalloons();
 
     // 摩擦
@@ -323,6 +285,9 @@ function step(ts){
     }
 
     updateHUD();
+  }else if(!running && !finished){
+    // ★プレゲームだけ超ゆるい見た目演出（ほんの少し上下に揺らす）
+    preFloatPhase += dt * 0.5;
   }
 
   render();
@@ -358,18 +323,22 @@ function drawWalls(){
   ctx.fillRect(0,WALL.B(),W,3);
 }
 function drawBalloon(b){
+  // プレゲーム中だけ、見た目用に ±0.6px くらいの微動（開始後は完全停止）
+  const x = (!running && !finished) ? (b.x + Math.sin(preFloatPhase + b.x*0.01)*0.6) : b.x;
+  const y = (!running && !finished) ? (b.y + Math.cos(preFloatPhase + b.y*0.01)*0.6) : b.y;
+
   if(!b.alive) return;
   if(assets.balloon){
     const d = b.r*2;
-    ctx.drawImage(assets.balloon, b.x-b.r, b.y-b.r, d, d);
+    ctx.drawImage(assets.balloon, x-b.r, y-b.r, d, d);
   }else{
     // フォールバック（赤い風船）
-    const g = ctx.createRadialGradient(b.x-4,b.y-6,4,b.x,b.y,b.r);
+    const g = ctx.createRadialGradient(x-4,y-6,4,x,y,b.r);
     g.addColorStop(0,'#ffb3b3'); g.addColorStop(1,'#c1121f');
     ctx.fillStyle = g;
-    ctx.beginPath(); ctx.arc(b.x,b.y,b.r,0,Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.arc(x,y,b.r,0,Math.PI*2); ctx.fill();
     ctx.fillStyle='rgba(255,255,255,.35)';
-    ctx.beginPath(); ctx.ellipse(b.x-6,b.y-8, b.r*0.35, b.r*0.22, -0.6, 0, Math.PI*2); ctx.fill();
+    ctx.beginPath(); ctx.ellipse(x-6,y-8, b.r*0.35, b.r*0.22, -0.6, 0, Math.PI*2); ctx.fill();
   }
 }
 function drawBall(){
@@ -435,7 +404,7 @@ function startCountdownThenRun(){
     else{
       clearInterval(t);
       overlay.textContent = '';
-      running = true;
+      running = true;    // ★ここから風船は完全停止
       lastTs = performance.now();
       angleHint.style.display = 'block';
       gaugeWrap.style.display = 'none';
@@ -476,11 +445,12 @@ function finishGame(){
     timeLeft = Math.max(0, timeLeft - dt);
     updateCPU(dt);
 
+    // 球のみ更新
     ball.x += ball.vx * dt;
     ball.y += ball.vy * dt;
 
     reflectWalls();
-    updateBalloons(dt);
+    // 風船は更新しない（停止）
     hitBalloons();
 
     ball.vx *= FRICTION;
@@ -494,6 +464,9 @@ function finishGame(){
       finishGame();
     }
     updateHUD();
+  }else if(!running && !finished){
+    // プレゲーム微動（見た目用だけ）
+    preFloatPhase += dt * 0.5;
   }
 
   render();
