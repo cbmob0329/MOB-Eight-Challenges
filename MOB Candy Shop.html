@@ -27,7 +27,7 @@
   <div class="pill" id="score">SCORE 0</div>
 </div>
 <div class="footer">
-  <div class="equipBox">装備中：<span id="equipIcon" class="equipIcon muted"></span></div>
+  <div class="equipBox">選択中：<span id="equipIcon" class="equipIcon muted"></span></div>
 </div>
 <div class="centerText"><span id="center"></span></div>
 
@@ -47,26 +47,20 @@ window.addEventListener("resize",resize);resize();
 const IMGS={
   bg:"shop.png",
   items:{choco:"1cho.png",gumi:"1gumi.png",gum:"1gum.png",ame:"1ame.png"},
-  customers:["1.png","2.png","3.png"],
-  bubbles:{choco:"cho.png",gumi:"gumi.png",gum:"gum.png",ame:"ame.png"}
 };
-const images={items:{},customers:[],bubbles:{}};
+const images={items:{}};
 function loadImage(src){return new Promise(r=>{const i=new Image();i.onload=()=>r(i);i.onerror=()=>r(null);i.src=src;});}
 async function loadAll(){
   images.bg=await loadImage(IMGS.bg);
   for(const k in IMGS.items){images.items[k]=await loadImage(IMGS.items[k]);}
-  for(const p of IMGS.customers){images.customers.push(await loadImage(p));}
-  for(const k in IMGS.bubbles){images.bubbles[k]=await loadImage(IMGS.bubbles[k]);}
 }
 
 // ===== game state =====
 const LANES=['A','B','C','D'];
-const laneQ={A:[],B:[],C:[],D:[]};
 let plates={A:{item:null},B:{item:null},C:{item:null},D:{item:null}};
 let equip=null;const equipIcon=document.getElementById("equipIcon");
-let started=false,timeLeft=60,score=0,spawnT=0,last=0;
+let started=false,timeLeft=60,score=0,last=0;
 const HUDt=document.getElementById("time"),HUDs=document.getElementById("score"),center=document.getElementById("center");
-const customers=new Map();let nextId=1;
 
 function updateEquipUI(){
   if(!equip){equipIcon.classList.add("muted");equipIcon.style.backgroundImage="";}
@@ -77,27 +71,27 @@ function updateEquipUI(){
 cv.addEventListener("click",e=>{
   if(!started)return;
   const x=e.clientX,y=e.clientY;
-  const item=hitItemRow(x,y);
-  if(item){equip=item;updateEquipUI();return;}
   const lane=hitPlate(x,y);
   if(lane&&equip){plates[lane].item=equip;}
+  // アイコン選択はA〜Dの下にある固定アイコンをタップ
+  const sel=hitFixedItems(x,y);
+  if(sel){equip=sel;updateEquipUI();}
 });
 
-function hitItemRow(x,y){
-  const size=W*0.15,gap=size*0.1,startX=(W-(size*4+gap*3))/2, Y=H*0.58;
-  const items=['choco','gumi','gum','ame'];
-  for(let i=0;i<4;i++){
-    const ix=startX+i*(size+gap),iy=Y-size/2;
-    if(x>=ix&&x<=ix+size&&y>=iy&&y<=iy+size)return items[i];
-  }
-  return null;
-}
 function hitPlate(x,y){
   const r=Math.min(W,H)*0.07;
   const X=[0.17,0.38,0.62,0.83].map(v=>v*W),Y=H*0.73;
   for(let i=0;i<4;i++){
     const dx=x-X[i],dy=y-Y;
     if(dx*dx+dy*dy<=r*r)return LANES[i];
+  }
+  return null;
+}
+function hitFixedItems(x,y){
+  const items=['choco','gumi','gum','ame'];
+  const X=[0.17,0.38,0.62,0.83].map(v=>v*W), Y=H*0.85, size=W*0.12;
+  for(let i=0;i<4;i++){
+    if(x>=X[i]-size/2&&x<=X[i]+size/2&&y>=Y-size/2&&y<=Y+size/2)return items[i];
   }
   return null;
 }
@@ -111,55 +105,39 @@ function loop(t){
 function update(dt){
   if(!started)return;
   timeLeft=Math.max(0,timeLeft-dt);
-  spawnT+=dt;
-  if(spawnT>=3){spawnT=0;spawnCustomer();}
   HUDt.textContent="TIME "+timeLeft.toFixed(1);
   HUDs.textContent="SCORE "+score;
   if(timeLeft<=0){started=false;showCenter("TIME UP!");setTimeout(()=>showCenter("SCORE "+score),1000);}
 }
-function spawnCustomer(){
-  const lane=LANES.reduce((a,b)=>laneQ[a].length<=laneQ[b].length?a:b);
-  const ask=['choco','gumi','gum','ame'][Math.floor(Math.random()*4)];
-  const id=nextId++;laneQ[lane].push(id);
-  customers.set(id,{lane,ask,state:'ORDER',orderT:0});
-}
 function draw(){
   ctx.clearRect(0,0,W,H);
+  // 背景は常に表示
   if(images.bg)ctx.drawImage(images.bg,0,0,W,H);
-  // items row
-  const size=W*0.15,gap=size*0.1,startX=(W-(size*4+gap*3))/2,Y=H*0.58;
-  ['choco','gumi','gum','ame'].forEach((k,i)=>{
-    const img=images.items[k];if(!img)return;
-    const x=startX+i*(size+gap),y=Y-size/2;
-    if(equip===k){ctx.strokeStyle="#fff";ctx.lineWidth=4;ctx.strokeRect(x-4,y-4,size+8,size+8);}
-    ctx.drawImage(img,x,y,size,size);
-  });
   // plates
   const r=Math.min(W,H)*0.07,X=[0.17,0.38,0.62,0.83].map(v=>v*W),Yp=H*0.73;
   for(let i=0;i<4;i++){
     ctx.beginPath();ctx.arc(X[i],Yp,r,0,Math.PI*2);
-    ctx.fillStyle="#000";ctx.fill();
-    ctx.strokeStyle="#fff";ctx.stroke();
+    ctx.fillStyle="#000";ctx.fill();ctx.strokeStyle="#fff";ctx.stroke();
     if(plates[LANES[i]].item&&images.items[plates[LANES[i]].item]){
       ctx.drawImage(images.items[plates[LANES[i]].item],X[i]-r*0.8,Yp-r*0.8,r*1.6,r*1.6);
     }
     ctx.fillStyle="#fff";ctx.textAlign="center";ctx.font="bold 18px sans-serif";
     ctx.fillText(LANES[i],X[i],Yp+r+18);
   }
-}
-function showCenter(t){
-  center.textContent=t;center.style.opacity=1;
-  setTimeout(()=>center.style.opacity=0,700);
-}
-async function boot(){
-  await loadAll();await runCountdown();startGame();requestAnimationFrame(loop);
-}
-async function runCountdown(){
-  for(const txt of ["3","2","1","Shop OPEN!"]){
-    showCenter(txt);await new Promise(r=>setTimeout(r,800));
+  // 固定アイコン（A:チョコ B:グミ C:ガム D:アメ）
+  const order=['choco','gumi','gum','ame'];
+  const Yi=H*0.85, size=W*0.12;
+  for(let i=0;i<4;i++){
+    const img=images.items[order[i]]; if(!img)continue;
+    ctx.drawImage(img,X[i]-size/2,Yi-size/2,size,size);
   }
 }
-function startGame(){started=true;timeLeft=60;score=0;spawnT=0;equip=null;updateEquipUI();}
+function showCenter(t){center.textContent=t;center.style.opacity=1;setTimeout(()=>center.style.opacity=0,700);}
+async function boot(){await loadAll();await runCountdown();startGame();requestAnimationFrame(loop);}
+async function runCountdown(){
+  for(const txt of ["3","2","1","Shop OPEN!"]){showCenter(txt);await new Promise(r=>setTimeout(r,800));}
+}
+function startGame(){started=true;timeLeft=60;score=0;equip=null;updateEquipUI();}
 boot();
 })();
 </script>
