@@ -79,6 +79,9 @@ const layout={
   // A〜D 下の固定アイコン
   itemY:0.86,
   itemSizeW:0.12, // W比率
+  // 入口（背景の扉前を想定）
+  doorX:0.50,
+  doorY:0.26
 };
 const LANES=['A','B','C','D'];
 
@@ -101,24 +104,33 @@ const laneQ={A:[],B:[],C:[],D:[]};
 const customers=new Map();
 let nextId=1;
 
+// ===== customers =====
 function makeCustomer(lane, ask){
   const id=nextId++;
   const sprite = pick(images.customers) || null;
+
   const cx = layout.platesX[LANES.indexOf(lane)]*W;
   const cy = layout.platesY*H;
   const spacingY = Math.min(H*0.08, 72);
   const idx = laneQ[lane].length; // 0-based
   const targetX = cx, targetY = cy - (idx+1)*spacingY;
 
-  const enterX = (0.5 + (Math.random()*0.16-0.08))*W;
-  const enterY = 0.24*H;
+  // 入口（扉前）から出現
+  const enterX = layout.doorX*W + (Math.random()*2-1)*W*0.03; // 少しブレ
+  const enterY = layout.doorY*H;
+
+  // 描画サイズ：高さ基準＋縦横比維持
+  const baseH = Math.min(H*0.16, 150);
+  const ratio = sprite && sprite.naturalWidth && sprite.naturalHeight
+                ? (sprite.naturalWidth/sprite.naturalHeight) : (3/4);
+  const baseW = baseH * ratio;
 
   const obj={
     id,lane,ask,sprite,
     x:enterX,y:enterY,tx:targetX,ty:targetY,
-    w:Math.min(W*0.12,120),h:Math.min(H*0.16,150),
-    speed:Math.max(120,Math.min(220,H*0.25)),
-    state:'WALK', // WALK -> FRONT_WAIT -> ORDER -> EXIT
+    w:baseW,h:baseH,
+    speed:Math.max(140,Math.min(250,H*0.28)),
+    state:'WALK', // WALK(入口→並び位置) / QUEUE(並び中) / HEAD_MOVE(先頭へ1歩詰め) / ORDER(先頭で注文) / EXITING(入口へ戻る) 
     bounceT:0,orderT:0,fade:1,say:null,sayAlpha:0,
     bubble: images.bubbles[ask]||null,
   };
@@ -134,22 +146,35 @@ function advanceLane(lane){
   q.forEach((id,i)=>{
     const c=customers.get(id); if(!c)return;
     c.tx=cx; c.ty=cy-(i+1)*spacingY;
-    if(i===0 && c.state!=='ORDER'){ c.state='FRONT_WAIT'; }
+    if(i===0){
+      if(c.state!=='ORDER' && c.state!=='HEAD_MOVE'){
+        c.state='HEAD_MOVE';
+      }
+    }else{
+      if(c.state!=='QUEUE' && c.state!=='WALK'){
+        c.state='QUEUE';
+      }
+    }
   });
 }
 function tryStartOrder(lane){
   const q=laneQ[lane]; if(q.length===0) return;
   const head=customers.get(q[0]); if(!head) return;
-  if(head.state==='FRONT_WAIT'){ head.state='ORDER'; head.orderT=0; head.say=null; head.sayAlpha=0; }
+  if(head.state==='HEAD_MOVE'){ head.state='ORDER'; head.orderT=0; head.say=null; head.sayAlpha=0; }
 }
 
 function resolveAndRemove(lane, head, type){
   if(type==='ok'){ score+=30; head.say='thanks'; }
   else if(type==='bad'){ score-=50; head.say='angry'; }
   else { score-=10; head.say='timeout'; }
-  head.state='EXIT'; head.fade=1; head.sayAlpha=1;
 
-  // 皿の中身は回収（クリア）
+  // 入口に戻りながらフェードアウト
+  head.state='EXITING';
+  head.tx = layout.doorX*W;
+  head.ty = layout.doorY*H;
+  head.sayAlpha=1;
+
+  // 皿の中身は回収
   plates[lane].item=null;
 
   // 先頭を取り除き、前詰め
@@ -178,7 +203,7 @@ function onDown(e){
   if(lane){
     if(plates[lane].cool<=0 && equip){
       plates[lane].item=equip;
-      plates[lane].cool=0.18; // 連打抑制
+      plates[lane].cool=0.15; // 連打抑制
     }
     return;
   }
@@ -218,6 +243,8 @@ function update(dt){
   // cooldown
   for(const L of LANES){ if(plates[L].cool>0) plates[L].cool=Math.max(0,plates[L].cool-dt); }
 
+  // 背景は draw() で常に描画するのでOK
+
   if(!started) return;
 
   // 時間
@@ -225,12 +252,12 @@ function update(dt){
   HUDt.textContent="TIME "+timeLeft.toFixed(1);
   HUDs.textContent="SCORE "+score;
 
-  // スポーン
+  // スポーン（テンポUP：1.2秒）
   spawnT+=dt;
-  if(spawnT>=3){
+  if(spawnT>=1.2){
     spawnT=0;
     const total=laneQ.A.length+laneQ.B.length+laneQ.C.length+laneQ.D.length;
-    if(total<12){
+    if(total<20){ // 上限ゆるめ
       const lane = ['A','B','C','D'].reduce((a,b)=> laneQ[a].length<=laneQ[b].length ? a : b);
       const ask = pick(['choco','gumi','gum','ame']);
       makeCustomer(lane, ask);
@@ -248,7 +275,11 @@ function update(dt){
     }
     c.bounceT += dt*8;
 
-    if(c.state==='FRONT_WAIT'){
+    if(c.state==='WALK'){
+      if(dist<=eps){ c.state='QUEUE'; } // 並び位置へ到達
+    }else if(c.state==='QUEUE'){
+      // ただ立っている（吹き出しなし、時間制限なし）
+    }else if(c.state==='HEAD_MOVE'){
       if(dist<=eps){ c.state='ORDER'; c.orderT=0; }
     }else if(c.state==='ORDER'){
       c.orderT += dt;
@@ -258,9 +289,12 @@ function update(dt){
       }else if(c.orderT>=5.0){
         resolveAndRemove(c.lane,c,'timeout');
       }
-    }else if(c.state==='EXIT'){
-      c.fade=Math.max(0, c.fade-dt*2);
-      if(c.fade===0) customers.delete(c.id);
+    }else if(c.state==='EXITING'){
+      // 入口へ向かいながらフェード
+      c.fade=Math.max(0, c.fade-dt*1.6);
+      if(dist<=eps || c.fade===0){
+        customers.delete(c.id);
+      }
       if(c.say) c.sayAlpha=c.fade;
     }
   });
@@ -275,7 +309,7 @@ function update(dt){
 function draw(){
   ctx.clearRect(0,0,W,H);
 
-  // 背景は常に表示
+  // 背景は常に表示（カウントダウン中も）
   if(images.bg) ctx.drawImage(images.bg,0,0,W,H);
   else { ctx.fillStyle="#303"; ctx.fillRect(0,0,W,H); }
 
@@ -313,18 +347,23 @@ function draw(){
     ctx.drawImage(img, X-size/2, Yi-size/2, size, size);
   }
 
-  // 客
+  // 客（縦横比維持で描画）
   customers.forEach(c=>{
     const bounce = Math.sin(c.bounceT)*4;
+    // 毎フレーム、元画像比で幅を算出（安全）
+    if(c.sprite && c.sprite.naturalWidth && c.sprite.naturalHeight){
+      const ratio = c.sprite.naturalWidth / c.sprite.naturalHeight;
+      c.w = c.h * ratio;
+    }
     const x=c.x - c.w/2, y=c.y - c.h + bounce;
     ctx.save(); ctx.globalAlpha=c.fade;
     if(c.sprite) ctx.drawImage(c.sprite, x, y, c.w, c.h);
-    // 吹き出し（注文中のみ）
+    // 吹き出し（先頭の ORDER のみ）
     if(c.state==='ORDER' && c.bubble){
-      const bw=Math.min(90, W*0.12), bh=bw;
-      ctx.drawImage(c.bubble, c.x-bw/2, y-bh-10, bw, bh);
+      const bw=Math.min(96, W*0.13), bh=bw;
+      ctx.drawImage(c.bubble, c.x-bw/2, y-bh-12, bw, bh);
       // タイマー円
-      const rT=Math.min(32, W*0.03);
+      const rT=Math.min(36, W*0.032);
       ctx.save(); ctx.translate(c.x + bw*0.5 + rT, y - bh*0.5); ctx.rotate(-Math.PI/2);
       ctx.strokeStyle="#fff"; ctx.lineWidth=4; ctx.beginPath(); ctx.arc(0,0,rT,0,Math.PI*2); ctx.stroke();
       ctx.strokeStyle= c.orderT<4 ? '#3cff77' : (c.orderT<5 ? '#ffb300':'#ff3b3b');
@@ -332,17 +371,29 @@ function draw(){
       ctx.arc(0,0,rT,0,a); ctx.stroke();
       ctx.restore();
     }
-    // 退出テキスト
+    // 受け取り演出テキスト（EXITING中も見える）
     if(c.say){
       ctx.globalAlpha = c.sayAlpha;
       ctx.textAlign='center'; ctx.textBaseline='bottom';
-      ctx.font=`bold ${Math.max(16, Math.min(24, W*0.026))}px system-ui,sans-serif`;
-      if(c.say==='thanks'){ ctx.fillStyle='#8cffc0'; ctx.fillText('ありがとう！', c.x, y-10); }
-      else if(c.say==='angry'){ ctx.fillStyle='#ff6363'; ctx.fillText('ぬー！！', c.x, y-10); }
-      else if(c.say==='timeout'){ ctx.fillStyle='#ffd36b'; ctx.fillText('時間切れ…', c.x, y-10); }
+      const fz = Math.max(20, Math.min(32, W*0.034));
+      ctx.font=`900 ${fz}px system-ui,sans-serif`;
+      if(c.say==='thanks'){
+        ctx.shadowColor='rgba(140,255,192,.9)'; ctx.shadowBlur=18; ctx.fillStyle='#b8ffd8';
+        ctx.fillText('ありがとう！', c.x, y-10);
+      }else if(c.say==='angry'){
+        ctx.shadowColor='rgba(255,99,99,.8)'; ctx.shadowBlur=16; ctx.fillStyle='#ff8a8a';
+        ctx.fillText('ぬー！！', c.x, y-10);
+      }else if(c.say==='timeout'){
+        ctx.shadowColor='rgba(255,211,107,.8)'; ctx.shadowBlur=16; ctx.fillStyle='#ffe1a8';
+        ctx.fillText('時間切れ…', c.x, y-10);
+      }
+      ctx.shadowBlur=0;
     }
     ctx.restore();
   });
+
+  // 入口位置の目安（デバッグしたければコメント外す）
+  // ctx.fillStyle='rgba(0,255,255,.2)'; ctx.beginPath(); ctx.arc(layout.doorX*W, layout.doorY*H, 8, 0, Math.PI*2); ctx.fill();
 }
 
 function roundRect(ctx,x,y,w,h,r){
@@ -355,7 +406,6 @@ function roundRect(ctx,x,y,w,h,r){
   ctx.arcTo(x,y,x+w,y,rr);
   ctx.closePath();
 }
-
 function pick(a){ return a && a.length ? a[Math.floor(Math.random()*a.length)] : null; }
 
 // ===== flow =====
@@ -375,6 +425,7 @@ function startGame(){
   for(const L of LANES){ plates[L].item=null; plates[L].cool=0; laneQ[L].length=0; }
   customers.clear();
 }
+
 async function boot(){
   // 背景は常に表示したいので、ロード前でもループ開始
   requestAnimationFrame(loop);
@@ -383,6 +434,7 @@ async function boot(){
   startGame();
 }
 boot();
+
 })();
 </script>
 </body>
