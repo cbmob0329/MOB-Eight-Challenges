@@ -2,47 +2,55 @@
 <html lang="ja">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
 <title>MOB GAME HUB</title>
 <style>
-  html,body{
-    margin:0;padding:0;height:100%;
-    background:#0d0d0f;color:#fff;
-    font-family:"Press Start 2P",system-ui,monospace;
-    display:flex;align-items:center;justify-content:center;
+  html,body {
+    margin:0; padding:0; height:100%; width:100%;
+    font-family: system-ui, -apple-system, "Yu Gothic", sans-serif;
+    color:#fff; text-align:center; background:#000;
   }
-  .menu{
-    display:flex;flex-direction:column;gap:20px;
-    text-align:center;
+  body {
+    display:flex; align-items:center; justify-content:center;
+    background:url("MOBhai.png") center/cover no-repeat;
   }
-  .game-btn{
-    font-size:20px;
-    padding:20px 30px;
-    border:3px solid #13c4ff;
+  .menu {
+    background:rgba(0,0,0,0.6);
+    padding:24px;
+    border-radius:16px;
+    box-shadow:0 8px 24px rgba(0,0,0,0.5);
+  }
+  h1 {
+    margin:0 0 20px;
+    font-size:28px;
+    letter-spacing:1px;
+  }
+  .btn {
+    display:block;
+    margin:12px auto;
+    padding:14px 24px;
     border-radius:12px;
-    background:#111;
-    color:#13c4ff;
-    cursor:pointer;
+    background:#1b1f27;
+    border:2px solid #2c3a50;
+    font-size:18px;
+    color:#fff;
     text-decoration:none;
-    transition:.15s;
+    font-weight:bold;
+    width:240px;
+    transition:0.2s;
   }
-  .game-btn:hover{
+  .btn:hover {
     background:#13c4ff;
-    color:#111;
+    border-color:#13c4ff;
+    color:#000;
   }
-  h1{margin-bottom:40px;color:#f5f5f5;font-size:28px}
 </style>
 </head>
 <body>
   <div class="menu">
     <h1>MOB GAME HUB</h1>
-    <!-- タイトル1 -->
-    <a href="MOB Candy Shop.html" class="game-btn">hoke</a>
-    <!-- タイトルを増やしたいときはここに追加 -->
-    <!--
-    <a href="MOB kart.html" class="game-btn">MOB Kart</a>
-    <a href="MOB darby.html" class="game-btn">MOB Darby</a>
-    -->
+    <a href="MOB Candy Shop.html" class="btn">🍬 MOB Candy Shop</a>
+    <a href="MOB Hockey.html" class="btn">🏒 MOB Hockey</a>
   </div>
 </body>
 </html>
