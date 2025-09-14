@@ -3,17 +3,15 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
-<title>MOB Hockey</title>
+<title>MOB Hockey (Square)</title>
 <style>
   :root{
-    --hud:#0e0f12cc; --fg:#fff; --accent:#13c4ff; --good:#34d399; --bad:#f87171; --dim:#9aa3b2;
+    --hud:#0e0f12cc; --fg:#fff; --accent:#13c4ff; --good:#34d399; --bad:#f87171;
   }
   html,body{margin:0;height:100%;background:#000;color:var(--fg);font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Hiragino Sans","Yu Gothic",sans-serif}
-  #wrap{position:fixed;inset:0;display:grid;grid-template-columns:1fr min(32vw,360px);}
-  #cv{width:100%;height:100%;display:block;touch-action:none;background:#000;}
-  #hud{
-    position:fixed;inset:0;pointer-events:none;
-  }
+  #wrap{position:fixed;inset:0;display:flex;align-items:center;justify-content:center}
+  #cv{display:block;touch-action:none;background:#000; box-shadow:0 0 0 1px #171a22;}
+  #hud{position:fixed;inset:0;pointer-events:none}
   .panel{position:fixed;left:0;right:0;display:flex;justify-content:center;gap:12px;pointer-events:none}
   .topbar{top:0;padding:env(safe-area-inset-top,10px) 10px 10px;align-items:center}
   .bottombar{bottom:0;padding:10px 10px env(safe-area-inset-bottom,10px);align-items:center}
@@ -23,56 +21,25 @@
   }
   .sep{opacity:.35}
   .count{font-size:28px;min-width:2ch;text-align:center}
-  .btn{pointer-events:auto; user-select:none; cursor:pointer; padding:10px 16px; border-radius:14px; border:1px solid #323643; background:#151923; transition:.2s}
-  .btn:hover{transform:translateY(-1px)}
-  #side{
-    position:relative; background:#0a0b0e; border-left:1px solid #1a1f2a; padding:10px;
-    display:flex; flex-direction:column; gap:10px;
-  }
-  #side h2{margin:4px 0 0;font-size:16px;color:#cfd6e5}
-  #board{
-    border:1px solid #242a36; border-radius:12px; overflow:hidden; background:#0f1218;
-  }
-  .row{display:grid; grid-template-columns:auto 1fr auto; gap:8px; padding:8px 10px; align-items:center; border-top:1px solid #161b25}
-  .row:first-child{border-top:none}
-  .dot{width:10px;height:10px;border-radius:50%}
-  .name{white-space:nowrap; overflow:hidden; text-overflow:ellipsis; color:#e8edf7; font-weight:600}
-  .pts{font-variant-numeric:tabular-nums}
-  .small{color:var(--dim); font-size:12px}
-  .legend{display:flex; flex-wrap:wrap; gap:6px; padding:6px; color:#cbd5e1; font-size:12px}
-  .legend span{display:inline-flex; align-items:center; gap:6px; background:#0e1320; border:1px solid #202635; border-radius:999px; padding:5px 9px}
-  .tag{font-weight:700}
   #final{
     position:fixed; inset:0; background:#000a; display:none; align-items:center; justify-content:center; z-index:9; backdrop-filter:blur(2px)
   }
   #final .card{
-    width:min(720px,90vw); background:#0c0f16; border:1px solid #242a36; border-radius:16px; padding:18px; box-shadow:0 10px 40px rgba(0,0,0,.5)
+    width:min(820px,92vw); background:#0c0f16; border:1px solid #242a36; border-radius:16px; padding:22px; box-shadow:0 10px 40px rgba(0,0,0,.5)
   }
-  #final h3{margin:0 0 8px}
-  #final .grid{display:grid; grid-template-columns:1fr auto; gap:8px}
-  #final .grid div{padding:8px 10px; border-bottom:1px solid #1b2030}
-  #final .grid div:nth-child(4n+1), #final .grid div:nth-child(4n+2){background:#0e1220}
-  @media (max-width:900px){
-    #wrap{grid-template-columns:1fr}
-    #side{position:fixed; right:10px; top:10px; width:min(60vw,300px); background:#0a0b0ecc; backdrop-filter:blur(6px); border-radius:14px; border:1px solid #1a1f2a}
-  }
+  #final h3{margin:0 0 12px; font-size:28px}
+  #final .big{font-size:18px; color:#cfe1ff; margin-bottom:10px}
+  #final .grid{display:grid; grid-template-columns:auto 1fr auto; gap:10px; align-items:center}
+  #final .rank{font-size:22px; font-weight:900; color:#fff}
+  #final .name{font-size:22px; font-weight:800; color:#e8edf7}
+  #final .pts{font-size:22px; font-weight:900; text-align:right}
+  .btn{pointer-events:auto; user-select:none; cursor:pointer; padding:12px 18px; border-radius:14px; border:1px solid #323643; background:#151923; transition:.2s; color:#fff}
+  .btn:hover{transform:translateY(-1px)}
 </style>
 </head>
 <body>
   <div id="wrap">
-    <canvas id="cv" width="1280" height="720"></canvas>
-    <aside id="side">
-      <h2>順位（リアルタイム）</h2>
-      <div id="board"></div>
-      <div class="legend">
-        <span><span class="dot" style="background:#ef4444"></span><b class="tag">YOU</b> 赤</span>
-        <span><span class="dot" style="background:#3b82f6"></span> ディーラー</span>
-        <span>自色ゴール <b>+10</b></span>
-        <span>他色ゴール <b>+2</b></span>
-        <span>失点 <b class="bad">-1</b> / 自色失点 <b class="bad">-5</b></span>
-      </div>
-      <div class="small">※CPU7名は別卓で自動進行（邪魔なし）</div>
-    </aside>
+    <canvas id="cv" width="900" height="900"></canvas>
     <div id="hud">
       <div class="panel topbar">
         <div class="pill">
@@ -82,7 +49,7 @@
         </div>
       </div>
       <div class="panel bottombar" style="justify-content:center">
-        <div id="msg" class="pill" style="font-size:18px;">準備中…</div>
+        <div id="msg" class="pill" style="font-size:20px;">準備中…</div>
       </div>
     </div>
   </div>
@@ -90,9 +57,9 @@
   <div id="final">
     <div class="card">
       <h3>リザルト</h3>
-      <div id="finalYou" class="small" style="margin-bottom:8px"></div>
-      <div class="grid" id="finalGrid"></div>
-      <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:12px">
+      <div id="finalYou" class="big"></div>
+      <div id="finalGrid" class="grid"></div>
+      <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:16px">
         <button class="btn" onclick="location.reload()">もう一度</button>
       </div>
     </div>
@@ -100,28 +67,42 @@
 
 <script>
 (()=>{
-  // ====== 基本設定 ======
+  // ====== 基本参照 ======
   const canvas = document.getElementById('cv');
   const ctx = canvas.getContext('2d');
   const hudMsg = document.getElementById('msg');
   const timeEl = document.getElementById('time');
   const youPtsEl = document.getElementById('youPts');
   const aiPtsEl = document.getElementById('aiPts');
-  const boardEl = document.getElementById('board');
   const finalEl = document.getElementById('final');
   const finalGrid = document.getElementById('finalGrid');
   const finalYou = document.getElementById('finalYou');
 
-  const GAME = { state:'loading', // 'countdown' | 'playing' | 'ended'
-                 length:30_000, // 30s
-                 startAt:0, now:0,
-                 width:1280, height:720,
-                 lineX:640, // 中央ライン（あとでリサイズで更新）
-                 leftGoal:{y0:0.35, y1:0.65, w:10}, // 左右ゴール（縦方向の割合指定）
-                 rightGoal:{y0:0.35, y1:0.65, w:10},
-                 images:{}, assetsReady:false };
+  // ====== ゲーム設定（正方形） ======
+  const GAME = {
+    state:'loading', // 'countdown' | 'playing' | 'ended'
+    length:30_000, // 30s
+    startAt:0, now:0,
+    size:900, // キャンバスの基準サイズ（resizeで更新）
+    lineY:450, // 中央水平ライン（上=ディーラー陣 / 下=プレイヤー陣）
+    topGoal:{ x0:0.35, x1:0.65, h:10 },     // 上側ゴール：上壁の開口（割合）
+    bottomGoal:{ x0:0.35, x1:0.65, h:10 },  // 下側ゴール：下壁の開口（割合）
+    images:{}, assetsReady:false
+  };
 
-  // ====== 画像読み込み（失敗しても進行） ======
+  // ====== 正方形リサイズ ======
+  function resizeSquare(){
+    const w = window.innerWidth, h = window.innerHeight;
+    const s = Math.min(w, h); // 常に正方形
+    canvas.width = s; canvas.height = s;
+    GAME.size = s; GAME.lineY = (s/2)|0;
+    canvas.style.width = s+'px';
+    canvas.style.height = s+'px';
+  }
+  window.addEventListener('resize', resizeSquare, {passive:true});
+  resizeSquare();
+
+  // ====== 画像ロード（未読でも進行） ======
   const IMG_LIST = {
     rink:'hokehai.png',
     smash:'smash.png',
@@ -133,7 +114,7 @@
       const im = new Image();
       im.onload = ()=>res(im);
       im.onerror = ()=>res(null);
-      im.src = src + (src.includes('?')?'':'?v=' + Date.now()); // キャッシュ潰し
+      im.src = src + (src.includes('?')?'':'?v=' + Date.now());
     });
   }
   (async()=>{
@@ -141,44 +122,24 @@
       GAME.images[k] = await loadImage(src);
     }
     GAME.assetsReady = true;
-    startCountdown(); // アセットの有無に関係なくカウント開始
+    startCountdown();
   })();
 
-  // ====== ユーティリティ ======
-  function resize(){
-    // 画面いっぱいに。背景は「全体が見える contain」でレターボックス
-    const w = window.innerWidth;
-    const h = window.innerHeight;
-    // 目安比率は背景の想定（1280x720）= 16:9
-    const targetRatio = 16/9;
-    const ratio = w/h;
-    let cw, ch;
-    if (ratio > targetRatio){
-      ch = h; cw = Math.round(h*targetRatio);
-    } else {
-      cw = w; ch = Math.round(w/targetRatio);
-    }
-    canvas.width = cw; canvas.height = ch;
-    canvas.style.margin = "auto";
-    GAME.width = cw; GAME.height = ch; GAME.lineX = cw/2|0;
-  }
-  window.addEventListener('resize', resize, {passive:true});
-  resize();
-
-  // ====== 物理とエンティティ ======
+  // ====== パラメータ ======
   const P = {
-    puckR: ()=>Math.max(10, Math.min(GAME.width, GAME.height)*0.018),
-    smashR: ()=>Math.max(22, Math.min(GAME.width, GAME.height)*0.035),
-    maxSpd: ()=>Math.max(300, GAME.width*0.55),
-    friction: 0.995,
+    puckR: ()=>Math.max(10, GAME.size*0.022),
+    smashR: ()=>Math.max(26, GAME.size*0.036),
+    maxSpd: ()=>Math.max(300, GAME.size*0.55),
+    friction: 0.994,
     hitBoost: 1.08
   };
 
+  // ====== エンティティ ======
   class Puck{
-    constructor(colorKey, side){ // side: 'L' or 'R' (初期配置のみ)
+    constructor(colorKey, field){ // field: 'T' (上) or 'B' (下)
       this.key = colorKey;
-      this.x = side==='L'? GAME.width*0.25 : GAME.width*0.75;
-      this.y = GAME.height*(0.2 + 0.6*Math.random());
+      this.x = GAME.size*(0.2 + 0.6*Math.random());
+      this.y = field==='T'? GAME.size*0.25 : GAME.size*0.75;
       this.vx = (Math.random()*2-1)*P.maxSpd()*0.25;
       this.vy = (Math.random()*2-1)*P.maxSpd()*0.25;
       this.r = P.puckR();
@@ -187,27 +148,29 @@
     step(dt){
       this.x += this.vx*dt; this.y += this.vy*dt;
       this.vx *= P.friction; this.vy *= P.friction;
-      // 壁反射（上下）
-      if (this.y < this.r){ this.y = this.r; this.vy = Math.abs(this.vy); }
-      if (this.y > GAME.height - this.r){ this.y = GAME.height - this.r; this.vy = -Math.abs(this.vy); }
-      // 左右はゴールチェックを優先
-      // 左ゴール
-      const gy0 = GAME.height*GAME.leftGoal.y0, gy1 = GAME.height*GAME.leftGoal.y1;
-      if (this.x < this.r){
-        if (this.y>gy0 && this.y<gy1){
-          scoreGoal('LEFT', this);
+
+      // 左右壁に反射
+      if (this.x < this.r){ this.x = this.r; this.vx = Math.abs(this.vx); }
+      if (this.x > GAME.size - this.r){ this.x = GAME.size - this.r; this.vx = -Math.abs(this.vx); }
+
+      // 上壁/下壁はゴール開口チェック優先
+      const gx0 = GAME.size*GAME.topGoal.x0, gx1 = GAME.size*GAME.topGoal.x1;
+      // 上ゴール
+      if (this.y < this.r){
+        if (this.x>gx0 && this.x<gx1){
+          scoreGoal('TOP', this);
           this.scored = true;
         }else{
-          this.x = this.r; this.vx = Math.abs(this.vx);
+          this.y = this.r; this.vy = Math.abs(this.vy);
         }
       }
-      // 右ゴール
-      if (this.x > GAME.width - this.r){
-        if (this.y>gy0 && this.y<gy1){
-          scoreGoal('RIGHT', this);
+      // 下ゴール
+      if (this.y > GAME.size - this.r){
+        if (this.x>gx0 && this.x<gx1){
+          scoreGoal('BOTTOM', this);
           this.scored = true;
         }else{
-          this.x = GAME.width - this.r; this.vx = -Math.abs(this.vx);
+          this.y = GAME.size - this.r; this.vy = -Math.abs(this.vy);
         }
       }
     }
@@ -217,41 +180,32 @@
         const size = this.r*2;
         ctx.drawImage(im, this.x-this.r, this.y-this.r, size, size);
       }else{
-        // フォールバック
         ctx.beginPath(); ctx.arc(this.x,this.y,this.r,0,Math.PI*2);
-        ctx.fillStyle = this.key==='red' ? '#ef4444' :
-                        this.key==='blue' ? '#3b82f6' :
-                        this.key==='green'? '#22c55e' :
-                        this.key==='mura' ? '#8b5cf6' :
-                        this.key==='orange' ? '#f59e0b' :
-                        this.key==='pink' ? '#ec4899' :
-                        this.key==='yellow' ? '#eab308' : '#e5e7eb';
-        ctx.fill();
+        ctx.fillStyle = colorOf(this.key); ctx.fill();
       }
     }
   }
 
   class Smasher{
-    constructor(side, name, color){
-      this.side = side; // 'L' or 'R'
+    constructor(half, name, color){
+      this.half = half; // 'B'(下=プレイヤー) / 'T'(上=ディーラー)
       this.name = name; this.color = color;
       this.r = P.smashR();
-      this.x = side==='L'? GAME.width*0.25 : GAME.width*0.75;
-      this.y = GAME.height*0.5;
+      this.x = GAME.size*0.5;
+      this.y = half==='B'? GAME.size*0.75 : GAME.size*0.25;
       this.vx = 0; this.vy = 0;
       this.targetX = this.x; this.targetY = this.y;
       this.lastX = this.x; this.lastY = this.y;
     }
-    clampToSide(){
-      const margin = this.r+2;
-      const minX = this.side==='L'? margin : GAME.lineX+margin;
-      const maxX = this.side==='L'? GAME.lineX - margin : GAME.width - margin;
-      this.x = Math.max(minX, Math.min(maxX, this.x));
-      this.y = Math.max(margin, Math.min(GAME.height - margin, this.y));
+    clampToHalf(){
+      const m = this.r+2;
+      const minY = this.half==='B'? GAME.lineY + m : m;
+      const maxY = this.half==='B'? GAME.size - m : GAME.lineY - m;
+      this.x = Math.max(m, Math.min(GAME.size - m, this.x));
+      this.y = Math.max(minY, Math.min(maxY, this.y));
     }
     setTarget(x,y){ this.targetX=x; this.targetY=y; }
     step(dt){
-      // 目標へスムーズ追従（人は直接位置に置く。AIは補間）
       const spd = P.maxSpd() * 0.9;
       const dx = this.targetX - this.x, dy = this.targetY - this.y;
       const d = Math.hypot(dx,dy);
@@ -259,7 +213,7 @@
       this.lastX = this.x; this.lastY = this.y;
       if (d <= maxMove){ this.x = this.targetX; this.y = this.targetY; }
       else{ this.x += dx/d*maxMove; this.y += dy/d*maxMove; }
-      this.clampToSide();
+      this.clampToHalf();
       this.vx = (this.x - this.lastX)/dt;
       this.vy = (this.y - this.lastY)/dt;
     }
@@ -276,44 +230,50 @@
     }
   }
 
-  // ====== テーブル / 得点 ======
-  const COLORS = ['black','blue','green','mura','orange','pink','red','yellow'];
+  // ====== 共通ユーティリティ ======
+  const colorMap = {
+    red:'#ef4444', blue:'#3b82f6', green:'#22c55e', mura:'#8b5cf6',
+    orange:'#f59e0b', pink:'#ec4899', yellow:'#eab308', black:'#e5e7eb'
+  };
+  function colorOf(key){ return colorMap[key] || '#e5e7eb'; }
+
+  // ====== ゲーム体 ======
   let pucks = [];
-  const player = new Smasher('L','YOU','#ef4444');
-  const dealer = new Smasher('R','DEALER','#3b82f6');
+  const player = new Smasher('B','YOU', colorMap.red);
+  const dealer = new Smasher('T','DEALER', colorMap.blue);
   let score = { YOU:0, DEALER:0 };
+
   function spawnPucks(){
     pucks = [];
-    // 左右に4つずつ
-    const leftColors = ['red','black','green','pink']; // プレイヤー陣に赤を必ず入れる
-    const rightColors= ['blue','yellow','orange','mura'];
-    leftColors.forEach(c=>pucks.push( new Puck(c,'L') ));
-    rightColors.forEach(c=>pucks.push( new Puck(c,'R') ));
+    const bottomColors = ['red','black','green','pink'];    // プレイヤー側に赤を含める
+    const topColors    = ['blue','yellow','orange','mura']; // ディーラー側に青を含める
+    bottomColors.forEach(c=>pucks.push( new Puck(c,'B') ));
+    topColors.forEach(c=>pucks.push( new Puck(c,'T') ));
   }
 
+  // ====== 得点処理（上下ゴール） ======
   function scoreGoal(side, puck){
-    // side: どちらのゴールに入ったか（LEFT=左のゴール＝プレイヤー側に失点）
     const isRed = (puck.key==='red');
-    if (side==='RIGHT'){
-      // 右側のゴール = ディーラーに失点 / プレイヤーが得点
+    const isBlue = (puck.key==='blue');
+    if (side==='TOP'){
+      // 上ゴール = ディーラーに失点 / プレイヤーに加点
       score.YOU += isRed ? 10 : 2;
-      score.DEALER += 0; // 失点は相手のマイナスへ
-      // 失点処理
       score.DEALER += isRed ? -5 : -1;
       flashMsg(isRed?'+10 (自色)':' +2', 'good');
-    }else{
-      // 左側のゴール = プレイヤーに失点 / ディーラーが得点
-      score.DEALER += (puck.key==='blue') ? 10 : 2; // ディーラーの自色は青扱い
+    }else{ // BOTTOM
+      // 下ゴール = プレイヤーに失点 / ディーラーに加点
+      score.DEALER += isBlue ? 10 : 2;
       score.YOU += isRed ? -5 : -1;
       flashMsg(isRed?' -5 (自色失点)':' -1 (失点)','bad');
     }
     youPtsEl.textContent = score.YOU|0;
     aiPtsEl.textContent = score.DEALER|0;
-    // ゴール後はパック位置を中央に再投入（相手陣に向けて）
-    const sideTo = side==='RIGHT' ? 'L' : 'R';
-    const np = new Puck(puck.key, sideTo);
-    np.vx = (side==='RIGHT'? 1 : -1) * P.maxSpd()*0.5;
-    np.vy = (Math.random()*2-1)*P.maxSpd()*0.2;
+
+    // 再投入（入れられた側の陣にリスポーンして反対へ）
+    const field = (side==='TOP') ? 'T' : 'B';
+    const np = new Puck(puck.key, field);
+    np.vy = (side==='TOP'? 1 : -1) * P.maxSpd()*0.5;
+    np.vx = (Math.random()*2-1)*P.maxSpd()*0.2;
     pucks.push(np);
   }
 
@@ -326,11 +286,9 @@
         if (dx*dx + dy*dy <= rr*rr){
           const dist = Math.hypot(dx,dy)||1;
           const nx = dx/dist, ny = dy/dist;
-          // スマッシャーの「振りかぶり速度」で威力増
           const swing = Math.hypot(S.vx,S.vy);
           const impulse = Math.min(P.maxSpd(), 200 + swing*0.8) * P.hitBoost;
           puck.vx = nx*impulse; puck.vy = ny*impulse;
-          // めり込み解消
           const overlap = rr - dist + 0.5;
           puck.x += nx*overlap; puck.y += ny*overlap;
         }
@@ -338,28 +296,25 @@
     }
   }
 
-  // ====== ディーラーAI ======
+  // ====== ディーラーAI（上半分でプレイ） ======
   function aiStep(dt){
-    // 自陣の最も自ゴール方向に向いているパックへ
-    let best = null, bestScore = -1e9;
+    let best=null, bestScore=-1e9;
     for (const p of pucks){
-      if (p.x >= GAME.lineX) { // 右陣のパックを狙う
-        // ゴール方向（右端）へ投げやすさ：右にあるほど高い、中央に近いほど高い
-        const s = (p.x - GAME.lineX) - Math.abs(p.y - GAME.height/2)*0.3;
+      if (p.y <= GAME.lineY){ // 上陣パックを狙う
+        const s = (GAME.lineY - p.y) - Math.abs(p.x - GAME.size/2)*0.3; // 上壁方向＆中央寄りほど高評価
         if (s>bestScore){bestScore=s; best=p;}
       }
     }
     if (best){
-      // ほんの少し後ろから流し込むように位置取り
-      const tx = Math.min(GAME.width - dealer.r - 2, best.x - best.r*0.3);
-      const ty = best.y + Math.sign((GAME.height/2 - best.y))*best.r*0.2;
+      const tx = best.x + (Math.random()*2-1)*best.r*0.4;
+      const ty = Math.min(GAME.lineY - dealer.r - 2, best.y - best.r*0.3);
       dealer.setTarget(tx,ty);
     }else{
-      dealer.setTarget(GAME.width*0.75, GAME.height*0.5);
+      dealer.setTarget(GAME.size*0.5, GAME.size*0.3);
     }
   }
 
-  // ====== 入力（プレイヤーはドラッグ／タッチで移動） ======
+  // ====== 入力（ドラッグ／タッチ） ======
   let dragging = false;
   function toCanvasXY(e){
     const rect = canvas.getBoundingClientRect();
@@ -386,103 +341,80 @@
   window.addEventListener('touchmove', onMove, {passive:false});
   window.addEventListener('touchend', onUp);
 
-  // ====== CPU7名（別卓） ======
-  const CPU_NAMES = ['ALPHA','BETA','GAMMA','DELTA','EPSILON','ZETA','THETA'];
-  const cpuScores = Object.fromEntries(CPU_NAMES.map(n=>[n,0]));
+  // ====== 背面CPU（別卓）※試合中は非表示、スコアのみ結果に反映 ======
+  const CPU = [
+    {name:'ブラック', color:'#111'}, {name:'ブルー', color:colorMap.blue},
+    {name:'グリーン', color:colorMap.green}, {name:'パープル', color:colorMap.mura},
+    {name:'オレンジ', color:colorMap.orange}, {name:'ピンク', color:colorMap.pink},
+    {name:'イエロー', color:colorMap.yellow},
+  ];
+  const cpuScores = Object.fromEntries(CPU.map(c=>[c.name,0]));
   function cpuBackgroundTick(dt){
-    // 各CPU 0.4秒に1回くらい成功判定、成功時 +10（自色） or +2（他色）を混ぜる
-    // 失点もまれに -1 / -5 を発生させる
     const now = GAME.now;
-    if (!cpuBackgroundTick.next) cpuBackgroundTick.next = now + 200;
+    if (!cpuBackgroundTick.next) cpuBackgroundTick.next = now + 250;
     if (now >= cpuBackgroundTick.next){
-      cpuBackgroundTick.next = now + 200; // 0.2sごとに誰かしら動く
-      const name = CPU_NAMES[Math.random()*CPU_NAMES.length|0];
+      cpuBackgroundTick.next = now + 250; // 0.25sごと
+      const pick = CPU[Math.random()*CPU.length|0].name;
       const r = Math.random();
-      if (r < 0.60) cpuScores[name] += 2;
-      else if (r < 0.75) cpuScores[name] += 10;
-      else if (r < 0.93) cpuScores[name] += -1;
-      else cpuScores[name] += -5;
-      renderBoard();
+      if (r < 0.60) cpuScores[pick] += 2;
+      else if (r < 0.75) cpuScores[pick] += 10;
+      else if (r < 0.93) cpuScores[pick] += -1;
+      else cpuScores[pick] += -5;
     }
   }
 
-  function renderBoard(){
-    // YOU / DEALER / 7CPU の合計9名で順位
-    const rows = [];
-    rows.push({name:'YOU', pts:score.YOU, color:'#ef4444'});
-    rows.push({name:'DEALER', pts:score.DEALER, color:'#3b82f6'});
-    for (const n of CPU_NAMES) rows.push({name:n, pts:cpuScores[n], color:'#9aa3b2'});
-    rows.sort((a,b)=>b.pts - a.pts);
-    boardEl.innerHTML = rows.map(r=>`
-      <div class="row">
-        <div class="dot" style="background:${r.color}"></div>
-        <div class="name">${r.name}</div>
-        <div class="pts">${r.pts|0}</div>
-      </div>
-    `).join('');
-  }
-
-  // ====== 描画 ======
+  // ====== 背景描画（正方形内に contain） ======
   function drawBackground(){
-    ctx.clearRect(0,0,GAME.width,GAME.height);
+    const S = GAME.size;
+    ctx.clearRect(0,0,S,S);
     const im = GAME.images.rink;
     if (im){
-      // contain（全体表示）
       const iw = im.naturalWidth||1280, ih = im.naturalHeight||720;
-      const canvasRatio = GAME.width/GAME.height;
-      const imgRatio = iw/ih;
+      const canvasRatio = 1; const imgRatio = iw/ih;
       let dw, dh;
-      if (canvasRatio > imgRatio){
-        // 横が余る
-        dh = GAME.height; dw = dh*imgRatio;
-      }else{
-        dw = GAME.width; dh = dw/imgRatio;
+      if (imgRatio > canvasRatio){ // 画像が横長 → 高さ基準
+        dh = S; dw = dh*imgRatio;
+      }else{ // 画像が縦長/同等 → 幅基準
+        dw = S; dh = dw/imgRatio;
       }
-      const dx = (GAME.width - dw)/2;
-      const dy = (GAME.height - dh)/2;
+      const dx = (S - dw)/2;
+      const dy = (S - dh)/2;
       ctx.drawImage(im, dx, dy, dw, dh);
     }else{
-      // フォールバック：暗いリンク
-      ctx.fillStyle = '#0b0e14'; ctx.fillRect(0,0,GAME.width,GAME.height);
-      ctx.strokeStyle = '#2a3140'; ctx.lineWidth = 4;
-      ctx.beginPath(); ctx.moveTo(GAME.lineX,0); ctx.lineTo(GAME.lineX,GAME.height); ctx.stroke();
+      ctx.fillStyle = '#0b0e14'; ctx.fillRect(0,0,S,S);
     }
 
-    // 中央ライン（侵入不可の可視化）
+    // 四方の壁（ゴール開口を除く）
+    const wallT = Math.max(6, S*0.008);
+    ctx.fillStyle = '#111a';
+    // 上壁（中央開口を除く）
+    const gx0 = S*GAME.topGoal.x0, gx1 = S*GAME.topGoal.x1;
+    ctx.fillRect(0,0,gx0,wallT);
+    ctx.fillRect(gx1,0,S-gx1,wallT);
+    // 下壁
+    ctx.fillRect(0,S-wallT,gx0,wallT);
+    ctx.fillRect(gx1,S-wallT,S-gx1,wallT);
+    // 左右壁（全域）
+    ctx.fillRect(0,0,wallT,S);
+    ctx.fillRect(S-wallT,0,wallT,S);
+
+    // 中央ライン（水平）
     ctx.strokeStyle = 'rgba(255,255,255,0.65)';
-    ctx.lineWidth = Math.max(2, GAME.width*0.004);
-    ctx.setLineDash([12,12]);
-    ctx.beginPath(); ctx.moveTo(GAME.lineX,0); ctx.lineTo(GAME.lineX,GAME.height); ctx.stroke();
+    ctx.lineWidth = Math.max(2, S*0.006);
+    ctx.setLineDash([14,14]);
+    ctx.beginPath(); ctx.moveTo(0,GAME.lineY); ctx.lineTo(S,GAME.lineY); ctx.stroke();
     ctx.setLineDash([]);
-
-    // ゴール枠（左右中央に縦の開口）
-    const gw = Math.max(6, GAME.width*0.006);
-    const gy0 = GAME.height*GAME.leftGoal.y0, gy1 = GAME.height*GAME.leftGoal.y1;
-    // 左
-    ctx.fillStyle = '#1118'; ctx.fillRect(0,0,gw,gy0);
-    ctx.fillRect(0,gy1,gw,GAME.height-gy1);
-    // 右
-    ctx.fillRect(GAME.width-gw,0,gw,gy0);
-    ctx.fillRect(GAME.width-gw,gy1,gw,GAME.height-gy1);
   }
 
-  function drawAll(){
-    drawBackground();
-    // パック
-    for (const p of pucks) p.draw();
-    // スマッシャー
-    player.draw(); dealer.draw();
-  }
-
-  // ====== メッセージ／フラッシュ ======
-  let flashTimer=0, flashKind='good';
+  // ====== 画面メッセージ ======
+  let flashTimer=0;
   function flashMsg(text, kind='good'){
     hudMsg.textContent = text;
-    hudMsg.style.color = kind==='good' ? '#34d399' : '#f87171';
-    flashTimer = 700; flashKind = kind;
+    hudMsg.style.color = (kind==='good')? '#34d399' : '#f87171';
+    flashTimer = 700;
   }
 
-  // ====== カウントダウンとループ ======
+  // ====== ループ管理 ======
   function startCountdown(){
     GAME.state = 'countdown';
     GAME.startAt = performance.now();
@@ -498,44 +430,42 @@
   }
 
   function finalRender(){
-    // 最終順位作成
+    // YOU / DEALER / CPU7 の9名で順位
     const rows = [];
-    rows.push({name:'YOU', pts:score.YOU, color:'#ef4444'});
-    rows.push({name:'DEALER', pts:score.DEALER, color:'#3b82f6'});
-    for (const n of CPU_NAMES) rows.push({name:n, pts:cpuScores[n], color:'#9aa3b2'});
+    rows.push({name:'YOU', pts:score.YOU, color:colorMap.red});
+    rows.push({name:'DEALER', pts:score.DEALER, color:colorMap.blue});
+    for (const c of CPU) rows.push({name:c.name, pts:cpuScores[c.name], color:c.color});
     rows.sort((a,b)=>b.pts - a.pts);
-    finalGrid.innerHTML = rows.flatMap(r=>[
-      `<div class="name">${r.name}</div>`,
-      `<div class="pts" style="text-align:right">${r.pts|0}</div>`
-    ]).join('');
-    finalYou.textContent = `あなたのスコア： ${score.YOU|0} 点（赤パック+10、他色+2、失点-1/自色-5）`;
+
+    finalGrid.innerHTML = rows.map((r,i)=>`
+      <div class="rank">${i+1}</div>
+      <div class="name" style="color:${r.name==='YOU'?'#fff':(r.name==='DEALER'?'#cde7ff':'#e8edf7')}">${r.name}</div>
+      <div class="pts" style="color:${r.name==='YOU'?'#34d399':'#e8edf7'}">${r.pts|0}</div>
+    `).join('');
+    finalYou.textContent = `あなたのスコア： ${score.YOU|0} 点（赤+10 / 他色+2 / 失点-1 / 自色失点-5）`;
   }
 
   let lastT = performance.now();
   function loop(t){
     GAME.now = t;
-    const dt = Math.min(0.033, (t - lastT)/1000); // 秒
+    const dt = Math.min(0.033, (t - lastT)/1000);
     lastT = t;
 
-    // 状態遷移
     if (GAME.state==='countdown'){
-      const elapsed = t - GAME.startAt; // ms
+      const elapsed = t - GAME.startAt;
       const total = 3200; // 3.2s（3→2→1→GO!）
       drawBackground();
-      // 背景は表示し続け、文字だけ重ねる
       const left = Math.max(0,total - elapsed);
       if (left <= 0){
         spawnPucks();
-        renderBoard();
         youPtsEl.textContent = '0'; aiPtsEl.textContent = '0';
         GAME.state = 'playing';
-        GAME.startAt = t; // ここから本タイマー
+        GAME.startAt = t;
         hudMsg.textContent = 'GO!';
         hudMsg.style.color = '#34d399';
         flashTimer = 700;
       }else{
-        // 段階表示
-        const step = Math.ceil(left/800); // 0..4 -> 4:3, 3:2, 2:1, 1:GO
+        const step = Math.ceil(left/800); // 4..1
         const label = step>=2 ? String(step-1) : 'GO!';
         hudMsg.textContent = label;
       }
@@ -546,27 +476,22 @@
     if (GAME.state==='playing'){
       const remain = Math.max(0, GAME.length - (t - GAME.startAt));
       timeEl.textContent = (remain/1000).toFixed(1);
-      // 入力の到達（人は目標に直置き：前フレームでstepがやる）
-      player.step(dt);
-      // AI
-      aiStep(dt); dealer.step(dt);
-      // 物理
+
+      // 入力/AI/物理
+      player.step(dt); aiStep(dt); dealer.step(dt);
       for (const p of pucks){ p.r = P.puckR(); p.step(dt); }
       collide();
-      // ゴール済み除外
       pucks = pucks.filter(p=>!p.scored);
 
-      // 背面CPU
+      // 背面CPU（スコアだけ進める）
       cpuBackgroundTick(dt);
 
-      // 表示
-      drawAll();
+      // 描画
+      drawBackground();
+      for (const p of pucks) p.draw();
+      player.draw(); dealer.draw();
 
-      // フラッシュメッセージ消去
-      if (flashTimer>0){
-        flashTimer -= dt*1000;
-        if (flashTimer<=0){ hudMsg.textContent=''; }
-      }
+      if (flashTimer>0){ flashTimer -= dt*1000; if (flashTimer<=0) hudMsg.textContent=''; }
 
       if (remain<=0){ endGame(); return; }
       requestAnimationFrame(loop);
@@ -574,14 +499,13 @@
     }
 
     if (GAME.state==='ended'){
-      // 停止画面でも背景と最終位置を描く（静止）
-      drawAll();
+      // 静止画描画
+      drawBackground();
+      for (const p of pucks) p.draw();
+      player.draw(); dealer.draw();
       return;
     }
   }
-
-  // 初期ボード
-  renderBoard();
 
 })();
 </script>
