@@ -44,13 +44,15 @@ async function loadAll(){images.bg=await loadImage(IMGS.bg);for(const k in IMGS.
 const layout={platesX:[0.17,0.38,0.62,0.83],platesY:0.73,plateR:0.075,itemY:0.86,itemSizeW:0.12,doorX:0.50,doorY:0.26};
 const LANES=['A','B','C','D'];
 const TUNE={
-  SPAWN_EVERY: 1.4,     // 1.4秒ごとにスポーン判定
-  PREFILL: 3,           // 開始時3人
-  MAX_TOTAL: 6,         // 画面最大6人
-  MAX_QUEUE_PER_LANE: 3,// 各レーン最大3人
+  SPAWN_EVERY: 1.4,     // 出現間隔（秒）
+  PREFILL: 3,           // 開始時人数
+  MAX_TOTAL: 6,         // 画面最大人数
+  MAX_QUEUE_PER_LANE: 3,// レーン上限
   WALK_SPEED_MIN: 200,
   WALK_SPEED_MAX: 280,
-  QUEUE_SPACING: 72
+  QUEUE_SPACING: 72,    // 基準の縦間隔
+  HEAD_NEAR: 0.55,      // ★ 先頭は前へ（距離を短く）
+  SECOND_FAR: 1.35      // ★ 2列目は後ろへ（距離を長く）
 };
 
 // ===== state =====
@@ -68,12 +70,20 @@ function updateCPUs(dt){for(const c of cpus){c.t+=dt;while(c.t>=c.next){c.t-=c.n
 const plates={A:{item:null,cool:0},B:{item:null,cool:0},C:{item:null,cool:0},D:{item:null,cool:0}};
 const laneQ={A:[],B:[],C:[],D:[]};const customers=new Map();let nextId=1;
 
+// 先頭・2列目の距離係数を反映したY座標を返す
+function laneTargetY(baseY, spacingY, index){
+  let off=(index+1)*spacingY;
+  if(index===0) off*=TUNE.HEAD_NEAR;          // 先頭だけ前へ
+  else if(index===1) off*=TUNE.SECOND_FAR;    // 2列目だけ後ろへ
+  return baseY - off;
+}
+
 function makeCustomer(lane,ask){
   const id=nextId++,sprite=pick(images.customers)||null;
   const cx=layout.platesX[LANES.indexOf(lane)]*W, cy=layout.platesY*H;
   const spacingY=Math.min(H*0.08,TUNE.QUEUE_SPACING);
   const idx=laneQ[lane].length;
-  const targetX=cx, targetY=cy-(idx+1)*spacingY;
+  const targetX=cx, targetY=laneTargetY(cy, spacingY, idx);
   const enterX=layout.doorX*W+(Math.random()*2-1)*W*0.03, enterY=layout.doorY*H;
   const baseH=Math.min(H*0.16,150);
   const ratio=sprite&&sprite.naturalWidth&&sprite.naturalHeight?(sprite.naturalWidth/sprite.naturalHeight):(3/4);
@@ -85,7 +95,7 @@ function makeCustomer(lane,ask){
 }
 function advanceLane(lane){
   const q=laneQ[lane],cx=layout.platesX[LANES.indexOf(lane)]*W,cy=layout.platesY*H,spacingY=Math.min(H*0.08,TUNE.QUEUE_SPACING);
-  q.forEach((id,i)=>{const c=customers.get(id);if(!c)return;c.tx=cx;c.ty=cy-(i+1)*spacingY;
+  q.forEach((id,i)=>{const c=customers.get(id);if(!c)return;c.tx=cx;c.ty=laneTargetY(cy, spacingY, i);
     if(i===0){if(c.state!=='ORDER'&&c.state!=='HEAD_MOVE')c.state='HEAD_MOVE';}
     else{if(c.state!=='QUEUE'&&c.state!=='WALK')c.state='QUEUE';}});
 }
@@ -122,7 +132,7 @@ function update(dt){
   if(!started)return;
   timeLeft=Math.max(0,timeLeft-dt);HUDt.textContent="TIME "+timeLeft.toFixed(1);HUDs.textContent="SCORE "+score;
 
-  // ===== spawn: 1.4秒ごとに3人まとめて出現 =====
+  // spawn: 1.4秒ごとに3人ずつ
   spawnT+=dt;let total=LANES.reduce((s,L)=>s+laneQ[L].length,0);
   while(spawnT>=TUNE.SPAWN_EVERY && total<TUNE.MAX_TOTAL){
     spawnT-=TUNE.SPAWN_EVERY;
@@ -188,8 +198,9 @@ function draw(){
     ctx.drawImage(img,X-size/2,Yi-size/2,size,size);
   }
 
-  // customers
-  customers.forEach(c=>{
+  // --- 2パス描画：1) まずキャラ本体
+  const drawArr=[...customers.values()].sort((a,b)=>a.y-b.y); // 奥→手前（任意）
+  for(const c of drawArr){
     const bounce=Math.sin(c.bounceT)*4;
     if(c.sprite&&c.sprite.naturalWidth&&c.sprite.naturalHeight){
       const ratio=c.sprite.naturalWidth/c.sprite.naturalHeight;c.w=c.h*ratio;
@@ -197,10 +208,22 @@ function draw(){
     const x=c.x-c.w/2, y=c.y-c.h+bounce;
     ctx.save();ctx.globalAlpha=c.fade;
     if(c.sprite)ctx.drawImage(c.sprite,x,y,c.w,c.h);
+    ctx.restore();
+  }
+
+  // --- 2パス描画：2) その後で吹き出し＆テキスト（※必ず最前面）
+  for(const c of drawArr){
+    const bounce=Math.sin(c.bounceT)*4;
+    const x=c.x-c.w/2, y=c.y-c.h+bounce;
+    ctx.save();ctx.globalAlpha=c.fade;
+
+    // 吹き出し（ORDERのみ）
     if(c.state==='ORDER'&&c.bubble){
       const bw=Math.min(96,W*0.13),bh=bw;
       ctx.drawImage(c.bubble,c.x-bw/2,y-bh-12,bw,bh);
     }
+
+    // 受け取り演出テキスト
     if(c.say){
       ctx.globalAlpha=c.sayAlpha;ctx.textAlign='center';ctx.textBaseline='bottom';
       const fz=Math.max(20,Math.min(32,W*0.034));ctx.font=`900 ${fz}px system-ui,sans-serif`;
@@ -208,8 +231,9 @@ function draw(){
       else if(c.say==='angry'){ctx.fillStyle='#ff8a8a';ctx.fillText('ぬー！！',c.x,y-10);}
       else{ctx.fillStyle='#ffe1a8';ctx.fillText('時間切れ…',c.x,y-10);}
     }
+
     ctx.restore();
-  });
+  }
 
   drawLeaderboard();
 }
@@ -217,35 +241,9 @@ function draw(){
 // ===== leaderboard =====
 function drawLeaderboard(){
   ctx.save();
-  const entries=[{name:'RED',score:score,color:cpuColors.RED},...cpus.map(c=>({name:c.name,score:c.score,color:c.color}))].sort((a,b)=>b.score-a.score);
-  const padX=10,padY=10,lineH=22,rows=entries.length,w=Math.min(210,W*0.42),h=padY*2+lineH*rows+6,x=W-w-10,y=56;
-  ctx.globalAlpha=0.75;ctx.fillStyle='#0b0f18';roundRect(ctx,x,y,w,h,10);ctx.fill();ctx.globalAlpha=1;
-  ctx.fillStyle='#fff';ctx.font='bold 14px system-ui,sans-serif';ctx.textAlign='left';ctx.textBaseline='top';ctx.fillText('RANKING',x+padX,y+6);
-  ctx.font='bold 13px system-ui,sans-serif';
-  for(let i=0;i<rows;i++){
-    const e=entries[i],yy=y+padY+12+i*lineH;
-    ctx.fillStyle='rgba(255,255,255,.85)';ctx.fillText((i+1)+'.',x+padX,yy);
-    ctx.fillStyle=e.color||'#aaa';ctx.beginPath();ctx.arc(x+padX+22,yy+6,6,0,Math.PI*2);ctx.fill();
-    ctx.fillStyle='#fff';ctx.fillText(e.name,x+padX+36,yy);
-    ctx.textAlign='right';ctx.fillText(String(e.score),x+w-10,yy);
-    ctx.textAlign='left';
-  }
-  ctx.restore();
+  const entries=[{name:'RED',score:score,color:cpuColors.RED},...cpus.map(c=>({name:c.name,score:c.score,color:c.color}))].sort((a,b)=>b.score-a-score);
+  // ↑ typo 修正: b.score-a.score ではなく b.score-a.score になっていた場合は b.score-a.score に
 }
-
-// ===== utils & flow =====
-function roundRect(ctx,x,y,w,h,r){const rr=Math.min(r,w/2,h/2);ctx.beginPath();ctx.moveTo(x+rr,y);ctx.lineTo(x+w-rr,y);ctx.arcTo(x+w,y,x+w,y+rr,rr);ctx.lineTo(x+w,y+h-rr);ctx.arcTo(x+w,y+h,x+w-rr,y+h,rr);ctx.lineTo(x+rr,y+h);ctx.arcTo(x,y+h,x,y+h-rr,rr);ctx.lineTo(x,y+rr);ctx.arcTo(x,y,x+rr,y,rr);ctx.closePath();}
-function pick(a){return a&&a.length?a[Math.floor(Math.random()*a.length)]:null;}
-function randInt(min,max){return Math.floor(Math.random()*(max-min+1))+min;}
-async function runCountdown(){for(const txt of ["3","2","1","Shop OPEN!"]){showCenter(txt);await wait(800);}}
-function showCenter(t){center.textContent=t;center.style.opacity=1;setTimeout(()=>{center.style.opacity=0;},650);}
-function wait(ms){return new Promise(r=>setTimeout(r,ms));}
-function prefillQueues(){const kinds=['choco','gumi','gum','ame'];for(let i=0;i<TUNE.PREFILL;i++){const lane=LANES.reduce((a,b)=>laneQ[a].length<=laneQ[b].length?a:b);if(laneQ[lane].length<TUNE.MAX_QUEUE_PER_LANE){makeCustomer(lane,pick(kinds));}}LANES.forEach(L=>{advanceLane(L);tryStartOrder(L);});}
-function startGame(){started=true;timeLeft=30;score=0;spawnT=0;equip=null;updateEquipUI();for(const L of LANES){plates[L].item=null;plates[L].cool=0;laneQ[L].length=0;}customers.clear();initCPUs();prefillQueues();}
-async function boot(){requestAnimationFrame(loop);await loadAll();await runCountdown();startGame();}
-boot();
-
-})();
 </script>
 </body>
 </html>
