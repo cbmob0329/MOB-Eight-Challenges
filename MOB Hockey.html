@@ -13,7 +13,6 @@
   #wrap{position:fixed;inset:0;display:flex;align-items:stretch;justify-content:center;background:#000;}
   canvas{display:block;touch-action:none;outline:none;background:var(--rink)}
 
-  /* HUD */
   .hud{position:fixed;z-index:10;top:env(safe-area-inset-top);left:0;right:0;
        display:flex;justify-content:space-between;gap:8px;align-items:center;
        padding:8px 12px;background:var(--hud);backdrop-filter: blur(6px);}
@@ -90,7 +89,7 @@
   window.addEventListener('resize', fit, {passive:true});
   fit();
 
-  // ====== Rink layout (余白を取りつつ中央に) ======
+  // ====== Rink layout ======
   const pad = 16 * DPR;
   const hudTop = 64*DPR, footer = 72*DPR;
   const rink = { x: pad, y: hudTop, w: W - pad*2, h: H - hudTop - footer };
@@ -107,12 +106,11 @@
     ['orange','orange.png'],['pink','pink.png'],['red','red.png'],['yellow','yellow.png'],
     ['smash','smash.png'],['bg','hokehai.png']
   ];
-  let loaded = 0;
   imgList.forEach(([k,src])=>{
     const im = new Image();
     im.src = src;
-    im.onload = ()=>{ images[k]=im; loaded++; };
-    im.onerror = ()=>{ images[k]=null; loaded++; };
+    im.onload = ()=>{ images[k]=im; };
+    im.onerror = ()=>{ images[k]=null; };
   });
 
   // ====== Players / leaderboard ======
@@ -133,12 +131,11 @@
   const overlayEl = document.getElementById('overlay');
   const countTxt = document.getElementById('countTxt');
   const endBar = document.getElementById('endBar');
-  const restartBtn = document.getElementById('restartBtn');
+  document.getElementById('restartBtn').addEventListener('click', startGame);
 
-  // ====== Physics state ======
+  // ====== Physics ======
   const P = [];
   const MALLETS = [];
-  let running = false, tLeft = 30.0, lastT=performance.now(), started=false, countdown=3.0, showGo=false;
 
   const rand = (a,b)=>a + Math.random()*(b-a);
   function clamp(v,a,b){return Math.max(a,Math.min(b,v));}
@@ -190,11 +187,9 @@
     const minus = (conceder===playerName && puck.kind==='red') ? -5 : -1;
     addScore(conceder, minus);
 
-    // Flash
     flashEl.className = 'goalFlash ' + (scorer===playerName ? 'good' : 'bad');
     flashEl.style.opacity='1'; setTimeout(()=>flashEl.style.opacity='0', 180);
 
-    // 消してリスポーン
     const idx = P.indexOf(puck); if (idx>=0) P.splice(idx,1);
     setTimeout(()=>{
       const side = (conceder===playerName) ? 'bottom' : 'top';
@@ -264,17 +259,40 @@
     else { m.charging=false; m.charge = clamp(m.charge - dt*0.8, 0, 1); }
   }
 
-  // ====== Physics step ======
+  // ====== Game phase/time handling (絶対時刻ベース) ======
+  let phase = 'countdown';          // 'countdown' | 'play' | 'end'
+  let tCountdownStart = performance.now();
+  let tGoShown = 0;
+  let tPlayStart = 0;
+  const GO_MS = 650;
+  const ROUND_SEC = 30;
+
+  function startGame(){
+    // reset scores?
+    scores[playerName]=0; scores[dealerName]=0; others.forEach(n=>scores[n]=0);
+    resetField();
+    phase='countdown';
+    tCountdownStart = performance.now();
+    tGoShown = 0; tPlayStart = 0;
+    countTxt.textContent = '3';
+    overlayEl.style.display='grid';
+    endBar.style.display='none';
+  }
+
+  // ====== Step / Draw ======
   function step(dt){
+    // pucks
     for(const p of P){
       p.x += p.vx*dt; p.y += p.vy*dt;
       p.vx *= (1 - 0.8*dt); p.vy *= (1 - 0.8*dt);
+
+      // walls
       const left = rink.x + p.r, right = rink.x + rink.w - p.r;
       const top = rink.y + p.r, bot = rink.y + rink.h - p.r;
       if (p.x < left){ p.x = left; p.vx = -p.vx*0.9; }
       if (p.x > right){ p.x = right; p.vx = -p.vx*0.9; }
 
-      // ゴール位置（画像の口に概ね合うよう中央幅を控えめに）
+      // goals
       const goalW = Math.min(240*DPR, rink.w*0.22);
       const gxL = rink.x + rink.w/2 - goalW/2;
       const gxR = gxL + goalW;
@@ -289,6 +307,7 @@
       }
     }
 
+    // mallets
     for (const m of MALLETS){
       if (m.side==='you') playerCtrl(dt,m); else dealerAI(dt,m);
       if (m.side==='you'){
@@ -320,27 +339,23 @@
     }
   }
 
-  // ====== Drawing ======
   function drawBackground(){
-    // 外枠
     ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--board');
     ctx.fillRect(rink.x-8*DPR, rink.y-8*DPR, rink.w+16*DPR, rink.h+16*DPR);
 
-    // 背景画像（contain）。ドット絵最適化。
     ctx.imageSmoothingEnabled = false;
     const bg = images['bg'];
     if (bg){
       const iw = bg.naturalWidth || bg.width;
       const ih = bg.naturalHeight || bg.height;
-      const s = Math.min(rink.w/iw, rink.h/ih); // 画像全体を表示（トリミング無し）
+      const s = Math.min(rink.w/iw, rink.h/ih);
       const dw = Math.floor(iw*s), dh = Math.floor(ih*s);
       const dx = Math.floor(rink.x + (rink.w - dw)/2);
       const dy = Math.floor(rink.y + (rink.h - dh)/2);
       ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--rink');
-      ctx.fillRect(rink.x, rink.y, rink.w, rink.h); // 余白はリンク色
+      ctx.fillRect(rink.x, rink.y, rink.w, rink.h);
       ctx.drawImage(bg, dx, dy, dw, dh);
     }else{
-      // 画像未配置時のフォールバック
       const grad = ctx.createLinearGradient(0,rink.y,0,rink.y+rink.h);
       grad.addColorStop(0,'#0e2230'); grad.addColorStop(1,'#0a0f14');
       ctx.fillStyle = grad;
@@ -349,7 +364,6 @@
   }
 
   function drawPucksAndMallets(){
-    // Pucks
     for (const p of P){
       const im = images[p.kind];
       if (im){
@@ -365,8 +379,6 @@
         ctx.strokeStyle = 'rgba(255,255,255,.15)'; ctx.stroke();
       }
     }
-
-    // Mallets
     for (const m of MALLETS){
       const im = images['smash'];
       if (im){
@@ -377,7 +389,6 @@
         ctx.beginPath(); ctx.arc(m.x, m.y, m.r, 0, Math.PI*2); ctx.fill();
         ctx.strokeStyle = 'rgba(255,255,255,.2)'; ctx.lineWidth = 3*DPR; ctx.stroke();
       }
-      // Charge ring
       if (m.charge>0){
         ctx.beginPath();
         ctx.strokeStyle = (m.side==='you') ? '#30d158' : '#a78bfa';
@@ -393,7 +404,6 @@
     ctx.clearRect(0,0,W,H);
     drawBackground();
     drawPucksAndMallets();
-    if (!started){ countTxt.textContent = showGo ? 'GO!' : String(Math.ceil(countdown)); }
   }
 
   // ====== Leaderboard ======
@@ -409,41 +419,67 @@
     dsEl.textContent = scores[dealerName]|0;
   }
 
-  // ====== Countdown / loop ======
-  function startGame(){
-    resetField();
-    started=false; running=false; showGo=false;
-    countdown=3.0; tLeft=30.0;
-    overlayEl.style.display='grid';
-    endBar.style.display='none';
-  }
-  document.getElementById('restartBtn').addEventListener('click', startGame);
-
-  let last = performance.now();
+  // ====== Main loop (絶対時刻で管理) ======
+  let lastRAF = performance.now();
   function loop(now){
-    const dt = Math.min(0.033, (now - last)/1000); last = now;
+    const dt = Math.min(0.033, (now - lastRAF)/1000); // 描画用
+    lastRAF = now;
+
     refreshRink();
 
-    if (!started){
-      countdown -= dt;
-      if (countdown<=0 && !showGo){
-        showGo = true;
-        setTimeout(()=>{ started=true; running=true; overlayEl.style.display='none'; }, 650);
+    if (phase==='countdown'){
+      const elapsed = (now - tCountdownStart)/1000;
+      const left = 3 - elapsed;
+      if (left > 0){
+        // 3,2,1 を整数で
+        const n = Math.max(1, Math.ceil(left));
+        document.getElementById('countTxt').textContent = String(n);
+      } else if (tGoShown===0){
+        // GO! 表示
+        document.getElementById('countTxt').textContent = 'GO!';
+        tGoShown = now;
+      } else if (now - tGoShown >= GO_MS){
+        // プレイ開始
+        phase='play';
+        tPlayStart = now;
+        overlayEl.style.display='none';
       }
-    } else if (running){
-      tLeft -= dt; if (tLeft<=0){ running=false; tLeft=0; endBar.style.display='flex'; }
+    } else if (phase==='play'){
+      const playElapsed = (now - tPlayStart)/1000;
+      const remain = Math.max(0, ROUND_SEC - playElapsed);
+      timeEl.textContent = (Math.ceil(remain*10)/10).toFixed(1);
+      // 通常更新
       step(dt);
       tickBackground(dt);
+      if (remain<=0){
+        phase='end';
+        endBar.style.display='flex';
+      }
     }
 
-    draw(); renderBoard();
-    timeEl.textContent = (Math.ceil(tLeft*10)/10).toFixed(1);
+    draw();
+    renderBoard();
     requestAnimationFrame(loop);
   }
 
-  startGame();
-  requestAnimationFrame(t=>{ last=t; loop(t); });
+  // ====== Boot ======
+  function hardReset(){
+    scores[playerName]=0; scores[dealerName]=0; others.forEach(n=>scores[n]=0);
+    startGame();
+  }
+  function startGame(){
+    resetField();
+    phase='countdown';
+    tCountdownStart = performance.now();
+    tGoShown = 0; tPlayStart = 0;
+    document.getElementById('countTxt').textContent = '3';
+    overlayEl.style.display='grid';
+    endBar.style.display='none';
+    timeEl.textContent = ROUND_SEC.toFixed(1);
+  }
 
+  hardReset();
+  requestAnimationFrame(loop);
 })();
 </script>
 </body>
