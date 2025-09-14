@@ -3,655 +3,164 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
-<title>Shop OPEN! - Candy Serve</title>
+<title>MOB Candy Shop</title>
 <style>
-  :root{ --hud:#0e0f12cc; --fg:#fff; --accent:#13c4ff; --bad:#ff3b3b; --good:#3cff77; }
-  html,body{margin:0;height:100%;background:#000;color:#fff;font-family:system-ui,-apple-system,Segoe UI,Roboto,"Hiragino Sans","Yu Gothic",sans-serif}
+  :root{ --hud:#0e0f12cc; --fg:#fff; }
+  html,body{margin:0;height:100%;background:#000;color:#fff;font-family:system-ui,-apple-system,"Yu Gothic",sans-serif}
   #wrap{position:fixed;inset:0;display:flex;align-items:stretch;justify-content:center;background:#000;}
   canvas{display:block;touch-action:none;outline:none}
-  .hud{position:fixed;left:env(safe-area-inset-left);right:env(safe-area-inset-right);top:env(safe-area-inset-top);display:flex;justify-content:space-between;gap:8px;padding:8px 10px;background:var(--hud);backdrop-filter:blur(6px);align-items:center}
-  .hud .pill{padding:6px 10px;border-radius:999px;background:#1b1f2a;color:#fff;font-weight:700}
-  .centerText{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;font-weight:900;text-shadow:0 6px 18px rgba(0,0,0,.5)}
-  .centerText span{font-size:13vmin;opacity:0;transform:scale(.9);transition:.15s}
-  .footer{position:fixed;left:env(safe-area-inset-left);right:env(safe-area-inset-right);bottom:env(safe-area-inset-bottom);display:flex;justify-content:center;gap:10px;padding:10px 8px;background:linear-gradient(180deg,transparent,rgba(0,0,0,.35))}
-  .equipBox{min-height:44px;padding:6px 10px;border-radius:12px;background:#111a;backdrop-filter:blur(4px);display:flex;align-items:center;gap:8px}
-  .equipBox .label{opacity:.8}
-  .equipIcon{width:40px;height:40px;border-radius:10px;border:2px solid #fff3;display:inline-block;background:#0006;background-size:contain;background-position:center;background-repeat:no-repeat}
-  .muted{opacity:.6}
-  /* tap helper for debug on desktop */
-  @media (hover:hover){ canvas{cursor:pointer} }
+  .hud{position:fixed;top:env(safe-area-inset-top);left:0;right:0;display:flex;justify-content:space-between;padding:6px 12px;background:var(--hud);z-index:10}
+  .hud .pill{padding:4px 10px;border-radius:999px;background:#1b1f27}
+  .footer{position:fixed;bottom:env(safe-area-inset-bottom);left:0;right:0;display:flex;justify-content:center;padding:6px;background:linear-gradient(180deg,transparent,rgba(0,0,0,.6));z-index:10}
+  .equipBox{padding:6px 10px;border-radius:12px;background:#111a;backdrop-filter:blur(4px);display:flex;align-items:center;gap:6px}
+  .equipIcon{width:40px;height:40px;border-radius:8px;border:2px solid #fff3;background-size:contain;background-repeat:no-repeat;background-position:center}
+  .muted{opacity:.4}
+  .centerText{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;font-weight:900}
+  .centerText span{font-size:13vmin;opacity:0;transition:.2s}
 </style>
 </head>
 <body>
-<div id="wrap">
-  <canvas id="cv" aria-label="game"></canvas>
-</div>
+<div id="wrap"><canvas id="cv"></canvas></div>
 
-<!-- HUD -->
-<div class="hud" id="hud">
+<div class="hud">
   <div class="pill" id="time">TIME 60.0</div>
   <div class="pill" id="score">SCORE 0</div>
 </div>
-
-<!-- Equip indicator -->
 <div class="footer">
-  <div class="equipBox">
-    <span class="label">装備中：</span>
-    <span id="equipIcon" class="equipIcon muted" title="未装備"></span>
-  </div>
+  <div class="equipBox">装備中：<span id="equipIcon" class="equipIcon muted"></span></div>
 </div>
-
-<!-- Center countdown -->
 <div class="centerText"><span id="center"></span></div>
 
 <script>
-(function(){
-  const canvas = document.getElementById('cv');
-  const ctx = canvas.getContext('2d');
-  let W=0,H=0, dpr=1;
+(()=>{
+const cv=document.getElementById("cv"),ctx=cv.getContext("2d");
+let W=0,H=0,dpr=1;
+function resize(){
+  dpr=Math.min(2,window.devicePixelRatio||1);
+  W=window.innerWidth;H=window.innerHeight;
+  cv.width=W*dpr;cv.height=H*dpr;
+  cv.style.width=W+"px";cv.style.height=H+"px";
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+}
+window.addEventListener("resize",resize);resize();
 
-  // ----- Assets -----
-  const IMGS = {
-    bg: "shop.png",
-    items: {
-      choco: "1cho.png",
-      gumi:  "1gumi.png",
-      gum:   "1gum.png",
-      ame:   "1ame.png",
-    },
-    customers: ["1.png","2.png","3.png"],
-    bubbles: {
-      choco:"cho.png",
-      gumi:"gumi.png",
-      gum:"gum.png",
-      ame:"ame.png",
+const IMGS={
+  bg:"shop.png",
+  items:{choco:"1cho.png",gumi:"1gumi.png",gum:"1gum.png",ame:"1ame.png"},
+  customers:["1.png","2.png","3.png"],
+  bubbles:{choco:"cho.png",gumi:"gumi.png",gum:"gum.png",ame:"ame.png"}
+};
+const images={items:{},customers:[],bubbles:{}};
+function loadImage(src){return new Promise(r=>{const i=new Image();i.onload=()=>r(i);i.onerror=()=>r(null);i.src=src;});}
+async function loadAll(){
+  images.bg=await loadImage(IMGS.bg);
+  for(const k in IMGS.items){images.items[k]=await loadImage(IMGS.items[k]);}
+  for(const p of IMGS.customers){images.customers.push(await loadImage(p));}
+  for(const k in IMGS.bubbles){images.bubbles[k]=await loadImage(IMGS.bubbles[k]);}
+}
+
+// ===== game state =====
+const LANES=['A','B','C','D'];
+const laneQ={A:[],B:[],C:[],D:[]};
+let plates={A:{item:null},B:{item:null},C:{item:null},D:{item:null}};
+let equip=null;const equipIcon=document.getElementById("equipIcon");
+let started=false,timeLeft=60,score=0,spawnT=0,last=0;
+const HUDt=document.getElementById("time"),HUDs=document.getElementById("score"),center=document.getElementById("center");
+const customers=new Map();let nextId=1;
+
+function updateEquipUI(){
+  if(!equip){equipIcon.classList.add("muted");equipIcon.style.backgroundImage="";}
+  else{equipIcon.classList.remove("muted");equipIcon.style.backgroundImage=`url(${IMGS.items[equip]})`;}
+}
+
+// ===== input =====
+cv.addEventListener("click",e=>{
+  if(!started)return;
+  const x=e.clientX,y=e.clientY;
+  const item=hitItemRow(x,y);
+  if(item){equip=item;updateEquipUI();return;}
+  const lane=hitPlate(x,y);
+  if(lane&&equip){plates[lane].item=equip;}
+});
+
+function hitItemRow(x,y){
+  const size=W*0.15,gap=size*0.1,startX=(W-(size*4+gap*3))/2, Y=H*0.58;
+  const items=['choco','gumi','gum','ame'];
+  for(let i=0;i<4;i++){
+    const ix=startX+i*(size+gap),iy=Y-size/2;
+    if(x>=ix&&x<=ix+size&&y>=iy&&y<=iy+size)return items[i];
+  }
+  return null;
+}
+function hitPlate(x,y){
+  const r=Math.min(W,H)*0.07;
+  const X=[0.17,0.38,0.62,0.83].map(v=>v*W),Y=H*0.73;
+  for(let i=0;i<4;i++){
+    const dx=x-X[i],dy=y-Y;
+    if(dx*dx+dy*dy<=r*r)return LANES[i];
+  }
+  return null;
+}
+
+// ===== loop =====
+function loop(t){
+  const now=t*0.001;if(!last)last=now;
+  const dt=Math.min(0.033,now-last);last=now;
+  update(dt);draw();requestAnimationFrame(loop);
+}
+function update(dt){
+  if(!started)return;
+  timeLeft=Math.max(0,timeLeft-dt);
+  spawnT+=dt;
+  if(spawnT>=3){spawnT=0;spawnCustomer();}
+  HUDt.textContent="TIME "+timeLeft.toFixed(1);
+  HUDs.textContent="SCORE "+score;
+  if(timeLeft<=0){started=false;showCenter("TIME UP!");setTimeout(()=>showCenter("SCORE "+score),1000);}
+}
+function spawnCustomer(){
+  const lane=LANES.reduce((a,b)=>laneQ[a].length<=laneQ[b].length?a:b);
+  const ask=['choco','gumi','gum','ame'][Math.floor(Math.random()*4)];
+  const id=nextId++;laneQ[lane].push(id);
+  customers.set(id,{lane,ask,state:'ORDER',orderT:0});
+}
+function draw(){
+  ctx.clearRect(0,0,W,H);
+  if(images.bg)ctx.drawImage(images.bg,0,0,W,H);
+  // items row
+  const size=W*0.15,gap=size*0.1,startX=(W-(size*4+gap*3))/2,Y=H*0.58;
+  ['choco','gumi','gum','ame'].forEach((k,i)=>{
+    const img=images.items[k];if(!img)return;
+    const x=startX+i*(size+gap),y=Y-size/2;
+    if(equip===k){ctx.strokeStyle="#fff";ctx.lineWidth=4;ctx.strokeRect(x-4,y-4,size+8,size+8);}
+    ctx.drawImage(img,x,y,size,size);
+  });
+  // plates
+  const r=Math.min(W,H)*0.07,X=[0.17,0.38,0.62,0.83].map(v=>v*W),Yp=H*0.73;
+  for(let i=0;i<4;i++){
+    ctx.beginPath();ctx.arc(X[i],Yp,r,0,Math.PI*2);
+    ctx.fillStyle="#000";ctx.fill();
+    ctx.strokeStyle="#fff";ctx.stroke();
+    if(plates[LANES[i]].item&&images.items[plates[LANES[i]].item]){
+      ctx.drawImage(images.items[plates[LANES[i]].item],X[i]-r*0.8,Yp-r*0.8,r*1.6,r*1.6);
     }
-  };
-  const images = {};
-  function loadImage(src){
-    return new Promise((res,rej)=>{
-      const img = new Image();
-      img.onload = ()=>res(img);
-      img.onerror = (e)=>rej(e);
-      img.src = src;
-    });
+    ctx.fillStyle="#fff";ctx.textAlign="center";ctx.font="bold 18px sans-serif";
+    ctx.fillText(LANES[i],X[i],Yp+r+18);
   }
-  async function loadAll(){
-    images.bg = await loadImage(IMGS.bg);
-    images.items = {};
-    for(const k in IMGS.items){ images.items[k] = await loadImage(IMGS.items[k]); }
-    images.customers = [];
-    for(const p of IMGS.customers){ images.customers.push(await loadImage(p)); }
-    images.bubbles = {};
-    for(const k in IMGS.bubbles){ images.bubbles[k] = await loadImage(IMGS.bubbles[k]); }
+}
+function showCenter(t){
+  center.textContent=t;center.style.opacity=1;
+  setTimeout(()=>center.style.opacity=0,700);
+}
+async function boot(){
+  await loadAll();await runCountdown();startGame();requestAnimationFrame(loop);
+}
+async function runCountdown(){
+  for(const txt of ["3","2","1","Shop OPEN!"]){
+    showCenter(txt);await new Promise(r=>setTimeout(r,800));
   }
-
-  // ----- Layout (percent based) -----
-  // Plate (皿) centers as % of canvas width; y as % of height.
-  const layout = {
-    platesX: [0.17, 0.38, 0.62, 0.83],
-    platesY: 0.73,
-    plateR:  0.075, // relative to min(W,H)
-    // item button row (机の後ろに横一列 = 背景の上だが見た目は机の後ろあたり)
-    itemRowY: 0.58,
-    itemScale: 0.08, // width %
-    // lanes entrance x (spawn start)
-    doorX: 0.5,
-    doorY: 0.25,
-  };
-
-  // ----- Game state -----
-  const LANES = ['A','B','C','D'];
-  const laneQueues = {A:[],B:[],C:[],D:[]}; // arrays of customer IDs
-  const customers = new Map(); // id -> customer object
-  let nextId = 1;
-
-  // plate contents
-  const plates = {
-    A: {item:null, cooldown:0},
-    B: {item:null, cooldown:0},
-    C: {item:null, cooldown:0},
-    D: {item:null, cooldown:0},
-  };
-
-  // equip
-  let equip = null; // 'choco' | 'gumi' | 'gum' | 'ame' | null
-  const equipIcon = document.getElementById('equipIcon');
-
-  // game flow
-  let started=false, countdown=0, centerTextEl=document.getElementById('center');
-  let timeLeft = 60.0;
-  let score = 0;
-  let spawnTimer = 0;
-  const HUD_time = document.getElementById('time');
-  const HUD_score = document.getElementById('score');
-
-  // helpers
-  function px(v){ return Math.round(v*dpr); }
-
-  function resize(){
-    const rect = document.getElementById('wrap').getBoundingClientRect();
-    dpr = Math.max(1, Math.min(2, window.devicePixelRatio||1));
-    W = Math.round(rect.width);
-    H = Math.round(rect.height);
-    canvas.width = px(W);
-    canvas.height = px(H);
-    canvas.style.width = W+"px";
-    canvas.style.height = H+"px";
-    ctx.setTransform(dpr,0,0,dpr,0,0);
-    draw(0);
-  }
-  window.addEventListener('resize', resize);
-
-  // ----- Customer object -----
-  function makeCustomer(lane, ask){ // ask: 'choco'|'gumi'|'gum'|'ame'
-    const id = nextId++;
-    const cx = layout.platesX[LANES.indexOf(lane)] * W;
-    const cy = layout.platesY * H;
-
-    const q = laneQueues[lane];
-    const idx = q.length; // 0-based index in queue
-    const spacingY = Math.min(H*0.08, 72); // vertical gap between people
-    const targetX = cx;
-    const targetY = cy - (idx+1)*spacingY; // behind plate
-    const enterX = layout.doorX * W + (Math.random()*2-1)*W*0.08; // a bit random
-    const enterY = layout.doorY * H;
-
-    const sprite = images.customers[Math.floor(Math.random()*images.customers.length)];
-    const obj = {
-      id, lane, ask, sprite,
-      x: enterX, y: enterY,
-      tx: targetX, ty: targetY,
-      state: 'WALK', // WALK -> FRONT_WAIT -> ORDER -> EXIT
-      bounceT: 0,
-      orderT: 0, // elapsed in ORDER
-      say: null, // current speech string ('thanks'|'angry'|null)
-      sayAlpha: 0,
-      bubble: images.bubbles[ask],
-      width: Math.min(W*0.12, 120), // draw size
-      height: Math.min(H*0.16, 150),
-      speed: Math.max(120, Math.min(220, H*0.25)), // px/s
-      fade: 1, // for EXIT
-    };
-    customers.set(id, obj);
-    q.push(id);
-  }
-
-  // Choose lane with fewest people (A->B->C->D priority on ties)
-  function pickLane(){
-    let best = 'A', bestLen = laneQueues['A'].length;
-    for(const lane of ['B','C','D']){
-      const len = laneQueues[lane].length;
-      if(len < bestLen){ best=lane; bestLen=len; }
-    }
-    return best;
-  }
-
-  // After a head leaves, advance everyone forward in that lane
-  function advanceLane(lane){
-    const q = laneQueues[lane];
-    const cx = layout.platesX[LANES.indexOf(lane)] * W;
-    const cy = layout.platesY * H;
-    const spacingY = Math.min(H*0.08, 72);
-    q.forEach((id, i)=>{
-      const c = customers.get(id);
-      if(!c) return;
-      c.tx = cx;
-      c.ty = cy - (i+1)*spacingY;
-      if(i===0 && c.state!=='ORDER'){ // new head
-        c.state = 'FRONT_WAIT'; // step to plate
-      }
-    });
-  }
-
-  // Place item on a plate (A-D)
-  function placeItem(lane){
-    const p = plates[lane];
-    if(p.cooldown>0) return; // 200ms cooldown per lane
-    p.cooldown = 0.2;
-    p.item = equip; // can be null
-    // small flash animation feedback could be handled visually in draw()
-  }
-
-  // Handle judgement for head of a lane (auto when entering ORDER end or immediately if ready?)
-  function tryStartOrder(lane){
-    const q = laneQueues[lane];
-    if(q.length===0) return;
-    const head = customers.get(q[0]);
-    if(!head) return;
-    if(head.state==='FRONT_WAIT'){
-      head.state='ORDER';
-      head.orderT=0;
-      head.say=null;
-      head.sayAlpha=0;
-    }
-  }
-
-  function resolveAndRemove(lane, head, type){ // type: 'ok'|'bad'|'timeout'
-    // feedback
-    if(type==='ok'){
-      score += 30;
-      head.say='thanks';
-    }else if(type==='bad'){
-      score -= 50;
-      head.say='angry';
-    }else{
-      score -= 10;
-      head.say='timeout';
-    }
-    head.state='EXIT';
-    head.fade=1;
-    head.sayAlpha=1;
-
-    // clear the plate's item on resolve (店で回収された想定)
-    plates[lane].item = null;
-
-    // remove from queue
-    const q = laneQueues[lane];
-    q.shift();
-    // smooth fade handled in draw loop, but we can schedule cleanup
-    // advance the lane (everyone steps forward)
-    advanceLane(lane);
-    tryStartOrder(lane); // new head begins order if exists
-  }
-
-  // ----- Input -----
-  const pointer = {x:0,y:0,down:false};
-  function evtXY(e){
-    if(e.touches && e.touches[0]){
-      return {x:e.touches[0].clientX, y:e.touches[0].clientY};
-    }else{
-      return {x:e.clientX, y:e.clientY};
-    }
-  }
-  function onDown(e){
-    const p = evtXY(e);
-    pointer.x=p.x; pointer.y=p.y; pointer.down=true;
-    handleTap(p.x, p.y);
-  }
-  function onUp(){ pointer.down=false; }
-  canvas.addEventListener('pointerdown', onDown);
-  canvas.addEventListener('pointerup', onUp);
-  canvas.addEventListener('touchstart', (e)=>{ onDown(e); e.preventDefault(); }, {passive:false});
-  canvas.addEventListener('touchend', (e)=>{ onUp(e); e.preventDefault(); }, {passive:false});
-
-  function handleTap(x,y){
-    if(!started) return;
-    // 1) item buttons (机の後ろに横一列)
-    const hitItem = hitItemRow(x,y);
-    if(hitItem){
-      equip = hitItem;
-      updateEquipUI();
-      return;
-    }
-    // 2) plates
-    const lane = hitPlate(x,y);
-    if(lane){
-      placeItem(lane);
-      return;
-    }
-  }
-
-  function updateEquipUI(){
-    if(!equip){
-      equipIcon.classList.add('muted');
-      equipIcon.style.backgroundImage='';
-      equipIcon.title='未装備';
-    }else{
-      equipIcon.classList.remove('muted');
-      const url = IMGS.items[equip];
-      equipIcon.style.backgroundImage=`url(${url})`;
-      const n = {choco:'チョコ', gumi:'グミ', gum:'ガム', ame:'アメ'}[equip];
-      equipIcon.title = n;
-    }
-  }
-
-  function hitItemRow(x,y){
-    // place 4 icons relative to canvas
-    const size = W*layout.itemScale;
-    const gap = size*0.22;
-    const totalW = size*4 + gap*3;
-    const startX = (W-totalW)/2;
-    const Y = H*layout.itemRowY;
-    const items = ['choco','gumi','gum','ame'];
-    for(let i=0;i<4;i++){
-      const ix = startX + i*(size+gap);
-      const iy = Y - size/2;
-      if(x>=ix && x<=ix+size && y>=iy && y<=iy+size) return items[i];
-    }
-    return null;
-  }
-
-  function hitPlate(x,y){
-    const minS = Math.min(W,H);
-    const r = minS * layout.plateR;
-    for(let i=0;i<4;i++){
-      const cx = layout.platesX[i]*W;
-      const cy = layout.platesY*H;
-      const dx = x - cx, dy = y - cy;
-      if(dx*dx + dy*dy <= r*r){
-        return LANES[i];
-      }
-    }
-    return null;
-  }
-
-  // ----- Game loop -----
-  let last=0;
-  function loop(t){
-    const now = t*0.001;
-    if(!last) last = now;
-    let dt = Math.min(0.033, now - last);
-    last = now;
-    update(dt);
-    draw(dt);
-    requestAnimationFrame(loop);
-  }
-
-  function update(dt){
-    // cooldowns
-    for(const k of LANES){ if(plates[k].cooldown>0){ plates[k].cooldown = Math.max(0, plates[k].cooldown - dt); } }
-
-    // countdown start text handled in startGame()
-
-    if(!started) return;
-
-    // timers
-    if(timeLeft>0){
-      timeLeft = Math.max(0, timeLeft - dt);
-    }
-
-    // spawn
-    spawnTimer += dt;
-    if(spawnTimer>=3.0){ // every 3s
-      spawnTimer = 0;
-      const total = laneQueues.A.length + laneQueues.B.length + laneQueues.C.length + laneQueues.D.length;
-      if(total < 12){ // capacity cap
-        const lane = pickLane();
-        // random ask
-        const asks = ['choco','gumi','gum','ame'];
-        const ask = asks[Math.floor(Math.random()*asks.length)];
-        makeCustomer(lane, ask);
-        // if the new customer becomes head, start order later via advanceLane/tryStartOrder
-        advanceLane(lane);
-        tryStartOrder(lane);
-      }
-    }
-
-    // customers update
-    customers.forEach(c=>{
-      // movement towards tx,ty
-      const dx = c.tx - c.x;
-      const dy = c.ty - c.y;
-      const dist = Math.hypot(dx,dy);
-      const eps = 2;
-      if(dist > eps){
-        const sp = c.speed * dt;
-        const k = sp / dist;
-        c.x += dx * Math.min(1,k);
-        c.y += dy * Math.min(1,k);
-      }
-      // bounce
-      c.bounceT += dt*8;
-      if(c.state==='FRONT_WAIT'){
-        // step to exact plate front
-        if(dist<=eps){
-          c.state='ORDER';
-          c.orderT=0;
-        }
-      }else if(c.state==='ORDER'){
-        c.orderT += dt;
-        // Auto check at 5s (timeout) OR early resolve if plate holds any item (correct/incorrect immediately when present)
-        const lane = c.lane;
-        const plateItem = plates[lane].item;
-        if(plateItem){ // immediate resolution when an item is present
-          if(plateItem === c.ask){
-            resolveAndRemove(lane, c, 'ok');
-          }else{
-            resolveAndRemove(lane, c, 'bad');
-          }
-        }else if(c.orderT >= 5.0){
-          resolveAndRemove(lane, c, 'timeout');
-        }
-      }else if(c.state==='EXIT'){
-        c.fade = Math.max(0, c.fade - dt*2);
-        if(c.fade===0){
-          customers.delete(c.id);
-        }
-      }
-      // speech alpha decay
-      if(c.say && c.state==='EXIT'){
-        c.sayAlpha = c.fade;
-      }
-    });
-
-    // HUD
-    HUD_time.textContent = "TIME " + timeLeft.toFixed(1);
-    HUD_score.textContent = "SCORE " + score;
-
-    // game end
-    if(timeLeft<=0 && started){
-      started=false;
-      showCenter("TIME UP!");
-      setTimeout(()=>showCenter(`SCORE ${score}`), 800);
-    }
-  }
-
-  function draw(dt){
-    // background fit (cover width)
-    // draw bg centered; scale to fill width
-    ctx.clearRect(0,0,W,H);
-    const bg = images.bg;
-    if(bg){
-      const scale = W / bg.width;
-      const h = bg.height * scale;
-      const y = (H - h)/2;
-      ctx.drawImage(bg, 0, y, W, h);
-    }else{
-      ctx.fillStyle="#303";
-      ctx.fillRect(0,0,W,H);
-    }
-
-    // item row (buttons)
-    const size = W*layout.itemScale;
-    const gap = size*0.22;
-    const totalW = size*4 + gap*3;
-    const startX = (W-totalW)/2;
-    const Y = H*layout.itemRowY;
-    const items = ['choco','gumi','gum','ame'];
-    items.forEach((k,i)=>{
-      const img = images.items[k];
-      if(img){
-        const x = startX + i*(size+gap);
-        const y = Y - size/2;
-        ctx.save();
-        // selection frame
-        if(equip===k){
-          ctx.shadowColor = 'rgba(255,255,255,.7)';
-          ctx.shadowBlur = 16;
-          ctx.globalAlpha = 1;
-          ctx.strokeStyle = '#fff';
-          ctx.lineWidth = 4;
-          ctx.strokeRect(x-4,y-4,size+8,size+8);
-        }else{
-          ctx.globalAlpha = .95;
-        }
-        ctx.drawImage(img, x, y, size, size);
-        ctx.restore();
-      }
-    });
-
-    // plates (皿)
-    const minS = Math.min(W,H);
-    const r = minS * layout.plateR;
-    for(let i=0;i<4;i++){
-      const cx = layout.platesX[i]*W;
-      const cy = layout.platesY*H;
-      // draw hit circle helper: glow if recently tapped
-      ctx.save();
-      // base black plate
-      ctx.fillStyle = '#000';
-      ctx.beginPath();
-      ctx.arc(cx, cy, r, 0, Math.PI*2);
-      ctx.fill();
-      // rim highlight
-      const cool = plates[LANES[i]].cooldown>0 ? 1 : 0;
-      ctx.strokeStyle = cool? '#fff' : 'rgba(255,255,255,.65)';
-      ctx.lineWidth = cool? 5:3;
-      ctx.beginPath();
-      ctx.arc(cx, cy, r*0.98, 0, Math.PI*2);
-      ctx.stroke();
-      ctx.restore();
-
-      // item on plate
-      const it = plates[LANES[i]].item;
-      if(it && images.items[it]){
-        const sz = r*1.35;
-        ctx.drawImage(images.items[it], cx - sz/2, cy - sz/2, sz, sz);
-      }
-
-      // label A-D (below)
-      const lbl = LANES[i];
-      const tx = cx, ty = cy + r + 18;
-      ctx.save();
-      ctx.textAlign='center';
-      ctx.textBaseline='middle';
-      const fz = Math.max(14, Math.min(22, W*0.022));
-      ctx.font = `bold ${fz}px system-ui, sans-serif`;
-      // pill bg
-      const padX = 12, padY = 6;
-      const tw = ctx.measureText(lbl).width;
-      const bw = tw + padX*2, bh = fz + padY*2;
-      ctx.fillStyle = 'rgba(0,0,0,.55)';
-      roundRect(ctx, tx-bw/2, ty-bh/2, bw, bh, 999);
-      ctx.fill();
-      ctx.fillStyle = '#fff';
-      ctx.fillText(lbl, tx, ty+1);
-      ctx.restore();
-    }
-
-    // customers (draw behind plates? actually on top)
-    customers.forEach(c=>{
-      const bounce = Math.sin(c.bounceT)*4;
-      const w=c.width, h=c.height;
-      const x=c.x - w/2, y=c.y - h + bounce;
-      ctx.save();
-      ctx.globalAlpha = c.fade;
-      ctx.drawImage(c.sprite, x, y, w, h);
-      // order bubble
-      if(c.state==='ORDER'){
-        const bub = c.bubble;
-        const bw = Math.min(90, W*0.12);
-        const bh = bw;
-        ctx.drawImage(bub, c.x - bw/2, y - bh - 10, bw, bh);
-        // timer ring
-        const rT = Math.min(32, W*0.03);
-        ctx.save();
-        ctx.translate(c.x + bw*0.5 + rT, y - bh*0.5);
-        ctx.rotate(-Math.PI/2);
-        ctx.strokeStyle = '#fff';
-        ctx.lineWidth = 4;
-        ctx.beginPath();
-        ctx.arc(0,0,rT,0,Math.PI*2);
-        ctx.stroke();
-        ctx.strokeStyle = c.orderT<4 ? '#3cff77' : '#ffb300';
-        if(c.orderT>=5) ctx.strokeStyle='#ff3b3b';
-        ctx.beginPath();
-        const a = Math.max(0, Math.min(1, c.orderT/5))*Math.PI*2;
-        ctx.arc(0,0,rT,0,a);
-        ctx.stroke();
-        ctx.restore();
-      }
-      // exit text
-      if(c.say){
-        ctx.save();
-        ctx.globalAlpha = c.sayAlpha;
-        ctx.textAlign='center';
-        ctx.textBaseline='bottom';
-        ctx.font = `bold ${Math.max(16, Math.min(24, W*0.026))}px system-ui,sans-serif`;
-        if(c.say==='thanks'){ ctx.fillStyle='#8cffc0'; ctx.fillText('ありがとう！', c.x, y-10); }
-        else if(c.say==='angry'){ ctx.fillStyle='#ff6363'; ctx.fillText('ぬー！！', c.x, y-10); }
-        else if(c.say==='timeout'){ ctx.fillStyle='#ffd36b'; ctx.fillText('時間切れ…', c.x, y-10); }
-        ctx.restore();
-      }
-      ctx.restore();
-    });
-  }
-
-  function roundRect(ctx,x,y,w,h,r){
-    const rr = Math.min(r, w/2, h/2);
-    ctx.beginPath();
-    ctx.moveTo(x+rr, y);
-    ctx.arcTo(x+w, y, x+w, y+h, rr);
-    ctx.arcTo(x+w, y+h, x, y+h, rr);
-    ctx.arcTo(x, y+h, x, y, rr);
-    ctx.arcTo(x, y, x+w, y, rr);
-    ctx.closePath();
-  }
-
-  // ----- Countdown & start -----
-  function showCenter(t){
-    const el = centerTextEl;
-    el.textContent = t;
-    el.style.opacity = 1;
-    el.style.transform = 'scale(1)';
-    const span = document.getElementById('center');
-    span.textContent = t;
-    span.style.opacity = 1;
-    span.style.transform = 'scale(1)';
-    setTimeout(()=>{ span.style.opacity=0; span.style.transform='scale(.9)'; }, 700);
-  }
-
-  async function runCountdown(){
-    const span = document.getElementById('center');
-    const seq = ['3','2','1','Shop OPEN!'];
-    for(let i=0;i<seq.length;i++){
-      span.textContent = seq[i];
-      span.style.opacity = 1;
-      span.style.transform = 'scale(1)';
-      await wait(700);
-      span.style.opacity = 0;
-      span.style.transform = 'scale(.9)';
-      await wait(200);
-    }
-  }
-
-  function wait(ms){ return new Promise(r=>setTimeout(r,ms)); }
-
-  function startGame(){
-    started = true;
-    timeLeft = 60.0;
-    score = 0;
-    spawnTimer = 0;
-    // clear lanes/plates/customers
-    for(const L of LANES){ laneQueues[L].length=0; plates[L].item=null; plates[L].cooldown=0; }
-    customers.clear();
-    equip = null;
-    updateEquipUI();
-    HUD_time.textContent = "TIME 60.0";
-    HUD_score.textContent = "SCORE 0";
-  }
-
-  // ----- Boot -----
-  (async function boot(){
-    resize();
-    // loading screen
-    ctx.fillStyle="#000"; ctx.fillRect(0,0,W,H);
-    ctx.fillStyle="#fff"; ctx.font="bold 20px system-ui"; ctx.textAlign='center';
-    ctx.fillText("Loading…", W/2, H/2);
-    try{
-      await loadAll();
-    }catch(e){
-      ctx.fillStyle="#f55"; ctx.fillText("画像の読み込みに失敗しました", W/2, H/2+30);
-      console.error(e);
-    }
-
-    // auto countdown then start
-    await runCountdown();
-    startGame();
-    requestAnimationFrame(loop);
-  })();
-
+}
+function startGame(){started=true;timeLeft=60;score=0;spawnT=0;equip=null;updateEquipUI();}
+boot();
 })();
 </script>
 </body>
