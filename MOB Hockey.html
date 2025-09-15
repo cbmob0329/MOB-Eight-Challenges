@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
-<title>MOB Hockey (Square / 4 Pucks)</title>
+<title>MOB Hockey (2 Pucks / Simple Scoring)</title>
 <style>
   :root{
-    --hud:#0e0f12cc; --fg:#fff; --accent:#13c4ff; --good:#34d399; --bad:#f87171;
+    --hud:#0e0f12cc; --fg:#fff; --good:#34d399; --bad:#f87171;
   }
   html,body{margin:0;height:100%;background:#000;color:var(--fg);font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Hiragino Sans","Yu Gothic",sans-serif}
   #wrap{position:fixed;inset:0;display:flex;align-items:center;justify-content:center}
@@ -78,27 +78,26 @@
   const finalGrid = document.getElementById('finalGrid');
   const finalYou = document.getElementById('finalYou');
 
-  // ====== ゲーム設定（正方形 / 銀の部分から壁） ======
+  // ====== ゲーム設定（正方形 / 銀フレーム＝壁） ======
   const GAME = {
     state:'loading', // 'countdown' | 'playing' | 'ended'
     length:30_000, // 30s
     startAt:0, now:0,
-    size:900, // キャンバスの基準サイズ（resizeで更新）
-    lineY:450, // 中央水平ライン（上=ディーラー陣 / 下=プレイヤー陣）
-    wall:0,    // 壁の厚さ（銀フレームの内側）※resizeで算出
-    topGoal:{ x0:0.35, x1:0.65 },     // 上ゴール：上壁の開口（割合）
-    bottomGoal:{ x0:0.35, x1:0.65 },  // 下ゴール：下壁の開口（割合）
+    size:900,
+    lineY:450,   // 中央水平ライン
+    wall:0,      // 銀フレーム厚（resizeで決定）
+    topGoal:{ x0:0.35, x1:0.65 },     // 上壁開口（割合）
+    bottomGoal:{ x0:0.35, x1:0.65 },  // 下壁開口（割合）
     images:{}, assetsReady:false
   };
 
   // ====== 正方形リサイズ ======
   function resizeSquare(){
     const w = window.innerWidth, h = window.innerHeight;
-    const s = Math.min(w, h); // 常に正方形
+    const s = Math.min(w, h);
     canvas.width = s; canvas.height = s;
     GAME.size = s; GAME.lineY = (s/2)|0;
-    // “銀の部分から壁”想定：フレームの厚みをサイズ比で確保（見た目に寄せて約4.5%）
-    GAME.wall = Math.max(10, Math.round(s * 0.045));
+    GAME.wall = Math.max(10, Math.round(s * 0.045)); // 銀フレーム厚
     canvas.style.width = s+'px';
     canvas.style.height = s+'px';
   }
@@ -128,38 +127,40 @@
     startCountdown();
   })();
 
-  // ====== パラメータ（感度アップ） ======
+  // ====== パラメータ（パック大きく／操作高感度／AI弱体化） ======
   const P = {
-    puckR: ()=>Math.max(10, GAME.size*0.022),
+    puckR: ()=>Math.max(16, GAME.size*0.05),        // ★ かなり大きめ
     smashR: ()=>Math.max(26, GAME.size*0.038),
-    maxSpd: ()=>Math.max(600, GAME.size*0.95),   // 速度アップ
+    maxSpd: ()=>Math.max(600, GAME.size*0.95),      // ベース速度
     friction: 0.994,
-    hitBoost: 1.12                                   // 当たりの伸び少し強化
+    hitBoostPlayer: 1.18,                           // 当たり（プレイヤー）強め
+    hitBoostAI: 0.95                                // 当たり（AI）弱め
   };
 
-  // ====== プレイ可能域（壁から内側） ======
+  // ====== プレイ可能域 ======
   function playMinX(){ return GAME.wall; }
   function playMaxX(){ return GAME.size - GAME.wall; }
   function playMinY(){ return GAME.wall; }
   function playMaxY(){ return GAME.size - GAME.wall; }
 
-  // ====== エンティティ ======
+  // ====== ユーティリティ ======
   const colorMap = {
     red:'#ef4444', blue:'#3b82f6', green:'#22c55e', mura:'#8b5cf6',
     orange:'#f59e0b', pink:'#ec4899', yellow:'#eab308', black:'#e5e7eb'
   };
   function colorOf(key){ return colorMap[key] || '#e5e7eb'; }
 
+  // ====== エンティティ ======
   class Puck{
-    constructor(colorKey, field){ // field: 'T' (上) or 'B' (下)
+    constructor(colorKey, field){ // 'T' or 'B'
       this.key = colorKey;
-      const x0 = playMinX(), x1 = playMaxX();
+      const xmin = playMinX(), xmax = playMaxX();
       const yTop = (playMinY()+GAME.lineY)/2;
       const yBot = (playMaxY()+GAME.lineY)/2;
-      this.x = x0 + (x1-x0)*(0.2 + 0.6*Math.random());
+      this.x = xmin + (xmax-xmin)*(0.25 + 0.5*Math.random());
       this.y = field==='T'? yTop : yBot;
-      this.vx = (Math.random()*2-1)*P.maxSpd()*0.25;
-      this.vy = (Math.random()*2-1)*P.maxSpd()*0.25;
+      this.vx = (Math.random()*2-1)*P.maxSpd()*0.20;
+      this.vy = (Math.random()*2-1)*P.maxSpd()*0.20;
       this.r = P.puckR();
       this.scored = false;
     }
@@ -170,53 +171,37 @@
       const xmin = playMinX(), xmax = playMaxX();
       const ymin = playMinY(), ymax = playMaxY();
 
-      // 左右壁に反射
+      // 左右壁反射
       if (this.x < xmin + this.r){ this.x = xmin + this.r; this.vx = Math.abs(this.vx); }
       if (this.x > xmax - this.r){ this.x = xmax - this.r; this.vx = -Math.abs(this.vx); }
 
-      // 上壁/下壁はゴール開口チェック優先（開口は壁内側のライン上）
+      // 上下ゴール
       const gx0 = xmin + (xmax - xmin)*GAME.topGoal.x0;
       const gx1 = xmin + (xmax - xmin)*GAME.topGoal.x1;
-
-      // 上ゴール（y < ymin + r）
       if (this.y < ymin + this.r){
-        if (this.x>gx0 && this.x<gx1){
-          scoreGoal('TOP', this);
-          this.scored = true;
-        }else{
-          this.y = ymin + this.r; this.vy = Math.abs(this.vy);
-        }
+        if (this.x>gx0 && this.x<gx1){ scoreGoal('TOP', this); this.scored = true; }
+        else{ this.y = ymin + this.r; this.vy = Math.abs(this.vy); }
       }
-      // 下ゴール
       if (this.y > ymax - this.r){
-        if (this.x>gx0 && this.x<gx1){
-          scoreGoal('BOTTOM', this);
-          this.scored = true;
-        }else{
-          this.y = ymax - this.r; this.vy = -Math.abs(this.vy);
-        }
+        if (this.x>gx0 && this.x<gx1){ scoreGoal('BOTTOM', this); this.scored = true; }
+        else{ this.y = ymax - this.r; this.vy = -Math.abs(this.vy); }
       }
     }
     draw(){
       const im = GAME.images[this.key];
-      if (im){
-        const size = this.r*2;
-        ctx.drawImage(im, this.x-this.r, this.y-this.r, size, size);
-      }else{
-        ctx.beginPath(); ctx.arc(this.x,this.y,this.r,0,Math.PI*2);
-        ctx.fillStyle = colorOf(this.key); ctx.fill();
-      }
+      const size = this.r*2;
+      if (im){ ctx.drawImage(im, this.x-this.r, this.y-this.r, size, size); }
+      else { ctx.beginPath(); ctx.arc(this.x,this.y,this.r,0,Math.PI*2); ctx.fillStyle=colorOf(this.key); ctx.fill(); }
     }
   }
 
   class Smasher{
     constructor(half, name, color){
-      this.half = half; // 'B'(下=プレイヤー) / 'T'(上=ディーラー)
-      this.name = name; this.color = color;
+      this.half = half; this.name=name; this.color=color;
       this.r = P.smashR();
       this.x = (playMinX()+playMaxX())/2;
       this.y = half==='B'? (GAME.lineY + playMaxY())/2 : (playMinY() + GAME.lineY)/2;
-      this.vx = 0; this.vy = 0;
+      this.vx = this.vy = 0;
       this.targetX = this.x; this.targetY = this.y;
       this.lastX = this.x; this.lastY = this.y;
     }
@@ -229,10 +214,10 @@
       this.y = Math.max(yminH, Math.min(ymaxH, this.y));
     }
     setTarget(x,y){ this.targetX=x; this.targetY=y; }
-    step(dt, fast=false){
-      // 感度アップ：速度上限↑、プレイヤーは追従を鋭く
+    step(dt, playerControlled=false){
+      // プレイヤー：超高感度 / AI：ゆっくり目
       const base = P.maxSpd();
-      const spd = fast ? base*1.6 : base*1.15; // プレイヤー：1.6 / AI：1.15
+      const spd = playerControlled ? base*1.9 : base*0.85; // ★ AI弱体化
       const dx = this.targetX - this.x, dy = this.targetY - this.y;
       const d = Math.hypot(dx,dy);
       const maxMove = spd*dt;
@@ -244,107 +229,93 @@
       this.vy = (this.y - this.lastY)/dt;
     }
     draw(){
-      const im = GAME.images.smash;
-      const R = this.r;
-      if (im){
-        ctx.drawImage(im, this.x-R, this.y-R, R*2, R*2);
-      }else{
-        ctx.beginPath(); ctx.arc(this.x,this.y,R,0,Math.PI*2);
-        ctx.fillStyle = this.color; ctx.fill();
-        ctx.lineWidth = 2; ctx.strokeStyle = '#fff2'; ctx.stroke();
-      }
+      const im = GAME.images.smash, R=this.r;
+      if (im){ ctx.drawImage(im, this.x-R, this.y-R, R*2, R*2); }
+      else { ctx.beginPath(); ctx.arc(this.x,this.y,R,0,Math.PI*2); ctx.fillStyle=this.color; ctx.fill(); ctx.lineWidth=2; ctx.strokeStyle='#fff2'; ctx.stroke(); }
     }
   }
 
-  // ====== ゲーム体 ======
+  // ====== 体 ======
   let pucks = [];
   const player = new Smasher('B','YOU', colorMap.red);
   const dealer = new Smasher('T','DEALER', colorMap.blue);
   let score = { YOU:0, DEALER:0 };
 
-  // 4パック（赤＋ランダム3色）
+  // 2パック：赤＋ランダム1色（見た目用。点差は全て同じ）
   function spawnPucks(){
     pucks = [];
-    const all = ['black','blue','green','mura','orange','pink','yellow'];
-    // ランダム3色（重複なし）
-    for (let i=all.length-1;i>0;i--){ const j=(Math.random()*(i+1))|0; [all[i],all[j]]=[all[j],all[i]]; }
-    const picks = ['red', all[0], all[1], all[2]];
-
-    // 配置：上下に2個ずつ（見やすさ＆バランス）
-    const fields = ['B','B','T','T'];
-    // シャッフルして割当て
-    for (let i=fields.length-1;i>0;i--){ const j=(Math.random()*(i+1))|0; [fields[i],fields[j]]=[fields[j],fields[i]]; }
-    for (let k=0;k<4;k++){
-      pucks.push( new Puck(picks[k], fields[k]) );
-    }
+    const others = ['black','blue','green','mura','orange','pink','yellow'];
+    const rnd = others[(Math.random()*others.length)|0];
+    // 上下に1個ずつ
+    pucks.push(new Puck('red','B'));
+    pucks.push(new Puck(rnd,'T'));
   }
 
-  // ====== 得点処理（上下ゴール） ======
+  // ====== 得点（シンプル） ======
+  // どの色でも：入れた側 +3 / 入れられた側 -1
   function scoreGoal(side, puck){
-    const isRed = (puck.key==='red');
-    const isBlue = (puck.key==='blue');
-    if (side==='TOP'){
-      // 上ゴール = ディーラーに失点 / プレイヤーに加点
-      score.YOU += isRed ? 10 : 2;
-      score.DEALER += isRed ? -5 : -1;
-      flashMsg(isRed?'+10 (自色)':' +2', 'good');
-    }else{ // BOTTOM
-      // 下ゴール = プレイヤーに失点 / ディーラーに加点
-      score.DEALER += isBlue ? 10 : 2;
-      score.YOU += isRed ? -5 : -1;
-      flashMsg(isRed?' -5 (自色失点)':' -1 (失点)','bad');
+    if (side==='TOP'){        // ディーラー側ゴールに入った = YOUが入れた
+      score.YOU += 3; score.DEALER -= 1; flashMsg('+3', 'good');
+    }else{                    // プレイヤー側ゴールに入った = YOUが入れられた
+      score.DEALER += 3; score.YOU -= 1; flashMsg('-1', 'bad');
     }
     youPtsEl.textContent = score.YOU|0;
     aiPtsEl.textContent = score.DEALER|0;
 
-    // 再投入：入れられた側の陣に1つだけ再スポーン（向きを反対へ）
+    // 再投入（入れられた側陣に1つスポーン、反転）
     const field = (side==='TOP') ? 'T' : 'B';
     const np = new Puck(puck.key, field);
-    np.vy = (side==='TOP'? 1 : -1) * P.maxSpd()*0.55;
-    np.vx = (Math.random()*2-1)*P.maxSpd()*0.25;
+    np.vy = (side==='TOP'? 1 : -1) * P.maxSpd()*0.45;
+    np.vx = (Math.random()*2-1)*P.maxSpd()*0.22;
     pucks.push(np);
   }
 
   // ====== 衝突（スマッシャー×パック） ======
   function collide(){
     for (const puck of pucks){
-      for (const S of [player,dealer]){
-        const dx = puck.x - S.x, dy = puck.y - S.y;
-        const rr = (puck.r + S.r);
-        if (dx*dx + dy*dy <= rr*rr){
-          const dist = Math.hypot(dx,dy)||1;
-          const nx = dx/dist, ny = dy/dist;
-          const swing = Math.hypot(S.vx,S.vy);
-          const impulse = Math.min(P.maxSpd(), 260 + swing*0.9) * P.hitBoost;
-          puck.vx = nx*impulse; puck.vy = ny*impulse;
-          const overlap = rr - dist + 0.5;
-          puck.x += nx*overlap; puck.y += ny*overlap;
-        }
+      // プレイヤー衝突
+      let dx = puck.x - player.x, dy = puck.y - player.y;
+      let rr = (puck.r + player.r);
+      if (dx*dx + dy*dy <= rr*rr){
+        const dist = Math.hypot(dx,dy)||1, nx=dx/dist, ny=dy/dist;
+        const swing = Math.hypot(player.vx,player.vy);
+        const impulse = Math.min(P.maxSpd(), 260 + swing*1.0) * P.hitBoostPlayer;
+        puck.vx = nx*impulse; puck.vy = ny*impulse;
+        const overlap = rr - dist + 0.5; puck.x += nx*overlap; puck.y += ny*overlap;
+      }
+      // AI衝突（弱め）
+      dx = puck.x - dealer.x; dy = puck.y - dealer.y;
+      rr = (puck.r + dealer.r);
+      if (dx*dx + dy*dy <= rr*rr){
+        const dist = Math.hypot(dx,dy)||1, nx=dx/dist, ny=dy/dist;
+        const swing = Math.hypot(dealer.vx,dealer.vy);
+        const impulse = Math.min(P.maxSpd(), 180 + swing*0.6) * P.hitBoostAI; // ★押し負ける
+        puck.vx = nx*impulse; puck.vy = ny*impulse;
+        const overlap = rr - dist + 0.5; puck.x += nx*overlap; puck.y += ny*overlap;
       }
     }
   }
 
-  // ====== ディーラーAI（上半分でプレイ） ======
+  // ====== ディーラーAI（さらに弱め） ======
   function aiStep(dt){
-    let best=null, bestScore=-1e9;
+    // 自陣（上半分）のパックがあればそれを軽く追う。なければ中央寄りで待機
+    let target = null, best=-1e9;
     for (const p of pucks){
-      if (p.y <= GAME.lineY){ // 上陣パック
-        // 上壁方向＆中央寄りを評価。壁内側(ymin)に近いほど高評価
-        const ymin = playMinY();
-        const s = (p.y - ymin) * -1 - Math.abs(p.x - (playMinX()+playMaxX())/2)*0.35;
-        if (s>bestScore){bestScore=s; best=p;}
+      if (p.y <= GAME.lineY){
+        const score = -Math.abs(p.x - (playMinX()+playMaxX())/2) - (GAME.lineY - p.y)*0.2;
+        if (score>best){best=score; target=p;}
       }
     }
-    if (best){
-      const tx = best.x + (Math.random()*2-1)*best.r*0.4;
-      const ty = Math.min(GAME.lineY - dealer.r - 2, best.y - best.r*0.35);
+    if (target){
+      const tx = target.x + (Math.random()*2-1)*target.r*0.3;
+      const ty = Math.min(GAME.lineY - dealer.r - 2, target.y - target.r*0.25);
       dealer.setTarget(tx,ty);
     }else{
-      dealer.setTarget((playMinX()+playMaxX())/2, (playMinY()+GAME.lineY)/2);
+      dealer.setTarget((playMinX()+playMaxX())/2, (playMinY()+GAME.lineY)/2 + 10);
     }
   }
 
-  // ====== 入力（ドラッグ／タッチ：高感度） ======
+  // ====== 入力（ドラッグ/タッチ 高感度） ======
   let dragging = false;
   function toCanvasXY(e){
     const rect = canvas.getBoundingClientRect();
@@ -352,16 +323,8 @@
     const y = ( (e.touches?e.touches[0].clientY:e.clientY) - rect.top ) * (canvas.height/rect.height);
     return {x,y};
   }
-  function onDown(e){
-    dragging = true; const {x,y} = toCanvasXY(e);
-    player.setTarget(x,y);
-    e.preventDefault();
-  }
-  function onMove(e){
-    const {x,y} = toCanvasXY(e);
-    if (dragging) player.setTarget(x,y);
-    e.preventDefault();
-  }
+  function onDown(e){ dragging=true; const {x,y}=toCanvasXY(e); player.setTarget(x,y); e.preventDefault(); }
+  function onMove(e){ const {x,y}=toCanvasXY(e); if (dragging) player.setTarget(x,y); e.preventDefault(); }
   function onUp(){ dragging=false; }
   canvas.addEventListener('mousedown', onDown);
   window.addEventListener('mousemove', onMove);
@@ -370,29 +333,25 @@
   window.addEventListener('touchmove', onMove, {passive:false});
   window.addEventListener('touchend', onUp);
 
-  // ====== 背面CPU（別卓）※試合中は非表示、スコアのみ結果に反映 ======
+  // ====== 背面CPU（+3 / -1で進行、試合中は非表示） ======
   const CPU = [
-    {name:'ブラック', color:'#111'}, {name:'ブルー', color:colorMap.blue},
-    {name:'グリーン', color:colorMap.green}, {name:'パープル', color:colorMap.mura},
-    {name:'オレンジ', color:colorMap.orange}, {name:'ピンク', color:colorMap.pink},
-    {name:'イエロー', color:colorMap.yellow},
+    {name:'ブラック'}, {name:'ブルー'}, {name:'グリーン'},
+    {name:'パープル'}, {name:'オレンジ'}, {name:'ピンク'}, {name:'イエロー'},
   ];
   const cpuScores = Object.fromEntries(CPU.map(c=>[c.name,0]));
   function cpuBackgroundTick(dt){
     const now = GAME.now;
-    if (!cpuBackgroundTick.next) cpuBackgroundTick.next = now + 250;
+    if (!cpuBackgroundTick.next) cpuBackgroundTick.next = now + 300;
     if (now >= cpuBackgroundTick.next){
-      cpuBackgroundTick.next = now + 250; // 0.25sごと
-      const pick = CPU[Math.random()*CPU.length|0].name;
+      cpuBackgroundTick.next = now + 300; // 0.3sごと
+      const name = CPU[(Math.random()*CPU.length)|0].name;
       const r = Math.random();
-      if (r < 0.60) cpuScores[pick] += 2;
-      else if (r < 0.75) cpuScores[pick] += 10;
-      else if (r < 0.93) cpuScores[pick] += -1;
-      else cpuScores[pick] += -5;
+      if (r < 0.72) cpuScores[name] += 3;  // ゴール
+      else cpuScores[name] -= 1;           // 失点
     }
   }
 
-  // ====== 背景描画（hokehai.png：正方形内 contain）＋壁・ライン・ゴール ======
+  // ====== 背景（hokehai.png contain）＋壁・ライン・ゴール ======
   function drawBackground(){
     const S = GAME.size;
     const xmin = playMinX(), xmax = playMaxX();
@@ -410,17 +369,17 @@
       ctx.fillStyle = '#0b0e14'; ctx.fillRect(0,0,S,S);
     }
 
-    // 四方の壁（銀の部分から＝フレーム部分を壁として描く／開口は中央）
+    // 壁（銀フレーム相当）と開口
     ctx.fillStyle = '#111a';
-    // 上壁（中央開口を除く）
     const gx0 = xmin + (xmax - xmin)*GAME.topGoal.x0;
     const gx1 = xmin + (xmax - xmin)*GAME.topGoal.x1;
-    ctx.fillRect(xmin, ymin - GAME.wall, gx0 - xmin, GAME.wall); // 左側上壁
-    ctx.fillRect(gx1, ymin - GAME.wall, xmax - gx1, GAME.wall);  // 右側上壁
-    // 下壁
+    // 上壁（開口除く）
+    ctx.fillRect(xmin, ymin - GAME.wall, gx0 - xmin, GAME.wall);
+    ctx.fillRect(gx1, ymin - GAME.wall, xmax - gx1, GAME.wall);
+    // 下壁（開口除く）
     ctx.fillRect(xmin, ymax, gx0 - xmin, GAME.wall);
     ctx.fillRect(gx1, ymax, xmax - gx1, GAME.wall);
-    // 左右壁（全域）
+    // 左右壁
     ctx.fillRect(xmin - GAME.wall, ymin - GAME.wall, GAME.wall, (ymax - ymin) + GAME.wall*2);
     ctx.fillRect(xmax, ymin - GAME.wall, GAME.wall, (ymax - ymin) + GAME.wall*2);
 
@@ -432,15 +391,15 @@
     ctx.setLineDash([]);
   }
 
-  // ====== 画面メッセージ ======
+  // ====== メッセージ ======
   let flashTimer=0;
   function flashMsg(text, kind='good'){
     hudMsg.textContent = text;
     hudMsg.style.color = (kind==='good')? '#34d399' : '#f87171';
-    flashTimer = 700;
+    flashTimer = 650;
   }
 
-  // ====== ループ管理 ======
+  // ====== ループ ======
   function startCountdown(){
     GAME.state = 'countdown';
     GAME.startAt = performance.now();
@@ -456,11 +415,11 @@
   }
 
   function finalRender(){
-    // YOU / DEALER / CPU7 の9名で順位（試合中は非表示だったものをここで集計表示）
+    // YOU / DEALER / CPU7 の9名順位（+3/-1）
     const rows = [];
-    rows.push({name:'YOU', pts:score.YOU, color:colorMap.red});
-    rows.push({name:'DEALER', pts:score.DEALER, color:colorMap.blue});
-    for (const c of CPU) rows.push({name:c.name, pts:cpuScores[c.name], color:c.color});
+    rows.push({name:'YOU', pts:score.YOU});
+    rows.push({name:'DEALER', pts:score.DEALER});
+    for (const c of CPU) rows.push({name:c.name, pts:cpuScores[c.name]});
     rows.sort((a,b)=>b.pts - a.pts);
 
     finalGrid.innerHTML = rows.map((r,i)=>`
@@ -468,7 +427,7 @@
       <div class="name" style="color:${r.name==='YOU'?'#fff':(r.name==='DEALER'?'#cde7ff':'#e8edf7')}">${r.name}</div>
       <div class="pts" style="color:${r.name==='YOU'?'#34d399':'#e8edf7'}">${r.pts|0}</div>
     `).join('');
-    finalYou.textContent = `あなたのスコア： ${score.YOU|0} 点（赤+10 / 他色+2 / 失点-1 / 自色失点-5）`;
+    finalYou.textContent = `あなたのスコア： ${score.YOU|0} 点（ゴール+3 / 失点-1）`;
   }
 
   let lastT = performance.now();
@@ -503,13 +462,14 @@
       const remain = Math.max(0, GAME.length - (t - GAME.startAt));
       timeEl.textContent = (remain/1000).toFixed(1);
 
-      // 入力/AI/物理（プレイヤーは高感度モード）
-      player.step(dt, true); aiStep(dt); dealer.step(dt, false);
+      // 入力/AI/物理
+      player.step(dt, true);        // ★高感度
+      aiStep(dt); dealer.step(dt);  // ★弱体化
       for (const p of pucks){ p.r = P.puckR(); p.step(dt); }
       collide();
       pucks = pucks.filter(p=>!p.scored);
 
-      // 背面CPU（スコアだけ進める）
+      // 背面CPU（スコア進行のみ）
       cpuBackgroundTick(dt);
 
       // 描画
@@ -525,13 +485,30 @@
     }
 
     if (GAME.state==='ended'){
-      // 静止画描画
       drawBackground();
       for (const p of pucks) p.draw();
       player.draw(); dealer.draw();
       return;
     }
   }
+
+  // ====== 入力ハンドラ ======
+  let dragging=false;
+  function toCanvasXY(e){
+    const r = canvas.getBoundingClientRect();
+    const x = ((e.touches?e.touches[0].clientX:e.clientX)-r.left)*(canvas.width/r.width);
+    const y = ((e.touches?e.touches[0].clientY:e.clientY)-r.top )*(canvas.height/r.height);
+    return {x,y};
+  }
+  function onDown(e){ dragging=true; const {x,y}=toCanvasXY(e); player.setTarget(x,y); e.preventDefault(); }
+  function onMove(e){ const {x,y}=toCanvasXY(e); if (dragging) player.setTarget(x,y); e.preventDefault(); }
+  function onUp(){ dragging=false; }
+  canvas.addEventListener('mousedown', onDown);
+  window.addEventListener('mousemove', onMove);
+  window.addEventListener('mouseup', onUp);
+  canvas.addEventListener('touchstart', onDown, {passive:false});
+  window.addEventListener('touchmove', onMove, {passive:false});
+  window.addEventListener('touchend', onUp);
 
 })();
 </script>
