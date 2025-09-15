@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
-<title>MOB 横スクロールシューティング（32px最適化）</title>
+<title>MOB 横スクロールシューティング（32px・分散AI・快適操作）</title>
 <style>
   :root{
     --bg:#05060a; --fg:#e8f0ff; --hud:#0e1220cc; --accent:#5ad1ff; --warn:#ff6b6b;
@@ -30,7 +30,6 @@
   .firebtn::after{content:"FIRE"; position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); font-weight:700; letter-spacing:.06em; font-size:12px;}
   .tip{position:fixed; left:50%; bottom:calc(env(safe-area-inset-bottom) + 6px); transform:translateX(-50%); font-size:10px; opacity:.7}
 
-  /* 端末回転時の誤タップ防止（任意） */
   @media (max-height:480px){ .tip{display:none;} }
 </style>
 </head>
@@ -59,11 +58,11 @@
   <div id="stickKnob" class="knob"></div>
 </div>
 <div id="fire" class="ctrl"><div id="fireBtn" class="firebtn"></div></div>
-<div class="tip">編隊4機 / タップで対象を直接選択（外すと順送り）。</div>
+<div class="tip">4機編隊。味方は各自の敵を担当し分散行動。タップで操縦機切替。</div>
 
 <script>
 (()=>{
-// ===== Canvas & DPR =====
+/* ================= Canvas & DPR ================= */
 const cv = document.getElementById('cv');
 const ctx = cv.getContext('2d');
 let W=0,H=0, DPR=1;
@@ -74,11 +73,11 @@ function fit(){
 }
 addEventListener('resize', fit, {passive:true}); fit();
 
-// ===== Utils =====
+/* ================= Utils ================= */
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const rand=(a,b)=>a+Math.random()*(b-a);
 
-// ===== Assets =====
+/* ================= Assets ================= */
 const IMG = {
   red:'1REDW.png', blue:'1BLUEW.png', orange:'1ORANGEW.png', ver:'1VERW.png',
   enemy:'karasu.png', coin:'coin.png'
@@ -89,11 +88,11 @@ async function loadAll(){ await Promise.all(Object.entries(IMG).map(([k,v])=>loa
 const HUD={ score:qs('#score'), distTxt:qs('#distTxt'), distFill:qs('#distFill'), ammo:qs('#ammo'), reload:qs('#reload') };
 function qs(s){return document.querySelector(s)}
 
-// ===== Input（小型スティック＆ボタン） =====
+/* ================= Input（高応答） ================= */
 const stickPad = document.getElementById('stickPad');
 const stickKnob = document.getElementById('stickKnob');
 const fireBtn = document.getElementById('fireBtn');
-let stick = {active:false, cx:0, cy:0, dx:0, dy:0, max:40};
+let stick = {active:false, cx:0, cy:0, dx:0, dy:0, max:44};
 let firing=false;
 
 function padCenter(el){ const r=el.getBoundingClientRect(); return {x:r.left+r.width/2, y:r.top+r.height/2}; }
@@ -122,20 +121,29 @@ fireBtn.addEventListener('touchend', fireEnd, {passive:false});
 fireBtn.addEventListener('mousedown', fireStart);
 addEventListener('mouseup', fireEnd);
 
-// ===== World =====
-const world={ speed: 120, t:0, distance:0, score:0 }; // 速度も少し落としてミニスケール寄り
+/* ================= World ================= */
+const world={ speed: 125, t:0, distance:0, score:0 };
 const walls={ top: 20, bottom: ()=>H-20 };
 
-// ===== Entities（32px基準） =====
-const TARGET_SPRITE = 32;                 // 目標サイズ（幅基準）
-const ALLY_SPEED = 180;                   // 編隊移動速度
-const BULLET_SPEED = 360;                 // 自弾速度
-const EBULLET_SPEED = 120;                // 敵弾（遅め）
-const FORM_SPACING = 14;                  // 編隊間隔（px）
-const COIN_R = 8;                         // コイン半径（判定用）
-const BULLET_R = 3;                       // 弾半径（見た目＆判定）
-const HP_MAX = 10;
+/* ================= Tuning（快適操作＆分散AI） ================= */
+const TARGET_SPRITE = 32;            // 表示基準
+const PLAYER_SPEED  = 290;           // 操作機の最高速度（高応答）
+const ALLY_SPEED    = 260;           // 味方巡航速度
+const BULLET_SPEED  = 380;           // 自弾
+const EBULLET_SPEED = 120;           // 敵弾（遅め）
+const BULLET_R = 3;                  // 弾半径
+const COIN_R   = 8;
+const HP_MAX   = 10;
 
+// 分散AI：担当レーン(Y目標)・分離力・戦闘距離
+const LANE_OFFS = [-80, -26, +26, +80];     // 4機の縦レーン
+const SEP_RADIUS = 44;                       // 分離距離
+const SEP_FORCE  = 240;                      // 分離の強さ
+const ENGAGE_DIST_X = 160;                   // 敵と保つX距離
+const ENGAGE_DIST_Y = 20;                    // 敵と保つY距離
+const FIRE_RANGE   = 260;                    // 味方AIの射程
+
+/* ================= Entities ================= */
 const bullets=[], ebullets=[], enemies=[], coins=[];
 function spawnBullet(x,y){ bullets.push({x,y,vx:BULLET_SPEED,vy:0,r:BULLET_R*DPR,dmg:1}); }
 function spawnEBullet(x,y,tx,ty){
@@ -148,94 +156,168 @@ function makeAlly(imgKey, idx){
   const scale = (TARGET_SPRITE*DPR) / Math.max(1, im.width);
   return {
     sprite:im, scale,
-    x: 120*DPR + idx*20*DPR,
-    y: clamp(H*0.5 + (idx-1.5)*FORM_SPACING*DPR, walls.top+18*DPR, walls.bottom()-18*DPR),
+    x: 120*DPR + idx*22*DPR,
+    y: clamp(H*0.5 + LANE_OFFS[idx%LANE_OFFS.length]*DPR, walls.top+18*DPR, walls.bottom()-18*DPR),
     vx:0, vy:0,
     hpMax:HP_MAX, hp:HP_MAX,
     alive:true, dying:false, rot:0, dieT:0,
-    fire:{ammo:10, ammoMax:10, cd:0, rate:0.10, reload:0, reloadTime:0.5},
-    bias:(idx-1.5)*FORM_SPACING*DPR
+    fire:{ammo:10, ammoMax:10, cd:0, rate:0.09, reload:0, reloadTime:0.5},
+    lane: LANE_OFFS[idx%LANE_OFFS.length],
+    targetId: -1   // 担当敵 index
   };
 }
 let team=[], controlIndex=0, controlTarget=null;
 function initTeam(){
   team=[ makeAlly('red',0), makeAlly('blue',1), makeAlly('orange',2), makeAlly('ver',3) ];
-  controlIndex=0; controlTarget=team[0];
+  controlIndex=0; controlTarget=team[0]; // 初期レッド操作
 }
 
+/* ================= Spawners ================= */
 function spawnEnemy(){
   const im=images.enemy;
-  const scale=(TARGET_SPRITE*DPR)/Math.max(1, im.width); // 敵も同程度サイズ
+  const scale=(TARGET_SPRITE*DPR)/Math.max(1, im.width);
   const y = rand(walls.top+24*DPR, walls.bottom()-24*DPR);
-  const x = W + rand(24*DPR, 160*DPR);
-  enemies.push({
-    sprite:im, scale, x,y, hp:3, alive:true,
-    fireCd: rand(0.9,1.7), targetDistance: 200*DPR
-  });
+  const x = W + rand(24*DPR, 180*DPR);
+  enemies.push({sprite:im, scale, x,y, hp:3, alive:true, fireCd: rand(0.9,1.7)});
 }
 function spawnCoin(){
   const im=images.coin;
-  const scale=(20*DPR)/Math.max(1, im.width); // 小さめコイン
+  const scale=(20*DPR)/Math.max(1, im.width);
   const y = rand(walls.top+22*DPR, walls.bottom()-22*DPR);
   const x = W + rand(10*DPR, 120*DPR);
   coins.push({sprite:im,scale,x,y,vx:-world.speed*0.9, taken:false});
 }
 
-// ===== Helpers =====
+/* ================= Helpers ================= */
 function hitCircleRect(cx,cy,cr, rx,ry,rw,rh){
   const nx = Math.max(rx, Math.min(cx, rx+rw));
   const ny = Math.max(ry, Math.min(cy, ry+rh));
   const dx=cx-nx, dy=cy-ny;
   return dx*dx+dy*dy <= cr*cr;
 }
-function nearestEnemyInFront(a, range){
-  for(const e of enemies){
-    if(!e.alive) continue;
-    if(e.x>a.x && e.x-a.x<range && Math.abs(e.y-a.y)<50*DPR) return true;
-  }
-  return false;
-}
 function prune(arr, keep){ let w=0; for(let i=0;i<arr.length;i++) if(keep(arr[i])) arr[w++]=arr[i]; arr.length=w; }
 
-// ===== Update =====
+/* ====== 分散AI：担当敵の割当 ====== */
+function assignTargets(){
+  if(enemies.length===0){ for(const a of team) a.targetId=-1; return; }
+  // 各味方に最寄り敵を割当（単純貪欲）
+  for(const a of team){
+    if(!a.alive && !a.dying) continue;
+    let best=-1, bd=1e9;
+    for(let i=0;i<enemies.length;i++){
+      const e=enemies[i]; if(!e.alive) continue;
+      const d=Math.hypot(e.x-a.x, e.y-a.y);
+      if(d<bd){ bd=d; best=i; }
+    }
+    a.targetId = best;
+  }
+}
+
+/* ================= Update ================= */
 let last=0;
 function update(dt){
   world.t+=dt;
-  world.distance += (world.speed*dt)/70; // 短い画面でも進んだ感を出す
+  world.distance += (world.speed*dt)/70;
 
-  // 出現密度（距離に応じて増やす）
+  // 出現密度（距離で増加）
   const diff = Math.min(1, world.distance/1200);
-  if(Math.random() < (0.45+diff*1.0)*dt) spawnEnemy();
-  if(Math.random() < (0.6+diff*0.8)*dt) spawnCoin();
+  if(Math.random() < (0.50+diff*1.1)*dt) spawnEnemy();
+  if(Math.random() < (0.65+diff*0.9)*dt) spawnCoin();
 
-  // Team
+  // 敵AI（右寄り・一定速度で左へ流れるだけに簡略化）
+  for(const e of enemies){
+    if(!e.alive) continue;
+    e.x += -world.speed*dt; // 右寄り維持はしない：プレイヤー側の進行で常に右に存在
+    // 縦にゆらぎ
+    e.y += Math.sin((world.t*2.2)+(e.x*0.005))*22*dt*DPR;
+    e.y = clamp(e.y, walls.top+22*DPR, walls.bottom()-22*DPR);
+    e.fireCd -= dt;
+    if(e.fireCd<=0){
+      // 最も近い編隊機に向けて低速弾
+      let tar=team[0]; let bd=1e9;
+      for(const a of team){ if(!a.alive || a.dying) continue; const d=Math.hypot(a.x-e.x, a.y-e.y); if(d<bd){bd=d; tar=a;} }
+      if(tar) spawnEBullet(e.x-8*DPR, e.y, tar.x, tar.y);
+      e.fireCd = rand(1.0,1.8) - diff*0.3;
+    }
+    if(e.x<-80*DPR) e.alive=false;
+  }
+
+  // 味方の担当更新（毎フレームでOK：軽量）
+  assignTargets();
+
+  // Team（快適操作 & 分散AI）
   for(let i=0;i<team.length;i++){
     const a=team[i];
     if(!a.alive && !a.dying) continue;
     if(a.dying){
       a.dieT+=dt; a.rot+=dt*6; a.y += 100*dt;
-      if(a.dieT>0.8) { /* keep faded by render then removed */ }
       continue;
     }
+
     if(i===controlIndex){
-      a.vx = stick.dx * ALLY_SPEED*DPR;
-      a.vy = stick.dy * ALLY_SPEED*DPR;
+      // 直接速度：もたつき無し
+      a.vx = stick.dx * PLAYER_SPEED*DPR;
+      a.vy = stick.dy * PLAYER_SPEED*DPR;
     }else{
-      const tx = controlTarget.x - 70*DPR + a.bias;
-      const ty = clamp(controlTarget.y + a.bias*0.3, walls.top+18*DPR, walls.bottom()-18*DPR);
-      a.vx = (tx - a.x)*4;
-      a.vy = (ty - a.y)*4;
+      // ===== 分散AI =====
+      // 1) 基本目的地：担当敵の少し左後方（ENGAGE距離を保つ）
+      let tx = a.x + 60*DPR; // デフォは前進
+      let ty = H*0.5 + a.lane*DPR; // レーンをベース
+      const tid=a.targetId;
+      if(tid>=0 && enemies[tid] && enemies[tid].alive){
+        const e=enemies[tid];
+        tx = e.x - ENGAGE_DIST_X*DPR;               // 敵の左側へ回り込み
+        ty = clamp(e.y + ((i%2===0)?-ENGAGE_DIST_Y:ENGAGE_DIST_Y)*DPR, walls.top+18*DPR, walls.bottom()-18*DPR);
+      }else{
+        // 敵がいない時は各レーン巡回（前方へ）
+        tx = Math.max(a.x, controlTarget.x + (60 + i*24)*DPR);
+      }
+
+      // 2) 分離（Separation）：近すぎる味方から離れる力
+      let sfx=0, sfy=0;
+      for(let j=0;j<team.length;j++){
+        if(j===i) continue;
+        const b=team[j]; if(!b.alive && !b.dying) continue;
+        const dx=a.x-b.x, dy=a.y-b.y, d=Math.hypot(dx,dy);
+        if(d>0 && d<SEP_RADIUS*DPR){
+          const w = (SEP_RADIUS*DPR - d) / (SEP_RADIUS*DPR);
+          sfx += (dx/d) * SEP_FORCE * w;
+          sfy += (dy/d) * SEP_FORCE * w;
+        }
+      }
+
+      // 3) 目標速度
+      const dx = tx - a.x, dy = ty - a.y, dm = Math.hypot(dx,dy) || 1;
+      const vx_des = dx/dm * ALLY_SPEED*DPR + sfx;
+      const vy_des = dy/dm * ALLY_SPEED*DPR + sfy;
+
+      // ダイレクト寄りの追従（慣性弱）：補間係数を強めに
+      const k = 0.6; // 0〜1（数値↑でキビキビ）
+      a.vx = a.vx*(1-k) + vx_des*k;
+      a.vy = a.vy*(1-k) + vy_des*k;
     }
-    a.x = clamp(a.x + a.vx*dt, 24*DPR, W*0.7);
+
+    // 位置更新＆壁制限
+    a.x = clamp(a.x + a.vx*dt, 24*DPR, W*0.75);
     a.y = clamp(a.y + a.vy*dt, walls.top+16*DPR, walls.bottom()-16*DPR);
 
-    // 射撃
+    // 射撃：操縦機はボタン、味方は担当敵が前方か射程内なら発砲
     a.fire.cd -= dt;
     if(a.fire.reload>0){
       a.fire.reload -= dt;
       if(a.fire.reload<=0) a.fire.ammo=a.fire.ammoMax;
     }else{
-      const should = (i===controlIndex && firing) || (i!==controlIndex && nearestEnemyInFront(a, 260*DPR));
+      let should=false;
+      if(i===controlIndex) should = firing;
+      else{
+        const tid=a.targetId;
+        if(tid>=0 && enemies[tid] && enemies[tid].alive){
+          const e=enemies[tid];
+          const inFront = e.x > a.x;
+          const inRange = Math.abs(e.x - a.x) < FIRE_RANGE*DPR && Math.abs(e.y - a.y) < 60*DPR;
+          should = inFront && inRange;
+        }
+      }
       if(should && a.fire.cd<=0 && a.fire.ammo>0){
         a.fire.cd = a.fire.rate; a.fire.ammo--;
         spawnBullet(a.x + 18*DPR, a.y);
@@ -244,24 +326,9 @@ function update(dt){
     }
   }
 
-  // Enemies（右寄り＆距離保持）
-  for(const e of enemies){
-    if(!e.alive) continue;
-    const targetX = Math.max(W*0.68, Math.min(W-40*DPR, controlTarget.x + e.targetDistance));
-    const targetY = clamp(controlTarget.y + Math.sin(world.t*1.8+e.y*0.02)*22, walls.top+18*DPR, walls.bottom()-18*DPR);
-    e.x += (targetX - e.x)*0.7*dt - world.speed*dt;
-    e.y += (targetY - e.y)*0.6*dt;
-    e.fireCd -= dt;
-    if(e.fireCd<=0){
-      spawnEBullet(e.x-10*DPR, e.y, controlTarget.x, controlTarget.y);
-      e.fireCd = rand(1.0,1.8) - diff*0.35;
-    }
-    if(e.x<-80*DPR) e.alive=false;
-  }
-
   // Bullets
-  for(const b of bullets){ b.x += (b.vx - world.speed*0.15)*dt; b.y += b.vy*dt; }
-  for(const b of ebullets){ b.x += (b.vx - world.speed*0.15)*dt; b.y += b.vy*dt; }
+  for(const b of bullets){ b.x += (b.vx - world.speed*0.15)*dt; }
+  for(const b of ebullets){ b.x += (b.vx - world.speed*0.05)*dt; b.y += b.vy*dt; }
 
   // Coins
   for(const c of coins){ c.x += c.vx*dt; if(c.x<-24*DPR) c.taken=true; }
@@ -301,8 +368,8 @@ function update(dt){
   }
 
   // クリーンアップ
-  prune(bullets, b=> b.x>-40*DPR && b.x<W+40*DPR && b.y>-40*DPR && b.y<H+40*DPR);
-  prune(ebullets, b=> b.x>-40*DPR && b.x<W+40*DPR && b.y>-40*DPR && b.y<H+40*DPR);
+  prune(bullets, b=> b.x>-40*DPR && b.x<W+40*DPR);
+  prune(ebullets, b=> b.x>-60*DPR && b.x<W+60*DPR && b.y>-60*DPR && b.y<H+60*DPR);
   prune(enemies, e=> e.alive || e.x>-120*DPR);
   prune(coins, c=> !c.taken);
 
@@ -313,12 +380,11 @@ function update(dt){
     HUD.reload.textContent = ctrl.fire.reload>0 ? `RELOAD ${ctrl.fire.reload.toFixed(2)}s` : '';
   }
   HUD.score.textContent = world.score|0;
-  world.distance = Math.max(0, world.distance);
   HUD.distTxt.textContent = `${(world.distance|0)} m`;
   HUD.distFill.style.width = `${Math.min(100, (world.distance%1000)/10)}%`;
 }
 
-// ===== Render（小型UI/壁も細く） =====
+/* ================= Render ================= */
 function render(){
   ctx.clearRect(0,0,W,H);
   // 背景
@@ -335,7 +401,7 @@ function render(){
   }
   ctx.globalAlpha=1;
 
-  // 壁（薄め）
+  // 壁
   ctx.fillStyle='#1a253a';
   ctx.fillRect(0,0,W,walls.top);
   ctx.fillRect(0,walls.bottom(),W,H-walls.bottom());
@@ -373,17 +439,16 @@ function render(){
     if(a.dying){
       const alpha=Math.max(0,1 - a.dieT/0.8);
       ctx.globalAlpha=alpha; ctx.rotate(a.rot);
-      ctx.drawImage(a.sprite,-w/2,-h/2,w,h);
-      ctx.restore(); continue;
+      ctx.drawImage(a.sprite,-w/2,-h/2,w,h); ctx.restore(); continue;
     }
     ctx.drawImage(a.sprite,-w/2,-h/2,w,h);
-    // HPバー（超小型）
+    // HPバー（小型）
     const bw=26*DPR, bh=4*DPR, bx=-bw/2, by= -h/2 - 8*DPR;
     ctx.fillStyle='#000a'; ctx.fillRect(bx-1,by-1,bw+2,bh+2);
     ctx.fillStyle='#223d'; ctx.fillRect(bx,by,bw,bh);
     ctx.fillStyle = (i===controlIndex?'#6ff':'#6f6');
     ctx.fillRect(bx,by,(a.hp/a.hpMax)*bw,bh);
-    // 選択リング（薄）
+    // 選択リング
     if(i===controlIndex){
       ctx.strokeStyle='#6ff'; ctx.lineWidth=1.5*DPR;
       ctx.beginPath(); ctx.arc(0,0, Math.max(w,h)*0.55, 0, Math.PI*2); ctx.stroke();
@@ -391,13 +456,13 @@ function render(){
     ctx.restore();
   }
 
-  // 走査線（薄）
+  // 走査線
   ctx.globalAlpha=0.06; ctx.fillStyle='#fff';
   for(let y=0;y<H;y+=2*DPR) ctx.fillRect(0,y,W,1*DPR);
   ctx.globalAlpha=1;
 }
 
-// ===== Tapで操作機体切替（近くで直接/外すと順送り） =====
+/* ================= Tap：操縦機切替 ================= */
 cv.addEventListener('click', (e)=>{
   const r=cv.getBoundingClientRect(), x=(e.clientX-r.left)*DPR, y=(e.clientY-r.top)*DPR;
   let best=-1, bd=1e9;
@@ -414,7 +479,7 @@ cv.addEventListener('click', (e)=>{
   }
 });
 
-// ===== Loop =====
+/* ================= Loop ================= */
 function loop(ts){
   if(!last) last=ts;
   const dt=Math.min(0.033,(ts-last)/1000); last=ts;
@@ -422,10 +487,10 @@ function loop(ts){
   requestAnimationFrame(loop);
 }
 
-// ===== Start =====
+/* ================= Start ================= */
 loadAll().then(()=>{ initTeam(); requestAnimationFrame(loop); });
 
-// ===== Keyboard（PCテスト用） =====
+/* ================= Keyboard（PCテスト） ================= */
 const keys={};
 addEventListener('keydown',e=>{ keys[e.key]=true; if(e.key===' ') firing=true; });
 addEventListener('keyup',e=>{ keys[e.key]=false; if(e.key===' ') firing=false; });
