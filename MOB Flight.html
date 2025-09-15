@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
-<title>MOB 横スクロールシューティング（黒画面対策版）</title>
+<title>MOB 横スクロールシューティング（32px・分散AI・ソフト壁・快適操作）</title>
 <style>
   :root{ --bg:#05060a; --fg:#e8f0ff; --hud:#0e1220cc; --warn:#ff6b6b; }
   html,body{margin:0;height:100%;background:#000;color:var(--fg);font-family:system-ui,-apple-system,Segoe UI,Roboto,"Hiragino Sans","Yu Gothic",sans-serif;}
@@ -61,13 +61,11 @@ function fit(){
   cv.width=W; cv.height=H;
 }
 function ensureSize(){
-  // レイアウト遅延対策：サイズが0やズレていたら再フィット
   const cw=cv.clientWidth, ch=cv.clientHeight;
   if(cw>0 && ch>0){
     const need = (cv.width!==cw*DPR) || (cv.height!==ch*DPR);
     if(need){ W=cw*DPR; H=ch*DPR; cv.width=W; cv.height=H; }
   }else{
-    // まだ0なら暫定で画面サイズ使用
     if(W<10||H<10) fit();
   }
 }
@@ -89,11 +87,16 @@ async function loadAll(){ await Promise.all(Object.entries(IMG).map(([k,v])=>loa
 const HUD={ score:qs('#score'), distTxt:qs('#distTxt'), distFill:qs('#distFill'), ammo:qs('#ammo'), reload:qs('#reload') };
 function qs(s){return document.querySelector(s)}
 
-/* ================= Input ================= */
+/* ================= Input（デッドゾーン＋カーブ） ================= */
 const stickPad = document.getElementById('stickPad');
 const stickKnob= document.getElementById('stickKnob');
 const fireBtn  = document.getElementById('fireBtn');
 let stick={active:false,cx:0,cy:0,dx:0,dy:0,max:44}, firing=false;
+
+const DEADZONE = 0.12;   // 微入力無視
+const INPUT_CURVE = 1.6; // 入力カーブ（>1で中央が繊細）
+function shape(v){ const s=Math.sign(v), a=Math.min(1,Math.abs(v)); return s*Math.pow(a, INPUT_CURVE); }
+
 function padCenter(el){ const r=el.getBoundingClientRect(); return {x:r.left+r.width/2,y:r.top+r.height/2}; }
 function onStickStart(e){ e.preventDefault(); const c=padCenter(stickPad); stick.active=true; stick.cx=c.x; stick.cy=c.y; onStickMove(e); }
 function onStickMove(e){ if(!stick.active) return; e.preventDefault(); const p=('touches'in e? e.touches[0]:e);
@@ -116,7 +119,7 @@ fireBtn.addEventListener('touchend',  fireEnd,{passive:false});
 fireBtn.addEventListener('mousedown', fireStart);
 addEventListener('mouseup',           fireEnd);
 
-/* ================= World & Tuning（前回設定） ================= */
+/* ================= World & Tuning ================= */
 const world={speed:125,t:0,distance:0,score:0};
 const walls={top:20,bottom:()=>H-20};
 
@@ -127,16 +130,38 @@ const BULLET_SPEED =380;
 const EBULLET_SPEED=120;
 const BULLET_R=3, COIN_R=8, HP_MAX=10;
 
-const LANE_OFFS = [-80,-26,26,80];
-const SLOT_OFFS_X = [-50,-15,15,50];
-const SEP_RADIUS = 60;
-const SEP_FORCE  = 320;
-const ENGAGE_X   = 180;
+// 分散設計
+const LANE_OFFS = [-80,-26,26,80];       // 縦レーン
+const SLOT_OFFS_X = [-50,-15,15,50];     // 横スロット
+const SEP_RADIUS = 60;                    // 分離半径
+const SEP_FORCE  = 320;                   // 分離強さ
+const ENGAGE_X   = 180;                   // 敵の左に回り込み距離
 const ENGAGE_Y   = 22;
 const FIRE_RANGE = 260;
 
+// CPU射撃頻度制御
 const AI_SHOT_MIN=0.25, AI_SHOT_MAX=0.50;
 const AI_SHOT_PROB=0.6;
+
+// ソフト壁（反発）
+const WALL_SOFT_ZONE = 36;   // 壁近傍の反発有効距離(px)
+const WALL_FORCE     = 900;  // 反発強さ(px/s^2)
+function wallYRepel(y){
+  let f=0;
+  const top = walls.top + 16*DPR;
+  const bot = walls.bottom() - 16*DPR;
+  const dTop = y - top;
+  const dBot = bot - y;
+  if (dTop < WALL_SOFT_ZONE*DPR){
+    const t=(WALL_SOFT_ZONE*DPR - dTop)/(WALL_SOFT_ZONE*DPR);
+    f += t * WALL_FORCE;
+  }
+  if (dBot < WALL_SOFT_ZONE*DPR){
+    const t=(WALL_SOFT_ZONE*DPR - dBot)/(WALL_SOFT_ZONE*DPR);
+    f -= t * WALL_FORCE;
+  }
+  return f;
+}
 
 /* ================= Entities ================= */
 const bullets=[], ebullets=[], enemies=[], coins=[];
@@ -144,7 +169,7 @@ function spawnBullet(x,y){ bullets.push({x,y,vx:BULLET_SPEED,vy:0,r:BULLET_R*DPR
 function spawnEBullet(x,y,tx,ty){ const a=Math.atan2(ty-y,tx-x); ebullets.push({x,y,vx:Math.cos(a)*EBULLET_SPEED,vy:Math.sin(a)*EBULLET_SPEED,r:BULLET_R*DPR,dmg:1}); }
 
 function makeAlly(imgKey, idx){
-  const im=images[imgKey]; const baseW=Math.max(1, im.width||TARGET_SPRITE); // 幅0対策
+  const im=images[imgKey]; const baseW=Math.max(1, im.width||TARGET_SPRITE);
   const scale=(TARGET_SPRITE*DPR)/baseW;
   return {
     sprite:im, scale,
@@ -180,7 +205,7 @@ function spawnCoin(){
 function hitCircleRect(cx,cy,cr,rx,ry,rw,rh){ const nx=Math.max(rx,Math.min(cx,rx+rw)); const ny=Math.max(ry,Math.min(cy,ry+rh)); const dx=cx-nx, dy=cy-ny; return dx*dx+dy*dy<=cr*cr; }
 function prune(arr,keep){ let w=0; for(let i=0;i<arr.length;i++) if(keep(arr[i])) arr[w++]=arr[i]; arr.length=w; }
 
-/* ================= Unique Target Assignment ================= */
+/* ================= Unique Target Assignment（敵の重複担当を防止） ================= */
 function assignTargetsUnique(){
   const aliveAllies = team.map((a,i)=>({a,i})).filter(o=>o.a.alive||o.a.dying);
   const aliveEnemies = enemies.map((e,j)=>({e,j})).filter(o=>o.e.alive);
@@ -200,10 +225,17 @@ function assignTargetsUnique(){
   for(const {a,i} of aliveAllies){ if(i===controlIndex) continue; if(!usedA.has(i)) a.targetId=-1; }
 }
 
-/* ================= Update & Render ================= */
+/* ================= Update ================= */
 let last=0;
+function applyStickFilters(){
+  const m=Math.hypot(stick.dx, stick.dy);
+  if(m<DEADZONE){ stick.dx=0; stick.dy=0; }
+  else{ stick.dx=shape(stick.dx); stick.dy=shape(stick.dy); }
+}
 function update(dt){
-  ensureSize(); // ★ 黒画面対策：毎フレーム確認
+  ensureSize(); // 黒画面対策
+  applyStickFilters();
+
   world.t+=dt;
   world.distance += (world.speed*dt)/70;
 
@@ -227,6 +259,7 @@ function update(dt){
     if(e.x<-80*DPR) e.alive=false;
   }
 
+  // 一意ターゲット割当
   assignTargetsUnique();
 
   // 味方
@@ -239,7 +272,8 @@ function update(dt){
       a.vx = stick.dx * PLAYER_SPEED*DPR;
       a.vy = stick.dy * PLAYER_SPEED*DPR;
     }else{
-      let tx = Math.max(a.x, (team[0]?.x||120*DPR) + (80 + i*20)*DPR) + a.slotX*DPR;
+      // 目的地（敵が居れば回り込み／居なければ編隊前進）
+      let tx = Math.max(a.x, controlTarget?.x ?? 120*DPR) + (80 + i*20)*DPR + a.slotX*DPR;
       let ty = clamp(H*0.5 + a.lane*DPR, walls.top+18*DPR, walls.bottom()-18*DPR);
       const tid=a.targetId;
       if(tid>=0 && enemies[tid] && enemies[tid].alive){
@@ -254,14 +288,31 @@ function update(dt){
         const dx=a.x-b.x, dy=a.y-b.y, d=Math.hypot(dx,dy);
         if(d>0 && d<SEP_RADIUS*DPR){ const w=(SEP_RADIUS*DPR - d)/(SEP_RADIUS*DPR); sfx += (dx/d)*SEP_FORCE*w; sfy += (dy/d)*SEP_FORCE*w; }
       }
+      // 壁際ではY分離弱め（上下の衝突感を軽減）
+      const nearWall = (a.y < walls.top + WALL_SOFT_ZONE*DPR) || (a.y > walls.bottom() - WALL_SOFT_ZONE*DPR);
+      if(nearWall) sfy *= 0.4;
+
+      // 目標速度（高応答）
       const dx=tx-a.x, dy=ty-a.y, dm=Math.hypot(dx,dy)||1;
       const vx_des = dx/dm*ALLY_SPEED*DPR + sfx;
       const vy_des = dy/dm*ALLY_SPEED*DPR + sfy;
-      const k=0.65; a.vx = a.vx*(1-k) + vx_des*k; a.vy = a.vy*(1-k) + vy_des*k;
+      const k=0.65;
+      a.vx = a.vx*(1-k) + vx_des*k;
+      a.vy = a.vy*(1-k) + vy_des*k;
     }
 
-    a.x = clamp(a.x + a.vx*dt, 24*DPR, W*0.78);
-    a.y = clamp(a.y + a.vy*dt, walls.top+16*DPR, walls.bottom()-16*DPR);
+    // ★ 壁ソフト反発をY速度に加算（滑らかに止まる）
+    a.vy += wallYRepel(a.y) * dt;
+
+    // ★ 片側クリップ式の境界処理（速度を壁側だけゼロに）
+    const leftLim = 24*DPR, rightLim = W*0.78;
+    const topLim  = walls.top + 14*DPR, botLim = walls.bottom() - 14*DPR;
+
+    a.x = Math.min(rightLim, Math.max(leftLim, a.x + a.vx*dt));
+    let newY = a.y + a.vy*dt;
+    if (newY < topLim){ newY = topLim; if (a.vy < 0) a.vy = 0; }
+    if (newY > botLim){ newY = botLim; if (a.vy > 0) a.vy = 0; }
+    a.y = newY;
 
     // 射撃
     a.fire.cd -= dt;
@@ -335,6 +386,7 @@ function update(dt){
   HUD.distFill.style.width=`${Math.min(100,(world.distance%1000)/10)}%`;
 }
 
+/* ================= Render ================= */
 function render(){
   const g=ctx.createLinearGradient(0,0,0,H); g.addColorStop(0,'#0a1126'); g.addColorStop(1,'#050814'); ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
 
@@ -379,12 +431,9 @@ let lastTs=0;
 function loop(ts){
   if(!lastTs) lastTs=ts;
   const dt=Math.min(0.033,(ts-lastTs)/1000); lastTs=ts;
-  try{
-    update(dt);
-    render();
-  }catch(err){
+  try{ update(dt); render(); }
+  catch(err){
     console.error(err);
-    // 画面にエラーを描く（真っ暗回避）
     ctx.fillStyle='#000'; ctx.fillRect(0,0,cv.width,cv.height);
     ctx.fillStyle='#f55'; ctx.font=`${14*DPR}px monospace`;
     ctx.fillText('Error: '+(err?.message||err), 12*DPR, 24*DPR);
@@ -395,14 +444,20 @@ function loop(ts){
 /* ================= Start ================= */
 loadAll().then(()=>{ initTeam(); requestAnimationFrame(loop); });
 
+/* ================= Controls: Tapで操縦機切替 ================= */
+cv.addEventListener('click', e=>{
+  const r=cv.getBoundingClientRect(), x=(e.clientX-r.left)*DPR, y=(e.clientY-r.top)*DPR;
+  let best=-1,bd=1e9;
+  for(let i=0;i<team.length;i++){ const a=team[i]; if(!a.alive&&!a.dying) continue; const d=Math.hypot(a.x-x,a.y-y); if(d<bd){bd=d; best=i;} }
+  if(best>=0 && bd<40*DPR){ controlIndex=best; controlTarget=team[controlIndex]; }
+  else{ for(let k=1;k<=team.length;k++){ const j=(controlIndex+k)%team.length; if(team[j].alive||team[j].dying){ controlIndex=j; controlTarget=team[j]; break; } } }
+});
+
 /* ================= Keyboard (PC) ================= */
 const keys={};
 addEventListener('keydown',e=>{ keys[e.key]=true; if(e.key===' ') firing=true; });
 addEventListener('keyup',e=>{ keys[e.key]=false; if(e.key===' ') firing=false; });
-setInterval(()=>{ // キー→仮想スティック
-  stick.dy=(keys['ArrowUp']?-1:0)+(keys['ArrowDown']?1:0);
-  stick.dx=(keys['ArrowLeft']?-1:0)+(keys['ArrowRight']?1:0);
-},16);
+setInterval(()=>{ stick.dy=(keys['ArrowUp']?-1:0)+(keys['ArrowDown']?1:0); stick.dx=(keys['ArrowLeft']?-1:0)+(keys['ArrowRight']?1:0); },16);
 
 })();
 </script>
