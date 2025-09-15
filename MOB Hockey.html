@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
-<title>MOB Hockey (2 Pucks / Simple Scoring) – FIX</title>
+<title>MOB Hockey (Solo / 2 Pucks)</title>
 <style>
   :root{ --hud:#0e0f12cc; --fg:#fff; --good:#34d399; --bad:#f87171; }
   html,body{margin:0;height:100%;background:#000;color:var(--fg);font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Hiragino Sans","Yu Gothic",sans-serif}
@@ -39,7 +39,6 @@
         <div class="pill">
           <span>TIME</span><span class="sep">|</span><span id="time" class="count">30.0</span>
           <span class="sep">|</span><span>YOU</span><b id="youPts" style="color:var(--good)">0</b>
-          <span class="sep">/</span><span>DEALER</span><b id="aiPts" style="color:var(--good)">0</b>
         </div>
       </div>
       <div class="panel bottombar" style="justify-content:center">
@@ -61,164 +60,135 @@
 
 <script>
 (()=>{'use strict';
-  // ---- 基本参照 ----
+  // === refs ===
   const canvas = document.getElementById('cv');
   const ctx = canvas.getContext('2d');
   const hudMsg = document.getElementById('msg');
   const timeEl = document.getElementById('time');
   const youPtsEl = document.getElementById('youPts');
-  const aiPtsEl = document.getElementById('aiPts');
   const finalEl = document.getElementById('final');
   const finalGrid = document.getElementById('finalGrid');
   const finalYou = document.getElementById('finalYou');
 
-  // ---- ゲーム設定（正方形 / 銀フレーム＝壁） ----
+  // === game config (square / silver frame = wall) ===
   const GAME = {
-    state:'init', // 'countdown' | 'playing' | 'ended'
-    length:30_000,
-    startAt:0, now:0,
-    size:900,
-    lineY:450,
-    wall:0,
+    state:'init',
+    length:30_000, startAt:0, now:0,
+    size:900, lineY:450, wall:0,
     topGoal:{ x0:0.35, x1:0.65 },
     bottomGoal:{ x0:0.35, x1:0.65 },
     images:{}, assetsReady:false
   };
 
-  // ---- 正方形リサイズ ----
+  // square resize
   function resizeSquare(){
-    const w = window.innerWidth, h = window.innerHeight;
-    const s = Math.min(w, h);
+    const s = Math.min(window.innerWidth, window.innerHeight);
     canvas.width = s; canvas.height = s;
     GAME.size = s; GAME.lineY = (s/2)|0;
-    GAME.wall = Math.max(10, Math.round(s * 0.045));
-    canvas.style.width = s+'px';
-    canvas.style.height = s+'px';
+    GAME.wall = Math.max(10, Math.round(s * 0.045)); // silver frame thickness
+    canvas.style.width = s+'px'; canvas.style.height = s+'px';
   }
   window.addEventListener('resize', resizeSquare, {passive:true});
   resizeSquare();
 
-  // ---- 画像は並行で読み込み（待たない） ----
+  // images (do NOT block countdown)
   const IMG_LIST = {
-    rink:'hokehai.png',
-    smash:'smash.png',
+    rink:'hokehai.png', smash:'smash.png',
     black:'black.png', blue:'blue.png', green:'green.png', mura:'mura.png',
     orange:'orange.png', pink:'pink.png', red:'red.png', yellow:'yellow.png'
   };
-  function loadImage(src){
-    return new Promise(res=>{
-      const im = new Image();
-      im.onload = ()=>res(im);
-      im.onerror = ()=>res(null);
-      im.src = src + (src.includes('?')?'':'?v=' + Date.now());
-    });
-  }
-  (async()=>{
-    try{
-      for (const [k,src] of Object.entries(IMG_LIST)){
-        GAME.images[k] = await loadImage(src);
-      }
-      GAME.assetsReady = true;
-    }catch(_e){ /* 読み込み失敗でも続行 */ }
-  })();
+  function loadImage(src){ return new Promise(res=>{ const im=new Image(); im.onload=()=>res(im); im.onerror=()=>res(null); im.src=src+(src.includes('?')?'':'?v='+Date.now()); }); }
+  (async()=>{ for (const [k,src] of Object.entries(IMG_LIST)){ GAME.images[k]=await loadImage(src); } GAME.assetsReady=true; })();
 
-  // ---- パラメータ（パック大きめ・操作高感度・AI弱体化） ----
+  // params (big pucks / high sensitivity)
   const P = {
-    puckR: ()=>Math.max(16, GAME.size*0.05),
+    puckR: ()=>Math.max(16, GAME.size*0.05),      // big
     smashR: ()=>Math.max(26, GAME.size*0.038),
     maxSpd: ()=>Math.max(600, GAME.size*0.95),
     friction: 0.994,
-    hitBoostPlayer: 1.18,
-    hitBoostAI: 0.95
+    hitBoostPlayer: 1.18
   };
 
-  // ---- プレイ可能域 ----
-  const playMinX=()=>GAME.wall, playMaxX=()=>GAME.size-GAME.wall;
-  const playMinY=()=>GAME.wall, playMaxY=()=>GAME.size-GAME.wall;
+  // play area helpers
+  const xMin=()=>GAME.wall, xMax=()=>GAME.size-GAME.wall;
+  const yMin=()=>GAME.wall, yMax=()=>GAME.size-GAME.wall;
 
-  // ---- ユーティリティ ----
-  const colorMap = {
-    red:'#ef4444', blue:'#3b82f6', green:'#22c55e', mura:'#8b5cf6',
-    orange:'#f59e0b', pink:'#ec4899', yellow:'#eab308', black:'#e5e7eb'
-  };
+  // colors
+  const colorMap = { red:'#ef4444', blue:'#3b82f6', green:'#22c55e', mura:'#8b5cf6', orange:'#f59e0b', pink:'#ec4899', yellow:'#eab308', black:'#e5e7eb' };
   const colorOf = k => colorMap[k]||'#e5e7eb';
 
-  // ---- エンティティ ----
+  // entities
   class Puck{
-    constructor(colorKey, field){ // 'T' or 'B'
-      this.key = colorKey;
-      const xmin = playMinX(), xmax = playMaxX();
-      const yTop = (playMinY()+GAME.lineY)/2, yBot = (playMaxY()+GAME.lineY)/2;
+    constructor(key, field){ // 'T' or 'B'
+      const xmin=xMin(), xmax=xMax();
+      const yTop = (yMin()+GAME.lineY)/2, yBot = (yMax()+GAME.lineY)/2;
+      this.key=key;
       this.x = xmin + (xmax-xmin)*(0.25 + 0.5*Math.random());
       this.y = field==='T'? yTop : yBot;
-      this.vx = (Math.random()*2-1)*P.maxSpd()*0.20;
-      this.vy = (Math.random()*2-1)*P.maxSpd()*0.20;
-      this.r = P.puckR();
-      this.scored = false;
+      this.vx=(Math.random()*2-1)*P.maxSpd()*0.20;
+      this.vy=(Math.random()*2-1)*P.maxSpd()*0.20;
+      this.r=P.puckR(); this.scored=false;
     }
     step(dt){
-      this.x += this.vx*dt; this.y += this.vy*dt;
-      this.vx *= P.friction; this.vy *= P.friction;
-      const xmin = playMinX(), xmax = playMaxX();
-      const ymin = playMinY(), ymax = playMaxY();
-      // 左右壁
+      this.x+=this.vx*dt; this.y+=this.vy*dt;
+      this.vx*=P.friction; this.vy*=P.friction;
+      const xmin=xMin(), xmax=xMax(), ymin=yMin(), ymax=yMax();
+      // side walls
       if (this.x < xmin + this.r){ this.x = xmin + this.r; this.vx = Math.abs(this.vx); }
       if (this.x > xmax - this.r){ this.x = xmax - this.r; this.vx = -Math.abs(this.vx); }
-      // 上下ゴール
+      // goals
       const gx0 = xmin + (xmax - xmin)*GAME.topGoal.x0;
       const gx1 = xmin + (xmax - xmin)*GAME.topGoal.x1;
       if (this.y < ymin + this.r){
-        if (this.x>gx0 && this.x<gx1){ scoreGoal('TOP', this); this.scored = true; }
+        if (this.x>gx0 && this.x<gx1){ scoreGoal('TOP', this); this.scored=true; }
         else{ this.y = ymin + this.r; this.vy = Math.abs(this.vy); }
       }
       if (this.y > ymax - this.r){
-        if (this.x>gx0 && this.x<gx1){ scoreGoal('BOTTOM', this); this.scored = true; }
+        if (this.x>gx0 && this.x<gx1){ scoreGoal('BOTTOM', this); this.scored=true; }
         else{ this.y = ymax - this.r; this.vy = -Math.abs(this.vy); }
       }
     }
     draw(){
-      const im = GAME.images[this.key], size=this.r*2;
-      if (im) ctx.drawImage(im, this.x-this.r, this.y-this.r, size, size);
+      const im=GAME.images[this.key], s=this.r*2;
+      if (im) ctx.drawImage(im, this.x-this.r, this.y-this.r, s, s);
       else { ctx.beginPath(); ctx.arc(this.x,this.y,this.r,0,Math.PI*2); ctx.fillStyle=colorOf(this.key); ctx.fill(); }
     }
   }
 
   class Smasher{
-    constructor(half, name, color){
-      this.half=half; this.name=name; this.color=color;
+    constructor(){
       this.r=P.smashR();
-      this.x=(playMinX()+playMaxX())/2;
-      this.y=half==='B'? (GAME.lineY + playMaxY())/2 : (playMinY() + GAME.lineY)/2;
-      this.vx=this.vy=0; this.targetX=this.x; this.targetY=this.y; this.lastX=this.x; this.lastY=this.y;
+      this.x=(xMin()+xMax())/2;
+      this.y=(GAME.lineY + yMax())/2; // bottom half center
+      this.vx=this.vy=0; this.targetX=this.x; this.targetY=this.y;
+      this.lastX=this.x; this.lastY=this.y;
     }
-    clampToHalf(){
-      const m=this.r+2, xmin=playMinX()+m, xmax=playMaxX()-m;
-      const yminH=this.half==='B'? GAME.lineY+m : playMinY()+m;
-      const ymaxH=this.half==='B'? playMaxY()-m : GAME.lineY-m;
+    clamp(){
+      const m=this.r+2, xmin=xMin()+m, xmax=xMax()-m;
+      const yminH=GAME.lineY+m, ymaxH=yMax()-m; // bottom half only
       this.x=Math.max(xmin,Math.min(xmax,this.x));
       this.y=Math.max(yminH,Math.min(ymaxH,this.y));
     }
     setTarget(x,y){ this.targetX=x; this.targetY=y; }
-    step(dt, playerControlled=false){
-      const base=P.maxSpd(), spd=playerControlled? base*1.9 : base*0.85; // プレイヤー速い／AI弱い
+    step(dt){
+      const spd=P.maxSpd()*1.9; // high sensitivity
       const dx=this.targetX-this.x, dy=this.targetY-this.y, d=Math.hypot(dx,dy);
-      const maxMove=spd*dt; this.lastX=this.x; this.lastY=this.y;
-      if (d<=maxMove){ this.x=this.targetX; this.y=this.targetY; }
-      else{ this.x+=dx/d*maxMove; this.y+=dy/d*maxMove; }
-      this.clampToHalf(); this.vx=(this.x-this.lastX)/dt; this.vy=(this.y-this.lastY)/dt;
+      const mv=spd*dt; this.lastX=this.x; this.lastY=this.y;
+      if (d<=mv){ this.x=this.targetX; this.y=this.targetY; }
+      else{ this.x+=dx/d*mv; this.y+=dy/d*mv; }
+      this.clamp(); this.vx=(this.x-this.lastX)/dt; this.vy=(this.y-this.lastY)/dt;
     }
     draw(){
       const im=GAME.images.smash, R=this.r;
       if (im) ctx.drawImage(im, this.x-R, this.y-R, R*2, R*2);
-      else { ctx.beginPath(); ctx.arc(this.x,this.y,R,0,Math.PI*2); ctx.fillStyle=this.color; ctx.fill(); ctx.lineWidth=2; ctx.strokeStyle='#fff2'; ctx.stroke(); }
+      else { ctx.beginPath(); ctx.arc(this.x,this.y,R,0,Math.PI*2); ctx.fillStyle='#ef4444'; ctx.fill(); ctx.lineWidth=2; ctx.strokeStyle='#fff2'; ctx.stroke(); }
     }
   }
 
-  // ---- 体 ----
+  // world
   let pucks=[];
-  const player=new Smasher('B','YOU', colorMap.red);
-  const dealer=new Smasher('T','DEALER', colorMap.blue);
-  let score={ YOU:0, DEALER:0 };
+  const player=new Smasher();
+  let score={ YOU:0 };
 
   function spawnPucks(){
     pucks=[];
@@ -228,59 +198,35 @@
     pucks.push(new Puck(rnd,'T'));
   }
 
-  // ---- 得点（全色+3 / 失点-1） ----
+  // scoring: any goal +3, self-goal -1
   function scoreGoal(side, puck){
-    if (side==='TOP'){ score.YOU+=3; score.DEALER-=1; flashMsg('+3','good'); }
-    else{ score.DEALER+=3; score.YOU-=1; flashMsg('-1','bad'); }
-    youPtsEl.textContent=score.YOU|0; aiPtsEl.textContent=score.DEALER|0;
+    if (side==='TOP'){ score.YOU += 3; flashMsg('+3','good'); }
+    else{ score.YOU -= 1; flashMsg('-1','bad'); }
+    youPtsEl.textContent = score.YOU|0;
+
+    // respawn one toward the other side
     const field=(side==='TOP')?'T':'B';
     const np=new Puck(puck.key, field);
-    np.vy=(side==='TOP'? 1 : -1)*P.maxSpd()*0.45;
+    np.vy=(side==='TOP'? 1 : -1) * P.maxSpd()*0.45;
     np.vx=(Math.random()*2-1)*P.maxSpd()*0.22;
     pucks.push(np);
   }
 
-  // ---- 衝突 ----
+  // collisions (player only)
   function collide(){
     for (const puck of pucks){
-      // player
-      let dx=puck.x-player.x, dy=puck.y-player.y, rr=(puck.r+player.r);
+      const dx=puck.x-player.x, dy=puck.y-player.y, rr=(puck.r+player.r);
       if (dx*dx+dy*dy<=rr*rr){
         const d=Math.hypot(dx,dy)||1, nx=dx/d, ny=dy/d;
         const swing=Math.hypot(player.vx,player.vy);
         const impulse=Math.min(P.maxSpd(), 260 + swing*1.0)*P.hitBoostPlayer;
-        puck.vx=nx*impulse; puck.vy=ny*impulse; const overlap=rr-d+0.5; puck.x+=nx*overlap; puck.y+=ny*overlap;
-      }
-      // dealer（弱い）
-      dx=puck.x-dealer.x; dy=puck.y-dealer.y; rr=(puck.r+dealer.r);
-      if (dx*dx+dy*dy<=rr*rr){
-        const d=Math.hypot(dx,dy)||1, nx=dx/d, ny=dy/d;
-        const swing=Math.hypot(dealer.vx,dealer.vy);
-        const impulse=Math.min(P.maxSpd(), 180 + swing*0.6)*P.hitBoostAI;
-        puck.vx=nx*impulse; puck.vy=ny*impulse; const overlap=rr-d+0.5; puck.x+=nx*overlap; puck.y+=ny*overlap;
+        puck.vx=nx*impulse; puck.vy=ny*impulse;
+        const overlap=rr-d+0.5; puck.x+=nx*overlap; puck.y+=ny*overlap;
       }
     }
   }
 
-  // ---- ディーラーAI（弱体） ----
-  function aiStep(dt){
-    let target=null, best=-1e9;
-    for (const p of pucks){
-      if (p.y<=GAME.lineY){
-        const score = -Math.abs(p.x - (playMinX()+playMaxX())/2) - (GAME.lineY - p.y)*0.2;
-        if (score>best){best=score; target=p;}
-      }
-    }
-    if (target){
-      const tx = target.x + (Math.random()*2-1)*target.r*0.3;
-      const ty = Math.min(GAME.lineY - dealer.r - 2, target.y - target.r*0.25);
-      dealer.setTarget(tx,ty);
-    }else{
-      dealer.setTarget((playMinX()+playMaxX())/2, (playMinY()+GAME.lineY)/2 + 10);
-    }
-  }
-
-  // ---- 入力（高感度） ----
+  // input (drag / touch)
   let dragging=false;
   function toCanvasXY(e){
     const r=canvas.getBoundingClientRect();
@@ -298,47 +244,45 @@
   window.addEventListener('touchmove', onMove, {passive:false});
   window.addEventListener('touchend', onUp);
 
-  // ---- 背面CPU（試合中は非表示／+3,-1） ----
-  const CPU=[{name:'ブラック'},{name:'ブルー'},{name:'グリーン'},{name:'パープル'},{name:'オレンジ'},{name:'ピンク'},{name:'イエロー'}];
+  // background CPUs (match-only; +3 win, -1 lose)
+  const CPU = [
+    {name:'ブラック'},{name:'ブルー'},{name:'グリーン'},
+    {name:'パープル'},{name:'オレンジ'},{name:'ピンク'},{name:'イエロー'},
+  ];
   const cpuScores=Object.fromEntries(CPU.map(c=>[c.name,0]));
-  function cpuBackgroundTick(dt){
-    const now=GAME.now;
-    if (!cpuBackgroundTick.next) cpuBackgroundTick.next = now + 300;
-    if (now>=cpuBackgroundTick.next){
-      cpuBackgroundTick.next = now + 300;
-      const name=CPU[(Math.random()*CPU.length)|0].name;
-      Math.random()<0.72 ? (cpuScores[name]+=3) : (cpuScores[name]-=1);
-    }
+  function cpuTick(){
+    const name=CPU[(Math.random()*CPU.length)|0].name;
+    Math.random()<0.72 ? (cpuScores[name]+=3) : (cpuScores[name]-=1);
   }
 
-  // ---- 背景＋壁・ライン・ゴール ----
+  // background drawing
   function drawBackground(){
-    const S=GAME.size, xmin=playMinX(), xmax=playMaxX(), ymin=playMinY(), ymax=playMaxY();
+    const S=GAME.size, xmin=xMin(), xmax=xMax(), ymin=yMin(), ymax=yMax();
     ctx.clearRect(0,0,S,S);
     const im=GAME.images.rink;
     if (im){
-      const iw=im.naturalWidth||1280, ih=im.naturalHeight||720, imgRatio=iw/ih;
-      let dw,dh; if (imgRatio>1){ dh=S; dw=dh*imgRatio; } else { dw=S; dh=dw/imgRatio; }
+      const iw=im.naturalWidth||1280, ih=im.naturalHeight||720, r=iw/ih;
+      let dw,dh; if (r>1){ dh=S; dw=dh*r; } else { dw=S; dh=dw/r; }
       const dx=(S-dw)/2, dy=(S-dh)/2; ctx.drawImage(im, dx, dy, dw, dh);
     }else{ ctx.fillStyle='#0b0e14'; ctx.fillRect(0,0,S,S); }
-    // 壁（銀フレーム相当）と開口
+    // walls (silver frame) & openings
     ctx.fillStyle='#111a';
     const gx0 = xmin + (xmax - xmin)*GAME.topGoal.x0, gx1 = xmin + (xmax - xmin)*GAME.topGoal.x1;
-    // 上壁（開口除く）
+    // top wall (except opening)
     ctx.fillRect(xmin, ymin - GAME.wall, gx0 - xmin, GAME.wall);
     ctx.fillRect(gx1, ymin - GAME.wall, xmax - gx1, GAME.wall);
-    // 下壁（開口除く）
+    // bottom wall
     ctx.fillRect(xmin, ymax, gx0 - xmin, GAME.wall);
     ctx.fillRect(gx1, ymax, xmax - gx1, GAME.wall);
-    // 左右壁
+    // side walls
     ctx.fillRect(xmin - GAME.wall, ymin - GAME.wall, GAME.wall, (ymax - ymin) + GAME.wall*2);
     ctx.fillRect(xmax, ymin - GAME.wall, GAME.wall, (ymax - ymin) + GAME.wall*2);
-    // 中央ライン
+    // center line (horizontal)
     ctx.strokeStyle='rgba(255,255,255,0.7)'; ctx.lineWidth=Math.max(2,S*0.006); ctx.setLineDash([14,14]);
     ctx.beginPath(); ctx.moveTo(xmin, GAME.lineY); ctx.lineTo(xmax, GAME.lineY); ctx.stroke(); ctx.setLineDash([]);
   }
 
-  // ---- メッセージ ----
+  // hud flash
   let flashTimer=0;
   function flashMsg(text, kind='good'){
     hudMsg.textContent=text;
@@ -346,42 +290,31 @@
     flashTimer=650;
   }
 
-  // ---- ループ＆状態管理（安全起動） ----
-  let rafStarted=false;
-  function safeRAF(){ if(!rafStarted){ rafStarted=true; requestAnimationFrame(loop); } }
-  function startCountdown(){
-    GAME.state='countdown';
-    GAME.startAt=performance.now();
-    hudMsg.style.color='#e5e7eb';
-    hudMsg.textContent='3';
-    safeRAF();
-  }
-  function endGame(){
-    GAME.state='ended'; hudMsg.textContent='FINISH!'; finalRender(); finalEl.style.display='flex';
-  }
-  function finalRender(){
-    const rows=[]; rows.push({name:'YOU',pts:score.YOU}); rows.push({name:'DEALER',pts:score.DEALER});
+  // loop and states (robust start)
+  let rafStarted=false; function safeRAF(){ if(!rafStarted){ rafStarted=true; requestAnimationFrame(loop); } }
+  function startCountdown(){ GAME.state='countdown'; GAME.startAt=performance.now(); hudMsg.style.color='#e5e7eb'; hudMsg.textContent='3'; safeRAF(); }
+  function endGame(){ GAME.state='ended'; hudMsg.textContent='FINISH!'; renderFinal(); finalEl.style.display='flex'; }
+  function renderFinal(){
+    const rows=[{name:'YOU', pts:score.YOU}];
     for (const c of CPU) rows.push({name:c.name, pts:cpuScores[c.name]});
     rows.sort((a,b)=>b.pts-a.pts);
     finalGrid.innerHTML = rows.map((r,i)=>`
-      <div class="rank">${i+1}</div>
-      <div class="name" style="color:${r.name==='YOU'?'#fff':(r.name==='DEALER'?'#cde7ff':'#e8edf7')}">${r.name}</div>
-      <div class="pts" style="color:${r.name==='YOU'?'#34d399':'#e8edf7'}">${r.pts|0}</div>
+      <div class="rank">${i+1}</div><div class="name" style="color:${r.name==='YOU'?'#fff':'#e8edf7'}">${r.name}</div><div class="pts" style="color:${r.name==='YOU'?'#34d399':'#e8edf7'}">${r.pts|0}</div>
     `).join('');
     finalYou.textContent = `あなたのスコア： ${score.YOU|0} 点（ゴール+3 / 失点-1）`;
   }
 
-  let lastT=performance.now();
+  let lastT=performance.now(), cpuNext=lastT+300;
   function loop(t){
     GAME.now=t;
     const dt=Math.min(0.033, (t-lastT)/1000); lastT=t;
 
     if (GAME.state==='countdown'){
-      const elapsed=t-GAME.startAt, total=3200; // 3→2→1→GO!
+      const elapsed=t-GAME.startAt, total=3200;
       drawBackground();
       const left=Math.max(0,total-elapsed);
       if (left<=0){
-        spawnPucks(); youPtsEl.textContent='0'; aiPtsEl.textContent='0';
+        spawnPucks(); youPtsEl.textContent='0';
         GAME.state='playing'; GAME.startAt=t; hudMsg.textContent='GO!'; hudMsg.style.color='#34d399'; flashTimer=700;
       }else{
         const step=Math.ceil(left/800); hudMsg.textContent = (step>=2)? String(step-1) : 'GO!';
@@ -392,29 +325,51 @@
     if (GAME.state==='playing'){
       const remain=Math.max(0, GAME.length - (t-GAME.startAt));
       timeEl.textContent=(remain/1000).toFixed(1);
-      // 入力/AI/物理
-      player.step(dt,true); aiStep(dt); dealer.step(dt,false);
+
+      // player + physics
+      player.step(dt);
       for (const p of pucks){ p.r=P.puckR(); p.step(dt); }
-      collide(); pucks=pucks.filter(p=>!p.scored);
-      // 背面CPU
-      cpuBackgroundTick(dt);
-      // 描画
-      drawBackground(); for (const p of pucks) p.draw(); player.draw(); dealer.draw();
+      collide();
+      pucks=pucks.filter(p=>!p.scored);
+
+      // CPUs tick (0.3s)
+      if (t>=cpuNext){ cpuTick(); cpuNext=t+300; }
+
+      // draw
+      drawBackground();
+      for (const p of pucks) p.draw();
+      player.draw();
+
       if (flashTimer>0){ flashTimer -= dt*1000; if (flashTimer<=0) hudMsg.textContent=''; }
       if (remain<=0){ endGame(); return; }
       requestAnimationFrame(loop); return;
     }
 
-    if (GAME.state==='ended'){ drawBackground(); for (const p of pucks) p.draw(); player.draw(); dealer.draw(); return; }
+    if (GAME.state==='ended'){ drawBackground(); for (const p of pucks) p.draw(); player.draw(); return; }
   }
 
-  // ---- 即スタート（画像待ちなし）＋二重保険 ----
-  // 1) DOM読み込み時に即開始
+  // start immediately (no image wait) + safety kicks
   startCountdown();
-  // 2) 念のための保険：もし何かでstartが走っていなければ、少し遅れて強制開始
   setTimeout(()=>{ if (GAME.state==='init') startCountdown(); }, 300);
-  // 3) さらに保険：raf開始が何らかで落ちた場合にkick
   setTimeout(safeRAF, 50);
+
+  // input wiring
+  let dragging=false;
+  function toCanvasXY(e){
+    const r=canvas.getBoundingClientRect();
+    const x=((e.touches?e.touches[0].clientX:e.clientX)-r.left)*(canvas.width/r.width);
+    const y=((e.touches?e.touches[0].clientY:e.clientY)-r.top )*(canvas.height/r.height);
+    return {x,y};
+  }
+  function onDown(e){ dragging=true; const {x,y}=toCanvasXY(e); player.setTarget(x,y); e.preventDefault(); }
+  function onMove(e){ const {x,y}=toCanvasXY(e); if (dragging) player.setTarget(x,y); e.preventDefault(); }
+  function onUp(){ dragging=false; }
+  canvas.addEventListener('mousedown', onDown);
+  window.addEventListener('mousemove', onMove);
+  window.addEventListener('mouseup', onUp);
+  canvas.addEventListener('touchstart', onDown, {passive:false});
+  window.addEventListener('touchmove', onMove, {passive:false});
+  window.addEventListener('touchend', onUp);
 
 })();
 </script>
