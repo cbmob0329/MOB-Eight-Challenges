@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
-<title>MOB 横スクロールシューティング（32px・分散強化・CPU減火力）</title>
+<title>MOB 横スクロールシューティング（黒画面対策版）</title>
 <style>
   :root{ --bg:#05060a; --fg:#e8f0ff; --hud:#0e1220cc; --warn:#ff6b6b; }
   html,body{margin:0;height:100%;background:#000;color:var(--fg);font-family:system-ui,-apple-system,Segoe UI,Roboto,"Hiragino Sans","Yu Gothic",sans-serif;}
@@ -50,27 +50,46 @@
 
 <script>
 (()=>{
-/* ===== Canvas & DPR ===== */
+/* ================= Canvas & DPR（黒画面対策付き） ================= */
 const cv=document.getElementById('cv'); const ctx=cv.getContext('2d');
 let W=0,H=0,DPR=1;
-function fit(){ DPR=Math.min(2,window.devicePixelRatio||1); W=cv.clientWidth*DPR; H=cv.clientHeight*DPR; cv.width=W; cv.height=H; }
-addEventListener('resize',fit,{passive:true}); fit();
+function fit(){
+  DPR=Math.min(2,window.devicePixelRatio||1);
+  const cw=cv.clientWidth||window.innerWidth;
+  const ch=cv.clientHeight||window.innerHeight;
+  W=Math.max(1,cw*DPR); H=Math.max(1,ch*DPR);
+  cv.width=W; cv.height=H;
+}
+function ensureSize(){
+  // レイアウト遅延対策：サイズが0やズレていたら再フィット
+  const cw=cv.clientWidth, ch=cv.clientHeight;
+  if(cw>0 && ch>0){
+    const need = (cv.width!==cw*DPR) || (cv.height!==ch*DPR);
+    if(need){ W=cw*DPR; H=ch*DPR; cv.width=W; cv.height=H; }
+  }else{
+    // まだ0なら暫定で画面サイズ使用
+    if(W<10||H<10) fit();
+  }
+}
+addEventListener('resize',fit,{passive:true});
+addEventListener('orientationchange',fit,{passive:true});
+fit();
 
-/* ===== Utils ===== */
+/* ================= Utils ================= */
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const rand=(a,b)=>a+Math.random()*(b-a);
 
-/* ===== Assets ===== */
+/* ================= Assets ================= */
 const IMG={ red:'1REDW.png', blue:'1BLUEW.png', orange:'1ORANGEW.png', ver:'1VERW.png', enemy:'karasu.png', coin:'coin.png' };
 const images={};
-function load(name,src){ return new Promise(res=>{ const im=new Image(); im.src=src; im.onload=()=>res(images[name]=im); im.onerror=()=>res(images[name]=im); }); }
+function load(name,src){ return new Promise(res=>{ const im=new Image(); im.src=src; im.onload=()=>res(images[name]=im); im.onerror=()=>{ console.warn('Image load failed:',src); res(images[name]=im); }; }); }
 async function loadAll(){ await Promise.all(Object.entries(IMG).map(([k,v])=>load(k,v))); }
 
-/* ===== HUD ===== */
+/* ================= HUD ================= */
 const HUD={ score:qs('#score'), distTxt:qs('#distTxt'), distFill:qs('#distFill'), ammo:qs('#ammo'), reload:qs('#reload') };
 function qs(s){return document.querySelector(s)}
 
-/* ===== Input ===== */
+/* ================= Input ================= */
 const stickPad = document.getElementById('stickPad');
 const stickKnob= document.getElementById('stickKnob');
 const fireBtn  = document.getElementById('fireBtn');
@@ -97,7 +116,7 @@ fireBtn.addEventListener('touchend',  fireEnd,{passive:false});
 fireBtn.addEventListener('mousedown', fireStart);
 addEventListener('mouseup',           fireEnd);
 
-/* ===== World & Tuning ===== */
+/* ================= World & Tuning（前回設定） ================= */
 const world={speed:125,t:0,distance:0,score:0};
 const walls={top:20,bottom:()=>H-20};
 
@@ -108,26 +127,25 @@ const BULLET_SPEED =380;
 const EBULLET_SPEED=120;
 const BULLET_R=3, COIN_R=8, HP_MAX=10;
 
-// 分散設計
-const LANE_OFFS = [-80,-26,26,80];                 // Yのレーン
-const SLOT_OFFS_X = [-50,-15,15,50];               // Xの横スロット（被り防止）
-const SEP_RADIUS = 60;                              // 分離半径UP
-const SEP_FORCE  = 320;                             // 分離強化
-const ENGAGE_X   = 180;                             // 敵の左に回り込む距離
+const LANE_OFFS = [-80,-26,26,80];
+const SLOT_OFFS_X = [-50,-15,15,50];
+const SEP_RADIUS = 60;
+const SEP_FORCE  = 320;
+const ENGAGE_X   = 180;
 const ENGAGE_Y   = 22;
 const FIRE_RANGE = 260;
 
-// CPU射撃頻度制御
-const AI_SHOT_MIN=0.25, AI_SHOT_MAX=0.50;          // 次回AI射撃までの間隔
-const AI_SHOT_PROB=0.6;                             // 条件を満たしても 60% だけ撃つ（=40%スキップ）
+const AI_SHOT_MIN=0.25, AI_SHOT_MAX=0.50;
+const AI_SHOT_PROB=0.6;
 
-/* ===== Entities ===== */
+/* ================= Entities ================= */
 const bullets=[], ebullets=[], enemies=[], coins=[];
 function spawnBullet(x,y){ bullets.push({x,y,vx:BULLET_SPEED,vy:0,r:BULLET_R*DPR,dmg:1}); }
 function spawnEBullet(x,y,tx,ty){ const a=Math.atan2(ty-y,tx-x); ebullets.push({x,y,vx:Math.cos(a)*EBULLET_SPEED,vy:Math.sin(a)*EBULLET_SPEED,r:BULLET_R*DPR,dmg:1}); }
 
 function makeAlly(imgKey, idx){
-  const im=images[imgKey]; const scale=(TARGET_SPRITE*DPR)/Math.max(1,im.width);
+  const im=images[imgKey]; const baseW=Math.max(1, im.width||TARGET_SPRITE); // 幅0対策
+  const scale=(TARGET_SPRITE*DPR)/baseW;
   return {
     sprite:im, scale,
     x: 120*DPR + idx*24*DPR,
@@ -146,21 +164,23 @@ let team=[], controlIndex=0, controlTarget=null;
 function initTeam(){ team=[makeAlly('red',0), makeAlly('blue',1), makeAlly('orange',2), makeAlly('ver',3)]; controlIndex=0; controlTarget=team[0]; }
 
 function spawnEnemy(){
-  const im=images.enemy; const scale=(TARGET_SPRITE*DPR)/Math.max(1,im.width);
+  const im=images.enemy; const baseW=Math.max(1,im.width||TARGET_SPRITE);
+  const scale=(TARGET_SPRITE*DPR)/baseW;
   const y=rand(walls.top+24*DPR,walls.bottom()-24*DPR); const x=W+rand(24*DPR,180*DPR);
   enemies.push({sprite:im,scale,x,y,hp:3,alive:true,fireCd:rand(0.9,1.7)});
 }
 function spawnCoin(){
-  const im=images.coin; const scale=(20*DPR)/Math.max(1,im.width);
+  const im=images.coin; const baseW=Math.max(1,im.width||20);
+  const scale=(20*DPR)/baseW;
   const y=rand(walls.top+22*DPR,walls.bottom()-22*DPR); const x=W+rand(10*DPR,120*DPR);
   coins.push({sprite:im,scale,x,y,vx:-world.speed*0.9,taken:false});
 }
 
-/* ===== Helpers ===== */
+/* ================= Helpers ================= */
 function hitCircleRect(cx,cy,cr,rx,ry,rw,rh){ const nx=Math.max(rx,Math.min(cx,rx+rw)); const ny=Math.max(ry,Math.min(cy,ry+rh)); const dx=cx-nx, dy=cy-ny; return dx*dx+dy*dy<=cr*cr; }
 function prune(arr,keep){ let w=0; for(let i=0;i<arr.length;i++) if(keep(arr[i])) arr[w++]=arr[i]; arr.length=w; }
 
-/* ===== Unique target assignment (貪欲で一意割当) ===== */
+/* ================= Unique Target Assignment ================= */
 function assignTargetsUnique(){
   const aliveAllies = team.map((a,i)=>({a,i})).filter(o=>o.a.alive||o.a.dying);
   const aliveEnemies = enemies.map((e,j)=>({e,j})).filter(o=>o.e.alive);
@@ -175,19 +195,15 @@ function assignTargetsUnique(){
     }
   }
   pairs.sort((p,q)=>p.d-q.d);
-
   const usedA=new Set(), usedE=new Set();
-  for(const p of pairs){
-    if(usedA.has(p.i)||usedE.has(p.j)) continue;
-    team[p.i].targetId=p.j; usedA.add(p.i); usedE.add(p.j);
-  }
-  // 未割当は -1
+  for(const p of pairs){ if(usedA.has(p.i)||usedE.has(p.j)) continue; team[p.i].targetId=p.j; usedA.add(p.i); usedE.add(p.j); }
   for(const {a,i} of aliveAllies){ if(i===controlIndex) continue; if(!usedA.has(i)) a.targetId=-1; }
 }
 
-/* ===== Update ===== */
+/* ================= Update & Render ================= */
 let last=0;
 function update(dt){
+  ensureSize(); // ★ 黒画面対策：毎フレーム確認
   world.t+=dt;
   world.distance += (world.speed*dt)/70;
 
@@ -211,10 +227,9 @@ function update(dt){
     if(e.x<-80*DPR) e.alive=false;
   }
 
-  // 一意ターゲット割当
   assignTargetsUnique();
 
-  // 味方（操縦機：ダイレクト / CPU：分散）
+  // 味方
   for(let i=0;i<team.length;i++){
     const a=team[i];
     if(!a.alive && !a.dying) continue;
@@ -224,8 +239,7 @@ function update(dt){
       a.vx = stick.dx * PLAYER_SPEED*DPR;
       a.vy = stick.dy * PLAYER_SPEED*DPR;
     }else{
-      // 目的地：敵の左+上下回避 / いなければ自レーン＋スロットで前進
-      let tx = Math.max(a.x, controlTarget.x + (80 + i*20)*DPR) + a.slotX*DPR;
+      let tx = Math.max(a.x, (team[0]?.x||120*DPR) + (80 + i*20)*DPR) + a.slotX*DPR;
       let ty = clamp(H*0.5 + a.lane*DPR, walls.top+18*DPR, walls.bottom()-18*DPR);
       const tid=a.targetId;
       if(tid>=0 && enemies[tid] && enemies[tid].alive){
@@ -233,27 +247,20 @@ function update(dt){
         tx = e.x - ENGAGE_X*DPR + a.slotX*DPR;
         ty = clamp(e.y + ((i%2?ENGAGE_Y:-ENGAGE_Y)*DPR), walls.top+18*DPR, walls.bottom()-18*DPR);
       }
-      // 分離（Separation）
+      // 分離
       let sfx=0,sfy=0;
       for(let j=0;j<team.length;j++){
         if(j===i) continue; const b=team[j]; if(!b.alive&& !b.dying) continue;
         const dx=a.x-b.x, dy=a.y-b.y, d=Math.hypot(dx,dy);
-        if(d>0 && d<SEP_RADIUS*DPR){
-          const w=(SEP_RADIUS*DPR - d)/(SEP_RADIUS*DPR);
-          sfx += (dx/d)*SEP_FORCE*w; sfy += (dy/d)*SEP_FORCE*w;
-        }
+        if(d>0 && d<SEP_RADIUS*DPR){ const w=(SEP_RADIUS*DPR - d)/(SEP_RADIUS*DPR); sfx += (dx/d)*SEP_FORCE*w; sfy += (dy/d)*SEP_FORCE*w; }
       }
-      // 速度決定（キビキビ寄り）
       const dx=tx-a.x, dy=ty-a.y, dm=Math.hypot(dx,dy)||1;
       const vx_des = dx/dm*ALLY_SPEED*DPR + sfx;
       const vy_des = dy/dm*ALLY_SPEED*DPR + sfy;
-      const k=0.65;
-      a.vx = a.vx*(1-k) + vx_des*k;
-      a.vy = a.vy*(1-k) + vy_des*k;
+      const k=0.65; a.vx = a.vx*(1-k) + vx_des*k; a.vy = a.vy*(1-k) + vy_des*k;
     }
 
-    // 位置 & 境界
-    a.x = clamp(a.x + a.vx*dt, 24*DPR, W*0.78); // 右へ少し余裕
+    a.x = clamp(a.x + a.vx*dt, 24*DPR, W*0.78);
     a.y = clamp(a.y + a.vy*dt, walls.top+16*DPR, walls.bottom()-16*DPR);
 
     // 射撃
@@ -262,9 +269,8 @@ function update(dt){
       a.fire.reload -= dt; if(a.fire.reload<=0) a.fire.ammo=a.fire.ammoMax;
     }else{
       let should=false, isCPU=i!==controlIndex;
-      if(!isCPU){
-        should = firing;
-      }else{
+      if(!isCPU){ should = firing; }
+      else{
         const tid=a.targetId;
         if(tid>=0 && enemies[tid] && enemies[tid].alive){
           const e=enemies[tid];
@@ -276,17 +282,15 @@ function update(dt){
       if(should && a.fire.cd<=0 && a.fire.ammo>0){
         a.fire.cd = a.fire.rate; a.fire.ammo--;
         spawnBullet(a.x + 18*DPR, a.y);
-        if(isCPU){ a.aiNextShotT = world.t + rand(AI_SHOT_MIN, AI_SHOT_MAX); } // CPUの射撃頻度制御
+        if(isCPU){ a.aiNextShotT = world.t + rand(AI_SHOT_MIN, AI_SHOT_MAX); }
         if(a.fire.ammo===0) a.fire.reload=a.fire.reloadTime;
       }
     }
   }
 
-  // Bullets
+  // Bullets & Coins
   for(const b of bullets){ b.x += (b.vx - world.speed*0.15)*dt; }
   for(const b of ebullets){ b.x += (b.vx - world.speed*0.05)*dt; b.y += b.vy*dt; }
-
-  // Coins
   for(const c of coins){ c.x += c.vx*dt; if(c.x<-24*DPR) c.taken=true; }
 
   // 当たり判定
@@ -331,9 +335,7 @@ function update(dt){
   HUD.distFill.style.width=`${Math.min(100,(world.distance%1000)/10)}%`;
 }
 
-/* ===== Render ===== */
 function render(){
-  ctx.clearRect(0,0,W,H);
   const g=ctx.createLinearGradient(0,0,0,H); g.addColorStop(0,'#0a1126'); g.addColorStop(1,'#050814'); ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
 
   // Parallax lines
@@ -372,27 +374,35 @@ function render(){
   }
 }
 
-/* ===== Tap：操縦切替 ===== */
-cv.addEventListener('click', e=>{
-  const r=cv.getBoundingClientRect(), x=(e.clientX-r.left)*DPR, y=(e.clientY-r.top)*DPR;
-  let best=-1,bd=1e9;
-  for(let i=0;i<team.length;i++){ const a=team[i]; if(!a.alive&&!a.dying) continue; const d=Math.hypot(a.x-x,a.y-y); if(d<bd){bd=d; best=i;} }
-  if(best>=0 && bd<40*DPR){ controlIndex=best; controlTarget=team[controlIndex]; }
-  else{ for(let k=1;k<=team.length;k++){ const j=(controlIndex+k)%team.length; if(team[j].alive||team[j].dying){ controlIndex=j; controlTarget=team[j]; break; } } }
-});
+/* ================= Error Guard（黒画面時の可視化） ================= */
+let lastTs=0;
+function loop(ts){
+  if(!lastTs) lastTs=ts;
+  const dt=Math.min(0.033,(ts-lastTs)/1000); lastTs=ts;
+  try{
+    update(dt);
+    render();
+  }catch(err){
+    console.error(err);
+    // 画面にエラーを描く（真っ暗回避）
+    ctx.fillStyle='#000'; ctx.fillRect(0,0,cv.width,cv.height);
+    ctx.fillStyle='#f55'; ctx.font=`${14*DPR}px monospace`;
+    ctx.fillText('Error: '+(err?.message||err), 12*DPR, 24*DPR);
+  }
+  requestAnimationFrame(loop);
+}
 
-/* ===== Loop ===== */
-let last=0;
-function loop(ts){ if(!last) last=ts; const dt=Math.min(0.033,(ts-last)/1000); last=ts; update(dt); render(); requestAnimationFrame(loop); }
-
-/* ===== Start ===== */
+/* ================= Start ================= */
 loadAll().then(()=>{ initTeam(); requestAnimationFrame(loop); });
 
-/* ===== Keyboard (PC) ===== */
+/* ================= Keyboard (PC) ================= */
 const keys={};
 addEventListener('keydown',e=>{ keys[e.key]=true; if(e.key===' ') firing=true; });
 addEventListener('keyup',e=>{ keys[e.key]=false; if(e.key===' ') firing=false; });
-setInterval(()=>{ stick.dy=(keys['ArrowUp']?-1:0)+(keys['ArrowDown']?1:0); stick.dx=(keys['ArrowLeft']?-1:0)+(keys['ArrowRight']?1:0); },16);
+setInterval(()=>{ // キー→仮想スティック
+  stick.dy=(keys['ArrowUp']?-1:0)+(keys['ArrowDown']?1:0);
+  stick.dx=(keys['ArrowLeft']?-1:0)+(keys['ArrowRight']?1:0);
+},16);
 
 })();
 </script>
