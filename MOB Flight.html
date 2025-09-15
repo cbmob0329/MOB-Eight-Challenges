@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
-<title>MOB 横スクロールシューティング（固定物理60Hz・CPU控えめ）</title>
+<title>MOB 横スクロールシューティング（縦操作スムーズ版）</title>
 <style>
   :root{ --bg:#05060a; --fg:#e8f0ff; --hud:#0e1220cc; --warn:#ff6b6b; }
   html,body{margin:0;height:100%;background:#000;color:var(--fg);font-family:system-ui,-apple-system,Segoe UI,Roboto,"Hiragino Sans","Yu Gothic",sans-serif;}
@@ -82,14 +82,14 @@ async function loadAll(){ await Promise.all(Object.entries(IMG).map(([k,v])=>loa
 const HUD={ score:qs('#score'), distTxt:qs('#distTxt'), distFill:qs('#distFill'), ammo:qs('#ammo'), reload:qs('#reload') };
 function qs(s){return document.querySelector(s)}
 
-/* ============== Input（デッドゾーン＋カーブ） ============== */
+/* ============== Input（微入力強化） ============== */
 const stickPad = document.getElementById('stickPad');
 const stickKnob= document.getElementById('stickKnob');
 const fireBtn  = document.getElementById('fireBtn');
 let stick={active:false,cx:0,cy:0,dx:0,dy:0,max:44}, firing=false;
 
-const DEADZONE = 0.12;
-const INPUT_CURVE = 1.6;
+const DEADZONE = 0.08;     // 0.12→0.08：微入力を拾いやすく
+const INPUT_CURVE = 1.35;  // 1.6→1.35：中央圧縮を弱める
 function shape(v){ const s=Math.sign(v), a=Math.min(1,Math.abs(v)); return s*Math.pow(a, INPUT_CURVE); }
 function padCenter(el){ const r=el.getBoundingClientRect(); return {x:r.left+r.width/2,y:r.top+r.height/2}; }
 function onStickStart(e){ e.preventDefault(); const c=padCenter(stickPad); stick.active=true; stick.cx=c.x; stick.cy=c.y; onStickMove(e); }
@@ -118,7 +118,8 @@ const walls={top:20,bottom:()=>H-20};
 
 const TARGET_SPRITE=32;
 const PLAYER_SPEED =290;
-const CPU_SPEED    =210;   // ★ CPUはゆっくり
+const PLAYER_SPEED_Y =320; // ★ 縦だけ少し速く
+const CPU_SPEED    =210;
 const BULLET_SPEED =380;
 const EBULLET_SPEED=120;
 const BULLET_R=3, COIN_R=8, HP_MAX=10;
@@ -128,8 +129,8 @@ const LANE_OFFS = [-80,-26,26,80];
 const SLOT_OFFS_X = [-50,-15,15,50];
 const SEP_RADIUS = 60;
 const SEP_FORCE  = 320;
-// 前に出過ぎ防止：敵の左“より”引く
-const ENGAGE_X   = 220;   // ★ 180→220（さらに後ろで戦う）
+// 前に出過ぎ防止
+const ENGAGE_X   = 220;
 const ENGAGE_Y   = 22;
 const FIRE_RANGE = 260;
 
@@ -137,9 +138,9 @@ const FIRE_RANGE = 260;
 const AI_SHOT_MIN=0.25, AI_SHOT_MAX=0.50;
 const AI_SHOT_PROB=0.6;
 
-// ソフト壁（上下の当たり感ナシ）
-const WALL_SOFT_ZONE = 36;
-const WALL_FORCE     = 900;
+// ソフト壁（少し弱め・浅め）
+const WALL_SOFT_ZONE = 28;  // 36→28
+const WALL_FORCE     = 650; // 900→650
 function wallYRepel(y){
   let f=0;
   const top = walls.top + 16*DPR, bot = walls.bottom() - 16*DPR;
@@ -254,16 +255,16 @@ function step(dt){
     if(a.dying){ a.dieT+=dt; a.rot+=dt*6; a.y += 100*dt; continue; }
 
     if(i===controlIndex){
-      a.vx = stick.dx * PLAYER_SPEED*DPR;
-      a.vy = stick.dy * PLAYER_SPEED*DPR;
+      a.vx = stick.dx * PLAYER_SPEED * DPR;
+      a.vy = stick.dy * PLAYER_SPEED_Y * DPR; // ★ 縦だけ速い
     }else{
-      // 目標位置（前に出過ぎないよう後退＆右端も浅め）
-      let tx = Math.max(a.x, (controlTarget?.x ?? 120*DPR) + (60 + i*16)*DPR) + a.slotX*DPR; // ★ 80→60、間隔縮小
+      // 目標位置（前に出過ぎない）
+      let tx = Math.max(a.x, (controlTarget?.x ?? 120*DPR) + (60 + i*16)*DPR) + a.slotX*DPR;
       let ty = clamp(H*0.5 + a.lane*DPR, walls.top+18*DPR, walls.bottom()-18*DPR);
       const tid=a.targetId;
       if(tid>=0 && enemies[tid] && enemies[tid].alive){
         const e=enemies[tid];
-        tx = e.x - ENGAGE_X*DPR + a.slotX*DPR;  // より後方で交戦
+        tx = e.x - ENGAGE_X*DPR + a.slotX*DPR;
         ty = clamp(e.y + ((i%2?ENGAGE_Y:-ENGAGE_Y)*DPR), walls.top+18*DPR, walls.bottom()-18*DPR);
       }
       // 分離
@@ -276,11 +277,10 @@ function step(dt){
       const nearWall=(a.y < walls.top + WALL_SOFT_ZONE*DPR) || (a.y > walls.bottom() - WALL_SOFT_ZONE*DPR);
       if(nearWall) sfy *= 0.4;
 
-      // ★ CPUは最高速を低め＆追従も少し緩やかに
       const dx=tx-a.x, dy=ty-a.y, dm=Math.hypot(dx,dy)||1;
       const vx_des = dx/dm*CPU_SPEED*DPR + sfx;
       const vy_des = dy/dm*CPU_SPEED*DPR + sfy;
-      const k=0.55; // 0.65→0.55（ゆったり）
+      const k=0.55;
       a.vx = a.vx*(1-k) + vx_des*k;
       a.vy = a.vy*(1-k) + vy_des*k;
     }
@@ -288,18 +288,17 @@ function step(dt){
     // ソフト反発
     a.vy += wallYRepel(a.y) * dt;
 
-    // 片側クリップ：CPUは右端浅め
+    // 片側クリップ（壁タッチ時は速度25%に減衰＝“スッ”と止まる）
     const leftLim = 24*DPR;
     const rightLimPlayer = W*0.78;
-    const rightLimCPU    = W*0.72; // ★ CPUはこれ以上前に出ない
+    const rightLimCPU    = W*0.72;
     const topLim  = walls.top + 14*DPR, botLim = walls.bottom() - 14*DPR;
-
     const rightLim = (i===controlIndex)? rightLimPlayer : rightLimCPU;
 
     a.x = Math.min(rightLim, Math.max(leftLim, a.x + a.vx*dt));
     let newY = a.y + a.vy*dt;
-    if (newY < topLim){ newY = topLim; if (a.vy < 0) a.vy = 0; }
-    if (newY > botLim){ newY = botLim; if (a.vy > 0) a.vy = 0; }
+    if (newY < topLim){ newY = topLim; if (a.vy < 0) a.vy *= 0.25; } // ★ 0→25%
+    if (newY > botLim){ newY = botLim; if (a.vy > 0) a.vy *= 0.25; } // ★ 0→25%
     a.y = newY;
 
     // 射撃
@@ -416,12 +415,11 @@ function render(){
 
 /* ============== Game Loop（固定物理60Hz） ============== */
 let lastRAF=0, acc=0;
-const FIXED_DT = 1/60;               // ★ 60Hz固定
-const MAX_STEPS = 5;                 // セーフティ
+const FIXED_DT = 1/60;
+const MAX_STEPS = 5;
 function loop(ts){
   if(!lastRAF) lastRAF=ts;
   let dt = (ts - lastRAF)/1000; lastRAF = ts;
-  // 異常に大きいフレームをカット（タブ復帰など）
   if(dt>0.25) dt=0.25;
 
   acc += dt;
