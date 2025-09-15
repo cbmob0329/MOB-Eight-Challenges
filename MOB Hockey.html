@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
-<title>MOB Hockey (Solo / 2 Pucks) – FIX2</title>
+<title>MOB Hockey (Solo / 2 Pucks / FX)</title>
 <style>
   :root{ --hud:#0e0f12cc; --fg:#fff; --good:#34d399; --bad:#f87171; }
   html,body{margin:0;height:100%;background:#000;color:var(--fg);font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Hiragino Sans","Yu Gothic",sans-serif}
@@ -29,7 +29,6 @@
   #final .pts{font-size:24px; font-weight:900; text-align:right}
   .btn{pointer-events:auto; user-select:none; cursor:pointer; padding:12px 18px; border-radius:14px; border:1px solid #323643; background:#151923; transition:.2s; color:#fff}
   .btn:hover{transform:translateY(-1px)}
-  #err{position:fixed;right:8px;top:8px;background:#dc2626cc;color:#fff;padding:6px 10px;border-radius:8px;font:12px/1.3 system-ui;z-index:99;display:none;max-width:min(70vw,480px)}
 </style>
 </head>
 <body>
@@ -59,16 +58,9 @@
     </div>
   </div>
 
-  <div id="err"></div>
-
 <script>
 (()=>{'use strict';
-  // === error overlay ===
-  const errBox = document.getElementById('err');
-  function showErr(e){ errBox.style.display='block'; errBox.textContent = (e && e.message) ? e.message : String(e); }
-  window.addEventListener('error', ev => { showErr(ev.error || ev.message); });
-
-  // === refs ===
+  // ====== refs ======
   const canvas = document.getElementById('cv');
   const ctx = canvas.getContext('2d');
   const hudMsg = document.getElementById('msg');
@@ -78,7 +70,7 @@
   const finalGrid = document.getElementById('finalGrid');
   const finalYou = document.getElementById('finalYou');
 
-  // === game config ===
+  // ====== config ======
   const GAME = {
     state:'init',
     length:30_000, startAt:0, now:0,
@@ -88,7 +80,6 @@
     images:{}, assetsReady:false
   };
 
-  // square resize
   function resizeSquare(){
     const s = Math.min(window.innerWidth, window.innerHeight);
     canvas.width = s; canvas.height = s;
@@ -106,15 +97,17 @@
     orange:'orange.png', pink:'pink.png', red:'red.png', yellow:'yellow.png'
   };
   function loadImage(src){ return new Promise(res=>{ const im=new Image(); im.onload=()=>res(im); im.onerror=()=>res(null); im.src=src+(src.includes('?')?'':'?v='+Date.now()); }); }
-  (async()=>{ try{ for (const [k,src] of Object.entries(IMG_LIST)){ GAME.images[k]=await loadImage(src); } GAME.assetsReady=true; }catch(e){ showErr(e); } })();
+  (async()=>{ for (const [k,src] of Object.entries(IMG_LIST)){ GAME.images[k]=await loadImage(src); } GAME.assetsReady=true; })();
 
-  // params
+  // ====== parameters ======
   const P = {
-    puckR: ()=>Math.max(16, GAME.size*0.05),
+    puckR: ()=>Math.max(16, GAME.size*0.055),   // さらに少し大きめ
     smashR: ()=>Math.max(26, GAME.size*0.038),
     maxSpd: ()=>Math.max(600, GAME.size*0.95),
-    friction: 0.994,
-    hitBoostPlayer: 1.18
+    friction: 0.9935,
+    hitBoostPlayer: 1.18,
+    tiltAccel: ()=>GAME.size*0.020,            // 上半分にいるパックへ微小な下向き加速度
+    minKick: ()=>GAME.size*0.08                // 停止回避の微小キック速度
   };
 
   // play area
@@ -125,7 +118,34 @@
   const colorMap = { red:'#ef4444', blue:'#3b82f6', green:'#22c55e', mura:'#8b5cf6', orange:'#f59e0b', pink:'#ec4899', yellow:'#eab308', black:'#e5e7eb' };
   const colorOf = k => colorMap[k]||'#e5e7eb';
 
-  // entities
+  // ====== center popup (goal FX) ======
+  let popup = null; // {text, color, t, dur}
+  function firePopup(text, color){
+    popup = { text, color, t:0, dur:900 }; // ms
+  }
+  function drawPopup(dt){
+    if (!popup) return;
+    popup.t += dt*1000;
+    const p = Math.min(1, popup.t/popup.dur);
+    const alpha = 1 - p;
+    const scale = 1 + 0.2*(1-p); // 少し縮みながら消える
+    ctx.save();
+    ctx.translate(GAME.size/2, GAME.size/2);
+    ctx.scale(scale, scale);
+    ctx.globalAlpha = alpha;
+    // うっすら縁
+    ctx.fillStyle = '#000a';
+    ctx.fillRect(-150, -60, 300, 120);
+    // テキスト
+    ctx.fillStyle = popup.color;
+    ctx.font = `700 ${Math.round(GAME.size*0.12)}px system-ui, sans-serif`;
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(popup.text, 0, 10);
+    ctx.restore();
+    if (popup.t>=popup.dur) popup=null;
+  }
+
+  // ====== entities ======
   class Puck{
     constructor(key, field){
       const xmin=xMin(), xmax=xMax();
@@ -136,14 +156,50 @@
       this.vx = (Math.random()*2-1)*P.maxSpd()*0.20;
       this.vy = (Math.random()*2-1)*P.maxSpd()*0.20;
       this.r=P.puckR(); this.scored=false;
+      this.spawning=false; // 天から降下中か
+      this.blinkT=0;
+    }
+    spawnFromHeavenToCenter(){
+      this.spawning = true;
+      this.x = (xMin()+xMax())/2;
+      this.y = yMin() - this.r - 6; // 壁の外から
+      this.vx = 0; this.vy = P.maxSpd()*0.25; // 下方向に降下
+      this.blinkT = 0;
     }
     step(dt){
+      // 傾斜（上半分のみ下向き加速）
+      if (!this.spawning && this.y < GAME.lineY){
+        this.vy += P.tiltAccel()*dt;
+        // ほぼ停止なら微小キック
+        const spd = Math.hypot(this.vx, this.vy);
+        if (spd < P.minKick()*0.2){
+          this.vy += P.minKick()*0.6;
+          this.vx += (Math.random()*2-1)*P.minKick()*0.15;
+        }
+      }
+
       this.x+=this.vx*dt; this.y+=this.vy*dt;
-      this.vx*=P.friction; this.vy*=P.friction;
+      if (!this.spawning){ this.vx*=P.friction; this.vy*=P.friction; }
+
       const xmin=xMin(), xmax=xMax(), ymin=yMin(), ymax=yMax();
       // side walls
       if (this.x < xmin + this.r){ this.x = xmin + this.r; this.vx = Math.abs(this.vx); }
       if (this.x > xmax - this.r){ this.x = xmax - this.r; this.vx = -Math.abs(this.vx); }
+
+      // heaven降下中の停止条件（中央まで来たら通常化）
+      if (this.spawning){
+        this.blinkT += dt;
+        const targetY = (yMin()+yMax())/2;
+        if (this.y >= targetY){
+          this.spawning = false;
+          // センターで少しだけランダムに動き出す
+          this.vx = (Math.random()*2-1)*P.maxSpd()*0.18;
+          this.vy = (Math.random()*2-1)*P.maxSpd()*0.18;
+          return;
+        }
+        return; // 壁・ゴール判定はスポーン完了後
+      }
+
       // goals
       const gx0 = xmin + (xmax - xmin)*GAME.topGoal.x0;
       const gx1 = xmin + (xmax - xmin)*GAME.topGoal.x1;
@@ -158,6 +214,11 @@
     }
     draw(){
       const im=GAME.images[this.key], s=this.r*2;
+      if (this.spawning){
+        // 点滅（blinkTで0.1s周期に）
+        const on = (Math.floor(this.blinkT*10)%2)===0;
+        if (!on) return;
+      }
       if (im) ctx.drawImage(im, this.x-this.r, this.y-this.r, s, s);
       else { ctx.beginPath(); ctx.arc(this.x,this.y,this.r,0,Math.PI*2); ctx.fillStyle=colorOf(this.key); ctx.fill(); }
     }
@@ -193,7 +254,7 @@
     }
   }
 
-  // world
+  // ====== world ======
   let pucks=[];
   const player=new Smasher();
   let score={ YOU:0 };
@@ -206,23 +267,23 @@
     pucks.push(new Puck(rnd,'T'));
   }
 
-  // scoring
+  // ====== scoring ======
   function scoreGoal(side, puck){
-    if (side==='TOP'){ score.YOU += 3; flashMsg('+3','good'); }
-    else{ score.YOU -= 1; flashMsg('-1','bad'); }
+    if (side==='TOP'){ score.YOU += 3; firePopup('+3', '#34d399'); }
+    else{ score.YOU -= 1; firePopup('-1', '#f87171'); }
     youPtsEl.textContent = score.YOU|0;
 
-    // respawn toward the opposite side
-    const field=(side==='TOP')?'T':'B';
-    const np=new Puck(puck.key, field);
-    np.vy=(side==='TOP'? 1 : -1) * P.maxSpd()*0.45;
-    np.vx=(Math.random()*2-1)*P.maxSpd()*0.22;
+    // スコアに使ったパックを「天からスポーン」
+    const np = new Puck(puck.key, 'T'); // 仮
+    np.spawnFromHeavenToCenter();
     pucks.push(np);
   }
 
-  // collisions
-  function collide(){
+  // ====== collisions ======
+  // Smasher vs Puck
+  function collideSmasher(){
     for (const puck of pucks){
+      if (puck.spawning) continue;
       const dx=puck.x-player.x, dy=puck.y-player.y, rr=(puck.r+player.r);
       if (dx*dx+dy*dy<=rr*rr){
         const d=Math.hypot(dx,dy)||1, nx=dx/d, ny=dy/d;
@@ -233,8 +294,34 @@
       }
     }
   }
+  // Puck vs Puck（簡易弾性）
+  function collidePucks(){
+    for (let i=0;i<pucks.length;i++){
+      const a=pucks[i]; if (a.spawning) continue;
+      for (let j=i+1;j<pucks.length;j++){
+        const b=pucks[j]; if (b.spawning) continue;
+        const dx=b.x-a.x, dy=b.y-a.y;
+        const rr = (a.r+b.r);
+        const distSq = dx*dx+dy*dy;
+        if (distSq <= rr*rr){
+          const dist = Math.sqrt(distSq)||1;
+          const nx = dx/dist, ny=dy/dist;
+          // 速度成分の交換（法線方向）
+          const va = a.vx*nx + a.vy*ny;
+          const vb = b.vx*nx + b.vy*ny;
+          const diff = vb - va;
+          a.vx += nx*diff; a.vy += ny*diff;
+          b.vx -= nx*diff; b.vy -= ny*diff;
+          // めり込み解消
+          const overlap = rr - dist + 0.5;
+          a.x -= nx*overlap*0.5; a.y -= ny*overlap*0.5;
+          b.x += nx*overlap*0.5; b.y += ny*overlap*0.5;
+        }
+      }
+    }
+  }
 
-  // input (ONLY ONCE — fixed)
+  // ====== input ======
   let dragging=false;
   function toCanvasXY(e){
     const r=canvas.getBoundingClientRect();
@@ -252,12 +339,12 @@
   window.addEventListener('touchmove', onMove, {passive:false});
   window.addEventListener('touchend', onUp);
 
-  // CPUs (solo ranking)
+  // ====== CPUs（裏で進行、結果のみ表示） ======
   const CPU=[{name:'ブラック'},{name:'ブルー'},{name:'グリーン'},{name:'パープル'},{name:'オレンジ'},{name:'ピンク'},{name:'イエロー'}];
   const cpuScores=Object.fromEntries(CPU.map(c=>[c.name,0]));
   function cpuTick(){ const name=CPU[(Math.random()*CPU.length)|0].name; Math.random()<0.72 ? (cpuScores[name]+=3) : (cpuScores[name]-=1); }
 
-  // background + walls + line
+  // ====== background (rink+walls+line) ======
   function drawBackground(){
     const S=GAME.size, xmin=xMin(), xmax=xMax(), ymin=yMin(), ymax=yMax();
     ctx.clearRect(0,0,S,S);
@@ -269,25 +356,18 @@
     }else{ ctx.fillStyle='#0b0e14'; ctx.fillRect(0,0,S,S); }
     ctx.fillStyle='#111a';
     const gx0 = xmin + (xmax - xmin)*GAME.topGoal.x0, gx1 = xmin + (xmax - xmin)*GAME.topGoal.x1;
-    ctx.fillRect(xmin, ymin - GAME.wall, gx0 - xmin, GAME.wall); // top left wall
-    ctx.fillRect(gx1, ymin - GAME.wall, xmax - gx1, GAME.wall);  // top right wall
-    ctx.fillRect(xmin, ymax, gx0 - xmin, GAME.wall);             // bottom left wall
-    ctx.fillRect(gx1, ymax, xmax - gx1, GAME.wall);              // bottom right wall
-    ctx.fillRect(xmin - GAME.wall, ymin - GAME.wall, GAME.wall, (ymax - ymin) + GAME.wall*2); // left
-    ctx.fillRect(xmax, ymin - GAME.wall, GAME.wall, (ymax - ymin) + GAME.wall*2);             // right
+    ctx.fillRect(xmin, ymin - GAME.wall, gx0 - xmin, GAME.wall);
+    ctx.fillRect(gx1, ymin - GAME.wall, xmax - gx1, GAME.wall);
+    ctx.fillRect(xmin, ymax, gx0 - xmin, GAME.wall);
+    ctx.fillRect(gx1, ymax, xmax - gx1, GAME.wall);
+    ctx.fillRect(xmin - GAME.wall, ymin - GAME.wall, GAME.wall, (ymax - ymin) + GAME.wall*2);
+    ctx.fillRect(xmax, ymin - GAME.wall, GAME.wall, (ymax - ymin) + GAME.wall*2);
     ctx.strokeStyle='rgba(255,255,255,0.7)'; ctx.lineWidth=Math.max(2,S*0.006); ctx.setLineDash([14,14]);
     ctx.beginPath(); ctx.moveTo(xmin, GAME.lineY); ctx.lineTo(xmax, GAME.lineY); ctx.stroke(); ctx.setLineDash([]);
   }
 
-  // HUD flash
-  let flashTimer=0;
-  function flashMsg(text, kind='good'){
-    hudMsg.textContent=text;
-    hudMsg.style.color=(kind==='good')? '#34d399' : '#f87171';
-    flashTimer=650;
-  }
-
-  // loop & states
+  // ====== loop & states ======
+  let popupDtAccum = 0;
   let rafStarted=false; function safeRAF(){ if(!rafStarted){ rafStarted=true; requestAnimationFrame(loop); } }
   function startCountdown(){ GAME.state='countdown'; GAME.startAt=performance.now(); hudMsg.style.color='#e5e7eb'; hudMsg.textContent='3'; safeRAF(); }
   function endGame(){
@@ -301,49 +381,51 @@
 
   let lastT=performance.now(), cpuNext=lastT+300;
   function loop(t){
-    try{
-      GAME.now=t;
-      const dt=Math.min(0.033, (t-lastT)/1000); lastT=t;
+    GAME.now=t;
+    const dt=Math.min(0.033, (t-lastT)/1000); lastT=t;
 
-      if (GAME.state==='countdown'){
-        const elapsed=t-GAME.startAt, total=3200;
-        drawBackground();
-        const left=Math.max(0,total-elapsed);
-        if (left<=0){
-          spawnPucks(); youPtsEl.textContent='0';
-          GAME.state='playing'; GAME.startAt=t; hudMsg.textContent='GO!'; hudMsg.style.color='#34d399'; flashTimer=700;
-        }else{
-          const step=Math.ceil(left/800); hudMsg.textContent = (step>=2)? String(step-1) : 'GO!';
-        }
-        requestAnimationFrame(loop); return;
+    if (GAME.state==='countdown'){
+      const elapsed=t-GAME.startAt, total=3200;
+      drawBackground();
+      const left=Math.max(0,total-elapsed);
+      if (left<=0){
+        spawnPucks(); youPtsEl.textContent='0';
+        GAME.state='playing'; GAME.startAt=t; hudMsg.textContent='GO!'; hudMsg.style.color='#34d399';
+        popup=null;
+      }else{
+        const step=Math.ceil(left/800); hudMsg.textContent = (step>=2)? String(step-1) : 'GO!';
       }
+      requestAnimationFrame(loop); return;
+    }
 
-      if (GAME.state==='playing'){
-        const remain=Math.max(0, GAME.length - (t-GAME.startAt));
-        timeEl.textContent=(remain/1000).toFixed(1);
+    if (GAME.state==='playing'){
+      const remain=Math.max(0, GAME.length - (t-GAME.startAt));
+      timeEl.textContent=(remain/1000).toFixed(1);
 
-        // physics
-        player.step(dt);
-        for (const p of pucks){ p.r=P.puckR(); p.step(dt); }
-        collide();
-        pucks=pucks.filter(p=>!p.scored);
+      // physics
+      player.step(dt);
+      for (const p of pucks){ p.r=P.puckR(); p.step(dt); }
+      collideSmasher();
+      collidePucks();
+      pucks=pucks.filter(p=>!p.scored);
 
-        // CPUs tick
-        if (t>=cpuNext){ cpuTick(); cpuNext=t+300; }
+      // CPUs
+      if (t>=cpuNext){ cpuTick(); cpuNext=t+300; }
 
-        // draw
-        drawBackground(); for (const p of pucks) p.draw(); player.draw();
+      // draw
+      drawBackground();
+      for (const p of pucks) p.draw();
+      player.draw();
+      drawPopup(dt);
 
-        if (flashTimer>0){ flashTimer -= dt*1000; if (flashTimer<=0) hudMsg.textContent=''; }
-        if (remain<=0){ endGame(); return; }
-        requestAnimationFrame(loop); return;
-      }
+      if (remain<=0){ endGame(); return; }
+      requestAnimationFrame(loop); return;
+    }
 
-      if (GAME.state==='ended'){ drawBackground(); for (const p of pucks) p.draw(); player.draw(); return; }
-    }catch(e){ showErr(e); }
+    if (GAME.state==='ended'){ drawBackground(); for (const p of pucks) p.draw(); player.draw(); drawPopup(dt); return; }
   }
 
-  // start immediately + safety
+  // start now
   startCountdown();
   setTimeout(()=>{ if (GAME.state==='init') startCountdown(); }, 300);
   setTimeout(safeRAF, 50);
