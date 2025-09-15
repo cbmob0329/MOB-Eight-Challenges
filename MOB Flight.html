@@ -3,37 +3,39 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1, user-scalable=no">
-<title>MOB 横スクロールシューティング（自動浮遊・味方編隊）</title>
+<title>MOB 横スクロールシューティング（32px最適化）</title>
 <style>
   :root{
     --bg:#05060a; --fg:#e8f0ff; --hud:#0e1220cc; --accent:#5ad1ff; --warn:#ff6b6b;
-    --safe:env(safe-area-inset);
   }
   html,body{margin:0;height:100%;background:#000;color:var(--fg);font-family:system-ui,-apple-system,Segoe UI,Roboto,"Hiragino Sans","Yu Gothic",sans-serif;}
   #wrap{position:fixed; inset:0; display:flex; background:#000;}
   #cv{flex:1; display:block; width:100%; height:100%; touch-action:none; background:#000;}
-  /* HUD */
-  .hud{position:fixed; left:0; right:0; top:0; padding:calc(env(safe-area-inset-top) + 6px) 8px 6px 8px; display:flex; gap:8px; align-items:center; justify-content:space-between; pointer-events:none}
-  .pill{background:var(--hud); backdrop-filter: blur(8px); padding:6px 10px; border-radius:999px; font-size:12px; line-height:1; display:flex; align-items:center; gap:10px; box-shadow:0 4px 16px #0008}
-  .bar{height:6px; width:140px; background:#233; border-radius:6px; overflow:hidden}
+
+  /* HUD（小さめ） */
+  .hud{position:fixed; left:0; right:0; top:0; padding:calc(env(safe-area-inset-top) + 4px) 6px 4px 6px; display:flex; gap:6px; align-items:center; justify-content:space-between; pointer-events:none}
+  .pill{background:var(--hud); backdrop-filter: blur(6px); padding:4px 8px; border-radius:999px; font-size:11px; line-height:1; display:flex; align-items:center; gap:8px; box-shadow:0 3px 12px #0008}
+  .bar{height:5px; width:110px; background:#233; border-radius:6px; overflow:hidden}
   .fill{height:100%; background:linear-gradient(90deg,#42ffd9,#36a3ff,#7d5bff); width:0%}
-  .ammo{min-width:72px; text-align:right}
+  .ammo{min-width:60px; text-align:right}
   .legend{opacity:.8}
-  /* Controls */
+
+  /* Controls（小さめ） */
   .ctrl{position:fixed; inset:auto; pointer-events:none}
-  #stick{left:10px; bottom:calc(env(safe-area-inset-bottom) + 10px); width:160px; height:160px;}
-  #fire{right:10px; bottom:calc(env(safe-area-inset-bottom) + 20px); width:120px; height:120px;}
-  .joypad{pointer-events:auto; touch-action:none; position:absolute; inset:0; border-radius:999px; background:radial-gradient(120px 120px at 50% 50%, #1b2334cc, #0b0f1acc); box-shadow:0 8px 28px #000a, inset 0 0 0 2px #2d395d;}
-  .knob{position:absolute; left:50%; top:50%; width:72px; height:72px; transform:translate(-50%,-50%); border-radius:999px; background:linear-gradient(#1b9cff,#1a6dd8); box-shadow:0 6px 18px #000a, inset 0 0 12px #fff4}
-  .firebtn{pointer-events:auto; touch-action:none; position:absolute; inset:0; border-radius:999px; background:radial-gradient(100px 100px at 50% 50%, #2a1b1bcc, #140909cc); box-shadow:0 8px 28px #000a, inset 0 0 0 2px #5b2d2d;}
-  .firebtn::after{content:"FIRE"; position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); font-weight:700; letter-spacing:.08em;}
-  .tip{position:fixed; left:50%; bottom:calc(env(safe-area-inset-bottom) + 8px); transform:translateX(-50%); font-size:11px; opacity:.7}
+  #stick{left:10px; bottom:calc(env(safe-area-inset-bottom) + 8px); width:120px; height:120px;}
+  #fire{right:10px; bottom:calc(env(safe-area-inset-bottom) + 14px); width:90px; height:90px;}
+  .joypad{pointer-events:auto; touch-action:none; position:absolute; inset:0; border-radius:999px; background:radial-gradient(90px 90px at 50% 50%, #1b2334cc, #0b0f1acc); box-shadow:0 6px 20px #000a, inset 0 0 0 2px #2d395d;}
+  .knob{position:absolute; left:50%; top:50%; width:48px; height:48px; transform:translate(-50%,-50%); border-radius:999px; background:linear-gradient(#1b9cff,#1a6dd8); box-shadow:0 5px 14px #000a, inset 0 0 10px #fff4}
+  .firebtn{pointer-events:auto; touch-action:none; position:absolute; inset:0; border-radius:999px; background:radial-gradient(70px 70px at 50% 50%, #2a1b1bcc, #140909cc); box-shadow:0 6px 20px #000a, inset 0 0 0 2px #5b2d2d;}
+  .firebtn::after{content:"FIRE"; position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); font-weight:700; letter-spacing:.06em; font-size:12px;}
+  .tip{position:fixed; left:50%; bottom:calc(env(safe-area-inset-bottom) + 6px); transform:translateX(-50%); font-size:10px; opacity:.7}
+
+  /* 端末回転時の誤タップ防止（任意） */
+  @media (max-height:480px){ .tip{display:none;} }
 </style>
 </head>
 <body>
-<div id="wrap">
-  <canvas id="cv" width="960" height="540"></canvas>
-</div>
+<div id="wrap"><canvas id="cv" width="960" height="540"></canvas></div>
 
 <!-- HUD -->
 <div class="hud">
@@ -43,14 +45,12 @@
     <span id="distTxt">0 m</span>
   </div>
   <div class="pill">
-    <span>💰 Score <b id="score">0</b></span>
+    <span>💰 <b id="score">0</b></span>
     <span class="legend">| Ammo</span>
     <span class="ammo" id="ammo">10 / 10</span>
     <span class="legend" id="reload" style="color:var(--warn)"></span>
   </div>
-  <div class="pill">
-    <span class="legend">Tap：操作キャラ変更 / FIRE長押し：射撃</span>
-  </div>
+  <div class="pill"><span class="legend">Tap：操作切替 / FIRE長押し：射撃</span></div>
 </div>
 
 <!-- Controls -->
@@ -58,10 +58,8 @@
   <div id="stickPad" class="joypad"></div>
   <div id="stickKnob" class="knob"></div>
 </div>
-<div id="fire" class="ctrl">
-  <div id="fireBtn" class="firebtn"></div>
-</div>
-<div class="tip">味方3体 + 自分1体の4機編隊。近くをタップで直接選択、外したら順送り切替。</div>
+<div id="fire" class="ctrl"><div id="fireBtn" class="firebtn"></div></div>
+<div class="tip">編隊4機 / タップで対象を直接選択（外すと順送り）。</div>
 
 <script>
 (()=>{
@@ -74,93 +72,42 @@ function fit(){
   W = cv.clientWidth * DPR; H = cv.clientHeight * DPR;
   cv.width = W; cv.height = H;
 }
-addEventListener('resize', fit, {passive:true});
-fit();
+addEventListener('resize', fit, {passive:true}); fit();
 
-// ===== Utilities =====
+// ===== Utils =====
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
-const lerp=(a,b,t)=>a+(b-a)*t;
 const rand=(a,b)=>a+Math.random()*(b-a);
-const nowms=()=>performance.now();
 
 // ===== Assets =====
-const imageNames = {
+const IMG = {
   red:'1REDW.png', blue:'1BLUEW.png', orange:'1ORANGEW.png', ver:'1VERW.png',
   enemy:'karasu.png', coin:'coin.png'
 };
 const images = {};
-function loadImage(name, src){
-  return new Promise(res=>{
-    const im = new Image(); im.src = src;
-    im.onload=()=>res(images[name]=im);
-    im.onerror=()=>{ // fallback placeholder
-      const c=document.createElement('canvas'); c.width=64; c.height=64;
-      const x=c.getContext('2d'); x.fillStyle='#fff2'; x.fillRect(0,0,64,64);
-      x.fillStyle='#f55'; x.fillRect(8,8,48,48); x.fillStyle='#000'; x.fillText(name,4,60);
-      const im2=new Image(); im2.src=c.toDataURL(); im2.onload=()=>res(images[name]=im2);
-    };
-  });
-}
-async function loadAll(){
-  await Promise.all([
-    loadImage('red', imageNames.red),
-    loadImage('blue', imageNames.blue),
-    loadImage('orange', imageNames.orange),
-    loadImage('ver', imageNames.ver),
-    loadImage('enemy', imageNames.enemy),
-    loadImage('coin', imageNames.coin),
-  ]);
-}
-const HUD = {
-  score: document.getElementById('score'),
-  distTxt: document.getElementById('distTxt'),
-  distFill: document.getElementById('distFill'),
-  ammo: document.getElementById('ammo'),
-  reload: document.getElementById('reload')
-};
+function load(name, src){ return new Promise(res=>{ const im=new Image(); im.src=src; im.onload=()=>res(images[name]=im); im.onerror=()=>res(images[name]=im); }); }
+async function loadAll(){ await Promise.all(Object.entries(IMG).map(([k,v])=>load(k,v))); }
+const HUD={ score:qs('#score'), distTxt:qs('#distTxt'), distFill:qs('#distFill'), ammo:qs('#ammo'), reload:qs('#reload') };
+function qs(s){return document.querySelector(s)}
 
-// ===== Input (Virtual Stick + Fire) =====
+// ===== Input（小型スティック＆ボタン） =====
 const stickPad = document.getElementById('stickPad');
 const stickKnob = document.getElementById('stickKnob');
 const fireBtn = document.getElementById('fireBtn');
-let stick = {active:false, cx:0, cy:0, dx:0, dy:0, max:56};
+let stick = {active:false, cx:0, cy:0, dx:0, dy:0, max:40};
 let firing=false;
 
-function padCenter(el){
-  const r = el.getBoundingClientRect();
-  return {x:r.left + r.width/2, y:r.top + r.height/2};
-}
-function toCanvasXY(ev){
-  const rect = cv.getBoundingClientRect();
-  const x = (('touches' in ev)? ev.touches[0].clientX : ev.clientX) - rect.left;
-  const y = (('touches' in ev)? ev.touches[0].clientY : ev.clientY) - rect.top;
-  return {x:x*DPR, y:y*DPR};
-}
-function onStickStart(ev){
-  ev.preventDefault();
-  const c=padCenter(stickPad);
-  stick.active=true; stick.cx=c.x; stick.cy=c.y;
-  onStickMove(ev);
-}
-function onStickMove(ev){
+function padCenter(el){ const r=el.getBoundingClientRect(); return {x:r.left+r.width/2, y:r.top+r.height/2}; }
+function onStickStart(e){ e.preventDefault(); const c=padCenter(stickPad); stick.active=true; stick.cx=c.x; stick.cy=c.y; onStickMove(e); }
+function onStickMove(e){
   if(!stick.active) return;
-  ev.preventDefault();
-  const p = (('touches'in ev)? ev.touches[0] : ev);
-  const dx = p.clientX - stick.cx;
-  const dy = p.clientY - stick.cy;
-  const m = Math.hypot(dx,dy);
-  const lim = stick.max;
-  const nx = (m>lim? dx/m*lim : dx);
-  const ny = (m>lim? dy/m*lim : dy);
-  stick.dx = nx/lim;
-  stick.dy = ny/lim;
+  e.preventDefault();
+  const p=('touches'in e? e.touches[0] : e);
+  const dx=p.clientX-stick.cx, dy=p.clientY-stick.cy, m=Math.hypot(dx,dy), lim=stick.max;
+  const nx = m>lim? dx/m*lim : dx; const ny = m>lim? dy/m*lim : dy;
+  stick.dx = nx/lim; stick.dy = ny/lim;
   stickKnob.style.transform = `translate(calc(-50% + ${nx}px), calc(-50% + ${ny}px))`;
 }
-function onStickEnd(ev){
-  ev.preventDefault();
-  stick.active=false; stick.dx=0; stick.dy=0;
-  stickKnob.style.transform = `translate(-50%,-50%)`;
-}
+function onStickEnd(e){ e.preventDefault(); stick.active=false; stick.dx=0; stick.dy=0; stickKnob.style.transform='translate(-50%,-50%)'; }
 stickPad.addEventListener('touchstart', onStickStart, {passive:false});
 stickPad.addEventListener('touchmove', onStickMove, {passive:false});
 stickPad.addEventListener('touchend', onStickEnd, {passive:false});
@@ -168,403 +115,323 @@ stickPad.addEventListener('mousedown', onStickStart);
 addEventListener('mousemove', e=>stick.active&&onStickMove(e));
 addEventListener('mouseup', onStickEnd);
 
-function fireStart(ev){ ev.preventDefault(); firing=true; }
-function fireEnd(ev){ ev.preventDefault(); firing=false; }
+function fireStart(e){ e.preventDefault(); firing=true; }
+function fireEnd(e){ e.preventDefault(); firing=false; }
 fireBtn.addEventListener('touchstart', fireStart, {passive:false});
 fireBtn.addEventListener('touchend', fireEnd, {passive:false});
 fireBtn.addEventListener('mousedown', fireStart);
 addEventListener('mouseup', fireEnd);
 
-// Tap to switch controlled character (tap near ally -> select; else cycle next alive)
-cv.addEventListener('click', (e)=>{
-  const p = toCanvasXY(e);
-  let best=null,bd=1e9, idx=-1;
-  for(let i=0;i<team.length;i++){
-    const a=team[i]; if(!a.alive) continue;
-    const d=Math.hypot(a.x - p.x, a.y - p.y);
-    if(d<bd){ bd=d; best=i; }
-  }
-  if(best!=null && bd<80*DPR){ controlIndex = best; controlTarget = team[controlIndex]; }
-  else{ // cycle next alive
-    for(let k=1;k<=team.length;k++){
-      const j=(controlIndex+k)%team.length;
-      if(team[j].alive){ controlIndex=j; controlTarget=team[j]; break; }
-    }
-  }
-});
+// ===== World =====
+const world={ speed: 120, t:0, distance:0, score:0 }; // 速度も少し落としてミニスケール寄り
+const walls={ top: 20, bottom: ()=>H-20 };
 
-// ===== Game Objects =====
-const world = {
-  speed: 160, // px/sec scroll to left
-  t: 0,
-  distance: 0, // meters
-  score: 0,
-};
-const walls = {top: 40, bottom: ()=>H-40};
+// ===== Entities（32px基準） =====
+const TARGET_SPRITE = 32;                 // 目標サイズ（幅基準）
+const ALLY_SPEED = 180;                   // 編隊移動速度
+const BULLET_SPEED = 360;                 // 自弾速度
+const EBULLET_SPEED = 120;                // 敵弾（遅め）
+const FORM_SPACING = 14;                  // 編隊間隔（px）
+const COIN_R = 8;                         // コイン半径（判定用）
+const BULLET_R = 3;                       // 弾半径（見た目＆判定）
+const HP_MAX = 10;
 
-// Player bullets & enemy bullets
-const bullets = [];
-const ebullets = [];
-function spawnBullet(x,y,vx,vy, dmg=1, from='ally'){
-  bullets.push({x,y,vx,vy,r:6*DPR, dmg, from});
-}
+const bullets=[], ebullets=[], enemies=[], coins=[];
+function spawnBullet(x,y){ bullets.push({x,y,vx:BULLET_SPEED,vy:0,r:BULLET_R*DPR,dmg:1}); }
 function spawnEBullet(x,y,tx,ty){
-  const ang = Math.atan2(ty-y, tx-x);
-  const sp = 140; // slow bullet
-  const vx = Math.cos(ang)*sp, vy=Math.sin(ang)*sp;
-  ebullets.push({x,y,vx,vy,r:6*DPR, dmg:1});
+  const a=Math.atan2(ty-y, tx-x);
+  ebullets.push({x,y,vx:Math.cos(a)*EBULLET_SPEED,vy:Math.sin(a)*EBULLET_SPEED,r:BULLET_R*DPR,dmg:1});
 }
 
-// Team (player+allies)
-function makeAlly(imgName, ix){
-  const im = images[imgName];
+function makeAlly(imgKey, idx){
+  const im=images[imgKey];
+  const scale = (TARGET_SPRITE*DPR) / Math.max(1, im.width);
   return {
-    sprite: im, x: 160*DPR, y: (H*0.5 + (ix-1.5)*70*DPR),
-    vx:0, vy:0, w: im.width, h: im.height, scale: 0.8*DPR,
-    hpMax:10, hp:10, alive:true, dying:false, dieT:0, rot:0,
-    fire:{ammo:10, ammoMax:10, cd:0, rate:0.12, reload:0, reloadTime:0.5},
-    aiBias: (ix-1.5)*24*DPR, // formation offset
+    sprite:im, scale,
+    x: 120*DPR + idx*20*DPR,
+    y: clamp(H*0.5 + (idx-1.5)*FORM_SPACING*DPR, walls.top+18*DPR, walls.bottom()-18*DPR),
+    vx:0, vy:0,
+    hpMax:HP_MAX, hp:HP_MAX,
+    alive:true, dying:false, rot:0, dieT:0,
+    fire:{ammo:10, ammoMax:10, cd:0, rate:0.10, reload:0, reloadTime:0.5},
+    bias:(idx-1.5)*FORM_SPACING*DPR
   };
 }
-let team=[];
-let controlIndex=0;
-let controlTarget=null;
-
+let team=[], controlIndex=0, controlTarget=null;
 function initTeam(){
-  team = [
-    makeAlly('red',0),    // forced initial control = red
-    makeAlly('blue',1),
-    makeAlly('orange',2),
-    makeAlly('ver',3),
-  ];
+  team=[ makeAlly('red',0), makeAlly('blue',1), makeAlly('orange',2), makeAlly('ver',3) ];
   controlIndex=0; controlTarget=team[0];
-  // Stagger positions
-  for(let i=0;i<team.length;i++){
-    team[i].x += i*34*DPR;
-    team[i].y = clamp(team[i].y, walls.top+40*DPR, walls.bottom()-40*DPR);
-  }
 }
 
-// Enemies & coins
-const enemies=[];
-const coins=[];
 function spawnEnemy(){
-  const im = images.enemy;
-  const y = rand(walls.top+60*DPR, walls.bottom()-60*DPR);
-  const ex = W + rand(40*DPR, 220*DPR);
+  const im=images.enemy;
+  const scale=(TARGET_SPRITE*DPR)/Math.max(1, im.width); // 敵も同程度サイズ
+  const y = rand(walls.top+24*DPR, walls.bottom()-24*DPR);
+  const x = W + rand(24*DPR, 160*DPR);
   enemies.push({
-    sprite:im, x:ex, y, vx:-world.speed*0.2, vy:0, w:im.width, h:im.height, scale:0.9*DPR,
-    hp:3, alive:true, fireCd: rand(0.6,1.6), targetDistance: 260*DPR
+    sprite:im, scale, x,y, hp:3, alive:true,
+    fireCd: rand(0.9,1.7), targetDistance: 200*DPR
   });
 }
 function spawnCoin(){
-  const im = images.coin;
-  const y = rand(walls.top+40*DPR, walls.bottom()-40*DPR);
-  const x = W + rand(20*DPR, 200*DPR);
-  coins.push({sprite:im,x,y,vx:-world.speed*0.9, r:16*DPR, taken:false});
+  const im=images.coin;
+  const scale=(20*DPR)/Math.max(1, im.width); // 小さめコイン
+  const y = rand(walls.top+22*DPR, walls.bottom()-22*DPR);
+  const x = W + rand(10*DPR, 120*DPR);
+  coins.push({sprite:im,scale,x,y,vx:-world.speed*0.9, taken:false});
 }
 
-// ===== Collision Helpers =====
+// ===== Helpers =====
 function hitCircleRect(cx,cy,cr, rx,ry,rw,rh){
-  const nx = clamp(cx, rx, rx+rw);
-  const ny = clamp(cy, ry, ry+rh);
+  const nx = Math.max(rx, Math.min(cx, rx+rw));
+  const ny = Math.max(ry, Math.min(cy, ry+rh));
   const dx=cx-nx, dy=cy-ny;
   return dx*dx+dy*dy <= cr*cr;
 }
-function rectsOverlap(a,b){
-  return !(a.x+a.w<a.bx || a.x>b.bx+b.bw || a.y+a.h<b.by || a.y>b.by+b.bh);
-}
-
-// ===== Update & Render =====
-let last = 0;
-function update(dt){
-  world.t += dt;
-  const pxs = world.speed * dt;
-  world.distance += (world.speed*dt)/100; // ~ px -> m rough
-  // Spawn pacing increases with distance
-  const diff = Math.min(1, world.distance/1500); // ramps by 1500m
-  // Enemy spawn
-  if(Math.random() < (0.6+diff*1.2)*dt) spawnEnemy();
-  // Coin spawn
-  if(Math.random() < (0.8+diff*0.8)*dt) spawnCoin();
-
-  // Move background via world.t (render step)
-  // Team control
-  for(let i=0;i<team.length;i++){
-    const a=team[i];
-    if(!a.alive){
-      if(a.dying){
-        a.dieT += dt;
-        a.rot += dt*4;
-        a.y += 120*dt;
-        if(a.dieT>0.8) a.alive=false; // remove flag (kept for corpse fade)
-      }
-      continue;
-    }
-    // Movement: player controlled vs ally AI
-    if(i===controlIndex){
-      // virtual stick
-      const moveSpeed = 240*DPR;
-      a.vx = stick.dx * moveSpeed;
-      a.vy = stick.dy * moveSpeed;
-    }else{
-      // simple formation AI: follow control target with bias, avoid walls
-      const tgtX = controlTarget.x - 100*DPR + a.aiBias;
-      const tgtY = clamp(controlTarget.y + a.aiBias*0.3, walls.top+40*DPR, walls.bottom()-40*DPR);
-      a.vx = (tgtX - a.x)*1.8;
-      a.vy = (tgtY - a.y)*1.8;
-    }
-    a.x = clamp(a.x + a.vx*dt, 40*DPR, W*0.7);
-    a.y = clamp(a.y + a.vy*dt, walls.top+24*DPR, walls.bottom()-24*DPR);
-
-    // Firing control
-    a.fire.cd -= dt;
-    if(a.fire.reload>0){
-      a.fire.reload -= dt;
-      if(a.fire.reload<=0){
-        a.fire.ammo = a.fire.ammoMax;
-      }
-    }else{
-      // Only shoot if it's the controlled one and firing is held
-      // Allies will also take opportunistic shots when enemy is near front
-      const shouldShoot = (i===controlIndex && firing) ||
-                          (i!==controlIndex && nearestEnemyInFront(a, 420*DPR));
-      if(shouldShoot && a.fire.cd<=0 && a.fire.ammo>0){
-        a.fire.cd = a.fire.rate;
-        a.fire.ammo--;
-        spawnBullet(a.x + 36*DPR, a.y, 420, 0, 1, 'ally');
-        if(a.fire.ammo===0){ a.fire.reload = a.fire.reloadTime; }
-      }
-    }
-  }
-
-  // Enemy behavior
-  for(const e of enemies){
-    if(!e.alive) continue;
-    // keep to right side, maintain distance to controlled player
-    const targetX = Math.max(W*0.65, Math.min(W-60*DPR, controlTarget.x + e.targetDistance));
-    const targetY = clamp(controlTarget.y + Math.sin(world.t*1.5+e.y*0.01)*40, walls.top+40*DPR, walls.bottom()-40*DPR);
-    e.x += (targetX - e.x)*0.8*dt - world.speed*dt; // include world scroll
-    e.y += (targetY - e.y)*0.6*dt;
-    e.fireCd -= dt;
-    if(e.fireCd<=0){
-      spawnEBullet(e.x-20*DPR, e.y, controlTarget.x, controlTarget.y);
-      e.fireCd = rand(1.1, 1.9) - diff*0.4; // slightly more frequent later
-    }
-    if(e.x<-120*DPR) e.alive=false;
-  }
-
-  // Bullets
-  for(const b of bullets){
-    b.x += b.vx*dt; b.y += b.vy*dt; b.x += -world.speed*dt*0.2; // slight parallax
-  }
-  for(const b of ebullets){
-    b.x += b.vx*dt; b.y += b.vy*dt; b.x += -world.speed*dt*0.2;
-  }
-
-  // Coins
-  for(const c of coins){
-    c.x += c.vx*dt;
-    if(c.x<-40*DPR) c.taken=true;
-  }
-
-  // Collisions: ally bullets vs enemies
-  for(const b of bullets){
-    if(b.from!=='ally') continue;
-    for(const e of enemies){
-      if(!e.alive) continue;
-      // simple circle-rect
-      const rw = e.sprite.width*e.scale, rh = e.sprite.height*e.scale;
-      const rx = e.x - rw*0.5, ry = e.y - rh*0.5;
-      if(hitCircleRect(b.x,b.y,b.r, rx,ry,rw,rh)){
-        e.hp -= b.dmg; b.x = -1e9; // remove
-        if(e.hp<=0){ e.alive=false; // drop coin sometimes
-          if(Math.random()<0.6) spawnCoin();
-          world.score += 20;
-        }else{
-          world.score += 5;
-        }
-      }
-    }
-  }
-  // Enemy bullets vs team
-  for(const eb of ebullets){
-    for(const a of team){
-      if(!a.alive || a.dying) continue;
-      const rw = a.sprite.width*a.scale, rh = a.sprite.height*a.scale;
-      const rx = a.x - rw*0.5, ry = a.y - rh*0.5;
-      if(hitCircleRect(eb.x,eb.y,eb.r, rx,ry,rw,rh)){
-        a.hp -= 1; eb.x = -1e9;
-        if(a.hp<=0 && !a.dying){
-          a.dying=true; a.alive=false; a.dieT=0; a.rot=0;
-          // slight spin/fade handled in render
-        }
-      }
-    }
-  }
-  // Coins pick-up by any team member
-  for(const c of coins){
-    if(c.taken) continue;
-    for(const a of team){
-      if(!a.alive) continue;
-      const rw = a.sprite.width*a.scale, rh = a.sprite.height*a.scale;
-      const rx = a.x - rw*0.5, ry = a.y - rh*0.5;
-      if(hitCircleRect(c.x,c.y,c.r, rx,ry,rw,rh)){
-        c.taken=true; world.score += 10; break;
-      }
-    }
-  }
-
-  // Cleanup
-  pruneInPlace(bullets, b=> b.x>-60*DPR && b.x<W+60*DPR && b.y>-60*DPR && b.y<H+60*DPR);
-  pruneInPlace(ebullets, b=> b.x>-60*DPR && b.x<W+60*DPR && b.y>-60*DPR && b.y<H+60*DPR);
-  pruneInPlace(enemies, e=> e.alive || e.x>-200*DPR);
-  pruneInPlace(coins, c=> !c.taken);
-
-  // HUD
-  HUD.score.textContent = world.score|0;
-  const ctrl = team[controlIndex];
-  if(ctrl){
-    const a = ctrl.fire;
-    HUD.ammo.textContent = `${a.ammo} / ${a.ammoMax}`;
-    HUD.reload.textContent = a.reload>0 ? `RELOAD ${a.reload.toFixed(2)}s` : '';
-  }
-  HUD.distTxt.textContent = `${(world.distance|0)} m`;
-  HUD.distFill.style.width = `${Math.min(100, (world.distance%1000)/10)}%`;
-}
-function pruneInPlace(arr, keep){
-  let w=0; for(let i=0;i<arr.length;i++){ if(keep(arr[i])) arr[w++]=arr[i]; }
-  arr.length=w;
-}
 function nearestEnemyInFront(a, range){
-  let ok=false;
   for(const e of enemies){
     if(!e.alive) continue;
-    if(e.x > a.x && e.x - a.x < range && Math.abs(e.y-a.y)<80*DPR){ ok=true; break; }
+    if(e.x>a.x && e.x-a.x<range && Math.abs(e.y-a.y)<50*DPR) return true;
   }
-  return ok;
+  return false;
 }
+function prune(arr, keep){ let w=0; for(let i=0;i<arr.length;i++) if(keep(arr[i])) arr[w++]=arr[i]; arr.length=w; }
 
-function render(){
-  ctx.clearRect(0,0,W,H);
-  // BG gradient + starfield parallax
-  const g = ctx.createLinearGradient(0,0,0,H);
-  g.addColorStop(0,'#081028'); g.addColorStop(1,'#04060f');
-  ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+// ===== Update =====
+let last=0;
+function update(dt){
+  world.t+=dt;
+  world.distance += (world.speed*dt)/70; // 短い画面でも進んだ感を出す
 
-  // Parallax stripes
-  const t = world.t;
-  ctx.globalAlpha = 0.25;
-  ctx.fillStyle='#0ff2';
-  const speed1 = world.speed*0.5;
-  for(let y=walls.top; y<H-walls.top; y+=48*DPR){
-    const x = (W - ((t*speed1 + y*22)% (W+200))) - 200;
-    ctx.fillRect(x, y, 180, 2);
-  }
-  ctx.globalAlpha = 1;
-
-  // Walls (top/bottom)
-  ctx.fillStyle='#1a253a';
-  ctx.fillRect(0,0,W,walls.top);
-  ctx.fillRect(0,walls.bottom(),W,H-walls.bottom());
-  ctx.strokeStyle='#2e3e63'; ctx.lineWidth=4*DPR;
-  ctx.beginPath(); ctx.moveTo(0, walls.top); ctx.lineTo(W, walls.top); ctx.stroke();
-  ctx.beginPath(); ctx.moveTo(0, walls.bottom()); ctx.lineTo(W, walls.bottom()); ctx.stroke();
-
-  // Coins
-  for(const c of coins){
-    const s=0.8*DPR;
-    const w=images.coin.width*s, h=images.coin.height*s;
-    ctx.save();
-    ctx.translate(c.x, c.y);
-    const wob = Math.sin(t*6 + c.x*0.01)*0.1;
-    ctx.rotate(wob);
-    ctx.drawImage(images.coin, -w/2, -h/2, w, h);
-    ctx.restore();
-  }
-
-  // Enemies
-  for(const e of enemies){
-    if(!e.alive) continue;
-    const s=e.scale;
-    const w=e.sprite.width*s, h=e.sprite.height*s;
-    ctx.drawImage(e.sprite, e.x-w/2, e.y-h/2, w, h);
-  }
-
-  // Ally bullets
-  ctx.fillStyle='#aff';
-  for(const b of bullets){
-    ctx.beginPath(); ctx.arc(b.x,b.y,b.r,0,Math.PI*2); ctx.fill();
-  }
-  // Enemy bullets
-  ctx.fillStyle='#f88';
-  for(const b of ebullets){
-    ctx.beginPath(); ctx.arc(b.x,b.y,b.r,0,Math.PI*2); ctx.fill();
-  }
+  // 出現密度（距離に応じて増やす）
+  const diff = Math.min(1, world.distance/1200);
+  if(Math.random() < (0.45+diff*1.0)*dt) spawnEnemy();
+  if(Math.random() < (0.6+diff*0.8)*dt) spawnCoin();
 
   // Team
   for(let i=0;i<team.length;i++){
     const a=team[i];
-    const s=a.scale;
-    const w=a.sprite.width*s, h=a.sprite.height*s;
-    ctx.save();
-    ctx.translate(a.x, a.y);
+    if(!a.alive && !a.dying) continue;
     if(a.dying){
-      const alpha = Math.max(0,1 - a.dieT/0.8);
-      ctx.globalAlpha = alpha;
-      ctx.rotate(a.rot);
-      ctx.drawImage(a.sprite,-w/2,-h/2,w,h);
-      ctx.restore();
+      a.dieT+=dt; a.rot+=dt*6; a.y += 100*dt;
+      if(a.dieT>0.8) { /* keep faded by render then removed */ }
       continue;
     }
+    if(i===controlIndex){
+      a.vx = stick.dx * ALLY_SPEED*DPR;
+      a.vy = stick.dy * ALLY_SPEED*DPR;
+    }else{
+      const tx = controlTarget.x - 70*DPR + a.bias;
+      const ty = clamp(controlTarget.y + a.bias*0.3, walls.top+18*DPR, walls.bottom()-18*DPR);
+      a.vx = (tx - a.x)*4;
+      a.vy = (ty - a.y)*4;
+    }
+    a.x = clamp(a.x + a.vx*dt, 24*DPR, W*0.7);
+    a.y = clamp(a.y + a.vy*dt, walls.top+16*DPR, walls.bottom()-16*DPR);
+
+    // 射撃
+    a.fire.cd -= dt;
+    if(a.fire.reload>0){
+      a.fire.reload -= dt;
+      if(a.fire.reload<=0) a.fire.ammo=a.fire.ammoMax;
+    }else{
+      const should = (i===controlIndex && firing) || (i!==controlIndex && nearestEnemyInFront(a, 260*DPR));
+      if(should && a.fire.cd<=0 && a.fire.ammo>0){
+        a.fire.cd = a.fire.rate; a.fire.ammo--;
+        spawnBullet(a.x + 18*DPR, a.y);
+        if(a.fire.ammo===0) a.fire.reload = a.fire.reloadTime;
+      }
+    }
+  }
+
+  // Enemies（右寄り＆距離保持）
+  for(const e of enemies){
+    if(!e.alive) continue;
+    const targetX = Math.max(W*0.68, Math.min(W-40*DPR, controlTarget.x + e.targetDistance));
+    const targetY = clamp(controlTarget.y + Math.sin(world.t*1.8+e.y*0.02)*22, walls.top+18*DPR, walls.bottom()-18*DPR);
+    e.x += (targetX - e.x)*0.7*dt - world.speed*dt;
+    e.y += (targetY - e.y)*0.6*dt;
+    e.fireCd -= dt;
+    if(e.fireCd<=0){
+      spawnEBullet(e.x-10*DPR, e.y, controlTarget.x, controlTarget.y);
+      e.fireCd = rand(1.0,1.8) - diff*0.35;
+    }
+    if(e.x<-80*DPR) e.alive=false;
+  }
+
+  // Bullets
+  for(const b of bullets){ b.x += (b.vx - world.speed*0.15)*dt; b.y += b.vy*dt; }
+  for(const b of ebullets){ b.x += (b.vx - world.speed*0.15)*dt; b.y += b.vy*dt; }
+
+  // Coins
+  for(const c of coins){ c.x += c.vx*dt; if(c.x<-24*DPR) c.taken=true; }
+
+  // 衝突：味方弾→敵
+  for(const b of bullets){
+    for(const e of enemies){
+      if(!e.alive) continue;
+      const w=e.sprite.width*e.scale, h=e.sprite.height*e.scale;
+      const rx=e.x-w/2, ry=e.y-h/2;
+      if(hitCircleRect(b.x,b.y,b.r, rx,ry,w,h)){
+        e.hp--; b.x=-1e9;
+        if(e.hp<=0){ e.alive=false; world.score+=20; if(Math.random()<0.6) spawnCoin(); } else { world.score+=5; }
+      }
+    }
+  }
+  // 衝突：敵弾→編隊
+  for(const eb of ebullets){
+    for(const a of team){
+      if(!a.alive || a.dying) continue;
+      const w=a.sprite.width*a.scale, h=a.sprite.height*a.scale;
+      const rx=a.x-w/2, ry=a.y-h/2;
+      if(hitCircleRect(eb.x,eb.y,eb.r, rx,ry,w,h)){
+        a.hp--; eb.x=-1e9;
+        if(a.hp<=0){ a.dying=true; a.alive=false; a.dieT=0; a.rot=0; }
+      }
+    }
+  }
+  // コイン取得
+  for(const c of coins){
+    if(c.taken) continue;
+    for(const a of team){
+      if(!a.alive) continue;
+      const w=a.sprite.width*a.scale, h=a.sprite.height*a.scale;
+      if(hitCircleRect(c.x,c.y, COIN_R*DPR, a.x-w/2, a.y-h/2, w, h)){ c.taken=true; world.score+=10; break; }
+    }
+  }
+
+  // クリーンアップ
+  prune(bullets, b=> b.x>-40*DPR && b.x<W+40*DPR && b.y>-40*DPR && b.y<H+40*DPR);
+  prune(ebullets, b=> b.x>-40*DPR && b.x<W+40*DPR && b.y>-40*DPR && b.y<H+40*DPR);
+  prune(enemies, e=> e.alive || e.x>-120*DPR);
+  prune(coins, c=> !c.taken);
+
+  // HUD
+  const ctrl=team[controlIndex];
+  if(ctrl){
+    HUD.ammo.textContent = `${ctrl.fire.ammo} / ${ctrl.fire.ammoMax}`;
+    HUD.reload.textContent = ctrl.fire.reload>0 ? `RELOAD ${ctrl.fire.reload.toFixed(2)}s` : '';
+  }
+  HUD.score.textContent = world.score|0;
+  world.distance = Math.max(0, world.distance);
+  HUD.distTxt.textContent = `${(world.distance|0)} m`;
+  HUD.distFill.style.width = `${Math.min(100, (world.distance%1000)/10)}%`;
+}
+
+// ===== Render（小型UI/壁も細く） =====
+function render(){
+  ctx.clearRect(0,0,W,H);
+  // 背景
+  const g = ctx.createLinearGradient(0,0,0,H);
+  g.addColorStop(0,'#0a1126'); g.addColorStop(1,'#050814');
+  ctx.fillStyle=g; ctx.fillRect(0,0,W,H);
+
+  // パララックス細ライン
+  const t = world.t, sp=world.speed*0.45;
+  ctx.globalAlpha=0.22; ctx.fillStyle='#0ff3';
+  for(let y=walls.top; y<H-walls.top; y+=32*DPR){
+    const x = (W - ((t*sp + y*18)%(W+140))) - 140;
+    ctx.fillRect(x,y,120,1);
+  }
+  ctx.globalAlpha=1;
+
+  // 壁（薄め）
+  ctx.fillStyle='#1a253a';
+  ctx.fillRect(0,0,W,walls.top);
+  ctx.fillRect(0,walls.bottom(),W,H-walls.bottom());
+  ctx.strokeStyle='#2e3e63'; ctx.lineWidth=2*DPR;
+  ctx.beginPath(); ctx.moveTo(0, walls.top); ctx.lineTo(W, walls.top); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(0, walls.bottom()); ctx.lineTo(W, walls.bottom()); ctx.stroke();
+
+  // コイン
+  for(const c of coins){
+    const w=c.sprite.width*c.scale, h=c.sprite.height*c.scale;
+    ctx.save(); ctx.translate(c.x,c.y);
+    ctx.rotate(Math.sin(t*5 + c.x*0.02)*0.12);
+    ctx.drawImage(c.sprite,-w/2,-h/2,w,h);
+    ctx.restore();
+  }
+
+  // 敵
+  for(const e of enemies){
+    if(!e.alive) continue;
+    const w=e.sprite.width*e.scale, h=e.sprite.height*e.scale;
+    ctx.drawImage(e.sprite, e.x-w/2, e.y-h/2, w, h);
+  }
+
+  // 弾
+  ctx.fillStyle='#aff';
+  for(const b of bullets){ ctx.beginPath(); ctx.arc(b.x,b.y,b.r,0,Math.PI*2); ctx.fill(); }
+  ctx.fillStyle='#f88';
+  for(const b of ebullets){ ctx.beginPath(); ctx.arc(b.x,b.y,b.r,0,Math.PI*2); ctx.fill(); }
+
+  // 編隊
+  for(let i=0;i<team.length;i++){
+    const a=team[i];
+    const w=a.sprite.width*a.scale, h=a.sprite.height*a.scale;
+    ctx.save(); ctx.translate(a.x,a.y);
+    if(a.dying){
+      const alpha=Math.max(0,1 - a.dieT/0.8);
+      ctx.globalAlpha=alpha; ctx.rotate(a.rot);
+      ctx.drawImage(a.sprite,-w/2,-h/2,w,h);
+      ctx.restore(); continue;
+    }
     ctx.drawImage(a.sprite,-w/2,-h/2,w,h);
-    // HP bar
-    const bw=44*DPR, bh=6*DPR, bx=-bw/2, by= -h/2 - 10*DPR;
+    // HPバー（超小型）
+    const bw=26*DPR, bh=4*DPR, bx=-bw/2, by= -h/2 - 8*DPR;
     ctx.fillStyle='#000a'; ctx.fillRect(bx-1,by-1,bw+2,bh+2);
     ctx.fillStyle='#223d'; ctx.fillRect(bx,by,bw,bh);
-    const hpw = (a.hp/a.hpMax)*bw;
     ctx.fillStyle = (i===controlIndex?'#6ff':'#6f6');
-    ctx.fillRect(bx,by,hpw,bh);
-    // Selection ring
+    ctx.fillRect(bx,by,(a.hp/a.hpMax)*bw,bh);
+    // 選択リング（薄）
     if(i===controlIndex){
-      ctx.strokeStyle='#6ff'; ctx.lineWidth=2*DPR;
+      ctx.strokeStyle='#6ff'; ctx.lineWidth=1.5*DPR;
       ctx.beginPath(); ctx.arc(0,0, Math.max(w,h)*0.55, 0, Math.PI*2); ctx.stroke();
     }
     ctx.restore();
   }
 
-  // Foreground scanlines
-  ctx.globalAlpha=0.08;
-  ctx.fillStyle='#fff';
+  // 走査線（薄）
+  ctx.globalAlpha=0.06; ctx.fillStyle='#fff';
   for(let y=0;y<H;y+=2*DPR) ctx.fillRect(0,y,W,1*DPR);
   ctx.globalAlpha=1;
 }
 
+// ===== Tapで操作機体切替（近くで直接/外すと順送り） =====
+cv.addEventListener('click', (e)=>{
+  const r=cv.getBoundingClientRect(), x=(e.clientX-r.left)*DPR, y=(e.clientY-r.top)*DPR;
+  let best=-1, bd=1e9;
+  for(let i=0;i<team.length;i++){
+    const a=team[i]; if(!a.alive && !a.dying) continue;
+    const d=Math.hypot(a.x-x,a.y-y); if(d<bd){bd=d; best=i;}
+  }
+  if(best>=0 && bd<40*DPR){ controlIndex=best; controlTarget=team[controlIndex]; }
+  else{
+    for(let k=1;k<=team.length;k++){
+      const j=(controlIndex+k)%team.length;
+      if(team[j].alive || team[j].dying){ controlIndex=j; controlTarget=team[j]; break; }
+    }
+  }
+});
+
+// ===== Loop =====
 function loop(ts){
   if(!last) last=ts;
-  const dt = Math.min(0.033, (ts-last)/1000); last=ts;
-  update(dt);
-  render();
+  const dt=Math.min(0.033,(ts-last)/1000); last=ts;
+  update(dt); render();
   requestAnimationFrame(loop);
 }
 
 // ===== Start =====
-loadAll().then(()=>{
-  initTeam();
-  requestAnimationFrame(loop);
-});
+loadAll().then(()=>{ initTeam(); requestAnimationFrame(loop); });
 
-// ===== Keyboard fallback (desktop test) =====
+// ===== Keyboard（PCテスト用） =====
 const keys={};
 addEventListener('keydown',e=>{ keys[e.key]=true; if(e.key===' ') firing=true; });
 addEventListener('keyup',e=>{ keys[e.key]=false; if(e.key===' ') firing=false; });
 setInterval(()=>{
-  if(keys['ArrowUp']) stick.dy=-1;
-  if(keys['ArrowDown']) stick.dy= 1;
-  if(keys['ArrowLeft']) stick.dx=-1;
-  if(keys['ArrowRight']) stick.dx= 1;
-  if(!keys['ArrowUp']&&!keys['ArrowDown']) stick.dy=0;
-  if(!keys['ArrowLeft']&&!keys['ArrowRight']) stick.dx=0;
+  stick.dy = (keys['ArrowUp']?-1:0) + (keys['ArrowDown']?1:0);
+  stick.dx = (keys['ArrowLeft']?-1:0) + (keys['ArrowRight']?1:0);
 }, 16);
 
 })();
