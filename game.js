@@ -28,7 +28,7 @@ const PLAYERS=[
 const GAMES=[
   {no:1,key:"reaction",title:"反射神経",sub:"MOBを押すまでのタイム"},
   {no:2,key:"memory",title:"記憶力ゲーム",sub:"10枚の点灯順を記憶"},
-  {no:3,key:"puzzle",title:"スライドパズル",sub:"3×3タイムアタック"},
+  {no:3,key:"puzzle",title:"9ピース はめ込みパズル",sub:"9個のピースを正しい場所にはめる"},
   {no:4,key:"launch",title:"フィギュア飛ばし",sub:"2ゲージ平均で飛距離勝負"}
 ];
 
@@ -115,7 +115,7 @@ function showGameIntro(index){
   const rules=index===0?
     `<li>READY? → 3・2・1 → ランダム待機後、大きなMOBボタンが出現。</li><li>MOB表示からタップまでを0.01秒単位で計測。</li><li>速いほど上位。</li>`:
     index===1?`<li>icon/01.png〜10.pngを10枚ランダム配置。</li><li>3・2・1 → 10枚が順番に光ります。</li><li>もう一度3・2・1 → 光った順番にタップ。</li><li>間違えた時点で終了。同じ正解数は同着。</li>`:
-    index===2?`<li>icon/006.pngを3×3の9分割として使用。</li><li>8ピース + 空き1マスのスライド式。</li><li>必ず解ける配置にシャッフル。</li><li>完成タイムが速いほど上位。</li>`:
+    index===2?`<li>icon/006.pngを<strong>3×3の9ピース</strong>に分割。</li><li>下のピース置き場から1個選び、上の正しいマスをタップしてはめ込みます。</li><li>正しい場所ならその場に固定。違う場所ならピースは戻ります。</li><li>完成見本と薄いガイドを表示する、遊びやすい仕様。</li><li>9個すべてをはめるまでのタイムが速いほど上位。</li>`:
     `<li>最初に横長ゲージ、次に円形ゲージを止めます。</li><li>どちらも端に近いほどパワー100%。</li><li>2ゲージの平均値で飛距離を決定。</li><li>棒にパワーが集まり、icon/01.pngのフィギュアを打ち出します。</li><li>カメラが追尾し、飛距離をリアルタイム表示。</li>`;
   screen.innerHTML=`
     <div class="game-head"><div><span class="kicker">GAME ${g.no} / 4</span><h2>${g.title}</h2><p class="lead">${g.sub}</p></div><div class="game-badge">${g.no}/4</div></div>
@@ -130,7 +130,7 @@ function humanReady(gameIndex,humanIndex){
   const list=humans();
   if(humanIndex>=list.length){return cpus().length?simulateCpuThenResult(gameIndex):finishGame(gameIndex)}
   const p=list[humanIndex],g=GAMES[gameIndex];
-  screen.innerHTML=`<div class="ready-wrap"><div class="ready-card">${imgTag(p,"ready-avatar")}<span class="kicker">GAME ${g.no} / PLAYER ${humanIndex+1} OF ${list.length}</span><div class="ready-big">READY?</div><div class="ready-name">${esc(p.name)}</div><div class="ready-sub">${mode().team?teamName(p.id):`PLAYER ${p.no}`}</div><button id="readyBtn" class="primary">準備OK</button></div></div>`;
+  screen.innerHTML=`<div class="ready-wrap"><div class="ready-card">${imgTag(p,"ready-avatar")}<span class="kicker">GAME ${g.no} / PLAYER ${humanIndex+1} OF ${list.length}</span><div class="ready-big">READY?</div><div class="ready-name">${esc(p.name)}</div><div class="ready-sub">${mode().team?teamName(p.id):`PLAYER ${p.no}`}</div>${gameIndex===2?`<div class="puzzle-ready-guide"><span>完成見本</span><img src="icon/006.png" alt="完成見本" onerror="this.style.visibility='hidden'"><small>9個を正しい場所にはめるだけです</small></div>`:""}<button id="readyBtn" class="primary">準備OK</button></div></div>`;
   document.getElementById("readyBtn").addEventListener("click",()=>{
     if(gameIndex===0)startReaction(p,humanIndex);
     else if(gameIndex===1)startMemory(p,humanIndex);
@@ -166,18 +166,62 @@ async function startMemory(p,humanIndex){
 
 // GAME 3 -------------------------------------------------
 async function startPuzzle(p,humanIndex){
-  let layout=makePuzzle();let moves=0,running=false,t0=0;
-  screen.innerHTML=`<div class="game-head"><div><span class="kicker">${esc(p.name)}</span><h2>スライドパズル</h2></div><div class="game-badge">${humanIndex+1}/4</div></div><div class="puzzle-wrap"><div class="puzzle-meta"><div class="stat-box"><span>TIME</span><b id="puzTime">0.00</b></div><div class="stat-box"><span>MOVE</span><b id="puzMove">0</b></div></div><div id="puzzleBoard" class="puzzle-board"></div><p class="hint">空きマスの上下左右にあるピースをタップ。</p></div>`;
-  const board=document.getElementById("puzzleBoard"),timeEl=document.getElementById("puzTime"),moveEl=document.getElementById("puzMove");
-  function draw(){board.innerHTML=layout.map((v,pos)=>{if(v===null)return `<div class="puzzle-empty" data-pos="${pos}"></div>`;const col=v%3,row=Math.floor(v/3),x=col*50,y=row*50;return `<button type="button" class="puzzle-tile" data-pos="${pos}" style="background-size:300% 300%;background-position:${x}% ${y}%"></button>`}).join("")}
-  draw();await countdown("PUZZLE");running=true;t0=performance.now();
-  const tick=()=>{if(!running)return;timeEl.textContent=(Math.floor((performance.now()-t0)/10)/100).toFixed(2);activeAnimation=requestAnimationFrame(tick)};activeAnimation=requestAnimationFrame(tick);
-  board.addEventListener("pointerdown",async e=>{const t=e.target.closest(".puzzle-tile");if(!t||!running)return;const pos=Number(t.dataset.pos),blank=layout.indexOf(null);if(!adjacent3(pos,blank))return;[layout[pos],layout[blank]]=[layout[blank],layout[pos]];moves++;moveEl.textContent=moves;beep(530,32,.015);draw();if(solved3(layout)){running=false;cancelActiveAnimation();const cs=Math.max(1,Math.round((performance.now()-t0)/10));state.records.puzzle[p.id]=cs;beep(900,110,.035);await wait(320);recordScreen(2,p,humanIndex,`${(cs/100).toFixed(2)}<small>秒</small>`,`${moves} MOVE`)}});
+  const trayOrder=shuffle(Array.from({length:9},(_,i)=>i));
+  const placed=Array(9).fill(null);
+  let selected=null,finished=false,t0=0,tries=0;
+  screen.innerHTML=`<div class="game-head"><div><span class="kicker">${esc(p.name)}</span><h2>9ピース はめ込みパズル</h2><p class="lead">9個を正しい場所にはめよう</p></div><div class="game-badge">${humanIndex+1}/4</div></div>
+    <div class="fit-wrap">
+      <div class="puzzle-meta"><div class="stat-box"><span>TIME</span><b id="puzTime">0.00</b></div><div class="stat-box"><span>FIT</span><b id="puzFit">0 / 9</b></div></div>
+      <div class="fit-guide"><img src="icon/006.png" alt="完成見本" onerror="this.style.visibility='hidden'"><div><b>完成見本</b><span>下のピースを選んで、上の同じ場所をタップ</span></div></div>
+      <div id="fitBoard" class="fit-board" aria-label="はめ込み先"></div>
+      <div class="fit-tray-title"><b>PIECE</b><span id="fitHint">ピースを1個タップ</span></div>
+      <div id="fitTray" class="fit-tray"></div>
+    </div>`;
+
+  const board=document.getElementById("fitBoard"),tray=document.getElementById("fitTray"),timeEl=document.getElementById("puzTime"),fitEl=document.getElementById("puzFit"),hint=document.getElementById("fitHint");
+  const pieceStyle=id=>{const col=id%3,row=Math.floor(id/3),x=col*50,y=row*50;return `background-size:300% 300%;background-position:${x}% ${y}%`};
+
+  function drawBoard(){
+    board.innerHTML=Array.from({length:9},(_,slot)=>{
+      const id=placed[slot];
+      if(id===slot)return `<div class="fit-slot filled" data-slot="${slot}"><div class="fit-piece fixed" style="${pieceStyle(id)}"></div></div>`;
+      return `<button type="button" class="fit-slot" data-slot="${slot}" aria-label="${slot+1}番の場所"><div class="fit-ghost" style="${pieceStyle(slot)}"></div><span>${slot+1}</span></button>`;
+    }).join("");
+  }
+  function drawTray(){
+    tray.innerHTML=trayOrder.map(id=>{
+      if(placed[id]===id)return `<div class="fit-piece-space"></div>`;
+      return `<button type="button" class="fit-piece ${selected===id?"selected":""}" data-piece="${id}" style="${pieceStyle(id)}" aria-label="ピース${id+1}"><span>${id+1}</span></button>`;
+    }).join("");
+  }
+  function selectPiece(id){
+    if(finished||placed[id]===id)return;
+    selected=id;drawTray();hint.textContent=`ピース ${id+1} を選択中 → 上の場所をタップ`;
+    beep(560,35,.015);
+  }
+  async function tryFit(slot){
+    if(finished)return;
+    if(selected===null){hint.textContent="先に下のピースを1個タップ";beep(190,55,.018);return;}
+    tries++;
+    if(selected===slot){
+      placed[slot]=selected;selected=null;drawBoard();drawTray();
+      const count=placed.filter((v,i)=>v===i).length;fitEl.textContent=`${count} / 9`;hint.textContent=count<9?"OK! 次のピースを選んでください":"COMPLETE!";
+      beep(800,65,.025);
+      const target=board.querySelector(`[data-slot="${slot}"]`);if(target)target.classList.add("just-fit");
+      if(count===9){
+        finished=true;cancelActiveAnimation();const cs=Math.max(1,Math.round((performance.now()-t0)/10));state.records.puzzle[p.id]=cs;beep(940,130,.04);await wait(420);recordScreen(2,p,humanIndex,`${(cs/100).toFixed(2)}<small>秒</small>`,`9 / 9 COMPLETE`);
+      }
+    }else{
+      const wrong=board.querySelector(`[data-slot="${slot}"]`);if(wrong){wrong.classList.add("wrong-fit");setTimeout(()=>wrong.classList.remove("wrong-fit"),260)}
+      hint.textContent="そこではありません。別の場所へ！";beep(170,120,.025);
+    }
+  }
+
+  drawBoard();drawTray();await countdown("PUZZLE");t0=performance.now();
+  const tick=()=>{if(finished)return;timeEl.textContent=(Math.floor((performance.now()-t0)/10)/100).toFixed(2);activeAnimation=requestAnimationFrame(tick)};activeAnimation=requestAnimationFrame(tick);
+  tray.addEventListener("pointerdown",e=>{const t=e.target.closest(".fit-piece[data-piece]");if(!t)return;selectPiece(Number(t.dataset.piece))});
+  board.addEventListener("pointerdown",e=>{const t=e.target.closest(".fit-slot[data-slot]");if(!t||t.classList.contains("filled"))return;tryFit(Number(t.dataset.slot))});
 }
-function adjacent3(a,b){const ar=Math.floor(a/3),ac=a%3,br=Math.floor(b/3),bc=b%3;return Math.abs(ar-br)+Math.abs(ac-bc)===1}
-function neighbors3(i){const r=Math.floor(i/3),c=i%3,a=[];if(r>0)a.push(i-3);if(r<2)a.push(i+3);if(c>0)a.push(i-1);if(c<2)a.push(i+1);return a}
-function makePuzzle(){let a=[0,1,2,3,4,5,6,7,null],blank=8,prev=-1;for(let i=0;i<150;i++){const o=neighbors3(blank).filter(x=>x!==prev),pick=o[Math.floor(Math.random()*o.length)];[a[blank],a[pick]]=[a[pick],a[blank]];prev=blank;blank=pick}return solved3(a)?makePuzzle():a}
-function solved3(a){for(let i=0;i<8;i++)if(a[i]!==i)return false;return a[8]===null}
 
 // GAME 4 -------------------------------------------------
 async function startLaunch(p,humanIndex){
@@ -216,7 +260,7 @@ async function simulateCpuThenResult(gameIndex){
 function simulateOneCpu(gameIndex,p){
   if(gameIndex===0){const skill={c5:[20,48],c6:[22,52],c7:[18,45],c8:[17,42]}[p.id]||[20,50];state.records.reaction[p.id]=randi(skill[0],skill[1]);}
   else if(gameIndex===1){const base={c5:7,c6:8,c7:6,c8:9}[p.id]||7;state.records.memory[p.id]=clamp(base+randi(-2,1),0,10);}
-  else if(gameIndex===2){const base={c5:3900,c6:3400,c7:4600,c8:3000}[p.id]||4000;state.records.puzzle[p.id]=clamp(base+randi(-900,1000),1600,8000);}
+  else if(gameIndex===2){const base={c5:1250,c6:1080,c7:1450,c8:920}[p.id]||1200;state.records.puzzle[p.id]=clamp(base+randi(-260,320),620,2200);}
   else{const base={c5:69,c6:74,c7:65,c8:82}[p.id]||72;const power=clamp(base+randi(-16,14),18,99);const dist=Math.round(Math.pow(power/100,1.35)*2800);state.records.launch[p.id]=dist;}
 }
 
