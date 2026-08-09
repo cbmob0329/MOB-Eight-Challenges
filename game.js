@@ -36,7 +36,8 @@ const MODES={
   solo4:{name:"4人 個人戦",short:"プレイヤー4人",participants:["p1","p2","p3","p4"],team:false,points:[5,3,1,0]},
   solo8:{name:"8人 個人戦",short:"プレイヤー4人 + CPU4人",participants:["p1","p2","p3","p4","c5","c6","c7","c8"],team:false,points:[10,8,6,4,3,2,1,0]},
   tag:{name:"2対2 タッグ",short:"P1・P2 VS P3・P4",participants:["p1","p2","p3","p4"],team:true,points:[5,3,1,0],teams:{A:["p1","p2"],B:["p3","p4"]},teamNames:{A:"P1 + P2",B:"P3 + P4"}},
-  humansVsCpu:{name:"4人 VS CPU4人",short:"PLAYER TEAM VS CPU TEAM",participants:["p1","p2","p3","p4","c5","c6","c7","c8"],team:true,points:[10,8,6,4,3,2,1,0],teams:{A:["p1","p2","p3","p4"],B:["c5","c6","c7","c8"]},teamNames:{A:"PLAYER TEAM",B:"CPU TEAM"}}
+  humansVsCpu:{name:"4人 VS CPU4人",short:"PLAYER TEAM VS CPU TEAM",participants:["p1","p2","p3","p4","c5","c6","c7","c8"],team:true,points:[10,8,6,4,3,2,1,0],teams:{A:["p1","p2","p3","p4"],B:["c5","c6","c7","c8"]},teamNames:{A:"PLAYER TEAM",B:"CPU TEAM"}},
+  free:{name:"1人フリープレイ",short:"好きなゲームだけ遊ぶ",participants:["p1"],team:false,points:[0]}
 };
 
 let state=freshState();
@@ -44,7 +45,7 @@ let audioCtx=null;
 let activeAnimation=null;
 
 function freshState(){
-  return {modeKey:null,gameIndex:0,records:{reaction:{},memory:{},puzzle:{},launch:{}},total:{},gamePoints:[null,null,null,null]};
+  return {modeKey:null,gameIndex:0,freePlay:false,freeGameIndex:null,records:{reaction:{},memory:{},puzzle:{},launch:{}},total:{},gamePoints:[null,null,null,null]};
 }
 function pById(id){return PLAYERS.find(p=>p.id===id)}
 function mode(){return state.modeKey?MODES[state.modeKey]:null}
@@ -62,7 +63,12 @@ function cancelActiveAnimation(){if(activeAnimation){cancelAnimationFrame(active
 function imgTag(p,cls="avatar"){return `<img class="${cls}" src="${p.img}" alt="${esc(p.name)}" onerror="this.style.visibility='hidden'">`}
 
 homeBtn.addEventListener("click",()=>{cancelActiveAnimation();renderHome()});
-resetBtn.addEventListener("click",()=>{cancelActiveAnimation();if(state.modeKey){const k=state.modeKey;state=freshState();state.modeKey=k;initTotals();renderModeLobby()}else renderHome()});
+resetBtn.addEventListener("click",()=>{
+  cancelActiveAnimation();
+  if(state.freePlay && state.freeGameIndex!==null){startFreeGame(state.freeGameIndex);return;}
+  if(state.modeKey){const k=state.modeKey;state=freshState();state.modeKey=k;initTotals();renderModeLobby()}
+  else renderHome();
+});
 
 function renderHome(){
   cancelActiveAnimation();
@@ -81,8 +87,26 @@ function renderHome(){
         <button class="mode-card" data-mode="humansVsCpu"><span class="mode-no">MODE 04</span><b>4人 VS CPU4人</b><span>PLAYER TEAM VS CPU TEAM</span></button>
       </div>
     </section>
+    <section class="panel free-play-panel">
+      <div class="panel-head"><div><span class="kicker mini">1 PLAYER</span><h3>好きなゲームを1人で遊ぶ</h3></div><span class="tag">FREE PLAY</span></div>
+      <p class="note">順位・ポイントなし。プレイヤー1で好きなゲームだけ遊べます。</p>
+      <div class="free-game-grid">
+        ${GAMES.map((g,i)=>`<button class="free-game-card" data-free-game="${i}"><span>GAME ${g.no}</span><b>${g.title}</b><small>${g.sub}</small></button>`).join("")}
+      </div>
+    </section>
     <section class="panel flat"><h3>MINI GAMES</h3><div class="game-list">${GAMES.map(g=>`<div class="game-row"><div class="game-no">${g.no}</div><div><b>${g.title}</b><br><span>${g.sub}</span></div><span>GAME ${g.no}</span></div>`).join("")}</div></section>`;
   screen.querySelectorAll("[data-mode]").forEach(b=>b.addEventListener("click",()=>selectMode(b.dataset.mode)));
+  screen.querySelectorAll("[data-free-game]").forEach(b=>b.addEventListener("click",()=>startFreeGame(Number(b.dataset.freeGame))));
+}
+
+function startFreeGame(gameIndex){
+  state=freshState();
+  state.modeKey="free";
+  state.freePlay=true;
+  state.freeGameIndex=gameIndex;
+  state.gameIndex=gameIndex;
+  initTotals();
+  showGameIntro(gameIndex);
 }
 
 function selectMode(key){
@@ -116,13 +140,15 @@ function showGameIntro(index){
     `<li>READY? → 3・2・1 → ランダム待機後、大きなMOBボタンが出現。</li><li>MOB表示からタップまでを0.01秒単位で計測。</li><li>速いほど上位。</li>`:
     index===1?`<li>icon/01.png〜10.pngを10枚ランダム配置。</li><li>3・2・1 → 10枚が順番に光ります。</li><li>もう一度3・2・1 → 光った順番にタップ。</li><li>間違えた時点で終了。同じ正解数は同着。</li>`:
     index===2?`<li>icon/006.pngを<strong>3×3の9ピース</strong>に分割。</li><li>下のピース置き場から1個選び、上の正しいマスをタップしてはめ込みます。</li><li>正しい場所ならその場に固定。違う場所ならピースは戻ります。</li><li>完成見本と薄いガイドを表示する、遊びやすい仕様。</li><li>9個すべてをはめるまでのタイムが速いほど上位。</li>`:
-    `<li>最初に横長ゲージ、次に円形ゲージを止めます。</li><li>どちらも端に近いほどパワー100%。</li><li>2ゲージの平均値で飛距離を決定。</li><li>棒にパワーが集まり、icon/01.pngのフィギュアを打ち出します。</li><li>カメラが追尾し、飛距離をリアルタイム表示。</li>`;
+    `<li>最初に横長ゲージ、次に<strong>円周を回る円形ゲージ</strong>を止めます。</li><li>横ゲージは左右端、円形ゲージは上のMAX位置に近いほど100%。</li><li>2ゲージの平均値で飛距離を決定。</li><li>棒にパワーが集まり、icon/01.pngのフィギュアを打ち出します。</li><li>カメラが追尾し、飛距離をリアルタイム表示。</li>`;
   screen.innerHTML=`
     <div class="game-head"><div><span class="kicker">GAME ${g.no} / 4</span><h2>${g.title}</h2><p class="lead">${g.sub}</p></div><div class="game-badge">${g.no}/4</div></div>
     ${index===2?`<img class="preview-img" src="icon/006.png" alt="完成見本" onerror="this.style.visibility='hidden'">`:""}
     <section class="panel"><h3>RULE</h3><ul class="rules">${rules}</ul></section>
-    <section class="panel flat"><h3>POINT</h3><div class="point-strip">${mode().points.map((p,i)=>`<span class="point-pill">${i+1}位 ${p}pt</span>`).join("")}</div></section>
-    <button id="introStart" class="primary">プレイヤー1 READY? へ</button>`;
+    ${state.freePlay
+      ? `<section class="panel flat free-play-note"><h3>1 PLAYER FREE PLAY</h3><p class="lead">順位・ポイントなしで、このゲームだけ遊びます。</p></section>`
+      : `<section class="panel flat"><h3>POINT</h3><div class="point-strip">${mode().points.map((p,i)=>`<span class="point-pill">${i+1}位 ${p}pt</span>`).join("")}</div></section>`}
+    <button id="introStart" class="primary">${state.freePlay?"READY? へ":"プレイヤー1 READY? へ"}</button>`;
   document.getElementById("introStart").addEventListener("click",()=>humanReady(index,0));
 }
 
@@ -130,7 +156,7 @@ function humanReady(gameIndex,humanIndex){
   const list=humans();
   if(humanIndex>=list.length){return cpus().length?simulateCpuThenResult(gameIndex):finishGame(gameIndex)}
   const p=list[humanIndex],g=GAMES[gameIndex];
-  screen.innerHTML=`<div class="ready-wrap"><div class="ready-card">${imgTag(p,"ready-avatar")}<span class="kicker">GAME ${g.no} / PLAYER ${humanIndex+1} OF ${list.length}</span><div class="ready-big">READY?</div><div class="ready-name">${esc(p.name)}</div><div class="ready-sub">${mode().team?teamName(p.id):`PLAYER ${p.no}`}</div>${gameIndex===2?`<div class="puzzle-ready-guide"><span>完成見本</span><img src="icon/006.png" alt="完成見本" onerror="this.style.visibility='hidden'"><small>9個を正しい場所にはめるだけです</small></div>`:""}<button id="readyBtn" class="primary">準備OK</button></div></div>`;
+  screen.innerHTML=`<div class="ready-wrap"><div class="ready-card">${imgTag(p,"ready-avatar")}<span class="kicker">GAME ${g.no} / ${state.freePlay?"SOLO":`PLAYER ${humanIndex+1} OF ${list.length}`}</span><div class="ready-big">READY?</div><div class="ready-name">${esc(p.name)}</div><div class="ready-sub">${state.freePlay?"1 PLAYER FREE PLAY":(mode().team?teamName(p.id):`PLAYER ${p.no}`)}</div>${gameIndex===2?`<div class="puzzle-ready-guide"><span>完成見本</span><img src="icon/006.png" alt="完成見本" onerror="this.style.visibility='hidden'"><small>9個を正しい場所にはめるだけ。下の初期位置は毎回ランダム。</small></div>`:""}<button id="readyBtn" class="primary">準備OK</button></div></div>`;
   document.getElementById("readyBtn").addEventListener("click",()=>{
     if(gameIndex===0)startReaction(p,humanIndex);
     else if(gameIndex===1)startMemory(p,humanIndex);
@@ -145,6 +171,10 @@ async function countdown(label="COUNTDOWN"){
   n.textContent="GO!";beep(710,100);await wait(300);layer.remove();
 }
 
+function playBadge(humanIndex){
+  return state.freePlay ? "SOLO" : `${humanIndex+1}/${humans().length}`;
+}
+
 // GAME 1 -------------------------------------------------
 async function startReaction(p,humanIndex){
   screen.innerHTML=`<section class="reaction-stage"><div><span class="kicker">${esc(p.name)}</span><h2>反射神経</h2></div><div id="reactionZone" class="reaction-zone"><div class="wait-dots">•••</div></div><p class="hint">MOBが出た瞬間にタップ。画面全体のフラッシュはありません。</p></section>`;
@@ -156,7 +186,7 @@ async function startReaction(p,humanIndex){
 // GAME 2 -------------------------------------------------
 async function startMemory(p,humanIndex){
   const ids=shuffle(Array.from({length:10},(_,i)=>i+1));const seq=shuffle([...ids]);let input=0,active=false;
-  screen.innerHTML=`<div class="game-head"><div><span class="kicker">${esc(p.name)}</span><h2>記憶力ゲーム</h2></div><div class="game-badge">${humanIndex+1}/4</div></div><div class="memory-status"><div class="stat-box"><span>PHASE</span><b id="memPhase">WATCH</b></div><div class="stat-box"><span>CORRECT</span><b id="memCount">0 / 10</b></div></div><div id="memoryBoard" class="memory-board">${ids.map(id=>`<button type="button" class="memory-tile" data-id="${id}"><img src="icon/${String(id).padStart(2,"0")}.png" alt="icon ${id}" onerror="this.style.visibility='hidden'"></button>`).join("")}</div><p id="memHint" class="hint">3・2・1のあと、光る順番を覚えてください。</p>`;
+  screen.innerHTML=`<div class="game-head"><div><span class="kicker">${esc(p.name)}</span><h2>記憶力ゲーム</h2></div><div class="game-badge">${playBadge(humanIndex)}</div></div><div class="memory-status"><div class="stat-box"><span>PHASE</span><b id="memPhase">WATCH</b></div><div class="stat-box"><span>CORRECT</span><b id="memCount">0 / 10</b></div></div><div id="memoryBoard" class="memory-board">${ids.map(id=>`<button type="button" class="memory-tile" data-id="${id}"><img src="icon/${String(id).padStart(2,"0")}.png" alt="icon ${id}" onerror="this.style.visibility='hidden'"></button>`).join("")}</div><p id="memHint" class="hint">3・2・1のあと、光る順番を覚えてください。</p>`;
   const board=document.getElementById("memoryBoard"),phase=document.getElementById("memPhase"),count=document.getElementById("memCount"),hint=document.getElementById("memHint");const tile=id=>board.querySelector(`[data-id="${id}"]`);
   await countdown("WATCH");
   for(const id of seq){if(!document.body.contains(board))return;tile(id).classList.add("showing");beep(400+id*18,55,.018);await wait(390);tile(id).classList.remove("showing");await wait(125)}
@@ -165,16 +195,24 @@ async function startMemory(p,humanIndex){
 }
 
 // GAME 3 -------------------------------------------------
+function randomPuzzleTrayOrder(){
+  const base=Array.from({length:9},(_,i)=>i);
+  let order;
+  do{ order=shuffle(base); }
+  while(order.some((id,i)=>id===i));
+  return order;
+}
+
 async function startPuzzle(p,humanIndex){
-  const trayOrder=shuffle(Array.from({length:9},(_,i)=>i));
+  const trayOrder=randomPuzzleTrayOrder();
   const placed=Array(9).fill(null);
   let selected=null,finished=false,t0=0,tries=0;
-  screen.innerHTML=`<div class="game-head"><div><span class="kicker">${esc(p.name)}</span><h2>9ピース はめ込みパズル</h2><p class="lead">9個を正しい場所にはめよう</p></div><div class="game-badge">${humanIndex+1}/4</div></div>
+  screen.innerHTML=`<div class="game-head"><div><span class="kicker">${esc(p.name)}</span><h2>9ピース はめ込みパズル</h2><p class="lead">9個を正しい場所にはめよう</p></div><div class="game-badge">${playBadge(humanIndex)}</div></div>
     <div class="fit-wrap">
       <div class="puzzle-meta"><div class="stat-box"><span>TIME</span><b id="puzTime">0.00</b></div><div class="stat-box"><span>FIT</span><b id="puzFit">0 / 9</b></div></div>
       <div class="fit-guide"><img src="icon/006.png" alt="完成見本" onerror="this.style.visibility='hidden'"><div><b>完成見本</b><span>下のピースを選んで、上の同じ場所をタップ</span></div></div>
       <div id="fitBoard" class="fit-board" aria-label="はめ込み先"></div>
-      <div class="fit-tray-title"><b>PIECE</b><span id="fitHint">ピースを1個タップ</span></div>
+      <div class="fit-tray-title"><b>PIECE / RANDOM</b><span id="fitHint">毎回ランダム配置 / ピースを1個タップ</span></div>
       <div id="fitTray" class="fit-tray"></div>
     </div>`;
 
@@ -226,18 +264,103 @@ async function startPuzzle(p,humanIndex){
 // GAME 4 -------------------------------------------------
 async function startLaunch(p,humanIndex){
   let linear=0,circle=0,phase="linear",start=performance.now();
-  screen.innerHTML=`<div class="game-head"><div><span class="kicker">${esc(p.name)}</span><h2>フィギュア飛ばし</h2></div><div class="game-badge">${humanIndex+1}/4</div></div><div class="gauge-wrap"><section id="linearCard" class="gauge-card"><div class="gauge-title">1. 横長ゲージ <span id="linearScore">タップでSTOP</span></div><div id="linearGauge" class="linear-gauge"><div id="linearMarker" class="linear-marker"></div></div></section><section id="circleCard" class="gauge-card disabled"><div class="gauge-title">2. 円形ゲージ <span id="circleScore">WAIT</span></div><div id="circleGauge" class="circle-gauge"><div id="circleDot" class="circle-dot"></div></div></section><p class="hint">端に近いほど100%。2つの平均値が最終パワー。</p></div>`;
-  const lg=document.getElementById("linearGauge"),lm=document.getElementById("linearMarker"),lc=document.getElementById("linearCard"),ls=document.getElementById("linearScore"),cg=document.getElementById("circleGauge"),cd=document.getElementById("circleDot"),cc=document.getElementById("circleCard"),cs=document.getElementById("circleScore");
-  function linearAnim(now){if(phase!=="linear")return;const t=(now-start)/760;const pos=(Math.sin(t*Math.PI*2-Math.PI/2)+1)/2*100;lm.style.left=`${pos}%`;lm.dataset.pos=pos.toFixed(3);activeAnimation=requestAnimationFrame(linearAnim)}
+
+  screen.innerHTML=`<div class="game-head"><div><span class="kicker">${esc(p.name)}</span><h2>フィギュア飛ばし</h2></div><div class="game-badge">${playBadge(humanIndex)}</div></div>
+  <div class="gauge-wrap">
+    <section id="linearCard" class="gauge-card">
+      <div class="gauge-title">1. 横長ゲージ <span id="linearScore">タップでSTOP</span></div>
+      <div id="linearGauge" class="linear-gauge"><div id="linearMarker" class="linear-marker"></div></div>
+    </section>
+
+    <section id="circleCard" class="gauge-card disabled">
+      <div class="gauge-title">2. 円形ゲージ <span id="circleScore">WAIT</span></div>
+      <div id="circleGauge" class="circle-gauge" role="button" aria-label="円形ゲージを止める">
+        <div class="circle-max-zone"><b>MAX</b><span>100</span></div>
+        <div class="circle-ring"></div>
+        <div id="circleNeedle" class="circle-needle"></div>
+        <div class="circle-center"><span>POWER</span><b id="circleLive">--</b></div>
+      </div>
+      <p class="circle-help">針が円周を360°回転。上のMAXに近いほど高得点。</p>
+    </section>
+    <p class="hint">横は左右端、円は上のMAXに近いほど100%。2つの平均値が最終パワー。</p>
+  </div>`;
+
+  const lg=document.getElementById("linearGauge"),
+        lm=document.getElementById("linearMarker"),
+        lc=document.getElementById("linearCard"),
+        ls=document.getElementById("linearScore"),
+        cg=document.getElementById("circleGauge"),
+        needle=document.getElementById("circleNeedle"),
+        live=document.getElementById("circleLive"),
+        cc=document.getElementById("circleCard"),
+        cs=document.getElementById("circleScore");
+
+  function linearAnim(now){
+    if(phase!=="linear")return;
+    const t=(now-start)/760;
+    const pos=(Math.sin(t*Math.PI*2-Math.PI/2)+1)/2*100;
+    lm.style.left=`${pos}%`;
+    lm.dataset.pos=pos.toFixed(3);
+    activeAnimation=requestAnimationFrame(linearAnim);
+  }
+
+  function beginCircle(){
+    phase="circle";
+    cancelActiveAnimation();
+    lc.classList.add("disabled");
+    cc.classList.remove("disabled");
+    cs.textContent="タップでSTOP";
+    start=performance.now();
+    beep(660,70);
+    activeAnimation=requestAnimationFrame(circleAnim);
+  }
+
+  function stopLinear(e){
+    if(phase!=="linear")return;
+    if(e)e.preventDefault();
+    const pos=Number(lm.dataset.pos||50);
+    linear=clamp(Math.round(Math.abs(pos-50)*2),0,100);
+    ls.textContent=`${linear}%`;
+    beginCircle();
+  }
+
+  function circleAnim(now){
+    if(phase!=="circle")return;
+    const angle=((now-start)/1150*360)%360;
+    const distToMax=Math.min(angle,360-angle);
+    const score=clamp(Math.round(100-(distToMax/180)*100),0,100);
+    needle.style.transform=`rotate(${angle}deg)`;
+    needle.dataset.score=String(score);
+    live.textContent=`${score}%`;
+    activeAnimation=requestAnimationFrame(circleAnim);
+  }
+
+  function stopCircle(e){
+    if(phase!=="circle")return;
+    if(e)e.preventDefault();
+    circle=clamp(Number(needle.dataset.score||0),0,100);
+    phase="done";
+    cancelActiveAnimation();
+    cs.textContent=`${circle}% STOP`;
+    live.textContent=`${circle}%`;
+    cc.classList.add("stopped");
+    beep(760,80);
+    const avg=(linear+circle)/2;
+    setTimeout(()=>launchAnimation(p,humanIndex,avg,linear,circle),360);
+  }
+
   activeAnimation=requestAnimationFrame(linearAnim);
-  lg.addEventListener("pointerdown",()=>{if(phase!=="linear")return;const pos=Number(lm.dataset.pos||50);linear=Math.round(Math.abs(pos-50)*2);linear=clamp(linear,0,100);phase="circle";cancelActiveAnimation();ls.textContent=`${linear}%`;lc.classList.add("disabled");cc.classList.remove("disabled");start=performance.now();beep(660,70);activeAnimation=requestAnimationFrame(circleAnim)},{once:true});
-  function circleAnim(now){if(phase!=="circle")return;const t=(now-start)/850;const pct=(Math.sin(t*Math.PI*2-Math.PI/2)+1)/2;const radius=pct*38;cd.style.left=`${50+radius}%`;cd.style.top="50%";cd.dataset.pct=(pct*100).toFixed(3);activeAnimation=requestAnimationFrame(circleAnim)}
-  cg.addEventListener("pointerdown",async()=>{if(phase!=="circle")return;circle=Math.round(Number(cd.dataset.pct||0));circle=clamp(circle,0,100);phase="done";cancelActiveAnimation();cs.textContent=`${circle}%`;cc.classList.add("disabled");beep(760,80);const avg=(linear+circle)/2;await wait(420);launchAnimation(p,humanIndex,avg,linear,circle)},{once:true});
+
+  lg.addEventListener("pointerdown",stopLinear,{passive:false});
+  lg.addEventListener("click",stopLinear);
+  cg.addEventListener("pointerdown",stopCircle,{passive:false});
+  cg.addEventListener("touchstart",stopCircle,{passive:false});
+  cg.addEventListener("click",stopCircle);
 }
 
 async function launchAnimation(p,humanIndex,power,linear,circle){
   const maxMeters=280;const target=Math.round(Math.pow(power/100,1.35)*maxMeters*10)/10;const pxPerM=16;const targetX=128+target*pxPerM;
-  screen.innerHTML=`<div class="game-head"><div><span class="kicker">POWER ${power.toFixed(1)}%</span><h2>FLY!</h2><p class="lead">横 ${linear}% / 円 ${circle}%</p></div><div class="game-badge">${humanIndex+1}/4</div></div><div class="flight-card"><div class="flight-hud"><div><span>REALTIME DISTANCE</span><b id="distance">0.0 m</b></div><div><span>POWER</span><b>${power.toFixed(1)}%</b></div></div><div id="viewport" class="flight-viewport"><div id="world" class="flight-world"><div class="ground-line"></div>${Array.from({length:6},(_,i)=>`<div class="meter-mark" style="left:${128+i*50*pxPerM}px"><span>${i*50}m</span></div>`).join("")}<div class="power-orb"></div><div id="stick" class="power-stick"></div><img id="figure" class="figure" src="icon/01.png" alt="figure" onerror="this.style.visibility='hidden'"></div></div></div>`;
+  screen.innerHTML=`<div class="game-head"><div><span class="kicker">POWER ${power.toFixed(1)}%</span><h2>FLY!</h2><p class="lead">横 ${linear}% / 円 ${circle}%</p></div><div class="game-badge">${playBadge(humanIndex)}</div></div><div class="flight-card"><div class="flight-hud"><div><span>REALTIME DISTANCE</span><b id="distance">0.0 m</b></div><div><span>POWER</span><b>${power.toFixed(1)}%</b></div></div><div id="viewport" class="flight-viewport"><div id="world" class="flight-world"><div class="ground-line"></div>${Array.from({length:6},(_,i)=>`<div class="meter-mark" style="left:${128+i*50*pxPerM}px"><span>${i*50}m</span></div>`).join("")}<div class="power-orb"></div><div id="stick" class="power-stick"></div><img id="figure" class="figure" src="icon/01.png" alt="figure" onerror="this.style.visibility='hidden'"></div></div></div>`;
   const viewport=document.getElementById("viewport"),world=document.getElementById("world"),figure=document.getElementById("figure"),stick=document.getElementById("stick"),distance=document.getElementById("distance");
   stick.classList.add("strike");beep(140,120,.035);await wait(440);beep(860,90,.03);
   const duration=2600+power*7;const start=performance.now();
@@ -247,7 +370,15 @@ async function launchAnimation(p,humanIndex,power,linear,circle){
 }
 
 function recordScreen(gameIndex,p,humanIndex,main,sub=""){
-  const more=humanIndex+1<humans().length;screen.innerHTML=`<div class="ready-wrap"><div class="ready-card">${imgTag(p,"ready-avatar")}<div class="record-label">${GAMES[gameIndex].title} / RECORD</div><div class="big-record">${main}</div>${sub?`<p class="lead">${sub}</p>`:""}<button id="nextHuman" class="primary">${more?"次のプレイヤー":cpus().length?"CPU高速処理へ":`GAME ${gameIndex+1} RESULT`}</button></div></div>`;document.getElementById("nextHuman").addEventListener("click",()=>humanReady(gameIndex,humanIndex+1));
+  if(state.freePlay){
+    screen.innerHTML=`<div class="ready-wrap"><div class="ready-card">${imgTag(p,"ready-avatar")}<div class="record-label">${GAMES[gameIndex].title} / SOLO RECORD</div><div class="big-record">${main}</div>${sub?`<p class="lead">${sub}</p>`:""}<button id="soloReplay" class="primary">同じゲームをもう一度</button><div style="height:8px"></div><button id="soloHome" class="secondary">メインメニューへ</button></div></div>`;
+    document.getElementById("soloReplay").addEventListener("click",()=>startFreeGame(gameIndex));
+    document.getElementById("soloHome").addEventListener("click",renderHome);
+    return;
+  }
+  const more=humanIndex+1<humans().length;
+  screen.innerHTML=`<div class="ready-wrap"><div class="ready-card">${imgTag(p,"ready-avatar")}<div class="record-label">${GAMES[gameIndex].title} / RECORD</div><div class="big-record">${main}</div>${sub?`<p class="lead">${sub}</p>`:""}<button id="nextHuman" class="primary">${more?"次のプレイヤー":cpus().length?"CPU高速処理へ":`GAME ${gameIndex+1} RESULT`}</button></div></div>`;
+  document.getElementById("nextHuman").addEventListener("click",()=>humanReady(gameIndex,humanIndex+1));
 }
 
 // CPU ----------------------------------------------------
