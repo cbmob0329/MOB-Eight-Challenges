@@ -1540,3 +1540,32 @@ body{touch-action:manipulation}
   .slot-paytable>span{min-height:27px;font-size:6px}
   .gameplay-fit .slot-main-button{width:min(16dvh,104px)}
 }
+
+
+/* ===== V8.5 SKI CAMERA / TAKEOFF VISIBILITY ===== */
+.ski-takeoff-lip{
+  box-shadow:0 0 0 6px rgba(255,213,73,.30),0 4px 0 var(--ink)!important;
+  z-index:12!important;
+}
+.ski-takeoff-lip:before{
+  content:"▼";
+  position:absolute;
+  left:50%;
+  top:-31px;
+  transform:translateX(-50%);
+  font-size:22px;
+  font-weight:1000;
+  color:var(--red);
+}
+.ski-jumper-v84{
+  z-index:20!important;
+  filter:drop-shadow(0 3px 0 rgba(17,19,26,.25));
+}
+
+/* ===== V8.5 UFO WIDTH GAUGE ===== */
+.arm-stop-gauge{
+  height:44px!important;
+}
+.arm-stop-gauge:not(.locked){
+  box-shadow:0 3px 0 var(--ink),0 0 0 4px rgba(116,223,240,.18)!important;
+}

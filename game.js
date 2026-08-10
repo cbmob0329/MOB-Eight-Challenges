@@ -396,7 +396,7 @@ function showGameIntro(index){
   }else if(index===7){
     rules=`<li>ベルトコンベアのMOB箱を10秒で完成。</li><li>空箱：人形 → 箱 → 箱で封。</li><li>人形入り箱は箱を1回タップ。</li><li>人形入り箱へさらに人形を入れたら不良品として箱ごと破棄。</li>`;
   }else if(index===8){
-    rules=`<li>最初に動いているアーム幅ゲージをタップして停止。</li><li>次に左右でクレーン位置を決めて降下。</li><li>STOPで高さを決め、実際にアームを閉じます。</li><li>本当にアーム内へ入って保持できたモブくんだけを実物ごと持ち上げます。</li><li>広げすぎても大量取得できないよう、閉じる時のこぼれ判定があります。</li>`;
+    rules=`<li>最初に動いているアーム幅ゲージをタップして停止。</li><li>次に左右でクレーン位置を決めて降下。</li><li>STOPで高さを決め、実際にアームを閉じます。</li><li>本当にアーム内へ入って保持できたモブくんだけを実物ごと持ち上げます。</li><li>広く止められるほど取りやすいですが、幅ゲージが高速なので狙うのが難しくなります。</li>`;
   }else if(index===9){
     rules=`<li>上の部屋が見本、下の部屋が自分の操作エリア。</li><li>見本の<strong>7体配置は毎回ランダム</strong>。</li><li>下の7体も毎回ランダムに散らばっています。</li><li>10秒でドラッグして見本へ近づけます。</li><li><strong>自動吸着なし</strong>。置いた位置そのままで一致率を計算。</li>`;
   }else if(index===10){
@@ -1607,7 +1607,7 @@ async function startCatcher(p,humanIndex){
   const widthAnim=now=>{
     if(phase!=="width")return;
 
-    const t=(now-widthStart)/820;
+    const t=(now-widthStart)/420;
     const pos=(Math.sin(t*Math.PI*2-Math.PI/2)+1)/2;
     armOpen=.27+pos*.62;
 
@@ -1686,8 +1686,9 @@ async function startCatcher(p,humanIndex){
     const depthNorm=clamp(gripCenterY/stageH,0,1);
     const depthQuality=clamp(1-Math.abs(depthNorm-.86)/.15,0,1);
 
-    // Width sweet spot is narrower; very wide claws lose much more retention.
-    const widthQuality=clamp(1-Math.abs(armOpen-.58)/.24,0,1);
+    // V8.5: wider is simply stronger/easier.
+    // The difficulty now comes from stopping the very fast width gauge at a wide position.
+    const widthQuality=clamp((armOpen-.27)/.62,0,1);
 
     const all=[...stage.querySelectorAll(".catcher-doll")].map(el=>{
       const r=el.getBoundingClientRect();
@@ -1697,23 +1698,21 @@ async function startCatcher(p,humanIndex){
       const dy=Math.abs(cy-gripCenterY)/((gripBottom-gripTop)/2);
       const inside=cx>=gripLeft&&cx<=gripRight&&cy>=gripTop&&cy<=gripBottom;
 
-      const centerQuality=inside?clamp(1-(dx*.72+dy*.28),0,1):-1;
+      const centerQuality=inside?clamp(1-(dx*.68+dy*.32),0,1):-1;
       return {el,id:Number(el.dataset.id),centerQuality,side:cx<headCenterX?-1:1};
     });
 
     const inside=all.filter(x=>x.centerQuality>=0).sort((a,b)=>b.centerQuality-a.centerQuality);
 
-    const widePenalty=armOpen>.64?(armOpen-.64)/.25:0;
-    const narrowPenalty=armOpen<.38?(.38-armOpen)/.11:0;
-    const stability=clamp(widthQuality*.70+depthQuality*.30-widePenalty*.58-narrowPenalty*.10,0,1);
-
-    // Even when many dolls are inside, weak retention throws most of them out.
-    const capacity=clamp(Math.floor(1+9*Math.pow(stability,2.25)),0,10);
-    const threshold=.26+(1-stability)*.50+widePenalty*.18;
+    // Bigger opening gives more capacity and better retention.
+    // Depth still matters, so a wide claw at a bad height can miss.
+    const stability=clamp(widthQuality*.72+depthQuality*.28,0,1);
+    const capacity=clamp(Math.floor(1+9*Math.pow(widthQuality,1.18)*(.55+.45*depthQuality)),1,10);
+    const threshold=clamp(.54-widthQuality*.30+(1-depthQuality)*.18,.18,.66);
 
     const held=inside.filter(c=>c.centerQuality>=threshold).slice(0,capacity);
     const heldIds=new Set(held.map(x=>x.id));
-    const slipped=inside.filter(c=>!heldIds.has(c.id)).slice(0,10);
+    const slipped=inside.filter(c=>!heldIds.has(c.id)).slice(0,8);
 
     return {held,slipped,stability};
   }
@@ -2134,13 +2133,20 @@ async function startSkiJump(p,humanIndex){
   function renderRun(elapsed){
     const t=clamp(elapsed/runDuration,0,1);
 
-    // Follow the actual visible slope: x advances while y moves down the ramp.
+    // MOB moves along the visible slope.
     const x=70+t*(takeoffX-92);
     const y=68+t*202;
 
     jumper.style.left=`${x}px`;
     jumper.style.top=`${y}px`;
     jumper.style.transform=`translate(-50%,-50%) rotate(${15+t*17}deg)`;
+
+    // Camera follows MOB even before takeoff, so the jumper and the upcoming
+    // jump lip stay visible instead of the MOB running out of frame.
+    const vw=stage.clientWidth;
+    const lead=vw*.40;
+    const camera=Math.max(0,Math.min(worldWidth-vw,x-lead));
+    world.style.transform=`translateX(${-camera}px)`;
   }
 
   async function resolveJump(delta){
@@ -2362,13 +2368,14 @@ async function startMobSlot(p,humanIndex){
 
     let idx=visible[stopIndex];
 
-    // Reel 1 and 2 have strong automatic assistance toward the hidden target.
-    if(stopIndex===0&&Math.random()<.82){
+    // Reel 1 and 2 are intentionally easy.
+    // They strongly follow the hidden target pattern so that the third reel becomes the main challenge.
+    if(stopIndex===0&&Math.random()<.95){
       idx=symbolIndexByKey(targetPattern[0]);
-    }else if(stopIndex===1&&Math.random()<.76){
+    }else if(stopIndex===1&&Math.random()<.92){
       idx=symbolIndexByKey(targetPattern[1]);
-    }else if(stopIndex===2&&Math.random()<.16){
-      // Third reel is primarily visual/timing skill, with occasional auto assistance.
+    }else if(stopIndex===2&&Math.random()<.18){
+      // Third reel is still mainly timing skill, with only occasional automatic help.
       idx=symbolIndexByKey(targetPattern[2]);
     }
 
