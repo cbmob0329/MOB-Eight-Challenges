@@ -3682,3 +3682,429 @@ body{touch-action:manipulation}
   .hero-option-wheel span{font-size:9px}
   .dart-target.result-zoom{transform:scale(1.30)}
 }
+
+
+/* =========================================================
+   V9.9 JUMPING MOB — BOOST EVERY JUMP
+   ========================================================= */
+.jumpup-platform{
+  height:12px!important;
+  border-radius:6px!important;
+}
+.jumpup-controls .jump-main{
+  font-size:11px!important;
+}
+.jumpup-player.spring i{
+  animation:springPopV99 .15s ease!important;
+}
+@keyframes springPopV99{
+  50%{
+    height:56px;
+    bottom:-42px;
+  }
+}
+
+/* =========================================================
+   V9.9 GAME 34 — この星を..！
+   ========================================================= */
+.planet-shell,
+.headspin-shell{
+  width:min(100%,650px);
+  height:100%;
+  margin:0 auto;
+  display:flex;
+  flex-direction:column;
+}
+.planet-hud{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:5px;
+  margin-bottom:5px;
+}
+.planet-hud>div,
+.headspin-hud>div{
+  border:3px solid var(--ink);
+  border-radius:11px;
+  background:#fff;
+  padding:4px;
+  text-align:center;
+}
+.planet-hud span,
+.headspin-hud span{
+  display:block;
+  font-size:7px;
+  font-weight:1000;
+  color:var(--muted);
+}
+.planet-hud b,
+.headspin-hud b{
+  font-size:14px;
+}
+.planet-charge-scene{
+  flex:1;
+  min-height:0;
+  position:relative;
+  overflow:hidden;
+  border:4px solid var(--ink);
+  border-radius:20px;
+  background:
+    radial-gradient(circle at 50% 16%,rgba(120,214,255,.38),transparent 34%),
+    linear-gradient(#101a3b 0 70%,#26304b 70% 100%);
+  transition:transform .45s ease;
+}
+.planet-charge-scene.camera-out{
+  transform:scale(.91);
+}
+.planet-charge-scene.planet-max{
+  box-shadow:0 0 0 5px rgba(101,222,255,.22);
+}
+.planet-gauge{
+  position:absolute;
+  z-index:8;
+  left:50%;
+  top:31%;
+  width:min(53vw,210px);
+  aspect-ratio:1;
+  transform:translate(-50%,-50%);
+}
+.planet-gauge-ring{
+  position:absolute;
+  inset:0;
+  border:7px solid #fff;
+  border-radius:50%;
+  box-shadow:
+    0 0 0 4px var(--ink),
+    0 0 18px rgba(86,229,255,.75);
+}
+.planet-gauge>span{
+  position:absolute;
+  left:50%;
+  top:-28px;
+  transform:translateX(-50%);
+  color:#fff;
+  font-size:10px;
+  font-weight:1000;
+}
+.planet-gauge.finished{
+  opacity:.25;
+}
+.planet-pulse,
+.planet-final-ball,
+.planet-flight-ball{
+  border:4px solid #fff;
+  border-radius:50%;
+  background:
+    radial-gradient(circle at 38% 34%,#fff 0 7%,#9af7ff 11%,#31a8ff 45%,#6256f2 73%,#22205a 100%);
+  box-shadow:
+    0 0 18px rgba(98,227,255,.9),
+    0 0 42px rgba(88,89,255,.58);
+}
+.planet-pulse{
+  position:absolute;
+  z-index:4;
+  left:50%;
+  top:50%;
+  width:100%;
+  height:100%;
+  transform:translate(-50%,-50%) scale(.2);
+  will-change:transform;
+}
+.planet-final-ball{
+  position:absolute;
+  z-index:12;
+  left:50%;
+  top:36%;
+  width:0;
+  height:0;
+  transform:translate(-50%,-50%);
+  opacity:0;
+  transition:
+    width .55s ease,
+    height .55s ease,
+    top .48s ease,
+    opacity .22s ease;
+}
+.planet-final-ball.show{
+  opacity:1;
+}
+.planet-final-ball.rise{
+  top:19%;
+}
+.planet-mob{
+  position:absolute;
+  z-index:9;
+  left:50%;
+  bottom:7%;
+  width:78px;
+  height:92px;
+  transform:translateX(-50%);
+  background-position:center;
+  background-size:contain;
+  background-repeat:no-repeat;
+  filter:drop-shadow(0 5px 0 rgba(0,0,0,.22));
+}
+.planet-charge-text{
+  position:absolute;
+  z-index:20;
+  left:50%;
+  bottom:2%;
+  transform:translateX(-50%);
+  min-width:200px;
+  border:3px solid var(--ink);
+  border-radius:999px;
+  background:#fff;
+  padding:6px 10px;
+  text-align:center;
+  font-size:10px;
+  font-weight:1000;
+}
+.planet-charge-button,
+.planet-fire-button{
+  height:52px;
+  margin-top:6px;
+  border:4px solid var(--ink);
+  border-radius:15px;
+  background:var(--yellow);
+  box-shadow:0 4px 0 var(--ink);
+  font-size:14px;
+  font-weight:1000;
+}
+.planet-fire-button{
+  background:#8cecff;
+  font-size:19px;
+}
+.planet-flight-view{
+  flex:1;
+  min-height:0;
+  position:relative;
+  overflow:hidden;
+  border:4px solid var(--ink);
+  border-radius:20px;
+  background:
+    radial-gradient(circle at 70% 18%,#fff 0 3%,transparent 3.5%),
+    linear-gradient(#111936 0 68%,#29314e 68% 100%);
+}
+.planet-world{
+  position:absolute;
+  left:0;
+  top:0;
+  bottom:0;
+  will-change:transform;
+}
+.planet-city-ground{
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  height:46px;
+  border-top:4px solid var(--ink);
+  background:#303644;
+}
+#planetBuildings{
+  position:absolute;
+  inset:0;
+}
+.planet-building{
+  position:absolute;
+  z-index:4;
+  bottom:46px;
+  border:4px solid var(--ink);
+  border-radius:8px 8px 0 0;
+  background:#566076;
+  transform-origin:bottom center;
+  transition:
+    transform .25s ease,
+    opacity .28s ease;
+}
+.planet-building.b1{background:#766078}
+.planet-building.b2{background:#4e6b72}
+.planet-building.b3{background:#74694e}
+.planet-windows{
+  position:absolute;
+  inset:12px 9px;
+  background:
+    repeating-linear-gradient(0deg,transparent 0 22px,rgba(255,232,122,.72) 22px 31px),
+    repeating-linear-gradient(90deg,rgba(255,232,122,.72) 0 11px,transparent 11px 25px);
+  opacity:.70;
+}
+.planet-building.destroyed{
+  transform:translateY(30px) rotate(13deg) scale(.55,.35);
+  opacity:.14;
+}
+.planet-flight-ball{
+  position:absolute;
+  z-index:18;
+  transform:translate(-50%,-50%);
+  will-change:left;
+}
+.planet-flight-view.camera-out .planet-building{
+  transform-origin:bottom center;
+}
+.planet-flight-banner{
+  position:absolute;
+  z-index:40;
+  left:50%;
+  top:9px;
+  transform:translateX(-50%);
+  border:3px solid var(--ink);
+  border-radius:999px;
+  background:#fff;
+  padding:5px 11px;
+  font-size:11px;
+  font-weight:1000;
+}
+
+/* =========================================================
+   V9.9 GAME 35 — HEAD SPINNER
+   ========================================================= */
+.headspin-hud{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:5px;
+  margin-bottom:5px;
+}
+.headspin-stage{
+  flex:1;
+  min-height:0;
+  position:relative;
+  overflow:hidden;
+  border:4px solid var(--ink);
+  border-radius:20px;
+  background:
+    radial-gradient(circle at 50% 45%,#fff 0 20%,#e8f7ff 21% 46%,#d9e5f2 47% 100%);
+  touch-action:none;
+}
+.headspin-guide{
+  position:absolute;
+  z-index:5;
+  left:50%;
+  top:46%;
+  width:min(75vw,330px);
+  aspect-ratio:1;
+  transform:translate(-50%,-50%);
+}
+#headspinSvg{
+  width:100%;
+  height:100%;
+  overflow:visible;
+  touch-action:none;
+}
+.headspin-guide-circle{
+  fill:none;
+  stroke:#2c3441;
+  stroke-width:13;
+  stroke-linecap:round;
+  stroke-dasharray:7 8;
+}
+.headspin-user-path{
+  fill:none;
+  stroke:#22a9ff;
+  stroke-width:10;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+  filter:drop-shadow(0 0 5px rgba(34,169,255,.55));
+}
+.headspin-arrow{
+  position:absolute;
+  right:7%;
+  top:14%;
+  font-size:30px;
+  font-weight:1000;
+}
+.headspin-mob{
+  position:absolute;
+  z-index:8;
+  left:50%;
+  top:46%;
+  width:78px;
+  height:92px;
+  transform:translate(-50%,-50%) rotate(180deg);
+  background-position:center;
+  background-size:contain;
+  background-repeat:no-repeat;
+  pointer-events:none;
+}
+.headspin-mob:after{
+  content:"";
+  position:absolute;
+  left:50%;
+  bottom:-7px;
+  width:54px;
+  height:12px;
+  transform:translateX(-50%);
+  border:3px solid var(--ink);
+  border-radius:50%;
+  background:rgba(51,171,255,.25);
+}
+.headspin-message{
+  position:absolute;
+  z-index:20;
+  left:50%;
+  bottom:5%;
+  transform:translateX(-50%);
+  min-width:170px;
+  border:3px solid var(--ink);
+  border-radius:999px;
+  background:#fff;
+  padding:6px 10px;
+  text-align:center;
+  font-size:10px;
+  font-weight:1000;
+}
+.headspin-spin{
+  height:54px;
+  margin-top:6px;
+  border:4px solid var(--ink);
+  border-radius:15px;
+  background:var(--yellow);
+  box-shadow:0 4px 0 var(--ink);
+  font-size:18px;
+  font-weight:1000;
+}
+.headspin-mob.super-spin{
+  animation:headSuperSpin .11s linear infinite;
+}
+@keyframes headSuperSpin{
+  from{transform:translate(-50%,-50%) rotate(180deg)}
+  to{transform:translate(-50%,-50%) rotate(540deg)}
+}
+.headspin-result{
+  position:absolute;
+  z-index:35;
+  left:50%;
+  top:24%;
+  transform:translate(-50%,-50%);
+  border:4px solid var(--ink);
+  border-radius:18px;
+  background:var(--yellow);
+  padding:8px 16px;
+  text-align:center;
+  pointer-events:none;
+}
+.headspin-result span,
+.headspin-result b{
+  display:block;
+  font-size:9px;
+}
+.headspin-result strong{
+  display:block;
+  font-size:44px;
+  line-height:1;
+}
+
+@media(max-height:690px){
+  .planet-gauge{
+    width:165px;
+  }
+  .planet-mob{
+    width:62px;
+    height:74px;
+  }
+  .headspin-guide{
+    width:240px;
+  }
+  .headspin-mob{
+    width:64px;
+    height:76px;
+  }
+}

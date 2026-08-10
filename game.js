@@ -70,7 +70,9 @@ const GAMES=[
   {no:30,key:"overlapMaster",title:"重なりマスター",sub:"4つの円を同時に重ねる"},
   {no:31,key:"jumpingMob",title:"ジャンピングモブくん",sub:"ホッピングで台を乗り継ぐ"},
   {no:32,key:"heroMaybe",title:"モブくんは勇者かも",sub:"10秒で勇者を育てる"},
-  {no:33,key:"popularGame",title:"あの人気者のゲーム",sub:"モブくんでモグラ踏み"}
+  {no:33,key:"popularGame",title:"あの人気者のゲーム",sub:"モブくんでモグラ踏み"},
+  {no:34,key:"planetEnergy",title:"この星を..！",sub:"3回チャージして高層ビルを貫く"},
+  {no:35,key:"headSpinner",title:"モブくんはヘッドスピナー",sub:"円をなぞって100周スピン"}
 ];
 
 const MODES={
@@ -105,7 +107,7 @@ function freshState(){
     roundIndex:0,
     records:{
       reaction:{},memory:{},puzzle:{},launch:{},stack:{},breakdance:{},
-      crisis:{},factory:{},catcher:{},tidy:{},ski:{},slot:{},rope:{},pk:{},rhythm:{},cut:{},climb:{},errand:{},dontHitMob:{},mobStop:{},overlap:{},shutter:{},cup:{},darts:{},parachute:{},mobCount:{},brake:{},feint:{},bomb:{},overlapMaster:{},jumpingMob:{},heroMaybe:{},popularGame:{}
+      crisis:{},factory:{},catcher:{},tidy:{},ski:{},slot:{},rope:{},pk:{},rhythm:{},cut:{},climb:{},errand:{},dontHitMob:{},mobStop:{},overlap:{},shutter:{},cup:{},darts:{},parachute:{},mobCount:{},brake:{},feint:{},bomb:{},overlapMaster:{},jumpingMob:{},heroMaybe:{},popularGame:{},planetEnergy:{},headSpinner:{}
     },
     total:{},
     roundPoints:[],
@@ -187,7 +189,7 @@ function renderHome(){
   state=freshState();
   screen.innerHTML=`
     <section class="hero">
-      <div><span class="kicker">SMARTPHONE PARTY GAME</span><h1>33 MINI<br>GAMES</h1><p>33種のミニゲーム。各モードでNORMALかCUSTOMを選んで遊べます。</p></div>
+      <div><span class="kicker">SMARTPHONE PARTY GAME</span><h1>35 MINI<br>GAMES</h1><p>35種のミニゲーム。各モードでNORMALかCUSTOMを選んで遊べます。</p></div>
       <div class="hero-mark">MOB</div>
     </section>
     <section class="panel">
@@ -310,7 +312,7 @@ function renderPlayStyleSelect(){
       <button id="normalStyle" class="style-select-card normal" type="button">
         <span>NORMAL</span>
         <b>順番に全種目</b>
-        <small>GAME 1 → 33 を順番にプレイ</small>
+        <small>GAME 1 → 35 を順番にプレイ</small>
       </button>
       <button id="customStyle" class="style-select-card custom" type="button">
         <span>CUSTOM</span>
@@ -320,7 +322,7 @@ function renderPlayStyleSelect(){
     </div>
 
     <section class="panel flat">
-      <h3>33 MINI GAMES</h3>
+      <h3>35 MINI GAMES</h3>
       <div class="compact-game-grid">
         ${GAMES.map(g=>`<div><b>${g.no}</b><span>${g.title}</span></div>`).join("")}
       </div>
@@ -523,7 +525,9 @@ function scoreRuleForGame(index){
     "4円一致率100%=100点 / TIME UP=0点",
     "500m以上=100点 / 0m=0点",
     "勇者ポイント0〜100がそのまま得点",
-    "20体以上=100点 / 0体=0点"
+    "20体以上=100点 / 0体=0点",
+    "100km到達=100点 / 0km=0点",
+    "100周=100点 / 0周=0点"
   ][index];
 }
 
@@ -597,8 +601,12 @@ function showGameIntro(index){
     rules=`<li>3・2・1後10秒。</li><li>モブくんはバネのホッピングマシーンに乗っています。</li><li>← →で左右移動、JUMPでジャンプ。</li><li>ランダムに並ぶ台を乗り継いで上へ。高い台ほど横幅が短くなります。</li><li>長距離はカメラが上方向へ追跡。500m以上で100点。</li>`;
   }else if(index===31){
     rules=`<li>「あなたは、、勇者様！？」のナレーションから3・2・1。</li><li>10秒間、4つの項目から1つを選び続けます。</li><li>選ぶたび4項目が全部入れ替わり、同じ項目は再登場しません。</li><li>強化と罠が合計50種。必ず1つ以上は強化。</li><li>勇者シリーズは高得点。弱点・呪いなどは弱体化。</li>`;
-  }else{
+  }else if(index===32){
     rules=`<li>3・2・1後10秒の横スクロールアクション。</li><li>← →で移動、JUMPでジャンプ。</li><li>モグラは最大4体。上から踏むと+1体、倒すと1体リポップ。</li><li>カメラはモブくんを左右に追跡。</li><li>20体踏みつけで100点。</li>`;
+  }else if(index===33){
+    rules=`<li>3・2・1後、円形ゲージでエネルギーを3回チャージ。</li><li>中の玉が最大まで膨らみ、外周ゲージと同じ大きさになった瞬間をタップ。</li><li>3回の合計精度で最終エネルギーサイズが決定。最大時は画面いっぱい近くまで巨大化しカメラが引きます。</li><li>「放つ！」でエネルギーが頭上へ上がってから右へ発射。</li><li>カメラが追跡し、高層ビルを破壊しながら最大100km進みます。</li>`;
+  }else{
+    rules=`<li>モブくんは最初から逆さのヘッドスピン姿勢。</li><li>円形ガイドを指で1周、できるだけ綺麗になぞります。</li><li>半径のズレ・一周できたか・逆戻りの少なさ・始点と終点の近さから一致度を判定。</li><li>全3回。一致度でエネルギーが蓄積。</li><li>最後に「スピン！」を押すと高速回転。最大100周。</li>`;
   }
   screen.innerHTML=`
     <div class="game-head">
@@ -671,7 +679,9 @@ function humanReady(gameIndex,humanIndex){
     else if(gameIndex===29)startOverlapMaster(p,humanIndex,runId);
     else if(gameIndex===30)startJumpingMob(p,humanIndex,runId);
     else if(gameIndex===31)startHeroMaybe(p,humanIndex,runId);
-    else startPopularGame(p,humanIndex,runId);
+    else if(gameIndex===32)startPopularGame(p,humanIndex,runId);
+    else if(gameIndex===33)startPlanetEnergy(p,humanIndex,runId);
+    else startHeadSpinner(p,humanIndex,runId);
   },{once:true});
 }
 
@@ -4830,30 +4840,47 @@ async function startOverlapMaster(p,humanIndex,runId){
 // GAME 31 -------------------------------------------------
 async function startJumpingMob(p,humanIndex,runId){
   gameFit();
-  let raf=null,timerRAF=null,finished=false,leftHeld=false,rightHeld=false,grounded=true,last=0,endAt=0,maxY=58,playerX=0,playerY=58,vy=0;
-  const worldH=3400,gravity=1120,jumpV=710;
+  let raf=null,timerRAF=null,finished=false,leftHeld=false,rightHeld=false,grounded=true,last=0,endAt=0,maxY=58,playerX=0,playerY=58,vy=0,jumpCount=0;
+  const worldH=4300,gravity=1280,baseJumpV=870;
   screen.innerHTML=`<div class="jumpup-shell"><div class="game-head"><div><span class="kicker">${esc(p.name)}</span><h2>ジャンピングモブくん</h2></div><div class="game-badge">${playBadge(humanIndex)}</div></div><div class="jumpup-hud"><div><span>TIME</span><b id="jumpupTime">10.00</b></div><div><span>HEIGHT</span><b id="jumpupHeight">0m</b></div></div><div id="jumpupView" class="jumpup-view"><div id="jumpupWorld" class="jumpup-world" style="height:${worldH}px"><div id="jumpupPlatforms"></div><div id="jumpupPlayer" class="jumpup-player" style="background-image:url('${p.img}')"><i></i></div></div></div><div class="jumpup-controls"><button id="jumpLeft" type="button">←</button><button id="jumpBtn" class="jump-main" type="button">JUMP</button><button id="jumpRight" type="button">→</button></div></div>`;
   const view=document.getElementById('jumpupView'),world=document.getElementById('jumpupWorld'),layer=document.getElementById('jumpupPlatforms'),player=document.getElementById('jumpupPlayer'),timeEl=document.getElementById('jumpupTime'),heightEl=document.getElementById('jumpupHeight'),left=document.getElementById('jumpLeft'),right=document.getElementById('jumpRight'),jump=document.getElementById('jumpBtn');
   const sw=view.clientWidth,platforms=[];let y=28,x=sw/2;
-  for(let i=0;i<30;i++){
-    // Start already shorter and shrink aggressively as height increases.
-    const width=Math.max(34,132-i*3.35);
+  for(let i=0;i<36;i++){
+    // V9.9: much narrower platforms. Later platforms become tiny.
+    const width=Math.max(18,78-i*1.72);
     if(i===0){x=sw/2;y=28}
     else{
-      y+=rand(94,138);
-      x=clamp(x+rand(-118,118),width/2+8,sw-width/2-8);
+      y+=rand(92,132);
+      x=clamp(x+rand(-142,142),width/2+7,sw-width/2-7);
     }
-    platforms.push({x,y,w:width,h:14});
+    platforms.push({x,y,w:width,h:12});
   }
   layer.innerHTML=platforms.map((pl,i)=>`<div class="jumpup-platform" style="left:${pl.x-pl.w/2}px;bottom:${pl.y}px;width:${pl.w}px"><span>${i}</span></div>`).join('');
   playerX=platforms[0].x;playerY=platforms[0].y+platforms[0].h;
   function controlsHold(el,setter){el.addEventListener('pointerdown',e=>{e.preventDefault();setter(true)},{passive:false});['pointerup','pointercancel','pointerleave'].forEach(ev=>el.addEventListener(ev,()=>setter(false),{passive:false}));}
   controlsHold(left,v=>leftHeld=v);controlsHold(right,v=>rightHeld=v);
-  jump.addEventListener('pointerdown',e=>{if(finished||!grounded||!isGameRunValid(runId))return;e.preventDefault();grounded=false;vy=jumpV;player.classList.add('spring');beep(640,35,.014);setTimeout(()=>player.classList.remove('spring'),160)},{passive:false});
-  function camera(){const vh=view.clientHeight,cam=clamp(playerY-vh*.54,0,worldH-vh);world.style.transform=`translateY(${cam}px)`}
+  jump.addEventListener('pointerdown',e=>{
+    if(finished||!grounded||!isGameRunValid(runId))return;
+    e.preventDefault();
+    jumpCount++;
+    grounded=false;
+
+    // Every jump boosts both vertical reach and horizontal travel speed.
+    vy=Math.min(1240,baseJumpV+jumpCount*27);
+
+    player.classList.add('spring');
+    jump.textContent=`JUMP ×${jumpCount}`;
+    beep(640+Math.min(260,jumpCount*12),35,.014);
+    setTimeout(()=>player.classList.remove('spring'),150);
+  },{passive:false});
+  function camera(){const vh=view.clientHeight,cam=clamp(playerY-vh*.46,0,worldH-vh);world.style.transform=`translateY(${cam}px)`}
   function finish(label='TIME UP'){if(finished)return;finished=true;if(raf)cancelAnimationFrame(raf);if(timerRAF)cancelAnimationFrame(timerRAF);const meters=Math.round(maxY/2);state.records.jumpingMob[p.id]=meters;setTimeout(()=>{if(isGameRunValid(runId))recordScreen(30,p,humanIndex,`${meters}<small>m</small>`,label)},350)}
   if(!(await countdown('HOPPING',runId)))return;endAt=performance.now()+10000;last=performance.now();
-  function frame(now){if(finished||!isGameRunValid(runId))return;const dt=Math.min(30,now-last)/1000;last=now;const prevY=playerY;const move=(rightHeld?1:0)-(leftHeld?1:0);playerX=clamp(playerX+move*285*dt,24,sw-24);if(!grounded){vy-=gravity*dt;playerY+=vy*dt;if(vy<=0){let landed=null;for(const pl of platforms){const top=pl.y+pl.h;if(prevY>=top&&playerY<=top&&Math.abs(playerX-pl.x)<pl.w/2+18){landed=pl;break;}}if(landed){playerY=landed.y+landed.h;vy=0;grounded=true;beep(760,25,.01);}}}maxY=Math.max(maxY,playerY);heightEl.textContent=`${Math.round(maxY/2)}m`;player.style.left=`${playerX}px`;player.style.bottom=`${playerY}px`;camera();if(playerY<-70){finish('FALL');return;}raf=requestAnimationFrame(frame)}
+  function frame(now){if(finished||!isGameRunValid(runId))return;const dt=Math.min(28,now-last)/1000;last=now;
+    const prevY=playerY;
+    const move=(rightHeld?1:0)-(leftHeld?1:0);
+    const moveSpeed=Math.min(575,335+jumpCount*11);
+    playerX=clamp(playerX+move*moveSpeed*dt,20,sw-20);if(!grounded){vy-=gravity*dt;playerY+=vy*dt;if(vy<=0){let landed=null;for(const pl of platforms){const top=pl.y+pl.h;if(prevY>=top&&playerY<=top&&Math.abs(playerX-pl.x)<pl.w/2+9){landed=pl;break;}}if(landed){playerY=landed.y+landed.h;vy=0;grounded=true;beep(760,25,.01);}}}maxY=Math.max(maxY,playerY);heightEl.textContent=`${Math.round(maxY/2)}m`;player.style.left=`${playerX}px`;player.style.bottom=`${playerY}px`;camera();if(playerY<-70){finish('FALL');return;}raf=requestAnimationFrame(frame)}
   function timer(now){if(finished||!isGameRunValid(runId))return;const rem=endAt-now;timeEl.textContent=(Math.max(0,rem)/1000).toFixed(2);if(rem<=0){finish('10 SEC');return;}timerRAF=requestAnimationFrame(timer)}
   raf=requestAnimationFrame(frame);timerRAF=requestAnimationFrame(timer);
 }
@@ -5101,6 +5128,539 @@ async function startPopularGame(p,humanIndex,runId){
 }
 
 
+// GAME 34 -------------------------------------------------
+async function startPlanetEnergy(p,humanIndex,runId){
+  gameFit();
+
+  let raf=null;
+  let finished=false;
+  let phaseStart=0;
+  let pulseScale=.2;
+  const charges=[];
+  let chargeRound=0;
+  let finalCharge=0;
+
+  screen.innerHTML=`<div class="planet-shell">
+    <div class="game-head">
+      <div><span class="kicker">${esc(p.name)}</span><h2>この星を..！</h2></div>
+      <div class="game-badge">${playBadge(humanIndex)}</div>
+    </div>
+
+    <div class="planet-hud">
+      <div><span>CHARGE</span><b id="planetRound">1 / 3</b></div>
+      <div><span>ENERGY</span><b id="planetEnergyValue">0%</b></div>
+      <div><span>DISTANCE</span><b id="planetDistance">-- km</b></div>
+    </div>
+
+    <div id="planetChargeScene" class="planet-charge-scene">
+      <div id="planetGauge" class="planet-gauge">
+        <div id="planetPulse" class="planet-pulse"></div>
+        <div class="planet-gauge-ring"></div>
+        <span>MAX</span>
+      </div>
+
+      <div id="planetFinalBall" class="planet-final-ball"></div>
+      <div class="planet-mob" style="background-image:url('${p.img}')"></div>
+      <div id="planetChargeText" class="planet-charge-text">MAXの瞬間をタップ</div>
+    </div>
+
+    <button id="planetChargeTap" class="planet-charge-button" type="button">CHARGE TAP</button>
+    <button id="planetFire" class="planet-fire-button hidden" type="button">放つ！</button>
+
+    <div id="planetFlightView" class="planet-flight-view hidden">
+      <div id="planetWorld" class="planet-world">
+        <div class="planet-city-ground"></div>
+        <div id="planetBuildings"></div>
+        <div id="planetFlightBall" class="planet-flight-ball"></div>
+      </div>
+      <div id="planetFlightBanner" class="planet-flight-banner">ENERGY LAUNCH!</div>
+    </div>
+  </div>`;
+
+  const roundEl=document.getElementById('planetRound');
+  const energyEl=document.getElementById('planetEnergyValue');
+  const distanceEl=document.getElementById('planetDistance');
+  const chargeScene=document.getElementById('planetChargeScene');
+  const gauge=document.getElementById('planetGauge');
+  const pulse=document.getElementById('planetPulse');
+  const finalBall=document.getElementById('planetFinalBall');
+  const chargeText=document.getElementById('planetChargeText');
+  const chargeBtn=document.getElementById('planetChargeTap');
+  const fireBtn=document.getElementById('planetFire');
+
+  const flightView=document.getElementById('planetFlightView');
+  const world=document.getElementById('planetWorld');
+  const buildingLayer=document.getElementById('planetBuildings');
+  const flightBall=document.getElementById('planetFlightBall');
+  const flightBanner=document.getElementById('planetFlightBanner');
+
+  function pulseFrame(now){
+    if(finished||chargeRound>=3||!isGameRunValid(runId))return;
+
+    const elapsed=now-phaseStart;
+    const phase=(elapsed%1120)/1120;
+
+    // Smooth breathe: 0.18 -> 1.00 -> 0.18
+    pulseScale=.18+.82*(.5-.5*Math.cos(phase*Math.PI*2));
+    pulse.style.transform=`translate(-50%,-50%) scale(${pulseScale})`;
+
+    raf=requestAnimationFrame(pulseFrame);
+  }
+
+  function startChargeRound(){
+    chargeBtn.disabled=false;
+    chargeText.textContent=`CHARGE ${chargeRound+1} / 3  —  MAXを狙え`;
+    roundEl.textContent=`${chargeRound+1} / 3`;
+    phaseStart=performance.now();
+    if(raf)cancelAnimationFrame(raf);
+    raf=requestAnimationFrame(pulseFrame);
+  }
+
+  chargeBtn.addEventListener('pointerdown',e=>{
+    if(finished||chargeRound>=3||chargeBtn.disabled||!isGameRunValid(runId))return;
+    e.preventDefault();
+
+    chargeBtn.disabled=true;
+    if(raf)cancelAnimationFrame(raf);
+
+    const pct=clamp(pulseScale*100,0,100);
+    charges.push(pct);
+
+    chargeText.textContent=`${pct.toFixed(1)}% CHARGE`;
+    beep(pct>=97?1000:pct>=90?820:540,80,.025);
+
+    chargeRound++;
+
+    const avg=charges.reduce((a,b)=>a+b,0)/charges.length;
+    energyEl.textContent=`${avg.toFixed(1)}%`;
+
+    if(chargeRound<3){
+      setTimeout(()=>{
+        if(isGameRunValid(runId))startChargeRound();
+      },620);
+      return;
+    }
+
+    finalCharge=charges.reduce((a,b)=>a+b,0)/3;
+    energyEl.textContent=`${finalCharge.toFixed(1)}%`;
+
+    // Final ball can become almost the whole gameplay view.
+    const rect=chargeScene.getBoundingClientRect();
+    const maxDiameter=Math.min(rect.width*.92,rect.height*.69);
+    const diameter=72+(maxDiameter-72)*Math.pow(finalCharge/100,1.15);
+
+    finalBall.style.width=`${diameter}px`;
+    finalBall.style.height=`${diameter}px`;
+    finalBall.classList.add('show');
+
+    if(finalCharge>=90)chargeScene.classList.add('camera-out');
+    if(finalCharge>=98)chargeScene.classList.add('planet-max');
+
+    gauge.classList.add('finished');
+    pulse.style.opacity='0';
+    chargeBtn.classList.add('hidden');
+    fireBtn.classList.remove('hidden');
+    chargeText.textContent=finalCharge>=98?'この星を..！ MAX ENERGY':'ENERGY READY';
+
+    beep(finalCharge>=98?1080:760,140,.035);
+  },{passive:false});
+
+  async function launchEnergy(){
+    if(finished||!isGameRunValid(runId))return;
+    fireBtn.disabled=true;
+
+    // Energy rises above MOB first, then the horizontal launch starts.
+    finalBall.classList.add('rise');
+    chargeText.textContent='ENERGY UP';
+    beep(820,100,.03);
+    await wait(520);
+
+    if(!isGameRunValid(runId))return;
+
+    chargeScene.classList.add('hidden');
+    fireBtn.classList.add('hidden');
+    flightView.classList.remove('hidden');
+
+    const vw=flightView.clientWidth;
+    const vh=flightView.clientHeight;
+    const worldW=6400;
+
+    world.style.width=`${worldW}px`;
+
+    const buildings=[];
+    let bx=430;
+    for(let i=0;i<25;i++){
+      const w=randi(76,128);
+      const h=randi(135,330);
+
+      buildings.push({x:bx,w,h,destroyed:false});
+      bx+=randi(190,275);
+    }
+
+    buildingLayer.innerHTML=buildings.map((b,i)=>`
+      <div class="planet-building b${i%4}" style="left:${b.x}px;width:${b.w}px;height:${b.h}px">
+        <div class="planet-windows"></div>
+      </div>`).join('');
+
+    const buildingEls=[...buildingLayer.children];
+
+    const distanceKm=Math.round(Math.pow(finalCharge/100,2.05)*1000)/10;
+    const travelPx=distanceKm/100*(worldW-620);
+
+    const ballDiameter=Math.min(
+      Math.max(70,vw*(.19+.50*Math.pow(finalCharge/100,1.2))),
+      vh*.70
+    );
+
+    flightBall.style.width=`${ballDiameter}px`;
+    flightBall.style.height=`${ballDiameter}px`;
+
+    let energyX=185;
+    const energyY=Math.max(42,vh*.16);
+    flightBall.style.left=`${energyX}px`;
+    flightBall.style.top=`${energyY}px`;
+
+    if(finalCharge>=92)flightView.classList.add('camera-out');
+
+    const start=performance.now();
+    const duration=1300+distanceKm/100*3600;
+
+    flightBanner.textContent='放て！！';
+    setTimeout(()=>{
+      if(isGameRunValid(runId))flightBanner.textContent='BUILDING BREAK!';
+    },520);
+
+    await new Promise(resolve=>{
+      const fly=now=>{
+        if(!isGameRunValid(runId)){resolve();return;}
+
+        const t=clamp((now-start)/duration,0,1);
+        const eased=1-Math.pow(1-t,2.2);
+
+        energyX=185+travelPx*eased;
+        flightBall.style.left=`${energyX}px`;
+
+        const km=distanceKm*eased;
+        distanceEl.textContent=`${km.toFixed(1)} km`;
+
+        const radius=ballDiameter*.46;
+
+        buildings.forEach((b,i)=>{
+          if(b.destroyed)return;
+
+          const center=b.x+b.w/2;
+          if(Math.abs(center-energyX)<radius+b.w*.40){
+            b.destroyed=true;
+            buildingEls[i].classList.add('destroyed');
+            beep(160+randi(0,70),35,.009);
+          }
+        });
+
+        // Camera follows energy. It never flies out of view.
+        const cam=clamp(energyX-vw*.40,0,worldW-vw);
+        world.style.transform=`translateX(${-cam}px)`;
+
+        if(t<1){
+          requestAnimationFrame(fly);
+        }else{
+          resolve();
+        }
+      };
+      requestAnimationFrame(fly);
+    });
+
+    if(!isGameRunValid(runId))return;
+
+    finished=true;
+    state.records.planetEnergy[p.id]=distanceKm;
+    distanceEl.textContent=`${distanceKm.toFixed(1)} km`;
+    flightBanner.textContent=distanceKm>=99.9?'100km PLANET ENERGY!':`${distanceKm.toFixed(1)}km`;
+
+    beep(distanceKm>=99?1050:distanceKm>=80?880:650,150,.035);
+
+    setTimeout(()=>{
+      if(isGameRunValid(runId)){
+        recordScreen(
+          33,p,humanIndex,
+          `${distanceKm.toFixed(1)}<small>km</small>`,
+          `ENERGY ${finalCharge.toFixed(1)}%`
+        );
+      }
+    },900);
+  }
+
+  fireBtn.addEventListener('pointerdown',e=>{
+    e.preventDefault();
+    launchEnergy();
+  },{passive:false});
+
+  if(!(await countdown('ENERGY',runId)))return;
+  startChargeRound();
+}
+
+// GAME 35 -------------------------------------------------
+function scoreHeadSpinTrace(points,w,h){
+  if(points.length<12)return 0;
+
+  const cx=w/2;
+  const cy=h/2;
+  const targetR=Math.min(w,h)*.31;
+
+  let radialError=0;
+  let totalAngle=0;
+  let netAngle=0;
+
+  const angles=[];
+
+  for(const pt of points){
+    const dx=pt.x-cx;
+    const dy=pt.y-cy;
+    const r=Math.hypot(dx,dy);
+
+    radialError+=Math.abs(r-targetR)/targetR;
+    angles.push(Math.atan2(dy,dx));
+  }
+
+  for(let i=1;i<angles.length;i++){
+    let d=angles[i]-angles[i-1];
+
+    while(d>Math.PI)d-=Math.PI*2;
+    while(d<-Math.PI)d+=Math.PI*2;
+
+    totalAngle+=Math.abs(d);
+    netAngle+=d;
+  }
+
+  radialError/=points.length;
+
+  const radialScore=clamp(100-radialError*260,0,100);
+  const coverage=clamp(totalAngle/(Math.PI*2),0,1);
+  const coverageScore=coverage*100;
+
+  const directionScore=totalAngle>0
+    ? clamp(Math.abs(netAngle)/totalAngle,0,1)*100
+    : 0;
+
+  const start=points[0];
+  const end=points[points.length-1];
+  const closeDist=Math.hypot(start.x-end.x,start.y-end.y);
+  const closeScore=clamp(100-closeDist/(targetR*1.45)*100,0,100);
+
+  const tooMuchPenalty=Math.max(0,(totalAngle/(Math.PI*2)-1.22)*42);
+
+  return clamp(
+    radialScore*.46+
+    coverageScore*.29+
+    directionScore*.15+
+    closeScore*.10-
+    tooMuchPenalty,
+    0,100
+  );
+}
+
+async function startHeadSpinner(p,humanIndex,runId){
+  gameFit();
+
+  let tracing=false;
+  let pointerId=null;
+  let points=[];
+  let round=0;
+  let finished=false;
+  const matches=[];
+
+  screen.innerHTML=`<div class="headspin-shell">
+    <div class="game-head">
+      <div><span class="kicker">${esc(p.name)}</span><h2>モブくんはヘッドスピナー</h2></div>
+      <div class="game-badge">${playBadge(humanIndex)}</div>
+    </div>
+
+    <div class="headspin-hud">
+      <div><span>TRACE</span><b id="headspinRound">1 / 3</b></div>
+      <div><span>ENERGY</span><b id="headspinEnergy">0%</b></div>
+    </div>
+
+    <div id="headspinStage" class="headspin-stage">
+      <div class="headspin-guide">
+        <svg id="headspinSvg" viewBox="0 0 300 300" preserveAspectRatio="none">
+          <circle cx="150" cy="150" r="94" class="headspin-guide-circle"></circle>
+          <polyline id="headspinPath" points="" class="headspin-user-path"></polyline>
+        </svg>
+        <div class="headspin-arrow">↻</div>
+      </div>
+
+      <div id="headspinMob" class="headspin-mob" style="background-image:url('${p.img}')"></div>
+      <div id="headspinMessage" class="headspin-message">円を1周なぞる</div>
+    </div>
+
+    <button id="headspinSpin" class="headspin-spin hidden" type="button">スピン！</button>
+
+    <div id="headspinResult" class="headspin-result hidden">
+      <span>SPIN</span>
+      <strong id="headspinLaps">0</strong>
+      <b>周</b>
+    </div>
+  </div>`;
+
+  const stage=document.getElementById('headspinStage');
+  const svg=document.getElementById('headspinSvg');
+  const path=document.getElementById('headspinPath');
+  const mob=document.getElementById('headspinMob');
+  const msg=document.getElementById('headspinMessage');
+  const roundEl=document.getElementById('headspinRound');
+  const energyEl=document.getElementById('headspinEnergy');
+  const spinBtn=document.getElementById('headspinSpin');
+  const result=document.getElementById('headspinResult');
+  const lapsEl=document.getElementById('headspinLaps');
+
+  function localPoint(e){
+    const rect=svg.getBoundingClientRect();
+
+    return {
+      x:(e.clientX-rect.left)/rect.width*300,
+      y:(e.clientY-rect.top)/rect.height*300
+    };
+  }
+
+  function renderPath(){
+    path.setAttribute(
+      'points',
+      points.map(pt=>`${pt.x.toFixed(1)},${pt.y.toFixed(1)}`).join(' ')
+    );
+  }
+
+  function beginTrace(e){
+    if(finished||round>=3||tracing||!isGameRunValid(runId))return;
+
+    e.preventDefault();
+
+    tracing=true;
+    pointerId=e.pointerId;
+    points=[localPoint(e)];
+
+    path.setAttribute('points','');
+    msg.textContent=`TRACE ${round+1} / 3`;
+
+    try{stage.setPointerCapture(pointerId)}catch(_){}
+  }
+
+  function moveTrace(e){
+    if(!tracing||e.pointerId!==pointerId)return;
+
+    e.preventDefault();
+
+    const pt=localPoint(e);
+    const prev=points[points.length-1];
+
+    if(!prev||Math.hypot(pt.x-prev.x,pt.y-prev.y)>=2.2){
+      points.push(pt);
+      renderPath();
+    }
+  }
+
+  function endTrace(e){
+    if(!tracing||e.pointerId!==pointerId)return;
+
+    e.preventDefault();
+    tracing=false;
+
+    const score=scoreHeadSpinTrace(points,300,300);
+    matches.push(score);
+    round++;
+
+    const avg=matches.reduce((a,b)=>a+b,0)/matches.length;
+
+    energyEl.textContent=`${avg.toFixed(1)}%`;
+    msg.textContent=`MATCH ${score.toFixed(1)}%`;
+
+    beep(score>=95?1000:score>=85?820:score>=65?620:330,70,.022);
+
+    if(round<3){
+      roundEl.textContent=`${round+1} / 3`;
+
+      setTimeout(()=>{
+        if(!isGameRunValid(runId)||finished)return;
+        points=[];
+        path.setAttribute('points','');
+        msg.textContent='次の円をなぞる';
+      },650);
+    }else{
+      roundEl.textContent='3 / 3';
+
+      setTimeout(()=>{
+        if(!isGameRunValid(runId)||finished)return;
+        spinBtn.classList.remove('hidden');
+        msg.textContent='ENERGY READY';
+      },650);
+    }
+  }
+
+  stage.addEventListener('pointerdown',beginTrace,{passive:false});
+  stage.addEventListener('pointermove',moveTrace,{passive:false});
+  stage.addEventListener('pointerup',endTrace,{passive:false});
+  stage.addEventListener('pointercancel',e=>{
+    if(tracing&&e.pointerId===pointerId){
+      tracing=false;
+      points=[];
+      path.setAttribute('points','');
+      msg.textContent='もう一度なぞる';
+    }
+  },{passive:false});
+
+  spinBtn.addEventListener('pointerdown',async e=>{
+    if(finished||round<3||!isGameRunValid(runId))return;
+
+    e.preventDefault();
+    finished=true;
+    spinBtn.disabled=true;
+
+    const avg=matches.reduce((a,b)=>a+b,0)/3;
+    const laps=clamp(Math.round(Math.pow(avg/100,1.28)*100),0,100);
+
+    result.classList.remove('hidden');
+    mob.classList.add('super-spin');
+    msg.textContent='SPIN!!';
+
+    const start=performance.now();
+    const duration=1700;
+
+    await new Promise(resolve=>{
+      const animate=now=>{
+        if(!isGameRunValid(runId)){resolve();return;}
+
+        const t=clamp((now-start)/duration,0,1);
+        const shown=Math.round(laps*(1-Math.pow(1-t,2.1)));
+
+        lapsEl.textContent=shown;
+
+        if(t<1)requestAnimationFrame(animate);
+        else resolve();
+      };
+      requestAnimationFrame(animate);
+    });
+
+    if(!isGameRunValid(runId))return;
+
+    lapsEl.textContent=laps;
+    state.records.headSpinner[p.id]=laps;
+    beep(laps>=95?1080:laps>=80?900:650,150,.035);
+
+    setTimeout(()=>{
+      if(isGameRunValid(runId)){
+        recordScreen(
+          34,p,humanIndex,
+          `${laps}<small>周</small>`,
+          `TRACE AVG ${avg.toFixed(1)}%`
+        );
+      }
+    },800);
+  },{passive:false});
+
+  if(!(await countdown('HEAD SPIN',runId)))return;
+  msg.textContent='円を1周なぞる';
+}
+
+
+
 function recordScreen(gameIndex,p,humanIndex,main,sub=""){
   clearGameFit();
   gameTop();
@@ -5138,7 +5698,7 @@ async function simulateCpuThenResult(gameIndex){
 
 function cpuUltraDraw(gameIndex){
   // Game-specific draw rate. Regular values are already intentionally strong.
-  const chance=[0.12,0.10,0.14,0.16,0.12,0.13,0.14,0.12,0.15,0.12,0.14,0.13,0.13,0.14,0.12,0.12,0.13,0.12,0.13,0.14,0.13,0.14,0.12,0.13,0.12,0.12,0.13,0.13,0.14,0.14,0.13,0.12,0.13][gameIndex] ?? 0.12;
+  const chance=[0.12,0.10,0.14,0.16,0.12,0.13,0.14,0.12,0.15,0.12,0.14,0.13,0.13,0.14,0.12,0.12,0.13,0.12,0.13,0.14,0.13,0.14,0.12,0.13,0.12,0.12,0.13,0.13,0.14,0.14,0.13,0.12,0.13,0.13,0.13][gameIndex] ?? 0.12;
   return Math.random()<chance;
 }
 
@@ -5214,8 +5774,12 @@ function simulateOneCpu(gameIndex,p){
     state.records.jumpingMob[p.id]=ultra?randi(430,545):randi(240,445);
   }else if(gameIndex===31){
     state.records.heroMaybe[p.id]=ultra?randi(84,98):randi(48,85);
-  }else{
+  }else if(gameIndex===32){
     state.records.popularGame[p.id]=ultra?randi(17,23):randi(9,18);
+  }else if(gameIndex===33){
+    state.records.planetEnergy[p.id]=Math.round((ultra?rand(82,98):rand(38,84))*10)/10;
+  }else{
+    state.records.headSpinner[p.id]=ultra?randi(84,97):randi(45,84);
   }
 
   return ultra;
@@ -5272,7 +5836,9 @@ function performancePoints(gameIndex,v){
   if(gameIndex===29)return clamp(Math.round(v),0,100);
   if(gameIndex===30)return clamp(Math.round(v/500*100),0,100);
   if(gameIndex===31)return clamp(Math.round(v),0,100);
-  return clamp(Math.round(v/20*100),0,100);
+  if(gameIndex===32)return clamp(Math.round(v/20*100),0,100);
+  if(gameIndex===33)return clamp(Math.round(v),0,100);
+  return clamp(Math.round(v),0,100);
 }
 
 function rankRecords(gameIndex){
@@ -5321,7 +5887,9 @@ function formatRecord(gameIndex,v){
   if(gameIndex===29)return `${Number(v).toFixed(1)}%`;
   if(gameIndex===30)return `${Math.round(v)}m`;
   if(gameIndex===31)return `${Math.round(v)}pt`;
-  return `${Math.round(v)}体`;
+  if(gameIndex===32)return `${Math.round(v)}体`;
+  if(gameIndex===33)return `${Number(v).toFixed(1)}km`;
+  return `${Math.round(v)}周`;
 }
 
 function applyPoints(gameIndex,ranked){
