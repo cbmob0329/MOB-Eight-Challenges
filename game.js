@@ -52,10 +52,12 @@ const GAMES=[
   {no:12,key:"slot",title:"モブくんスロット",sub:"キャラクタースロットでコイン勝負"},
   {no:13,key:"rope",title:"モブ跳び",sub:"横から走ってくるモブくんを飛び越える"},
   {no:14,key:"pk",title:"モブくんPK",sub:"10本のシュートを止める"},
-  {no:15,key:"rhythm",title:"モブくんリズムタップ",sub:"4人の跳ねるリズムを再現"},
+  {no:15,key:"rhythm",title:"モブくんリズムタップ",sub:"TAP表示のタイミングに合わせる"},
   {no:16,key:"cut",title:"モブくんカットゲーム",sub:"指定%を感覚で切り分ける"},
   {no:17,key:"climb",title:"モブくん木登り",sub:"中央タップで10秒登る"},
-  {no:18,key:"errand",title:"お使いモブくん",sub:"1000円を10秒で使い切る"}
+  {no:18,key:"errand",title:"お使いモブくん",sub:"1000円を10秒で使い切る"},
+  {no:19,key:"dontHitMob",title:"モブくんを叩かないで",sub:"モグラだけを叩く10秒勝負"},
+  {no:20,key:"mobStop",title:"モブくんストップ",sub:"棒のギリギリで止める"}
 ];
 
 const MODES={
@@ -96,7 +98,7 @@ function freshState(){
     roundIndex:0,
     records:{
       reaction:{},memory:{},puzzle:{},launch:{},stack:{},breakdance:{},
-      crisis:{},factory:{},catcher:{},tidy:{},ski:{},slot:{},rope:{},pk:{},rhythm:{},cut:{},climb:{},errand:{}
+      crisis:{},factory:{},catcher:{},tidy:{},ski:{},slot:{},rope:{},pk:{},rhythm:{},cut:{},climb:{},errand:{},dontHitMob:{},mobStop:{}
     },
     total:{},
     roundPoints:[],
@@ -154,7 +156,7 @@ function renderHome(){
   state=freshState();
   screen.innerHTML=`
     <section class="hero">
-      <div><span class="kicker">SMARTPHONE PARTY GAME</span><h1>18 MINI<br>GAMES</h1><p>18種のミニゲーム。各モードでNORMALかCUSTOMを選んで遊べます。</p></div>
+      <div><span class="kicker">SMARTPHONE PARTY GAME</span><h1>20 MINI<br>GAMES</h1><p>20種のミニゲーム。各モードでNORMALかCUSTOMを選んで遊べます。</p></div>
       <div class="hero-mark">MOB</div>
     </section>
     <section class="panel">
@@ -227,7 +229,7 @@ function renderPlayStyleSelect(){
       <button id="normalStyle" class="style-select-card normal" type="button">
         <span>NORMAL</span>
         <b>順番に全種目</b>
-        <small>GAME 1 → 18 を順番にプレイ</small>
+        <small>GAME 1 → 20 を順番にプレイ</small>
       </button>
       <button id="customStyle" class="style-select-card custom" type="button">
         <span>CUSTOM</span>
@@ -237,7 +239,7 @@ function renderPlayStyleSelect(){
     </div>
 
     <section class="panel flat">
-      <h3>18 MINI GAMES</h3>
+      <h3>20 MINI GAMES</h3>
       <div class="compact-game-grid">
         ${GAMES.map(g=>`<div><b>${g.no}</b><span>${g.title}</span></div>`).join("")}
       </div>
@@ -355,6 +357,8 @@ function renderModeLobby(){
       <div><b>モブくんカットゲーム</b><span>3回の誤差から0〜100</span></div>
       <div><b>モブくん木登り</b><span>700m以上=100 / 0m=0</span></div>
       <div><b>お使いモブくん</b><span>残金0円=100 / 10円=90 / 100円以上=0</span></div>
+      <div><b>モブくんを叩かないで</b><span>モグラ12体以上=100 / MOBを叩くと終了</span></div>
+      <div><b>モブくんストップ</b><span>右端ギリギリ=100 / 落下=0</span></div>
     </div>`;
 
   screen.innerHTML=`
@@ -405,12 +409,14 @@ function scoreRuleForGame(index){
     "見本との一致率がそのまま0〜100点",
     "1000m=100点 / 200m以下=0点",
     "3000コイン以上=100点 / 1000コイン以下=0点",
-    "30回以上=100点 / 0回=0点",
+    "30体回避=100点 / 0体=0点",
     "10本セーブ=100点 / 1本=10点",
-    "リズム判定0〜100点",
+    "TAP表示とのタイミング精度0〜100点",
     "3回のカット精度を0〜100点化",
     "700m以上=100点 / 0m=0点",
-    "残金0円=100点 / 残金10円=90点 / 残金100円以上=0点"
+    "残金0円=100点 / 残金10円=90点 / 残金100円以上=0点",
+    "モグラ12体以上=100点 / 0体=0点",
+    "棒の端に近いほど高得点 / 落下=0点"
   ][index];
 }
 
@@ -445,17 +451,21 @@ function showGameIntro(index){
   }else if(index===11){
     rules=`<li>1000コイン開始 / 1回100コイン / 10秒。</li><li>記憶力ゲームの10キャラクターがリールに登場。</li><li>最初の2リールはかなり揃いやすく、3つ目が勝負。</li><li>同じキャラクター3つで配当。</li>`;
   }else if(index===12){
-    rules=`<li>3・2・1後、横から様々なモブくんが走ってきます。</li><li>ぶつかる直前にタップしてジャンプ。</li><li>飛び越えるたび、相手の速度と出現テンポが上がります。</li><li>接触したら即終了。30体回避で100点。</li>`;
+    rules=`<li>3・2・1後、左右どちらからも様々なモブくんが走ってきます。</li><li>ジャンプ中の連打は無効。着地してから次のジャンプが可能。</li><li>相手と重なる瞬間に十分な高さまで跳べていないと接触終了。</li><li>基本はどんどん高速化。たまに遅いモブくんも混ざります。</li><li>30体回避で100点。</li>`;
   }else if(index===13){
-    rules=`<li>3・2・1後、様々なモブくんが合計10本シュート。</li><li>LEFT / CENTER / RIGHTを選んでキーパーを飛ばします。</li><li>10本全部止めれば100点。</li>`;
+    rules=`<li>3・2・1後、様々なモブくんが合計10本シュート。</li><li>左スワイプ / 中央タップ / 右スワイプでセーブ。</li><li>基本速度は少し遅め。たまに高速シュートが混ざります。</li><li>10本全部止めれば100点。</li>`;
   }else if(index===14){
-    rules=`<li>4人のモブくんがランダムな順番・リズムで跳ねます。</li><li>見本を見た後、同じキャラを同じリズムでタップ。</li><li>全4ROUND。後半ほど複雑。</li><li>同じキャラクターが連続することもあります。</li>`;
+    rules=`<li>4人のモブくんが4拍ジャンプしてテンポを提示。</li><li>お手本のリズムを見た後はカウントダウンなし。</li><li>本番前にも4人が4拍ジャンプ。</li><li>押すべきキャラにTAP表示が出るので、その瞬間に近いほど高得点。</li><li>全4ROUND、後半ほど複雑。</li>`;
   }else if(index===15){
     rules=`<li>「右側を○%残せ！」と表示。</li><li>長い棒を縦スワイプしてカット。</li><li>右側に残った割合と指定%の誤差を判定。</li><li>3回の平均精度で0〜100点。</li>`;
   }else if(index===16){
     rules=`<li>3・2・1後、10秒間木登り。</li><li>短いゲージのマーカーが左右へ移動。</li><li>中央に近い時ほど1タップで大きく登ります。</li><li>700m以上で100点。</li>`;
-  }else{
+  }else if(index===17){
     rules=`<li>1000円を持って3・2・1スタート。</li><li>食材・お菓子など100種類から毎回30商品。</li><li>3円〜250円の商品をタップ購入。</li><li>10秒で1000円ぴったり使い切れば100点。</li>`;
+  }else if(index===18){
+    rules=`<li>3・2・1後、9個の穴からモグラが出現。</li><li>モグラをタップすると+1。</li><li>たまにモブくんが顔を出します。</li><li>モブくんを1回でも叩いたらその場で終了。</li><li>10秒。モグラ12体以上で100点。</li>`;
+  }else{
+    rules=`<li>横長の棒の左端にモブくん。</li><li>モブくんを左へ引っ張り、離すと発射。</li><li>引っ張る距離が長いほど遠くへ進みます。</li><li>右端ギリギリで止めるほど高得点。</li><li>棒から落ちたら0点。</li>`;
   }
 
   screen.innerHTML=`
@@ -512,7 +522,9 @@ function humanReady(gameIndex,humanIndex){
     else if(gameIndex===14)startRhythmTap(p,humanIndex);
     else if(gameIndex===15)startCutGame(p,humanIndex);
     else if(gameIndex===16)startTreeClimb(p,humanIndex);
-    else startErrand(p,humanIndex);
+    else if(gameIndex===17)startErrand(p,humanIndex);
+    else if(gameIndex===18)startDontHitMob(p,humanIndex);
+    else startMobStop(p,humanIndex);
   },{once:true});
 }
 
@@ -2797,11 +2809,11 @@ async function startJumpRope(p,humanIndex){
 
   let count=0;
   let finished=false;
-  let jumpingUntil=0;
+  let jumpStart=0;
+  const jumpDuration=520;
   let animRAF=null;
   let incoming=null;
   let nextSpawnAt=0;
-  let startAt=0;
 
   screen.innerHTML=`<div class="mob-jump-shell">
     <div class="game-head">
@@ -2821,7 +2833,7 @@ async function startJumpRope(p,humanIndex){
       <div id="mobJumpReady" class="mob-jump-ready">READY</div>
     </button>
 
-    <p id="ropeHint" class="hint">右から走ってくるモブくんをタップジャンプで飛び越える。</p>
+    <p id="ropeHint" class="hint">左右から来るモブくんを、1回ずつ正確にジャンプ。</p>
   </div>`;
 
   const stage=document.getElementById("mobJumpStage");
@@ -2832,36 +2844,63 @@ async function startJumpRope(p,humanIndex){
   const speedEl=document.getElementById("ropeSpeed");
   const hint=document.getElementById("ropeHint");
 
+  function jumpHeight(now){
+    if(!jumpStart)return 0;
+
+    const t=(now-jumpStart)/jumpDuration;
+    if(t<0||t>=1){
+      jumpStart=0;
+      player.classList.remove("jump-active");
+      player.style.transform="translateX(-50%) translateY(0)";
+      return 0;
+    }
+
+    const height=Math.sin(t*Math.PI)*96;
+    player.style.transform=`translateX(-50%) translateY(${-height}px)`;
+    return height;
+  }
+
   stage.addEventListener("pointerdown",e=>{
     if(finished)return;
     e.preventDefault();
 
-    jumpingUntil=performance.now()+510;
-    player.classList.remove("jump");
-    void player.offsetWidth;
-    player.classList.add("jump");
+    const now=performance.now();
+
+    // 空中での連打は完全無効。着地するまで次のジャンプは出ない。
+    if(jumpStart&&now-jumpStart<jumpDuration)return;
+
+    jumpStart=now;
+    player.classList.add("jump-active");
     beep(640,28,.012);
   },{passive:false});
 
   function spawn(now){
     const stageW=stage.clientWidth;
-    const speed=Math.min(1220,430+count*27);
+    const fromRight=Math.random()<.62;
+    const slow=Math.random()<.16;
+
+    const normalSpeed=Math.min(1760,520+count*46);
+    const speed=slow?rand(290,460):normalSpeed*rand(.92,1.08);
     const icon=randi(1,10);
 
     incoming={
-      x:stageW+58,
+      x:fromRight?stageW+68:-78,
       speed,
+      direction:fromRight?-1:1,
       icon,
       passed:false,
-      started:now
+      slow
     };
 
     runner.style.display="block";
     runner.style.backgroundImage=`url("icon/${String(icon).padStart(2,"0")}.png")`;
-    runner.style.transform=`translateX(${incoming.x}px)`;
-    runner.classList.remove("hit");
+    runner.className=`incoming-runner ${fromRight?"from-right":"from-left"} ${slow?"slow":""}`;
+    runner.style.transform=`translateX(${incoming.x}px) scaleX(${fromRight?1:-1})`;
 
-    speedEl.textContent=`${(speed/430).toFixed(1)}x`;
+    speedEl.textContent=slow?"SLOW":`${(speed/520).toFixed(1)}x`;
+    hint.textContent=fromRight
+      ? (slow?"右からSLOW MOB":"右から来る！")
+      : (slow?"左からSLOW MOB":"左から来る！");
   }
 
   function finish(){
@@ -2876,8 +2915,7 @@ async function startJumpRope(p,humanIndex){
   await countdown("MOB JUMP");
   if(!document.body.contains(stage))return;
 
-  startAt=performance.now();
-  nextSpawnAt=startAt+950;
+  nextSpawnAt=performance.now()+1050;
   ready.textContent="GO!";
   ready.classList.add("go");
   setTimeout(()=>ready.classList.remove("go"),430);
@@ -2887,30 +2925,33 @@ async function startJumpRope(p,humanIndex){
   const frame=now=>{
     if(finished)return;
 
-    const dt=Math.min(34,now-last);
+    const dt=Math.min(32,now-last);
     last=now;
+
+    const height=jumpHeight(now);
 
     if(!incoming&&now>=nextSpawnAt){
       spawn(now);
     }
 
     if(incoming){
-      incoming.x-=incoming.speed*dt/1000;
-      runner.style.transform=`translateX(${incoming.x}px)`;
+      incoming.x+=incoming.direction*incoming.speed*dt/1000;
+      runner.style.transform=`translateX(${incoming.x}px) scaleX(${incoming.direction<0?1:-1})`;
 
       const stageRect=stage.getBoundingClientRect();
       const playerRect=player.getBoundingClientRect();
       const runnerRect=runner.getBoundingClientRect();
 
-      const px=playerRect.left-stageRect.left;
-      const pw=playerRect.width;
-      const rx=runnerRect.left-stageRect.left;
-      const rw=runnerRect.width;
+      const playerCenter=(playerRect.left+playerRect.right)/2-stageRect.left;
+      const runnerCenter=(runnerRect.left+runnerRect.right)/2-stageRect.left;
+      const horizontalGap=Math.abs(playerCenter-runnerCenter);
 
-      const overlap=rx < px+pw*.76 && rx+rw > px+pw*.24;
+      // 判定は「タイマーが生きているか」ではなく、実際のジャンプ高さ。
+      // 連打で常時無敵にはできない。
+      const collisionZone=horizontalGap<46;
 
-      if(overlap&&!incoming.passed){
-        if(jumpingUntil>=now){
+      if(collisionZone&&!incoming.passed){
+        if(height>=44){
           incoming.passed=true;
           count++;
           countEl.textContent=count;
@@ -2926,12 +2967,17 @@ async function startJumpRope(p,humanIndex){
         }
       }
 
-      if(incoming.x<-90){
+      const stageW=stage.clientWidth;
+      const goneRight=incoming.direction>0&&incoming.x>stageW+95;
+      const goneLeft=incoming.direction<0&&incoming.x<-95;
+
+      if(goneRight||goneLeft){
         incoming=null;
         runner.style.display="none";
 
-        // More successful jumps = shorter gap between runners.
-        const gap=Math.max(190,700-count*14);
+        // 後半ほど次が早い。時々かなり短い間隔も来る。
+        const baseGap=Math.max(105,620-count*16);
+        const gap=Math.random()<.18?baseGap*.55:baseGap;
         nextSpawnAt=now+gap;
       }
     }
@@ -3053,11 +3099,22 @@ async function startPK(p,humanIndex){
     active=true;
 
     const targetX=[-92,0,92][dir];
+
+    // 平均は見切れる速度を確保。たまにV8.9相当の高速シュート。
+    const speedRoll=Math.random();
+    const shotDuration=speedRoll<.14
+      ? rand(270,315)
+      : speedRoll<.38
+        ? rand(350,420)
+        : rand(445,560);
+
+    hint.textContent=shotDuration<325?"FAST SHOT!":"KICK!";
+
     const start=performance.now();
 
     await new Promise(resolve=>{
       const frame=now=>{
-        const t=clamp((now-start)/290,0,1);
+        const t=clamp((now-start)/shotDuration,0,1);
         ball.style.transform=`translate(calc(-50% + ${targetX*t}px),${-150*t}px) scale(${1-.2*t})`;
 
         if(t<1)requestAnimationFrame(frame);
@@ -3121,7 +3178,10 @@ async function startRhythmTap(p,humanIndex){
     </div>
 
     <div id="rhythmCharacters" class="rhythm-characters rhythm-row-v88">
-      ${[1,2,3,4].map((id,i)=>`<button class="rhythm-mob rhythm-mob-v88" data-rhythm="${i}" type="button" style="background-image:url('icon/${String(id).padStart(2,"0")}.png')"></button>`).join("")}
+      ${[1,2,3,4].map((id,i)=>`
+        <button class="rhythm-mob rhythm-mob-v88" data-rhythm="${i}" type="button" style="background-image:url('icon/${String(id).padStart(2,"0")}.png')">
+          <span class="rhythm-tap-badge">TAP</span>
+        </button>`).join("")}
     </div>
 
     <div id="rhythmMessage" class="rhythm-message">WATCH</div>
@@ -3135,17 +3195,21 @@ async function startRhythmTap(p,humanIndex){
 
   function bounceOne(index,cls="bounce"){
     const mob=mobs[index];
-    mob.classList.remove("bounce","tap-bounce");
+    mob.classList.remove("bounce","tap-bounce","group-bounce");
     void mob.offsetWidth;
     mob.classList.add(cls);
     setTimeout(()=>mob.classList.remove(cls),190);
   }
 
-  async function fourBeatCountIn(beat){
-    message.textContent="KEEP THE BEAT";
+  function clearTapCues(){
+    mobs.forEach(m=>m.classList.remove("tap-cue","cue-hit","cue-miss"));
+  }
+
+  async function fourBeatCountIn(beat,label="KEEP THE BEAT"){
+    message.textContent=label;
 
     for(let n=1;n<=4;n++){
-      mobs.forEach((mob,i)=>{
+      mobs.forEach(mob=>{
         mob.classList.remove("group-bounce");
         void mob.offsetWidth;
         mob.classList.add("group-bounce");
@@ -3158,17 +3222,7 @@ async function startRhythmTap(p,humanIndex){
     }
   }
 
-  for(let round=0;round<4;round++){
-    roundEl.textContent=`${round+1} / 4`;
-    const pattern=makeRhythmPattern(round);
-
-    mobs.forEach(b=>b.disabled=true);
-    await countdown(`ROUND ${round+1}`);
-
-    // Everybody bounces four times first so the player has a clear pulse.
-    await fourBeatCountIn(pattern.beat);
-    await wait(180);
-
+  async function playSample(pattern){
     message.textContent="WATCH";
 
     for(let i=0;i<pattern.chars.length;i++){
@@ -3177,82 +3231,115 @@ async function startRhythmTap(p,humanIndex){
 
       if(i<pattern.intervals.length)await wait(pattern.intervals[i]);
     }
+  }
 
-    await wait(300);
-    await countdown("TAP");
-
-    // 本番側にも同じ4拍を必ず入れる。
-    // 見本を覚えた後にこの4拍を聞いてから再現するのでテンポを取り直せる。
-    await fourBeatCountIn(pattern.beat);
-    await wait(120);
-
+  async function playUserTurn(pattern){
+    clearTapCues();
     message.textContent="YOUR TURN";
-    mobs.forEach(b=>b.disabled=false);
-
-    const taps=[];
-    const needed=pattern.chars.length;
-    let resolveRound;
-    const done=new Promise(r=>resolveRound=r);
-    let timeout=null;
-
-    const handler=e=>{
-      const btn=e.target.closest(".rhythm-mob");
-      if(!btn||taps.length>=needed)return;
-      e.preventDefault();
-
-      const char=Number(btn.dataset.rhythm);
-      taps.push({char,time:performance.now()});
-
-      // 本番でもタップしたキャラ自身が必ず跳ねる。
-      bounceOne(char,"tap-bounce");
-      beep(500+char*55,28,.01);
-
-      if(taps.length===needed){
-        clearTimeout(timeout);
-        resolveRound();
-      }
-    };
-
-    area.addEventListener("pointerdown",handler,{passive:false});
-    timeout=setTimeout(resolveRound,Math.max(3000,pattern.intervals.reduce((a,b)=>a+b,0)+1800));
-    await done;
-    clearTimeout(timeout);
-    area.removeEventListener("pointerdown",handler);
-    mobs.forEach(b=>b.disabled=true);
 
     let roundScore=0;
 
-    if(taps.length){
-      const anchor=taps[0].time;
-      const expected=[0];
-      pattern.intervals.forEach(v=>expected.push(expected[expected.length-1]+v));
+    for(let i=0;i<pattern.chars.length;i++){
+      if(i>0)await wait(pattern.intervals[i-1]);
 
-      for(let i=0;i<pattern.chars.length;i++){
-        totalEvents++;
+      const target=pattern.chars[i];
+      const targetMob=mobs[target];
+      const cueTime=performance.now();
 
-        if(!taps[i])continue;
+      clearTapCues();
+      targetMob.classList.add("tap-cue");
+      bounceOne(target,"tap-bounce");
 
-        const charScore=taps[i].char===pattern.chars[i]?55:0;
-        const actual=taps[i].time-anchor;
-        const error=Math.abs(actual-expected[i]);
-        const timingScore=clamp(45-error/220*45,0,45);
+      // TAP表示が出た瞬間が100点の中心。
+      const maxWindow=Math.min(470,Math.max(260,(pattern.intervals[i]||pattern.beat)*.78));
 
-        roundScore+=charScore+timingScore;
-      }
-    }else{
-      totalEvents+=pattern.chars.length;
+      const eventScore=await new Promise(resolve=>{
+        let resolved=false;
+        const started=performance.now();
+
+        const finish=(score,hitMob=null)=>{
+          if(resolved)return;
+          resolved=true;
+          clearTimeout(timeout);
+          area.removeEventListener("pointerdown",handler);
+
+          targetMob.classList.remove("tap-cue");
+
+          if(hitMob!==null){
+            const hit=mobs[hitMob];
+            hit.classList.add(score>0?"cue-hit":"cue-miss");
+            setTimeout(()=>hit.classList.remove("cue-hit","cue-miss"),160);
+          }
+
+          resolve(score);
+        };
+
+        const handler=e=>{
+          const btn=e.target.closest(".rhythm-mob");
+          if(!btn)return;
+          e.preventDefault();
+
+          const char=Number(btn.dataset.rhythm);
+          bounceOne(char,"tap-bounce");
+
+          if(char!==target){
+            beep(180,40,.012);
+            finish(0,char);
+            return;
+          }
+
+          const error=Math.abs(performance.now()-cueTime);
+
+          // 0ms=100 / 60ms≈90 / 120ms≈75 / 200ms≈50 / 300ms≈20
+          const timingScore=clamp(Math.round(100-Math.pow(error/300,.82)*80),0,100);
+          beep(560+timingScore*3.2,32,.012);
+          finish(timingScore,char);
+        };
+
+        area.addEventListener("pointerdown",handler,{passive:false});
+        const timeout=setTimeout(()=>finish(0,null),maxWindow);
+      });
+
+      roundScore+=eventScore;
+      totalScore+=eventScore;
+      totalEvents++;
+
+      scoreEl.textContent=Math.round(totalScore/Math.max(1,totalEvents));
     }
 
-    totalScore+=roundScore;
-    const live=Math.round(totalScore/Math.max(1,totalEvents));
-    scoreEl.textContent=live;
-    message.textContent=`ROUND ${round+1} ${Math.round(roundScore/pattern.chars.length)}pt`;
+    clearTapCues();
+    return Math.round(roundScore/pattern.chars.length);
+  }
+
+  for(let round=0;round<4;round++){
+    roundEl.textContent=`${round+1} / 4`;
+    const pattern=makeRhythmPattern(round);
+
+    mobs.forEach(b=>b.disabled=true);
+
+    // ROUND開始時だけ3・2・1。
+    await countdown(`ROUND ${round+1}`);
+    await fourBeatCountIn(pattern.beat,"SAMPLE BEAT");
+    await wait(120);
+
+    await playSample(pattern);
+
+    // お手本の後は3・2・1を入れない。
+    await wait(300);
+    await fourBeatCountIn(pattern.beat,"YOUR BEAT");
+    await wait(100);
+
+    mobs.forEach(b=>b.disabled=false);
+    const roundResult=await playUserTurn(pattern);
+    mobs.forEach(b=>b.disabled=true);
+
+    message.textContent=`ROUND ${round+1} ${roundResult}pt`;
     await wait(520);
   }
 
   const score=clamp(Math.round(totalScore/Math.max(1,totalEvents)),0,100);
   state.records.rhythm[p.id]=score;
-  recordScreen(14,p,humanIndex,`${score}<small>pt</small>`,`RHYTHM SCORE`);
+  recordScreen(14,p,humanIndex,`${score}<small>pt</small>`,`TIMING SCORE`);
 }
 
 // GAME 16 -------------------------------------------------
@@ -3641,6 +3728,374 @@ async function startErrand(p,humanIndex){
 }
 
 
+// GAME 19 -------------------------------------------------
+async function startDontHitMob(p,humanIndex){
+  gameFit();
+
+  let hits=0;
+  let finished=false;
+  let timerRAF=null;
+  let spawnTimer=null;
+  let currentHole=-1;
+  let currentType=null;
+  let currentEl=null;
+  let endAt=0;
+
+  screen.innerHTML=`<div class="dont-hit-shell">
+    <div class="game-head">
+      <div><span class="kicker">${esc(p.name)}</span><h2>モブくんを叩かないで</h2></div>
+      <div class="game-badge">${playBadge(humanIndex)}</div>
+    </div>
+
+    <div class="dont-hit-hud">
+      <div><span>TIME</span><b id="dontHitTime">10.00</b></div>
+      <div><span>MOLE</span><b id="dontHitCount">0</b></div>
+    </div>
+
+    <div id="moleBoard" class="mole-board">
+      ${Array.from({length:9},(_,i)=>`
+        <button class="mole-hole" data-hole="${i}" type="button">
+          <div class="mole-hole-dark"></div>
+          <div class="mole-actor"></div>
+        </button>`).join("")}
+    </div>
+
+    <p id="dontHitHint" class="hint">モグラだけ叩く。モブくんを叩いた瞬間に終了。</p>
+  </div>`;
+
+  const board=document.getElementById("moleBoard");
+  const timeEl=document.getElementById("dontHitTime");
+  const countEl=document.getElementById("dontHitCount");
+  const hint=document.getElementById("dontHitHint");
+  const holes=[...board.querySelectorAll(".mole-hole")];
+
+  function clearCurrent(){
+    if(currentEl){
+      currentEl.classList.remove("show","mole","mob","hit");
+      currentEl.style.backgroundImage="";
+    }
+    currentHole=-1;
+    currentType=null;
+    currentEl=null;
+  }
+
+  function scheduleNext(delay=null){
+    if(finished)return;
+
+    clearTimeout(spawnTimer);
+
+    const d=delay??Math.max(240,520-hits*10+randi(-70,85));
+    spawnTimer=setTimeout(spawn,d);
+  }
+
+  function spawn(){
+    if(finished)return;
+
+    clearCurrent();
+
+    currentHole=randi(0,8);
+    const hole=holes[currentHole];
+    currentEl=hole.querySelector(".mole-actor");
+
+    const isMob=Math.random()<.18;
+    currentType=isMob?"mob":"mole";
+
+    currentEl.classList.add("show",currentType);
+
+    if(isMob){
+      const icon=randi(1,10);
+      currentEl.style.backgroundImage=`url("icon/${String(icon).padStart(2,"0")}.png")`;
+    }
+
+    const visibleFor=Math.max(290,700-hits*13+randi(-60,80));
+
+    spawnTimer=setTimeout(()=>{
+      clearCurrent();
+      scheduleNext(70);
+    },visibleFor);
+  }
+
+  function finish(reason="TIME"){
+    if(finished)return;
+    finished=true;
+
+    if(timerRAF)cancelAnimationFrame(timerRAF);
+    clearTimeout(spawnTimer);
+    holes.forEach(h=>h.disabled=true);
+
+    state.records.dontHitMob[p.id]=hits;
+
+    setTimeout(()=>recordScreen(
+      18,p,humanIndex,
+      `${hits}<small>体</small>`,
+      reason==="MOB"?"MOBを叩いて終了":"10 SEC COMPLETE"
+    ),280);
+  }
+
+  board.addEventListener("pointerdown",e=>{
+    const hole=e.target.closest(".mole-hole");
+    if(!hole||finished)return;
+    e.preventDefault();
+
+    const index=Number(hole.dataset.hole);
+
+    if(index!==currentHole||!currentType)return;
+
+    if(currentType==="mob"){
+      currentEl.classList.add("hit");
+      hint.textContent="MOB HIT! END!";
+      beep(130,220,.04);
+      finish("MOB");
+      return;
+    }
+
+    hits++;
+    countEl.textContent=hits;
+    currentEl.classList.add("hit");
+    hint.textContent=`MOLE ${hits}!`;
+    beep(720,32,.014);
+
+    clearTimeout(spawnTimer);
+    setTimeout(()=>{
+      clearCurrent();
+      scheduleNext(45);
+    },95);
+  },{passive:false});
+
+  await countdown("DON'T HIT MOB");
+  if(!document.body.contains(board))return;
+
+  endAt=performance.now()+10000;
+  scheduleNext(260);
+
+  const timer=now=>{
+    if(finished)return;
+
+    const left=Math.max(0,endAt-now);
+    timeEl.textContent=(left/1000).toFixed(2);
+
+    if(left<=0){
+      finish("TIME");
+      return;
+    }
+
+    timerRAF=requestAnimationFrame(timer);
+  };
+  timerRAF=requestAnimationFrame(timer);
+}
+
+// GAME 20 -------------------------------------------------
+function mobStopScore(remainingRatio,fell){
+  if(fell)return 0;
+
+  const pct=remainingRatio*100;
+
+  if(pct<=2)return 100;
+  if(pct<=5)return Math.round(100-(pct-2)/3*10);
+  if(pct<=10)return Math.round(90-(pct-5)/5*15);
+  if(pct<=20)return Math.round(75-(pct-10)/10*25);
+  if(pct<=45)return Math.round(50-(pct-20)/25*50);
+  return 0;
+}
+
+async function startMobStop(p,humanIndex){
+  gameFit();
+
+  let dragging=false;
+  let pointerId=null;
+  let startClientX=0;
+  let pull=0;
+  let launched=false;
+  let animRAF=null;
+
+  screen.innerHTML=`<div class="mob-stop-shell">
+    <div class="game-head">
+      <div><span class="kicker">${esc(p.name)}</span><h2>モブくんストップ</h2></div>
+      <div class="game-badge">${playBadge(humanIndex)}</div>
+    </div>
+
+    <div class="mob-stop-hud">
+      <div><span>POWER</span><b id="mobStopPower">0</b></div>
+      <div><span>EDGE</span><b id="mobStopEdge">--</b></div>
+    </div>
+
+    <div id="mobStopStage" class="mob-stop-stage">
+      <div class="mob-stop-launch-zone"></div>
+
+      <div id="mobStopBar" class="mob-stop-bar">
+        <i class="mob-stop-edge-line"></i>
+        <span class="mob-stop-danger">EDGE</span>
+      </div>
+
+      <div id="mobStopMob" class="mob-stop-mob"></div>
+      <div id="mobStopPullLine" class="mob-stop-pull-line"></div>
+      <div id="mobStopMessage" class="mob-stop-message">← PULL</div>
+    </div>
+
+    <p class="hint">モブくんを左へ引っ張って離す。右端から落とさずギリギリを狙う。</p>
+  </div>`;
+
+  const stage=document.getElementById("mobStopStage");
+  const bar=document.getElementById("mobStopBar");
+  const mob=document.getElementById("mobStopMob");
+  const pullLine=document.getElementById("mobStopPullLine");
+  const powerEl=document.getElementById("mobStopPower");
+  const edgeEl=document.getElementById("mobStopEdge");
+  const message=document.getElementById("mobStopMessage");
+
+  await countdown("MOB STOP");
+  if(!document.body.contains(stage))return;
+
+  const stageRect=stage.getBoundingClientRect();
+  const barRect=bar.getBoundingClientRect();
+  const barStart=barRect.left-stageRect.left+14;
+  const barEnd=barRect.right-stageRect.left-14;
+  const trackLength=barEnd-barStart;
+  const maxPull=Math.min(135,stage.clientWidth*.25);
+
+  let mobX=barStart;
+
+  function renderMob(){
+    mob.style.left=`${mobX}px`;
+  }
+
+  function setPull(px){
+    pull=clamp(px,0,maxPull);
+    mobX=barStart-pull;
+
+    powerEl.textContent=Math.round(pull/maxPull*100);
+    pullLine.style.left=`${mobX}px`;
+    pullLine.style.width=`${barStart-mobX}px`;
+
+    renderMob();
+  }
+
+  mob.addEventListener("pointerdown",e=>{
+    if(launched)return;
+    e.preventDefault();
+
+    dragging=true;
+    pointerId=e.pointerId;
+    startClientX=e.clientX+pull;
+    mob.classList.add("dragging");
+
+    try{mob.setPointerCapture(pointerId)}catch(_){}
+  },{passive:false});
+
+  mob.addEventListener("pointermove",e=>{
+    if(!dragging||e.pointerId!==pointerId||launched)return;
+    e.preventDefault();
+
+    const newPull=startClientX-e.clientX;
+    setPull(newPull);
+  },{passive:false});
+
+  const release=e=>{
+    if(!dragging||e.pointerId!==pointerId||launched)return;
+    e.preventDefault();
+
+    dragging=false;
+    mob.classList.remove("dragging");
+
+    if(pull<10){
+      setPull(0);
+      message.textContent="もっと左へ引っ張る";
+      return;
+    }
+
+    launch();
+  };
+
+  mob.addEventListener("pointerup",release,{passive:false});
+  mob.addEventListener("pointercancel",e=>{
+    if(dragging){
+      dragging=false;
+      mob.classList.remove("dragging");
+      setPull(0);
+    }
+  },{passive:false});
+
+  function launch(){
+    launched=true;
+    message.textContent="GO!";
+    beep(520,45,.018);
+
+    const power=pull/maxPull;
+
+    // Pull distance directly determines launch velocity.
+    // Strong pulls can overshoot the right edge.
+    let velocity=.30+power*1.48; // px/ms
+    const friction=.00215;       // px/ms²
+    let last=performance.now();
+
+    // Start exactly at bar's left edge when released.
+    mobX=barStart;
+    pullLine.style.width="0";
+
+    const frame=now=>{
+      const dt=Math.min(28,now-last);
+      last=now;
+
+      mobX+=velocity*dt;
+      velocity=Math.max(0,velocity-friction*dt);
+
+      renderMob();
+
+      const remaining=barEnd-mobX;
+      edgeEl.textContent=remaining>=0?`${Math.max(0,remaining).toFixed(0)}px`:"FALL";
+
+      if(mobX>barEnd+32){
+        if(animRAF)cancelAnimationFrame(animRAF);
+        fallResult();
+        return;
+      }
+
+      if(velocity<=.015){
+        stopResult();
+        return;
+      }
+
+      animRAF=requestAnimationFrame(frame);
+    };
+
+    animRAF=requestAnimationFrame(frame);
+  }
+
+  async function fallResult(){
+    message.textContent="FALL!";
+    edgeEl.textContent="0 pt";
+    mob.classList.add("fall");
+    beep(135,200,.04);
+
+    state.records.mobStop[p.id]=0;
+
+    await wait(520);
+    recordScreen(19,p,humanIndex,`0<small>pt</small>`,`FALL`);
+  }
+
+  async function stopResult(){
+    if(animRAF)cancelAnimationFrame(animRAF);
+
+    const remaining=Math.max(0,barEnd-mobX);
+    const ratio=remaining/trackLength;
+    const score=mobStopScore(ratio,false);
+
+    edgeEl.textContent=`${remaining.toFixed(0)}px`;
+    message.textContent=score===100?"PERFECT!":score>=90?"GREAT!":score>=70?"GOOD":"STOP";
+
+    mob.classList.add("stopped");
+    beep(score>=95?920:score>=75?720:430,80,.024);
+
+    state.records.mobStop[p.id]=score;
+
+    await wait(500);
+    recordScreen(19,p,humanIndex,`${score}<small>pt</small>`,`EDGE ${remaining.toFixed(0)}px`);
+  }
+
+  setPull(0);
+}
+
+
 
 function recordScreen(gameIndex,p,humanIndex,main,sub=""){
   clearGameFit();
@@ -3679,7 +4134,7 @@ async function simulateCpuThenResult(gameIndex){
 
 function cpuUltraDraw(gameIndex){
   // Game-specific draw rate. Regular values are already intentionally strong.
-  const chance=[0.12,0.10,0.14,0.16,0.12,0.13,0.14,0.12,0.15,0.12,0.14,0.13,0.13,0.14,0.12,0.12,0.13,0.12][gameIndex] ?? 0.12;
+  const chance=[0.12,0.10,0.14,0.16,0.12,0.13,0.14,0.12,0.15,0.12,0.14,0.13,0.13,0.14,0.12,0.12,0.13,0.12,0.13,0.14][gameIndex] ?? 0.12;
   return Math.random()<chance;
 }
 
@@ -3723,8 +4178,12 @@ function simulateOneCpu(gameIndex,p){
     state.records.cut[p.id]=ultra?randi(94,100):randi(60,92);
   }else if(gameIndex===16){
     state.records.climb[p.id]=Math.round((ultra?rand(690,830):rand(390,720))*10);
-  }else{
+  }else if(gameIndex===17){
     state.records.errand[p.id]=ultra?randi(990,1000):randi(760,995);
+  }else if(gameIndex===18){
+    state.records.dontHitMob[p.id]=ultra?randi(12,16):randi(6,13);
+  }else{
+    state.records.mobStop[p.id]=ultra?randi(92,100):randi(48,94);
   }
 
   return ultra;
@@ -3754,7 +4213,9 @@ function performancePoints(gameIndex,v){
   if(gameIndex===14)return clamp(Math.round(v),0,100);
   if(gameIndex===15)return clamp(Math.round(v),0,100);
   if(gameIndex===16)return clamp(Math.round((v/10)/700*100),0,100);
-  return clamp(Math.round(v-900),0,100);
+  if(gameIndex===17)return clamp(Math.round(v-900),0,100);
+  if(gameIndex===18)return clamp(Math.round(v/12*100),0,100);
+  return clamp(Math.round(v),0,100);
 }
 
 function rankRecords(gameIndex){
@@ -3788,7 +4249,9 @@ function formatRecord(gameIndex,v){
   if(gameIndex===14)return `${v}pt`;
   if(gameIndex===15)return `${v}pt`;
   if(gameIndex===16)return `${(v/10).toFixed(1)}m`;
-  return `¥${v}使用`;
+  if(gameIndex===17)return `¥${v}使用`;
+  if(gameIndex===18)return `${v}体`;
+  return `${v}pt`;
 }
 
 function applyPoints(gameIndex,ranked){

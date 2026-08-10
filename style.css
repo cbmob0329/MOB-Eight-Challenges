@@ -2621,3 +2621,271 @@ body{touch-action:manipulation}
   75%{transform:translateX(-3px)}
   100%{transform:translateX(0)}
 }
+
+
+/* =========================================================
+   V9.0 MOB JUMP — STRICT JUMP
+   ========================================================= */
+.jump-player{
+  will-change:transform;
+}
+.jump-player.jump-active{
+  filter:drop-shadow(0 4px 0 rgba(17,19,26,.18));
+}
+.incoming-runner.from-left{
+  transform-origin:center;
+}
+.incoming-runner.slow{
+  opacity:.78;
+}
+
+/* =========================================================
+   V9.0 RHYTHM TAP CUE
+   ========================================================= */
+.rhythm-mob-v88{
+  position:relative!important;
+}
+.rhythm-tap-badge{
+  position:absolute;
+  z-index:20;
+  left:50%;
+  top:-8px;
+  transform:translate(-50%,-8px) scale(.75);
+  min-width:44px;
+  height:28px;
+  border:3px solid var(--ink);
+  border-radius:999px;
+  background:var(--yellow);
+  display:grid;
+  place-items:center;
+  font-size:10px;
+  font-weight:1000;
+  opacity:0;
+  pointer-events:none;
+}
+.rhythm-mob-v88.tap-cue .rhythm-tap-badge{
+  animation:rhythmTapCue .28s ease forwards;
+}
+.rhythm-mob-v88.tap-cue{
+  filter:drop-shadow(0 0 7px rgba(255,213,73,.95));
+}
+.rhythm-mob-v88.cue-hit{
+  filter:drop-shadow(0 0 8px rgba(82,184,101,.95));
+}
+.rhythm-mob-v88.cue-miss{
+  filter:drop-shadow(0 0 8px rgba(230,75,67,.95));
+}
+@keyframes rhythmTapCue{
+  0%{opacity:0;transform:translate(-50%,-12px) scale(.65)}
+  65%{opacity:1;transform:translate(-50%,0) scale(1.08)}
+  100%{opacity:1;transform:translate(-50%,0) scale(1)}
+}
+
+/* =========================================================
+   V9.0 DON'T HIT MOB
+   ========================================================= */
+.dont-hit-shell,.mob-stop-shell{
+  width:min(100%,650px);
+  height:100%;
+  margin:0 auto;
+  display:flex;
+  flex-direction:column;
+}
+.dont-hit-hud,.mob-stop-hud{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:5px;
+  margin-bottom:5px;
+}
+.dont-hit-hud>div,.mob-stop-hud>div{
+  border:3px solid var(--ink);
+  border-radius:11px;
+  background:#fff;
+  padding:4px;
+  text-align:center;
+}
+.dont-hit-hud span,.mob-stop-hud span{
+  display:block;
+  font-size:7px;
+  font-weight:1000;
+  color:var(--muted);
+}
+.dont-hit-hud b,.mob-stop-hud b{
+  font-size:16px;
+}
+.mole-board{
+  flex:1;
+  min-height:0;
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  grid-template-rows:repeat(3,1fr);
+  gap:7px;
+  padding:7px;
+  border:4px solid var(--ink);
+  border-radius:20px;
+  background:#77b765;
+  overflow:hidden;
+}
+.mole-hole{
+  position:relative;
+  min-height:0;
+  border:none;
+  background:transparent;
+  overflow:hidden;
+  touch-action:manipulation;
+}
+.mole-hole-dark{
+  position:absolute;
+  left:10%;
+  right:10%;
+  bottom:7%;
+  height:34%;
+  border:3px solid var(--ink);
+  border-radius:50%;
+  background:#34291f;
+}
+.mole-actor{
+  position:absolute;
+  z-index:4;
+  left:50%;
+  bottom:-66%;
+  width:76%;
+  height:83%;
+  transform:translateX(-50%);
+  transition:bottom .12s ease;
+  background-position:center bottom;
+  background-size:contain;
+  background-repeat:no-repeat;
+}
+.mole-actor.show{
+  bottom:7%;
+}
+.mole-actor.mole{
+  border:3px solid var(--ink);
+  border-radius:50% 50% 42% 42%;
+  background-color:#8c5c36;
+}
+.mole-actor.mole:before{
+  content:"";
+  position:absolute;
+  left:20%;
+  right:20%;
+  top:20%;
+  height:14%;
+  border-radius:999px;
+  background:#2d2119;
+  box-shadow:0 22px 0 #c18c5d;
+}
+.mole-actor.mob{
+  background-color:transparent;
+}
+.mole-actor.hit{
+  transform:translateX(-50%) scale(.78) rotate(-8deg);
+  opacity:.55;
+}
+
+/* =========================================================
+   V9.0 MOB STOP
+   ========================================================= */
+.mob-stop-stage{
+  flex:1;
+  min-height:0;
+  position:relative;
+  overflow:hidden;
+  border:4px solid var(--ink);
+  border-radius:20px;
+  background:linear-gradient(#e9f7ff 0 68%,#e7dfca 68% 100%);
+  touch-action:none;
+}
+.mob-stop-launch-zone{
+  position:absolute;
+  left:0;
+  top:39%;
+  width:24%;
+  height:23%;
+  border-right:3px dashed rgba(17,19,26,.25);
+  background:rgba(255,213,73,.16);
+}
+.mob-stop-bar{
+  position:absolute;
+  left:18%;
+  right:7%;
+  top:50%;
+  height:38px;
+  transform:translateY(-50%);
+  border:4px solid var(--ink);
+  border-radius:14px;
+  background:#d7a675;
+  box-shadow:0 5px 0 rgba(17,19,26,.20);
+}
+.mob-stop-edge-line{
+  position:absolute;
+  right:10px;
+  top:-15px;
+  bottom:-15px;
+  width:5px;
+  background:var(--red);
+}
+.mob-stop-danger{
+  position:absolute;
+  right:4px;
+  top:-31px;
+  font-size:8px;
+  font-weight:1000;
+  color:var(--red);
+}
+.mob-stop-mob{
+  position:absolute;
+  z-index:8;
+  top:50%;
+  width:62px;
+  height:62px;
+  transform:translate(-50%,-61%);
+  background:url("icon/01.png") center/contain no-repeat;
+  touch-action:none;
+  cursor:grab;
+  will-change:left,transform;
+}
+.mob-stop-mob.dragging{
+  cursor:grabbing;
+  filter:drop-shadow(0 3px 0 rgba(17,19,26,.22));
+}
+.mob-stop-mob.stopped{
+  animation:mobStopSettle .35s ease;
+}
+.mob-stop-mob.fall{
+  animation:mobStopFall .48s ease-in forwards;
+}
+.mob-stop-pull-line{
+  position:absolute;
+  z-index:5;
+  top:50%;
+  height:5px;
+  transform:translateY(-50%);
+  background:var(--red);
+  border-radius:999px;
+  pointer-events:none;
+}
+.mob-stop-message{
+  position:absolute;
+  left:50%;
+  top:18%;
+  transform:translateX(-50%);
+  border:3px solid var(--ink);
+  border-radius:999px;
+  background:#fff;
+  padding:6px 12px;
+  font-size:12px;
+  font-weight:1000;
+}
+@keyframes mobStopSettle{
+  50%{transform:translate(-50%,-61%) rotate(7deg)}
+}
+@keyframes mobStopFall{
+  to{transform:translate(-50%,180px) rotate(120deg);opacity:.12}
+}
+
+@media(max-height:680px){
+  .mole-board{gap:4px;padding:4px}
+  .mob-stop-mob{width:54px;height:54px}
+}
