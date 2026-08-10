@@ -1494,14 +1494,37 @@ async function startCatcher(p,humanIndex){
   let animRAF=null;
   const dolls=[];
 
-  const dollCount=46;
-  for(let i=0;i<dollCount;i++){
-    const cluster=Math.random()<.72;
+  // Build several visible prize piles instead of one almost-uniform center mass.
+  // This makes horizontal crane position genuinely matter.
+  const clusterCenters=shuffle([.27,.46,.66,.83]).map((x,i)=>({
+    x:clamp(x+rand(-.025,.025),.18,.88),
+    y:.875+rand(-.018,.018)
+  }));
+
+  let dollId=0;
+  clusterCenters.forEach((c,clusterIndex)=>{
+    const amount=randi(8,11);
+    for(let i=0;i<amount;i++){
+      const ring=i<3?.018:i<7?.040:.067;
+      const angle=rand(0,Math.PI*2);
+      dolls.push({
+        x:clamp(c.x+Math.cos(angle)*rand(.006,ring),.12,.92),
+        y:clamp(c.y+Math.sin(angle)*rand(.006,ring*.70),.78,.95),
+        rot:rand(-30,30),
+        id:dollId++,
+        cluster:clusterIndex
+      });
+    }
+  });
+
+  // A few loose prizes between the piles.
+  for(let i=0;i<6;i++){
     dolls.push({
-      x:cluster?clamp(.57+rand(-.22,.22),.13,.91):rand(.13,.91),
-      y:cluster?rand(.80,.95):rand(.77,.96),
+      x:rand(.14,.90),
+      y:rand(.82,.94),
       rot:rand(-30,30),
-      id:i
+      id:dollId++,
+      cluster:-1
     });
   }
 
@@ -1671,50 +1694,62 @@ async function startCatcher(p,humanIndex){
   function calculateGrip(){
     const stageRect=stage.getBoundingClientRect();
     const headRect=head.getBoundingClientRect();
+    const stageW=stageRect.width;
+    const stageH=stageRect.height;
 
     const headCenterX=headRect.left-stageRect.left+headRect.width/2;
     const headBottom=headRect.bottom-stageRect.top;
-    const stageH=stage.clientHeight;
 
-    const gripWidth=32+armOpen*108;
-    const gripTop=headBottom+16;
-    const gripBottom=headBottom+90;
-    const gripLeft=headCenterX-gripWidth/2;
-    const gripRight=headCenterX+gripWidth/2;
-    const gripCenterY=(gripTop+gripBottom)/2;
+    // The grab envelope moves with the actual claw.
+    const clawX=headCenterX/stageW;
+    const clawY=(headBottom+48)/stageH;
 
-    const depthNorm=clamp(gripCenterY/stageH,0,1);
-    const depthQuality=clamp(1-Math.abs(depthNorm-.86)/.15,0,1);
-
-    // V8.5: wider is simply stronger/easier.
-    // The difficulty now comes from stopping the very fast width gauge at a wide position.
+    // Wider gauge = wider real catch envelope and higher capacity.
     const widthQuality=clamp((armOpen-.27)/.62,0,1);
+    const radiusX=.030+widthQuality*.105;
+    const radiusY=.046+widthQuality*.020;
 
-    const all=[...stage.querySelectorAll(".catcher-doll")].map(el=>{
-      const r=el.getBoundingClientRect();
-      const cx=r.left-stageRect.left+r.width/2;
-      const cy=r.top-stageRect.top+r.height/2;
-      const dx=Math.abs(cx-headCenterX)/(gripWidth/2);
-      const dy=Math.abs(cy-gripCenterY)/((gripBottom-gripTop)/2);
-      const inside=cx>=gripLeft&&cx<=gripRight&&cy>=gripTop&&cy<=gripBottom;
+    // The prize mound sits near the bottom. Depth still matters strongly.
+    const idealDepth=.875;
+    const depthQuality=clamp(1-Math.abs(clawY-idealDepth)/.135,0,1);
 
-      const centerQuality=inside?clamp(1-(dx*.68+dy*.32),0,1):-1;
-      return {el,id:Number(el.dataset.id),centerQuality,side:cx<headCenterX?-1:1};
-    });
+    const candidates=dolls.map(d=>{
+      const nx=(d.x-clawX)/radiusX;
+      const ny=(d.y-clawY)/radiusY;
+      const ellipse=nx*nx+ny*ny;
+      const inside=ellipse<=1;
+      const quality=inside?clamp(1-Math.sqrt(ellipse),0,1):-1;
+      return {...d,quality};
+    }).filter(d=>d.quality>=0).sort((a,b)=>b.quality-a.quality);
 
-    const inside=all.filter(x=>x.centerQuality>=0).sort((a,b)=>b.centerQuality-a.centerQuality);
+    // Wide is better, but only if the claw is actually over a dense pile and at the right depth.
+    const capacity=clamp(Math.round(1+widthQuality*9),1,10);
+    const usable=Math.max(0,Math.floor(capacity*(.22+.78*depthQuality)));
 
-    // Bigger opening gives more capacity and better retention.
-    // Depth still matters, so a wide claw at a bad height can miss.
-    const stability=clamp(widthQuality*.72+depthQuality*.28,0,1);
-    const capacity=clamp(Math.floor(1+9*Math.pow(widthQuality,1.18)*(.55+.45*depthQuality)),1,10);
-    const threshold=clamp(.54-widthQuality*.30+(1-depthQuality)*.18,.18,.66);
+    // Very shallow/deep stops can genuinely get 0.
+    let held=candidates.filter(d=>d.quality>=.08+(1-depthQuality)*.34).slice(0,usable);
 
-    const held=inside.filter(c=>c.centerQuality>=threshold).slice(0,capacity);
-    const heldIds=new Set(held.map(x=>x.id));
-    const slipped=inside.filter(c=>!heldIds.has(c.id)).slice(0,8);
+    if(depthQuality<.18)held=[];
 
-    return {held,slipped,stability};
+    const heldIds=new Set(held.map(d=>d.id));
+    const slipped=candidates.filter(d=>!heldIds.has(d.id)).slice(0,8).map(d=>({
+      ...d,
+      el:stage.querySelector(`.catcher-doll[data-id="${d.id}"]`),
+      side:d.x<clawX?-1:1
+    }));
+
+    held=held.map(d=>({
+      ...d,
+      el:stage.querySelector(`.catcher-doll[data-id="${d.id}"]`)
+    }));
+
+    return {
+      held,
+      slipped,
+      depthQuality,
+      widthQuality,
+      nearby:candidates.length
+    };
   }
 
   function attachRealHeldDolls(held){
@@ -1750,7 +1785,9 @@ async function startCatcher(p,humanIndex){
     const held=grip.held;
     const caught=held.length;
 
-    hint.textContent=caught?`${caught} GET`:"MISS";
+    hint.textContent=caught
+      ? `${caught} GET`
+      : (grip.nearby===0?"NO PRIZE":"MISS");
 
     grip.slipped.forEach(item=>{
       if(!item.el)return;
@@ -2048,41 +2085,37 @@ async function startTidy(p,humanIndex){
 function skiDistanceFromTiming(deltaMs){
   const a=Math.abs(deltaMs);
 
-  let meters;
-  if(a<=40){
-    meters=1000-a*2.25;               // 910–1000
-  }else if(a<=85){
-    meters=910-(a-40)*3.25;           // 764–910
-  }else if(a<=155){
-    meters=764-(a-85)*3.45;           // 523–764
-  }else if(a<=260){
-    meters=523-(a-155)*2.25;          // 287–523
-  }else{
-    meters=287-(a-260)*.55;
-  }
-
-  return clamp(meters,110,1000);
+  // Called only inside the actual takeoff window.
+  if(a<=25)return 1000-(a/25)*45;          // 955–1000m
+  if(a<=55)return 955-((a-25)/30)*105;     // 850–955m
+  if(a<=95)return 850-((a-55)/40)*180;     // 670–850m
+  if(a<=135)return 670-((a-95)/40)*210;    // 460–670m
+  return 460-((a-135)/45)*240;             // 220–460m
 }
 
 function skiTimingLabel(deltaMs){
   const a=Math.abs(deltaMs);
-  if(a<=40)return "PERFECT";
-  if(a<=85)return "GREAT";
-  if(a<=155)return "GOOD";
-  return deltaMs<0?"TOO EARLY":"TOO LATE";
+  if(a<=25)return "PERFECT";
+  if(a<=55)return "GREAT";
+  if(a<=95)return "GOOD";
+  return deltaMs<0?"EARLY":"LATE";
 }
 
 async function startSkiJump(p,humanIndex){
   gameFit();
 
   let running=false;
-  let jumped=false;
+  let resolved=false;
   let startTime=0;
   let runRAF=null;
+  let earlyTapLock=0;
 
-  const runDuration=2600;
-  const idealTime=2240;
+  const idealTime=2500;          // Jumper center reaches the yellow JUMP lip.
+  const validEarly=180;          // Earliest valid takeoff.
+  const validLate=165;           // Latest valid takeoff.
+  const failTime=idealTime+185;  // After this the jumper physically falls.
   const worldWidth=5200;
+  const runStartX=70;
   const takeoffX=720;
   const pxPerM=4.15;
 
@@ -2117,9 +2150,10 @@ async function startSkiJump(p,humanIndex){
       </div>
 
       <div id="skiFlyCallout" class="ski-fly-callout">FLY!</div>
+      <div id="skiNoJumpCallout" class="ski-nojump-callout">NOT YET</div>
     </button>
 
-    <p id="skiHint" class="hint">長いスロープを滑走。黄色いJUMPリップで1回タップ。</p>
+    <p id="skiHint" class="hint">黄色いJUMPリップに来た瞬間だけジャンプできます。</p>
   </div>`;
 
   const stage=document.getElementById("skiStage");
@@ -2129,76 +2163,108 @@ async function startSkiJump(p,humanIndex){
   const distanceEl=document.getElementById("skiDistance");
   const hint=document.getElementById("skiHint");
   const flyCallout=document.getElementById("skiFlyCallout");
+  const noJumpCallout=document.getElementById("skiNoJumpCallout");
+
+  function cameraFollow(x,ratio=.40){
+    const vw=stage.clientWidth;
+    const lead=vw*ratio;
+    const camera=Math.max(0,Math.min(worldWidth-vw,x-lead));
+    world.style.transform=`translateX(${-camera}px)`;
+  }
 
   function renderRun(elapsed){
-    const t=clamp(elapsed/runDuration,0,1);
-
-    // MOB moves along the visible slope.
-    const x=70+t*(takeoffX-92);
+    // Reach the visible JUMP lip exactly at idealTime.
+    const t=clamp(elapsed/idealTime,0,1);
+    const x=runStartX+t*(takeoffX-runStartX);
     const y=68+t*202;
 
     jumper.style.left=`${x}px`;
     jumper.style.top=`${y}px`;
     jumper.style.transform=`translate(-50%,-50%) rotate(${15+t*17}deg)`;
 
-    // Camera follows MOB even before takeoff, so the jumper and the upcoming
-    // jump lip stay visible instead of the MOB running out of frame.
-    const vw=stage.clientWidth;
-    const lead=vw*.40;
-    const camera=Math.max(0,Math.min(worldWidth-vw,x-lead));
-    world.style.transform=`translateX(${-camera}px)`;
+    cameraFollow(x,.40);
   }
 
-  async function resolveJump(delta){
-    if(jumped)return;
-
-    jumped=true;
+  async function fallOff(){
+    if(resolved)return;
+    resolved=true;
     running=false;
     if(runRAF)cancelAnimationFrame(runRAF);
 
-    const meters=Math.round(skiDistanceFromTiming(delta)*10)/10;
+    timingEl.textContent="NO JUMP";
+    hint.textContent="踏切できず落下！";
+    distanceEl.textContent="0.0m";
+    beep(145,180,.035);
+
+    const startX=takeoffX+10;
+    const startY=272;
+    const fallStart=performance.now();
+
+    await new Promise(resolve=>{
+      const frame=now=>{
+        const t=clamp((now-fallStart)/900,0,1);
+        const x=startX+t*170;
+        const y=startY+t*t*260;
+
+        jumper.style.left=`${x}px`;
+        jumper.style.top=`${y}px`;
+        jumper.style.transform=`translate(-50%,-50%) rotate(${32+t*130}deg)`;
+        cameraFollow(x,.38);
+
+        if(t<1)requestAnimationFrame(frame);
+        else resolve();
+      };
+      requestAnimationFrame(frame);
+    });
+
+    state.records.ski[p.id]=0;
+    await wait(220);
+    recordScreen(10,p,humanIndex,`0.0<small>m</small>`,`NO JUMP`);
+  }
+
+  async function resolveJump(delta){
+    if(resolved)return;
+
+    resolved=true;
+    running=false;
+    if(runRAF)cancelAnimationFrame(runRAF);
+
+    const meters=Math.round(clamp(skiDistanceFromTiming(delta),220,1000)*10)/10;
     const label=skiTimingLabel(delta);
 
     timingEl.textContent=label;
     hint.textContent=`${label} / ${Math.abs(Math.round(delta))}ms`;
     flyCallout.classList.add("show");
 
-    beep(label==="PERFECT"?980:label==="GREAT"?830:label==="GOOD"?700:280,90,.028);
+    beep(label==="PERFECT"?980:label==="GREAT"?830:label==="GOOD"?700:360,90,.028);
 
     const targetX=takeoffX+meters*pxPerM;
     const flightStart=performance.now();
-    const flightDuration=2100+meters*.9;
+    const flightDuration=1750+meters*1.15;
     const startY=270;
     const landingY=326;
 
     await new Promise(resolve=>{
       const frame=now=>{
         const t=clamp((now-flightStart)/flightDuration,0,1);
-        const ease=1-Math.pow(1-t,2.1);
+        const ease=1-Math.pow(1-t,2.05);
         const x=takeoffX+(targetX-takeoffX)*ease;
 
-        // Huge, satisfying arc. Longer jumps fly visibly higher.
-        const arc=Math.sin(t*Math.PI)*(115+meters*.16);
+        const arc=Math.sin(t*Math.PI)*(135+meters*.18);
         const y=startY+(landingY-startY)*t-arc;
 
         jumper.style.left=`${x}px`;
         jumper.style.top=`${y}px`;
-        jumper.style.transform=`translate(-50%,-50%) rotate(${8+t*28}deg)`;
+        jumper.style.transform=`translate(-50%,-50%) rotate(${7+t*27}deg)`;
 
         const currentMeters=Math.min(meters,Math.max(0,(x-takeoffX)/pxPerM));
         distanceEl.textContent=`${currentMeters.toFixed(1)}m`;
-
-        const vw=stage.clientWidth;
-        const camera=Math.max(0,Math.min(worldWidth-vw,x-vw*.34));
-        world.style.transform=`translateX(${-camera}px)`;
+        cameraFollow(x,.34);
 
         if(t>.16)flyCallout.classList.remove("show");
 
-        if(t<1){
-          requestAnimationFrame(frame);
-        }else{
-          resolve();
-        }
+        if(t<1)requestAnimationFrame(frame);
+        else resolve();
       };
       requestAnimationFrame(frame);
     });
@@ -2212,10 +2278,33 @@ async function startSkiJump(p,humanIndex){
   }
 
   stage.addEventListener("pointerdown",e=>{
-    if(!running||jumped)return;
+    if(!running||resolved)return;
     e.preventDefault();
 
-    const delta=(performance.now()-startTime)-idealTime;
+    const elapsed=performance.now()-startTime;
+    const delta=elapsed-idealTime;
+
+    // Pressing somewhere in the middle of the slope cannot launch anymore.
+    if(delta<-validEarly){
+      const now=performance.now();
+      if(now>=earlyTapLock){
+        earlyTapLock=now+230;
+        timingEl.textContent="WAIT";
+        noJumpCallout.classList.remove("show");
+        void noJumpCallout.offsetWidth;
+        noJumpCallout.classList.add("show");
+        setTimeout(()=>noJumpCallout.classList.remove("show"),180);
+        beep(230,30,.008);
+      }
+      return;
+    }
+
+    // Once past the actual lip, it is too late and the jumper falls.
+    if(delta>validLate){
+      fallOff();
+      return;
+    }
+
     resolveJump(delta);
   },{passive:false});
 
@@ -2226,15 +2315,28 @@ async function startSkiJump(p,humanIndex){
   startTime=performance.now();
 
   const run=now=>{
-    if(!running||jumped)return;
+    if(!running||resolved)return;
 
     const elapsed=now-startTime;
-    renderRun(elapsed);
 
-    if(elapsed>=runDuration+300){
-      resolveJump(470);
+    if(elapsed<=idealTime){
+      renderRun(elapsed);
+    }else{
+      // Roll slightly beyond the lip while waiting for the very small late window.
+      const late=clamp((elapsed-idealTime)/(failTime-idealTime),0,1);
+      const x=takeoffX+late*22;
+      const y=270+late*13;
+      jumper.style.left=`${x}px`;
+      jumper.style.top=`${y}px`;
+      jumper.style.transform=`translate(-50%,-50%) rotate(${32+late*9}deg)`;
+      cameraFollow(x,.40);
+    }
+
+    if(elapsed>=failTime){
+      fallOff();
       return;
     }
+
     runRAF=requestAnimationFrame(run);
   };
   runRAF=requestAnimationFrame(run);

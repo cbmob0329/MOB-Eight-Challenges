@@ -1569,3 +1569,30 @@ body{touch-action:manipulation}
 .arm-stop-gauge:not(.locked){
   box-shadow:0 3px 0 var(--ink),0 0 0 4px rgba(116,223,240,.18)!important;
 }
+
+
+/* ===== V8.6 SKI: REAL TAKEOFF WINDOW / FALL ===== */
+.ski-nojump-callout{
+  position:absolute;
+  z-index:31;
+  left:50%;
+  top:24%;
+  transform:translate(-50%,-12px) scale(.85);
+  border:4px solid var(--ink);
+  border-radius:999px;
+  background:#fff;
+  color:var(--red);
+  padding:6px 15px;
+  font-size:15px;
+  font-weight:1000;
+  opacity:0;
+  pointer-events:none;
+}
+.ski-nojump-callout.show{
+  animation:skiNoJump .18s ease;
+}
+@keyframes skiNoJump{
+  0%{opacity:0;transform:translate(-50%,-12px) scale(.8)}
+  45%{opacity:1;transform:translate(-50%,0) scale(1.04)}
+  100%{opacity:0;transform:translate(-50%,4px) scale(.96)}
+}
