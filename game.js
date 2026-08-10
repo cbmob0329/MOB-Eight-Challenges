@@ -467,7 +467,7 @@ function showGameIntro(index){
   }else if(index===13){
     rules=`<li>3・2・1後、様々なモブくんが合計10本シュート。</li><li>左スワイプ / 中央タップ / 右スワイプでセーブ。</li><li>基本速度は少し遅め。たまに高速シュートが混ざります。</li><li>10本全部止めれば100点。</li>`;
   }else if(index===14){
-    rules=`<li>4人のモブくんが4拍ジャンプしてテンポを提示。</li><li>お手本のリズムを見た後はカウントダウンなし。</li><li>本番前にも4人が4拍ジャンプ。</li><li>押すべきキャラにTAP表示が出るので、その瞬間に近いほど高得点。</li><li>全4ROUND、後半ほど複雑。</li>`;
+    rules=`<li>4人のモブくんが4拍ジャンプしてテンポを提示。</li><li>お手本のリズムを見た後はカウントダウンなし。</li><li>本番前にも4人が4拍ジャンプ。</li><li>押すべきキャラにTAP表示が出るので、その瞬間に近いほど高得点。</li><li>全3ROUND、後半ほど少し速くなり順番が長くなります。</li>`;
   }else if(index===15){
     rules=`<li>「右側を○%残せ！」と表示。</li><li>長い棒を縦スワイプしてカット。</li><li>右側に残った割合と指定%の誤差を判定。</li><li>3回の平均精度で0〜100点。</li>`;
   }else if(index===16){
@@ -475,7 +475,7 @@ function showGameIntro(index){
   }else if(index===17){
     rules=`<li>1000円を持って3・2・1スタート。</li><li>食材・お菓子など100種類から毎回30商品。</li><li>3円〜250円の商品をタップ購入。</li><li>10秒で1000円ぴったり使い切れば100点。</li>`;
   }else if(index===18){
-    rules=`<li>3・2・1後、9個の穴からモグラが出現。</li><li>モグラをタップすると+1。</li><li>たまにモブくんが顔を出します。</li><li>モブくんを1回でも叩いたらその場で終了。</li><li>10秒。モグラ12体以上で100点。</li>`;
+    rules=`<li>3・2・1後、9個の穴からモグラが出現。</li><li>1〜6体が一気に出ることがあります。</li><li>モグラをタップすると+1。</li><li>モグラと一緒にモブくんが混ざって出ることもあります。</li><li>モブくんを1回でも叩いたらその場で終了。</li><li>10秒。モグラ12体以上で100点。</li>`;
   }else{
     rules=`<li>横長の棒の左端にモブくん。</li><li>モブくんを左へ引っ張り、離すと発射。</li><li>引っ張る距離が長いほど遠くへ進みます。</li><li>右端ギリギリで止めるほど高得点。</li><li>棒から落ちたら0点。</li>`;
   }
@@ -580,7 +580,7 @@ function playBadge(humanIndex){
 // GAME 1 -------------------------------------------------
 async function startReaction(p,humanIndex){
   gameFit();
-  screen.innerHTML=`<section class="reaction-stage"><div><span class="kicker">${esc(p.name)}</span><h2>反射神経</h2></div><div id="reactionZone" class="reaction-zone"><div class="wait-dots">•••</div></div><p class="hint">モブくんが出た瞬間にタップ。0.001秒単位で記録します。</p></section>`;
+  screen.innerHTML=`<section class="reaction-stage"><div><span class="kicker">${esc(p.name)}</span><h2>反射神経</h2></div><div id="reactionZone" class="reaction-zone"><div class="wait-dots">•••</div></div><p class="hint">モブくんが出た瞬間にタップ。0.0001秒単位で表示します。</p></section>`;
   await countdown();
   const zone=document.getElementById("reactionZone");
   if(!zone)return;
@@ -597,10 +597,10 @@ async function startReaction(p,humanIndex){
 
   const t0=performance.now();
   btn.addEventListener("pointerdown",()=>{
-    const ms=Math.max(1,Math.round(performance.now()-t0));
+    const ms=Math.max(.1,performance.now()-t0);
     state.records.reaction[p.id]=ms;
     beep(870,100);
-    recordScreen(0,p,humanIndex,`${(ms/1000).toFixed(3)}<small>秒</small>`);
+    recordScreen(0,p,humanIndex,`${(ms/1000).toFixed(4)}<small>秒</small>`);
   },{once:true});
 }
 
@@ -3188,9 +3188,8 @@ async function startPK(p,humanIndex){
 function makeRhythmPattern(round){
   const settings=[
     {count:4,beat:680},
-    {count:5,beat:610},
-    {count:6,beat:545},
-    {count:7,beat:480}
+    {count:5,beat:590},
+    {count:6,beat:510}
   ];
 
   const cfg=settings[round];
@@ -3214,7 +3213,7 @@ async function startRhythmTap(p,humanIndex){
     </div>
 
     <div class="rhythm-hud">
-      <div><span>ROUND</span><b id="rhythmRound">1 / 4</b></div>
+      <div><span>ROUND</span><b id="rhythmRound">1 / 3</b></div>
       <div><span>SCORE</span><b id="rhythmScore">0</b></div>
     </div>
 
@@ -3259,7 +3258,10 @@ async function startRhythmTap(p,humanIndex){
 
       message.textContent=`${n} / 4`;
       beep(440,42,.012);
-      await wait(beat);
+
+      // 4拍目のあとに余計な1拍を待たない。
+      // これで4回目のジャンプ直後に次のフェーズへ移る。
+      if(n<4)await wait(beat);
     }
   }
 
@@ -3376,8 +3378,8 @@ async function startRhythmTap(p,humanIndex){
     return Math.round(roundScore/pattern.chars.length);
   }
 
-  for(let round=0;round<4;round++){
-    roundEl.textContent=`${round+1} / 4`;
+  for(let round=0;round<3;round++){
+    roundEl.textContent=`${round+1} / 3`;
     const pattern=makeRhythmPattern(round);
 
     mobs.forEach(b=>b.disabled=true);
@@ -3387,15 +3389,12 @@ async function startRhythmTap(p,humanIndex){
     if(!ok||!document.body.contains(area))return;
 
     await fourBeatCountIn(pattern.beat,"SAMPLE BEAT");
-    await wait(100);
-
     await playSample(pattern);
 
     // お手本後はカウントダウン無し。
-    // 同じテンポの4拍だけ取り直して、そのまま本番。
+    // 1拍だけ間を置いて本番用の4拍へ。その4拍目の直後に即スタート。
     await wait(pattern.beat);
     await fourBeatCountIn(pattern.beat,"YOUR BEAT");
-    await wait(80);
 
     mobs.forEach(b=>b.disabled=false);
     const roundResult=await playUserTurn(pattern);
@@ -3826,7 +3825,7 @@ async function startDontHitMob(p,humanIndex){
         </button>`).join("")}
     </div>
 
-    <p id="dontHitHint" class="hint">モグラだけ叩く。2〜3体同時に出ることもあります。</p>
+    <p id="dontHitHint" class="hint">モグラだけ叩く。2〜6体が一気に出て、モブくんが混ざることもあります。</p>
   </div>`;
 
   const board=document.getElementById("moleBoard");
@@ -3864,15 +3863,38 @@ async function startDontHitMob(p,humanIndex){
     clearAll();
 
     const roll=Math.random();
-    const actorCount=roll<.50?1:roll<.84?2:3;
+
+    // 多数同時出現をかなり増やす。
+    // 1体15% / 2体22% / 3体24% / 4体18% / 5体13% / 6体8%
+    const actorCount=
+      roll<.15?1:
+      roll<.37?2:
+      roll<.61?3:
+      roll<.79?4:
+      roll<.92?5:6;
+
     const holeIndexes=shuffle([0,1,2,3,4,5,6,7,8]).slice(0,actorCount);
 
-    holeIndexes.forEach(index=>{
+    // 2体以上の波ではかなりの確率で「モグラ + モブくん」が同時に出る。
+    const forceMixed=actorCount>=2&&Math.random()<.48;
+    const forcedMobSlots=new Set();
+
+    if(forceMixed){
+      forcedMobSlots.add(randi(0,actorCount-1));
+
+      // 4体以上の大波では、たまにモブくんが2体混ざる。
+      if(actorCount>=4&&Math.random()<.24){
+        let second=randi(0,actorCount-1);
+        while(forcedMobSlots.has(second))second=randi(0,actorCount-1);
+        forcedMobSlots.add(second);
+      }
+    }
+
+    holeIndexes.forEach((index,slotIndex)=>{
       const hole=holes[index];
       const el=hole.querySelector(".mole-actor");
 
-      // MOB chance per actor. With multi-spawns this creates meaningful visual traps.
-      const isMob=Math.random()<.15;
+      const isMob=forcedMobSlots.has(slotIndex)||Math.random()<.12;
       const type=isMob?"mob":"mole";
 
       el.classList.add("show",type);
@@ -3885,7 +3907,7 @@ async function startDontHitMob(p,humanIndex){
       active.set(index,{type,el});
     });
 
-    const visibleFor=Math.max(270,680-hits*11+randi(-50,70));
+    const visibleFor=Math.max(300,730-hits*10+randi(-55,85));
 
     waveTimer=setTimeout(()=>{
       clearAll();
@@ -4318,7 +4340,7 @@ function rankRecords(gameIndex){
   return arr;
 }
 function formatRecord(gameIndex,v){
-  if(gameIndex===0)return `${(v/1000).toFixed(3)}秒`;
+  if(gameIndex===0)return `${(v/1000).toFixed(4)}秒`;
   if(gameIndex===1)return `${v}/10`;
   if(gameIndex===2)return `${(v/1000).toFixed(2)}秒`;
   if(gameIndex===3)return `${(v/10).toFixed(1)}m`;
