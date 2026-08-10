@@ -371,11 +371,11 @@ function showGameIntro(index){
   }else if(index===5){
     rules=`<li>10秒間、毎回どちらか一方が1990。</li><li>1990=1周、5連続ごとにBONUS +1周。</li><li>罠は-1周。</li><li><strong>25周以上で世界1位確定。</strong></li>`;
   }else if(index===6){
-    rules=`<li>3体のモブくんが<strong>横一列</strong>に並びます。</li><li>長縄のような1本のエネルギーが横から一気に通過。</li><li>それぞれのモブくんをタイミングよくタップしてジャンプ回避。</li><li>3体全員が避けて1回成功。</li><li>最初から速く、成功するたびさらに高速化。誰か1体でも被弾で終了。</li>`;
+    rules=`<li>3体のモブくんが<strong>広く横一列</strong>に並びます。</li><li>足元の高さを<strong>短いエネルギー</strong>が横から走り抜けます。</li><li>長縄のように、同じエネルギーを3体が順番に1ジャンプで回避。</li><li>3体全員が避けて1回成功。</li><li>最初から速めですが、画面端から十分な助走距離を取ります。成功するたびさらに高速化。</li>`;
   }else if(index===7){
     rules=`<li>ベルトコンベアのMOB箱を10秒で完成させます。</li><li>空箱：右上のモブくん → 箱 → 箱をもう一度タップして封。</li><li>最初から人形入りの箱は箱を1回タップするだけ。</li><li><strong>人形入り箱にさらにモブくんを入れたら不良品扱いで箱ごと破棄。</strong></li><li>箱の状態は毎回完全ランダム。</li>`;
   }else{
-    rules=`<li>矢印でクレーン位置を調整。</li><li>降下でクレーンが下がり、アームの開き幅も変化。</li><li>STOP時に<strong>実際にアームの中へ入ったモブくんだけ</strong>をつかみます。</li><li>つかんだモブくんはクレーンと一緒に持ち上がり、そのまま落とし口まで移動。</li><li>狙いが甘いと0〜数体。上手く中央の山を狙えば最大10体。</li>`;
+    rules=`<li>まず矢印でクレーン位置を決めます。</li><li><strong>降下前にアーム幅を− / ＋で自分で決定</strong>。降下を押したら幅は固定。</li><li>降下中はSTOPで高さを決定し、そこから実際にアームが閉じます。</li><li>アームの内側に本当に入っているモブくんだけをつかみ、その実物がクレーンと一緒に移動。</li><li>落とし口でOPEN。狙いが悪ければ0体、上手く山を包めば最大10体。</li>`;
   }
 
   screen.innerHTML=`
@@ -722,6 +722,10 @@ async function startStack(p,humanIndex){
       <div id="stackStage" class="stack-stage">
         <div id="stackCallout" class="stack-callout"></div>
         <div class="stack-sky-label">HOLD / MOVE / RELEASE</div>
+        <div id="stackWaitingDock" class="stack-waiting-dock">
+          <span>NEXT MOB</span>
+          <div class="stack-waiting-mob"></div>
+        </div>
         <div class="wind-lines"><i></i><i></i><i></i></div>
 
         <div id="towerWorld" class="tower-world">
@@ -746,7 +750,8 @@ async function startStack(p,humanIndex){
         windEl=document.getElementById("windValue"),
         windFill=document.getElementById("windFill"),
         hint=document.getElementById("stackHint"),
-        callout=document.getElementById("stackCallout");
+        callout=document.getElementById("stackCallout"),
+        waitingDock=document.getElementById("stackWaitingDock");
 
   function stageWidth(){return stage.clientWidth}
   function progress(){
@@ -793,9 +798,10 @@ async function startStack(p,humanIndex){
     handWobbleRot=0;
 
     const sw=stageWidth();
-    active={x:clamp(sw*.5+rand(-sw*.21,sw*.21),pieceW/2+8,sw-pieceW/2-8),y:15};
+    active={x:clamp(sw*.5+rand(-sw*.16,sw*.16),pieceW/2+8,sw-pieceW/2-8),y:58};
 
-    activeLayer.innerHTML=`<div id="activeStackPiece" class="stack-piece active v8-active" role="button" aria-label="モブくん" style="left:${active.x-pieceW/2}px;top:${active.y}px"></div>`;
+    if(waitingDock)waitingDock.classList.add("active");
+    activeLayer.innerHTML=`<div id="activeStackPiece" class="stack-piece active v8-active visible-waiting-mob" role="button" aria-label="待機中のモブくん" style="left:${active.x-pieceW/2}px;top:${active.y}px"></div>`;
   }
 
   function setActiveX(clientX){
@@ -867,7 +873,7 @@ async function startStack(p,humanIndex){
     el.style.left=`${dropX-pieceW/2}px`;
     el.style.transform=`rotate(${handWobbleRot*.22}deg)`;
 
-    const startTop=parseFloat(el.style.top)||15;
+    const startTop=parseFloat(el.style.top)||58;
     const dropStart=performance.now();
     const dropDur=220;
 
@@ -897,6 +903,7 @@ async function startStack(p,humanIndex){
     count++;
     active=null;
     activeLayer.innerHTML="";
+    if(waitingDock)waitingDock.classList.remove("active");
     renderStack();
     beep(760,45,.022);
 
@@ -914,6 +921,7 @@ async function startStack(p,humanIndex){
     if(wobbleRAF)cancelAnimationFrame(wobbleRAF);
     if(timerRAF)cancelAnimationFrame(timerRAF);
     activeLayer.innerHTML="";
+    if(waitingDock)waitingDock.classList.remove("active");
     state.records.stack[p.id]=count;
     setTimeout(()=>recordScreen(4,p,humanIndex,`${count}<small>体</small>`,`10 SECOND STACK`),170);
   }
@@ -1074,9 +1082,9 @@ async function startCrisis(p,humanIndex){
   let waveRAF=null;
   const dodgeUntil=[0,0,0];
 
-  screen.innerHTML=`<div class="crisis-shell">
+  screen.innerHTML=`<div class="crisis-shell crisis-shell-wide">
     <div class="game-head">
-      <div><span class="kicker">${esc(p.name)}</span><h2>モブくん危機一髪</h2><p class="lead">横一列・長縄エネルギー</p></div>
+      <div><span class="kicker">${esc(p.name)}</span><h2>モブくん危機一髪</h2><p class="lead">足元エネルギーを3人で順番にJUMP</p></div>
       <div class="game-badge">${playBadge(humanIndex)}</div>
     </div>
 
@@ -1085,23 +1093,24 @@ async function startCrisis(p,humanIndex){
       <div><span>SPEED</span><b id="crisisSpeed">1.0x</b></div>
     </div>
 
-    <div id="crisisStage" class="crisis-stage crisis-stage-rope">
-      <div class="crisis-ground"></div>
-      <div id="ropeEnergy" class="rope-energy"><i></i><i></i><i></i></div>
+    <div id="crisisStage" class="crisis-stage crisis-stage-long">
+      <div class="crisis-runway"></div>
+      <div class="crisis-ground-line"></div>
+      <div id="lowEnergy" class="low-energy"><i></i></div>
 
-      <div class="crisis-mob-row">
-        ${[0,1,2].map(i=>`<button class="crisis-mob rope-mob" data-mob="${i}" type="button" aria-label="モブくん${i+1}">
+      <div class="crisis-mob-row crisis-mob-row-wide">
+        ${[0,1,2].map(i=>`<button class="crisis-mob low-jump-mob" data-mob="${i}" type="button" aria-label="モブくん${i+1}">
           <span>P${i+1}</span>
         </button>`).join("")}
       </div>
     </div>
 
-    <p id="crisisHint" class="hint">長縄のようにエネルギーが横切る。3体を順番にタップして全員ジャンプ！</p>
+    <p id="crisisHint" class="hint">小さいエネルギーが足元を横切ります。P1 → P2 → P3の順にジャンプ！</p>
   </div>`;
   gameTop();
 
   const stage=document.getElementById("crisisStage");
-  const rope=document.getElementById("ropeEnergy");
+  const energy=document.getElementById("lowEnergy");
   const countEl=document.getElementById("crisisCount");
   const speedEl=document.getElementById("crisisSpeed");
   const hint=document.getElementById("crisisHint");
@@ -1112,7 +1121,7 @@ async function startCrisis(p,humanIndex){
     e.preventDefault();
 
     const now=performance.now();
-    dodgeUntil[i]=now+430;
+    dodgeUntil[i]=now+520;
 
     mob.classList.remove("dodge");
     void mob.offsetWidth;
@@ -1130,33 +1139,42 @@ async function startCrisis(p,humanIndex){
       return r.left-stageRect.left+r.width/2;
     });
 
-    const speed=Math.min(1550,650+wave*45);
-    const startX=stageW+70;
-    const endX=-70;
-    const totalDistance=startX-endX;
+    // Quick, but the energy starts well outside the first player and the three
+    // players are spread across almost the whole stage.
+    const speed=Math.min(980,420+wave*27);
+    const startX=-78;
+    const endX=stageW+78;
+    const totalDistance=endX-startX;
     const duration=totalDistance/speed*1000;
     const crossed=[false,false,false];
     const safe=[false,false,false];
-    const start=performance.now();
 
-    speedEl.textContent=`${(speed/650).toFixed(1)}x`;
-    rope.classList.remove("hit","clear");
-    rope.style.opacity="1";
-    hint.textContent="ENERGY IN! 3体をタイミングよくジャンプ！";
+    speedEl.textContent=`${(speed/420).toFixed(1)}x`;
+    energy.classList.remove("hit","clear","warning");
+    energy.style.opacity="1";
+    energy.style.transform=`translateX(${startX}px)`;
+
+    hint.textContent="ENERGY READY…";
+    energy.classList.add("warning");
+    await wait(Math.max(250,480-wave*7));
+    energy.classList.remove("warning");
+
+    const start=performance.now();
 
     await new Promise(resolve=>{
       const frame=now=>{
         if(finished){resolve();return}
 
         const t=clamp((now-start)/duration,0,1);
-        const x=startX-totalDistance*t;
-        rope.style.transform=`translateX(${x}px)`;
+        const x=startX+totalDistance*t;
+        energy.style.transform=`translateX(${x}px)`;
 
         for(let i=0;i<3;i++){
           if(crossed[i])continue;
 
-          // One long energy rope passes the mobs from right to left.
-          if(x<=mobCenters[i]+8){
+          // The energy is a short low bar, so each MOB only has to jump once
+          // when this same bar reaches his feet.
+          if(x>=mobCenters[i]-12){
             crossed[i]=true;
             const isSafe=dodgeUntil[i]>=now;
             safe[i]=isSafe;
@@ -1164,8 +1182,8 @@ async function startCrisis(p,humanIndex){
             if(!isSafe){
               finished=true;
               mobs[i].classList.add("hurt");
-              rope.classList.add("hit");
-              hint.textContent=`モブくん${i+1}が長縄エネルギーに被弾！`;
+              energy.classList.add("hit");
+              hint.textContent=`P${i+1}が足元エネルギーに被弾！`;
               beep(145,230,.04);
               resolve();
               return;
@@ -1185,23 +1203,23 @@ async function startCrisis(p,humanIndex){
     if(finished){
       state.records.crisis[p.id]=wave;
       await wait(500);
-      recordScreen(6,p,humanIndex,`${wave}<small>回</small>`,`LONG ROPE DODGE`);
+      recordScreen(6,p,humanIndex,`${wave}<small>回</small>`,`LOW ENERGY DODGE`);
       return;
     }
 
     if(safe.every(Boolean)){
       wave++;
       countEl.textContent=wave;
-      rope.classList.add("clear");
+      energy.classList.add("clear");
       hint.textContent=`ALL DODGE ${wave}!`;
       beep(880,75,.025);
 
-      await wait(Math.max(80,235-wave*7));
+      await wait(Math.max(75,210-wave*5));
       runWave();
     }
   }
 
-  await countdown("LONG ROPE");
+  await countdown("LOW ENERGY");
   if(!document.body.contains(stage))return;
   runWave();
 }
@@ -1415,63 +1433,90 @@ async function startFactory(p,humanIndex){
 // GAME 9 -------------------------------------------------
 async function startCatcher(p,humanIndex){
   let phase="position";
-  let craneX=.55;
-  let craneY=42;
-  let armOpen=.52;
+  let craneX=.56;
+  let craneY=38;
+  let armOpen=.58;
   let animRAF=null;
   const dolls=[];
 
-  // Dense center cluster + surrounding dolls. Great aim can reach high numbers,
-  // but the claw must physically enclose them.
-  const dollCount=38;
+  const dollCount=42;
   for(let i=0;i<dollCount;i++){
-    const centerBias=Math.random()<.62;
+    const centerBias=Math.random()<.68;
     dolls.push({
-      x:centerBias?clamp(.55+rand(-.19,.19),.13,.90):rand(.13,.90),
+      x:centerBias?clamp(.56+rand(-.21,.21),.14,.90):rand(.14,.90),
       y:centerBias?rand(.72,.91):rand(.68,.93),
-      rot:rand(-28,28),
+      rot:rand(-30,30),
       id:i
     });
   }
 
-  screen.innerHTML=`<div class="catcher-shell">
+  screen.innerHTML=`<div class="catcher-shell ufo-catcher-shell">
     <div class="game-head">
-      <div><span class="kicker">${esc(p.name)}</span><h2>モブくんキャッチャー</h2><p class="lead">本当にアームに入った分だけGET</p></div>
+      <div><span class="kicker">${esc(p.name)}</span><h2>モブくんキャッチャー</h2><p class="lead">MOB UFO CATCHER</p></div>
       <div class="game-badge">${playBadge(humanIndex)}</div>
     </div>
 
-    <div id="catcherStage" class="catcher-stage">
-      <div class="catcher-chute"><b>DROP</b><span id="chuteCount">0</span></div>
-
-      <div id="dollPile" class="catcher-dolls">
-        ${dolls.map(d=>`<i class="catcher-doll" data-id="${d.id}" style="left:${d.x*100}%;top:${d.y*100}%;transform:translate(-50%,-50%) rotate(${d.rot}deg)"></i>`).join("")}
+    <div class="ufo-cabinet">
+      <div class="ufo-marquee">
+        <span>★</span><b>MOB CATCHER</b><span>★</span>
       </div>
 
-      <div id="crane" class="crane" style="left:${craneX*100}%">
-        <div class="crane-rail"></div>
-        <div id="craneCable" class="crane-cable" style="height:${craneY}px"></div>
+      <div class="ufo-glass-wrap">
+        <div class="ufo-side-post left"></div>
+        <div class="ufo-side-post right"></div>
+        <div class="ufo-top-beam"></div>
 
-        <div id="craneHead" class="crane-head" style="top:${craneY}px">
-          <div id="armLeft" class="crane-arm left"></div>
-          <div id="armRight" class="crane-arm right"></div>
-          <div id="heldDolls" class="held-dolls"></div>
+        <div id="catcherStage" class="catcher-stage ufo-glass">
+          <div class="ufo-back-logo">MOB</div>
+          <div class="ufo-prize-floor"></div>
+
+          <div class="catcher-chute ufo-chute">
+            <b>PRIZE</b>
+            <span id="chuteCount">0</span>
+          </div>
+
+          <div id="dollPile" class="catcher-dolls ufo-prize-pile">
+            ${dolls.map(d=>`<i class="catcher-doll ufo-prize" data-id="${d.id}" style="left:${d.x*100}%;top:${d.y*100}%;transform:translate(-50%,-50%) rotate(${d.rot}deg)"></i>`).join("")}
+          </div>
+
+          <div id="crane" class="crane ufo-crane" style="left:${craneX*100}%">
+            <div class="ufo-trolley"><i></i><i></i></div>
+            <div id="craneCable" class="crane-cable ufo-cable" style="height:${craneY}px"></div>
+
+            <div id="craneHead" class="crane-head ufo-head" style="top:${craneY}px">
+              <div class="ufo-head-light"></div>
+              <div id="armLeft" class="crane-arm ufo-arm left"><i></i></div>
+              <div id="armRight" class="crane-arm ufo-arm right"><i></i></div>
+              <div id="heldDolls" class="held-dolls"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ufo-control-panel">
+        <div class="ufo-width-control">
+          <span>ARM WIDTH</span>
+          <div class="width-controls">
+            <button id="armNarrow" type="button">−</button>
+            <div class="catcher-meter ufo-meter">
+              <b id="armValue">${Math.round(armOpen*100)}%</b>
+              <i><em id="armFill" style="width:${armOpen*100}%"></em></i>
+            </div>
+            <button id="armWide" type="button">＋</button>
+          </div>
+          <small>降下前に決める / 降下後は固定</small>
+        </div>
+
+        <div class="catcher-controls ufo-controls">
+          <button id="craneLeft" class="move" type="button">◀</button>
+          <button id="craneRight" class="move" type="button">▶</button>
+          <button id="craneDrop" class="drop" type="button">降下</button>
+          <button id="craneStop" class="stop" type="button" disabled>STOP</button>
         </div>
       </div>
     </div>
 
-    <div class="catcher-meter">
-      <span>ARM OPEN</span><b id="armValue">${Math.round(armOpen*100)}%</b>
-      <i><em id="armFill" style="width:${armOpen*100}%"></em></i>
-    </div>
-
-    <div class="catcher-controls">
-      <button id="craneLeft" type="button">◀</button>
-      <button id="craneRight" type="button">▶</button>
-      <button id="craneDrop" class="drop" type="button">降下</button>
-      <button id="craneStop" class="stop" type="button" disabled>STOP</button>
-    </div>
-
-    <p id="catcherHint" class="hint">位置を決めて降下。STOPした瞬間のアーム内にいるモブくんだけを実際につかみます。</p>
+    <p id="catcherHint" class="hint">①位置 ②アーム幅 ③降下 ④高さをSTOP。アーム内に本当に入った人形だけGET。</p>
   </div>`;
   gameTop();
 
@@ -1484,6 +1529,8 @@ async function startCatcher(p,humanIndex){
   const heldLayer=document.getElementById("heldDolls");
   const armValue=document.getElementById("armValue");
   const armFill=document.getElementById("armFill");
+  const narrowBtn=document.getElementById("armNarrow");
+  const wideBtn=document.getElementById("armWide");
   const leftBtn=document.getElementById("craneLeft");
   const rightBtn=document.getElementById("craneRight");
   const dropBtn=document.getElementById("craneDrop");
@@ -1496,9 +1543,11 @@ async function startCatcher(p,humanIndex){
     cable.style.height=`${craneY}px`;
     head.style.top=`${craneY}px`;
 
-    const spread=10+armOpen*27;
-    leftArm.style.transform=`rotate(${-(18+armOpen*42)}deg) translateX(${-spread*.15}px)`;
-    rightArm.style.transform=`rotate(${18+armOpen*42}deg) translateX(${spread*.15}px)`;
+    // Width is selected by the player before descent and remains locked.
+    const angle=22+armOpen*42;
+    const spread=8+armOpen*20;
+    leftArm.style.transform=`rotate(${-angle}deg) translateX(${-spread*.12}px)`;
+    rightArm.style.transform=`rotate(${angle}deg) translateX(${spread*.12}px)`;
 
     armValue.textContent=`${Math.round(armOpen*100)}%`;
     armFill.style.width=`${armOpen*100}%`;
@@ -1506,13 +1555,22 @@ async function startCatcher(p,humanIndex){
 
   function move(dx){
     if(phase!=="position")return;
-    craneX=clamp(craneX+dx,.13,.90);
+    craneX=clamp(craneX+dx,.15,.90);
     renderCrane();
     beep(460,22,.009);
   }
 
-  leftBtn.addEventListener("pointerdown",e=>{e.preventDefault();move(-.065)},{passive:false});
-  rightBtn.addEventListener("pointerdown",e=>{e.preventDefault();move(.065)},{passive:false});
+  function changeWidth(delta){
+    if(phase!=="position")return;
+    armOpen=clamp(Math.round((armOpen+delta)*100)/100,.28,.88);
+    renderCrane();
+    beep(delta>0?580:510,25,.01);
+  }
+
+  leftBtn.addEventListener("pointerdown",e=>{e.preventDefault();move(-.06)},{passive:false});
+  rightBtn.addEventListener("pointerdown",e=>{e.preventDefault();move(.06)},{passive:false});
+  narrowBtn.addEventListener("pointerdown",e=>{e.preventDefault();changeWidth(-.10)},{passive:false});
+  wideBtn.addEventListener("pointerdown",e=>{e.preventDefault();changeWidth(.10)},{passive:false});
 
   dropBtn.addEventListener("pointerdown",e=>{
     if(phase!=="position")return;
@@ -1521,22 +1579,21 @@ async function startCatcher(p,humanIndex){
     phase="descending";
     leftBtn.disabled=true;
     rightBtn.disabled=true;
+    narrowBtn.disabled=true;
+    wideBtn.disabled=true;
     dropBtn.disabled=true;
     stopBtn.disabled=false;
-    hint.textContent="アームの中へモブくんを入れてSTOP！";
+    hint.textContent=`ARM ${Math.round(armOpen*100)}% LOCK / 高さをSTOPで決定`;
 
     const start=performance.now();
     const frame=now=>{
       if(phase!=="descending")return;
 
       const t=(now-start)/1000;
-      craneY=clamp(42+t*168,42,266);
-
-      // Fast oscillating opening width. Wide is not automatically better.
-      armOpen=.18+((Math.sin(t*8.5)+1)/2)*.75;
+      craneY=clamp(38+t*142,38,252);
       renderCrane();
 
-      if(craneY>=266){
+      if(craneY>=252){
         stopCatch();
         return;
       }
@@ -1551,72 +1608,80 @@ async function startCatcher(p,humanIndex){
   },{passive:false});
 
   function calculateGrip(){
-    const stageW=stage.clientWidth;
-    const stageH=stage.clientHeight;
+    const stageRect=stage.getBoundingClientRect();
+    const headRect=head.getBoundingClientRect();
 
-    // Approximate actual claw center and envelope on screen.
-    const clawY=(craneY+76)/stageH;
-    const halfWidth=.026+armOpen*.082;
-    const verticalRange=.055;
+    const headCenterX=headRect.left-stageRect.left+headRect.width/2;
+    const headBottom=headRect.bottom-stageRect.top;
 
-    const candidates=dolls
-      .map(d=>{
-        const dx=Math.abs(d.x-craneX);
-        const dy=Math.abs(d.y-clawY);
-        const inside=dx<=halfWidth && dy<=verticalRange;
-        const centerQuality=inside
-          ? (1-dx/halfWidth)*.72 + (1-dy/verticalRange)*.28
-          : -1;
-        return {...d,dx,dy,centerQuality};
-      })
-      .filter(d=>d.centerQuality>=0)
-      .sort((a,b)=>b.centerQuality-a.centerQuality);
+    // Real claw envelope based on the selected arm width.
+    // This is measured against the actual DOM prize positions.
+    const gripWidth=42+armOpen*118;
+    const gripTop=headBottom+18;
+    const gripBottom=headBottom+86;
+    const gripLeft=headCenterX-gripWidth/2;
+    const gripRight=headCenterX+gripWidth/2;
+    const gripCenterX=headCenterX;
+    const gripCenterY=(gripTop+gripBottom)/2;
 
-    // Best opening is around 60–70%. Too narrow misses, too wide closes loosely.
-    const openQuality=clamp(1-Math.abs(armOpen-.64)/.48,0,1);
-    const depthQuality=clamp(1-Math.abs(clawY-.80)/.19,0,1);
-    const gripQuality=openQuality*.62+depthQuality*.38;
+    const candidates=[...stage.querySelectorAll(".catcher-doll")].map(el=>{
+      const r=el.getBoundingClientRect();
+      const cx=r.left-stageRect.left+r.width/2;
+      const cy=r.top-stageRect.top+r.height/2;
+      const inside=cx>=gripLeft&&cx<=gripRight&&cy>=gripTop&&cy<=gripBottom;
 
-    // Usually 1–5, excellent placement can reach 6–10.
-    const capacity=clamp(Math.floor(1+9*Math.pow(gripQuality,2.35)),1,10);
+      const dx=Math.abs(cx-gripCenterX)/(gripWidth/2);
+      const dy=Math.abs(cy-gripCenterY)/((gripBottom-gripTop)/2);
+      const centerQuality=inside ? 1-(dx*.62+dy*.38) : -1;
 
-    // Only well-centered candidates actually remain between the closing arms.
-    let held=candidates.filter(d=>d.centerQuality>=.30+.18*(1-gripQuality)).slice(0,capacity);
+      return {el,id:Number(el.dataset.id),cx,cy,centerQuality};
+    }).filter(x=>x.centerQuality>=0).sort((a,b)=>b.centerQuality-a.centerQuality);
 
-    // Very poor aim can miss completely. A near miss may still get one.
-    if(!held.length&&candidates.length&&gripQuality>.38&&candidates[0].centerQuality>.18){
-      held=[candidates[0]];
-    }
+    // Width is strategic:
+    // narrow = precise but low capacity, medium = balanced, very wide = many
+    // candidates but weaker hold at the edges.
+    const widthCapacity=clamp(Math.round(1+(armOpen-.28)/.60*9),1,10);
+    const stability=clamp(1-Math.abs(armOpen-.64)/.52,.28,1);
+    const qualityThreshold=.19+.22*(1-stability);
 
-    return {held,gripQuality,capacity,clawY};
+    const held=candidates
+      .filter(c=>c.centerQuality>=qualityThreshold)
+      .slice(0,widthCapacity);
+
+    return {
+      held,
+      gripWidth,
+      stability,
+      capacity:widthCapacity
+    };
   }
 
   function attachRealHeldDolls(held){
     heldLayer.innerHTML="";
 
-    held.forEach((d,i)=>{
-      // Move the actual doll element from the pile into the crane.
-      // This is not a badge/clone: the same doll physically travels with the claw.
-      const el=stage.querySelector(`.catcher-doll[data-id="${d.id}"]`);
+    held.forEach((item,i)=>{
+      const el=item.el;
       if(!el)return;
 
       const cols=Math.min(4,Math.max(1,held.length));
       const col=i%cols;
       const row=Math.floor(i/cols);
-      const left=50+(col-(cols-1)/2)*16;
-      const top=31+row*16+(i%2?4:0);
+      const left=50+(col-(cols-1)/2)*17;
+      const top=35+row*17+(i%2?4:0);
 
+      // Reparent the exact same DOM prize element into the claw.
       el.className="held-doll";
       el.style.left=`${left}%`;
       el.style.top=`${top}px`;
       el.style.transform="";
-      el.style.setProperty("--r",`${rand(-16,16)}deg`);
+      el.style.setProperty("--r",`${rand(-14,14)}deg`);
       heldLayer.appendChild(el);
     });
   }
 
   async function stopCatch(){
     if(phase!=="descending")return;
+
     phase="closing";
     if(animRAF)cancelAnimationFrame(animRAF);
     stopBtn.disabled=true;
@@ -1626,19 +1691,21 @@ async function startCatcher(p,humanIndex){
     const caught=held.length;
 
     hint.textContent=caught
-      ? `CLOSE… ${caught}体がアームの中に入った！`
-      : "CLOSE… 空振り！";
+      ? `アーム内に${caught}体！CLOSE…`
+      : "アーム内にモブくんがいない！";
 
-    // Close arms visibly around the actual selected dolls.
+    const lockedOpen=armOpen;
     const closeStart=performance.now();
+
     await new Promise(resolve=>{
       const close=now=>{
-        const t=clamp((now-closeStart)/430,0,1);
-        const fakeOpen=armOpen*(1-t)+.06*t;
-        const spread=10+fakeOpen*27;
+        const t=clamp((now-closeStart)/520,0,1);
+        const fakeOpen=lockedOpen*(1-t)+.07*t;
+        const angle=22+fakeOpen*42;
+        const spread=8+fakeOpen*20;
 
-        leftArm.style.transform=`rotate(${-(18+fakeOpen*42)}deg) translateX(${-spread*.15}px)`;
-        rightArm.style.transform=`rotate(${18+fakeOpen*42}deg) translateX(${spread*.15}px)`;
+        leftArm.style.transform=`rotate(${-angle}deg) translateX(${-spread*.12}px)`;
+        rightArm.style.transform=`rotate(${angle}deg) translateX(${spread*.12}px)`;
 
         if(t<1)requestAnimationFrame(close);
         else resolve();
@@ -1646,7 +1713,6 @@ async function startCatcher(p,humanIndex){
       requestAnimationFrame(close);
     });
 
-    // Physically move only the truly held dolls from the pile into the claw.
     attachRealHeldDolls(held);
 
     if(caught)beep(720,60,.02);
@@ -1658,9 +1724,9 @@ async function startCatcher(p,humanIndex){
 
     await new Promise(resolve=>{
       const lift=now=>{
-        const t=clamp((now-liftStart)/650,0,1);
+        const t=clamp((now-liftStart)/720,0,1);
         const e=1-Math.pow(1-t,3);
-        craneY=startY+(58-startY)*e;
+        craneY=startY+(48-startY)*e;
         renderCrane();
 
         if(t<1)requestAnimationFrame(lift);
@@ -1669,17 +1735,19 @@ async function startCatcher(p,humanIndex){
       requestAnimationFrame(lift);
     });
 
-    // Carry the physically visible dolls to the chute.
     phase="returning";
-    hint.textContent=caught?`${caught}体を抱えて落とし口へ…`:"何もつかめなかった…";
+    hint.textContent=caught
+      ? `${caught}体を本当に抱えたままPRIZEへ移動…`
+      : "空振りのままPRIZEへ…";
+
     const returnStart=performance.now();
     const startX=craneX;
 
     await new Promise(resolve=>{
       const back=now=>{
-        const t=clamp((now-returnStart)/850,0,1);
+        const t=clamp((now-returnStart)/900,0,1);
         const e=1-Math.pow(1-t,3);
-        craneX=startX+(.15-startX)*e;
+        craneX=startX+(.17-startX)*e;
         renderCrane();
 
         if(t<1)requestAnimationFrame(back);
@@ -1689,16 +1757,20 @@ async function startCatcher(p,humanIndex){
     });
 
     phase="release";
-    hint.textContent="DROP ZONEでOPEN！";
+    hint.textContent="PRIZE CHUTE / OPEN!";
 
     const openStart=performance.now();
     await new Promise(resolve=>{
       const open=now=>{
-        const t=clamp((now-openStart)/360,0,1);
-        armOpen=.06+.80*t;
-        renderCrane();
+        const t=clamp((now-openStart)/420,0,1);
+        const fakeOpen=.07+lockedOpen*t;
+        const angle=22+fakeOpen*42;
+        const spread=8+fakeOpen*20;
 
-        if(t>.32)heldLayer.classList.add("release");
+        leftArm.style.transform=`rotate(${-angle}deg) translateX(${-spread*.12}px)`;
+        rightArm.style.transform=`rotate(${angle}deg) translateX(${spread*.12}px)`;
+
+        if(t>.26)heldLayer.classList.add("release");
 
         if(t<1)requestAnimationFrame(open);
         else resolve();
@@ -1710,8 +1782,8 @@ async function startCatcher(p,humanIndex){
     beep(caught?900:210,100,.03);
 
     state.records.catcher[p.id]=caught;
-    await wait(520);
-    recordScreen(8,p,humanIndex,`${caught}<small>体</small>`,caught>=8?"BIG CATCH!":caught===0?"MISS":"REAL CATCH");
+    await wait(560);
+    recordScreen(8,p,humanIndex,`${caught}<small>体</small>`,caught>=8?"BIG CATCH!":caught===0?"MISS":"UFO CATCH");
   }
 
   renderCrane();
