@@ -357,3 +357,39 @@ body{touch-action:manipulation}
 .n1990-choice b{font-size:clamp(30px,10vw,50px)!important;letter-spacing:-.04em}
 .n1990-choice.picked{background:#dfffd3!important}.n1990-choice.wrong{background:#ffd9d6!important}.n1990-choice.bonus{background:var(--yellow)!important;transform:translateY(4px) scale(.96)}
 .n1990-summary strong{color:var(--red)}
+
+
+/* ===== V7.1 GURAGURA INPUT FIX ===== */
+/* V7では親active-layerがpointer-events:noneのまま、
+   active bundle側にauto指定が無かったためタッチが貫通していました。 */
+.active-layer{pointer-events:none!important}
+.stack-bundle.active{
+  pointer-events:auto!important;
+  touch-action:none!important;
+  -webkit-touch-callout:none!important;
+  -webkit-user-select:none!important;
+  user-select:none!important;
+  -webkit-user-drag:none!important;
+  cursor:grab!important;
+}
+.stack-bundle.active.pressed,
+.stack-bundle.active.grabbed{
+  cursor:grabbing!important;
+}
+.stack-stage,
+.stack-stage *{
+  -webkit-touch-callout:none!important;
+  -webkit-user-select:none!important;
+  user-select:none!important;
+  -webkit-user-drag:none!important;
+  -webkit-tap-highlight-color:transparent!important;
+}
+.stack-stage{
+  touch-action:none!important;
+  overscroll-behavior:contain;
+}
+.stack-sky-label,
+.stack-hint,
+.stack-callout{
+  pointer-events:none!important;
+}

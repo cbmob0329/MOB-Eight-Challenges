@@ -438,6 +438,7 @@ async function startStack(p,humanIndex){
   let count=0,dropCount=1,active=null,pointerId=null;
   let pointerDown=false,dragging=false,dropping=false,finished=false;
   let downX=0,downY=0,towerWobbleX=0,towerWobbleRot=0,handWobbleX=0,handWobbleRot=0,wobbleRAF=null;
+  let grabTimer=null;
   const pieceW=68,pieceH=50,baseBottom=32,stacked=[];
   const gameStart=performance.now();
 
@@ -529,12 +530,90 @@ async function startStack(p,humanIndex){
     await wait(220);spawnPiece();
   }
 
-  function finishStack(){if(finished)return;finished=true;if(wobbleRAF)cancelAnimationFrame(wobbleRAF);state.records.stack[p.id]=count;setTimeout(()=>recordScreen(4,p,humanIndex,`${count}<small>体</small>`,`WIND ${windPercent()}% / STACK RECORD`),220)}
+  function finishStack(){if(finished)return;finished=true;clearTimeout(grabTimer);if(wobbleRAF)cancelAnimationFrame(wobbleRAF);state.records.stack[p.id]=count;setTimeout(()=>recordScreen(4,p,humanIndex,`${count}<small>体</small>`,`WIND ${windPercent()}% / STACK RECORD`),220)}
 
-  stage.addEventListener("pointerdown",e=>{const el=e.target.closest("#activeStackBundle");if(!el||dropping||finished)return;e.preventDefault();pointerDown=true;dragging=false;pointerId=e.pointerId;downX=e.clientX;downY=e.clientY;try{stage.setPointerCapture(pointerId)}catch(_){};showCallout("GRAB?","grab");updateBalance()},{passive:false});
-  stage.addEventListener("pointermove",e=>{if(!pointerDown||e.pointerId!==pointerId||dropping||finished)return;e.preventDefault();if(!dragging&&Math.hypot(e.clientX-downX,e.clientY-downY)>7){dragging=true;showCallout("GRAB!","grab")}if(dragging)setActiveX(e.clientX)},{passive:false});
-  const release=e=>{if(!pointerDown||e.pointerId!==pointerId||dropping||finished)return;e.preventDefault();if(dragging)releaseBundle();else{pointerDown=false;cycleDropCount()}};
-  stage.addEventListener("pointerup",release,{passive:false});stage.addEventListener("pointercancel",e=>{if(pointerDown){pointerDown=false;dragging=false;updateBalance()}},{passive:false});
+  // iPhoneでは「長押ししてから動かす」でも確実につかめる。
+  // 短いタップだけは DROP数変更、3px以上動かす or 0.22秒ホールドでGRABになる。
+  stage.addEventListener("pointerdown",e=>{
+    const el=e.target.closest("#activeStackBundle");
+    if(!el||dropping||finished)return;
+
+    e.preventDefault();
+    e.stopPropagation();
+
+    pointerDown=true;
+    dragging=false;
+    pointerId=e.pointerId;
+    downX=e.clientX;
+    downY=e.clientY;
+
+    el.classList.add("pressed");
+    try{stage.setPointerCapture(pointerId)}catch(_){}
+
+    clearTimeout(grabTimer);
+    grabTimer=setTimeout(()=>{
+      if(pointerDown&&!dropping&&!finished){
+        dragging=true;
+        el.classList.add("grabbed");
+        showCallout("GRAB!","grab");
+        updateBalance();
+      }
+    },220);
+
+    showCallout("HOLD / MOVE","grab");
+    updateBalance();
+  },{passive:false});
+
+  stage.addEventListener("pointermove",e=>{
+    if(!pointerDown||e.pointerId!==pointerId||dropping||finished)return;
+
+    e.preventDefault();
+    e.stopPropagation();
+
+    if(!dragging&&Math.hypot(e.clientX-downX,e.clientY-downY)>3){
+      clearTimeout(grabTimer);
+      dragging=true;
+      const el=activeEl();
+      if(el)el.classList.add("grabbed");
+      showCallout("GRAB!","grab");
+    }
+
+    if(dragging)setActiveX(e.clientX);
+  },{passive:false});
+
+  const release=e=>{
+    if(!pointerDown||e.pointerId!==pointerId||dropping||finished)return;
+
+    e.preventDefault();
+    e.stopPropagation();
+    clearTimeout(grabTimer);
+
+    const el=activeEl();
+    if(el)el.classList.remove("pressed","grabbed");
+
+    if(dragging){
+      releaseBundle();
+    }else{
+      pointerDown=false;
+      cycleDropCount();
+    }
+  };
+
+  stage.addEventListener("pointerup",release,{passive:false});
+  stage.addEventListener("pointercancel",e=>{
+    clearTimeout(grabTimer);
+    const el=activeEl();
+    if(el)el.classList.remove("pressed","grabbed");
+    if(pointerDown){
+      pointerDown=false;
+      dragging=false;
+      updateBalance();
+    }
+  },{passive:false});
+
+  // Safariの長押しメニュー・選択をゲーム領域では完全に無効化。
+  stage.addEventListener("contextmenu",e=>e.preventDefault(),{passive:false});
+  stage.addEventListener("touchstart",e=>e.preventDefault(),{passive:false});
 
   renderStack();startWobble();await countdown("STACK");spawnPiece();
 }
@@ -552,9 +631,30 @@ function build1990WorldRanking(laps){
   const strong=Object.keys(COUNTRY_1990_BIAS);
   const others=shuffle(WORLD_COUNTRIES.filter(x=>!strong.includes(x))).slice(0,31);
   const countries=[...strong,...others];
-  const entries=countries.map(name=>({name,score:rand(7,28)+(COUNTRY_1990_BIAS[name]||rand(-.5,1.8)),mob:false}));
-  entries.push({name:"MOB",score:laps+rand(-1.1,1.1),mob:true});
-  entries.sort((a,b)=>b.score-a.score);entries.forEach((e,i)=>e.rank=i+1);return entries;
+  const entries=countries.map(name=>({
+    name,
+    score:rand(7,28)+(COUNTRY_1990_BIAS[name]||rand(-.5,1.8)),
+    mob:false
+  }));
+
+  // 1990を25周以上披露できたら世界大会優勝を確定。
+  // 24周以下は毎回多少順位が変動する。
+  let mobScore;
+  if(laps>=25){
+    const currentBest=Math.max(...entries.map(e=>e.score));
+    mobScore=currentBest+5+rand(0,2);
+  }else{
+    // 目安:
+    // 20～24周 = 世界上位～表彰台候補
+    // 15～19周 = 中位～上位
+    // 10～14周 = 中位中心
+    mobScore=8+laps*.92+rand(-1.3,1.3);
+  }
+
+  entries.push({name:"MOB",score:mobScore,mob:true});
+  entries.sort((a,b)=>b.score-a.score);
+  entries.forEach((e,i)=>e.rank=i+1);
+  return entries;
 }
 
 async function startGanbareMob(p,humanIndex){
