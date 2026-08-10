@@ -3130,3 +3130,234 @@ body{touch-action:manipulation}
   font-weight:1000;
 }
 .chair-result-card .primary{width:100%}
+
+
+/* =========================================================
+   V9.4 MUSICAL CHAIRS — WINNER SITS / FLOATING MUSIC
+   ========================================================= */
+.music-ring{
+  width:292px!important;
+  height:292px!important;
+  animation:musicRingDance 5.4s ease-in-out infinite!important;
+}
+.music-ring span{
+  --angle:calc(var(--i) * 30deg)!important;
+  font-size:clamp(34px,10vw,54px)!important;
+  line-height:1;
+  transform:
+    translate(-50%,-50%)
+    rotate(var(--angle))
+    translateY(-136px)
+    rotate(calc(var(--angle) * -1))!important;
+  animation:musicNoteFloat .82s ease-in-out infinite alternate!important;
+  animation-delay:var(--delay)!important;
+  text-shadow:0 3px 0 rgba(17,19,26,.15);
+}
+.music-ring span:nth-child(3n+1){
+  animation-duration:.72s!important;
+}
+.music-ring span:nth-child(3n+2){
+  animation-duration:.94s!important;
+}
+.music-ring span:nth-child(3n){
+  animation-duration:1.08s!important;
+}
+@keyframes musicRingDance{
+  0%{transform:translate(-50%,-50%) rotate(-5deg) scale(.98)}
+  25%{transform:translate(-50%,-52%) rotate(5deg) scale(1.02)}
+  50%{transform:translate(-50%,-48%) rotate(-4deg) scale(1.04)}
+  75%{transform:translate(-50%,-51%) rotate(6deg) scale(1.01)}
+  100%{transform:translate(-50%,-50%) rotate(-5deg) scale(.98)}
+}
+@keyframes musicNoteFloat{
+  0%{
+    margin-top:-8px;
+    filter:drop-shadow(0 2px 0 rgba(17,19,26,.10));
+  }
+  100%{
+    margin-top:14px;
+    filter:drop-shadow(0 8px 0 rgba(17,19,26,.07));
+  }
+}
+.music-ring.stopped{
+  opacity:0!important;
+  animation:none!important;
+}
+
+.chair-racer{
+  z-index:6;
+}
+.chair-racer.seated{
+  z-index:18!important;
+  left:50%!important;
+  right:auto!important;
+  top:45%!important;
+  bottom:auto!important;
+  transform:translate(-50%,-29%) scale(1.08)!important;
+  transition:
+    left .34s cubic-bezier(.18,.82,.28,1),
+    top .34s cubic-bezier(.18,.82,.28,1),
+    transform .34s cubic-bezier(.18,.82,.28,1)!important;
+}
+.chair-racer.seated i{
+  width:72px!important;
+  height:72px!important;
+  animation:chairSitBounce .38s ease;
+}
+.chair-racer.seated b{
+  margin-top:-5px;
+  border:2px solid var(--ink);
+  border-radius:999px;
+  background:var(--yellow);
+  padding:2px 6px;
+}
+.chair-racer.seated em{
+  display:none;
+}
+.chair-button.occupied{
+  filter:drop-shadow(0 0 10px rgba(255,213,73,.85));
+}
+@keyframes chairSitBounce{
+  0%{transform:translateY(-16px) scale(.9)}
+  55%{transform:translateY(5px) scale(1.10)}
+  100%{transform:translateY(0) scale(1)}
+}
+
+.chair-winner-call{
+  position:absolute;
+  z-index:30;
+  left:50%;
+  top:64%;
+  transform:translate(-50%,-8px) scale(.85);
+  min-width:180px;
+  border:4px solid var(--ink);
+  border-radius:999px;
+  background:var(--yellow);
+  padding:7px 14px;
+  text-align:center;
+  font-size:14px;
+  font-weight:1000;
+  opacity:0;
+  pointer-events:none;
+}
+.chair-winner-call.show{
+  animation:chairWinnerCall .85s ease forwards;
+}
+@keyframes chairWinnerCall{
+  0%{
+    opacity:0;
+    transform:translate(-50%,-12px) scale(.72);
+  }
+  28%{
+    opacity:1;
+    transform:translate(-50%,0) scale(1.10);
+  }
+  78%{
+    opacity:1;
+    transform:translate(-50%,0) scale(1);
+  }
+  100%{
+    opacity:.92;
+    transform:translate(-50%,0) scale(1);
+  }
+}
+.chair-message.winner-message{
+  background:var(--yellow);
+}
+
+.chair-final-result{
+  position:fixed;
+  z-index:1700;
+  inset:0;
+  display:none;
+  place-items:center;
+  background:rgba(17,19,26,.78);
+  padding:18px;
+}
+.chair-final-result.show{
+  display:grid;
+}
+.chair-final-card{
+  width:min(94vw,460px);
+  border:5px solid var(--ink);
+  border-radius:25px;
+  background:#fff;
+  box-shadow:0 10px 0 var(--ink);
+  padding:20px 16px 16px;
+  text-align:center;
+}
+.chair-final-card>span{
+  display:block;
+  font-size:10px;
+  font-weight:1000;
+  letter-spacing:.14em;
+  color:var(--muted);
+}
+.chair-final-rounds{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+  margin:13px 0;
+}
+.chair-final-rounds>div{
+  border:3px solid var(--ink);
+  border-radius:14px;
+  background:#f4f4ef;
+  padding:10px 6px;
+}
+.chair-final-rounds small{
+  display:block;
+  font-size:9px;
+  font-weight:1000;
+  color:var(--muted);
+}
+.chair-final-rounds b{
+  display:block;
+  margin-top:4px;
+  font-size:21px;
+}
+.chair-final-rounds em{
+  display:block;
+  margin-top:2px;
+  font-size:9px;
+  font-style:normal;
+  font-weight:1000;
+}
+.chair-final-card>p{
+  margin:10px 0 3px;
+  font-size:15px;
+  font-weight:1000;
+}
+.chair-final-card>strong{
+  display:block;
+  margin:3px 0 16px;
+  font-size:clamp(38px,12vw,60px);
+  line-height:1;
+  color:var(--red);
+}
+.chair-final-card .primary{
+  width:100%;
+}
+
+@media(max-height:680px){
+  .music-ring{
+    width:245px!important;
+    height:245px!important;
+  }
+  .music-ring span{
+    font-size:34px!important;
+    transform:
+      translate(-50%,-50%)
+      rotate(var(--angle))
+      translateY(-112px)
+      rotate(calc(var(--angle) * -1))!important;
+  }
+  .chair-racer.seated{
+    top:44%!important;
+    transform:translate(-50%,-27%) scale(.98)!important;
+  }
+  .chair-winner-call{
+    top:63%;
+    font-size:11px;
+  }
+}

@@ -3243,6 +3243,7 @@ async function startMusicalChairs(p,humanIndex,runId){
   gameFit();
 
   const roundTimes=[];
+  const roundRanks=[];
   const cpuPlayers=[
     {name:"CPU 1",icon:2},
     {name:"CPU 2",icon:3},
@@ -3263,7 +3264,7 @@ async function startMusicalChairs(p,humanIndex,runId){
 
     <div id="chairArena" class="chair-arena">
       <div id="musicRing" class="music-ring">
-        ${Array.from({length:10},(_,i)=>`<span style="--i:${i}">♪</span>`).join("")}
+        ${Array.from({length:12},(_,i)=>`<span style="--i:${i};--delay:${(i%6)*-.13}s">♪</span>`).join("")}
       </div>
 
       <button id="chairButton" class="chair-button" type="button" aria-label="椅子">
@@ -3274,11 +3275,12 @@ async function startMusicalChairs(p,humanIndex,runId){
       </button>
 
       <div class="chair-racers">
-        <div class="chair-racer player">
+        <div class="chair-racer player" data-chair-player="1">
           <i style="background-image:url('${p.img}')"></i>
           <b>YOU</b>
           <em id="chairYouTime">--</em>
         </div>
+
         ${cpuPlayers.map((cpu,i)=>`
           <div class="chair-racer cpu" data-chair-cpu="${i}">
             <i style="background-image:url('icon/${String(cpu.icon).padStart(2,"0")}.png')"></i>
@@ -3288,14 +3290,39 @@ async function startMusicalChairs(p,humanIndex,runId){
       </div>
 
       <div id="chairMessage" class="chair-message">♪ MUSIC ♪</div>
+      <div id="chairWinnerCall" class="chair-winner-call"></div>
     </div>
 
     <div id="chairRoundResult" class="chair-round-result">
       <div class="chair-result-card">
         <span id="chairResultLabel">ROUND 1 RESULT</span>
-        <strong id="chairResultTime">0.300</strong>
+        <strong id="chairResultTime">0.300s</strong>
         <div id="chairResultRank">1 / 5</div>
         <button id="chairNext" class="primary" type="button">NEXT</button>
+      </div>
+    </div>
+
+    <div id="chairFinalResult" class="chair-final-result">
+      <div class="chair-final-card">
+        <span>FINAL RESULT</span>
+
+        <div class="chair-final-rounds">
+          <div>
+            <small>1回目</small>
+            <b id="chairFinalR1">--</b>
+            <em id="chairFinalRank1">--</em>
+          </div>
+          <div>
+            <small>2回目</small>
+            <b id="chairFinalR2">--</b>
+            <em id="chairFinalRank2">--</em>
+          </div>
+        </div>
+
+        <p>あなたの最高記録は</p>
+        <strong id="chairFinalBest">0.000秒！</strong>
+
+        <button id="chairFinalNext" class="primary" type="button">NEXT</button>
       </div>
     </div>
   </div>`;
@@ -3306,7 +3333,10 @@ async function startMusicalChairs(p,humanIndex,runId){
   const roundEl=document.getElementById("chairRound");
   const bestEl=document.getElementById("chairBest");
   const message=document.getElementById("chairMessage");
+  const winnerCall=document.getElementById("chairWinnerCall");
   const youTimeEl=document.getElementById("chairYouTime");
+
+  const playerEl=arena.querySelector("[data-chair-player]");
   const cpuEls=[...arena.querySelectorAll("[data-chair-cpu]")];
 
   const overlay=document.getElementById("chairRoundResult");
@@ -3315,7 +3345,46 @@ async function startMusicalChairs(p,humanIndex,runId){
   const resultRank=document.getElementById("chairResultRank");
   const nextBtn=document.getElementById("chairNext");
 
-  async function waitForNext(){
+  const finalOverlay=document.getElementById("chairFinalResult");
+  const finalR1=document.getElementById("chairFinalR1");
+  const finalR2=document.getElementById("chairFinalR2");
+  const finalRank1=document.getElementById("chairFinalRank1");
+  const finalRank2=document.getElementById("chairFinalRank2");
+  const finalBest=document.getElementById("chairFinalBest");
+  const finalNext=document.getElementById("chairFinalNext");
+
+  function clearSeated(){
+    playerEl.classList.remove("seated","winner");
+    cpuEls.forEach(el=>el.classList.remove("seated","winner","arrived"));
+  }
+
+  function seatWinner(winner){
+    clearSeated();
+
+    let el=null;
+
+    if(winner.you){
+      el=playerEl;
+    }else if(winner.index!==undefined){
+      el=cpuEls[winner.index];
+    }
+
+    if(!el)return;
+
+    el.classList.add("winner","seated");
+    winnerCall.textContent=`${winner.name} GET CHAIR!`;
+    winnerCall.classList.remove("show");
+    void winnerCall.offsetWidth;
+    winnerCall.classList.add("show");
+
+    chair.classList.add("occupied");
+    message.textContent=`${winner.name} が座った！`;
+    message.className="chair-message winner-message";
+
+    beep(980,100,.03);
+  }
+
+  function waitForRoundNext(){
     return new Promise(resolve=>{
       nextBtn.onclick=()=>{
         overlay.classList.remove("show");
@@ -3325,18 +3394,37 @@ async function startMusicalChairs(p,humanIndex,runId){
     });
   }
 
+  function waitForFinalNext(){
+    return new Promise(resolve=>{
+      finalNext.onclick=()=>{
+        finalOverlay.classList.remove("show");
+        finalNext.onclick=null;
+        resolve();
+      };
+    });
+  }
+
   async function playRound(round){
     if(!isGameRunValid(runId))return null;
+
+    clearSeated();
+    chair.classList.remove("occupied");
 
     roundEl.textContent=`${round+1} / 2`;
     message.textContent="♪ MUSIC ♪";
     message.className="chair-message playing";
+
+    winnerCall.textContent="";
+    winnerCall.classList.remove("show");
+
     musicRing.classList.remove("stopped");
+
     chair.classList.remove("ready","pressed","foul","winner");
+
     youTimeEl.textContent="--";
 
     cpuEls.forEach(el=>{
-      el.classList.remove("winner","arrived");
+      el.classList.remove("winner","arrived","seated");
       el.querySelector("em").textContent="--";
     });
 
@@ -3347,6 +3435,7 @@ async function startMusicalChairs(p,humanIndex,runId){
     let stopAt=0;
     let resolved=false;
     let falseStart=false;
+
     const cpuTimes=musicalChairCpuTimes(round);
 
     const musicInterval=setInterval(()=>{
@@ -3354,12 +3443,14 @@ async function startMusicalChairs(p,humanIndex,runId){
         clearInterval(musicInterval);
         return;
       }
+
       beep(430+randi(-40,55),34,.008);
     },330);
 
     const playerResultPromise=new Promise(resolve=>{
       const finish=value=>{
         if(resolved)return;
+
         resolved=true;
         chair.removeEventListener("pointerdown",onTap);
         resolve(value);
@@ -3384,8 +3475,10 @@ async function startMusicalChairs(p,humanIndex,runId){
         }
 
         const ms=Math.max(.1,performance.now()-stopAt);
+
         chair.classList.add("pressed");
         youTimeEl.textContent=`${(ms/1000).toFixed(3)}s`;
+
         beep(860,70,.022);
         finish(ms);
       };
@@ -3401,6 +3494,7 @@ async function startMusicalChairs(p,humanIndex,runId){
         clearInterval(musicInterval);
         return null;
       }
+
       await wait(40);
     }
 
@@ -3411,17 +3505,21 @@ async function startMusicalChairs(p,humanIndex,runId){
 
     stopped=true;
     stopAt=performance.now();
+
     clearInterval(musicInterval);
 
     musicRing.classList.add("stopped");
     chair.classList.add("ready");
+
     message.textContent="STOP!";
     message.className="chair-message stopped";
+
     beep(930,65,.02);
 
     cpuTimes.forEach((ms,i)=>{
       setTimeout(()=>{
         if(!isGameRunValid(runId))return;
+
         cpuEls[i].classList.add("arrived");
         cpuEls[i].querySelector("em").textContent=`${(ms/1000).toFixed(3)}s`;
       },ms);
@@ -3435,6 +3533,7 @@ async function startMusicalChairs(p,humanIndex,runId){
     if(!isGameRunValid(runId)||playerMs===null)return null;
 
     const effectivePlayer=playerMs;
+
     if(effectivePlayer>=1200){
       youTimeEl.textContent="1.200s";
       message.textContent="TOO LATE";
@@ -3442,29 +3541,45 @@ async function startMusicalChairs(p,humanIndex,runId){
 
     const ranking=[
       {name:"YOU",ms:effectivePlayer,you:true},
-      ...cpuTimes.map((ms,i)=>({name:`CPU ${i+1}`,ms,you:false,index:i}))
+      ...cpuTimes.map((ms,i)=>({
+        name:`CPU ${i+1}`,
+        ms,
+        you:false,
+        index:i
+      }))
     ].sort((a,b)=>a.ms-b.ms);
 
     const rank=ranking.findIndex(x=>x.you)+1;
     const winner=ranking[0];
 
-    if(winner.you){
-      chair.classList.add("winner");
-    }else if(winner.index!==undefined&&cpuEls[winner.index]){
-      cpuEls[winner.index].classList.add("winner");
-    }
-
     roundTimes.push(effectivePlayer);
+    roundRanks.push(rank);
+
     const best=Math.min(...roundTimes);
     bestEl.textContent=`${(best/1000).toFixed(3)}s`;
 
-    resultLabel.textContent=`ROUND ${round+1} RESULT`;
-    resultTime.textContent=falseStart?"FOUL":`${(effectivePlayer/1000).toFixed(3)}s`;
-    resultRank.textContent=`${rank} / 5`;
-    nextBtn.textContent=round===0?"ROUND 2":"FINAL";
+    // First show who actually got the chair.
+    seatWinner(winner);
+
+    // Let the winner sitting animation be visible before showing player's result.
+    await wait(900);
+
+    if(!isGameRunValid(runId))return null;
+
+    resultLabel.textContent=`ROUND ${round+1} YOUR RESULT`;
+    resultTime.textContent=falseStart
+      ? "FOUL"
+      : `${(effectivePlayer/1000).toFixed(3)}s`;
+
+    resultRank.textContent=`あなたは ${rank} / 5`;
+
+    nextBtn.textContent=round===0
+      ? "ROUND 2"
+      : "FINAL RESULT";
+
     overlay.classList.add("show");
 
-    await waitForNext();
+    await waitForRoundNext();
 
     return effectivePlayer;
   }
@@ -3478,10 +3593,25 @@ async function startMusicalChairs(p,humanIndex,runId){
   const best=Math.min(r1,r2);
   state.records.rhythm[p.id]=best;
 
+  finalR1.textContent=`${(r1/1000).toFixed(3)}秒`;
+  finalR2.textContent=`${(r2/1000).toFixed(3)}秒`;
+
+  finalRank1.textContent=`${roundRanks[0]} / 5`;
+  finalRank2.textContent=`${roundRanks[1]} / 5`;
+
+  finalBest.textContent=`${(best/1000).toFixed(3)}秒！`;
+
+  finalOverlay.classList.add("show");
+  beep(900,120,.032);
+
+  await waitForFinalNext();
+
+  if(!isGameRunValid(runId))return;
+
   recordScreen(
     14,p,humanIndex,
     `${(best/1000).toFixed(3)}<small>秒</small>`,
-    `BEST OF 2`
+    `あなたの最高記録`
   );
 }
 
