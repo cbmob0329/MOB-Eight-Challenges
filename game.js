@@ -39,9 +39,10 @@ const GAMES=[
   {no:6,key:"breakdance",title:"1990世界大会",sub:"10秒で1990を見抜いて世界へ"},
   {no:7,key:"crisis",title:"モブくん危機一髪",sub:"3体で足元エネルギーを連続回避"},
   {no:8,key:"factory",title:"モブくん人形大人気",sub:"10秒で箱詰め・封印を量産"},
-  {no:9,key:"catcher",title:"モブくんキャッチャー",sub:"位置・幅・高さで本当に景品をつかむ"},
-  {no:10,key:"tidy",title:"モブくん整理整頓",sub:"10秒で見本の部屋へ近づける"},
-  {no:11,key:"ski",title:"モブくんスキージャンプ",sub:"踏切タイミングで飛距離勝負"}
+  {no:9,key:"catcher",title:"モブくんキャッチャー",sub:"位置・アーム幅・高さで景品をつかむ"},
+  {no:10,key:"tidy",title:"モブくん整理整頓",sub:"7体を見本の部屋へ近づける"},
+  {no:11,key:"ski",title:"モブくんスキージャンプ",sub:"踏切タイミングで最大1km"},
+  {no:12,key:"slot",title:"モブくんスロット",sub:"10秒で1000コインを増やす"}
 ];
 
 const MODES={
@@ -68,7 +69,7 @@ function freshState(){
     roundIndex:0,
     records:{
       reaction:{},memory:{},puzzle:{},launch:{},stack:{},breakdance:{},
-      crisis:{},factory:{},catcher:{},tidy:{},ski:{}
+      crisis:{},factory:{},catcher:{},tidy:{},ski:{},slot:{}
     },
     total:{},
     roundPoints:[],
@@ -126,7 +127,7 @@ function renderHome(){
   state=freshState();
   screen.innerHTML=`
     <section class="hero">
-      <div><span class="kicker">SMARTPHONE PARTY GAME</span><h1>11 MINI<br>GAMES</h1><p>11種のミニゲーム。各モードでNORMALかCUSTOMを選んで遊べます。</p></div>
+      <div><span class="kicker">SMARTPHONE PARTY GAME</span><h1>12 MINI<br>GAMES</h1><p>12種のミニゲーム。各モードでNORMALかCUSTOMを選んで遊べます。</p></div>
       <div class="hero-mark">MOB</div>
     </section>
     <section class="panel">
@@ -197,7 +198,7 @@ function renderPlayStyleSelect(){
       <button id="normalStyle" class="style-select-card normal" type="button">
         <span>NORMAL</span>
         <b>順番に全種目</b>
-        <small>GAME 1 → 11 を順番にプレイ</small>
+        <small>GAME 1 → 12 を順番にプレイ</small>
       </button>
       <button id="customStyle" class="style-select-card custom" type="button">
         <span>CUSTOM</span>
@@ -207,7 +208,7 @@ function renderPlayStyleSelect(){
     </div>
 
     <section class="panel flat">
-      <h3>11 MINI GAMES</h3>
+      <h3>12 MINI GAMES</h3>
       <div class="compact-game-grid">
         ${GAMES.map(g=>`<div><b>${g.no}</b><span>${g.title}</span></div>`).join("")}
       </div>
@@ -317,7 +318,8 @@ function renderModeLobby(){
       <div><b>モブくん人形大人気</b><span>25箱以上=100 / 0箱=0</span></div>
       <div><b>モブくんキャッチャー</b><span>1体=10 / 10体以上=100</span></div>
       <div><b>モブくん整理整頓</b><span>一致率0〜100%=そのまま点数</span></div>
-      <div><b>モブくんスキージャンプ</b><span>240m=100 / 80m以下=0</span></div>
+      <div><b>モブくんスキージャンプ</b><span>1000m=100 / 200m以下=0</span></div>
+      <div><b>モブくんスロット</b><span>3000コイン以上=100 / 1000以下=0</span></div>
     </div>`;
 
   screen.innerHTML=`
@@ -366,7 +368,8 @@ function scoreRuleForGame(index){
     "25箱以上=100点 / 0箱=0点",
     "1体=10点 / 10体以上=100点",
     "見本との一致率がそのまま0〜100点",
-    "240m=100点 / 80m以下=0点"
+    "1000m=100点 / 200m以下=0点",
+    "3000コイン以上=100点 / 1000コイン以下=0点"
   ][index];
 }
 
@@ -389,15 +392,17 @@ function showGameIntro(index){
   }else if(index===5){
     rules=`<li>10秒間、毎回どちらか一方が1990。</li><li>1990=1周、5連続ごとにBONUS +1周。</li><li>罠は-1周。</li><li>25周以上で世界1位確定。</li>`;
   }else if(index===6){
-    rules=`<li>3体を<strong>画面いっぱいに広く横一列</strong>に配置。</li><li>画面外の遠い位置から、足元の高さを短いエネルギーが接近。</li><li>同じ小さいエネルギーをP1 → P2 → P3が順番に1ジャンプで回避。</li><li>INCOMING予告のあと進入するので、突然目の前に出ません。</li><li>3体全員回避で1回。成功するほど高速化。</li>`;
+    rules=`<li>3体を画面いっぱいに広く横一列に配置。</li><li>画面外の遠い位置から、足元の小さいエネルギーが接近。</li><li>同じエネルギーをP1 → P2 → P3が順番に1ジャンプで回避。</li><li>INCOMING予告あり。</li><li>成功するたび<strong>かなり大きく加速</strong>し、後半は素早い連続タップが必要。</li>`;
   }else if(index===7){
     rules=`<li>ベルトコンベアのMOB箱を10秒で完成。</li><li>空箱：人形 → 箱 → 箱で封。</li><li>人形入り箱は箱を1回タップ。</li><li>人形入り箱へさらに人形を入れたら不良品として箱ごと破棄。</li>`;
   }else if(index===8){
-    rules=`<li>①左右で位置 ②降下前にアーム幅を決定 ③降下 ④STOPで高さ決定。</li><li>大きく開けば有利、ではありません。<strong>広げすぎると閉じた時に端の景品を押し出して保持力が落ちます。</strong></li><li>STOP時に本当にアーム内へ入ったモブくんだけを実物ごと持ち上げます。</li><li>0体もあり。幅・位置・高さが噛み合った時だけ大量GET。</li>`;
+    rules=`<li>最初に動いているアーム幅ゲージをタップして停止。</li><li>次に左右でクレーン位置を決めて降下。</li><li>STOPで高さを決め、実際にアームを閉じます。</li><li>本当にアーム内へ入って保持できたモブくんだけを実物ごと持ち上げます。</li><li>広げすぎても大量取得できないよう、閉じる時のこぼれ判定があります。</li>`;
   }else if(index===9){
-    rules=`<li>上の部屋が見本、下の部屋が自分の操作エリア。</li><li>見本では棚・テーブルなどに10体のモブくんが配置。</li><li>下の10体は毎回ランダムに散らばっています。</li><li>10秒でドラッグして見本と同じ配置へ近づけます。</li><li>完全一致=100%。位置が近いほど高得点。</li>`;
+    rules=`<li>上の部屋が見本、下の部屋が自分の操作エリア。</li><li>見本の<strong>7体配置は毎回ランダム</strong>。</li><li>下の7体も毎回ランダムに散らばっています。</li><li>10秒でドラッグして見本へ近づけます。</li><li><strong>自動吸着なし</strong>。置いた位置そのままで一致率を計算。</li>`;
+  }else if(index===10){
+    rules=`<li>3・2・1で長いスロープを自動滑走。</li><li>踏切ラインへ来た瞬間を狙ってタップ。</li><li>成功すると大きく飛び、カメラがモブくんを追跡。</li><li>最高<strong>1000m</strong>。</li><li>100点モードは1000m=100点、200m以下=0点。</li>`;
   }else{
-    rules=`<li>3・2・1で自動滑走スタート。</li><li>ジャンプ台の踏切部分でタイミングよく画面をタップ。</li><li>タイミングが中央に近いほど飛距離が伸びます。</li><li>最高240m。早すぎても遅すぎても距離が落ちます。</li><li>100点モードは240m=100点、80m以下=0点。</li>`;
+    rules=`<li>1000コインからスタート。1回100コイン。</li><li>SPINで3リール開始。STOP 1 → STOP 2 → STOP 3を自分で押します。</li><li>MMM / OOO / BBB = ×2、MOB = ×5、モブくん3つ = ×10。</li><li>最初の2リールはかなり揃いやすく補助。3リール目は目押し中心で、ときどき自動補助。</li><li>10秒後の所持コインで勝負。</li>`;
   }
 
   screen.innerHTML=`
@@ -450,7 +455,8 @@ function humanReady(gameIndex,humanIndex){
     else if(gameIndex===7)startFactory(p,humanIndex);
     else if(gameIndex===8)startCatcher(p,humanIndex);
     else if(gameIndex===9)startTidy(p,humanIndex);
-    else startSkiJump(p,humanIndex);
+    else if(gameIndex===10)startSkiJump(p,humanIndex);
+    else startMobSlot(p,humanIndex);
   },{once:true});
 }
 
@@ -1179,7 +1185,7 @@ async function startCrisis(p,humanIndex){
       return r.left-stageRect.left+r.width/2;
     });
 
-    const speed=Math.min(880,250+wave*24);
+    const speed=Math.min(1800,340+wave*70);
     const startX=-220;
     const endX=stageW+90;
     const totalDistance=endX-startX;
@@ -1187,7 +1193,7 @@ async function startCrisis(p,humanIndex){
     const crossed=[false,false,false];
     const safe=[false,false,false];
 
-    speedEl.textContent=`${(speed/250).toFixed(1)}x`;
+    speedEl.textContent=`${(speed/340).toFixed(1)}x`;
     energy.className="low-energy low-energy-v83";
     energy.style.opacity="1";
     energy.style.transform=`translateX(${startX}px)`;
@@ -1198,7 +1204,7 @@ async function startCrisis(p,humanIndex){
     hint.textContent="INCOMING… まだ遠い。タイミングを見て準備！";
     beep(330,55,.012);
 
-    await wait(Math.max(650,920-wave*9));
+    await wait(Math.max(420,820-wave*12));
 
     approach.classList.remove("show");
     incomingBox.classList.remove("warn");
@@ -1259,7 +1265,7 @@ async function startCrisis(p,humanIndex){
       hint.textContent=`ALL DODGE ${wave}!`;
       beep(880,75,.025);
 
-      await wait(Math.max(80,210-wave*5));
+      await wait(Math.max(45,175-wave*5));
       runWave();
     }
   }
@@ -1480,25 +1486,26 @@ async function startFactory(p,humanIndex){
 async function startCatcher(p,humanIndex){
   gameFit();
 
-  let phase="position";
+  let phase="width";
   let craneX=.56;
-  let craneY=36;
-  let armOpen=.58;
+  let craneY=22;
+  let armOpen=.55;
+  let widthRAF=null;
   let animRAF=null;
   const dolls=[];
 
-  const dollCount=44;
+  const dollCount=46;
   for(let i=0;i<dollCount;i++){
     const cluster=Math.random()<.72;
     dolls.push({
       x:cluster?clamp(.57+rand(-.22,.22),.13,.91):rand(.13,.91),
-      y:cluster?rand(.70,.91):rand(.67,.93),
+      y:cluster?rand(.80,.95):rand(.77,.96),
       rot:rand(-30,30),
       id:i
     });
   }
 
-  screen.innerHTML=`<div class="catcher-shell ufo-catcher-shell v83-catcher">
+  screen.innerHTML=`<div class="catcher-shell ufo-catcher-shell v84-catcher">
     <div class="game-head">
       <div><span class="kicker">${esc(p.name)}</span><h2>モブくんキャッチャー</h2></div>
       <div class="game-badge">${playBadge(humanIndex)}</div>
@@ -1512,7 +1519,7 @@ async function startCatcher(p,humanIndex){
         <div class="ufo-side-post right"></div>
         <div class="ufo-top-beam"></div>
 
-        <div id="catcherStage" class="catcher-stage ufo-glass v83-ufo-glass">
+        <div id="catcherStage" class="catcher-stage ufo-glass v84-ufo-glass">
           <div class="ufo-back-logo">MOB</div>
           <div class="ufo-prize-floor"></div>
 
@@ -1524,7 +1531,7 @@ async function startCatcher(p,humanIndex){
             ${dolls.map(d=>`<i class="catcher-doll ufo-prize" data-id="${d.id}" style="left:${d.x*100}%;top:${d.y*100}%;transform:translate(-50%,-50%) rotate(${d.rot}deg)"></i>`).join("")}
           </div>
 
-          <div id="crane" class="crane ufo-crane" style="left:${craneX*100}%">
+          <div id="crane" class="crane ufo-crane v84-crane" style="left:${craneX*100}%">
             <div class="ufo-trolley"><i></i><i></i></div>
             <div id="craneCable" class="crane-cable ufo-cable" style="height:${craneY}px"></div>
 
@@ -1538,35 +1545,23 @@ async function startCatcher(p,humanIndex){
         </div>
       </div>
 
-      <div class="ufo-control-panel">
-        <div class="ufo-width-control">
-          <div class="ufo-width-head">
-            <span>ARM WIDTH</span>
-            <b id="widthStrategy">BALANCE</b>
-          </div>
+      <div class="ufo-control-panel v84-ufo-panel">
+        <button id="armGauge" class="arm-stop-gauge" type="button" aria-label="アーム幅を止める">
+          <span id="armGaugeFill"></span>
+          <i id="armGaugeMarker"></i>
+          <b>SET</b>
+        </button>
 
-          <div class="width-controls">
-            <button id="armNarrow" type="button">−</button>
-            <div class="catcher-meter ufo-meter">
-              <b id="armValue">${Math.round(armOpen*100)}%</b>
-              <i><em id="armFill" style="width:${armOpen*100}%"></em></i>
-            </div>
-            <button id="armWide" type="button">＋</button>
-          </div>
-
-          <small id="widthHint">広げすぎると閉じる時に端の景品がこぼれます。</small>
-        </div>
-
-        <div class="catcher-controls ufo-controls">
-          <button id="craneLeft" class="move" type="button">◀</button>
-          <button id="craneRight" class="move" type="button">▶</button>
-          <button id="craneDrop" class="drop" type="button">降下</button>
+        <div class="catcher-controls ufo-controls v84-controls">
+          <button id="craneLeft" class="move" type="button" disabled>◀</button>
+          <button id="craneRight" class="move" type="button" disabled>▶</button>
+          <button id="craneDrop" class="drop" type="button" disabled>降下</button>
           <button id="craneStop" class="stop" type="button" disabled>STOP</button>
         </div>
       </div>
     </div>
 
-    <p id="catcherHint" class="hint">幅を最大にするだけでは取れません。山の形に合う幅・位置・深さを選びます。</p>
+    <p id="catcherHint" class="hint">ARM SET → 位置 → 降下 → STOP</p>
   </div>`;
 
   const stage=document.getElementById("catcherStage");
@@ -1576,24 +1571,15 @@ async function startCatcher(p,humanIndex){
   const leftArm=document.getElementById("armLeft");
   const rightArm=document.getElementById("armRight");
   const heldLayer=document.getElementById("heldDolls");
-  const armValue=document.getElementById("armValue");
-  const armFill=document.getElementById("armFill");
-  const widthStrategy=document.getElementById("widthStrategy");
-  const widthHint=document.getElementById("widthHint");
-  const narrowBtn=document.getElementById("armNarrow");
-  const wideBtn=document.getElementById("armWide");
+  const gauge=document.getElementById("armGauge");
+  const gaugeFill=document.getElementById("armGaugeFill");
+  const gaugeMarker=document.getElementById("armGaugeMarker");
   const leftBtn=document.getElementById("craneLeft");
   const rightBtn=document.getElementById("craneRight");
   const dropBtn=document.getElementById("craneDrop");
   const stopBtn=document.getElementById("craneStop");
   const hint=document.getElementById("catcherHint");
   const chuteCount=document.getElementById("chuteCount");
-
-  function strategyText(){
-    if(armOpen<=.42)return ["NARROW","安定しやすい / 一度に少量"];
-    if(armOpen<=.68)return ["BALANCE","包み込みと保持力のバランス"];
-    return ["TOO WIDE","広すぎる / 端の景品がこぼれやすい"];
-  }
 
   function renderCrane(){
     crane.style.left=`${craneX*100}%`;
@@ -1604,13 +1590,6 @@ async function startCatcher(p,humanIndex){
     const spread=8+armOpen*20;
     leftArm.style.transform=`rotate(${-angle}deg) translateX(${-spread*.12}px)`;
     rightArm.style.transform=`rotate(${angle}deg) translateX(${spread*.12}px)`;
-
-    armValue.textContent=`${Math.round(armOpen*100)}%`;
-    armFill.style.width=`${armOpen*100}%`;
-
-    const [label,text]=strategyText();
-    widthStrategy.textContent=label;
-    widthHint.textContent=text;
   }
 
   function move(dx){
@@ -1620,17 +1599,41 @@ async function startCatcher(p,humanIndex){
     beep(460,22,.009);
   }
 
-  function changeWidth(delta){
-    if(phase!=="position")return;
-    armOpen=clamp(Math.round((armOpen+delta)*100)/100,.28,.88);
-    renderCrane();
-    beep(delta>0?580:510,25,.01);
-  }
-
   leftBtn.addEventListener("pointerdown",e=>{e.preventDefault();move(-.055)},{passive:false});
   rightBtn.addEventListener("pointerdown",e=>{e.preventDefault();move(.055)},{passive:false});
-  narrowBtn.addEventListener("pointerdown",e=>{e.preventDefault();changeWidth(-.10)},{passive:false});
-  wideBtn.addEventListener("pointerdown",e=>{e.preventDefault();changeWidth(.10)},{passive:false});
+
+  // The arm-width gauge is the decision. No percentage or explanation text.
+  const widthStart=performance.now();
+  const widthAnim=now=>{
+    if(phase!=="width")return;
+
+    const t=(now-widthStart)/820;
+    const pos=(Math.sin(t*Math.PI*2-Math.PI/2)+1)/2;
+    armOpen=.27+pos*.62;
+
+    gaugeFill.style.width=`${pos*100}%`;
+    gaugeMarker.style.left=`${pos*100}%`;
+    renderCrane();
+
+    widthRAF=requestAnimationFrame(widthAnim);
+  };
+  widthRAF=requestAnimationFrame(widthAnim);
+
+  gauge.addEventListener("pointerdown",e=>{
+    if(phase!=="width")return;
+    e.preventDefault();
+
+    phase="position";
+    if(widthRAF)cancelAnimationFrame(widthRAF);
+    gauge.classList.add("locked");
+    gauge.querySelector("b").textContent="LOCK";
+
+    leftBtn.disabled=false;
+    rightBtn.disabled=false;
+    dropBtn.disabled=false;
+    hint.textContent="◀ ▶ で位置 → 降下";
+    beep(690,55,.018);
+  },{passive:false});
 
   dropBtn.addEventListener("pointerdown",e=>{
     if(phase!=="position")return;
@@ -1639,22 +1642,19 @@ async function startCatcher(p,humanIndex){
     phase="descending";
     leftBtn.disabled=true;
     rightBtn.disabled=true;
-    narrowBtn.disabled=true;
-    wideBtn.disabled=true;
     dropBtn.disabled=true;
     stopBtn.disabled=false;
-
-    hint.textContent=`ARM ${Math.round(armOpen*100)}% LOCK / STOPで深さを決定`;
+    hint.textContent="STOP";
 
     const start=performance.now();
     const frame=now=>{
       if(phase!=="descending")return;
 
       const t=(now-start)/1000;
-      craneY=clamp(36+t*145,36,248);
+      craneY=clamp(22+t*175,22,300);
       renderCrane();
 
-      if(craneY>=248){
+      if(craneY>=300){
         stopCatch();
         return;
       }
@@ -1676,18 +1676,18 @@ async function startCatcher(p,humanIndex){
     const headBottom=headRect.bottom-stageRect.top;
     const stageH=stage.clientHeight;
 
-    const gripWidth=36+armOpen*112;
-    const gripTop=headBottom+15;
-    const gripBottom=headBottom+86;
+    const gripWidth=32+armOpen*108;
+    const gripTop=headBottom+16;
+    const gripBottom=headBottom+90;
     const gripLeft=headCenterX-gripWidth/2;
     const gripRight=headCenterX+gripWidth/2;
     const gripCenterY=(gripTop+gripBottom)/2;
 
     const depthNorm=clamp(gripCenterY/stageH,0,1);
-    const depthQuality=clamp(1-Math.abs(depthNorm-.79)/.18,0,1);
+    const depthQuality=clamp(1-Math.abs(depthNorm-.86)/.15,0,1);
 
-    // Sweet spot is around 58–64%. Both too narrow and too wide lose capacity.
-    const widthQuality=clamp(1-Math.abs(armOpen-.61)/.30,0,1);
+    // Width sweet spot is narrower; very wide claws lose much more retention.
+    const widthQuality=clamp(1-Math.abs(armOpen-.58)/.24,0,1);
 
     const all=[...stage.querySelectorAll(".catcher-doll")].map(el=>{
       const r=el.getBoundingClientRect();
@@ -1697,26 +1697,25 @@ async function startCatcher(p,humanIndex){
       const dy=Math.abs(cy-gripCenterY)/((gripBottom-gripTop)/2);
       const inside=cx>=gripLeft&&cx<=gripRight&&cy>=gripTop&&cy<=gripBottom;
 
-      const centerQuality=inside ? clamp(1-(dx*.68+dy*.32),0,1) : -1;
-      return {el,id:Number(el.dataset.id),cx,cy,centerQuality,side:cx<headCenterX?-1:1};
+      const centerQuality=inside?clamp(1-(dx*.72+dy*.28),0,1):-1;
+      return {el,id:Number(el.dataset.id),centerQuality,side:cx<headCenterX?-1:1};
     });
 
     const inside=all.filter(x=>x.centerQuality>=0).sort((a,b)=>b.centerQuality-a.centerQuality);
 
-    // Wide arms sweep more prizes, but the grip becomes weak and edges slip.
-    const widePenalty=armOpen>.68 ? (armOpen-.68)/.20 : 0;
-    const narrowPenalty=armOpen<.40 ? (.40-armOpen)/.12 : 0;
-    const stability=clamp(widthQuality*.66+depthQuality*.34-widePenalty*.32-narrowPenalty*.08,0,1);
+    const widePenalty=armOpen>.64?(armOpen-.64)/.25:0;
+    const narrowPenalty=armOpen<.38?(.38-armOpen)/.11:0;
+    const stability=clamp(widthQuality*.70+depthQuality*.30-widePenalty*.58-narrowPenalty*.10,0,1);
 
-    const capacity=clamp(Math.floor(1+9*Math.pow(stability,1.85)),0,10);
-    const threshold=.23+(1-stability)*.42+widePenalty*.12;
+    // Even when many dolls are inside, weak retention throws most of them out.
+    const capacity=clamp(Math.floor(1+9*Math.pow(stability,2.25)),0,10);
+    const threshold=.26+(1-stability)*.50+widePenalty*.18;
 
     const held=inside.filter(c=>c.centerQuality>=threshold).slice(0,capacity);
     const heldIds=new Set(held.map(x=>x.id));
+    const slipped=inside.filter(c=>!heldIds.has(c.id)).slice(0,10);
 
-    const slipped=inside.filter(c=>!heldIds.has(c.id)).slice(0,8);
-
-    return {held,slipped,stability,capacity,depthQuality,widthQuality};
+    return {held,slipped,stability};
   }
 
   function attachRealHeldDolls(held){
@@ -1752,11 +1751,8 @@ async function startCatcher(p,humanIndex){
     const held=grip.held;
     const caught=held.length;
 
-    hint.textContent=caught
-      ? `CLOSE… ${caught}体を保持できる位置！`
-      : "CLOSE… アーム内にいても保持できず空振り！";
+    hint.textContent=caught?`${caught} GET`:"MISS";
 
-    // Show prizes pushed/slipped out by an overly wide or poorly centered grab.
     grip.slipped.forEach(item=>{
       if(!item.el)return;
       item.el.classList.add(item.side<0?"ufo-slip-left":"ufo-slip-right");
@@ -1767,8 +1763,8 @@ async function startCatcher(p,humanIndex){
 
     await new Promise(resolve=>{
       const close=now=>{
-        const t=clamp((now-closeStart)/520,0,1);
-        const fakeOpen=lockedOpen*(1-t)+.07*t;
+        const t=clamp((now-closeStart)/540,0,1);
+        const fakeOpen=lockedOpen*(1-t)+.065*t;
         const angle=22+fakeOpen*42;
         const spread=8+fakeOpen*20;
 
@@ -1792,9 +1788,9 @@ async function startCatcher(p,humanIndex){
 
     await new Promise(resolve=>{
       const lift=now=>{
-        const t=clamp((now-liftStart)/700,0,1);
+        const t=clamp((now-liftStart)/760,0,1);
         const e=1-Math.pow(1-t,3);
-        craneY=startY+(46-startY)*e;
+        craneY=startY+(38-startY)*e;
         renderCrane();
 
         if(t<1)requestAnimationFrame(lift);
@@ -1804,16 +1800,12 @@ async function startCatcher(p,humanIndex){
     });
 
     phase="returning";
-    hint.textContent=caught
-      ? `${caught}体を抱えたままPRIZEへ移動…`
-      : "空振りのままPRIZEへ…";
-
     const returnStart=performance.now();
     const startX=craneX;
 
     await new Promise(resolve=>{
       const back=now=>{
-        const t=clamp((now-returnStart)/860,0,1);
+        const t=clamp((now-returnStart)/900,0,1);
         const e=1-Math.pow(1-t,3);
         craneX=startX+(.17-startX)*e;
         renderCrane();
@@ -1825,13 +1817,13 @@ async function startCatcher(p,humanIndex){
     });
 
     phase="release";
-    hint.textContent="PRIZE CHUTE / OPEN!";
+    hint.textContent="OPEN";
 
     const openStart=performance.now();
     await new Promise(resolve=>{
       const open=now=>{
-        const t=clamp((now-openStart)/400,0,1);
-        const fakeOpen=.07+lockedOpen*t;
+        const t=clamp((now-openStart)/410,0,1);
+        const fakeOpen=.065+lockedOpen*t;
         const angle=22+fakeOpen*42;
         const spread=8+fakeOpen*20;
 
@@ -1857,12 +1849,12 @@ async function startCatcher(p,humanIndex){
   renderCrane();
 }
 
-
 // GAME 10 -------------------------------------------------
-const TIDY_TARGETS=[
-  {x:.22,y:.22},{x:.50,y:.22},{x:.78,y:.22},
-  {x:.18,y:.51},{x:.39,y:.51},{x:.61,y:.51},{x:.82,y:.51},
-  {x:.27,y:.80},{x:.52,y:.80},{x:.76,y:.80}
+const TIDY_ANCHORS=[
+  {x:.18,y:.23},{x:.36,y:.23},{x:.58,y:.23},{x:.80,y:.23},
+  {x:.16,y:.50},{x:.36,y:.50},{x:.58,y:.50},{x:.82,y:.50},
+  {x:.20,y:.78},{x:.39,y:.80},{x:.60,y:.79},{x:.80,y:.80},
+  {x:.30,y:.63},{x:.70,y:.64}
 ];
 
 function tidyFurniture(){
@@ -1872,25 +1864,27 @@ function tidyFurniture(){
     <div class="tidy-box"></div>`;
 }
 
-function generateTidyStart(){
-  const pts=[];
-  const zones=[
-    [.13,.67],[.27,.87],[.45,.72],[.64,.90],[.83,.70],
-    [.18,.90],[.36,.80],[.56,.67],[.73,.82],[.88,.90]
-  ];
-
-  const shuffled=shuffle(zones);
-  for(const [x,y] of shuffled){
-    pts.push({
-      x:clamp(x+rand(-.055,.055),.08,.92),
-      y:clamp(y+rand(-.035,.035),.62,.93)
-    });
-  }
-  return pts;
+function generateTidyTargets(){
+  return shuffle(TIDY_ANCHORS).slice(0,7).map(a=>({
+    x:clamp(a.x+rand(-.025,.025),.08,.92),
+    y:clamp(a.y+rand(-.018,.018),.10,.90)
+  }));
 }
 
-function tidySimilarity(positions){
-  const n=10;
+function generateTidyStart(){
+  const zones=[
+    [.13,.70],[.26,.88],[.43,.74],[.61,.90],[.82,.70],
+    [.18,.91],[.37,.84],[.57,.69],[.73,.86],[.88,.92]
+  ];
+
+  return shuffle(zones).slice(0,7).map(([x,y])=>({
+    x:clamp(x+rand(-.05,.05),.08,.92),
+    y:clamp(y+rand(-.03,.03),.64,.93)
+  }));
+}
+
+function tidySimilarity(positions,targets){
+  const n=7;
   const full=1<<n;
   const dp=new Array(full).fill(Infinity);
   dp[0]=0;
@@ -1905,21 +1899,24 @@ function tidySimilarity(positions){
     const pos=positions[k];
     for(let j=0;j<n;j++){
       if(mask&(1<<j))continue;
-      const t=TIDY_TARGETS[j];
+
+      const t=targets[j];
       const d=Math.hypot(pos.x-t.x,pos.y-t.y);
       const next=mask|(1<<j);
       const cost=dp[mask]+d;
+
       if(cost<dp[next])dp[next]=cost;
     }
   }
 
   const avg=dp[full-1]/n;
-  return clamp(Math.round((1-avg/.42)*100),0,100);
+  return clamp(Math.round((1-avg/.43)*100),0,100);
 }
 
 async function startTidy(p,humanIndex){
   gameFit();
 
+  const targets=generateTidyTargets();
   let positions=generateTidyStart();
   let dragging=null;
   let pointerId=null;
@@ -1935,24 +1932,24 @@ async function startTidy(p,humanIndex){
 
     <div class="tidy-hud">
       <div><span>TIME</span><b id="tidyTime">10.00</b></div>
-      <div><span>MATCH</span><b id="tidyScore">${tidySimilarity(positions)}%</b></div>
+      <div><span>MATCH</span><b id="tidyScore">${tidySimilarity(positions,targets)}%</b></div>
     </div>
 
     <div class="tidy-room-stack">
       <div class="tidy-room-label"><b>見本</b><span>REFERENCE</span></div>
       <div class="tidy-room reference">
         ${tidyFurniture()}
-        ${TIDY_TARGETS.map((t,i)=>`<div class="tidy-mob static" style="left:${t.x*100}%;top:${t.y*100}%"></div>`).join("")}
+        ${targets.map(t=>`<div class="tidy-mob static" style="left:${t.x*100}%;top:${t.y*100}%"></div>`).join("")}
       </div>
 
-      <div class="tidy-room-label"><b>自分の部屋</b><span>DRAG 10 MOB</span></div>
+      <div class="tidy-room-label"><b>自分の部屋</b><span>DRAG 7 MOB</span></div>
       <div id="tidyPlayRoom" class="tidy-room play">
         ${tidyFurniture()}
         ${positions.map((t,i)=>`<div class="tidy-mob movable" data-tidy="${i}" style="left:${t.x*100}%;top:${t.y*100}%"></div>`).join("")}
       </div>
     </div>
 
-    <p id="tidyHint" class="hint">下のモブくんをドラッグ。上の見本と同じ場所へ近づけよう。</p>
+    <p id="tidyHint" class="hint">自動吸着なし。見本を見ながら自分の感覚で置いてください。</p>
   </div>`;
 
   const room=document.getElementById("tidyPlayRoom");
@@ -1961,7 +1958,7 @@ async function startTidy(p,humanIndex){
   const hint=document.getElementById("tidyHint");
 
   function updateScore(){
-    scoreEl.textContent=`${tidySimilarity(positions)}%`;
+    scoreEl.textContent=`${tidySimilarity(positions,targets)}%`;
   }
 
   function setPosition(index,clientX,clientY){
@@ -2005,25 +2002,7 @@ async function startTidy(p,humanIndex){
     const el=room.querySelector(`[data-tidy="${index}"]`);
     if(el)el.classList.remove("dragging");
 
-    // If close enough to any target, snap exactly. This makes 100% genuinely achievable.
-    let nearest=-1;
-    let nearestD=Infinity;
-    for(let i=0;i<TIDY_TARGETS.length;i++){
-      const d=Math.hypot(positions[index].x-TIDY_TARGETS[i].x,positions[index].y-TIDY_TARGETS[i].y);
-      if(d<nearestD){nearestD=d;nearest=i}
-    }
-
-    if(nearest>=0&&nearestD<=.075){
-      positions[index]={...TIDY_TARGETS[nearest]};
-      if(el){
-        el.style.left=`${positions[index].x*100}%`;
-        el.style.top=`${positions[index].y*100}%`;
-        el.classList.add("snap");
-        setTimeout(()=>el.classList.remove("snap"),180);
-      }
-      beep(760,36,.014);
-    }
-
+    // No snap / no auto correction.
     dragging=null;
     pointerId=null;
     updateScore();
@@ -2037,13 +2016,13 @@ async function startTidy(p,humanIndex){
     finished=true;
     if(timerRAF)cancelAnimationFrame(timerRAF);
 
-    const score=tidySimilarity(positions);
+    const score=tidySimilarity(positions,targets);
     state.records.tidy[p.id]=score;
     hint.textContent=`MATCH ${score}%`;
 
     room.querySelectorAll(".tidy-mob").forEach(el=>el.style.pointerEvents="none");
 
-    setTimeout(()=>recordScreen(9,p,humanIndex,`${score}<small>%</small>`,score===100?"PERFECT ROOM":"ROOM MATCH"),260);
+    setTimeout(()=>recordScreen(9,p,humanIndex,`${score}<small>%</small>`,score===100?"PERFECT ROOM":"ROOM MATCH"),240);
   }
 
   await countdown("TIDY ROOM");
@@ -2053,6 +2032,7 @@ async function startTidy(p,humanIndex){
 
   const timer=now=>{
     if(finished)return;
+
     const left=Math.max(0,endAt-now);
     timeEl.textContent=(left/1000).toFixed(2);
 
@@ -2070,26 +2050,26 @@ function skiDistanceFromTiming(deltaMs){
   const a=Math.abs(deltaMs);
 
   let meters;
-  if(a<=45){
-    meters=240-a*.24;
-  }else if(a<=90){
-    meters=229.2-(a-45)*.55;
-  }else if(a<=160){
-    meters=204.45-(a-90)*.70;
+  if(a<=40){
+    meters=1000-a*2.25;               // 910–1000
+  }else if(a<=85){
+    meters=910-(a-40)*3.25;           // 764–910
+  }else if(a<=155){
+    meters=764-(a-85)*3.45;           // 523–764
   }else if(a<=260){
-    meters=155.45-(a-160)*.55;
+    meters=523-(a-155)*2.25;          // 287–523
   }else{
-    meters=100.45-(a-260)*.18;
+    meters=287-(a-260)*.55;
   }
 
-  return clamp(meters,55,240);
+  return clamp(meters,110,1000);
 }
 
 function skiTimingLabel(deltaMs){
   const a=Math.abs(deltaMs);
-  if(a<=45)return "PERFECT";
-  if(a<=90)return "GREAT";
-  if(a<=160)return "GOOD";
+  if(a<=40)return "PERFECT";
+  if(a<=85)return "GREAT";
+  if(a<=155)return "GOOD";
   return deltaMs<0?"TOO EARLY":"TOO LATE";
 }
 
@@ -2101,10 +2081,13 @@ async function startSkiJump(p,humanIndex){
   let startTime=0;
   let runRAF=null;
 
-  const runDuration=2200;
-  const idealTime=1820;
+  const runDuration=2600;
+  const idealTime=2240;
+  const worldWidth=5200;
+  const takeoffX=720;
+  const pxPerM=4.15;
 
-  screen.innerHTML=`<div class="ski-shell">
+  screen.innerHTML=`<div class="ski-shell ski-shell-v84">
     <div class="game-head">
       <div><span class="kicker">${esc(p.name)}</span><h2>モブくんスキージャンプ</h2></div>
       <div class="game-badge">${playBadge(humanIndex)}</div>
@@ -2115,44 +2098,54 @@ async function startSkiJump(p,humanIndex){
       <div><span>DISTANCE</span><b id="skiDistance">0.0m</b></div>
     </div>
 
-    <button id="skiStage" class="ski-stage" type="button">
-      <div class="ski-mountain"></div>
-      <div class="ski-ramp"><i></i></div>
-      <div class="ski-takeoff-zone"><span>JUMP</span></div>
-      <div class="ski-landing-hill"></div>
-      <div class="ski-meter-line m80">80m</div>
-      <div class="ski-meter-line m160">160m</div>
-      <div class="ski-meter-line m240">240m</div>
+    <button id="skiStage" class="ski-stage ski-stage-v84" type="button">
+      <div id="skiCameraWorld" class="ski-camera-world" style="width:${worldWidth}px">
+        <div class="ski-sky-lines"><i></i><i></i><i></i><i></i></div>
 
-      <div id="skiJumper" class="ski-jumper">
-        <div class="ski-mob"></div>
-        <div class="ski-board b1"></div>
-        <div class="ski-board b2"></div>
+        <div class="ski-start-platform"></div>
+        <div class="ski-slope-main"></div>
+        <div class="ski-slope-edge"></div>
+        <div class="ski-takeoff-lip"><b>JUMP</b></div>
+
+        <div class="ski-flight-ground"></div>
+        ${[0,200,400,600,800,1000].map(m=>`<div class="ski-world-meter" style="left:${takeoffX+m*pxPerM}px"><i></i><span>${m}m</span></div>`).join("")}
+
+        <div id="skiJumper" class="ski-jumper ski-jumper-v84">
+          <div class="ski-mob"></div>
+          <div class="ski-board b1"></div>
+          <div class="ski-board b2"></div>
+        </div>
       </div>
+
+      <div id="skiFlyCallout" class="ski-fly-callout">FLY!</div>
     </button>
 
-    <p id="skiHint" class="hint">3・2・1後に自動滑走。JUMPラインへ来た瞬間を狙って1回タップ。</p>
+    <p id="skiHint" class="hint">長いスロープを滑走。黄色いJUMPリップで1回タップ。</p>
   </div>`;
 
   const stage=document.getElementById("skiStage");
+  const world=document.getElementById("skiCameraWorld");
   const jumper=document.getElementById("skiJumper");
   const timingEl=document.getElementById("skiTiming");
   const distanceEl=document.getElementById("skiDistance");
   const hint=document.getElementById("skiHint");
+  const flyCallout=document.getElementById("skiFlyCallout");
 
   function renderRun(elapsed){
     const t=clamp(elapsed/runDuration,0,1);
 
-    const x=6+t*67;
-    const y=14+t*51;
+    // Follow the actual visible slope: x advances while y moves down the ramp.
+    const x=70+t*(takeoffX-92);
+    const y=68+t*202;
 
-    jumper.style.left=`${x}%`;
-    jumper.style.top=`${y}%`;
-    jumper.style.transform=`translate(-50%,-50%) rotate(${12+t*15}deg)`;
+    jumper.style.left=`${x}px`;
+    jumper.style.top=`${y}px`;
+    jumper.style.transform=`translate(-50%,-50%) rotate(${15+t*17}deg)`;
   }
 
   async function resolveJump(delta){
     if(jumped)return;
+
     jumped=true;
     running=false;
     if(runRAF)cancelAnimationFrame(runRAF);
@@ -2161,44 +2154,62 @@ async function startSkiJump(p,humanIndex){
     const label=skiTimingLabel(delta);
 
     timingEl.textContent=label;
-    hint.textContent=`${delta<0?"EARLY":"LATE"} ${Math.abs(Math.round(delta))}ms / ${label}`;
-    beep(label==="PERFECT"?950:label==="GREAT"?810:label==="GOOD"?680:260,80,.025);
+    hint.textContent=`${label} / ${Math.abs(Math.round(delta))}ms`;
+    flyCallout.classList.add("show");
 
+    beep(label==="PERFECT"?980:label==="GREAT"?830:label==="GOOD"?700:280,90,.028);
+
+    const targetX=takeoffX+meters*pxPerM;
     const flightStart=performance.now();
-    const flightDuration=1600;
+    const flightDuration=2100+meters*.9;
+    const startY=270;
+    const landingY=326;
 
     await new Promise(resolve=>{
       const frame=now=>{
         const t=clamp((now-flightStart)/flightDuration,0,1);
-        const e=1-Math.pow(1-t,2.25);
-        const x=73+e*23;
-        const arc=Math.sin(t*Math.PI)*28*(meters/240);
-        const y=65-arc+t*17;
+        const ease=1-Math.pow(1-t,2.1);
+        const x=takeoffX+(targetX-takeoffX)*ease;
 
-        jumper.style.left=`${x}%`;
-        jumper.style.top=`${y}%`;
-        jumper.style.transform=`translate(-50%,-50%) rotate(${18+t*34}deg)`;
-        distanceEl.textContent=`${(meters*t).toFixed(1)}m`;
+        // Huge, satisfying arc. Longer jumps fly visibly higher.
+        const arc=Math.sin(t*Math.PI)*(115+meters*.16);
+        const y=startY+(landingY-startY)*t-arc;
 
-        if(t<1)requestAnimationFrame(frame);
-        else resolve();
+        jumper.style.left=`${x}px`;
+        jumper.style.top=`${y}px`;
+        jumper.style.transform=`translate(-50%,-50%) rotate(${8+t*28}deg)`;
+
+        const currentMeters=Math.min(meters,Math.max(0,(x-takeoffX)/pxPerM));
+        distanceEl.textContent=`${currentMeters.toFixed(1)}m`;
+
+        const vw=stage.clientWidth;
+        const camera=Math.max(0,Math.min(worldWidth-vw,x-vw*.34));
+        world.style.transform=`translateX(${-camera}px)`;
+
+        if(t>.16)flyCallout.classList.remove("show");
+
+        if(t<1){
+          requestAnimationFrame(frame);
+        }else{
+          resolve();
+        }
       };
       requestAnimationFrame(frame);
     });
 
+    jumper.classList.add("land");
     distanceEl.textContent=`${meters.toFixed(1)}m`;
     state.records.ski[p.id]=Math.round(meters*10);
 
-    await wait(260);
-    recordScreen(10,p,humanIndex,`${meters.toFixed(1)}<small>m</small>`,`${label} / ${delta<0?"EARLY":"LATE"} ${Math.abs(Math.round(delta))}ms`);
+    await wait(420);
+    recordScreen(10,p,humanIndex,`${meters.toFixed(1)}<small>m</small>`,`${label} / MAX 1000m`);
   }
 
   stage.addEventListener("pointerdown",e=>{
     if(!running||jumped)return;
     e.preventDefault();
 
-    const now=performance.now();
-    const delta=(now-startTime)-idealTime;
+    const delta=(performance.now()-startTime)-idealTime;
     resolveJump(delta);
   },{passive:false});
 
@@ -2214,15 +2225,228 @@ async function startSkiJump(p,humanIndex){
     const elapsed=now-startTime;
     renderRun(elapsed);
 
-    // Missing the lip entirely produces a short jump automatically.
-    if(elapsed>=runDuration+260){
-      resolveJump(440);
+    if(elapsed>=runDuration+300){
+      resolveJump(470);
       return;
     }
-
     runRAF=requestAnimationFrame(run);
   };
   runRAF=requestAnimationFrame(run);
+}
+
+// GAME 12 -------------------------------------------------
+const SLOT_SYMBOLS=[
+  {key:"M",label:"M"},
+  {key:"O",label:"O"},
+  {key:"B",label:"B"},
+  {key:"MOB",label:""}
+];
+
+function slotPayout(keys){
+  if(keys[0]==="MOB"&&keys[1]==="MOB"&&keys[2]==="MOB")return {mult:10,label:"MOB ×10"};
+  if(keys[0]==="M"&&keys[1]==="O"&&keys[2]==="B")return {mult:5,label:"MOB ×5"};
+  if(keys.every(k=>k==="M"))return {mult:2,label:"MMM ×2"};
+  if(keys.every(k=>k==="O"))return {mult:2,label:"OOO ×2"};
+  if(keys.every(k=>k==="B"))return {mult:2,label:"BBB ×2"};
+  return {mult:0,label:"MISS"};
+}
+
+async function startMobSlot(p,humanIndex){
+  gameFit();
+
+  let coins=1000;
+  let running=false;
+  let finished=false;
+  let spinActive=false;
+  let stopIndex=0;
+  let timerRAF=null;
+  let endAt=0;
+  let reelRAF=null;
+  let reelStart=0;
+  let visible=[0,1,2];
+  let stopped=[null,null,null];
+  let targetPattern=null;
+
+  screen.innerHTML=`<div class="mob-slot-shell">
+    <div class="game-head">
+      <div><span class="kicker">${esc(p.name)}</span><h2>モブくんスロット</h2></div>
+      <div class="game-badge">${playBadge(humanIndex)}</div>
+    </div>
+
+    <div class="slot-hud">
+      <div><span>TIME</span><b id="slotTime">10.00</b></div>
+      <div><span>COIN</span><b id="slotCoins">1000</b></div>
+    </div>
+
+    <div class="slot-machine">
+      <div class="slot-top">MOB SLOT</div>
+
+      <div class="slot-reels">
+        ${[0,1,2].map(i=>`<div class="slot-reel" data-reel="${i}"><div class="slot-symbol" id="slotSymbol${i}">M</div></div>`).join("")}
+      </div>
+
+      <div id="slotResult" class="slot-result">READY</div>
+
+      <button id="slotMainBtn" class="slot-main-button" type="button">SPIN</button>
+    </div>
+
+    <div class="slot-paytable">
+      <span>MMM ×2</span><span>OOO ×2</span><span>BBB ×2</span><span>MOB ×5</span><span class="mob-pay"><i></i><i></i><i></i> ×10</span>
+    </div>
+  </div>`;
+
+  const timeEl=document.getElementById("slotTime");
+  const coinsEl=document.getElementById("slotCoins");
+  const resultEl=document.getElementById("slotResult");
+  const mainBtn=document.getElementById("slotMainBtn");
+  const symbolEls=[0,1,2].map(i=>document.getElementById(`slotSymbol${i}`));
+
+  function renderSymbol(el,symbolIndex){
+    const s=SLOT_SYMBOLS[symbolIndex];
+    el.className=`slot-symbol ${s.key==="MOB"?"mob-symbol":""}`;
+    el.textContent=s.label;
+  }
+
+  function chooseTarget(){
+    const r=Math.random();
+    if(r<.20)return ["M","O","B"];
+    if(r<.31)return ["MOB","MOB","MOB"];
+    if(r<.50){
+      const k=["M","O","B"][randi(0,2)];
+      return [k,k,k];
+    }
+    return shuffle(["M","O","B","MOB"]).slice(0,3);
+  }
+
+  function symbolIndexByKey(key){
+    return SLOT_SYMBOLS.findIndex(s=>s.key===key);
+  }
+
+  function spinReels(now){
+    if(!spinActive)return;
+
+    const elapsed=now-reelStart;
+    for(let i=stopIndex;i<3;i++){
+      const speed=82+i*11;
+      visible[i]=Math.floor(elapsed/speed+i*1.4)%4;
+      renderSymbol(symbolEls[i],visible[i]);
+    }
+    reelRAF=requestAnimationFrame(spinReels);
+  }
+
+  function beginSpin(){
+    if(!running||finished||spinActive||coins<100)return;
+
+    coins-=100;
+    coinsEl.textContent=coins;
+    spinActive=true;
+    stopIndex=0;
+    stopped=[null,null,null];
+    targetPattern=chooseTarget();
+    resultEl.textContent="-";
+    mainBtn.textContent="STOP 1";
+    mainBtn.classList.add("stopping");
+
+    reelStart=performance.now();
+    reelRAF=requestAnimationFrame(spinReels);
+    beep(420,40,.012);
+  }
+
+  async function stopCurrent(){
+    if(!running||finished)return;
+
+    if(!spinActive){
+      beginSpin();
+      return;
+    }
+
+    let idx=visible[stopIndex];
+
+    // Reel 1 and 2 have strong automatic assistance toward the hidden target.
+    if(stopIndex===0&&Math.random()<.82){
+      idx=symbolIndexByKey(targetPattern[0]);
+    }else if(stopIndex===1&&Math.random()<.76){
+      idx=symbolIndexByKey(targetPattern[1]);
+    }else if(stopIndex===2&&Math.random()<.16){
+      // Third reel is primarily visual/timing skill, with occasional auto assistance.
+      idx=symbolIndexByKey(targetPattern[2]);
+    }
+
+    visible[stopIndex]=idx;
+    stopped[stopIndex]=idx;
+    renderSymbol(symbolEls[stopIndex],idx);
+    beep(620+stopIndex*90,45,.018);
+
+    stopIndex++;
+
+    if(stopIndex<3){
+      mainBtn.textContent=`STOP ${stopIndex+1}`;
+      return;
+    }
+
+    spinActive=false;
+    if(reelRAF)cancelAnimationFrame(reelRAF);
+
+    const keys=stopped.map(i=>SLOT_SYMBOLS[i].key);
+    const payout=slotPayout(keys);
+
+    if(payout.mult>0){
+      const win=100*payout.mult;
+      coins+=win;
+      coinsEl.textContent=coins;
+      resultEl.textContent=`${payout.label} +${win}`;
+      resultEl.classList.add("win");
+      beep(payout.mult===10?980:payout.mult===5?850:720,100,.03);
+    }else{
+      resultEl.textContent="MISS";
+      resultEl.classList.remove("win");
+      beep(180,65,.012);
+    }
+
+    mainBtn.classList.remove("stopping");
+    mainBtn.textContent="SPIN";
+
+    await wait(75);
+  }
+
+  mainBtn.addEventListener("pointerdown",e=>{
+    e.preventDefault();
+    stopCurrent();
+  },{passive:false});
+
+  function finishSlot(){
+    if(finished)return;
+    finished=true;
+    running=false;
+
+    if(timerRAF)cancelAnimationFrame(timerRAF);
+    if(reelRAF)cancelAnimationFrame(reelRAF);
+
+    mainBtn.disabled=true;
+    state.records.slot[p.id]=coins;
+
+    setTimeout(()=>recordScreen(11,p,humanIndex,`${coins}<small> COIN</small>`,coins>1000?`+${coins-1000}`:coins===1000?"±0":`${coins-1000}`),220);
+  }
+
+  await countdown("MOB SLOT");
+  if(!document.body.contains(mainBtn))return;
+
+  running=true;
+  endAt=performance.now()+10000;
+
+  const timer=now=>{
+    if(finished)return;
+
+    const left=Math.max(0,endAt-now);
+    timeEl.textContent=(left/1000).toFixed(2);
+
+    if(left<=0){
+      finishSlot();
+      return;
+    }
+    timerRAF=requestAnimationFrame(timer);
+  };
+  timerRAF=requestAnimationFrame(timer);
 }
 
 
@@ -2264,7 +2488,7 @@ async function simulateCpuThenResult(gameIndex){
 
 function cpuUltraDraw(gameIndex){
   // Game-specific draw rate. Regular values are already intentionally strong.
-  const chance=[0.12,0.10,0.14,0.16,0.12,0.13,0.14,0.12,0.15,0.12,0.14][gameIndex] ?? 0.12;
+  const chance=[0.12,0.10,0.14,0.16,0.12,0.13,0.14,0.12,0.15,0.12,0.14,0.13][gameIndex] ?? 0.12;
   return Math.random()<chance;
 }
 
@@ -2303,10 +2527,13 @@ function simulateOneCpu(gameIndex,p){
   }else if(gameIndex===9){
     const bias={c5:1,c6:3,c7:0,c8:2}[p.id]||0;
     state.records.tidy[p.id]=ultra?randi(96,100):clamp(randi(72,92)+bias,68,96);
-  }else{
-    const bias={c5:15,c6:25,c7:0,c8:30}[p.id]||0;
-    const meters=ultra?rand(226,240):clamp(rand(174,222)+bias/10,166,232);
+  }else if(gameIndex===10){
+    const bias={c5:22,c6:36,c7:0,c8:42}[p.id]||0;
+    const meters=ultra?rand(925,1000):clamp(rand(610,900)+bias,580,960);
     state.records.ski[p.id]=Math.round(meters*10);
+  }else{
+    const bias={c5:40,c6:120,c7:-30,c8:160}[p.id]||0;
+    state.records.slot[p.id]=ultra?randi(2600,3900):clamp(randi(1450,2650)+bias,1250,3200);
   }
   return ultra;
 }
@@ -2329,7 +2556,8 @@ function performancePoints(gameIndex,v){
   if(gameIndex===7)return clamp(Math.round(v/25*100),0,100);
   if(gameIndex===8)return clamp(Math.round(v*10),0,100);
   if(gameIndex===9)return clamp(Math.round(v),0,100);
-  return clamp(Math.round(((v/10)-80)/160*100),0,100);
+  if(gameIndex===10)return clamp(Math.round(((v/10)-200)/800*100),0,100);
+  return clamp(Math.round((v-1000)/2000*100),0,100);
 }
 
 function rankRecords(gameIndex){
@@ -2356,7 +2584,8 @@ function formatRecord(gameIndex,v){
   if(gameIndex===7)return `${v}箱`;
   if(gameIndex===8)return `${v}体`;
   if(gameIndex===9)return `${v}%`;
-  return `${(v/10).toFixed(1)}m`;
+  if(gameIndex===10)return `${(v/10).toFixed(1)}m`;
+  return `${v} COIN`;
 }
 
 function applyPoints(gameIndex,ranked){
