@@ -57,7 +57,16 @@ const GAMES=[
   {no:17,key:"climb",title:"モブくん木登り",sub:"中央タップで10秒登る"},
   {no:18,key:"errand",title:"お使いモブくん",sub:"1000円を10秒で使い切る"},
   {no:19,key:"dontHitMob",title:"モブくんを叩かないで",sub:"モグラだけを叩く10秒勝負"},
-  {no:20,key:"mobStop",title:"モブくんストップ",sub:"棒のギリギリで止める"}
+  {no:20,key:"mobStop",title:"モブくんストップ",sub:"棒のギリギリで止める"},
+  {no:21,key:"overlap",title:"重なる瞬間を狙え！",sub:"2つの円が重なる瞬間をSTOP"},
+  {no:22,key:"shutter",title:"モブくんシャッターチャンス",sub:"ジャンプの頂点を撮影"},
+  {no:23,key:"cup",title:"コップ限界チャレンジ",sub:"表面張力ギリギリまで注ぐ"},
+  {no:24,key:"darts",title:"ダーツ1投勝負",sub:"縦・横ゲージで中心を狙う"},
+  {no:25,key:"parachute",title:"モブくんとパラシュート",sub:"開くタイミングで着地点を狙う"},
+  {no:26,key:"mobCount",title:"モブくんは何人？",sub:"0.5秒で人数を見抜く"},
+  {no:27,key:"brake",title:"急ブレーキ",sub:"障害物ギリギリで停止"},
+  {no:28,key:"feint",title:"フェイント反射神経",sub:"本物のGO!だけを待つ"},
+  {no:29,key:"bomb",title:"爆弾チキンレース",sub:"0.000秒直前でSTOP"}
 ];
 
 const MODES={
@@ -102,7 +111,7 @@ function freshState(){
     roundIndex:0,
     records:{
       reaction:{},memory:{},puzzle:{},launch:{},stack:{},breakdance:{},
-      crisis:{},factory:{},catcher:{},tidy:{},ski:{},slot:{},rope:{},pk:{},rhythm:{},cut:{},climb:{},errand:{},dontHitMob:{},mobStop:{}
+      crisis:{},factory:{},catcher:{},tidy:{},ski:{},slot:{},rope:{},pk:{},rhythm:{},cut:{},climb:{},errand:{},dontHitMob:{},mobStop:{},overlap:{},shutter:{},cup:{},darts:{},parachute:{},mobCount:{},brake:{},feint:{},bomb:{}
     },
     total:{},
     roundPoints:[],
@@ -184,7 +193,7 @@ function renderHome(){
   state=freshState();
   screen.innerHTML=`
     <section class="hero">
-      <div><span class="kicker">SMARTPHONE PARTY GAME</span><h1>20 MINI<br>GAMES</h1><p>20種のミニゲーム。各モードでNORMALかCUSTOMを選んで遊べます。</p></div>
+      <div><span class="kicker">SMARTPHONE PARTY GAME</span><h1>29 MINI<br>GAMES</h1><p>29種のミニゲーム。各モードでNORMALかCUSTOMを選んで遊べます。</p></div>
       <div class="hero-mark">MOB</div>
     </section>
     <section class="panel">
@@ -257,7 +266,7 @@ function renderPlayStyleSelect(){
       <button id="normalStyle" class="style-select-card normal" type="button">
         <span>NORMAL</span>
         <b>順番に全種目</b>
-        <small>GAME 1 → 20 を順番にプレイ</small>
+        <small>GAME 1 → 29 を順番にプレイ</small>
       </button>
       <button id="customStyle" class="style-select-card custom" type="button">
         <span>CUSTOM</span>
@@ -267,7 +276,7 @@ function renderPlayStyleSelect(){
     </div>
 
     <section class="panel flat">
-      <h3>20 MINI GAMES</h3>
+      <h3>29 MINI GAMES</h3>
       <div class="compact-game-grid">
         ${GAMES.map(g=>`<div><b>${g.no}</b><span>${g.title}</span></div>`).join("")}
       </div>
@@ -387,6 +396,15 @@ function renderModeLobby(){
       <div><b>お使いモブくん</b><span>残金0円=100 / 10円=90 / 100円以上=0</span></div>
       <div><b>モブくんを叩かないで</b><span>モグラ12体以上=100 / MOBを叩くと終了</span></div>
       <div><b>モブくんストップ</b><span>右端ギリギリ=100 / 落下=0</span></div>
+      <div><b>重なる瞬間を狙え！</b><span>一致率100%=100点</span></div>
+      <div><b>モブくんシャッターチャンス</b><span>頂点誤差0秒=100 / 0.15秒以上=0</span></div>
+      <div><b>コップ限界チャレンジ</b><span>限界ギリギリ=100 / あふれたら0</span></div>
+      <div><b>ダーツ1投勝負</b><span>中心=100 / 外周=0</span></div>
+      <div><b>モブくんとパラシュート</b><span>中央着地=100 / 激突=0</span></div>
+      <div><b>モブくんは何人？</b><span>正解=100 / 誤差1人=75</span></div>
+      <div><b>急ブレーキ</b><span>衝突せず0m差=100 / 衝突=0</span></div>
+      <div><b>フェイント反射神経</b><span>0.150秒以下=100 / フェイント押し=0</span></div>
+      <div><b>爆弾チキンレース</b><span>0.000秒直前ほど最大100点換算</span></div>
     </div>`;
 
   screen.innerHTML=`
@@ -444,7 +462,16 @@ function scoreRuleForGame(index){
     "700m以上=100点 / 0m=0点",
     "残金0円=100点 / 残金10円=90点 / 残金100円以上=0点",
     "モグラ12体以上=100点 / 0体=0点",
-    "棒の端に近いほど高得点 / 落下=0点"
+    "棒の端に近いほど高得点 / 落下=0点",
+    "一致率100%=100点 / 0%=0点",
+    "頂点誤差0秒=100点 / 0.150秒以上=0点",
+    "限界ギリギリ=100点 / あふれたら0点",
+    "中心距離0%=100点 / 外周100%=0点",
+    "中央着地=100点 / 25m以上または激突=0点",
+    "正解=100点 / 誤差1人=75 / 2人=50 / 3人=25",
+    "停止差0m=100点 / 10m以上または衝突=0点",
+    "0.150秒以下=100点 / 0.300秒=50点 / フェイント押し=0点",
+    "チキンスコア10000=100点 / 爆発=0点"
   ][index];
 }
 
@@ -492,8 +519,26 @@ function showGameIntro(index){
     rules=`<li>1000円を持って3・2・1スタート。</li><li>食材・お菓子など100種類から毎回30商品。</li><li>3円〜250円の商品をタップ購入。</li><li>10秒で1000円ぴったり使い切れば100点。</li>`;
   }else if(index===18){
     rules=`<li>3・2・1後、9個の穴からモグラが出現。</li><li>1〜6体が一気に出ることがあります。</li><li>モグラをタップすると+1。</li><li>モグラと一緒にモブくんが混ざって出ることもあります。</li><li>モブくんを1回でも叩いたらその場で終了。</li><li>10秒。モグラ12体以上で100点。</li>`;
-  }else{
+  }else if(index===19){
     rules=`<li>横長の棒の左端にモブくん。</li><li>モブくんを左へ引っ張り、離すと発射。</li><li>引っ張る距離が長いほど遠くへ進みます。</li><li>右端ギリギリで止めるほど高得点。</li><li>棒から落ちたら0点。</li>`;
+  }else if(index===20){
+    rules=`<li>3・2・1で2つの円が別速度で左右移動。</li><li>完全に重なると思った瞬間に画面をタップ。</li><li>円の重なり面積を0.1%単位で計算。</li><li>100.0%に近いほど高得点。</li>`;
+  }else if(index===21){
+    rules=`<li>最初に3・2・1で見本ジャンプを1回確認。</li><li>次の3・2・1で本番。</li><li>モブくんが一番高い瞬間にCAMERAをタップ。</li><li>頂点との時間誤差を記録。0.000秒に近いほど高得点。</li><li>ジャンプの高さは毎回ランダム。</li>`;
+  }else if(index===22){
+    rules=`<li>3・2・1後、水が自動で注がれます。</li><li>操作はSTOPだけ。</li><li>表面張力でコップの縁より少し上まで耐えます。</li><li>限界ギリギリほど高得点。あふれたら0点。</li>`;
+  }else if(index===23){
+    rules=`<li>3・2・1後、まず縦ゲージをSTOP。</li><li>続けて横ゲージをSTOP。</li><li>2軸からダーツの命中地点を決定。</li><li>的はわずかに動きます。中心からの距離が小さいほど上位。</li>`;
+  }else if(index===24){
+    rules=`<li>3・2・1後、モブくんが高空から落下。</li><li>好きなタイミングでタップしてパラシュート展開。</li><li>早すぎると風に流され、遅すぎると地面へ激突。</li><li>中央の着地点に近いほど高得点。</li><li>カメラはモブくんを追いかけます。</li>`;
+  }else if(index===25){
+    rules=`<li>3・2・1後、21〜30体のモブくんを0.5秒だけ表示。</li><li>消えた後、21〜30から人数を回答。</li><li>正解で100点。誤差が小さいほど高得点。</li>`;
+  }else if(index===26){
+    rules=`<li>3・2・1後、モブくんの車が高速走行。</li><li>前方へ突然障害物が出現。</li><li>BRAKEをタップすると急減速。</li><li>衝突せず、障害物との停止距離が短いほど高得点。</li><li>走行距離に合わせてカメラが追尾。</li>`;
+  }else if(index===27){
+    rules=`<li>3・2・1後にREADY。</li><li>G0 / G00 / NOW / MOVE / GO?などのフェイントが出ます。</li><li>本物のGO!が出た瞬間だけタップ。</li><li>フェイント中に押したらFOULで0点。</li>`;
+  }else{
+    rules=`<li>3・2・1後、爆弾が10.000秒から0.000秒へカウント。</li><li>好きなタイミングでSTOP。</li><li>0.000秒に近いほど高得点。</li><li>0秒を超えたら爆発して0点。</li><li>チキンスコアは 10000 - 残りミリ秒。</li>`;
   }
 
   screen.innerHTML=`
@@ -554,7 +599,16 @@ function humanReady(gameIndex,humanIndex){
     else if(gameIndex===16)startTreeClimb(p,humanIndex,runId);
     else if(gameIndex===17)startErrand(p,humanIndex,runId);
     else if(gameIndex===18)startDontHitMob(p,humanIndex,runId);
-    else startMobStop(p,humanIndex,runId);
+    else if(gameIndex===19)startMobStop(p,humanIndex,runId);
+    else if(gameIndex===20)startOverlapMoment(p,humanIndex,runId);
+    else if(gameIndex===21)startShutterChance(p,humanIndex,runId);
+    else if(gameIndex===22)startCupLimit(p,humanIndex,runId);
+    else if(gameIndex===23)startDartsOneShot(p,humanIndex,runId);
+    else if(gameIndex===24)startParachute(p,humanIndex,runId);
+    else if(gameIndex===25)startMobCount(p,humanIndex,runId);
+    else if(gameIndex===26)startEmergencyBrake(p,humanIndex,runId);
+    else if(gameIndex===27)startFeintReaction(p,humanIndex,runId);
+    else startBombChicken(p,humanIndex,runId);
   },{once:true});
 }
 
@@ -4411,6 +4465,250 @@ async function startMobStop(p,humanIndex,runId){
 
 
 
+// GAME 21 -------------------------------------------------
+function circleOverlapPercent(distance,radius){
+  if(distance<=0)return 100;
+  if(distance>=radius*2)return 0;
+  const d=distance,r=radius;
+  const area=2*r*r*Math.acos(d/(2*r))-.5*d*Math.sqrt(Math.max(0,4*r*r-d*d));
+  return clamp(area/(Math.PI*r*r)*100,0,100);
+}
+
+async function startOverlapMoment(p,humanIndex,runId){
+  gameFit();
+  let raf=null,done=false,startAt=0;
+  screen.innerHTML=`<div class="overlap-shell">
+    <div class="game-head"><div><span class="kicker">${esc(p.name)}</span><h2>重なる瞬間を狙え！</h2></div><div class="game-badge">${playBadge(humanIndex)}</div></div>
+    <div class="overlap-hud"><span>MATCH</span><b id="overlapLive">---</b></div>
+    <button id="overlapStage" class="overlap-stage" type="button">
+      <div id="overlapA" class="overlap-circle a"><img src="icon/01.png" draggable="false"></div>
+      <div id="overlapB" class="overlap-circle b"><img src="icon/02.png" draggable="false"></div>
+      <div class="overlap-center-line"></div>
+      <div id="overlapTap" class="overlap-tap">TAP</div>
+    </button>
+    <p class="hint">2つの円が完全に重なる瞬間を狙う。</p>
+  </div>`;
+  const stage=document.getElementById('overlapStage'),a=document.getElementById('overlapA'),b=document.getElementById('overlapB'),live=document.getElementById('overlapLive');
+  if(!(await countdown('MATCH',runId)))return;
+  if(!isGameRunValid(runId)||!stage.isConnected)return;
+  startAt=performance.now();
+  const radius=46;
+  function pos(now){
+    const w=stage.clientWidth,range=Math.max(60,w/2-radius-18),t=(now-startAt)/1000;
+    const x1=w/2+Math.sin(t*4.38)*range*.92;
+    const x2=w/2+Math.sin(t*5.61+1.37)*range*.92;
+    return [x1,x2];
+  }
+  function frame(now){
+    if(done||!isGameRunValid(runId))return;
+    const [x1,x2]=pos(now);
+    a.style.left=`${x1}px`;b.style.left=`${x2}px`;
+    raf=requestAnimationFrame(frame);
+  }
+  stage.addEventListener('pointerdown',e=>{
+    if(done||!isGameRunValid(runId))return;e.preventDefault();done=true;if(raf)cancelAnimationFrame(raf);
+    const [x1,x2]=pos(performance.now());a.style.left=`${x1}px`;b.style.left=`${x2}px`;
+    const pct=Math.round(circleOverlapPercent(Math.abs(x1-x2),radius)*10)/10;
+    live.textContent=`${pct.toFixed(1)}%`;stage.classList.add('locked');beep(pct>=99?980:pct>=95?760:430,90,.025);
+    state.records.overlap[p.id]=pct;
+    setTimeout(()=>{if(isGameRunValid(runId))recordScreen(20,p,humanIndex,`${pct.toFixed(1)}<small>%</small>`,pct===100?'PERFECT OVERLAP':'MATCH RATE')},520);
+  },{passive:false});
+  raf=requestAnimationFrame(frame);
+}
+
+// GAME 22 -------------------------------------------------
+async function startShutterChance(p,humanIndex,runId){
+  gameFit();
+  let raf=null,shotDone=false;
+  screen.innerHTML=`<div class="shutter-shell">
+    <div class="game-head"><div><span class="kicker">${esc(p.name)}</span><h2>モブくんシャッターチャンス</h2></div><div class="game-badge">${playBadge(humanIndex)}</div></div>
+    <div class="shutter-stage" id="shutterStage"><div class="shutter-ground"></div><div id="shutterMob" class="shutter-mob" style="background-image:url('${p.img}')"></div><div id="shutterFlash" class="shutter-snap">SNAP!</div></div>
+    <div class="shutter-status" id="shutterStatus">まずは見本</div>
+    <button id="cameraBtn" class="camera-button" type="button" disabled>📷 CAMERA</button>
+  </div>`;
+  const mob=document.getElementById('shutterMob'),status=document.getElementById('shutterStatus'),camera=document.getElementById('cameraBtn'),snap=document.getElementById('shutterFlash');
+  function animateJump(height,duration,allowShot=false){
+    return new Promise(resolve=>{
+      const start=performance.now(),apex=start+duration/2;
+      function frame(now){
+        if(!isGameRunValid(runId)){resolve(null);return;}
+        const t=clamp((now-start)/duration,0,1),y=Math.sin(Math.PI*t)*height;
+        mob.style.transform=`translate(-50%,${-y}px) rotate(${Math.sin(t*Math.PI)*4}deg)`;
+        if(t<1){raf=requestAnimationFrame(frame)}else{mob.style.transform='translate(-50%,0)';resolve({apex})}
+      }
+      raf=requestAnimationFrame(frame);
+    });
+  }
+  if(!(await countdown('SAMPLE',runId)))return;
+  status.textContent='見本ジャンプ';
+  const sampleHeight=rand(105,185);await animateJump(sampleHeight,1200,false);
+  if(!isGameRunValid(runId))return;
+  status.textContent='次が本番';await wait(420);
+  if(!(await countdown('SHUTTER',runId)))return;
+  const height=rand(105,205),duration=1200,start=performance.now(),apex=start+duration/2;
+  camera.disabled=false;status.textContent='頂点でCAMERA！';
+  camera.addEventListener('pointerdown',e=>{
+    if(shotDone||!isGameRunValid(runId))return;e.preventDefault();shotDone=true;camera.disabled=true;
+    const error=Math.abs(performance.now()-apex);
+    snap.classList.add('show');beep(error<=25?980:error<=70?760:420,75,.025);
+    state.records.shutter[p.id]=error;
+    setTimeout(()=>{if(isGameRunValid(runId))recordScreen(21,p,humanIndex,`${(error/1000).toFixed(3)}<small>秒</small>`,`頂点との誤差`)},520);
+  },{passive:false},{once:false});
+  await new Promise(resolve=>{
+    function frame(now){
+      if(!isGameRunValid(runId)){resolve();return;}
+      const t=clamp((now-start)/duration,0,1),y=Math.sin(Math.PI*t)*height;
+      mob.style.transform=`translate(-50%,${-y}px)`;
+      if(t<1&&!shotDone)raf=requestAnimationFrame(frame);else resolve();
+    }
+    raf=requestAnimationFrame(frame);
+  });
+  if(!shotDone&&isGameRunValid(runId)){
+    shotDone=true;camera.disabled=true;const error=duration/2;state.records.shutter[p.id]=error;
+    recordScreen(21,p,humanIndex,`${(error/1000).toFixed(3)}<small>秒</small>`,`NO SHOT`);
+  }
+}
+
+// GAME 23 -------------------------------------------------
+async function startCupLimit(p,humanIndex,runId){
+  gameFit();
+  let raf=null,done=false,start=0;
+  screen.innerHTML=`<div class="cup-shell">
+    <div class="game-head"><div><span class="kicker">${esc(p.name)}</span><h2>コップ限界チャレンジ</h2></div><div class="game-badge">${playBadge(humanIndex)}</div></div>
+    <div class="cup-scene"><div class="cup-stream"></div><div id="cupGlass" class="cup-glass"><div id="cupWater" class="cup-water"></div><img src="icon/01.png" draggable="false"></div><div id="cupSpill" class="cup-spill"></div></div>
+    <div id="cupMsg" class="cup-msg">STOPだけで勝負</div>
+    <button id="cupStop" class="cup-stop" type="button">STOP</button>
+  </div>`;
+  const water=document.getElementById('cupWater'),spill=document.getElementById('cupSpill'),stop=document.getElementById('cupStop'),msg=document.getElementById('cupMsg');
+  if(!(await countdown('WATER',runId)))return;
+  start=performance.now();
+  function level(now){return .18+(now-start)/4300*.90}
+  function render(now){
+    if(done||!isGameRunValid(runId))return;
+    const lv=level(now);water.style.setProperty('--fill',`${Math.min(lv,1.075)*100}%`);water.classList.toggle('bulge',lv>1);
+    if(lv>=1.062){done=true;stop.disabled=true;spill.classList.add('show');msg.textContent='OVERFLOW!';beep(140,200,.04);state.records.cup[p.id]=0;setTimeout(()=>{if(isGameRunValid(runId))recordScreen(22,p,humanIndex,`0<small>pt</small>`,`OVERFLOW`)},560);return;}
+    raf=requestAnimationFrame(render);
+  }
+  stop.addEventListener('pointerdown',e=>{
+    if(done||!isGameRunValid(runId))return;e.preventDefault();done=true;if(raf)cancelAnimationFrame(raf);stop.disabled=true;
+    const lv=level(performance.now());
+    const target=1.048;
+    let score=lv<=target?clamp((lv-.72)/(target-.72)*100,0,100):clamp(100-(lv-target)/(.062-target)*100,0,100);
+    score=Math.round(score*10)/10;state.records.cup[p.id]=score;water.style.setProperty('--fill',`${Math.min(lv,1.06)*100}%`);water.classList.toggle('bulge',lv>1);
+    msg.textContent=score>=98?'SURFACE TENSION!':score>=85?'GREAT!':'STOP';beep(score>=98?980:score>=85?760:430,85,.025);
+    setTimeout(()=>{if(isGameRunValid(runId))recordScreen(22,p,humanIndex,`${score.toFixed(1)}<small>pt</small>`,`WATER ${(lv*100).toFixed(1)}%`)},480);
+  },{passive:false});
+  raf=requestAnimationFrame(render);
+}
+
+// GAME 24 -------------------------------------------------
+async function startDartsOneShot(p,humanIndex,runId){
+  gameFit();
+  let phase='vertical',v=.5,h=.5,raf=null,start=0,done=false;
+  screen.innerHTML=`<div class="darts-shell">
+    <div class="game-head"><div><span class="kicker">${esc(p.name)}</span><h2>ダーツ1投勝負</h2></div><div class="game-badge">${playBadge(humanIndex)}</div></div>
+    <div class="darts-main"><div id="dartTarget" class="dart-target"><i></i><i></i><i></i><b></b><div id="dartHit" class="dart-hit">✦</div></div>
+      <div class="darts-gauges"><div class="dart-v"><span>VERTICAL</span><div class="dart-vtrack"><b id="dartVMark"></b></div></div><div class="dart-h"><span>HORIZONTAL</span><div class="dart-htrack"><b id="dartHMark"></b></div></div></div>
+    </div>
+    <div id="dartPhase" class="dart-phase">VERTICAL</div><button id="dartStop" class="dart-stop" type="button">STOP</button>
+  </div>`;
+  const target=document.getElementById('dartTarget'),vm=document.getElementById('dartVMark'),hm=document.getElementById('dartHMark'),phaseEl=document.getElementById('dartPhase'),stop=document.getElementById('dartStop'),hit=document.getElementById('dartHit');
+  if(!(await countdown('DARTS',runId)))return;start=performance.now();
+  function vals(now){const t=(now-start)/1000;return {vv:(Math.sin(t*5.4)+1)/2,hh:(Math.sin(t*6.25+1.2)+1)/2,dx:Math.sin(t*1.75)*8,dy:Math.cos(t*1.43)*6}}
+  function frame(now){if(done||!isGameRunValid(runId))return;const x=vals(now);if(phase==='vertical')v=x.vv;else h=x.hh;vm.style.top=`${(phase==='vertical'?x.vv:v)*100}%`;hm.style.left=`${(phase==='horizontal'?x.hh:h)*100}%`;target.style.transform=`translate(${x.dx}px,${x.dy}px)`;raf=requestAnimationFrame(frame)}
+  stop.addEventListener('pointerdown',e=>{
+    if(done||!isGameRunValid(runId))return;e.preventDefault();const x=vals(performance.now());
+    if(phase==='vertical'){v=x.vv;phase='horizontal';phaseEl.textContent='HORIZONTAL';beep(590,45,.015);return;}
+    h=x.hh;done=true;if(raf)cancelAnimationFrame(raf);stop.disabled=true;const tx=x.dx/100,ty=x.dy/100;const nx=(h-.5)*2-tx,ny=(v-.5)*2-ty;const dist=Math.sqrt(nx*nx+ny*ny)*100;const record=Math.round(dist*10)/10;state.records.darts[p.id]=record;
+    hit.style.left=`${clamp(50+nx*42,4,96)}%`;hit.style.top=`${clamp(50+ny*42,4,96)}%`;hit.classList.add('show');phaseEl.textContent=record<=5?'BULL!':record<=20?'GREAT!':'HIT';beep(record<=5?980:record<=20?760:430,90,.025);
+    setTimeout(()=>{if(isGameRunValid(runId))recordScreen(23,p,humanIndex,`${record.toFixed(1)}<small>%</small>`,`CENTER DISTANCE`)},650);
+  },{passive:false});raf=requestAnimationFrame(frame);
+}
+
+// GAME 25 -------------------------------------------------
+async function startParachute(p,humanIndex,runId){
+  gameFit();
+  let raf=null,done=false,deployed=false,start=0;
+  const worldH=1700,groundY=1510,wind=Math.random()<.5?-1:1;
+  let centerX=0;
+  screen.innerHTML=`<div class="para-shell"><div class="game-head"><div><span class="kicker">${esc(p.name)}</span><h2>モブくんとパラシュート</h2></div><div class="game-badge">${playBadge(humanIndex)}</div></div>
+    <div class="para-hud"><span>WIND</span><b>${wind<0?'←':'→'}</b></div><button id="paraStage" class="para-stage" type="button"><div id="paraWorld" class="para-world" style="height:${worldH}px"><div class="para-cloud c1">☁</div><div class="para-cloud c2">☁</div><div class="para-target">TARGET</div><div class="para-ground"></div><div id="paraMob" class="para-mob" style="background-image:url('${p.img}')"><div class="para-canopy"></div></div></div><div class="para-tap">TAP = PARACHUTE</div></button></div>`;
+  const stage=document.getElementById('paraStage'),world=document.getElementById('paraWorld'),mob=document.getElementById('paraMob');
+  centerX=stage.clientWidth/2;mob.style.left=`${centerX}px`;
+  if(!(await countdown('PARACHUTE',runId)))return;start=performance.now();
+  let deployProgress=null;
+  stage.addEventListener('pointerdown',e=>{if(done||deployed||!isGameRunValid(runId))return;e.preventDefault();const elapsed=performance.now()-start;deployProgress=clamp(elapsed/2600,0,1);deployed=true;mob.classList.add('open');beep(720,80,.022)},{passive:false});
+  function camera(y){const vh=stage.clientHeight;const cam=clamp(y-vh*.40,0,worldH-vh);world.style.transform=`translateY(${-cam}px)`}
+  function finishCrash(){if(done)return;done=true;state.records.parachute[p.id]=999;mob.classList.add('crash');beep(130,220,.04);setTimeout(()=>{if(isGameRunValid(runId))recordScreen(24,p,humanIndex,`0<small>pt</small>`,`GROUND CRASH`)},620)}
+  function frame(now){
+    if(done||!isGameRunValid(runId))return;const elapsed=now-start;
+    if(!deployed){const pr=clamp(elapsed/2600,0,1);const y=110+pr*(groundY-160);mob.style.left=`${centerX}px`;mob.style.top=`${y}px`;camera(y);if(pr>=.84){finishCrash();return;}raf=requestAnimationFrame(frame);return;}
+    if(deployProgress>.82){finishCrash();return;}
+    const landDuration=1700+(1-deployProgress)*900,lt=clamp((elapsed-deployProgress*2600)/landDuration,0,1);const offset=wind*(.60-deployProgress)*650;const finalX=centerX+offset;const startY=110+deployProgress*(groundY-160),y=startY+(groundY-startY)*lt,x=centerX+(finalX-centerX)*lt;mob.style.left=`${x}px`;mob.style.top=`${y}px`;camera(y);
+    if(lt>=1){done=true;const meters=Math.abs(finalX-centerX)/8;state.records.parachute[p.id]=Math.round(meters*10)/10;mob.classList.add('landed');beep(meters<=3?960:meters<=10?720:420,90,.025);setTimeout(()=>{if(isGameRunValid(runId))recordScreen(24,p,humanIndex,`${meters.toFixed(1)}<small>m</small>`,`CENTER ERROR`)},600);return;}raf=requestAnimationFrame(frame)
+  }
+  raf=requestAnimationFrame(frame);
+}
+
+// GAME 26 -------------------------------------------------
+async function startMobCount(p,humanIndex,runId){
+  gameFit();
+  const answer=randi(21,30);
+  screen.innerHTML=`<div class="countmob-shell"><div class="game-head"><div><span class="kicker">${esc(p.name)}</span><h2>モブくんは何人？</h2></div><div class="game-badge">${playBadge(humanIndex)}</div></div><div id="countMobStage" class="countmob-stage"></div><div id="countMobChoices" class="countmob-choices hidden">${Array.from({length:10},(_,i)=>21+i).map(n=>`<button data-count="${n}" type="button">${n}</button>`).join('')}</div><div id="countMobMsg" class="countmob-msg">0.5秒だけ表示</div></div>`;
+  const stage=document.getElementById('countMobStage'),choices=document.getElementById('countMobChoices'),msg=document.getElementById('countMobMsg');
+  if(!(await countdown('COUNT',runId)))return;if(!isGameRunValid(runId))return;
+  const cells=shuffle(Array.from({length:30},(_,i)=>i)).slice(0,answer);
+  stage.innerHTML=cells.map((cell,i)=>{const col=cell%6,row=Math.floor(cell/6),icon=1+(i%10);return `<img draggable="false" src="icon/${String(icon).padStart(2,'0')}.png" style="left:${7+col*17+rand(-2,2)}%;top:${9+row*19+rand(-2,2)}%;transform:translate(-50%,-50%) rotate(${rand(-12,12)}deg)">`}).join('');
+  msg.textContent='見逃すな！';await wait(500);if(!isGameRunValid(runId))return;stage.innerHTML='<div class="countmob-gone">?</div>';choices.classList.remove('hidden');msg.textContent='何人いた？';
+  choices.addEventListener('pointerdown',e=>{const btn=e.target.closest('[data-count]');if(!btn||!isGameRunValid(runId))return;e.preventDefault();const pick=Number(btn.dataset.count),err=Math.abs(pick-answer);state.records.mobCount[p.id]=err;choices.querySelectorAll('button').forEach(b=>b.disabled=true);msg.textContent=err===0?`正解！ ${answer}人`:`正解 ${answer}人 / あなた ${pick}人`;beep(err===0?960:err===1?720:360,90,.025);setTimeout(()=>{if(isGameRunValid(runId))recordScreen(25,p,humanIndex,err===0?`PERFECT`:`±${err}<small>人</small>`,`ANSWER ${answer}`)},600)},{passive:false},{once:true});
+}
+
+// GAME 27 -------------------------------------------------
+async function startEmergencyBrake(p,humanIndex,runId){
+  gameFit();
+  let raf=null,done=false,obstacleVisible=false,braking=false,last=0,carX=120,speed=510,obstacleX=9999;
+  const worldW=3600;
+  screen.innerHTML=`<div class="brake-shell"><div class="game-head"><div><span class="kicker">${esc(p.name)}</span><h2>急ブレーキ</h2></div><div class="game-badge">${playBadge(humanIndex)}</div></div><div class="brake-hud"><span>SPEED</span><b id="brakeSpeed">FAST</b></div><div id="brakeStage" class="brake-stage"><div id="brakeWorld" class="brake-world" style="width:${worldW}px"><div class="brake-road"></div><div id="brakeCar" class="brake-car"><img src="icon/01.png" draggable="false"></div><div id="brakeObstacle" class="brake-obstacle">!</div></div><div id="brakeAlert" class="brake-alert">DRIVE</div></div><button id="brakeBtn" class="brake-button" type="button">BRAKE</button></div>`;
+  const stage=document.getElementById('brakeStage'),world=document.getElementById('brakeWorld'),car=document.getElementById('brakeCar'),obs=document.getElementById('brakeObstacle'),alert=document.getElementById('brakeAlert'),btn=document.getElementById('brakeBtn'),speedEl=document.getElementById('brakeSpeed');
+  if(!(await countdown('DRIVE',runId)))return;last=performance.now();const revealAt=last+rand(1050,1850);
+  btn.addEventListener('pointerdown',e=>{if(done||braking||!obstacleVisible||!isGameRunValid(runId))return;e.preventDefault();braking=true;alert.textContent='BRAKE!';car.classList.add('braking');beep(310,70,.02)},{passive:false});
+  function camera(){const vw=stage.clientWidth,cam=clamp(carX-vw*.28,0,worldW-vw);world.style.transform=`translateX(${-cam}px)`}
+  function finishCrash(){if(done)return;done=true;state.records.brake[p.id]=999;car.classList.add('crash');alert.textContent='CRASH!';beep(120,220,.04);setTimeout(()=>{if(isGameRunValid(runId))recordScreen(26,p,humanIndex,`0<small>pt</small>`,`CRASH`)},620)}
+  function frame(now){if(done||!isGameRunValid(runId))return;const dt=Math.min(32,now-last)/1000;last=now;
+    if(!obstacleVisible&&now>=revealAt){obstacleVisible=true;obstacleX=carX+rand(305,350);obs.style.left=`${obstacleX}px`;obs.classList.add('show');alert.textContent='障害物！';beep(890,80,.025)}
+    if(braking)speed=Math.max(0,speed-690*dt);carX+=speed*dt;car.style.left=`${carX}px`;speedEl.textContent=braking?`${Math.round(speed)}`:'FAST';camera();
+    if(obstacleVisible&&carX+58>=obstacleX){finishCrash();return;}
+    if(braking&&speed<=2){done=true;const gap=Math.max(0,(obstacleX-(carX+58))/10);const rec=Math.round(gap*10)/10;state.records.brake[p.id]=rec;alert.textContent=gap<=1?'PERFECT STOP!':'STOP';beep(gap<=1?980:gap<=4?720:420,90,.025);setTimeout(()=>{if(isGameRunValid(runId))recordScreen(26,p,humanIndex,`${rec.toFixed(1)}<small>m</small>`,`STOPPING GAP`)},620);return;}
+    raf=requestAnimationFrame(frame)}
+  raf=requestAnimationFrame(frame);
+}
+
+// GAME 28 -------------------------------------------------
+async function startFeintReaction(p,humanIndex,runId){
+  gameFit();
+  let live=false,done=false,goAt=0;
+  const fakes=['G0','G00','NOW','MOVE','GO?','G O','READY!','GOGO'];
+  screen.innerHTML=`<div class="feint-shell"><div class="game-head"><div><span class="kicker">${esc(p.name)}</span><h2>フェイント反射神経</h2></div><div class="game-badge">${playBadge(humanIndex)}</div></div><button id="feintStage" class="feint-stage" type="button"><img src="icon/01.png" draggable="false"><strong id="feintWord">READY</strong><span>本物のGO!だけタップ</span></button></div>`;
+  const stage=document.getElementById('feintStage'),word=document.getElementById('feintWord');
+  if(!(await countdown('READY',runId)))return;
+  stage.addEventListener('pointerdown',e=>{if(done||!isGameRunValid(runId))return;e.preventDefault();if(!live){done=true;state.records.feint[p.id]=999;word.textContent='FOUL!';stage.classList.add('foul');beep(140,180,.04);setTimeout(()=>{if(isGameRunValid(runId))recordScreen(27,p,humanIndex,`FOUL`,`フェイントを押した`)},550);return;}done=true;const ms=performance.now()-goAt;state.records.feint[p.id]=ms;word.textContent=`${(ms/1000).toFixed(4)}s`;stage.classList.add('hit');beep(ms<=180?980:ms<=260?720:420,85,.025);setTimeout(()=>{if(isGameRunValid(runId))recordScreen(27,p,humanIndex,`${(ms/1000).toFixed(4)}<small>秒</small>`,`TRUE GO REACTION`)},520)},{passive:false});
+  const n=randi(2,5);for(let i=0;i<n;i++){if(!isGameRunValid(runId)||done)return;await wait(rand(480,900));if(done)return;word.textContent=fakes[randi(0,fakes.length-1)];word.classList.remove('pop');void word.offsetWidth;word.classList.add('pop');beep(260,35,.008)}
+  if(!isGameRunValid(runId)||done)return;await wait(rand(550,1100));if(!isGameRunValid(runId)||done)return;live=true;goAt=performance.now();word.textContent='GO!';stage.classList.add('go');beep(920,65,.02);
+}
+
+// GAME 29 -------------------------------------------------
+async function startBombChicken(p,humanIndex,runId){
+  gameFit();
+  let raf=null,done=false,start=0;
+  screen.innerHTML=`<div class="bomb-shell"><div class="game-head"><div><span class="kicker">${esc(p.name)}</span><h2>爆弾チキンレース</h2></div><div class="game-badge">${playBadge(humanIndex)}</div></div><div class="bomb-stage"><div id="bombMob" class="bomb-mob"><img src="icon/01.png" draggable="false"></div><div id="bigBomb" class="big-bomb">💣</div><div id="bombTime" class="bomb-time">10.000</div><div id="bombScore" class="bomb-score">SCORE 0</div></div><button id="bombStop" class="bomb-stop" type="button">STOP</button></div>`;
+  const bomb=document.getElementById('bigBomb'),timeEl=document.getElementById('bombTime'),scoreEl=document.getElementById('bombScore'),stop=document.getElementById('bombStop');
+  if(!(await countdown('CHICKEN',runId)))return;start=performance.now();
+  function finishExplosion(){if(done)return;done=true;stop.disabled=true;state.records.bomb[p.id]=0;bomb.classList.add('explode');timeEl.textContent='0.000';scoreEl.textContent='BOOM! 0';beep(110,260,.045);setTimeout(()=>{if(isGameRunValid(runId))recordScreen(28,p,humanIndex,`0<small>pt</small>`,`EXPLOSION`)},650)}
+  stop.addEventListener('pointerdown',e=>{if(done||!isGameRunValid(runId))return;e.preventDefault();const elapsed=performance.now()-start,remaining=10000-elapsed;if(remaining<=0){finishExplosion();return;}done=true;if(raf)cancelAnimationFrame(raf);stop.disabled=true;const score=clamp(Math.floor(10000-remaining),0,9999);state.records.bomb[p.id]=score;timeEl.textContent=(remaining/1000).toFixed(3);scoreEl.textContent=`SCORE ${score}`;bomb.classList.add('stopped');beep(score>=9900?1000:score>=9500?780:430,90,.025);setTimeout(()=>{if(isGameRunValid(runId))recordScreen(28,p,humanIndex,`${score}<small>pt</small>`,`${(remaining/1000).toFixed(3)}秒残し`)},560)},{passive:false});
+  function frame(now){if(done||!isGameRunValid(runId))return;const rem=10000-(now-start);if(rem<=0){finishExplosion();return;}timeEl.textContent=(rem/1000).toFixed(3);scoreEl.textContent=`SCORE ${Math.floor(10000-rem)}`;bomb.classList.toggle('danger',rem<1200);raf=requestAnimationFrame(frame)}raf=requestAnimationFrame(frame);
+}
+
+
 function recordScreen(gameIndex,p,humanIndex,main,sub=""){
   clearGameFit();
   gameTop();
@@ -4448,7 +4746,7 @@ async function simulateCpuThenResult(gameIndex){
 
 function cpuUltraDraw(gameIndex){
   // Game-specific draw rate. Regular values are already intentionally strong.
-  const chance=[0.12,0.10,0.14,0.16,0.12,0.13,0.14,0.12,0.15,0.12,0.14,0.13,0.13,0.14,0.12,0.12,0.13,0.12,0.13,0.14][gameIndex] ?? 0.12;
+  const chance=[0.12,0.10,0.14,0.16,0.12,0.13,0.14,0.12,0.15,0.12,0.14,0.13,0.13,0.14,0.12,0.12,0.13,0.12,0.13,0.14,0.12,0.12,0.12,0.12,0.12,0.10,0.12,0.12,0.12][gameIndex] ?? 0.12;
   return Math.random()<chance;
 }
 
@@ -4457,47 +4755,67 @@ function simulateOneCpu(gameIndex,p){
   state.cpuTier[`${state.roundIndex}:${p.id}`]=ultra?"SUPER":"STRONG";
 
   if(gameIndex===0){
-    const bias={c5:8,c6:2,c7:12,c8:0}[p.id]||0;
-    state.records.reaction[p.id]=ultra?randi(72,112):clamp(randi(125,230)+bias,118,245);
+    const bias={c2:10,c3:4,c4:14,c5:8,c6:2,c7:12,c8:0}[p.id]||0;
+    state.records.reaction[p.id]=ultra
+      ? rand(155,185)
+      : clamp(rand(185,305)+bias,180,325);
   }else if(gameIndex===1){
     const base={c5:9,c6:9,c7:8,c8:10}[p.id]||9;
     state.records.memory[p.id]=ultra?10:clamp(base+randi(-1,1),7,10);
   }else if(gameIndex===2){
-    state.records.puzzle[p.id]=ultra?randi(1950,2350):randi(2500,4450);
+    state.records.puzzle[p.id]=ultra?randi(2450,2850):randi(2900,4700);
   }else if(gameIndex===3){
     state.records.launch[p.id]=Math.round((ultra?rand(1840,2000):rand(1280,1900))*10);
   }else if(gameIndex===4){
-    state.records.stack[p.id]=ultra?randi(23,31):randi(12,25);
+    state.records.stack[p.id]=ultra?randi(17,20):randi(10,17);
   }else if(gameIndex===5){
     state.records.breakdance[p.id]=ultra?1:randi(1,12);
   }else if(gameIndex===6){
-    state.records.crisis[p.id]=ultra?randi(24,34):randi(13,26);
+    state.records.crisis[p.id]=ultra?randi(22,28):randi(12,23);
   }else if(gameIndex===7){
-    state.records.factory[p.id]=ultra?randi(25,32):randi(16,27);
+    state.records.factory[p.id]=ultra?randi(23,28):randi(15,24);
   }else if(gameIndex===8){
-    state.records.catcher[p.id]=ultra?randi(10,16):randi(4,12);
+    state.records.catcher[p.id]=ultra?randi(9,13):randi(4,10);
   }else if(gameIndex===9){
-    state.records.tidy[p.id]=ultra?randi(93,100):randi(58,88);
+    state.records.tidy[p.id]=ultra?randi(88,96):randi(55,84);
   }else if(gameIndex===10){
-    state.records.ski[p.id]=Math.round((ultra?rand(925,1000):rand(560,930))*10);
+    state.records.ski[p.id]=Math.round((ultra?rand(850,960):rand(500,850))*10);
   }else if(gameIndex===11){
-    state.records.slot[p.id]=ultra?randi(2900,4300):randi(1650,3300);
+    state.records.slot[p.id]=ultra?randi(2500,3400):randi(1450,2750);
   }else if(gameIndex===12){
-    state.records.rope[p.id]=ultra?randi(31,40):randi(18,32);
+    state.records.rope[p.id]=ultra?randi(26,33):randi(15,27);
   }else if(gameIndex===13){
-    state.records.pk[p.id]=ultra?randi(9,10):randi(5,9);
+    state.records.pk[p.id]=ultra?randi(8,10):randi(4,8);
   }else if(gameIndex===14){
-    state.records.rhythm[p.id]=ultra?rand(145,195):rand(185,315);
+    state.records.rhythm[p.id]=ultra?rand(175,210):rand(210,335);
   }else if(gameIndex===15){
-    state.records.cut[p.id]=ultra?randi(94,100):randi(60,92);
+    state.records.cut[p.id]=ultra?randi(88,97):randi(55,88);
   }else if(gameIndex===16){
-    state.records.climb[p.id]=Math.round((ultra?rand(690,830):rand(390,720))*10);
+    state.records.climb[p.id]=Math.round((ultra?rand(620,760):rand(340,650))*10);
   }else if(gameIndex===17){
-    state.records.errand[p.id]=ultra?randi(990,1000):randi(760,995);
+    state.records.errand[p.id]=ultra?randi(970,1000):randi(730,985);
   }else if(gameIndex===18){
-    state.records.dontHitMob[p.id]=ultra?randi(12,16):randi(6,13);
+    state.records.dontHitMob[p.id]=ultra?randi(11,14):randi(5,11);
+  }else if(gameIndex===19){
+    state.records.mobStop[p.id]=ultra?randi(86,96):randi(42,88);
+  }else if(gameIndex===20){
+    state.records.overlap[p.id]=Math.round((ultra?rand(98.2,100):rand(87,98.8))*10)/10;
+  }else if(gameIndex===21){
+    state.records.shutter[p.id]=ultra?rand(12,32):rand(32,105);
+  }else if(gameIndex===22){
+    state.records.cup[p.id]=Math.round((ultra?rand(94,100):rand(62,95))*10)/10;
+  }else if(gameIndex===23){
+    state.records.darts[p.id]=Math.round((ultra?rand(1.5,7):rand(7,34))*10)/10;
+  }else if(gameIndex===24){
+    state.records.parachute[p.id]=Math.round((ultra?rand(.5,3.5):rand(3,18))*10)/10;
+  }else if(gameIndex===25){
+    state.records.mobCount[p.id]=ultra?(Math.random()<.85?0:1):randi(0,3);
+  }else if(gameIndex===26){
+    state.records.brake[p.id]=Math.round((ultra?rand(.2,1.4):rand(1.2,6.5))*10)/10;
+  }else if(gameIndex===27){
+    state.records.feint[p.id]=ultra?rand(170,205):rand(205,335);
   }else{
-    state.records.mobStop[p.id]=ultra?randi(92,100):randi(48,94);
+    state.records.bomb[p.id]=ultra?randi(9600,9960):randi(7600,9700);
   }
 
   return ultra;
@@ -4535,11 +4853,26 @@ function performancePoints(gameIndex,v){
   if(gameIndex===16)return clamp(Math.round((v/10)/700*100),0,100);
   if(gameIndex===17)return clamp(Math.round(v-900),0,100);
   if(gameIndex===18)return clamp(Math.round(v/12*100),0,100);
-  return clamp(Math.round(v),0,100);
+  if(gameIndex===19)return clamp(Math.round(v),0,100);
+  if(gameIndex===20)return clamp(Math.round(v),0,100);
+  if(gameIndex===21)return clamp(Math.round(100-v/150*100),0,100);
+  if(gameIndex===22)return clamp(Math.round(v),0,100);
+  if(gameIndex===23)return clamp(Math.round(100-v),0,100);
+  if(gameIndex===24)return v>=900?0:clamp(Math.round(100-v/25*100),0,100);
+  if(gameIndex===25)return [100,75,50,25,0][Math.min(4,Math.round(v))];
+  if(gameIndex===26)return v>=900?0:clamp(Math.round(100-v/10*100),0,100);
+  if(gameIndex===27){
+    if(v>=900)return 0;
+    if(v<=150)return 100;
+    if(v<=300)return Math.round(100-(v-150)/150*50);
+    if(v<=500)return Math.round(50-(v-300)/200*50);
+    return 0;
+  }
+  return clamp(Math.round(v/100),0,100);
 }
 
 function rankRecords(gameIndex){
-  const key=GAMES[gameIndex].key,records=state.records[key],ascRaw=(gameIndex===0||gameIndex===2||gameIndex===5||gameIndex===14);
+  const key=GAMES[gameIndex].key,records=state.records[key],ascRaw=(gameIndex===0||gameIndex===2||gameIndex===5||gameIndex===14||gameIndex===21||gameIndex===23||gameIndex===24||gameIndex===25||gameIndex===26||gameIndex===27);
   const arr=participants().map(p=>({p,value:records[p.id]}));
   if(mode().performance){
     arr.forEach(e=>e.points=performancePoints(gameIndex,e.value));
@@ -4571,7 +4904,16 @@ function formatRecord(gameIndex,v){
   if(gameIndex===16)return `${(v/10).toFixed(1)}m`;
   if(gameIndex===17)return `¥${v}使用`;
   if(gameIndex===18)return `${v}体`;
-  return `${v}pt`;
+  if(gameIndex===19)return `${v}pt`;
+  if(gameIndex===20)return `${Number(v).toFixed(1)}%`;
+  if(gameIndex===21)return `${(v/1000).toFixed(3)}秒`;
+  if(gameIndex===22)return `${Number(v).toFixed(1)}pt`;
+  if(gameIndex===23)return `${Number(v).toFixed(1)}%`;
+  if(gameIndex===24)return v>=900?`CRASH`:`${Number(v).toFixed(1)}m`;
+  if(gameIndex===25)return v===0?`PERFECT`:`誤差${v}人`;
+  if(gameIndex===26)return v>=900?`CRASH`:`${Number(v).toFixed(1)}m`;
+  if(gameIndex===27)return v>=900?`FOUL`:`${(v/1000).toFixed(4)}秒`;
+  return `${Math.round(v)}pt`;
 }
 
 function applyPoints(gameIndex,ranked){
