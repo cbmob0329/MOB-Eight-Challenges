@@ -4108,3 +4108,605 @@ body{touch-action:manipulation}
     height:76px;
   }
 }
+
+
+/* =========================================================
+   V10.0 FIGURE MOB RULE
+   New cinematic games use icon/01.png, same figure as GAME 4.
+   ========================================================= */
+
+/* =========================================================
+   V10.0 GAME 34 — ONE CONTINUOUS SCREEN
+   ========================================================= */
+.planet-stage-v100{
+  flex:1;
+  min-height:0;
+  position:relative;
+  overflow:hidden;
+  border:4px solid var(--ink);
+  border-radius:22px;
+  background:
+    radial-gradient(circle at 72% 14%,rgba(130,205,255,.20),transparent 20%),
+    linear-gradient(#070b23 0 62%,#111939 62% 100%);
+  isolation:isolate;
+}
+.planet-space-bg{
+  position:absolute;
+  inset:0;
+  z-index:0;
+  pointer-events:none;
+}
+.planet-star{
+  position:absolute;
+  width:5px;
+  height:5px;
+  border-radius:50%;
+  background:#fff;
+  box-shadow:0 0 8px #fff;
+  animation:planetStarTwinkle 1.4s ease-in-out infinite alternate;
+}
+.planet-star.s1{left:8%;top:12%}
+.planet-star.s2{left:23%;top:21%;animation-delay:-.6s}
+.planet-star.s3{left:46%;top:8%;animation-delay:-1s}
+.planet-star.s4{left:71%;top:23%;animation-delay:-.2s}
+.planet-star.s5{left:88%;top:10%;animation-delay:-.9s}
+.planet-star.s6{left:62%;top:35%;animation-delay:-.4s}
+@keyframes planetStarTwinkle{
+  from{opacity:.28;transform:scale(.65)}
+  to{opacity:1;transform:scale(1.35)}
+}
+.planet-moon{
+  position:absolute;
+  right:5%;
+  top:6%;
+  width:52px;
+  height:52px;
+  border:3px solid rgba(255,255,255,.72);
+  border-radius:50%;
+  background:#eaf5ff;
+  box-shadow:0 0 22px rgba(210,240,255,.45);
+}
+
+.planet-camera-v100{
+  --planet-camera-scale:1;
+  --planet-cam-x:0px;
+  position:absolute;
+  z-index:4;
+  inset:0;
+  transform-origin:left center;
+  transform:scale(var(--planet-camera-scale));
+  transition:transform .52s cubic-bezier(.16,.82,.24,1);
+  pointer-events:none;
+}
+.planet-world-v100{
+  position:absolute;
+  left:0;
+  top:0;
+  bottom:0;
+  width:7200px;
+  transform:translateX(var(--planet-cam-x));
+  transition:transform .08s linear;
+  will-change:transform;
+}
+.planet-city-ground-v100{
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  height:58px;
+  border-top:4px solid #0d1228;
+  background:
+    repeating-linear-gradient(90deg,#232a40 0 38px,#2d354f 38px 76px);
+}
+.planet-buildings-v100{
+  position:absolute;
+  inset:0;
+}
+.planet-building-v100{
+  position:absolute;
+  z-index:5;
+  bottom:58px;
+  border:4px solid #0b1023;
+  border-radius:8px 8px 0 0;
+  background:#44526e;
+  transform-origin:bottom center;
+  transition:transform .28s ease,opacity .28s ease,filter .25s ease;
+}
+.planet-building-v100.b1{background:#625073}
+.planet-building-v100.b2{background:#3f6872}
+.planet-building-v100.b3{background:#6d5d42}
+.planet-building-v100.b4{background:#445f86}
+.planet-windows-v100{
+  position:absolute;
+  inset:15px 10px 12px;
+  opacity:.72;
+  background:
+    repeating-linear-gradient(0deg,transparent 0 22px,rgba(255,230,120,.88) 22px 31px),
+    repeating-linear-gradient(90deg,rgba(255,230,120,.88) 0 10px,transparent 10px 24px);
+}
+.planet-roof-v100{
+  position:absolute;
+  left:50%;
+  top:-20px;
+  width:4px;
+  height:18px;
+  transform:translateX(-50%);
+  background:#11172a;
+}
+.planet-building-v100.destroyed{
+  transform:
+    translateY(46px)
+    rotate(calc(var(--break-dir,1) * 17deg))
+    scale(.46,.22);
+  opacity:.08;
+  filter:blur(1px);
+}
+
+.planet-mob-v100{
+  position:absolute;
+  z-index:12;
+  left:255px;
+  bottom:60px;
+  width:78px;
+  height:92px;
+  background-position:center;
+  background-size:contain;
+  background-repeat:no-repeat;
+  filter:drop-shadow(0 5px 0 rgba(0,0,0,.28));
+  transform-origin:center bottom;
+  transition:transform .52s ease,width .52s ease,height .52s ease,opacity .3s ease;
+}
+.planet-stage-v100.huge-energy .planet-mob-v100{
+  transform:scale(.52);
+}
+.planet-stage-v100.max-energy .planet-mob-v100,
+.planet-mob-v100.bean-size{
+  transform:scale(.28)!important;
+}
+.planet-stage-v100.max-energy .planet-mob-v100{
+  opacity:.86;
+}
+
+.planet-orb-v100{
+  position:absolute;
+  z-index:20;
+  left:294px;
+  top:145px;
+  width:0;
+  height:0;
+  transform:translate(-50%,-50%);
+  border-radius:50%;
+  opacity:0;
+  pointer-events:none;
+  transition:
+    width .62s cubic-bezier(.16,.82,.24,1),
+    height .62s cubic-bezier(.16,.82,.24,1),
+    top .42s ease,
+    opacity .18s ease;
+  will-change:left,top,width,height;
+}
+.planet-orb-v100.charged{
+  opacity:1;
+}
+.planet-orb-v100.launch-ready{
+  top:10%!important;
+}
+.planet-orb-core{
+  position:absolute;
+  inset:0;
+  border:5px solid rgba(255,255,255,.94);
+  border-radius:50%;
+  background:
+    radial-gradient(circle at 36% 32%,#fff 0 5%,#b7fcff 9%,#58d9ff 24%,#4572ff 53%,#6949e7 74%,#151944 100%);
+  box-shadow:
+    0 0 25px rgba(112,236,255,.95),
+    0 0 70px rgba(73,91,255,.78),
+    0 0 120px rgba(73,91,255,.42),
+    inset 0 0 30px rgba(255,255,255,.44);
+  animation:planetOrbCorePulse .52s ease-in-out infinite alternate;
+}
+@keyframes planetOrbCorePulse{
+  from{transform:scale(.985)}
+  to{transform:scale(1.015)}
+}
+.planet-orb-ring{
+  position:absolute;
+  inset:-7%;
+  border:3px solid rgba(136,242,255,.56);
+  border-radius:50%;
+  animation:planetOrbRingSpin 1.2s linear infinite;
+}
+.planet-orb-ring.r2{
+  inset:-13%;
+  border-style:dashed;
+  animation-duration:1.75s;
+  animation-direction:reverse;
+}
+.planet-orb-ring.r3{
+  inset:-19%;
+  border-width:2px;
+  opacity:.44;
+  animation-duration:2.4s;
+}
+@keyframes planetOrbRingSpin{
+  to{transform:rotate(360deg)}
+}
+.planet-orb-spark{
+  position:absolute;
+  width:9px;
+  height:9px;
+  border-radius:50%;
+  background:#fff;
+  box-shadow:0 0 12px #8cf5ff;
+  animation:planetSparkOrbit .7s linear infinite;
+}
+.planet-orb-spark.sp1{left:8%;top:20%}
+.planet-orb-spark.sp2{right:4%;top:43%;animation-delay:-.2s}
+.planet-orb-spark.sp3{left:31%;bottom:1%;animation-delay:-.4s}
+.planet-orb-spark.sp4{right:24%;top:7%;animation-delay:-.55s}
+@keyframes planetSparkOrbit{
+  50%{transform:scale(1.8);opacity:.35}
+}
+
+.planet-gauge-v100{
+  position:absolute;
+  z-index:50;
+  left:50%;
+  top:31%;
+  width:min(52vw,208px);
+  aspect-ratio:1;
+  transform:translate(-50%,-50%);
+  transition:opacity .25s ease,transform .3s ease;
+}
+.planet-gauge-ring-v100{
+  position:absolute;
+  inset:0;
+  border:7px solid #fff;
+  border-radius:50%;
+  box-shadow:0 0 0 4px #10152d,0 0 22px rgba(100,237,255,.80);
+}
+.planet-gauge-v100>span{
+  position:absolute;
+  left:50%;
+  top:-27px;
+  transform:translateX(-50%);
+  color:#fff;
+  font-size:10px;
+  font-weight:1000;
+}
+.planet-pulse-v100{
+  position:absolute;
+  left:50%;
+  top:50%;
+  width:100%;
+  height:100%;
+  transform:translate(-50%,-50%) scale(.18);
+  border:4px solid #fff;
+  border-radius:50%;
+  background:
+    radial-gradient(circle at 37% 33%,#fff 0 6%,#9ef9ff 11%,#38aaff 48%,#564ddc 74%,#1c2050 100%);
+  box-shadow:0 0 22px rgba(99,234,255,.85),0 0 52px rgba(74,91,255,.52);
+}
+.planet-gauge-v100.finished{
+  opacity:.12;
+  transform:translate(-50%,-50%) scale(.75);
+}
+.planet-gauge-v100.launching{
+  opacity:0;
+}
+
+.planet-charge-text-v100{
+  position:absolute;
+  z-index:70;
+  left:50%;
+  bottom:8px;
+  transform:translateX(-50%);
+  min-width:220px;
+  border:3px solid #0f152d;
+  border-radius:999px;
+  background:#fff;
+  padding:6px 11px;
+  text-align:center;
+  font-size:10px;
+  font-weight:1000;
+}
+.planet-cinematic-text{
+  position:absolute;
+  z-index:100;
+  left:50%;
+  top:44%;
+  transform:translate(-50%,-50%) scale(.55);
+  width:94%;
+  text-align:center;
+  font-size:clamp(30px,11vw,70px);
+  font-weight:1000;
+  color:#fff;
+  -webkit-text-stroke:3px #11182e;
+  text-shadow:0 6px 0 #11182e,0 0 25px rgba(103,232,255,.76);
+  opacity:0;
+  pointer-events:none;
+}
+.planet-cinematic-text.show{
+  animation:planetCinemaPop .85s ease forwards;
+}
+@keyframes planetCinemaPop{
+  0%{opacity:0;transform:translate(-50%,-50%) scale(.45)}
+  25%{opacity:1;transform:translate(-50%,-50%) scale(1.06)}
+  75%{opacity:1;transform:translate(-50%,-50%) scale(1)}
+  100%{opacity:0;transform:translate(-50%,-55%) scale(1.02)}
+}
+
+.planet-stage-v100.flight-mode{
+  box-shadow:inset 0 0 50px rgba(90,219,255,.12);
+}
+.planet-stage-v100.flight-mode:after{
+  content:"";
+  position:absolute;
+  z-index:2;
+  inset:0;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      transparent 0 36px,
+      rgba(126,226,255,.06) 36px 39px,
+      transparent 39px 80px
+    );
+  animation:planetSpeedBg .25s linear infinite;
+  pointer-events:none;
+}
+@keyframes planetSpeedBg{
+  to{transform:translateX(-80px)}
+}
+.planet-debris-burst{
+  position:absolute;
+  z-index:30;
+  width:24px;
+  height:24px;
+  border-radius:50%;
+  background:#ffdd81;
+  box-shadow:
+    -25px -8px 0 #68728a,
+    22px -14px 0 #4c586e,
+    -18px 17px 0 #39455d,
+    30px 13px 0 #79849a;
+  animation:planetDebrisBurst .62s ease-out forwards;
+}
+@keyframes planetDebrisBurst{
+  to{transform:scale(4.8) rotate(55deg);opacity:0}
+}
+
+/* =========================================================
+   V10.0 GAME 35 — TRUE HEAD PIVOT SPIN
+   ========================================================= */
+.headspin-stage-v100{
+  flex:1;
+  min-height:0;
+  position:relative;
+  overflow:hidden;
+  border:4px solid var(--ink);
+  border-radius:22px;
+  background:
+    radial-gradient(circle at 50% 62%,#fff 0 17%,#e9f8ff 18% 45%,#d5e6f4 46% 100%);
+  touch-action:none;
+}
+.headspin-floor{
+  position:absolute;
+  left:10%;
+  right:10%;
+  top:64%;
+  height:4px;
+  border-radius:999px;
+  background:#768494;
+  box-shadow:0 5px 0 rgba(17,19,26,.10);
+}
+.headspin-guide-v100{
+  position:absolute;
+  z-index:4;
+  left:50%;
+  top:44%;
+  width:min(74vw,318px);
+  aspect-ratio:1;
+  transform:translate(-50%,-50%);
+}
+.headspin-pivot{
+  position:absolute;
+  z-index:14;
+  left:50%;
+  top:64%;
+  width:1px;
+  height:1px;
+  pointer-events:none;
+}
+.headspin-spinner{
+  position:absolute;
+  left:0;
+  top:0;
+  width:84px;
+  height:100px;
+  transform:rotate(0deg);
+  transform-origin:0 0;
+  will-change:transform;
+}
+.headspin-figure{
+  position:absolute;
+  left:-42px;
+  top:-90px;
+  width:84px;
+  height:100px;
+  background-position:center;
+  background-size:contain;
+  background-repeat:no-repeat;
+  /* Figure is upside down; its head is placed exactly at the outer pivot. */
+  transform:rotate(180deg);
+  transform-origin:50% 50%;
+  filter:drop-shadow(0 4px 0 rgba(17,19,26,.18));
+}
+.headspin-pivot:after{
+  content:"";
+  position:absolute;
+  z-index:-1;
+  left:-26px;
+  top:-7px;
+  width:52px;
+  height:13px;
+  border:3px solid var(--ink);
+  border-radius:50%;
+  background:rgba(36,166,255,.20);
+}
+.headspin-pivot.spinning:after{
+  animation:headContactPulse .11s ease infinite alternate;
+}
+@keyframes headContactPulse{
+  to{transform:scaleX(1.35);opacity:.42}
+}
+
+.headspin-fx{
+  --spin-speed:0;
+  position:absolute;
+  z-index:10;
+  left:50%;
+  top:64%;
+  width:0;
+  height:0;
+  pointer-events:none;
+  opacity:0;
+}
+.headspin-fx.active{
+  opacity:1;
+}
+.headspin-speed-ring{
+  position:absolute;
+  left:0;
+  top:0;
+  width:120px;
+  height:34px;
+  transform:translate(-50%,-50%);
+  border:5px solid rgba(34,169,255,.66);
+  border-radius:50%;
+  opacity:calc(.25 + var(--spin-speed) * .65);
+  animation:headRingSpin .22s linear infinite;
+}
+.headspin-speed-ring.ring2{
+  width:170px;
+  height:48px;
+  border-style:dashed;
+  animation-duration:.16s;
+  animation-direction:reverse;
+}
+.headspin-speed-ring.ring3{
+  width:220px;
+  height:62px;
+  border-width:3px;
+  opacity:.32;
+  animation-duration:.30s;
+}
+@keyframes headRingSpin{
+  to{transform:translate(-50%,-50%) rotate(360deg)}
+}
+.headspin-speed-line{
+  position:absolute;
+  left:0;
+  top:0;
+  width:120px;
+  height:5px;
+  border-radius:999px;
+  background:linear-gradient(90deg,transparent,#31a8ff,#fff);
+  transform-origin:left center;
+  opacity:.78;
+  animation:headSpeedLine .18s linear infinite;
+}
+.headspin-speed-line.l1{transform:rotate(18deg)}
+.headspin-speed-line.l2{transform:rotate(108deg);animation-delay:-.05s}
+.headspin-speed-line.l3{transform:rotate(198deg);animation-delay:-.10s}
+.headspin-speed-line.l4{transform:rotate(288deg);animation-delay:-.15s}
+@keyframes headSpeedLine{
+  from{width:28px;opacity:.25}
+  to{width:145px;opacity:0}
+}
+.headspin-dust{
+  position:absolute;
+  left:0;
+  top:0;
+  width:12px;
+  height:12px;
+  border-radius:50%;
+  background:#c6d3dc;
+  opacity:.55;
+}
+.headspin-dust.d1{animation:headDust1 .42s ease-out infinite}
+.headspin-dust.d2{animation:headDust2 .48s ease-out infinite -.15s}
+.headspin-dust.d3{animation:headDust3 .38s ease-out infinite -.25s}
+@keyframes headDust1{
+  to{transform:translate(-85px,-20px) scale(2.3);opacity:0}
+}
+@keyframes headDust2{
+  to{transform:translate(80px,-13px) scale(2.7);opacity:0}
+}
+@keyframes headDust3{
+  to{transform:translate(15px,-65px) scale(1.8);opacity:0}
+}
+.headspin-fx.finish-burst .headspin-speed-ring{
+  animation-duration:.08s!important;
+  filter:drop-shadow(0 0 10px #4bdfff);
+}
+
+.headspin-message-v100{
+  position:absolute;
+  z-index:25;
+  left:50%;
+  bottom:4%;
+  transform:translateX(-50%);
+  min-width:180px;
+  border:3px solid var(--ink);
+  border-radius:999px;
+  background:#fff;
+  padding:6px 10px;
+  text-align:center;
+  font-size:10px;
+  font-weight:1000;
+}
+.headspin-result-v100{
+  position:absolute;
+  z-index:40;
+  left:50%;
+  top:18%;
+  transform:translate(-50%,-50%);
+  border:4px solid var(--ink);
+  border-radius:18px;
+  background:var(--yellow);
+  padding:8px 17px;
+  text-align:center;
+}
+.headspin-result-v100 span,
+.headspin-result-v100 b{
+  display:block;
+  font-size:9px;
+}
+.headspin-result-v100 strong{
+  display:block;
+  font-size:46px;
+  line-height:1;
+}
+
+@media(max-height:690px){
+  .planet-mob-v100{
+    width:65px;
+    height:78px;
+  }
+  .planet-stage-v100.max-energy .planet-mob-v100,
+  .planet-mob-v100.bean-size{
+    transform:scale(.24)!important;
+  }
+  .planet-gauge-v100{
+    width:160px;
+  }
+  .headspin-guide-v100{
+    width:238px;
+  }
+  .headspin-pivot{
+    top:66%;
+  }
+  .headspin-fx{
+    top:66%;
+  }
+}

@@ -5135,12 +5135,12 @@ async function startPlanetEnergy(p,humanIndex,runId){
   let raf=null;
   let finished=false;
   let phaseStart=0;
-  let pulseScale=.2;
-  const charges=[];
+  let pulseScale=.18;
   let chargeRound=0;
   let finalCharge=0;
+  const charges=[];
 
-  screen.innerHTML=`<div class="planet-shell">
+  screen.innerHTML=`<div class="planet-shell planet-v100">
     <div class="game-head">
       <div><span class="kicker">${esc(p.name)}</span><h2>この星を..！</h2></div>
       <div class="game-badge">${playBadge(humanIndex)}</div>
@@ -5152,68 +5152,148 @@ async function startPlanetEnergy(p,humanIndex,runId){
       <div><span>DISTANCE</span><b id="planetDistance">-- km</b></div>
     </div>
 
-    <div id="planetChargeScene" class="planet-charge-scene">
-      <div id="planetGauge" class="planet-gauge">
-        <div id="planetPulse" class="planet-pulse"></div>
-        <div class="planet-gauge-ring"></div>
+    <div id="planetStage" class="planet-stage-v100">
+      <div class="planet-space-bg">
+        <i class="planet-star s1"></i><i class="planet-star s2"></i><i class="planet-star s3"></i>
+        <i class="planet-star s4"></i><i class="planet-star s5"></i><i class="planet-star s6"></i>
+        <div class="planet-moon"></div>
+      </div>
+
+      <div id="planetCamera" class="planet-camera-v100">
+        <div id="planetWorld" class="planet-world-v100">
+          <div class="planet-city-ground-v100"></div>
+          <div id="planetBuildings" class="planet-buildings-v100"></div>
+
+          <div id="planetMob" class="planet-mob-v100" style="background-image:url('icon/01.png')"></div>
+
+          <div id="planetOrb" class="planet-orb-v100">
+            <div class="planet-orb-core"></div>
+            <div class="planet-orb-ring r1"></div>
+            <div class="planet-orb-ring r2"></div>
+            <div class="planet-orb-ring r3"></div>
+            <i class="planet-orb-spark sp1"></i>
+            <i class="planet-orb-spark sp2"></i>
+            <i class="planet-orb-spark sp3"></i>
+            <i class="planet-orb-spark sp4"></i>
+          </div>
+        </div>
+      </div>
+
+      <div id="planetGauge" class="planet-gauge-v100">
+        <div id="planetPulse" class="planet-pulse-v100"></div>
+        <div class="planet-gauge-ring-v100"></div>
         <span>MAX</span>
       </div>
 
-      <div id="planetFinalBall" class="planet-final-ball"></div>
-      <div class="planet-mob" style="background-image:url('${p.img}')"></div>
-      <div id="planetChargeText" class="planet-charge-text">MAXの瞬間をタップ</div>
+      <div id="planetChargeText" class="planet-charge-text-v100">MAXの瞬間をタップ</div>
+      <div id="planetCinematicText" class="planet-cinematic-text"></div>
     </div>
 
     <button id="planetChargeTap" class="planet-charge-button" type="button">CHARGE TAP</button>
     <button id="planetFire" class="planet-fire-button hidden" type="button">放つ！</button>
-
-    <div id="planetFlightView" class="planet-flight-view hidden">
-      <div id="planetWorld" class="planet-world">
-        <div class="planet-city-ground"></div>
-        <div id="planetBuildings"></div>
-        <div id="planetFlightBall" class="planet-flight-ball"></div>
-      </div>
-      <div id="planetFlightBanner" class="planet-flight-banner">ENERGY LAUNCH!</div>
-    </div>
   </div>`;
 
+  const stage=document.getElementById('planetStage');
+  const camera=document.getElementById('planetCamera');
+  const world=document.getElementById('planetWorld');
+  const buildingLayer=document.getElementById('planetBuildings');
+  const mob=document.getElementById('planetMob');
+  const orb=document.getElementById('planetOrb');
+  const gauge=document.getElementById('planetGauge');
+  const pulse=document.getElementById('planetPulse');
   const roundEl=document.getElementById('planetRound');
   const energyEl=document.getElementById('planetEnergyValue');
   const distanceEl=document.getElementById('planetDistance');
-  const chargeScene=document.getElementById('planetChargeScene');
-  const gauge=document.getElementById('planetGauge');
-  const pulse=document.getElementById('planetPulse');
-  const finalBall=document.getElementById('planetFinalBall');
   const chargeText=document.getElementById('planetChargeText');
+  const cinematicText=document.getElementById('planetCinematicText');
   const chargeBtn=document.getElementById('planetChargeTap');
   const fireBtn=document.getElementById('planetFire');
 
-  const flightView=document.getElementById('planetFlightView');
-  const world=document.getElementById('planetWorld');
-  const buildingLayer=document.getElementById('planetBuildings');
-  const flightBall=document.getElementById('planetFlightBall');
-  const flightBanner=document.getElementById('planetFlightBanner');
+  const worldW=7200;
+  world.style.width=`${worldW}px`;
+
+  // City is present from the beginning. No screen transition.
+  const buildings=[];
+  let bx=720;
+  for(let i=0;i<29;i++){
+    const w=randi(72,138);
+    const h=randi(155,380);
+    buildings.push({x:bx,w,h,destroyed:false});
+    bx+=randi(190,265);
+  }
+
+  buildingLayer.innerHTML=buildings.map((b,i)=>`
+    <div class="planet-building-v100 b${i%5}" style="left:${b.x}px;width:${b.w}px;height:${b.h}px">
+      <div class="planet-windows-v100"></div>
+      <div class="planet-roof-v100"></div>
+    </div>`).join('');
+
+  const buildingEls=[...buildingLayer.children];
+
+  function showCinematic(text,ms=650){
+    cinematicText.textContent=text;
+    cinematicText.classList.remove('show');
+    void cinematicText.offsetWidth;
+    cinematicText.classList.add('show');
+    setTimeout(()=>cinematicText.classList.remove('show'),ms);
+  }
 
   function pulseFrame(now){
     if(finished||chargeRound>=3||!isGameRunValid(runId))return;
 
     const elapsed=now-phaseStart;
-    const phase=(elapsed%1120)/1120;
-
-    // Smooth breathe: 0.18 -> 1.00 -> 0.18
-    pulseScale=.18+.82*(.5-.5*Math.cos(phase*Math.PI*2));
+    // Faster pulse than V9.9: 0.94 sec per cycle.
+    const phase=(elapsed%940)/940;
+    pulseScale=.14+.86*(.5-.5*Math.cos(phase*Math.PI*2));
     pulse.style.transform=`translate(-50%,-50%) scale(${pulseScale})`;
 
     raf=requestAnimationFrame(pulseFrame);
   }
 
   function startChargeRound(){
+    if(!isGameRunValid(runId))return;
+
     chargeBtn.disabled=false;
-    chargeText.textContent=`CHARGE ${chargeRound+1} / 3  —  MAXを狙え`;
     roundEl.textContent=`${chargeRound+1} / 3`;
+    chargeText.textContent=`CHARGE ${chargeRound+1} / 3 — MAXを狙え`;
+
     phaseStart=performance.now();
     if(raf)cancelAnimationFrame(raf);
     raf=requestAnimationFrame(pulseFrame);
+  }
+
+  function applyFinalOrbSize(){
+    const rect=stage.getBoundingClientRect();
+
+    // MAX really fills almost the entire stage.
+    const maxDiameter=Math.min(rect.width*.97,rect.height*.91);
+    const minDiameter=82;
+    const normalized=Math.pow(finalCharge/100,1.38);
+    const diameter=minDiameter+(maxDiameter-minDiameter)*normalized;
+
+    orb.style.width=`${diameter}px`;
+    orb.style.height=`${diameter}px`;
+
+    // The orb stays above MOB, never overlapping him.
+    const mobTop=mob.offsetTop;
+    const desiredCenterY=Math.max(diameter/2+12,mobTop-diameter/2-18);
+    orb.style.top=`${desiredCenterY}px`;
+    orb.style.left=`${mob.offsetLeft+mob.offsetWidth/2}px`;
+
+    orb.classList.add('charged');
+
+    if(finalCharge>=88)stage.classList.add('huge-energy');
+    if(finalCharge>=97)stage.classList.add('max-energy');
+
+    // On huge charge the city / MOB camera pulls out, while orb remains dominant.
+    const pull=clamp((finalCharge-82)/18,0,1);
+    const sceneScale=1-pull*.27;
+    camera.style.setProperty('--planet-camera-scale',sceneScale.toFixed(3));
+
+    showCinematic(
+      finalCharge>=97?'この星を..！':finalCharge>=90?'超巨大エネルギー':'ENERGY READY',
+      900
+    );
   }
 
   chargeBtn.addEventListener('pointerdown',e=>{
@@ -5226,139 +5306,120 @@ async function startPlanetEnergy(p,humanIndex,runId){
     const pct=clamp(pulseScale*100,0,100);
     charges.push(pct);
 
-    chargeText.textContent=`${pct.toFixed(1)}% CHARGE`;
-    beep(pct>=97?1000:pct>=90?820:540,80,.025);
+    chargeText.textContent=`${pct.toFixed(1)}%`;
+    beep(pct>=98?1060:pct>=92?850:540,80,.025);
 
     chargeRound++;
 
-    const avg=charges.reduce((a,b)=>a+b,0)/charges.length;
-    energyEl.textContent=`${avg.toFixed(1)}%`;
+    const currentAvg=charges.reduce((a,b)=>a+b,0)/charges.length;
+    energyEl.textContent=`${currentAvg.toFixed(1)}%`;
 
     if(chargeRound<3){
       setTimeout(()=>{
         if(isGameRunValid(runId))startChargeRound();
-      },620);
+      },520);
       return;
     }
 
     finalCharge=charges.reduce((a,b)=>a+b,0)/3;
     energyEl.textContent=`${finalCharge.toFixed(1)}%`;
 
-    // Final ball can become almost the whole gameplay view.
-    const rect=chargeScene.getBoundingClientRect();
-    const maxDiameter=Math.min(rect.width*.92,rect.height*.69);
-    const diameter=72+(maxDiameter-72)*Math.pow(finalCharge/100,1.15);
-
-    finalBall.style.width=`${diameter}px`;
-    finalBall.style.height=`${diameter}px`;
-    finalBall.classList.add('show');
-
-    if(finalCharge>=90)chargeScene.classList.add('camera-out');
-    if(finalCharge>=98)chargeScene.classList.add('planet-max');
-
     gauge.classList.add('finished');
     pulse.style.opacity='0';
     chargeBtn.classList.add('hidden');
-    fireBtn.classList.remove('hidden');
-    chargeText.textContent=finalCharge>=98?'この星を..！ MAX ENERGY':'ENERGY READY';
 
-    beep(finalCharge>=98?1080:760,140,.035);
+    applyFinalOrbSize();
+
+    fireBtn.classList.remove('hidden');
+    chargeText.textContent='エネルギーをそのまま放て！';
+
+    beep(finalCharge>=97?1100:780,150,.035);
   },{passive:false});
 
   async function launchEnergy(){
     if(finished||!isGameRunValid(runId))return;
-    fireBtn.disabled=true;
 
-    // Energy rises above MOB first, then the horizontal launch starts.
-    finalBall.classList.add('rise');
-    chargeText.textContent='ENERGY UP';
-    beep(820,100,.03);
-    await wait(520);
+    fireBtn.disabled=true;
+    fireBtn.classList.add('hidden');
+    gauge.classList.add('launching');
+    chargeText.textContent='';
+
+    showCinematic('放て！！',650);
+    beep(980,120,.04);
+
+    // Same charged orb rises a little, then flies right. It is never replaced.
+    orb.classList.add('launch-ready');
+    await wait(420);
 
     if(!isGameRunValid(runId))return;
 
-    chargeScene.classList.add('hidden');
-    fireBtn.classList.add('hidden');
-    flightView.classList.remove('hidden');
+    stage.classList.add('flight-mode');
+    orb.classList.add('flying');
 
-    const vw=flightView.clientWidth;
-    const vh=flightView.clientHeight;
-    const worldW=6400;
+    const vw=stage.clientWidth;
+    const vh=stage.clientHeight;
+    const orbDiameter=orb.getBoundingClientRect().width;
 
-    world.style.width=`${worldW}px`;
+    const distanceKm=Math.round(Math.pow(finalCharge/100,2.0)*1000)/10;
+    const travelPx=distanceKm/100*(worldW-850);
 
-    const buildings=[];
-    let bx=430;
-    for(let i=0;i<25;i++){
-      const w=randi(76,128);
-      const h=randi(135,330);
+    let startX=parseFloat(orb.style.left)||mob.offsetLeft+mob.offsetWidth/2;
+    let energyX=startX;
+    const startTop=parseFloat(orb.style.top)||110;
 
-      buildings.push({x:bx,w,h,destroyed:false});
-      bx+=randi(190,275);
+    // High energy receives even more camera pull-out, making MOB truly tiny.
+    const chargePull=clamp((finalCharge-72)/28,0,1);
+    const flightScale=1-chargePull*.38;
+    camera.style.setProperty('--planet-camera-scale',flightScale.toFixed(3));
+
+    if(finalCharge>=96){
+      mob.classList.add('bean-size');
     }
 
-    buildingLayer.innerHTML=buildings.map((b,i)=>`
-      <div class="planet-building b${i%4}" style="left:${b.x}px;width:${b.w}px;height:${b.h}px">
-        <div class="planet-windows"></div>
-      </div>`).join('');
-
-    const buildingEls=[...buildingLayer.children];
-
-    const distanceKm=Math.round(Math.pow(finalCharge/100,2.05)*1000)/10;
-    const travelPx=distanceKm/100*(worldW-620);
-
-    const ballDiameter=Math.min(
-      Math.max(70,vw*(.19+.50*Math.pow(finalCharge/100,1.2))),
-      vh*.70
-    );
-
-    flightBall.style.width=`${ballDiameter}px`;
-    flightBall.style.height=`${ballDiameter}px`;
-
-    let energyX=185;
-    const energyY=Math.max(42,vh*.16);
-    flightBall.style.left=`${energyX}px`;
-    flightBall.style.top=`${energyY}px`;
-
-    if(finalCharge>=92)flightView.classList.add('camera-out');
-
     const start=performance.now();
-    const duration=1300+distanceKm/100*3600;
-
-    flightBanner.textContent='放て！！';
-    setTimeout(()=>{
-      if(isGameRunValid(runId))flightBanner.textContent='BUILDING BREAK!';
-    },520);
+    const duration=1150+distanceKm/100*3600;
 
     await new Promise(resolve=>{
       const fly=now=>{
         if(!isGameRunValid(runId)){resolve();return;}
 
         const t=clamp((now-start)/duration,0,1);
-        const eased=1-Math.pow(1-t,2.2);
+        const eased=1-Math.pow(1-t,2.05);
 
-        energyX=185+travelPx*eased;
-        flightBall.style.left=`${energyX}px`;
+        energyX=startX+travelPx*eased;
+
+        orb.style.left=`${energyX}px`;
+        // Slight cinematic wave, but remains high above the city.
+        orb.style.top=`${startTop+Math.sin(t*Math.PI*3)*10}px`;
 
         const km=distanceKm*eased;
         distanceEl.textContent=`${km.toFixed(1)} km`;
 
-        const radius=ballDiameter*.46;
+        const radius=orbDiameter*.45;
 
         buildings.forEach((b,i)=>{
           if(b.destroyed)return;
 
           const center=b.x+b.w/2;
-          if(Math.abs(center-energyX)<radius+b.w*.40){
+          if(Math.abs(center-energyX)<radius+b.w*.42){
             b.destroyed=true;
             buildingEls[i].classList.add('destroyed');
-            beep(160+randi(0,70),35,.009);
+            buildingEls[i].style.setProperty('--break-dir',Math.random()<.5?-1:1);
+            beep(135+randi(0,95),30,.008);
+
+            const debris=document.createElement('i');
+            debris.className='planet-debris-burst';
+            debris.style.left=`${center}px`;
+            debris.style.bottom=`${46+b.h*.38}px`;
+            world.appendChild(debris);
+            setTimeout(()=>debris.remove(),650);
           }
         });
 
-        // Camera follows energy. It never flies out of view.
-        const cam=clamp(energyX-vw*.40,0,worldW-vw);
-        world.style.transform=`translateX(${-cam}px)`;
+        // Camera follows the exact same orb.
+        const scaledVw=vw/flightScale;
+        const camX=clamp(energyX-scaledVw*.39,0,worldW-scaledVw);
+        camera.style.setProperty('--planet-cam-x',`${-camX}px`);
 
         if(t<1){
           requestAnimationFrame(fly);
@@ -5374,9 +5435,14 @@ async function startPlanetEnergy(p,humanIndex,runId){
     finished=true;
     state.records.planetEnergy[p.id]=distanceKm;
     distanceEl.textContent=`${distanceKm.toFixed(1)} km`;
-    flightBanner.textContent=distanceKm>=99.9?'100km PLANET ENERGY!':`${distanceKm.toFixed(1)}km`;
 
-    beep(distanceKm>=99?1050:distanceKm>=80?880:650,150,.035);
+    stage.classList.add('impact-finish');
+    showCinematic(
+      distanceKm>=99.9?'100.0 km!!':`${distanceKm.toFixed(1)} km!!`,
+      1000
+    );
+
+    beep(distanceKm>=99?1080:distanceKm>=80?900:650,160,.04);
 
     setTimeout(()=>{
       if(isGameRunValid(runId)){
@@ -5386,7 +5452,7 @@ async function startPlanetEnergy(p,humanIndex,runId){
           `ENERGY ${finalCharge.toFixed(1)}%`
         );
       }
-    },900);
+    },1150);
   }
 
   fireBtn.addEventListener('pointerdown',e=>{
@@ -5409,24 +5475,20 @@ function scoreHeadSpinTrace(points,w,h){
   let radialError=0;
   let totalAngle=0;
   let netAngle=0;
-
   const angles=[];
 
   for(const pt of points){
     const dx=pt.x-cx;
     const dy=pt.y-cy;
     const r=Math.hypot(dx,dy);
-
     radialError+=Math.abs(r-targetR)/targetR;
     angles.push(Math.atan2(dy,dx));
   }
 
   for(let i=1;i<angles.length;i++){
     let d=angles[i]-angles[i-1];
-
     while(d>Math.PI)d-=Math.PI*2;
     while(d<-Math.PI)d+=Math.PI*2;
-
     totalAngle+=Math.abs(d);
     netAngle+=d;
   }
@@ -5436,7 +5498,6 @@ function scoreHeadSpinTrace(points,w,h){
   const radialScore=clamp(100-radialError*260,0,100);
   const coverage=clamp(totalAngle/(Math.PI*2),0,1);
   const coverageScore=coverage*100;
-
   const directionScore=totalAngle>0
     ? clamp(Math.abs(netAngle)/totalAngle,0,1)*100
     : 0;
@@ -5445,7 +5506,6 @@ function scoreHeadSpinTrace(points,w,h){
   const end=points[points.length-1];
   const closeDist=Math.hypot(start.x-end.x,start.y-end.y);
   const closeScore=clamp(100-closeDist/(targetR*1.45)*100,0,100);
-
   const tooMuchPenalty=Math.max(0,(totalAngle/(Math.PI*2)-1.22)*42);
 
   return clamp(
@@ -5468,7 +5528,7 @@ async function startHeadSpinner(p,humanIndex,runId){
   let finished=false;
   const matches=[];
 
-  screen.innerHTML=`<div class="headspin-shell">
+  screen.innerHTML=`<div class="headspin-shell headspin-v100">
     <div class="game-head">
       <div><span class="kicker">${esc(p.name)}</span><h2>モブくんはヘッドスピナー</h2></div>
       <div class="game-badge">${playBadge(humanIndex)}</div>
@@ -5479,8 +5539,10 @@ async function startHeadSpinner(p,humanIndex,runId){
       <div><span>ENERGY</span><b id="headspinEnergy">0%</b></div>
     </div>
 
-    <div id="headspinStage" class="headspin-stage">
-      <div class="headspin-guide">
+    <div id="headspinStage" class="headspin-stage-v100">
+      <div class="headspin-floor"></div>
+
+      <div class="headspin-guide-v100">
         <svg id="headspinSvg" viewBox="0 0 300 300" preserveAspectRatio="none">
           <circle cx="150" cy="150" r="94" class="headspin-guide-circle"></circle>
           <polyline id="headspinPath" points="" class="headspin-user-path"></polyline>
@@ -5488,14 +5550,32 @@ async function startHeadSpinner(p,humanIndex,runId){
         <div class="headspin-arrow">↻</div>
       </div>
 
-      <div id="headspinMob" class="headspin-mob" style="background-image:url('${p.img}')"></div>
-      <div id="headspinMessage" class="headspin-message">円を1周なぞる</div>
+      <div id="headspinFx" class="headspin-fx">
+        <div class="headspin-speed-ring ring1"></div>
+        <div class="headspin-speed-ring ring2"></div>
+        <div class="headspin-speed-ring ring3"></div>
+        <i class="headspin-speed-line l1"></i>
+        <i class="headspin-speed-line l2"></i>
+        <i class="headspin-speed-line l3"></i>
+        <i class="headspin-speed-line l4"></i>
+        <i class="headspin-dust d1"></i>
+        <i class="headspin-dust d2"></i>
+        <i class="headspin-dust d3"></i>
+      </div>
+
+      <div id="headspinPivot" class="headspin-pivot">
+        <div id="headspinSpinner" class="headspin-spinner">
+          <div class="headspin-figure" style="background-image:url('icon/01.png')"></div>
+        </div>
+      </div>
+
+      <div id="headspinMessage" class="headspin-message-v100">円を1周なぞる</div>
     </div>
 
     <button id="headspinSpin" class="headspin-spin hidden" type="button">スピン！</button>
 
-    <div id="headspinResult" class="headspin-result hidden">
-      <span>SPIN</span>
+    <div id="headspinResult" class="headspin-result-v100 hidden">
+      <span>HEAD SPIN</span>
       <strong id="headspinLaps">0</strong>
       <b>周</b>
     </div>
@@ -5504,7 +5584,9 @@ async function startHeadSpinner(p,humanIndex,runId){
   const stage=document.getElementById('headspinStage');
   const svg=document.getElementById('headspinSvg');
   const path=document.getElementById('headspinPath');
-  const mob=document.getElementById('headspinMob');
+  const pivot=document.getElementById('headspinPivot');
+  const spinner=document.getElementById('headspinSpinner');
+  const fx=document.getElementById('headspinFx');
   const msg=document.getElementById('headspinMessage');
   const roundEl=document.getElementById('headspinRound');
   const energyEl=document.getElementById('headspinEnergy');
@@ -5514,7 +5596,6 @@ async function startHeadSpinner(p,humanIndex,runId){
 
   function localPoint(e){
     const rect=svg.getBoundingClientRect();
-
     return {
       x:(e.clientX-rect.left)/rect.width*300,
       y:(e.clientY-rect.top)/rect.height*300
@@ -5530,13 +5611,11 @@ async function startHeadSpinner(p,humanIndex,runId){
 
   function beginTrace(e){
     if(finished||round>=3||tracing||!isGameRunValid(runId))return;
-
     e.preventDefault();
 
     tracing=true;
     pointerId=e.pointerId;
     points=[localPoint(e)];
-
     path.setAttribute('points','');
     msg.textContent=`TRACE ${round+1} / 3`;
 
@@ -5545,7 +5624,6 @@ async function startHeadSpinner(p,humanIndex,runId){
 
   function moveTrace(e){
     if(!tracing||e.pointerId!==pointerId)return;
-
     e.preventDefault();
 
     const pt=localPoint(e);
@@ -5559,8 +5637,8 @@ async function startHeadSpinner(p,humanIndex,runId){
 
   function endTrace(e){
     if(!tracing||e.pointerId!==pointerId)return;
-
     e.preventDefault();
+
     tracing=false;
 
     const score=scoreHeadSpinTrace(points,300,300);
@@ -5568,7 +5646,6 @@ async function startHeadSpinner(p,humanIndex,runId){
     round++;
 
     const avg=matches.reduce((a,b)=>a+b,0)/matches.length;
-
     energyEl.textContent=`${avg.toFixed(1)}%`;
     msg.textContent=`MATCH ${score.toFixed(1)}%`;
 
@@ -5576,21 +5653,19 @@ async function startHeadSpinner(p,humanIndex,runId){
 
     if(round<3){
       roundEl.textContent=`${round+1} / 3`;
-
       setTimeout(()=>{
         if(!isGameRunValid(runId)||finished)return;
         points=[];
         path.setAttribute('points','');
         msg.textContent='次の円をなぞる';
-      },650);
+      },620);
     }else{
       roundEl.textContent='3 / 3';
-
       setTimeout(()=>{
         if(!isGameRunValid(runId)||finished)return;
         spinBtn.classList.remove('hidden');
         msg.textContent='ENERGY READY';
-      },650);
+      },620);
     }
   }
 
@@ -5608,29 +5683,46 @@ async function startHeadSpinner(p,humanIndex,runId){
 
   spinBtn.addEventListener('pointerdown',async e=>{
     if(finished||round<3||!isGameRunValid(runId))return;
-
     e.preventDefault();
+
     finished=true;
     spinBtn.disabled=true;
+    spinBtn.classList.add('hidden');
 
     const avg=matches.reduce((a,b)=>a+b,0)/3;
     const laps=clamp(Math.round(Math.pow(avg/100,1.28)*100),0,100);
 
     result.classList.remove('hidden');
-    mob.classList.add('super-spin');
+    fx.classList.add('active');
+    pivot.classList.add('spinning');
     msg.textContent='SPIN!!';
 
     const start=performance.now();
-    const duration=1700;
+    const duration=1900;
+    let lastShown=-1;
 
     await new Promise(resolve=>{
       const animate=now=>{
         if(!isGameRunValid(runId)){resolve();return;}
 
         const t=clamp((now-start)/duration,0,1);
-        const shown=Math.round(laps*(1-Math.pow(1-t,2.1)));
-
+        const eased=1-Math.pow(1-t,2.25);
+        const shown=Math.round(laps*eased);
         lapsEl.textContent=shown;
+
+        // Actual visual rotation count is scaled for readability,
+        // but pivot remains exactly on the head contact point.
+        const visualTurns=eased*(8+laps*.21);
+        spinner.style.transform=`rotate(${visualTurns*360}deg)`;
+
+        // Shrink the spin radius illusion as speed builds: stays on the spot.
+        const speed=Math.min(1,t*1.5);
+        fx.style.setProperty('--spin-speed',speed.toFixed(3));
+
+        if(shown!==lastShown&&shown%10===0){
+          lastShown=shown;
+          beep(520+Math.min(390,shown*4),24,.007);
+        }
 
         if(t<1)requestAnimationFrame(animate);
         else resolve();
@@ -5640,9 +5732,13 @@ async function startHeadSpinner(p,humanIndex,runId){
 
     if(!isGameRunValid(runId))return;
 
+    spinner.style.transform=`rotate(${(8+laps*.21)*360}deg)`;
     lapsEl.textContent=laps;
+    fx.classList.add('finish-burst');
+    msg.textContent=laps>=95?'LEGEND SPIN!!':laps>=80?'SUPER SPIN!':'SPIN COMPLETE';
+
     state.records.headSpinner[p.id]=laps;
-    beep(laps>=95?1080:laps>=80?900:650,150,.035);
+    beep(laps>=95?1080:laps>=80?900:650,160,.04);
 
     setTimeout(()=>{
       if(isGameRunValid(runId)){
@@ -5652,7 +5748,7 @@ async function startHeadSpinner(p,humanIndex,runId){
           `TRACE AVG ${avg.toFixed(1)}%`
         );
       }
-    },800);
+    },900);
   },{passive:false});
 
   if(!(await countdown('HEAD SPIN',runId)))return;
