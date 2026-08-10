@@ -24,6 +24,13 @@ const PLAYERS=[
   {id:"p2",no:2,name:"プレイヤー2",cpu:false,img:"play/02.png"},
   {id:"p3",no:3,name:"プレイヤー3",cpu:false,img:"play/03.png"},
   {id:"p4",no:4,name:"プレイヤー4",cpu:false,img:"play/04.png"},
+
+  // 1 PLAYER VS CPU7 用の追加CPU。
+  // 専用play画像を増やさなくても動くよう、既存iconをアバターに利用。
+  {id:"c2",no:2,name:"CPUモブ02",cpu:true,img:"icon/02.png"},
+  {id:"c3",no:3,name:"CPUモブ03",cpu:true,img:"icon/03.png"},
+  {id:"c4",no:4,name:"CPUモブ04",cpu:true,img:"icon/04.png"},
+
   {id:"c5",no:5,name:"モブイタリアン",cpu:true,img:"play/05.PNG"},
   {id:"c6",no:6,name:"モブ中華店主",cpu:true,img:"play/06.PNG"},
   {id:"c7",no:7,name:"モブティラノ",cpu:true,img:"play/07.PNG"},
@@ -43,7 +50,7 @@ const GAMES=[
   {no:10,key:"tidy",title:"モブくん整理整頓",sub:"7体を見本の部屋へ近づける"},
   {no:11,key:"ski",title:"モブくんスキージャンプ",sub:"踏切タイミングで最大1km"},
   {no:12,key:"slot",title:"モブくんスロット",sub:"キャラクタースロットでコイン勝負"},
-  {no:13,key:"rope",title:"モブくん縄跳び",sub:"どんどん速くなる縄を跳ぶ"},
+  {no:13,key:"rope",title:"モブ跳び",sub:"横から走ってくるモブくんを飛び越える"},
   {no:14,key:"pk",title:"モブくんPK",sub:"10本のシュートを止める"},
   {no:15,key:"rhythm",title:"モブくんリズムタップ",sub:"4人の跳ねるリズムを再現"},
   {no:16,key:"cut",title:"モブくんカットゲーム",sub:"指定%を感覚で切り分ける"},
@@ -57,6 +64,20 @@ const MODES={
   tag:{name:"2対2 タッグ",short:"P1・P2 VS P3・P4",participants:["p1","p2","p3","p4"],team:true,points:[5,3,1,0],teams:{A:["p1","p2"],B:["p3","p4"]},teamNames:{A:"P1 + P2",B:"P3 + P4"}},
   humansVsCpu:{name:"4人 VS CPU4人",short:"PLAYER TEAM VS CPU TEAM",participants:["p1","p2","p3","p4","c5","c6","c7","c8"],team:true,points:[10,8,6,4,3,2,1,0],teams:{A:["p1","p2","p3","p4"],B:["c5","c6","c7","c8"]},teamNames:{A:"PLAYER TEAM",B:"CPU TEAM"}},
   score4:{name:"100点 スコアバトル",short:"各ゲーム0〜100点の合計勝負",participants:["p1","p2","p3","p4"],team:false,points:[],performance:true},
+
+  soloCpu7:{name:"1人 VS CPU7人",short:"PLAYER 1人 + CPU7人",participants:["p1","c2","c3","c4","c5","c6","c7","c8"],team:false,points:[10,8,6,4,3,2,1,0]},
+
+  scoreTag:{
+    name:"100点 タッグバトル",
+    short:"P1・P2 VS P3・P4 / 各ゲーム0〜100点",
+    participants:["p1","p2","p3","p4"],
+    team:true,
+    points:[],
+    performance:true,
+    teams:{A:["p1","p2"],B:["p3","p4"]},
+    teamNames:{A:"P1 + P2",B:"P3 + P4"}
+  },
+
   free:{name:"1人フリープレイ",short:"好きなゲームだけ遊ぶ",participants:["p1"],team:false,points:[0]}
 };
 
@@ -137,13 +158,15 @@ function renderHome(){
       <div class="hero-mark">MOB</div>
     </section>
     <section class="panel">
-      <div class="panel-head"><h3>MODE SELECT</h3><span class="tag">5 MODES</span></div>
+      <div class="panel-head"><h3>MODE SELECT</h3><span class="tag">7 MODES</span></div>
       <div class="mode-grid">
         <button class="mode-card" data-mode="solo4"><span class="mode-no">MODE 01</span><b>4人 個人戦</b><span>プレイヤー1〜4で個人順位を競う</span></button>
         <button class="mode-card" data-mode="solo8"><span class="mode-no">MODE 02</span><b>8人 個人戦</b><span>プレイヤー4人 + CPU4人</span></button>
         <button class="mode-card" data-mode="tag"><span class="mode-no">MODE 03</span><b>2対2 タッグ</b><span>P1・P2 VS P3・P4</span></button>
         <button class="mode-card" data-mode="humansVsCpu"><span class="mode-no">MODE 04</span><b>4人 VS CPU4人</b><span>PLAYER TEAM VS CPU TEAM</span></button>
         <button class="mode-card score-mode-card" data-mode="score4"><span class="mode-no">MODE 05</span><b>100点 スコアバトル</b><span>各ゲーム0〜100点 / 選択ゲーム数で最大点が変化</span></button>
+        <button class="mode-card" data-mode="soloCpu7"><span class="mode-no">MODE 06</span><b>1人 VS CPU7人</b><span>P1ひとりでCPU7人に挑戦</span></button>
+        <button class="mode-card score-mode-card" data-mode="scoreTag"><span class="mode-no">MODE 07</span><b>100点 タッグバトル</b><span>P1・P2 VS P3・P4 / 得点合計勝負</span></button>
       </div>
     </section>
     <section class="panel free-play-panel">
@@ -326,12 +349,12 @@ function renderModeLobby(){
       <div><b>モブくん整理整頓</b><span>一致率0〜100%=そのまま点数</span></div>
       <div><b>モブくんスキージャンプ</b><span>1000m=100 / 200m以下=0</span></div>
       <div><b>モブくんスロット</b><span>3000コイン以上=100 / 1000以下=0</span></div>
-      <div><b>モブくん縄跳び</b><span>30回以上=100 / 0回=0</span></div>
+      <div><b>モブ跳び</b><span>30回以上=100 / 0回=0</span></div>
       <div><b>モブくんPK</b><span>10セーブ=100 / 1セーブ=10</span></div>
       <div><b>モブくんリズムタップ</b><span>リズム精度0〜100</span></div>
       <div><b>モブくんカットゲーム</b><span>3回の誤差から0〜100</span></div>
-      <div><b>モブくん木登り</b><span>400m以上=100 / 0m=0</span></div>
-      <div><b>お使いモブくん</b><span>1000円使用=100 / 0円=0</span></div>
+      <div><b>モブくん木登り</b><span>700m以上=100 / 0m=0</span></div>
+      <div><b>お使いモブくん</b><span>残金0円=100 / 10円=90 / 100円以上=0</span></div>
     </div>`;
 
   screen.innerHTML=`
@@ -386,8 +409,8 @@ function scoreRuleForGame(index){
     "10本セーブ=100点 / 1本=10点",
     "リズム判定0〜100点",
     "3回のカット精度を0〜100点化",
-    "400m以上=100点 / 0m=0点",
-    "1000円使用=100点 / 0円=0点"
+    "700m以上=100点 / 0m=0点",
+    "残金0円=100点 / 残金10円=90点 / 残金100円以上=0点"
   ][index];
 }
 
@@ -422,7 +445,7 @@ function showGameIntro(index){
   }else if(index===11){
     rules=`<li>1000コイン開始 / 1回100コイン / 10秒。</li><li>記憶力ゲームの10キャラクターがリールに登場。</li><li>最初の2リールはかなり揃いやすく、3つ目が勝負。</li><li>同じキャラクター3つで配当。</li>`;
   }else if(index===12){
-    rules=`<li>3・2・1後、縄が足元を通る瞬間にタップしてジャンプ。</li><li>成功するたび縄が速くなります。</li><li>引っ掛かったら終了。</li><li>30回で100点。</li>`;
+    rules=`<li>3・2・1後、横から様々なモブくんが走ってきます。</li><li>ぶつかる直前にタップしてジャンプ。</li><li>飛び越えるたび、相手の速度と出現テンポが上がります。</li><li>接触したら即終了。30体回避で100点。</li>`;
   }else if(index===13){
     rules=`<li>3・2・1後、様々なモブくんが合計10本シュート。</li><li>LEFT / CENTER / RIGHTを選んでキーパーを飛ばします。</li><li>10本全部止めれば100点。</li>`;
   }else if(index===14){
@@ -430,7 +453,7 @@ function showGameIntro(index){
   }else if(index===15){
     rules=`<li>「右側を○%残せ！」と表示。</li><li>長い棒を縦スワイプしてカット。</li><li>右側に残った割合と指定%の誤差を判定。</li><li>3回の平均精度で0〜100点。</li>`;
   }else if(index===16){
-    rules=`<li>3・2・1後、10秒間木登り。</li><li>短いゲージのマーカーが左右へ高速移動。</li><li>中央に近い時ほど1タップで大きく登ります。</li><li>400m以上で100点。</li>`;
+    rules=`<li>3・2・1後、10秒間木登り。</li><li>短いゲージのマーカーが左右へ移動。</li><li>中央に近い時ほど1タップで大きく登ります。</li><li>700m以上で100点。</li>`;
   }else{
     rules=`<li>1000円を持って3・2・1スタート。</li><li>食材・お菓子など100種類から毎回30商品。</li><li>3円〜250円の商品をタップ購入。</li><li>10秒で1000円ぴったり使い切れば100点。</li>`;
   }
@@ -2775,134 +2798,148 @@ async function startJumpRope(p,humanIndex){
   let count=0;
   let finished=false;
   let jumpingUntil=0;
-  let ropeRAF=null;
-  let period=1180;
-  let angle=-Math.PI*.52;
-  let lastNow=0;
-  let previousPhase=0;
-  let collisionReadyAt=0;
+  let animRAF=null;
+  let incoming=null;
+  let nextSpawnAt=0;
+  let startAt=0;
 
-  screen.innerHTML=`<div class="rope-shell">
+  screen.innerHTML=`<div class="mob-jump-shell">
     <div class="game-head">
-      <div><span class="kicker">${esc(p.name)}</span><h2>モブくん縄跳び</h2></div>
+      <div><span class="kicker">${esc(p.name)}</span><h2>モブ跳び</h2></div>
       <div class="game-badge">${playBadge(humanIndex)}</div>
     </div>
 
     <div class="rope-hud">
-      <div><span>JUMP</span><b id="ropeCount">0</b></div>
+      <div><span>DODGE</span><b id="ropeCount">0</b></div>
       <div><span>SPEED</span><b id="ropeSpeed">1.0x</b></div>
     </div>
 
-    <button id="ropeStage" class="rope-stage rope-stage-v88" type="button">
-      <div class="rope-floor-shadow"></div>
-
-      <div class="rope-turner left">
-        <span></span><i></i>
-      </div>
-      <div class="rope-turner right">
-        <span></span><i></i>
-      </div>
-
-      <div id="ropeLoop" class="rope-loop-v88"></div>
-      <div id="ropeMob" class="rope-mob rope-mob-v88"></div>
-
-      <div id="ropeReady" class="rope-ready-v88">READY</div>
+    <button id="mobJumpStage" class="mob-jump-stage" type="button">
+      <div class="mob-jump-ground"></div>
+      <div id="jumpPlayer" class="jump-player"></div>
+      <div id="incomingRunner" class="incoming-runner"></div>
+      <div id="mobJumpReady" class="mob-jump-ready">READY</div>
     </button>
 
-    <p id="ropeHint" class="hint">縄が足元を通る瞬間にタップしてジャンプ。</p>
+    <p id="ropeHint" class="hint">右から走ってくるモブくんをタップジャンプで飛び越える。</p>
   </div>`;
 
-  const stage=document.getElementById("ropeStage");
-  const mob=document.getElementById("ropeMob");
-  const rope=document.getElementById("ropeLoop");
-  const ready=document.getElementById("ropeReady");
+  const stage=document.getElementById("mobJumpStage");
+  const player=document.getElementById("jumpPlayer");
+  const runner=document.getElementById("incomingRunner");
+  const ready=document.getElementById("mobJumpReady");
   const countEl=document.getElementById("ropeCount");
   const speedEl=document.getElementById("ropeSpeed");
   const hint=document.getElementById("ropeHint");
 
   stage.addEventListener("pointerdown",e=>{
-    if(finished||performance.now()<collisionReadyAt-750)return;
+    if(finished)return;
     e.preventDefault();
 
-    jumpingUntil=performance.now()+500;
-    mob.classList.remove("jump");
-    void mob.offsetWidth;
-    mob.classList.add("jump");
+    jumpingUntil=performance.now()+510;
+    player.classList.remove("jump");
+    void player.offsetWidth;
+    player.classList.add("jump");
     beep(640,28,.012);
   },{passive:false});
+
+  function spawn(now){
+    const stageW=stage.clientWidth;
+    const speed=Math.min(1220,430+count*27);
+    const icon=randi(1,10);
+
+    incoming={
+      x:stageW+58,
+      speed,
+      icon,
+      passed:false,
+      started:now
+    };
+
+    runner.style.display="block";
+    runner.style.backgroundImage=`url("icon/${String(icon).padStart(2,"0")}.png")`;
+    runner.style.transform=`translateX(${incoming.x}px)`;
+    runner.classList.remove("hit");
+
+    speedEl.textContent=`${(speed/430).toFixed(1)}x`;
+  }
 
   function finish(){
     if(finished)return;
     finished=true;
-    if(ropeRAF)cancelAnimationFrame(ropeRAF);
+    if(animRAF)cancelAnimationFrame(animRAF);
 
     state.records.rope[p.id]=count;
-    setTimeout(()=>recordScreen(12,p,humanIndex,`${count}<small>回</small>`,`JUMP ROPE`),360);
+    setTimeout(()=>recordScreen(12,p,humanIndex,`${count}<small>体</small>`,`MOB JUMP`),320);
   }
 
-  await countdown("JUMP ROPE");
+  await countdown("MOB JUMP");
   if(!document.body.contains(stage))return;
 
-  // 最初の縄が足元へ来るまで約1.35秒確保。
-  collisionReadyAt=performance.now()+1350;
+  startAt=performance.now();
+  nextSpawnAt=startAt+950;
   ready.textContent="GO!";
   ready.classList.add("go");
-  setTimeout(()=>ready.classList.remove("go"),450);
+  setTimeout(()=>ready.classList.remove("go"),430);
 
-  lastNow=performance.now();
-  previousPhase=((angle%(Math.PI*2))+Math.PI*2)%(Math.PI*2);
+  let last=performance.now();
 
   const frame=now=>{
     if(finished)return;
 
-    const dt=Math.min(40,now-lastNow);
-    lastNow=now;
+    const dt=Math.min(34,now-last);
+    last=now;
 
-    // Speed changes smoothly with each successful jump.
-    angle+=dt/period*Math.PI*2;
-    const phase=((angle%(Math.PI*2))+Math.PI*2)%(Math.PI*2);
+    if(!incoming&&now>=nextSpawnAt){
+      spawn(now);
+    }
 
-    // Simulate one real rope loop rotating around the centered MOB.
-    // At the back/top it becomes a thin high arc; at the front/feet it becomes wide and low.
-    const depth=(Math.cos(angle)+1)/2; // 1=front, 0=back
-    const centerY=48;
-    const vertical=Math.sin(angle);
-    const ropeTop=centerY+vertical*34;
-    const ropeScaleY=.12+Math.abs(Math.cos(angle))*.88;
-    const ropeScaleX=.72+depth*.28;
+    if(incoming){
+      incoming.x-=incoming.speed*dt/1000;
+      runner.style.transform=`translateX(${incoming.x}px)`;
 
-    rope.style.top=`${ropeTop}%`;
-    rope.style.transform=`translate(-50%,-50%) scale(${ropeScaleX},${ropeScaleY})`;
-    rope.style.opacity=String(.42+depth*.48);
-    rope.style.zIndex=depth>.50?"8":"3";
+      const stageRect=stage.getBoundingClientRect();
+      const playerRect=player.getBoundingClientRect();
+      const runnerRect=runner.getBoundingClientRect();
 
-    // Danger point: rope passes low and in front of the feet.
-    const dangerPhase=Math.PI*.50;
-    const crossed=previousPhase<dangerPhase&&phase>=dangerPhase;
+      const px=playerRect.left-stageRect.left;
+      const pw=playerRect.width;
+      const rx=runnerRect.left-stageRect.left;
+      const rw=runnerRect.width;
 
-    if(now>=collisionReadyAt&&crossed){
-      if(jumpingUntil>=now){
-        count++;
-        countEl.textContent=count;
-        period=Math.max(360,1180-count*25);
-        speedEl.textContent=`${(1180/period).toFixed(1)}x`;
-        hint.textContent=`CLEAR ${count}!`;
-        beep(860,45,.018);
-      }else{
-        hint.textContent="HIT!";
-        rope.classList.add("hit");
-        mob.classList.add("hurt");
-        beep(150,180,.035);
-        finish();
-        return;
+      const overlap=rx < px+pw*.76 && rx+rw > px+pw*.24;
+
+      if(overlap&&!incoming.passed){
+        if(jumpingUntil>=now){
+          incoming.passed=true;
+          count++;
+          countEl.textContent=count;
+          hint.textContent=`CLEAR ${count}!`;
+          beep(850,42,.018);
+        }else{
+          runner.classList.add("hit");
+          player.classList.add("hurt");
+          hint.textContent="HIT!";
+          beep(145,180,.035);
+          finish();
+          return;
+        }
+      }
+
+      if(incoming.x<-90){
+        incoming=null;
+        runner.style.display="none";
+
+        // More successful jumps = shorter gap between runners.
+        const gap=Math.max(190,700-count*14);
+        nextSpawnAt=now+gap;
       }
     }
 
-    previousPhase=phase;
-    ropeRAF=requestAnimationFrame(frame);
+    animRAF=requestAnimationFrame(frame);
   };
 
-  ropeRAF=requestAnimationFrame(frame);
+  animRAF=requestAnimationFrame(frame);
 }
 
 // GAME 14 -------------------------------------------------
@@ -3020,7 +3057,7 @@ async function startPK(p,humanIndex){
 
     await new Promise(resolve=>{
       const frame=now=>{
-        const t=clamp((now-start)/500,0,1);
+        const t=clamp((now-start)/290,0,1);
         ball.style.transform=`translate(calc(-50% + ${targetX*t}px),${-150*t}px) scale(${1-.2*t})`;
 
         if(t<1)requestAnimationFrame(frame);
@@ -3144,6 +3181,11 @@ async function startRhythmTap(p,humanIndex){
     await wait(300);
     await countdown("TAP");
 
+    // 本番側にも同じ4拍を必ず入れる。
+    // 見本を覚えた後にこの4拍を聞いてから再現するのでテンポを取り直せる。
+    await fourBeatCountIn(pattern.beat);
+    await wait(120);
+
     message.textContent="YOUR TURN";
     mobs.forEach(b=>b.disabled=false);
 
@@ -3235,8 +3277,10 @@ async function startCutGame(p,humanIndex){
 
     <div id="cutArea" class="cut-area">
       <div id="cutBar" class="cut-bar">
+        <div id="cutLeftPiece" class="cut-left-piece"></div>
         <div id="cutRemain" class="cut-remain"></div>
         <div id="cutKnife" class="cut-knife"></div>
+        <div id="cutImpact" class="cut-impact">CUT!</div>
       </div>
       <div class="cut-swipe-guide">↑ SWIPE ↑</div>
     </div>
@@ -3257,7 +3301,9 @@ async function startCutGame(p,humanIndex){
   const area=document.getElementById("cutArea");
   const bar=document.getElementById("cutBar");
   const remain=document.getElementById("cutRemain");
+  const leftPiece=document.getElementById("cutLeftPiece");
   const knife=document.getElementById("cutKnife");
+  const impact=document.getElementById("cutImpact");
   const targetEl=document.getElementById("cutTarget");
   const resultEl=document.getElementById("cutResult");
   const roundEl=document.getElementById("cutRound");
@@ -3291,9 +3337,15 @@ async function startCutGame(p,humanIndex){
     resultEl.textContent="縦スワイプでCUT";
     remain.style.left="0";
     remain.style.width="100%";
+    remain.classList.remove("cut-right-kick");
+    leftPiece.style.width="0";
+    leftPiece.classList.remove("cut-left-fall");
     knife.style.display="none";
+    knife.classList.remove("slash");
+    impact.classList.remove("show");
 
-    await countdown(`CUT ${round+1}`);
+    // カウントダウン無し。指定%が表示されたらすぐ切れる。
+    await wait(180);
 
     const result=await new Promise(resolve=>{
       const down=e=>{
@@ -3333,8 +3385,22 @@ async function startCutGame(p,humanIndex){
 
     knife.style.display="block";
     knife.style.left=`${result.cutPercent}%`;
+    knife.classList.add("slash");
+
+    leftPiece.style.width=`${result.cutPercent}%`;
     remain.style.left=`${result.cutPercent}%`;
     remain.style.width=`${100-result.cutPercent}%`;
+
+    // カット位置を見せてから左右が分離。
+    impact.style.left=`${result.cutPercent}%`;
+    impact.classList.add("show");
+    bar.classList.remove("cut-shake");
+    void bar.offsetWidth;
+    bar.classList.add("cut-shake");
+    leftPiece.classList.add("cut-left-fall");
+    remain.classList.add("cut-right-kick");
+    beep(760,45,.024);
+    await wait(430);
 
     const avg=Math.round(scores.reduce((a,b)=>a+b,0)/scores.length);
     scoreEl.textContent=avg;
@@ -3656,7 +3722,7 @@ function simulateOneCpu(gameIndex,p){
   }else if(gameIndex===15){
     state.records.cut[p.id]=ultra?randi(94,100):randi(60,92);
   }else if(gameIndex===16){
-    state.records.climb[p.id]=Math.round((ultra?rand(400,500):rand(220,410))*10);
+    state.records.climb[p.id]=Math.round((ultra?rand(690,830):rand(390,720))*10);
   }else{
     state.records.errand[p.id]=ultra?randi(990,1000):randi(760,995);
   }
@@ -3687,8 +3753,8 @@ function performancePoints(gameIndex,v){
   if(gameIndex===13)return clamp(Math.round(v*10),0,100);
   if(gameIndex===14)return clamp(Math.round(v),0,100);
   if(gameIndex===15)return clamp(Math.round(v),0,100);
-  if(gameIndex===16)return clamp(Math.round((v/10)/400*100),0,100);
-  return clamp(Math.round(v/10),0,100);
+  if(gameIndex===16)return clamp(Math.round((v/10)/700*100),0,100);
+  return clamp(Math.round(v-900),0,100);
 }
 
 function rankRecords(gameIndex){

@@ -2425,3 +2425,199 @@ body{touch-action:manipulation}
   align-self:center!important;
   height:46px!important;
 }
+
+
+/* =========================================================
+   V8.9 MODE SELECT
+   ========================================================= */
+.mode-grid{
+  grid-template-columns:repeat(2,minmax(0,1fr));
+}
+@media(max-width:380px){
+  .mode-grid{grid-template-columns:1fr}
+}
+
+/* =========================================================
+   V8.9 MOB JUMP
+   ========================================================= */
+.mob-jump-shell{
+  width:min(100%,650px);
+  height:100%;
+  margin:0 auto;
+  display:flex;
+  flex-direction:column;
+}
+.mob-jump-stage{
+  flex:1;
+  min-height:0;
+  position:relative;
+  overflow:hidden;
+  border:4px solid var(--ink);
+  border-radius:20px;
+  background:linear-gradient(#e8f8ff 0 74%,#ebd7aa 74% 100%);
+  touch-action:none;
+}
+.mob-jump-ground{
+  position:absolute;
+  left:0;right:0;
+  bottom:58px;
+  height:4px;
+  background:var(--ink);
+}
+.jump-player{
+  position:absolute;
+  z-index:7;
+  left:30%;
+  bottom:61px;
+  width:76px;
+  height:76px;
+  transform:translateX(-50%);
+  background:url("icon/01.png") center/contain no-repeat;
+}
+.jump-player.jump{
+  animation:mobJumpPlayer .51s ease-out;
+}
+.jump-player.hurt{
+  transform:translateX(-50%) rotate(25deg);
+  opacity:.52;
+}
+@keyframes mobJumpPlayer{
+  0%,100%{transform:translateX(-50%) translateY(0)}
+  48%{transform:translateX(-50%) translateY(-92px)}
+}
+.incoming-runner{
+  display:none;
+  position:absolute;
+  z-index:6;
+  left:0;
+  bottom:61px;
+  width:64px;
+  height:64px;
+  background-position:center;
+  background-size:contain;
+  background-repeat:no-repeat;
+  will-change:transform;
+}
+.incoming-runner.hit{
+  filter:drop-shadow(0 0 5px rgba(230,75,67,.7));
+}
+.mob-jump-ready{
+  position:absolute;
+  z-index:20;
+  left:50%;
+  top:18%;
+  transform:translateX(-50%);
+  font-size:15px;
+  font-weight:1000;
+  opacity:.55;
+}
+.mob-jump-ready.go{
+  animation:ropeGo .43s ease;
+}
+
+/* =========================================================
+   V8.9 SLOT LAYOUT FIX
+   The 174%-height reel track is centered around the reel window.
+   ========================================================= */
+.slot-reel-v88{
+  position:relative!important;
+  overflow:hidden!important;
+}
+.slot-reel-track{
+  top:-37%!important;
+  bottom:auto!important;
+  height:174%!important;
+  left:0!important;
+  right:0!important;
+  display:grid!important;
+  grid-template-rows:27% 46% 27%!important;
+  align-items:stretch!important;
+  justify-items:center!important;
+}
+.slot-reel-track .slot-symbol{
+  align-self:stretch!important;
+  min-height:0!important;
+}
+.slot-peek{
+  align-self:stretch!important;
+  min-height:0!important;
+}
+.slot-center-line.top{top:27%!important}
+.slot-center-line.bottom{bottom:27%!important}
+
+/* =========================================================
+   V8.9 CUT EFFECT
+   ========================================================= */
+.cut-bar{
+  overflow:visible!important;
+}
+.cut-left-piece{
+  position:absolute;
+  z-index:2;
+  left:0;
+  top:0;
+  bottom:0;
+  width:0;
+  border-radius:8px 0 0 8px;
+  background:#c5905f;
+  transform-origin:right center;
+}
+.cut-left-piece.cut-left-fall{
+  animation:cutLeftFall .42s cubic-bezier(.25,.75,.35,1) forwards;
+}
+.cut-remain{
+  z-index:3;
+  transform-origin:left center;
+}
+.cut-remain.cut-right-kick{
+  animation:cutRightKick .38s ease-out;
+}
+.cut-knife.slash{
+  animation:cutKnifeSlash .28s ease-out;
+}
+.cut-impact{
+  position:absolute;
+  z-index:9;
+  top:50%;
+  transform:translate(-50%,-50%) scale(.5);
+  border:3px solid var(--ink);
+  border-radius:999px;
+  background:var(--yellow);
+  padding:5px 9px;
+  font-size:13px;
+  font-weight:1000;
+  opacity:0;
+  pointer-events:none;
+}
+.cut-impact.show{
+  animation:cutImpact .42s ease-out forwards;
+}
+.cut-bar.cut-shake{
+  animation:cutBarShake .20s linear;
+}
+@keyframes cutLeftFall{
+  0%{transform:translate(0,0) rotate(0);opacity:1}
+  55%{transform:translate(-10px,10px) rotate(-5deg);opacity:1}
+  100%{transform:translate(-28px,78px) rotate(-17deg);opacity:.32}
+}
+@keyframes cutRightKick{
+  0%{transform:translateX(0)}
+  45%{transform:translateX(12px)}
+  100%{transform:translateX(0)}
+}
+@keyframes cutKnifeSlash{
+  0%{transform:translateX(-50%) scaleY(.2);opacity:0}
+  35%{transform:translateX(-50%) scaleY(1.3);opacity:1}
+  100%{transform:translateX(-50%) scaleY(1);opacity:.8}
+}
+@keyframes cutImpact{
+  0%{opacity:0;transform:translate(-50%,-50%) scale(.5)}
+  35%{opacity:1;transform:translate(-50%,-50%) scale(1.22)}
+  100%{opacity:0;transform:translate(-50%,-80%) scale(.9)}
+}
+@keyframes cutBarShake{
+  25%{transform:translateX(-4px)}
+  50%{transform:translateX(5px)}
+  75%{transform:translateX(-3px)}
+  100%{transform:translateX(0)}
+}
