@@ -323,3 +323,37 @@ body{touch-action:manipulation}
   .choice-card{padding:8px 5px;border-radius:18px}
   .choice-card b{font-size:16px}
 }
+
+
+/* ===== V7 SCORE MODE ===== */
+.score-mode-card{background:#fff8cf!important}
+.score-rule-grid{display:grid;gap:7px;margin-top:8px}
+.score-rule-grid>div{border:2px solid var(--ink);border-radius:12px;background:#fff;padding:8px}
+.score-rule-grid b{display:block;font-size:11px}.score-rule-grid span{display:block;font-size:9px;font-weight:800;color:var(--muted);margin-top:3px;line-height:1.4}
+.score-big-rule{border:3px solid var(--ink);border-radius:15px;background:var(--yellow);padding:11px;text-align:center;font-weight:1000;font-size:13px}
+
+/* ===== V7 FLIGHT ===== */
+.linear-marker{will-change:left}
+
+/* ===== V7 STACK ===== */
+.stack-hud-v7{grid-template-columns:repeat(4,1fr)!important}
+.stack-hud-v7 .stat-box{padding:6px 4px!important;min-width:0}
+.stack-hud-v7 .stat-box b{font-size:14px!important;white-space:nowrap}
+.wind-box i{display:block;height:5px;border:1px solid var(--ink);border-radius:999px;background:#eee;overflow:hidden;margin-top:4px}
+.wind-box i em{display:block;width:0;height:100%;background:var(--cyan);transition:width .08s linear}
+.stack-bundle{position:absolute;width:68px;z-index:10;touch-action:none;-webkit-touch-callout:none;will-change:left,top,transform}
+.stack-bundle .bundle-piece{position:absolute!important;width:68px!important;height:50px!important}
+.tower-world.camera-fall{transition:transform .75s cubic-bezier(.2,.7,.2,1)!important}
+.stack-layer.tower-collapse-right{animation:towerCollapseRightV7 .82s ease-in forwards!important;transform-origin:50% calc(100% - 32px)!important}
+.stack-layer.tower-collapse-left{animation:towerCollapseLeftV7 .82s ease-in forwards!important;transform-origin:50% calc(100% - 32px)!important}
+@keyframes towerCollapseRight{to{transform:translate(150px,170px) rotate(24deg);opacity:.38}}
+@keyframes towerCollapseLeftV7{to{transform:translate(-150px,170px) rotate(-24deg);opacity:.38}}
+@keyframes towerCollapseRightV7{to{transform:translate(150px,170px) rotate(24deg);opacity:.38}}
+@media(max-width:390px){.stack-hud-v7{gap:4px!important}.stack-hud-v7 .stat-box span{font-size:7px!important}.stack-hud-v7 .stat-box b{font-size:12px!important}}
+
+/* ===== V7 1990 WORLD ===== */
+.n1990-hud{grid-template-columns:repeat(3,1fr)!important}
+.n1990-arena{min-height:46dvh}
+.n1990-choice b{font-size:clamp(30px,10vw,50px)!important;letter-spacing:-.04em}
+.n1990-choice.picked{background:#dfffd3!important}.n1990-choice.wrong{background:#ffd9d6!important}.n1990-choice.bonus{background:var(--yellow)!important;transform:translateY(4px) scale(.96)}
+.n1990-summary strong{color:var(--red)}
