@@ -33,10 +33,13 @@ const PLAYERS=[
 const GAMES=[
   {no:1,key:"reaction",title:"反射神経",sub:"MOBを押すまでのタイム"},
   {no:2,key:"memory",title:"記憶力ゲーム",sub:"10枚の点灯順を記憶"},
-  {no:3,key:"puzzle",title:"ナンバー12 パズル",sub:"1〜12を順番に消すタイムアタック"},
-  {no:4,key:"launch",title:"フィギュア飛ばし",sub:"2ゲージ平均で最大2000m"},
-  {no:5,key:"stack",title:"グラグラモブくん",sub:"フィギュアを何体積めるか勝負"},
-  {no:6,key:"breakdance",title:"1990世界大会",sub:"10秒で1990を見抜いて世界へ"}
+  {no:3,key:"puzzle",title:"ナンバープレート12",sub:"1〜12を順番に消すタイムアタック"},
+  {no:4,key:"launch",title:"フィギュア飛ばし",sub:"感覚で狙う最大2000m"},
+  {no:5,key:"stack",title:"グラグラモブくん",sub:"10秒で何体積めるか"},
+  {no:6,key:"breakdance",title:"1990世界大会",sub:"10秒で1990を見抜いて世界へ"},
+  {no:7,key:"crisis",title:"モブくん危機一髪",sub:"3体全員をエネルギーから回避"},
+  {no:8,key:"factory",title:"モブくん人形大人気",sub:"10秒で箱詰め・封印を量産"},
+  {no:9,key:"catcher",title:"モブくんキャッチャー",sub:"1回のクレーンで何体取れるか"}
 ];
 
 const MODES={
@@ -44,7 +47,7 @@ const MODES={
   solo8:{name:"8人 個人戦",short:"プレイヤー4人 + CPU4人",participants:["p1","p2","p3","p4","c5","c6","c7","c8"],team:false,points:[10,8,6,4,3,2,1,0]},
   tag:{name:"2対2 タッグ",short:"P1・P2 VS P3・P4",participants:["p1","p2","p3","p4"],team:true,points:[5,3,1,0],teams:{A:["p1","p2"],B:["p3","p4"]},teamNames:{A:"P1 + P2",B:"P3 + P4"}},
   humansVsCpu:{name:"4人 VS CPU4人",short:"PLAYER TEAM VS CPU TEAM",participants:["p1","p2","p3","p4","c5","c6","c7","c8"],team:true,points:[10,8,6,4,3,2,1,0],teams:{A:["p1","p2","p3","p4"],B:["c5","c6","c7","c8"]},teamNames:{A:"PLAYER TEAM",B:"CPU TEAM"}},
-  score4:{name:"100点 スコアバトル",short:"6ゲーム合計 最大600点",participants:["p1","p2","p3","p4"],team:false,points:[],performance:true},
+  score4:{name:"100点 スコアバトル",short:"各ゲーム0〜100点の合計勝負",participants:["p1","p2","p3","p4"],team:false,points:[],performance:true},
   free:{name:"1人フリープレイ",short:"好きなゲームだけ遊ぶ",participants:["p1"],team:false,points:[0]}
 };
 
@@ -53,7 +56,22 @@ let audioCtx=null;
 let activeAnimation=null;
 
 function freshState(){
-  return {modeKey:null,gameIndex:0,freePlay:false,freeGameIndex:null,records:{reaction:{},memory:{},puzzle:{},launch:{},stack:{},breakdance:{}},total:{},gamePoints:[null,null,null,null,null,null],cpuTier:{}};
+  return {
+    modeKey:null,
+    gameIndex:0,
+    freePlay:false,
+    freeGameIndex:null,
+    playStyle:null,
+    playlist:[],
+    roundIndex:0,
+    records:{
+      reaction:{},memory:{},puzzle:{},launch:{},stack:{},breakdance:{},
+      crisis:{},factory:{},catcher:{}
+    },
+    total:{},
+    roundPoints:[],
+    cpuTier:{}
+  };
 }
 function pById(id){return PLAYERS.find(p=>p.id===id)}
 function mode(){return state.modeKey?MODES[state.modeKey]:null}
@@ -75,8 +93,22 @@ homeBtn.addEventListener("click",()=>{cancelActiveAnimation();renderHome()});
 resetBtn.addEventListener("click",()=>{
   cancelActiveAnimation();
   if(state.freePlay && state.freeGameIndex!==null){startFreeGame(state.freeGameIndex);return;}
-  if(state.modeKey){const k=state.modeKey;state=freshState();state.modeKey=k;initTotals();renderModeLobby()}
-  else renderHome();
+
+  if(state.modeKey){
+    const k=state.modeKey;
+    const style=state.playStyle;
+    const list=[...state.playlist];
+
+    state=freshState();
+    state.modeKey=k;
+    state.playStyle=style;
+    state.playlist=list;
+    state.roundIndex=0;
+    initTotals();
+
+    if(list.length)renderModeLobby();
+    else renderPlayStyleSelect();
+  }else renderHome();
 });
 
 function renderHome(){
@@ -84,7 +116,7 @@ function renderHome(){
   state=freshState();
   screen.innerHTML=`
     <section class="hero">
-      <div><span class="kicker">SMARTPHONE PARTY GAME</span><h1>6 MINI<br>GAMES</h1><p>6つのミニゲームを、4人個人戦・CPU入り8人戦・タッグ・PLAYER VS CPUで遊べます。</p></div>
+      <div><span class="kicker">SMARTPHONE PARTY GAME</span><h1>9 MINI<br>GAMES</h1><p>9種のミニゲーム。各モードでNORMALかCUSTOMを選んで遊べます。</p></div>
       <div class="hero-mark">MOB</div>
     </section>
     <section class="panel">
@@ -94,7 +126,7 @@ function renderHome(){
         <button class="mode-card" data-mode="solo8"><span class="mode-no">MODE 02</span><b>8人 個人戦</b><span>プレイヤー4人 + CPU4人</span></button>
         <button class="mode-card" data-mode="tag"><span class="mode-no">MODE 03</span><b>2対2 タッグ</b><span>P1・P2 VS P3・P4</span></button>
         <button class="mode-card" data-mode="humansVsCpu"><span class="mode-no">MODE 04</span><b>4人 VS CPU4人</b><span>PLAYER TEAM VS CPU TEAM</span></button>
-        <button class="mode-card score-mode-card" data-mode="score4"><span class="mode-no">MODE 05</span><b>100点 スコアバトル</b><span>各ゲーム0〜100点 / 合計最大600点</span></button>
+        <button class="mode-card score-mode-card" data-mode="score4"><span class="mode-no">MODE 05</span><b>100点 スコアバトル</b><span>各ゲーム0〜100点 / 選択ゲーム数で最大点が変化</span></button>
       </div>
     </section>
     <section class="panel free-play-panel">
@@ -120,7 +152,10 @@ function startFreeGame(gameIndex){
 }
 
 function selectMode(key){
-  state=freshState();state.modeKey=key;initTotals();renderModeLobby();
+  state=freshState();
+  state.modeKey=key;
+  initTotals();
+  renderPlayStyleSelect();
 }
 function initTotals(){participants().forEach(p=>state.total[p.id]=0)}
 function teamOf(id){
@@ -132,6 +167,128 @@ function teamName(id){
   return mode().teamNames[teamOf(id)];
 }
 function pointsText(){return mode().points.map((p,i)=>`${i+1}位 ${p}`).join(" / ")}
+function roundGameIndex(){return state.playlist[state.roundIndex] ?? state.gameIndex}
+function roundCount(){return state.freePlay?1:state.playlist.length}
+function maxScoreTotal(){return roundCount()*100}
+function currentRoundLabel(){return state.freePlay?"SOLO":`ROUND ${state.roundIndex+1} / ${roundCount()}`}
+
+
+
+function renderPlayStyleSelect(){
+  const m=mode();
+  screen.innerHTML=`
+    <div class="game-head">
+      <div><span class="kicker">PLAY STYLE</span><h2>${m.name}</h2><p class="lead">${m.short}</p></div>
+      <div class="game-badge">${m.participants.length}人</div>
+    </div>
+
+    <div class="style-select-grid">
+      <button id="normalStyle" class="style-select-card normal" type="button">
+        <span>NORMAL</span>
+        <b>順番に全種目</b>
+        <small>GAME 1 → 9 を順番にプレイ</small>
+      </button>
+      <button id="customStyle" class="style-select-card custom" type="button">
+        <span>CUSTOM</span>
+        <b>自由にゲーム選択</b>
+        <small>重複OK / 3〜10ゲーム</small>
+      </button>
+    </div>
+
+    <section class="panel flat">
+      <h3>9 MINI GAMES</h3>
+      <div class="compact-game-grid">
+        ${GAMES.map(g=>`<div><b>${g.no}</b><span>${g.title}</span></div>`).join("")}
+      </div>
+    </section>
+  `;
+  gameTop();
+
+  document.getElementById("normalStyle").addEventListener("click",()=>{
+    state.playStyle="normal";
+    state.playlist=GAMES.map((_,i)=>i);
+    state.roundIndex=0;
+    renderModeLobby();
+  });
+
+  document.getElementById("customStyle").addEventListener("click",()=>{
+    state.playStyle="custom";
+    state.playlist=[];
+    state.roundIndex=0;
+    renderCustomPicker();
+  });
+}
+
+function renderCustomPicker(){
+  screen.innerHTML=`
+    <div class="game-head">
+      <div><span class="kicker">CUSTOM</span><h2>ゲームを選択</h2><p class="lead">同じゲームを何回選んでもOK。3〜10個まで。</p></div>
+      <div class="game-badge"><span id="customCount">${state.playlist.length}</span>/10</div>
+    </div>
+
+    <section class="panel custom-order-panel">
+      <div class="panel-head"><h3>PLAY ORDER</h3><span class="tag">3〜10</span></div>
+      <div id="customOrder" class="custom-order"></div>
+      <div class="custom-actions">
+        <button id="undoCustom" class="secondary small-btn" type="button">1つ戻す</button>
+        <button id="clearCustom" class="secondary small-btn" type="button">全消去</button>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h3>追加するゲーム</h3>
+      <div class="custom-game-grid">
+        ${GAMES.map((g,i)=>`<button class="custom-game-add" data-add-game="${i}" type="button"><span>GAME ${g.no}</span><b>${g.title}</b><small>タップで追加</small></button>`).join("")}
+      </div>
+    </section>
+
+    <button id="customDecide" class="primary" type="button">この内容で決定</button>
+  `;
+
+  const order=document.getElementById("customOrder");
+  const count=document.getElementById("customCount");
+  const decide=document.getElementById("customDecide");
+
+  const redraw=()=>{
+    order.innerHTML=state.playlist.length
+      ? state.playlist.map((idx,pos)=>`<button class="custom-order-chip" data-remove-pos="${pos}" type="button"><span>${pos+1}</span>${GAMES[idx].title}<small>×</small></button>`).join("")
+      : `<p class="note">まだ選択されていません。</p>`;
+    count.textContent=state.playlist.length;
+    decide.disabled=state.playlist.length<3||state.playlist.length>10;
+    decide.textContent=state.playlist.length<3
+      ? `あと${3-state.playlist.length}個選択`
+      : `この${state.playlist.length}ゲームで決定`;
+
+    order.querySelectorAll("[data-remove-pos]").forEach(b=>b.addEventListener("click",()=>{
+      state.playlist.splice(Number(b.dataset.removePos),1);
+      redraw();
+    }));
+  };
+
+  screen.querySelectorAll("[data-add-game]").forEach(b=>b.addEventListener("click",()=>{
+    if(state.playlist.length>=10)return;
+    state.playlist.push(Number(b.dataset.addGame));
+    beep(620,35,.015);
+    redraw();
+  }));
+
+  document.getElementById("undoCustom").addEventListener("click",()=>{
+    state.playlist.pop();
+    redraw();
+  });
+  document.getElementById("clearCustom").addEventListener("click",()=>{
+    state.playlist=[];
+    redraw();
+  });
+  decide.addEventListener("click",()=>{
+    if(state.playlist.length<3||state.playlist.length>10)return;
+    state.roundIndex=0;
+    renderModeLobby();
+  });
+
+  redraw();
+  gameTop();
+}
 
 function renderModeLobby(){
   const m=mode();
@@ -139,32 +296,60 @@ function renderModeLobby(){
     <div class="score-rule-grid">
       <div><b>反射神経</b><span>0.150秒以下=100 / 0.300秒=50 / 0.500秒以上=0</span></div>
       <div><b>記憶力</b><span>正解数 × 10点</span></div>
-      <div><b>ナンバー12</b><span>4.00秒=100 / 12.00秒以上=0</span></div>
+      <div><b>ナンバープレート12</b><span>2.50秒=100 / 6.00秒以上=0</span></div>
       <div><b>フィギュア飛ばし</b><span>2000m=100 / 0m=0</span></div>
       <div><b>グラグラモブくん</b><span>30体以上=100 / 0体=0</span></div>
       <div><b>1990世界大会</b><span>世界1位=100 / 40位=0</span></div>
+      <div><b>モブくん危機一髪</b><span>20回以上=100 / 0回=0</span></div>
+      <div><b>モブくん人形大人気</b><span>25箱以上=100 / 0箱=0</span></div>
+      <div><b>モブくんキャッチャー</b><span>1体=10 / 10体以上=100</span></div>
     </div>`;
 
   screen.innerHTML=`
-    <div class="game-head"><div><span class="kicker">MODE SELECTED</span><h2>${m.name}</h2><p class="lead">${m.short}</p></div><div class="game-badge">${m.participants.length}人</div></div>
-    <section class="panel"><div class="panel-head"><h3>ENTRY</h3><span class="tag">${m.performance?"SCORE BATTLE":m.team?"TEAM BATTLE":"INDIVIDUAL"}</span></div><div class="player-grid">${participants().map(p=>`<div class="player-card ${m.team?(teamOf(p.id)==="A"?"team-a":"team-b"):(p.cpu?"team-cpu":"team-human")}">${imgTag(p)}<div><b>${esc(p.name)}</b><span>${p.cpu?"CPU":`PLAYER ${p.no}`}${m.team?` / ${teamName(p.id)}`:""}</span></div></div>`).join("")}</div></section>
+    <div class="game-head">
+      <div><span class="kicker">${state.playStyle==="custom"?"CUSTOM":"NORMAL"}</span><h2>${m.name}</h2><p class="lead">${m.short}</p></div>
+      <div class="game-badge">${state.playlist.length}戦</div>
+    </div>
+
+    <section class="panel">
+      <div class="panel-head"><h3>ENTRY</h3><span class="tag">${m.performance?"SCORE BATTLE":m.team?"TEAM BATTLE":"INDIVIDUAL"}</span></div>
+      <div class="player-grid">
+        ${participants().map(p=>`<div class="player-card ${m.team?(teamOf(p.id)==="A"?"team-a":"team-b"):(p.cpu?"team-cpu":"team-human")}">${imgTag(p)}<div><b>${esc(p.name)}</b><span>${p.cpu?"CPU":`PLAYER ${p.no}`}${m.team?` / ${teamName(p.id)}`:""}</span></div></div>`).join("")}
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head"><h3>GAME ORDER</h3><span class="tag">${state.playlist.length} GAMES</span></div>
+      <div class="lobby-playlist">
+        ${state.playlist.map((idx,i)=>`<div><span>${i+1}</span><b>${GAMES[idx].title}</b></div>`).join("")}
+      </div>
+    </section>
+
     ${m.performance
-      ? `<section class="panel score-rule-panel"><h3>0〜100 SCORE RULE</h3>${scoreRules}<p class="note" style="margin-top:9px">6ゲームの合計点で最終順位を決定。最大600点。</p></section>`
-      : `<section class="panel"><h3>POINT RULE</h3><div class="point-strip">${m.points.map((p,i)=>`<span class="point-pill">${i+1}位 ${p}pt</span>`).join("")}</div><p class="note" style="margin-top:9px">同記録は同着。同着時は同じ順位ポイントを獲得し、次順位は人数分繰り下がります。</p></section>`}
+      ? `<section class="panel score-rule-panel"><h3>0〜100 SCORE RULE</h3>${scoreRules}<p class="note" style="margin-top:9px">選んだ${state.playlist.length}ゲームの合計点で順位を決定。最大${maxScoreTotal()}点。</p></section>`
+      : `<section class="panel"><h3>POINT RULE</h3><div class="point-strip">${m.points.map((p,i)=>`<span class="point-pill">${i+1}位 ${p}pt</span>`).join("")}</div><p class="note" style="margin-top:9px">同記録は同着。同着時は同順位ポイント。</p></section>`}
+
     <section class="panel flat"><h3>PLAY ORDER</h3><p class="lead">プレイヤー1 → 2 → 3 → 4${cpus().length?" → CPUは高速処理":""}</p></section>
-    <button id="modeStart" class="primary">GAME 1 START</button>`;
+    <button id="modeStart" class="primary">START</button>
+  `;
   gameTop();
-  document.getElementById("modeStart").addEventListener("click",()=>showGameIntro(0));
+  document.getElementById("modeStart").addEventListener("click",()=>{
+    state.roundIndex=0;
+    showGameIntro(state.playlist[0]);
+  });
 }
 
 function scoreRuleForGame(index){
   return [
     "0.150秒以下=100点 / 0.300秒=50点 / 0.500秒以上=0点",
     "正解数×10点 / 10枚正解=100点",
-    "4.00秒=100点 / 12.00秒以上=0点",
+    "2.50秒=100点 / 6.00秒以上=0点",
     "2000m=100点 / 0m=0点",
     "30体以上=100点 / 0体=0点",
-    "世界1位=100点 / 世界40位=0点"
+    "世界1位=100点 / 世界40位=0点",
+    "20回以上=100点 / 0回=0点",
+    "25箱以上=100点 / 0箱=0点",
+    "1体=10点 / 10体以上=100点"
   ][index];
 }
 
@@ -172,29 +357,43 @@ function showGameIntro(index){
   state.gameIndex=index;
   const g=GAMES[index];
   let rules="";
+
   if(index===0){
-    rules=`<li>READY? → 3・2・1 → ランダム待機後、大きなMOBボタンが出現。</li><li>MOB表示からタップまでを<strong>0.001秒単位</strong>で計測。</li>`;
+    rules=`<li>READY? → 3・2・1 → ランダム待機後、大きなMOBボタン。</li><li>0.001秒単位で計測。</li>`;
   }else if(index===1){
-    rules=`<li>icon/01.png〜10.pngを10枚ランダム配置。</li><li>3・2・1 → 10枚が順番に光ります。</li><li>もう一度3・2・1 → 光った順番にタップ。</li><li>間違えた時点で終了。</li>`;
+    rules=`<li>10枚が順番に光ります。</li><li>同じ順番でタップ。間違えた時点で終了。</li>`;
   }else if(index===2){
-    rules=`<li>12個のマスに1〜12をランダム配置。</li><li>3・2・1のあと、1 → 2 → … → 12 の順番だけ入力可能。</li><li>12を消した瞬間のタイム。</li>`;
+    rules=`<li>1〜12をランダム配置。</li><li>1 → 12の順番だけ入力可能。</li><li>12を消した瞬間のタイム。</li>`;
   }else if(index===3){
-    rules=`<li>横長ゲージ → 円形ゲージの順にSTOP。</li><li>横ゲージは以前より高速。</li><li>2ゲージ平均から飛距離を決定。最高<strong>2000m</strong>。</li>`;
+    rules=`<li>高速横ゲージ → 円形ゲージ。</li><li>横ゲージの<strong>両端約10%は「？」フィルターで見えません</strong>。</li><li>感覚で端を狙い、最大2000m。</li>`;
   }else if(index===4){
-    rules=`<li>フィギュアを<strong>短くタップ</strong>すると DROP ×1 → ×2 → ×3 → ×1 と切り替え。</li><li>そのまま横へ動かすと掴み、離すと1〜3体を同時DROP。</li><li>時間が経つほど風が強くなります。</li><li>重なり不足で崩れたら、カメラが一番下まで追います。</li><li>序盤はかなり乗りやすく、10体前後までは到達しやすいバランス。</li>`;
+    rules=`<li>1体ずつつかんで積みます。</li><li><strong>制限時間10秒</strong>。</li><li>時間が経つほど風が強くなり、手元もタワーもグラグラ。</li><li>崩れたらカメラが一番下まで追います。</li>`;
+  }else if(index===5){
+    rules=`<li>10秒間、毎回どちらか一方が1990。</li><li>1990=1周、5連続ごとにBONUS +1周。</li><li>罠は-1周。</li><li><strong>25周以上で世界1位確定。</strong></li>`;
+  }else if(index===6){
+    rules=`<li>3体のモブくんへ横からエネルギーが飛来。</li><li>モブくんをタップすると短時間回避。</li><li>3体全員が避けて1回成功。</li><li>最初から速く、成功するたびさらに高速化。</li><li>誰か1体でも被弾したら終了。</li>`;
+  }else if(index===7){
+    rules=`<li>ベルトコンベアのMOB箱を10秒で完成させます。</li><li>空箱：右上のモブくん → 箱 → 箱をもう一度タップして封。</li><li>最初から人形入りの箱は箱を1回タップするだけ。</li><li>箱の状態は毎回完全ランダム。</li>`;
   }else{
-    rules=`<li>10秒間、左右には<strong>必ず片方に1990</strong>が出ます。両方罠・進行不能はありません。</li><li>もう片方には1991 / 1989 / 2000 / 1909 / 1999など1990っぽい項目。</li><li>1990を押すと1周。<strong>5回連続で1990を押すたびBONUS +1周</strong>。</li><li>一部のニセ項目は罠で -1周。ニセを押すと連続数はリセット。</li><li>最終周回数をもとに世界1〜40位を決定。</li>`;
+    rules=`<li>矢印でクレーン位置を調整。</li><li>降下でクレーンが下がり、アームの開き幅も変化。</li><li>STOPで高さ・開き幅を決定し、そこから閉じます。</li><li>抱えたモブくんを自動で落とし口へ運んで開放。</li><li>1回で最大10体。</li>`;
   }
 
   screen.innerHTML=`
-    <div class="game-head"><div><span class="kicker">GAME ${g.no} / 6</span><h2>${g.title}</h2><p class="lead">${g.sub}</p></div><div class="game-badge">${g.no}/6</div></div>
+    <div class="game-head">
+      <div><span class="kicker">${currentRoundLabel()}</span><h2>${g.title}</h2><p class="lead">${g.sub}</p></div>
+      <div class="game-badge">G${g.no}</div>
+    </div>
+
     <section class="panel"><h3>RULE</h3><ul class="rules">${rules}</ul></section>
+
     ${state.freePlay
-      ? `<section class="panel flat free-play-note"><h3>1 PLAYER FREE PLAY</h3><p class="lead">順位・ポイントなしで、このゲームだけ遊びます。</p></section>`
+      ? `<section class="panel flat free-play-note"><h3>1 PLAYER FREE PLAY</h3><p class="lead">このゲームだけ遊びます。</p></section>`
       : mode().performance
         ? `<section class="panel flat score-intro"><h3>SCORE</h3><div class="score-big-rule">${scoreRuleForGame(index)}</div></section>`
         : `<section class="panel flat"><h3>POINT</h3><div class="point-strip">${mode().points.map((p,i)=>`<span class="point-pill">${i+1}位 ${p}pt</span>`).join("")}</div></section>`}
-    <button id="introStart" class="primary">${state.freePlay?"READY? へ":"プレイヤー1 READY? へ"}</button>`;
+
+    <button id="introStart" class="primary">${state.freePlay?"READY? へ":"プレイヤー1 READY? へ"}</button>
+  `;
   gameTop();
   document.getElementById("introStart").addEventListener("click",()=>humanReady(index,0));
 }
@@ -204,17 +403,15 @@ function humanReady(gameIndex,humanIndex){
   if(humanIndex>=list.length){
     return cpus().length ? simulateCpuThenResult(gameIndex) : finishGame(gameIndex);
   }
+
   const p=list[humanIndex],g=GAMES[gameIndex];
 
   screen.innerHTML=`<div class="ready-wrap"><div class="ready-card">
     ${imgTag(p,"ready-avatar")}
-    <span class="kicker">GAME ${g.no} / ${state.freePlay?"SOLO":`PLAYER ${humanIndex+1} OF ${list.length}`}</span>
+    <span class="kicker">${currentRoundLabel()}</span>
     <div class="ready-big">READY?</div>
     <div class="ready-name">${esc(p.name)}</div>
     <div class="ready-sub">${state.freePlay?"1 PLAYER FREE PLAY":(mode().team?teamName(p.id):`PLAYER ${p.no}`)}</div>
-    ${gameIndex===2?`<div class="number-ready-guide"><b>1 → 2 → 3 → … → 12</b><small>数字は毎回ランダム / 正しい順番以外は押せません</small></div>`:""}
-    ${gameIndex===4?`<div class="number-ready-guide"><b>GRAB → MOVE → DROP</b><small>重なっていれば必ず乗る / 重なり不足なら必ず落ちる</small></div>`:""}
-    ${gameIndex===5?`<div class="number-ready-guide"><b>1990 CHALLENGE</b><small>左右どちらかは必ず1990。見抜いて連続タップ。</small></div>`:""}
     <button id="readyBtn" class="primary">準備OK</button>
   </div></div>`;
   gameTop();
@@ -225,7 +422,10 @@ function humanReady(gameIndex,humanIndex){
     else if(gameIndex===2)startPuzzle(p,humanIndex);
     else if(gameIndex===3)startLaunch(p,humanIndex);
     else if(gameIndex===4)startStack(p,humanIndex);
-    else startGanbareMob(p,humanIndex);
+    else if(gameIndex===5)startGanbareMob(p,humanIndex);
+    else if(gameIndex===6)startCrisis(p,humanIndex);
+    else if(gameIndex===7)startFactory(p,humanIndex);
+    else startCatcher(p,humanIndex);
   },{once:true});
 }
 
@@ -371,39 +571,94 @@ async function startPuzzle(p,humanIndex){
 async function startLaunch(p,humanIndex){
   gameTop();
   let linear=0,circle=0,phase="linear",start=performance.now();
+  const linearPeriod=rand(350,430);
 
   screen.innerHTML=`<div class="game-head"><div><span class="kicker">${esc(p.name)}</span><h2>フィギュア飛ばし</h2></div><div class="game-badge">${playBadge(humanIndex)}</div></div>
   <div class="gauge-wrap">
     <section id="linearCard" class="gauge-card">
       <div class="gauge-title">1. 高速 横長ゲージ <span id="linearScore">タップでSTOP</span></div>
-      <div id="linearGauge" class="linear-gauge"><div id="linearMarker" class="linear-marker"></div></div>
+      <div id="linearGauge" class="linear-gauge blind-gauge">
+        <div id="linearMarker" class="linear-marker"></div>
+        <div class="linear-blind left">?</div>
+        <div class="linear-blind right">?</div>
+      </div>
+      <p class="blind-help">両端の最後約10%は見えません。感覚でSTOP。</p>
     </section>
+
     <section id="circleCard" class="gauge-card disabled">
       <div class="gauge-title">2. 円形ゲージ <span id="circleScore">WAIT</span></div>
       <div id="circleGauge" class="circle-gauge" role="button" aria-label="円形ゲージを止める">
-        <div class="circle-max-zone"><b>MAX</b><span>100</span></div><div class="circle-ring"></div><div id="circleNeedle" class="circle-needle"></div><div class="circle-center"><span>POWER</span><b id="circleLive">--</b></div>
+        <div class="circle-max-zone"><b>MAX</b><span>100</span></div>
+        <div class="circle-ring"></div>
+        <div id="circleNeedle" class="circle-needle"></div>
+        <div class="circle-center"><span>POWER</span><b id="circleLive">--</b></div>
       </div>
-      <p class="circle-help">針が円周を360°回転。上のMAXに近いほど高得点。</p>
     </section>
-    <p class="hint">横は左右端、円は上のMAXに近いほど100%。最大2000m。</p>
+    <p class="hint">横は見えない両端、円は上のMAXを狙う。最大2000m。</p>
   </div>`;
 
-  const lg=document.getElementById("linearGauge"),lm=document.getElementById("linearMarker"),lc=document.getElementById("linearCard"),ls=document.getElementById("linearScore"),cg=document.getElementById("circleGauge"),needle=document.getElementById("circleNeedle"),live=document.getElementById("circleLive"),cc=document.getElementById("circleCard"),cs=document.getElementById("circleScore");
+  const lg=document.getElementById("linearGauge"),lm=document.getElementById("linearMarker"),
+        lc=document.getElementById("linearCard"),ls=document.getElementById("linearScore"),
+        cg=document.getElementById("circleGauge"),needle=document.getElementById("circleNeedle"),
+        live=document.getElementById("circleLive"),cc=document.getElementById("circleCard"),
+        cs=document.getElementById("circleScore");
 
   function linearAnim(now){
     if(phase!=="linear")return;
-    const t=(now-start)/500;
+    const t=(now-start)/linearPeriod;
     const pos=(Math.sin(t*Math.PI*2-Math.PI/2)+1)/2*100;
-    lm.style.left=`${pos}%`;lm.dataset.pos=pos.toFixed(3);activeAnimation=requestAnimationFrame(linearAnim);
+    lm.style.left=`${pos}%`;
+    lm.dataset.pos=pos.toFixed(3);
+    activeAnimation=requestAnimationFrame(linearAnim);
   }
-  function beginCircle(){phase="circle";cancelActiveAnimation();lc.classList.add("disabled");cc.classList.remove("disabled");cs.textContent="タップでSTOP";start=performance.now();beep(660,70);activeAnimation=requestAnimationFrame(circleAnim)}
-  function stopLinear(e){if(phase!=="linear")return;if(e)e.preventDefault();const pos=Number(lm.dataset.pos||50);linear=clamp(Math.round(Math.abs(pos-50)*2),0,100);ls.textContent=`${linear}%`;beginCircle()}
-  function circleAnim(now){if(phase!=="circle")return;const angle=((now-start)/1120*360)%360;const distToMax=Math.min(angle,360-angle);const score=clamp(Math.round(100-(distToMax/180)*100),0,100);needle.style.transform=`rotate(${angle}deg)`;needle.dataset.score=String(score);live.textContent=`${score}%`;activeAnimation=requestAnimationFrame(circleAnim)}
-  function stopCircle(e){if(phase!=="circle")return;if(e)e.preventDefault();circle=clamp(Number(needle.dataset.score||0),0,100);phase="done";cancelActiveAnimation();cs.textContent=`${circle}% STOP`;live.textContent=`${circle}%`;cc.classList.add("stopped");beep(760,80);const avg=(linear+circle)/2;setTimeout(()=>launchAnimation(p,humanIndex,avg,linear,circle),320)}
+
+  function beginCircle(){
+    phase="circle";
+    cancelActiveAnimation();
+    lc.classList.add("disabled");
+    cc.classList.remove("disabled");
+    cs.textContent="タップでSTOP";
+    start=performance.now();
+    beep(660,70);
+    activeAnimation=requestAnimationFrame(circleAnim);
+  }
+
+  function stopLinear(e){
+    if(phase!=="linear")return;
+    if(e)e.preventDefault();
+    const pos=Number(lm.dataset.pos||50);
+    linear=clamp(Math.round(Math.abs(pos-50)*2),0,100);
+    ls.textContent=`${linear}%`;
+    beginCircle();
+  }
+
+  function circleAnim(now){
+    if(phase!=="circle")return;
+    const angle=((now-start)/1080*360)%360;
+    const distToMax=Math.min(angle,360-angle);
+    const score=clamp(Math.round(100-(distToMax/180)*100),0,100);
+    needle.style.transform=`rotate(${angle}deg)`;
+    needle.dataset.score=String(score);
+    live.textContent=`${score}%`;
+    activeAnimation=requestAnimationFrame(circleAnim);
+  }
+
+  function stopCircle(e){
+    if(phase!=="circle")return;
+    if(e)e.preventDefault();
+    circle=clamp(Number(needle.dataset.score||0),0,100);
+    phase="done";
+    cancelActiveAnimation();
+    cs.textContent=`${circle}% STOP`;
+    live.textContent=`${circle}%`;
+    cc.classList.add("stopped");
+    beep(760,80);
+    setTimeout(()=>launchAnimation(p,humanIndex,(linear+circle)/2,linear,circle),300);
+  }
 
   activeAnimation=requestAnimationFrame(linearAnim);
-  lg.addEventListener("pointerdown",stopLinear,{passive:false});lg.addEventListener("click",stopLinear);
-  cg.addEventListener("pointerdown",stopCircle,{passive:false});cg.addEventListener("touchstart",stopCircle,{passive:false});cg.addEventListener("click",stopCircle);
+  lg.addEventListener("pointerdown",stopLinear,{passive:false});
+  cg.addEventListener("pointerdown",stopCircle,{passive:false});
 }
 
 async function launchAnimation(p,humanIndex,power,linear,circle){
@@ -435,187 +690,286 @@ async function launchAnimation(p,humanIndex,power,linear,circle){
 
 // GAME 5 -------------------------------------------------
 async function startStack(p,humanIndex){
-  let count=0,dropCount=1,active=null,pointerId=null;
-  let pointerDown=false,dragging=false,dropping=false,finished=false;
-  let downX=0,downY=0,towerWobbleX=0,towerWobbleRot=0,handWobbleX=0,handWobbleRot=0,wobbleRAF=null;
-  let grabTimer=null;
-  const pieceW=68,pieceH=50,baseBottom=32,stacked=[];
-  const gameStart=performance.now();
+  let count=0;
+  let active=null;
+  let pointerId=null;
+  let dragging=false;
+  let dropping=false;
+  let finished=false;
+  let towerWobbleX=0;
+  let towerWobbleRot=0;
+  let handWobbleX=0;
+  let handWobbleRot=0;
+  let wobbleRAF=null;
+  let timerRAF=null;
+  let endAt=0;
 
-  screen.innerHTML=`<div class="stack-game-shell"><div class="stack-topline"><div><span class="kicker">${esc(p.name)}</span><h2>グラグラモブくん</h2></div><div class="game-badge">${playBadge(humanIndex)}</div></div>
+  const pieceW=68,pieceH=50,baseBottom=32,stacked=[];
+
+  screen.innerHTML=`<div class="stack-game-shell">
+    <div class="stack-topline">
+      <div><span class="kicker">${esc(p.name)}</span><h2>グラグラモブくん</h2></div>
+      <div class="game-badge">${playBadge(humanIndex)}</div>
+    </div>
+
     <div class="stack-wrap">
-      <div class="stack-hud stack-hud-v7">
+      <div class="stack-hud stack-hud-v8">
         <div class="stat-box"><span>STACK</span><b id="stackCount">0</b></div>
-        <div class="stat-box"><span>DROP</span><b id="dropCount">×1</b></div>
+        <div class="stat-box"><span>TIME</span><b id="stackTime">10.00</b></div>
         <div class="stat-box wind-box"><span>WIND</span><b id="windValue">0%</b><i><em id="windFill"></em></i></div>
-        <div class="stat-box balance-box"><span>BALANCE</span><b id="stackBalance">--</b><i><em id="balanceFill"></em></i></div>
       </div>
+
       <div id="stackStage" class="stack-stage">
-        <div id="stackCallout" class="stack-callout"></div><div class="stack-sky-label">TAP:個数変更 / MOVE:つかむ / RELEASE:DROP</div>
-        <div id="towerWorld" class="tower-world"><div id="stackLayer" class="stack-layer"></div><div id="supportGuide" class="support-guide"></div><div class="tower-base"></div></div>
+        <div id="stackCallout" class="stack-callout"></div>
+        <div class="stack-sky-label">HOLD / MOVE / RELEASE</div>
+        <div class="wind-lines"><i></i><i></i><i></i></div>
+
+        <div id="towerWorld" class="tower-world">
+          <div id="stackLayer" class="stack-layer"></div>
+          <div class="tower-base"></div>
+        </div>
+
         <div id="activeLayer" class="active-layer"></div>
       </div>
-      <p id="stackHint" class="hint">短くタップすると ×1 → ×2 → ×3。横へ動かして離すと同時DROP。</p>
-    </div></div>`;
+
+      <p id="stackHint" class="hint">1体ずつ。つかんで移動 → 離してDROP。10秒勝負。</p>
+    </div>
+  </div>`;
   gameTop();
 
-  const stage=document.getElementById("stackStage"),world=document.getElementById("towerWorld"),stackLayer=document.getElementById("stackLayer"),activeLayer=document.getElementById("activeLayer"),supportGuide=document.getElementById("supportGuide"),countEl=document.getElementById("stackCount"),dropEl=document.getElementById("dropCount"),windEl=document.getElementById("windValue"),windFill=document.getElementById("windFill"),balanceEl=document.getElementById("stackBalance"),balanceFill=document.getElementById("balanceFill"),hint=document.getElementById("stackHint"),callout=document.getElementById("stackCallout");
+  const stage=document.getElementById("stackStage"),
+        world=document.getElementById("towerWorld"),
+        stackLayer=document.getElementById("stackLayer"),
+        activeLayer=document.getElementById("activeLayer"),
+        countEl=document.getElementById("stackCount"),
+        timeEl=document.getElementById("stackTime"),
+        windEl=document.getElementById("windValue"),
+        windFill=document.getElementById("windFill"),
+        hint=document.getElementById("stackHint"),
+        callout=document.getElementById("stackCallout");
 
   function stageWidth(){return stage.clientWidth}
-  function elapsedSec(){return Math.max(0,(performance.now()-gameStart)/1000)}
-  function windPercent(){return clamp(Math.round(elapsedSec()/45*100),0,100)}
-  function windAmp(){const s=elapsedSec();return Math.min(23,1.2+s*.44)}
-  function handAmp(){return Math.min(12,2.4+elapsedSec()*.12+Math.max(0,count-8)*.18)}
-  function requiredOverlapRatio(){let base=count<10?.25:count<20?.32:.40;return clamp(base+(dropCount-1)*.035,.25,.50)}
-  function cameraShift(){const top=baseBottom+(count+dropCount)*pieceH;return Math.max(0,top-(stage.clientHeight-145))}
-  function updateCamera(){world.style.transition="transform .22s ease";world.style.transform=`translateY(${cameraShift()}px)`}
+  function progress(){
+    if(!endAt)return 0;
+    return clamp(1-(endAt-performance.now())/10000,0,1);
+  }
+  function windPercent(){return Math.round(progress()*100)}
+  function windAmp(){return 1.4+progress()*17}
+  function handAmp(){return 2.4+progress()*8+Math.max(0,count-10)*.10}
+  function requiredOverlapRatio(){
+    return clamp(.22+progress()*.15+Math.max(0,count-12)*.006,.22,.48);
+  }
+  function cameraShift(){
+    const top=baseBottom+(count+1)*pieceH;
+    return Math.max(0,top-(stage.clientHeight-145));
+  }
+  function updateCamera(){
+    world.style.transition="transform .18s ease";
+    world.style.transform=`translateY(${cameraShift()}px)`;
+  }
   function topLocalX(){return count===0?stageWidth()/2:stacked[stacked.length-1].x}
   function topVisualX(){return topLocalX()+towerWobbleX}
   function landingBottom(){return baseBottom+count*pieceH}
-  function bundleHeight(){return pieceH*dropCount}
-  function activeEl(){return document.getElementById("activeStackBundle")}
+  function activeEl(){return document.getElementById("activeStackPiece")}
 
-  function updateSupportGuide(){const x=topLocalX();supportGuide.style.width=`${pieceW}px`;supportGuide.style.left=`${x-pieceW/2}px`;supportGuide.style.bottom=`${landingBottom()}px`}
   function renderStack(){
     stackLayer.innerHTML=stacked.map((it,i)=>`<div class="stack-piece placed" style="left:${it.x-pieceW/2}px;bottom:${baseBottom+i*pieceH}px;transform:rotate(${it.rot}deg)"></div>`).join("");
-    countEl.textContent=count;dropEl.textContent=`×${dropCount}`;updateSupportGuide();updateCamera();
+    countEl.textContent=count;
+    updateCamera();
   }
-  function showCallout(text,kind="good"){callout.className=`stack-callout show ${kind}`;callout.textContent=text;setTimeout(()=>{if(callout.textContent===text)callout.className="stack-callout"},520)}
-  function visibleDropX(){return active?active.x+handWobbleX:0}
-  function currentOverlapRatio(){if(!active)return 0;const d=Math.abs(visibleDropX()-topVisualX()),overlap=Math.max(0,pieceW-d);return clamp(overlap/pieceW,0,1)}
-  function updateBalance(){if(!active||!pointerDown){balanceEl.textContent="--";balanceFill.style.width="0%";return}const ratio=currentOverlapRatio(),need=requiredOverlapRatio();balanceFill.style.width=`${Math.round(ratio*100)}%`;balanceEl.textContent=ratio>=.82?"PERFECT":ratio>=.58?"GOOD":ratio>=need?"SAFE":"DANGER"}
 
-  function renderActiveBundle(){
-    if(!active)return;
-    activeLayer.innerHTML=`<div id="activeStackBundle" class="stack-bundle active" role="button" aria-label="フィギュア${dropCount}体" style="left:${active.x-pieceW/2}px;top:${active.y}px;height:${bundleHeight()}px">${Array.from({length:dropCount},(_,i)=>`<div class="stack-piece bundle-piece" style="left:0;bottom:${i*pieceH}px"></div>`).join("")}</div>`;
+  function showCallout(text,kind="good"){
+    callout.className=`stack-callout show ${kind}`;
+    callout.textContent=text;
+    setTimeout(()=>{if(callout.textContent===text)callout.className="stack-callout"},430);
   }
+
   function spawnPiece(){
-    if(finished)return;pointerDown=false;dragging=false;dropping=false;pointerId=null;handWobbleX=0;handWobbleRot=0;
-    const sw=stageWidth(),startX=clamp(sw*.5+rand(-sw*.20,sw*.20),pieceW/2+8,sw-pieceW/2-8);active={x:startX,y:16};renderActiveBundle();dropEl.textContent=`×${dropCount}`;hint.textContent="短くタップで個数変更。横へ動かすと掴みます。";updateBalance();
+    if(finished||performance.now()>=endAt)return;
+    dragging=false;
+    dropping=false;
+    pointerId=null;
+    handWobbleX=0;
+    handWobbleRot=0;
+
+    const sw=stageWidth();
+    active={x:clamp(sw*.5+rand(-sw*.21,sw*.21),pieceW/2+8,sw-pieceW/2-8),y:15};
+
+    activeLayer.innerHTML=`<div id="activeStackPiece" class="stack-piece active v8-active" role="button" aria-label="モブくん" style="left:${active.x-pieceW/2}px;top:${active.y}px"></div>`;
   }
-  function cycleDropCount(){dropCount=dropCount%3+1;dropEl.textContent=`×${dropCount}`;showCallout(`DROP ×${dropCount}`,"grab");beep(520+dropCount*80,45,.018);if(active)renderActiveBundle();updateSupportGuide()}
-  function setActiveX(clientX){if(!active)return;const rect=stage.getBoundingClientRect();active.x=clamp(clientX-rect.left,pieceW/2+6,rect.width-pieceW/2-6);const el=activeEl();if(el)el.style.left=`${active.x-pieceW/2}px`;updateBalance()}
+
+  function setActiveX(clientX){
+    if(!active)return;
+    const rect=stage.getBoundingClientRect();
+    active.x=clamp(clientX-rect.left,pieceW/2+5,rect.width-pieceW/2-5);
+    const el=activeEl();
+    if(el)el.style.left=`${active.x-pieceW/2}px`;
+  }
 
   function startWobble(){
     const started=performance.now();
-    const frame=now=>{if(finished)return;const t=now-started,amp=windAmp(),wp=windPercent();windEl.textContent=`${wp}%`;windFill.style.width=`${wp}%`;
-      towerWobbleX=Math.sin(t/(340-Math.min(170,wp)))*amp*.42 + Math.sin(t/710)*amp*.18;
-      towerWobbleRot=Math.sin(t/540)*Math.min(3.2,amp*.12);
-      stackLayer.style.transform=`translateX(${towerWobbleX}px) rotate(${towerWobbleRot}deg)`;supportGuide.style.transform=`translateX(${towerWobbleX}px) rotate(${towerWobbleRot}deg)`;
-      if(pointerDown&&active){const ha=handAmp();handWobbleX=Math.sin(t/76)*ha+Math.sin(t/43)*ha*.24;handWobbleRot=Math.sin(t/88)*Math.min(9,2.4+wp*.055);const el=activeEl();if(el)el.style.transform=`translateX(${handWobbleX}px) rotate(${handWobbleRot}deg) scale(1.04)`;updateBalance()}else{handWobbleX=0;handWobbleRot=0}
-      wobbleRAF=requestAnimationFrame(frame)};
+
+    const frame=now=>{
+      if(finished)return;
+
+      const t=now-started;
+      const amp=windAmp();
+      const wp=windPercent();
+
+      windEl.textContent=`${wp}%`;
+      windFill.style.width=`${wp}%`;
+
+      towerWobbleX=Math.sin(t/(300-wp*1.15))*amp*.55 + Math.sin(t/580)*amp*.22;
+      towerWobbleRot=Math.sin(t/440)*Math.min(4.0,amp*.18);
+
+      stackLayer.style.transform=`translateX(${towerWobbleX}px) rotate(${towerWobbleRot}deg)`;
+
+      if(dragging&&active){
+        const ha=handAmp();
+        handWobbleX=Math.sin(t/68)*ha+Math.sin(t/39)*ha*.26;
+        handWobbleRot=Math.sin(t/82)*Math.min(11,3+wp*.07);
+        const el=activeEl();
+        if(el)el.style.transform=`translateX(${handWobbleX}px) rotate(${handWobbleRot}deg) scale(1.045)`;
+      }else{
+        handWobbleX=0;
+        handWobbleRot=0;
+      }
+
+      wobbleRAF=requestAnimationFrame(frame);
+    };
     wobbleRAF=requestAnimationFrame(frame);
   }
 
   async function collapseToBottom(direction=1){
     stackLayer.classList.add(direction>=0?"tower-collapse-right":"tower-collapse-left");
-    world.classList.add("camera-fall");world.style.transition="transform .75s cubic-bezier(.2,.7,.2,1)";world.style.transform="translateY(0px)";
+    world.style.transition="transform .75s cubic-bezier(.2,.7,.2,1)";
+    world.style.transform="translateY(0px)";
     await wait(820);
   }
 
-  async function releaseBundle(){
-    if(!active||dropping||finished)return;dropping=true;pointerDown=false;dragging=false;
-    const dropX=visibleDropX(),targetX=topVisualX(),distance=Math.abs(dropX-targetX),ratio=Math.max(0,pieceW-distance)/pieceW,need=requiredOverlapRatio();
-    const stageH=stage.clientHeight,targetTop=stageH-(landingBottom()+bundleHeight())+cameraShift(),el=activeEl();if(!el)return;
-    active.x=dropX;handWobbleX=0;el.style.left=`${dropX-pieceW/2}px`;el.style.transform=`rotate(${handWobbleRot*.25}deg)`;
-    const startTop=parseFloat(el.style.top)||16,dropStart=performance.now(),dropDur=330+dropCount*55;
-    await new Promise(resolve=>{const fall=now=>{const t=clamp((now-dropStart)/dropDur,0,1),e=1-Math.pow(1-t,3);el.style.top=`${startTop+(targetTop-startTop)*e}px`;if(t<1)requestAnimationFrame(fall);else resolve()};requestAnimationFrame(fall)});
+  async function releasePiece(){
+    if(!active||dropping||finished)return;
+    dropping=true;
+    dragging=false;
 
-    if(ratio<need){balanceEl.textContent="MISS";balanceFill.style.width=`${Math.round(ratio*100)}%`;showCallout("BALANCE BREAK!","bad");beep(150,230,.04);el.classList.add(dropX>=targetX?"fall-right":"fall-left");await wait(260);await collapseToBottom(dropX>=targetX?1:-1);finishStack();return}
+    const dropX=active.x+handWobbleX;
+    const targetX=topVisualX();
+    const distance=Math.abs(dropX-targetX);
+    const ratio=Math.max(0,pieceW-distance)/pieceW;
+    const need=requiredOverlapRatio();
 
-    const localX=dropX-towerWobbleX,offset=dropX-targetX;
-    for(let i=0;i<dropCount;i++)stacked.push({x:localX+Math.sin(i*2.2)*2.2,rot:clamp(offset*.075+towerWobbleRot*.18+(i-(dropCount-1)/2)*.7,-6,6)});
-    count+=dropCount;active=null;activeLayer.innerHTML="";renderStack();beep(760,70,.024);
-    if(ratio>=.82){showCallout(`PERFECT +${dropCount}!`,"perfect");hint.textContent=`PERFECT! ${dropCount}体積み上げ！`}else if(ratio>=.58){showCallout(`GOOD +${dropCount}!`,"good");hint.textContent=`GOOD! ${dropCount}体積み上げ！`}else{showCallout(`SAFE +${dropCount}!`,"safe");hint.textContent="ギリギリ乗りました！"}
-    await wait(220);spawnPiece();
+    const stageH=stage.clientHeight;
+    const targetTop=stageH-(landingBottom()+pieceH)+cameraShift();
+    const el=activeEl();
+    if(!el)return;
+
+    active.x=dropX;
+    el.style.left=`${dropX-pieceW/2}px`;
+    el.style.transform=`rotate(${handWobbleRot*.22}deg)`;
+
+    const startTop=parseFloat(el.style.top)||15;
+    const dropStart=performance.now();
+    const dropDur=220;
+
+    await new Promise(resolve=>{
+      const fall=now=>{
+        const t=clamp((now-dropStart)/dropDur,0,1);
+        const e=1-Math.pow(1-t,3);
+        el.style.top=`${startTop+(targetTop-startTop)*e}px`;
+        if(t<1)requestAnimationFrame(fall);else resolve();
+      };
+      requestAnimationFrame(fall);
+    });
+
+    if(ratio<need){
+      showCallout("BREAK!","bad");
+      beep(150,220,.04);
+      el.classList.add(dropX>=targetX?"fall-right":"fall-left");
+      await wait(180);
+      await collapseToBottom(dropX>=targetX?1:-1);
+      finishStack();
+      return;
+    }
+
+    const localX=dropX-towerWobbleX;
+    const offset=dropX-targetX;
+    stacked.push({x:localX,rot:clamp(offset*.075+towerWobbleRot*.16,-6,6)});
+    count++;
+    active=null;
+    activeLayer.innerHTML="";
+    renderStack();
+    beep(760,45,.022);
+
+    if(ratio>=.78)showCallout("PERFECT!","perfect");
+    else if(ratio>=.52)showCallout("GOOD!","good");
+    else showCallout("SAFE!","safe");
+
+    await wait(90);
+    spawnPiece();
   }
 
-  function finishStack(){if(finished)return;finished=true;clearTimeout(grabTimer);if(wobbleRAF)cancelAnimationFrame(wobbleRAF);state.records.stack[p.id]=count;setTimeout(()=>recordScreen(4,p,humanIndex,`${count}<small>体</small>`,`WIND ${windPercent()}% / STACK RECORD`),220)}
+  function finishStack(){
+    if(finished)return;
+    finished=true;
+    if(wobbleRAF)cancelAnimationFrame(wobbleRAF);
+    if(timerRAF)cancelAnimationFrame(timerRAF);
+    activeLayer.innerHTML="";
+    state.records.stack[p.id]=count;
+    setTimeout(()=>recordScreen(4,p,humanIndex,`${count}<small>体</small>`,`10 SECOND STACK`),170);
+  }
 
-  // iPhoneでは「長押ししてから動かす」でも確実につかめる。
-  // 短いタップだけは DROP数変更、3px以上動かす or 0.22秒ホールドでGRABになる。
   stage.addEventListener("pointerdown",e=>{
-    const el=e.target.closest("#activeStackBundle");
+    const el=e.target.closest("#activeStackPiece");
     if(!el||dropping||finished)return;
-
     e.preventDefault();
     e.stopPropagation();
 
-    pointerDown=true;
-    dragging=false;
+    dragging=true;
     pointerId=e.pointerId;
-    downX=e.clientX;
-    downY=e.clientY;
-
-    el.classList.add("pressed");
     try{stage.setPointerCapture(pointerId)}catch(_){}
-
-    clearTimeout(grabTimer);
-    grabTimer=setTimeout(()=>{
-      if(pointerDown&&!dropping&&!finished){
-        dragging=true;
-        el.classList.add("grabbed");
-        showCallout("GRAB!","grab");
-        updateBalance();
-      }
-    },220);
-
-    showCallout("HOLD / MOVE","grab");
-    updateBalance();
+    setActiveX(e.clientX);
+    el.classList.add("grabbed");
   },{passive:false});
 
   stage.addEventListener("pointermove",e=>{
-    if(!pointerDown||e.pointerId!==pointerId||dropping||finished)return;
-
+    if(!dragging||e.pointerId!==pointerId||dropping||finished)return;
     e.preventDefault();
     e.stopPropagation();
-
-    if(!dragging&&Math.hypot(e.clientX-downX,e.clientY-downY)>3){
-      clearTimeout(grabTimer);
-      dragging=true;
-      const el=activeEl();
-      if(el)el.classList.add("grabbed");
-      showCallout("GRAB!","grab");
-    }
-
-    if(dragging)setActiveX(e.clientX);
+    setActiveX(e.clientX);
   },{passive:false});
 
   const release=e=>{
-    if(!pointerDown||e.pointerId!==pointerId||dropping||finished)return;
-
+    if(!dragging||e.pointerId!==pointerId||dropping||finished)return;
     e.preventDefault();
     e.stopPropagation();
-    clearTimeout(grabTimer);
-
     const el=activeEl();
-    if(el)el.classList.remove("pressed","grabbed");
-
-    if(dragging){
-      releaseBundle();
-    }else{
-      pointerDown=false;
-      cycleDropCount();
-    }
+    if(el)el.classList.remove("grabbed");
+    releasePiece();
   };
-
   stage.addEventListener("pointerup",release,{passive:false});
-  stage.addEventListener("pointercancel",e=>{
-    clearTimeout(grabTimer);
-    const el=activeEl();
-    if(el)el.classList.remove("pressed","grabbed");
-    if(pointerDown){
-      pointerDown=false;
-      dragging=false;
-      updateBalance();
-    }
-  },{passive:false});
-
-  // Safariの長押しメニュー・選択をゲーム領域では完全に無効化。
+  stage.addEventListener("pointercancel",release,{passive:false});
   stage.addEventListener("contextmenu",e=>e.preventDefault(),{passive:false});
   stage.addEventListener("touchstart",e=>e.preventDefault(),{passive:false});
 
-  renderStack();startWobble();await countdown("STACK");spawnPiece();
+  renderStack();
+  startWobble();
+  await countdown("10 SECOND STACK");
+  if(!document.body.contains(stage))return;
+
+  endAt=performance.now()+10000;
+  spawnPiece();
+
+  const timer=now=>{
+    if(finished)return;
+    const left=Math.max(0,endAt-now);
+    timeEl.textContent=(left/1000).toFixed(2);
+    if(left<=0){
+      finishStack();
+      return;
+    }
+    timerRAF=requestAnimationFrame(timer);
+  };
+  timerRAF=requestAnimationFrame(timer);
 }
 
 // GAME 6 -------------------------------------------------
@@ -713,6 +1067,456 @@ function show1990Final(p,humanIndex,laps,rank){
   if(state.freePlay){document.getElementById("gAgain").addEventListener("click",()=>startFreeGame(5));document.getElementById("gHome").addEventListener("click",renderHome)}else document.getElementById("gNext").addEventListener("click",()=>humanReady(5,humanIndex+1));
 }
 
+// GAME 7 -------------------------------------------------
+async function startCrisis(p,humanIndex){
+  let wave=0;
+  let finished=false;
+  let waveRAF=null;
+  const dodgeUntil=[0,0,0];
+
+  screen.innerHTML=`<div class="crisis-shell">
+    <div class="game-head"><div><span class="kicker">${esc(p.name)}</span><h2>モブくん危機一髪</h2></div><div class="game-badge">${playBadge(humanIndex)}</div></div>
+    <div class="crisis-hud"><div><span>ALL DODGE</span><b id="crisisCount">0</b></div><div><span>SPEED</span><b id="crisisSpeed">1.0x</b></div></div>
+    <div id="crisisStage" class="crisis-stage">
+      ${[0,1,2].map(i=>`<div class="crisis-lane" data-lane="${i}">
+        <button class="crisis-mob" data-mob="${i}" type="button" aria-label="モブくん${i+1}"></button>
+        <div class="crisis-energy" data-energy="${i}"></div>
+      </div>`).join("")}
+    </div>
+    <p id="crisisHint" class="hint">エネルギーが近づいたら3体それぞれをタップして回避！</p>
+  </div>`;
+  gameTop();
+
+  const stage=document.getElementById("crisisStage");
+  const countEl=document.getElementById("crisisCount");
+  const speedEl=document.getElementById("crisisSpeed");
+  const hint=document.getElementById("crisisHint");
+  const mobs=[...stage.querySelectorAll(".crisis-mob")];
+  const energies=[...stage.querySelectorAll(".crisis-energy")];
+
+  mobs.forEach((mob,i)=>mob.addEventListener("pointerdown",e=>{
+    if(finished)return;
+    e.preventDefault();
+    const now=performance.now();
+    dodgeUntil[i]=now+390;
+    mob.classList.remove("dodge");
+    void mob.offsetWidth;
+    mob.classList.add("dodge");
+    beep(610+i*55,32,.012);
+  },{passive:false}));
+
+  async function runWave(){
+    if(finished)return;
+
+    const stageW=stage.clientWidth;
+    const targetX=58;
+    const baseSpeed=Math.min(1150,520+wave*34);
+    const duration=(stageW-targetX+45)/baseSpeed*1000;
+    const delays=shuffle([0,90,180]);
+    const laneDone=[false,false,false];
+    const laneSafe=[false,false,false];
+    const start=performance.now();
+
+    speedEl.textContent=`${(baseSpeed/520).toFixed(1)}x`;
+
+    energies.forEach((en,i)=>{
+      en.classList.remove("hit","safe");
+      en.style.opacity="1";
+      en.style.transform=`translateX(${stageW+40}px)`;
+      en.dataset.delay=delays[i];
+    });
+
+    await new Promise(resolve=>{
+      const frame=now=>{
+        if(finished){resolve();return}
+
+        let allDone=true;
+        for(let i=0;i<3;i++){
+          if(laneDone[i])continue;
+          allDone=false;
+
+          const local=now-start-delays[i];
+          if(local<0)continue;
+
+          const t=clamp(local/duration,0,1);
+          const x=stageW+40-(stageW+40-targetX)*t;
+          energies[i].style.transform=`translateX(${x}px)`;
+
+          if(t>=1){
+            laneDone[i]=true;
+            const safe=dodgeUntil[i]>=now;
+            laneSafe[i]=safe;
+            energies[i].classList.add(safe?"safe":"hit");
+            if(!safe){
+              finished=true;
+              mobs[i].classList.add("hurt");
+              hint.textContent=`モブくん${i+1}が被弾！`;
+              beep(150,220,.04);
+            }
+          }
+        }
+
+        if(finished||laneDone.every(Boolean)){
+          resolve();
+          return;
+        }
+        waveRAF=requestAnimationFrame(frame);
+      };
+      waveRAF=requestAnimationFrame(frame);
+    });
+
+    if(finished){
+      state.records.crisis[p.id]=wave;
+      await wait(480);
+      recordScreen(6,p,humanIndex,`${wave}<small>回</small>`,`ALL DODGE RECORD`);
+      return;
+    }
+
+    if(laneSafe.every(Boolean)){
+      wave++;
+      countEl.textContent=wave;
+      hint.textContent=`ALL DODGE ${wave}!`;
+      beep(860,70,.025);
+      await wait(Math.max(85,220-wave*6));
+      runWave();
+    }
+  }
+
+  await countdown("DODGE");
+  runWave();
+}
+
+// GAME 8 -------------------------------------------------
+async function startFactory(p,humanIndex){
+  let completed=0;
+  let current=null;
+  let carrying=false;
+  let finished=false;
+  let timerRAF=null;
+  let endAt=0;
+
+  screen.innerHTML=`<div class="factory-shell">
+    <div class="game-head"><div><span class="kicker">${esc(p.name)}</span><h2>モブくん人形大人気</h2></div><div class="game-badge">${playBadge(humanIndex)}</div></div>
+
+    <div class="factory-hud">
+      <div><span>TIME</span><b id="factoryTime">10.00</b></div>
+      <div><span>COMPLETE</span><b id="factoryCount">0</b></div>
+    </div>
+
+    <div class="factory-room">
+      <button id="mobStock" class="mob-stock" type="button">
+        <span class="stock-pile">${Array.from({length:9},()=>`<i></i>`).join("")}</span>
+        <b>MOB DOLL</b><small>空箱なら最初にタップ</small>
+      </button>
+
+      <div class="factory-machine">
+        <div class="factory-belt">
+          <div class="belt-line"></div>
+          <div id="factoryBox" class="factory-box">
+            <span class="box-logo">MOB</span>
+            <div class="box-doll"></div>
+            <div class="box-stamp">OK</div>
+          </div>
+          <div class="ghost-box g1">MOB</div>
+          <div class="ghost-box g2">MOB</div>
+        </div>
+      </div>
+    </div>
+
+    <p id="factoryHint" class="hint">空箱：右上の人形 → 箱 → もう一度箱。人形入り箱：箱を1回。</p>
+  </div>`;
+  gameTop();
+
+  const timeEl=document.getElementById("factoryTime");
+  const countEl=document.getElementById("factoryCount");
+  const stock=document.getElementById("mobStock");
+  const box=document.getElementById("factoryBox");
+  const hint=document.getElementById("factoryHint");
+
+  function spawnBox(){
+    if(finished)return;
+    current={prefilled:Math.random()<.47,filled:false,sealed:false};
+    carrying=false;
+    stock.classList.remove("carrying");
+    box.className="factory-box enter";
+    box.querySelector(".box-doll").style.display=current.prefilled?"block":"none";
+    box.querySelector(".box-stamp").style.display="none";
+    hint.textContent=current.prefilled
+      ?"人形入り！箱をタップして封をするだけ。"
+      :"空箱！右上のモブくんをタップ。";
+    setTimeout(()=>box.classList.remove("enter"),110);
+  }
+
+  stock.addEventListener("pointerdown",e=>{
+    if(finished||!current||current.prefilled||current.filled)return;
+    e.preventDefault();
+    carrying=true;
+    stock.classList.add("carrying");
+    hint.textContent="人形を持った！箱をタップ。";
+    beep(590,32,.014);
+  },{passive:false});
+
+  box.addEventListener("pointerdown",e=>{
+    if(finished||!current||current.sealed)return;
+    e.preventDefault();
+
+    if(current.prefilled||current.filled){
+      current.sealed=true;
+      box.querySelector(".box-stamp").style.display="grid";
+      box.classList.add("sealed");
+      completed++;
+      countEl.textContent=completed;
+      beep(850,42,.02);
+      hint.textContent="COMPLETE!";
+      setTimeout(()=>{
+        box.classList.add("exit");
+        setTimeout(spawnBox,70);
+      },55);
+      return;
+    }
+
+    if(carrying){
+      current.filled=true;
+      carrying=false;
+      stock.classList.remove("carrying");
+      box.querySelector(".box-doll").style.display="block";
+      box.classList.add("filled");
+      hint.textContent="人形IN！もう一度箱をタップして封。";
+      beep(690,32,.015);
+    }else{
+      hint.textContent="先に右上のモブくんをタップ！";
+      box.classList.add("need-doll");
+      setTimeout(()=>box.classList.remove("need-doll"),180);
+    }
+  },{passive:false});
+
+  function finishFactory(){
+    if(finished)return;
+    finished=true;
+    if(timerRAF)cancelAnimationFrame(timerRAF);
+    state.records.factory[p.id]=completed;
+    recordScreen(7,p,humanIndex,`${completed}<small>箱</small>`,`10 SECOND FACTORY`);
+  }
+
+  await countdown("FACTORY");
+  if(!document.body.contains(box))return;
+  endAt=performance.now()+10000;
+  spawnBox();
+
+  const timer=now=>{
+    if(finished)return;
+    const left=Math.max(0,endAt-now);
+    timeEl.textContent=(left/1000).toFixed(2);
+    if(left<=0){finishFactory();return}
+    timerRAF=requestAnimationFrame(timer);
+  };
+  timerRAF=requestAnimationFrame(timer);
+}
+
+// GAME 9 -------------------------------------------------
+async function startCatcher(p,humanIndex){
+  let phase="position";
+  let craneX=.56;
+  let craneY=42;
+  let armOpen=.55;
+  let animRAF=null;
+  let dolls=[];
+
+  const dollCount=34;
+  for(let i=0;i<dollCount;i++){
+    dolls.push({
+      x:rand(.16,.88),
+      y:rand(.70,.92),
+      rot:rand(-26,26),
+      id:i
+    });
+  }
+
+  screen.innerHTML=`<div class="catcher-shell">
+    <div class="game-head"><div><span class="kicker">${esc(p.name)}</span><h2>モブくんキャッチャー</h2></div><div class="game-badge">${playBadge(humanIndex)}</div></div>
+
+    <div id="catcherStage" class="catcher-stage">
+      <div class="catcher-chute"><b>DROP</b></div>
+      <div id="dollPile" class="catcher-dolls">
+        ${dolls.map(d=>`<i class="catcher-doll" data-id="${d.id}" style="left:${d.x*100}%;top:${d.y*100}%;transform:translate(-50%,-50%) rotate(${d.rot}deg)"></i>`).join("")}
+      </div>
+
+      <div id="crane" class="crane" style="left:${craneX*100}%">
+        <div class="crane-rail"></div>
+        <div id="craneCable" class="crane-cable" style="height:${craneY}px"></div>
+        <div id="craneHead" class="crane-head" style="top:${craneY}px">
+          <div id="armLeft" class="crane-arm left"></div>
+          <div id="armRight" class="crane-arm right"></div>
+          <span id="grabBadge" class="grab-badge"></span>
+        </div>
+      </div>
+    </div>
+
+    <div class="catcher-meter"><span>ARM OPEN</span><b id="armValue">${Math.round(armOpen*100)}%</b><i><em id="armFill" style="width:${armOpen*100}%"></em></i></div>
+
+    <div class="catcher-controls">
+      <button id="craneLeft" type="button">◀</button>
+      <button id="craneRight" type="button">▶</button>
+      <button id="craneDrop" class="drop" type="button">降下</button>
+      <button id="craneStop" class="stop" type="button" disabled>STOP</button>
+    </div>
+
+    <p id="catcherHint" class="hint">矢印で位置決め → 降下 → 好きな高さ・アーム幅でSTOP。</p>
+  </div>`;
+  gameTop();
+
+  const stage=document.getElementById("catcherStage");
+  const crane=document.getElementById("crane");
+  const cable=document.getElementById("craneCable");
+  const head=document.getElementById("craneHead");
+  const leftArm=document.getElementById("armLeft");
+  const rightArm=document.getElementById("armRight");
+  const armValue=document.getElementById("armValue");
+  const armFill=document.getElementById("armFill");
+  const leftBtn=document.getElementById("craneLeft");
+  const rightBtn=document.getElementById("craneRight");
+  const dropBtn=document.getElementById("craneDrop");
+  const stopBtn=document.getElementById("craneStop");
+  const hint=document.getElementById("catcherHint");
+  const grabBadge=document.getElementById("grabBadge");
+
+  function renderCrane(){
+    crane.style.left=`${craneX*100}%`;
+    cable.style.height=`${craneY}px`;
+    head.style.top=`${craneY}px`;
+    const spread=10+armOpen*28;
+    leftArm.style.transform=`rotate(${-(18+armOpen*40)}deg) translateX(${-spread*.15}px)`;
+    rightArm.style.transform=`rotate(${18+armOpen*40}deg) translateX(${spread*.15}px)`;
+    armValue.textContent=`${Math.round(armOpen*100)}%`;
+    armFill.style.width=`${armOpen*100}%`;
+  }
+
+  function move(dx){
+    if(phase!=="position")return;
+    craneX=clamp(craneX+dx,.14,.90);
+    renderCrane();
+    beep(460,22,.009);
+  }
+
+  leftBtn.addEventListener("pointerdown",e=>{e.preventDefault();move(-.07)},{passive:false});
+  rightBtn.addEventListener("pointerdown",e=>{e.preventDefault();move(.07)},{passive:false});
+
+  dropBtn.addEventListener("pointerdown",e=>{
+    if(phase!=="position")return;
+    e.preventDefault();
+
+    phase="descending";
+    leftBtn.disabled=true;
+    rightBtn.disabled=true;
+    dropBtn.disabled=true;
+    stopBtn.disabled=false;
+    hint.textContent="今！と思った高さ・アーム幅でSTOP。";
+
+    const start=performance.now();
+    const frame=now=>{
+      if(phase!=="descending")return;
+      const t=(now-start)/1000;
+      craneY=clamp(42+t*165,42,260);
+      armOpen=.22+((Math.sin(t*7.4)+1)/2)*.73;
+      renderCrane();
+
+      if(craneY>=260){
+        stopCatch();
+        return;
+      }
+      animRAF=requestAnimationFrame(frame);
+    };
+    animRAF=requestAnimationFrame(frame);
+  },{passive:false});
+
+  stopBtn.addEventListener("pointerdown",e=>{
+    e.preventDefault();
+    stopCatch();
+  },{passive:false});
+
+  async function stopCatch(){
+    if(phase!=="descending")return;
+    phase="closing";
+    if(animRAF)cancelAnimationFrame(animRAF);
+    stopBtn.disabled=true;
+
+    const depth=clamp((craneY-42)/(260-42),0,1);
+    const captureRadius=.045+armOpen*.11;
+
+    const nearby=dolls.filter(d=>
+      Math.abs(d.x-craneX)<=captureRadius &&
+      d.y>.64+depth*.13
+    ).sort((a,b)=>Math.abs(a.x-craneX)-Math.abs(b.x-craneX));
+
+    const opennessQuality=clamp(1-Math.abs(armOpen-.70)/.72,.18,1);
+    const depthQuality=.45+depth*.55;
+    const capacity=clamp(Math.round(1+9*opennessQuality*depthQuality),1,10);
+    const caught=Math.max(1,Math.min(10,nearby.length||1,capacity));
+
+    hint.textContent=`アームCLOSE… ${caught}体を抱えた！`;
+    grabBadge.textContent=`${caught}`;
+    grabBadge.classList.add("show");
+
+    const closeStart=performance.now();
+    await new Promise(resolve=>{
+      const close=now=>{
+        const t=clamp((now-closeStart)/430,0,1);
+        const fakeOpen=armOpen*(1-t)+.08*t;
+        const spread=10+fakeOpen*28;
+        leftArm.style.transform=`rotate(${-(18+fakeOpen*40)}deg) translateX(${-spread*.15}px)`;
+        rightArm.style.transform=`rotate(${18+fakeOpen*40}deg) translateX(${spread*.15}px)`;
+        if(t<1)requestAnimationFrame(close);else resolve();
+      };
+      requestAnimationFrame(close);
+    });
+
+    const taken=nearby.slice(0,caught).map(d=>d.id);
+    taken.forEach(id=>{
+      const el=stage.querySelector(`.catcher-doll[data-id="${id}"]`);
+      if(el)el.classList.add("caught");
+    });
+
+    phase="returning";
+    const returnStart=performance.now();
+    const startX=craneX,startY=craneY;
+
+    await new Promise(resolve=>{
+      const back=now=>{
+        const t=clamp((now-returnStart)/900,0,1);
+        const e=1-Math.pow(1-t,3);
+        craneY=startY+(42-startY)*e;
+        craneX=startX+(.15-startX)*e;
+        renderCrane();
+        if(t<1)requestAnimationFrame(back);else resolve();
+      };
+      requestAnimationFrame(back);
+    });
+
+    phase="release";
+    hint.textContent="落とし口でOPEN！";
+    const openStart=performance.now();
+
+    await new Promise(resolve=>{
+      const open=now=>{
+        const t=clamp((now-openStart)/360,0,1);
+        armOpen=.08+.78*t;
+        renderCrane();
+        if(t<1)requestAnimationFrame(open);else resolve();
+      };
+      requestAnimationFrame(open);
+    });
+
+    beep(900,100,.03);
+    grabBadge.classList.remove("show");
+    state.records.catcher[p.id]=caught;
+    await wait(360);
+    recordScreen(8,p,humanIndex,`${caught}<small>体</small>`,`UFO CATCHER`);
+  }
+
+  renderCrane();
+}
+
+
 function recordScreen(gameIndex,p,humanIndex,main,sub=""){
   gameTop();
   if(state.freePlay){
@@ -722,7 +1526,7 @@ function recordScreen(gameIndex,p,humanIndex,main,sub=""){
     return;
   }
   const more=humanIndex+1<humans().length;
-  screen.innerHTML=`<div class="ready-wrap"><div class="ready-card">${imgTag(p,"ready-avatar")}<div class="record-label">${GAMES[gameIndex].title} / RECORD</div><div class="big-record">${main}</div>${sub?`<p class="lead">${sub}</p>`:""}<button id="nextHuman" class="primary">${more?"次のプレイヤー":cpus().length?"CPU高速処理へ":`GAME ${gameIndex+1} RESULT`}</button></div></div>`;
+  screen.innerHTML=`<div class="ready-wrap"><div class="ready-card">${imgTag(p,"ready-avatar")}<div class="record-label">${GAMES[gameIndex].title} / RECORD</div><div class="big-record">${main}</div>${sub?`<p class="lead">${sub}</p>`:""}<button id="nextHuman" class="primary">${more?"次のプレイヤー":cpus().length?"CPU高速処理へ":`ROUND ${state.roundIndex+1} RESULT`}</button></div></div>`;
   document.getElementById("nextHuman").addEventListener("click",()=>humanReady(gameIndex,humanIndex+1));
 }
 
@@ -748,20 +1552,46 @@ async function simulateCpuThenResult(gameIndex){
 
 function cpuUltraDraw(gameIndex){
   // Game-specific draw rate. Regular values are already intentionally strong.
-  const chance=[0.12,0.10,0.14,0.16,0.12,0.13][gameIndex] ?? 0.12;
+  const chance=[0.12,0.10,0.14,0.16,0.12,0.13,0.14,0.12,0.15][gameIndex] ?? 0.12;
   return Math.random()<chance;
 }
 
 function simulateOneCpu(gameIndex,p){
-  const ultra=cpuUltraDraw(gameIndex);state.cpuTier[`${gameIndex}:${p.id}`]=ultra?"SUPER":"STRONG";
-  if(gameIndex===0){const bias={c5:8,c6:2,c7:12,c8:0}[p.id]||0;state.records.reaction[p.id]=ultra?randi(72,112):clamp(randi(125,230)+bias,118,245)}
-  else if(gameIndex===1){const base={c5:9,c6:9,c7:8,c8:10}[p.id]||9;state.records.memory[p.id]=ultra?10:clamp(base+randi(-1,1),7,10)}
-  else if(gameIndex===2){const bias={c5:180,c6:80,c7:260,c8:0}[p.id]||0;state.records.puzzle[p.id]=ultra?randi(1250,1850):clamp(randi(2150,3700)+bias,2050,4200)}
-  else if(gameIndex===3){const bias={c5:25,c6:65,c7:0,c8:80}[p.id]||0;const meters=ultra?rand(1880,2000):clamp(rand(1380,1880)+bias,1300,1960);state.records.launch[p.id]=Math.round(meters*10)}
-  else if(gameIndex===4){const bias={c5:2,c6:4,c7:1,c8:5}[p.id]||0;state.records.stack[p.id]=ultra?randi(27,36):clamp(randi(15,25)+bias,14,31)}
-  else{const bias={c5:1,c6:0,c7:2,c8:0}[p.id]||0;state.records.breakdance[p.id]=ultra?randi(1,3):clamp(randi(3,12)+bias,2,16)}
+  const ultra=cpuUltraDraw(gameIndex);
+  state.cpuTier[`${state.roundIndex}:${p.id}`]=ultra?"SUPER":"STRONG";
+
+  if(gameIndex===0){
+    const bias={c5:8,c6:2,c7:12,c8:0}[p.id]||0;
+    state.records.reaction[p.id]=ultra?randi(72,112):clamp(randi(125,230)+bias,118,245);
+  }else if(gameIndex===1){
+    const base={c5:9,c6:9,c7:8,c8:10}[p.id]||9;
+    state.records.memory[p.id]=ultra?10:clamp(base+randi(-1,1),7,10);
+  }else if(gameIndex===2){
+    const bias={c5:120,c6:40,c7:180,c8:0}[p.id]||0;
+    state.records.puzzle[p.id]=ultra?randi(1950,2350):clamp(randi(2550,4300)+bias,2400,4700);
+  }else if(gameIndex===3){
+    const bias={c5:15,c6:45,c7:0,c8:60}[p.id]||0;
+    const meters=ultra?rand(1840,2000):clamp(rand(1280,1810)+bias,1200,1930);
+    state.records.launch[p.id]=Math.round(meters*10);
+  }else if(gameIndex===4){
+    const bias={c5:1,c6:2,c7:0,c8:3}[p.id]||0;
+    state.records.stack[p.id]=ultra?randi(23,31):clamp(randi(12,21)+bias,11,26);
+  }else if(gameIndex===5){
+    const bias={c5:1,c6:0,c7:2,c8:0}[p.id]||0;
+    state.records.breakdance[p.id]=ultra?randi(1,2):clamp(randi(2,10)+bias,1,14);
+  }else if(gameIndex===6){
+    const bias={c5:1,c6:2,c7:0,c8:2}[p.id]||0;
+    state.records.crisis[p.id]=ultra?randi(22,31):clamp(randi(14,23)+bias,13,28);
+  }else if(gameIndex===7){
+    const bias={c5:1,c6:3,c7:0,c8:2}[p.id]||0;
+    state.records.factory[p.id]=ultra?randi(25,32):clamp(randi(16,24)+bias,15,28);
+  }else{
+    const bias={c5:0,c6:1,c7:-1,c8:1}[p.id]||0;
+    state.records.catcher[p.id]=ultra?randi(8,10):clamp(randi(4,8)+bias,3,10);
+  }
   return ultra;
 }
+
 
 // RANKING ------------------------------------------------
 function performancePoints(gameIndex,v){
@@ -772,10 +1602,13 @@ function performancePoints(gameIndex,v){
     return 0;
   }
   if(gameIndex===1)return clamp(Math.round(v*10),0,100);
-  if(gameIndex===2)return clamp(Math.round((12000-v)/8000*100),0,100);
+  if(gameIndex===2)return clamp(Math.round((6000-v)/3500*100),0,100);
   if(gameIndex===3)return clamp(Math.round((v/10)/2000*100),0,100);
   if(gameIndex===4)return clamp(Math.round(v/30*100),0,100);
-  return clamp(Math.round((40-v)/39*100),0,100);
+  if(gameIndex===5)return clamp(Math.round((40-v)/39*100),0,100);
+  if(gameIndex===6)return clamp(Math.round(v/20*100),0,100);
+  if(gameIndex===7)return clamp(Math.round(v/25*100),0,100);
+  return clamp(Math.round(v*10),0,100);
 }
 
 function rankRecords(gameIndex){
@@ -791,40 +1624,126 @@ function rankRecords(gameIndex){
   }
   return arr;
 }
-function formatRecord(gameIndex,v){if(gameIndex===0)return `${(v/1000).toFixed(3)}秒`;if(gameIndex===1)return `${v}/10`;if(gameIndex===2)return `${(v/1000).toFixed(2)}秒`;if(gameIndex===3)return `${(v/10).toFixed(1)}m`;if(gameIndex===4)return `${v}体`;return `世界${v}位`}
-function applyPoints(gameIndex,ranked){const gp={};ranked.forEach(e=>{gp[e.p.id]=e.points;state.total[e.p.id]=(state.total[e.p.id]||0)+e.points});state.gamePoints[gameIndex]=gp}
+function formatRecord(gameIndex,v){
+  if(gameIndex===0)return `${(v/1000).toFixed(3)}秒`;
+  if(gameIndex===1)return `${v}/10`;
+  if(gameIndex===2)return `${(v/1000).toFixed(2)}秒`;
+  if(gameIndex===3)return `${(v/10).toFixed(1)}m`;
+  if(gameIndex===4)return `${v}体`;
+  if(gameIndex===5)return `世界${v}位`;
+  if(gameIndex===6)return `${v}回`;
+  if(gameIndex===7)return `${v}箱`;
+  return `${v}体`;
+}
+function applyPoints(gameIndex,ranked){
+  const gp={};
+  ranked.forEach(e=>{
+    gp[e.p.id]=e.points;
+    state.total[e.p.id]=(state.total[e.p.id]||0)+e.points;
+  });
+  state.roundPoints[state.roundIndex]=gp;
+}
 function competitionRankTotals(){const arr=participants().map(p=>({p,points:state.total[p.id]||0})).sort((a,b)=>b.points-a.points);let last=null,lastRank=0;arr.forEach((e,i)=>{e.rank=i>0&&e.points===last?lastRank:i+1;last=e.points;lastRank=e.rank});return arr}
 function teamTotals(){if(!mode().team)return null;const sum=t=>mode().teams[t].reduce((s,id)=>s+(state.total[id]||0),0);return {A:sum("A"),B:sum("B")}}
 function finishGame(gameIndex){const ranked=rankRecords(gameIndex);applyPoints(gameIndex,ranked);renderGameResult(gameIndex,ranked)}
 function renderGameResult(gameIndex,ranked){
   const totals=competitionRankTotals(),tt=teamTotals(),g=GAMES[gameIndex],scoreMode=mode().performance;
-  screen.innerHTML=`<div class="game-head"><div><span class="kicker">GAME ${g.no} COMPLETE</span><h2>${g.title} RESULT</h2></div><div class="game-badge">${g.no}/6</div></div>
-  <section class="panel"><h3>${scoreMode?"GAME SCORE":"GAME RANKING"}</h3><div class="rank-list">${ranked.map(e=>rankRow(e.p,e.rank,formatRecord(gameIndex,e.value),scoreMode?`${e.points}/100 pt`:`+${e.points}pt`)).join("")}</div></section>
-  <section class="panel"><h3>OVERALL</h3><div class="rank-list">${totals.map(e=>rankRow(e.p,e.rank,`${e.points}pt`,scoreMode?`MAX 600`:(mode().team?teamName(e.p.id):(e.p.cpu?"CPU":"PLAYER")))).join("")}</div></section>
-  ${tt?`<section class="panel"><h3>TEAM TOTAL</h3><div class="team-total"><div class="team-box a"><span>${mode().teamNames.A}</span><b>${tt.A}pt</b></div><div class="team-box b"><span>${mode().teamNames.B}</span><b>${tt.B}pt</b></div></div></section>`:""}
-  <button id="resultNext" class="primary">${gameIndex<5?`GAME ${gameIndex+2} へ`:"FINAL RESULT"}</button>`;
-  gameTop();document.getElementById("resultNext").addEventListener("click",()=>gameIndex<5?showGameIntro(gameIndex+1):renderFinal());
+  const hasNext=state.roundIndex+1<state.playlist.length;
+
+  screen.innerHTML=`
+    <div class="game-head">
+      <div><span class="kicker">ROUND ${state.roundIndex+1} COMPLETE</span><h2>${g.title} RESULT</h2></div>
+      <div class="game-badge">${state.roundIndex+1}/${state.playlist.length}</div>
+    </div>
+
+    <section class="panel">
+      <h3>${scoreMode?"GAME SCORE":"GAME RANKING"}</h3>
+      <div class="rank-list">
+        ${ranked.map(e=>rankRow(e.p,e.rank,formatRecord(gameIndex,e.value),scoreMode?`${e.points}/100 pt`:`+${e.points}pt`)).join("")}
+      </div>
+    </section>
+
+    <section class="panel">
+      <h3>OVERALL</h3>
+      <div class="rank-list">
+        ${totals.map(e=>rankRow(e.p,e.rank,`${e.points}pt`,scoreMode?`MAX ${maxScoreTotal()}`:(mode().team?teamName(e.p.id):(e.p.cpu?"CPU":"PLAYER")))).join("")}
+      </div>
+    </section>
+
+    ${tt?`<section class="panel"><h3>TEAM TOTAL</h3><div class="team-total"><div class="team-box a"><span>${mode().teamNames.A}</span><b>${tt.A}pt</b></div><div class="team-box b"><span>${mode().teamNames.B}</span><b>${tt.B}pt</b></div></div></section>`:""}
+
+    <button id="resultNext" class="primary">${hasNext?`NEXT / ${GAMES[state.playlist[state.roundIndex+1]].title}`:"FINAL RESULT"}</button>
+  `;
+
+  gameTop();
+
+  document.getElementById("resultNext").addEventListener("click",()=>{
+    if(hasNext){
+      state.roundIndex++;
+      showGameIntro(state.playlist[state.roundIndex]);
+    }else{
+      renderFinal();
+    }
+  });
 }
-function rankRow(p,rank,record,badge){const tier=p.cpu&&!state.freePlay?state.cpuTier[`${state.gameIndex}:${p.id}`]:null;return `<div class="rank-row"><div class="rank-place">${rank}位</div>${imgTag(p)}<div class="rank-name">${esc(p.name)}<span>${p.cpu?"CPU":`PLAYER ${p.no}`}${mode().team?` / ${teamName(p.id)}`:""}${tier==="SUPER"?" / SUPER CPU":""}</span></div><div class="rank-score"><b>${record}</b><span class="point-badge">${badge}</span></div></div>`}
+
+function rankRow(p,rank,record,badge){const tier=p.cpu&&!state.freePlay?state.cpuTier[`${state.roundIndex}:${p.id}`]:null;return `<div class="rank-row"><div class="rank-place">${rank}位</div>${imgTag(p)}<div class="rank-name">${esc(p.name)}<span>${p.cpu?"CPU":`PLAYER ${p.no}`}${mode().team?` / ${teamName(p.id)}`:""}${tier==="SUPER"?" / SUPER CPU":""}</span></div><div class="rank-score"><b>${record}</b><span class="point-badge">${badge}</span></div></div>`}
 
 function renderFinal(){
   const totals=competitionRankTotals(),tt=teamTotals();
   let winner="";
+
   if(tt)winner=tt.A===tt.B?"DRAW":tt.A>tt.B?`${mode().teamNames.A} WIN!`:`${mode().teamNames.B} WIN!`;
   else winner=`${totals[0].p.name} WIN!`;
 
-  screen.innerHTML=`<div class="champion"><small>FINAL RESULT</small><strong>${esc(winner)}</strong>${tt?`<span>${mode().teamNames.A} ${tt.A}pt　–　${tt.B}pt ${mode().teamNames.B}</span>`:`<span>${mode().performance?"6ゲーム合計 / MAX 600pt":"全6ゲーム 総合順位"}</span>`}</div>
-  <section class="panel"><h3>FINAL RANKING</h3><div class="rank-list">${totals.map(e=>rankRow(e.p,e.rank,`${e.points}pt`,mode().team?teamName(e.p.id):(e.p.cpu?"CPU":"PLAYER"))).join("")}</div></section>
-  <section class="panel"><h3>GAME SCORE</h3><div class="game-list">${GAMES.map((g,i)=>`<div class="game-row"><div class="game-no">${g.no}</div><div><b>${g.title}</b><br><span>${participants().map(p=>`${p.cpu?p.name:`P${p.no}`}:${state.gamePoints[i]?.[p.id]??0}`).join(" / ")}</span></div><span>pt</span></div>`).join("")}</div></section>
-  <button id="replay" class="primary">同じモードでもう一度</button><div style="height:8px"></div><button id="modeChange" class="secondary">モード選択へ</button>`;
+  screen.innerHTML=`
+    <div class="champion">
+      <small>FINAL RESULT</small>
+      <strong>${esc(winner)}</strong>
+      ${tt
+        ? `<span>${mode().teamNames.A} ${tt.A}pt　–　${tt.B}pt ${mode().teamNames.B}</span>`
+        : `<span>${mode().performance?`${state.playlist.length}ゲーム合計 / MAX ${maxScoreTotal()}pt`:`${state.playlist.length}ゲーム 総合順位`}</span>`}
+    </div>
+
+    <section class="panel">
+      <h3>FINAL RANKING</h3>
+      <div class="rank-list">
+        ${totals.map(e=>rankRow(e.p,e.rank,`${e.points}pt`,mode().team?teamName(e.p.id):(e.p.cpu?"CPU":"PLAYER"))).join("")}
+      </div>
+    </section>
+
+    <section class="panel">
+      <h3>GAME SCORE</h3>
+      <div class="game-list">
+        ${state.playlist.map((gameIdx,round)=>`<div class="game-row">
+          <div class="game-no">${round+1}</div>
+          <div><b>${GAMES[gameIdx].title}</b><br><span>${participants().map(p=>`${p.cpu?p.name:`P${p.no}`}:${state.roundPoints[round]?.[p.id]??0}`).join(" / ")}</span></div>
+          <span>pt</span>
+        </div>`).join("")}
+      </div>
+    </section>
+
+    <button id="replay" class="primary">同じ内容でもう一度</button>
+    <div style="height:8px"></div>
+    <button id="modeChange" class="secondary">モード選択へ</button>
+  `;
+
+  gameTop();
 
   document.getElementById("replay").addEventListener("click",()=>{
     const k=state.modeKey;
+    const style=state.playStyle;
+    const list=[...state.playlist];
+
     state=freshState();
     state.modeKey=k;
+    state.playStyle=style;
+    state.playlist=list;
+    state.roundIndex=0;
     initTotals();
     renderModeLobby();
   });
+
   document.getElementById("modeChange").addEventListener("click",renderHome);
 }
 
