@@ -2120,3 +2120,308 @@ body{touch-action:manipulation}
   .rhythm-message{min-height:31px}
   .errand-item{min-height:49px}
 }
+
+
+/* =========================================================
+   V8.8 JUMP ROPE
+   ========================================================= */
+.rope-stage-v88{
+  display:block;
+  position:relative;
+  background:linear-gradient(#e8f8ff 0 68%,#efe0b8 68% 100%)!important;
+}
+.rope-floor-shadow{
+  position:absolute;
+  left:50%;
+  top:64%;
+  width:150px;
+  height:30px;
+  transform:translate(-50%,-50%);
+  border-radius:50%;
+  background:rgba(17,19,26,.10);
+}
+.rope-mob-v88{
+  left:50%!important;
+  top:50%!important;
+  bottom:auto!important;
+  width:84px!important;
+  height:84px!important;
+  transform:translate(-50%,-50%)!important;
+  z-index:6!important;
+}
+.rope-mob-v88.jump{
+  animation:ropeMobJumpV88 .50s ease-out!important;
+}
+.rope-mob-v88.hurt{
+  transform:translate(-50%,-50%) rotate(24deg)!important;
+  opacity:.55;
+}
+@keyframes ropeMobJumpV88{
+  0%,100%{transform:translate(-50%,-50%) translateY(0)}
+  48%{transform:translate(-50%,-50%) translateY(-88px)}
+}
+.rope-loop-v88{
+  position:absolute;
+  left:50%;
+  top:50%;
+  width:min(74%,310px);
+  height:245px;
+  transform:translate(-50%,-50%);
+  transform-origin:center;
+  border:7px solid var(--cyan);
+  border-radius:50%;
+  box-shadow:0 0 0 3px var(--ink);
+  pointer-events:none;
+  will-change:top,transform;
+}
+.rope-loop-v88.hit{
+  border-color:var(--red);
+}
+.rope-turner{
+  position:absolute;
+  z-index:5;
+  top:45%;
+  width:36px;
+  height:78px;
+}
+.rope-turner.left{left:6%}
+.rope-turner.right{right:6%}
+.rope-turner span{
+  position:absolute;
+  left:50%;
+  top:0;
+  width:16px;
+  height:16px;
+  transform:translateX(-50%);
+  border:3px solid var(--ink);
+  border-radius:50%;
+  background:#fff;
+}
+.rope-turner i{
+  position:absolute;
+  left:50%;
+  top:15px;
+  width:7px;
+  height:61px;
+  transform:translateX(-50%);
+  border:2px solid var(--ink);
+  border-radius:999px;
+  background:#777;
+}
+.rope-ready-v88{
+  position:absolute;
+  z-index:20;
+  left:50%;
+  top:18%;
+  transform:translateX(-50%);
+  font-size:14px;
+  font-weight:1000;
+  opacity:.55;
+}
+.rope-ready-v88.go{
+  animation:ropeGo .45s ease;
+}
+@keyframes ropeGo{
+  0%{transform:translateX(-50%) scale(.7);opacity:0}
+  45%{transform:translateX(-50%) scale(1.25);opacity:1}
+  100%{transform:translateX(-50%) scale(1);opacity:0}
+}
+
+/* =========================================================
+   V8.8 PK SWIPE CONTROL
+   ========================================================= */
+.pk-field-v88{
+  touch-action:none!important;
+}
+.pk-gesture-guide{
+  position:absolute;
+  z-index:20;
+  left:8%;
+  right:8%;
+  bottom:8px;
+  display:grid;
+  grid-template-columns:1fr auto 1fr;
+  align-items:center;
+  gap:8px;
+  pointer-events:none;
+}
+.pk-gesture-guide span,.pk-gesture-guide b{
+  border:2px solid var(--ink);
+  border-radius:999px;
+  background:rgba(255,255,255,.88);
+  padding:5px 7px;
+  text-align:center;
+  font-size:8px;
+  font-weight:1000;
+}
+.pk-gesture-guide b{
+  background:var(--yellow);
+}
+
+/* =========================================================
+   V8.8 RHYTHM: NO FRAMES / HORIZONTAL
+   ========================================================= */
+.rhythm-shell-v88{
+  justify-content:flex-start;
+}
+.rhythm-row-v88{
+  flex:1;
+  min-height:0;
+  display:grid!important;
+  grid-template-columns:repeat(4,1fr)!important;
+  grid-template-rows:1fr!important;
+  gap:4px!important;
+  align-items:center;
+}
+.rhythm-mob-v88{
+  width:100%;
+  min-height:0!important;
+  height:min(24dvh,145px)!important;
+  border:none!important;
+  border-radius:0!important;
+  box-shadow:none!important;
+  background-color:transparent!important;
+  background-size:contain!important;
+  background-position:center bottom!important;
+  background-repeat:no-repeat!important;
+  touch-action:manipulation;
+}
+.rhythm-mob-v88:disabled{
+  opacity:1!important;
+}
+.rhythm-mob-v88.bounce{
+  animation:rhythmBounceV88 .19s ease!important;
+}
+.rhythm-mob-v88.group-bounce{
+  animation:rhythmGroupBounceV88 .19s ease!important;
+}
+.rhythm-mob-v88.tap-bounce{
+  animation:rhythmTapBounceV88 .18s ease!important;
+}
+@keyframes rhythmBounceV88{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-30px)}
+}
+@keyframes rhythmGroupBounceV88{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-24px) scale(1.03)}
+}
+@keyframes rhythmTapBounceV88{
+  0%,100%{transform:translateY(0)}
+  45%{transform:translateY(-27px) scale(1.08)}
+}
+
+/* =========================================================
+   V8.8 CUT RESULT MODAL
+   ========================================================= */
+.cut-result-overlay{
+  position:fixed;
+  z-index:1500;
+  inset:0;
+  display:none;
+  place-items:center;
+  padding:18px;
+  background:rgba(17,19,26,.72);
+}
+.cut-result-overlay.show{
+  display:grid;
+}
+.cut-result-card{
+  width:min(92vw,430px);
+  border:5px solid var(--ink);
+  border-radius:24px;
+  background:#fff;
+  box-shadow:0 9px 0 var(--ink);
+  padding:20px 16px 16px;
+  text-align:center;
+}
+.cut-result-card>span{
+  display:block;
+  font-size:10px;
+  font-weight:1000;
+  letter-spacing:.13em;
+  color:var(--muted);
+}
+.cut-result-card>strong{
+  display:block;
+  margin:8px 0;
+  font-size:clamp(52px,18vw,90px);
+  line-height:.95;
+}
+.cut-result-card>div{
+  border:3px solid var(--ink);
+  border-radius:12px;
+  background:#f4f4ef;
+  padding:9px;
+  font-size:13px;
+  font-weight:1000;
+}
+.cut-result-card>b{
+  display:block;
+  margin:10px 0 14px;
+  font-size:20px;
+}
+.cut-result-card .primary{
+  width:100%;
+}
+
+/* =========================================================
+   V8.8 SLOT: PEEK ABOVE / BELOW
+   ========================================================= */
+.slot-reel-v88{
+  position:relative;
+  overflow:hidden!important;
+  background:#e7e8e9!important;
+}
+.slot-reel-track{
+  position:absolute;
+  left:0;
+  right:0;
+  top:50%;
+  height:174%;
+  transform:translateY(0);
+  transition:none;
+  display:grid;
+  grid-template-rows:27% 46% 27%;
+  align-items:center;
+  justify-items:center;
+  will-change:transform;
+}
+.slot-reel-track .slot-symbol{
+  width:78%;
+  height:100%;
+  aspect-ratio:auto!important;
+  background-size:78%!important;
+}
+.slot-peek{
+  width:70%;
+  height:100%;
+  border:2px solid var(--ink);
+  border-radius:14px;
+  background-color:#fff;
+  background-position:center;
+  background-size:68%;
+  background-repeat:no-repeat;
+  opacity:.50;
+  transform:scale(.82);
+}
+.slot-center-line{
+  position:absolute;
+  z-index:12;
+  left:4%;
+  right:4%;
+  height:3px;
+  background:var(--red);
+  pointer-events:none;
+}
+.slot-center-line.top{top:27%}
+.slot-center-line.bottom{bottom:27%}
+
+/* =========================================================
+   V8.8 TREE CLIMB: SHORTER & SLOWER GAUGE
+   ========================================================= */
+.climb-gauge{
+  width:min(72%,360px)!important;
+  align-self:center!important;
+  height:46px!important;
+}

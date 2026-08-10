@@ -2561,8 +2561,17 @@ async function startMobSlot(p,humanIndex){
     <div class="slot-machine">
       <div class="slot-top">SLOT</div>
 
-      <div class="slot-reels">
-        ${[0,1,2].map(i=>`<div class="slot-reel" data-reel="${i}"><div class="slot-symbol mob-symbol" id="slotSymbol${i}"></div></div>`).join("")}
+      <div class="slot-reels slot-reels-v88">
+        ${[0,1,2].map(i=>`
+          <div class="slot-reel slot-reel-v88" data-reel="${i}">
+            <div class="slot-reel-track" id="slotTrack${i}">
+              <div class="slot-peek top" id="slotPrev${i}"></div>
+              <div class="slot-symbol mob-symbol" id="slotSymbol${i}"></div>
+              <div class="slot-peek bottom" id="slotNext${i}"></div>
+            </div>
+            <i class="slot-center-line top"></i>
+            <i class="slot-center-line bottom"></i>
+          </div>`).join("")}
       </div>
 
       <div id="slotResult" class="slot-result">READY</div>
@@ -2582,12 +2591,33 @@ async function startMobSlot(p,humanIndex){
   const resultEl=document.getElementById("slotResult");
   const mainBtn=document.getElementById("slotMainBtn");
   const symbolEls=[0,1,2].map(i=>document.getElementById(`slotSymbol${i}`));
+  const prevEls=[0,1,2].map(i=>document.getElementById(`slotPrev${i}`));
+  const nextEls=[0,1,2].map(i=>document.getElementById(`slotNext${i}`));
+  const trackEls=[0,1,2].map(i=>document.getElementById(`slotTrack${i}`));
 
-  function renderSymbol(el,symbolIndex){
-    const s=SLOT_SYMBOLS[symbolIndex];
-    el.className=`slot-symbol mob-symbol ${s.rare?"rare":""}`;
-    el.textContent="";
-    el.style.backgroundImage=`url("icon/${String(s.icon).padStart(2,"0")}.png")`;
+  function symbolImage(index){
+    const s=SLOT_SYMBOLS[(index+SLOT_SYMBOLS.length)%SLOT_SYMBOLS.length];
+    return `url("icon/${String(s.icon).padStart(2,"0")}.png")`;
+  }
+
+  function renderReel(reelIndex,symbolIndex,fraction=.5){
+    const total=SLOT_SYMBOLS.length;
+    const current=(symbolIndex+total)%total;
+    const prev=(current-1+total)%total;
+    const next=(current+1)%total;
+    const s=SLOT_SYMBOLS[current];
+
+    const center=symbolEls[reelIndex];
+    center.className=`slot-symbol mob-symbol ${s.rare?"rare":""}`;
+    center.textContent="";
+    center.style.backgroundImage=symbolImage(current);
+
+    prevEls[reelIndex].style.backgroundImage=symbolImage(prev);
+    nextEls[reelIndex].style.backgroundImage=symbolImage(next);
+
+    // Small continuous vertical offset makes the reel visibly roll.
+    const offset=(fraction-.5)*34;
+    trackEls[reelIndex].style.transform=`translateY(${offset}px)`;
   }
 
   function chooseTargetIndex(){
@@ -2604,9 +2634,12 @@ async function startMobSlot(p,humanIndex){
     const elapsed=now-reelStart;
 
     for(let i=stopIndex;i<3;i++){
-      const speed=66+i*9;
-      visible[i]=Math.floor(elapsed/speed+i*1.6)%SLOT_SYMBOLS.length;
-      renderSymbol(symbolEls[i],visible[i]);
+      const speed=72+i*10;
+      const raw=elapsed/speed+i*1.7;
+      const base=Math.floor(raw);
+      const fraction=raw-base;
+      visible[i]=base%SLOT_SYMBOLS.length;
+      renderReel(i,visible[i],fraction);
     }
 
     reelRAF=requestAnimationFrame(spinReels);
@@ -2641,19 +2674,18 @@ async function startMobSlot(p,humanIndex){
 
     let idx=visible[stopIndex];
 
-    // First two are deliberately very easy to match.
+    // 最初の2リールはほぼ狙いキャラへ揃う。
     if(stopIndex===0&&Math.random()<.995){
       idx=targetIndex;
     }else if(stopIndex===1&&Math.random()<.985){
       idx=targetIndex;
     }else if(stopIndex===2&&Math.random()<.36){
-      // Third reel is still the main timing challenge, but wins are more common.
       idx=targetIndex;
     }
 
     visible[stopIndex]=idx;
     stopped[stopIndex]=idx;
-    renderSymbol(symbolEls[stopIndex],idx);
+    renderReel(stopIndex,idx,.5);
     beep(620+stopIndex*90,45,.018);
 
     stopIndex++;
@@ -2710,10 +2742,9 @@ async function startMobSlot(p,humanIndex){
     ),220);
   }
 
-  // Initial symbols are already character images.
-  renderSymbol(symbolEls[0],0);
-  renderSymbol(symbolEls[1],1);
-  renderSymbol(symbolEls[2],2);
+  renderReel(0,0,.5);
+  renderReel(1,1,.5);
+  renderReel(2,2,.5);
 
   await countdown("SLOT");
   if(!document.body.contains(mainBtn))return;
@@ -2737,7 +2768,6 @@ async function startMobSlot(p,humanIndex){
   timerRAF=requestAnimationFrame(timer);
 }
 
-
 // GAME 13 -------------------------------------------------
 async function startJumpRope(p,humanIndex){
   gameFit();
@@ -2746,9 +2776,11 @@ async function startJumpRope(p,humanIndex){
   let finished=false;
   let jumpingUntil=0;
   let ropeRAF=null;
-  let cycleStart=0;
-  let period=1080;
-  let lastPass=-1;
+  let period=1180;
+  let angle=-Math.PI*.52;
+  let lastNow=0;
+  let previousPhase=0;
+  let collisionReadyAt=0;
 
   screen.innerHTML=`<div class="rope-shell">
     <div class="game-head">
@@ -2761,29 +2793,38 @@ async function startJumpRope(p,humanIndex){
       <div><span>SPEED</span><b id="ropeSpeed">1.0x</b></div>
     </div>
 
-    <button id="ropeStage" class="rope-stage" type="button">
-      <div class="rope-ground"></div>
-      <div id="ropeMob" class="rope-mob"></div>
-      <div id="ropeLine" class="rope-line"></div>
-      <div class="rope-handle left"></div>
-      <div class="rope-handle right"></div>
+    <button id="ropeStage" class="rope-stage rope-stage-v88" type="button">
+      <div class="rope-floor-shadow"></div>
+
+      <div class="rope-turner left">
+        <span></span><i></i>
+      </div>
+      <div class="rope-turner right">
+        <span></span><i></i>
+      </div>
+
+      <div id="ropeLoop" class="rope-loop-v88"></div>
+      <div id="ropeMob" class="rope-mob rope-mob-v88"></div>
+
+      <div id="ropeReady" class="rope-ready-v88">READY</div>
     </button>
 
-    <p id="ropeHint" class="hint">縄が足元へ来る瞬間にタップ。</p>
+    <p id="ropeHint" class="hint">縄が足元を通る瞬間にタップしてジャンプ。</p>
   </div>`;
 
   const stage=document.getElementById("ropeStage");
   const mob=document.getElementById("ropeMob");
-  const rope=document.getElementById("ropeLine");
+  const rope=document.getElementById("ropeLoop");
+  const ready=document.getElementById("ropeReady");
   const countEl=document.getElementById("ropeCount");
   const speedEl=document.getElementById("ropeSpeed");
   const hint=document.getElementById("ropeHint");
 
   stage.addEventListener("pointerdown",e=>{
-    if(finished)return;
+    if(finished||performance.now()<collisionReadyAt-750)return;
     e.preventDefault();
 
-    jumpingUntil=performance.now()+470;
+    jumpingUntil=performance.now()+500;
     mob.classList.remove("jump");
     void mob.offsetWidth;
     mob.classList.add("jump");
@@ -2796,38 +2837,55 @@ async function startJumpRope(p,humanIndex){
     if(ropeRAF)cancelAnimationFrame(ropeRAF);
 
     state.records.rope[p.id]=count;
-    setTimeout(()=>recordScreen(12,p,humanIndex,`${count}<small>回</small>`,`JUMP ROPE`),260);
+    setTimeout(()=>recordScreen(12,p,humanIndex,`${count}<small>回</small>`,`JUMP ROPE`),360);
   }
 
   await countdown("JUMP ROPE");
   if(!document.body.contains(stage))return;
 
-  cycleStart=performance.now();
+  // 最初の縄が足元へ来るまで約1.35秒確保。
+  collisionReadyAt=performance.now()+1350;
+  ready.textContent="GO!";
+  ready.classList.add("go");
+  setTimeout(()=>ready.classList.remove("go"),450);
+
+  lastNow=performance.now();
+  previousPhase=((angle%(Math.PI*2))+Math.PI*2)%(Math.PI*2);
 
   const frame=now=>{
     if(finished)return;
 
-    const elapsed=now-cycleStart;
-    const cycle=Math.floor(elapsed/period);
-    const phase=(elapsed%period)/period;
+    const dt=Math.min(40,now-lastNow);
+    lastNow=now;
 
-    // Rope visually rotates: top -> front -> feet -> back -> top.
-    const angle=phase*Math.PI*2;
-    const y=50+Math.sin(angle)*40;
-    const scale=.55+(Math.cos(angle)+1)*.22;
-    rope.style.top=`${y}%`;
-    rope.style.transform=`translate(-50%,-50%) scaleX(${scale})`;
-    rope.style.opacity=String(.48+(Math.cos(angle)+1)*.23);
+    // Speed changes smoothly with each successful jump.
+    angle+=dt/period*Math.PI*2;
+    const phase=((angle%(Math.PI*2))+Math.PI*2)%(Math.PI*2);
 
-    // The dangerous foot pass happens near phase .25.
-    if(phase>=.23&&phase<=.31&&cycle!==lastPass){
-      lastPass=cycle;
+    // Simulate one real rope loop rotating around the centered MOB.
+    // At the back/top it becomes a thin high arc; at the front/feet it becomes wide and low.
+    const depth=(Math.cos(angle)+1)/2; // 1=front, 0=back
+    const centerY=48;
+    const vertical=Math.sin(angle);
+    const ropeTop=centerY+vertical*34;
+    const ropeScaleY=.12+Math.abs(Math.cos(angle))*.88;
+    const ropeScaleX=.72+depth*.28;
 
+    rope.style.top=`${ropeTop}%`;
+    rope.style.transform=`translate(-50%,-50%) scale(${ropeScaleX},${ropeScaleY})`;
+    rope.style.opacity=String(.42+depth*.48);
+    rope.style.zIndex=depth>.50?"8":"3";
+
+    // Danger point: rope passes low and in front of the feet.
+    const dangerPhase=Math.PI*.50;
+    const crossed=previousPhase<dangerPhase&&phase>=dangerPhase;
+
+    if(now>=collisionReadyAt&&crossed){
       if(jumpingUntil>=now){
         count++;
         countEl.textContent=count;
-        period=Math.max(330,1080-count*23);
-        speedEl.textContent=`${(1080/period).toFixed(1)}x`;
+        period=Math.max(360,1180-count*25);
+        speedEl.textContent=`${(1180/period).toFixed(1)}x`;
         hint.textContent=`CLEAR ${count}!`;
         beep(860,45,.018);
       }else{
@@ -2840,8 +2898,10 @@ async function startJumpRope(p,humanIndex){
       }
     }
 
+    previousPhase=phase;
     ropeRAF=requestAnimationFrame(frame);
   };
+
   ropeRAF=requestAnimationFrame(frame);
 }
 
@@ -2853,6 +2913,7 @@ async function startPK(p,humanIndex){
   let saves=0;
   let active=false;
   let chosen=null;
+  let gestureStart=null;
 
   screen.innerHTML=`<div class="pk-shell">
     <div class="game-head">
@@ -2865,46 +2926,74 @@ async function startPK(p,humanIndex){
       <div><span>SAVE</span><b id="pkSave">0</b></div>
     </div>
 
-    <div class="pk-field">
+    <div id="pkField" class="pk-field pk-field-v88">
       <div class="pk-goal">
         <div class="pk-net"></div>
         <div id="pkKeeper" class="pk-keeper"></div>
         <div id="pkBall" class="pk-ball"></div>
       </div>
       <div id="pkShooter" class="pk-shooter"></div>
+
+      <div class="pk-gesture-guide">
+        <span>← SWIPE</span>
+        <b>TAP</b>
+        <span>SWIPE →</span>
+      </div>
     </div>
 
-    <div class="pk-controls">
-      <button data-pk="0" type="button">LEFT</button>
-      <button data-pk="1" type="button">CENTER</button>
-      <button data-pk="2" type="button">RIGHT</button>
-    </div>
-
-    <p id="pkHint" class="hint">蹴る方向を読んでキーパーを飛ばす。</p>
+    <p id="pkHint" class="hint">左へスワイプ / 中央はタップ / 右へスワイプ。</p>
   </div>`;
 
+  const field=document.getElementById("pkField");
   const shotEl=document.getElementById("pkShot");
   const saveEl=document.getElementById("pkSave");
   const keeper=document.getElementById("pkKeeper");
   const ball=document.getElementById("pkBall");
   const shooter=document.getElementById("pkShooter");
   const hint=document.getElementById("pkHint");
-  const controls=[...screen.querySelectorAll("[data-pk]")];
 
-  controls.forEach(btn=>btn.addEventListener("pointerdown",e=>{
+  function chooseKeeper(dir){
+    if(!active||chosen!==null)return;
+    chosen=dir;
+
+    keeper.className="pk-keeper";
+    keeper.classList.add(`dive-${dir}`);
+    beep(dir===1?660:560,35,.012);
+  }
+
+  field.addEventListener("pointerdown",e=>{
     if(!active||chosen!==null)return;
     e.preventDefault();
-    chosen=Number(btn.dataset.pk);
-    keeper.dataset.dive=String(chosen);
-    keeper.classList.add(`dive-${chosen}`);
-  },{passive:false}));
+    gestureStart={x:e.clientX,y:e.clientY,id:e.pointerId,time:performance.now()};
+    try{field.setPointerCapture(e.pointerId)}catch(_){}
+  },{passive:false});
+
+  field.addEventListener("pointerup",e=>{
+    if(!active||chosen!==null||!gestureStart||gestureStart.id!==e.pointerId)return;
+    e.preventDefault();
+
+    const dx=e.clientX-gestureStart.x;
+    const dy=e.clientY-gestureStart.y;
+    const dist=Math.hypot(dx,dy);
+
+    if(Math.abs(dx)>=34&&Math.abs(dx)>Math.abs(dy)*.65){
+      chooseKeeper(dx<0?0:2);
+    }else if(dist<28){
+      chooseKeeper(1);
+    }
+
+    gestureStart=null;
+  },{passive:false});
+
+  field.addEventListener("pointercancel",()=>{gestureStart=null},{passive:false});
 
   await countdown("PK");
   if(!document.body.contains(ball))return;
 
   for(shot=1;shot<=10;shot++){
-    active=true;
+    active=false;
     chosen=null;
+    gestureStart=null;
     keeper.className="pk-keeper";
     ball.className="pk-ball";
     ball.style.transform="translate(-50%,0)";
@@ -2914,7 +3003,8 @@ async function startPK(p,humanIndex){
     shooter.style.backgroundImage=`url("icon/${String(shooterIcon).padStart(2,"0")}.png")`;
     shotEl.textContent=`${shot} / 10`;
     hint.textContent=`SHOT ${shot} READY`;
-    await wait(430+rand(80,260));
+
+    await wait(480+rand(100,300));
 
     const dir=randi(0,2);
     shooter.classList.remove("kick");
@@ -2923,14 +3013,15 @@ async function startPK(p,humanIndex){
 
     hint.textContent="KICK!";
     beep(360,35,.012);
+    active=true;
 
-    const targetX=[-86,0,86][dir];
+    const targetX=[-92,0,92][dir];
     const start=performance.now();
 
     await new Promise(resolve=>{
       const frame=now=>{
-        const t=clamp((now-start)/430,0,1);
-        ball.style.transform=`translate(calc(-50% + ${targetX*t}px),${-148*t}px) scale(${1-.2*t})`;
+        const t=clamp((now-start)/500,0,1);
+        ball.style.transform=`translate(calc(-50% + ${targetX*t}px),${-150*t}px) scale(${1-.2*t})`;
 
         if(t<1)requestAnimationFrame(frame);
         else resolve();
@@ -2953,7 +3044,7 @@ async function startPK(p,humanIndex){
       beep(170,80,.02);
     }
 
-    await wait(330);
+    await wait(370);
   }
 
   state.records.pk[p.id]=saves;
@@ -2963,18 +3054,16 @@ async function startPK(p,humanIndex){
 // GAME 15 -------------------------------------------------
 function makeRhythmPattern(round){
   const configs=[
-    {count:4,intervals:[520,520,520]},
-    {count:5,intervals:[420,650,420,520]},
-    {count:6,intervals:[310,310,620,310,520]},
-    {count:8,intervals:[250,250,520,250,250,250,560]}
+    {count:4,intervals:[520,520,520],beat:520},
+    {count:5,intervals:[420,650,420,520],beat:480},
+    {count:6,intervals:[310,310,620,310,520],beat:420},
+    {count:8,intervals:[250,250,520,250,250,250,560],beat:360}
   ];
 
   const cfg=configs[round];
   const chars=Array.from({length:cfg.count},()=>randi(0,3));
-
-  // Slightly randomize while preserving difficulty character.
-  const intervals=cfg.intervals.map(v=>Math.max(180,v+randi(-55,55)));
-  return {chars,intervals};
+  const intervals=cfg.intervals.map(v=>Math.max(180,v+randi(-45,45)));
+  return {chars,intervals,beat:cfg.beat};
 }
 
 async function startRhythmTap(p,humanIndex){
@@ -2983,7 +3072,7 @@ async function startRhythmTap(p,humanIndex){
   let totalScore=0;
   let totalEvents=0;
 
-  screen.innerHTML=`<div class="rhythm-shell">
+  screen.innerHTML=`<div class="rhythm-shell rhythm-shell-v88">
     <div class="game-head">
       <div><span class="kicker">${esc(p.name)}</span><h2>モブくんリズムタップ</h2></div>
       <div class="game-badge">${playBadge(humanIndex)}</div>
@@ -2994,17 +3083,43 @@ async function startRhythmTap(p,humanIndex){
       <div><span>SCORE</span><b id="rhythmScore">0</b></div>
     </div>
 
-    <div id="rhythmCharacters" class="rhythm-characters">
-      ${[1,2,3,4].map((id,i)=>`<button class="rhythm-mob" data-rhythm="${i}" type="button" style="background-image:url('icon/${String(id).padStart(2,"0")}.png')"></button>`).join("")}
+    <div id="rhythmCharacters" class="rhythm-characters rhythm-row-v88">
+      ${[1,2,3,4].map((id,i)=>`<button class="rhythm-mob rhythm-mob-v88" data-rhythm="${i}" type="button" style="background-image:url('icon/${String(id).padStart(2,"0")}.png')"></button>`).join("")}
     </div>
 
     <div id="rhythmMessage" class="rhythm-message">WATCH</div>
   </div>`;
 
+  const area=document.getElementById("rhythmCharacters");
   const mobs=[...screen.querySelectorAll(".rhythm-mob")];
   const roundEl=document.getElementById("rhythmRound");
   const scoreEl=document.getElementById("rhythmScore");
   const message=document.getElementById("rhythmMessage");
+
+  function bounceOne(index,cls="bounce"){
+    const mob=mobs[index];
+    mob.classList.remove("bounce","tap-bounce");
+    void mob.offsetWidth;
+    mob.classList.add(cls);
+    setTimeout(()=>mob.classList.remove(cls),190);
+  }
+
+  async function fourBeatCountIn(beat){
+    message.textContent="KEEP THE BEAT";
+
+    for(let n=1;n<=4;n++){
+      mobs.forEach((mob,i)=>{
+        mob.classList.remove("group-bounce");
+        void mob.offsetWidth;
+        mob.classList.add("group-bounce");
+        setTimeout(()=>mob.classList.remove("group-bounce"),190);
+      });
+
+      message.textContent=`${n} / 4`;
+      beep(440,42,.012);
+      await wait(beat);
+    }
+  }
 
   for(let round=0;round<4;round++){
     roundEl.textContent=`${round+1} / 4`;
@@ -3012,18 +3127,21 @@ async function startRhythmTap(p,humanIndex){
 
     mobs.forEach(b=>b.disabled=true);
     await countdown(`ROUND ${round+1}`);
+
+    // Everybody bounces four times first so the player has a clear pulse.
+    await fourBeatCountIn(pattern.beat);
+    await wait(180);
+
     message.textContent="WATCH";
 
     for(let i=0;i<pattern.chars.length;i++){
-      const mob=mobs[pattern.chars[i]];
-      mob.classList.add("bounce");
+      bounceOne(pattern.chars[i],"bounce");
       beep(520+pattern.chars[i]*60,40,.012);
-      setTimeout(()=>mob.classList.remove("bounce"),180);
 
       if(i<pattern.intervals.length)await wait(pattern.intervals[i]);
     }
 
-    await wait(280);
+    await wait(300);
     await countdown("TAP");
 
     message.textContent="YOUR TURN";
@@ -3043,10 +3161,9 @@ async function startRhythmTap(p,humanIndex){
       const char=Number(btn.dataset.rhythm);
       taps.push({char,time:performance.now()});
 
-      btn.classList.remove("tap");
-      void btn.offsetWidth;
-      btn.classList.add("tap");
-      setTimeout(()=>btn.classList.remove("tap"),130);
+      // 本番でもタップしたキャラ自身が必ず跳ねる。
+      bounceOne(char,"tap-bounce");
+      beep(500+char*55,28,.01);
 
       if(taps.length===needed){
         clearTimeout(timeout);
@@ -3054,11 +3171,11 @@ async function startRhythmTap(p,humanIndex){
       }
     };
 
-    document.getElementById("rhythmCharacters").addEventListener("pointerdown",handler,{passive:false});
+    area.addEventListener("pointerdown",handler,{passive:false});
     timeout=setTimeout(resolveRound,Math.max(3000,pattern.intervals.reduce((a,b)=>a+b,0)+1800));
     await done;
     clearTimeout(timeout);
-    document.getElementById("rhythmCharacters").removeEventListener("pointerdown",handler);
+    area.removeEventListener("pointerdown",handler);
     mobs.forEach(b=>b.disabled=true);
 
     let roundScore=0;
@@ -3088,7 +3205,7 @@ async function startRhythmTap(p,humanIndex){
     const live=Math.round(totalScore/Math.max(1,totalEvents));
     scoreEl.textContent=live;
     message.textContent=`ROUND ${round+1} ${Math.round(roundScore/pattern.chars.length)}pt`;
-    await wait(500);
+    await wait(520);
   }
 
   const score=clamp(Math.round(totalScore/Math.max(1,totalEvents)),0,100);
@@ -3125,6 +3242,16 @@ async function startCutGame(p,humanIndex){
     </div>
 
     <div id="cutResult" class="cut-result">縦スワイプでCUT</div>
+
+    <div id="cutResultOverlay" class="cut-result-overlay">
+      <div class="cut-result-card">
+        <span id="cutResultRound">ROUND 1</span>
+        <strong id="cutResultScore">100</strong>
+        <div id="cutResultMain">指定 50% / 残り 50%</div>
+        <b id="cutResultError">誤差 0%</b>
+        <button id="cutNextBtn" class="primary" type="button">NEXT</button>
+      </div>
+    </div>
   </div>`;
 
   const area=document.getElementById("cutArea");
@@ -3135,6 +3262,24 @@ async function startCutGame(p,humanIndex){
   const resultEl=document.getElementById("cutResult");
   const roundEl=document.getElementById("cutRound");
   const scoreEl=document.getElementById("cutScore");
+
+  const overlay=document.getElementById("cutResultOverlay");
+  const overlayRound=document.getElementById("cutResultRound");
+  const overlayScore=document.getElementById("cutResultScore");
+  const overlayMain=document.getElementById("cutResultMain");
+  const overlayError=document.getElementById("cutResultError");
+  const nextBtn=document.getElementById("cutNextBtn");
+
+  function waitForNext(){
+    return new Promise(resolve=>{
+      nextBtn.onclick=()=>{
+        overlay.classList.remove("show");
+        nextBtn.onclick=null;
+        beep(520,30,.01);
+        resolve();
+      };
+    });
+  }
 
   for(let round=0;round<3;round++){
     const target=randi(18,82);
@@ -3175,9 +3320,9 @@ async function startCutGame(p,humanIndex){
         resolve({cutPercent,rightRemain});
       };
 
-      area.addEventListener("pointerdown",down,{passive:false});
-      area.addEventListener("pointerup",up,{passive:false});
-      area.addEventListener("pointercancel",()=>{startPoint=null},{passive:false});
+      area.addEventListener("pointerdown",down,{passive:false,once:false});
+      area.addEventListener("pointerup",up,{passive:false,once:false});
+      area.addEventListener("pointercancel",()=>{startPoint=null},{passive:false,once:false});
     });
 
     const error=Math.abs(result.rightRemain-target);
@@ -3193,10 +3338,19 @@ async function startCutGame(p,humanIndex){
 
     const avg=Math.round(scores.reduce((a,b)=>a+b,0)/scores.length);
     scoreEl.textContent=avg;
-    resultEl.textContent=`残り ${result.rightRemain.toFixed(1)}% / 誤差 ${error.toFixed(1)}%`;
+    resultEl.textContent=`残り ${result.rightRemain.toFixed(1)}%`;
+
+    overlayRound.textContent=`ROUND ${round+1} RESULT`;
+    overlayScore.textContent=`${roundScore} pt`;
+    overlayMain.textContent=`指定 ${target}% / 実際 ${result.rightRemain.toFixed(1)}%`;
+    overlayError.textContent=`誤差 ${error.toFixed(1)}%`;
+    nextBtn.textContent=round<2?"NEXT":"FINAL";
+    overlay.classList.add("show");
+
     beep(roundScore>=90?880:roundScore>=60?650:250,65,.018);
 
-    await wait(650);
+    // NEXTを押すまで絶対に次へ進まない。
+    await waitForNext();
   }
 
   const score=Math.round(scores.reduce((a,b)=>a+b,0)/3);
@@ -3253,7 +3407,7 @@ async function startTreeClimb(p,humanIndex){
   const animateMarker=now=>{
     if(finished)return;
     const elapsed=now-gaugeStart;
-    markerPos=(Math.sin(elapsed/245*Math.PI*2)+1)/2;
+    markerPos=(Math.sin(elapsed/620*Math.PI*2)+1)/2;
     marker.style.left=`${markerPos*100}%`;
     markerRAF=requestAnimationFrame(animateMarker);
   };
