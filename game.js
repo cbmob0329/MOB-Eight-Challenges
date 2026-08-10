@@ -86,6 +86,8 @@ const MODES={
 let state=freshState();
 let audioCtx=null;
 let activeAnimation=null;
+let countdownSerial=0;
+let activeCountdownLayer=null;
 
 function freshState(){
   return {
@@ -118,6 +120,11 @@ function clamp(v,a,b){return Math.max(a,Math.min(b,v))}
 function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
 function beep(freq=480,ms=65,vol=.025){try{if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.frequency.value=freq;g.gain.value=vol;o.connect(g);g.connect(audioCtx.destination);o.start();setTimeout(()=>o.stop(),ms)}catch(e){}}
 function cancelActiveAnimation(){if(activeAnimation){cancelAnimationFrame(activeAnimation);activeAnimation=null}}
+function cancelCountdown(){
+  countdownSerial++;
+  if(activeCountdownLayer&&activeCountdownLayer.isConnected)activeCountdownLayer.remove();
+  activeCountdownLayer=null;
+}
 function gameTop(){requestAnimationFrame(()=>{try{window.scrollTo(0,0)}catch(e){};screen.scrollTop=0;});}
 function gameFit(){
   screen.classList.add("gameplay-fit");
@@ -128,7 +135,11 @@ function clearGameFit(){
 }
 function imgTag(p,cls="avatar"){return `<img draggable="false" class="${cls}" src="${p.img}" alt="${esc(p.name)}" onerror="this.style.visibility='hidden'">`}
 
-homeBtn.addEventListener("click",()=>{cancelActiveAnimation();renderHome()});
+homeBtn.addEventListener("click",()=>{
+  cancelActiveAnimation();
+  cancelCountdown();
+  renderHome();
+});
 resetBtn.addEventListener("click",()=>{
   cancelActiveAnimation();
   if(state.freePlay && state.freeGameIndex!==null){startFreeGame(state.freeGameIndex);return;}
@@ -153,6 +164,7 @@ resetBtn.addEventListener("click",()=>{
 function renderHome(){
   clearGameFit();
   cancelActiveAnimation();
+  cancelCountdown();
   state=freshState();
   screen.innerHTML=`
     <section class="hero">
@@ -529,9 +541,36 @@ function humanReady(gameIndex,humanIndex){
 }
 
 async function countdown(label="COUNTDOWN"){
-  const layer=document.createElement("div");layer.className="countdown-layer";layer.innerHTML=`<div class="count-label">${label}</div><div class="count-number">3</div>`;document.body.appendChild(layer);const n=layer.querySelector(".count-number");
-  for(const v of [3,2,1]){n.textContent=v;beep(310+(3-v)*85,80);await wait(620)}
-  n.textContent="GO!";beep(710,100);await wait(300);layer.remove();
+  cancelCountdown();
+  const serial=++countdownSerial;
+
+  const layer=document.createElement("div");
+  layer.className="countdown-layer";
+  layer.innerHTML=`<div class="count-label">${label}</div><div class="count-number">3</div>`;
+  document.body.appendChild(layer);
+  activeCountdownLayer=layer;
+
+  const n=layer.querySelector(".count-number");
+
+  for(const v of [3,2,1]){
+    if(serial!==countdownSerial||!layer.isConnected)return false;
+
+    n.textContent=v;
+    beep(310+(3-v)*85,80);
+    await wait(620);
+  }
+
+  if(serial!==countdownSerial||!layer.isConnected)return false;
+
+  n.textContent="GO!";
+  beep(710,100);
+  await wait(300);
+
+  if(serial!==countdownSerial||!layer.isConnected)return false;
+
+  layer.remove();
+  if(activeCountdownLayer===layer)activeCountdownLayer=null;
+  return true;
 }
 
 function playBadge(humanIndex){
@@ -3147,17 +3186,19 @@ async function startPK(p,humanIndex){
 
 // GAME 15 -------------------------------------------------
 function makeRhythmPattern(round){
-  const configs=[
-    {count:4,intervals:[520,520,520],beat:520},
-    {count:5,intervals:[420,650,420,520],beat:480},
-    {count:6,intervals:[310,310,620,310,520],beat:420},
-    {count:8,intervals:[250,250,520,250,250,250,560],beat:360}
+  const settings=[
+    {count:4,beat:680},
+    {count:5,beat:610},
+    {count:6,beat:545},
+    {count:7,beat:480}
   ];
 
-  const cfg=configs[round];
-  const chars=Array.from({length:cfg.count},()=>randi(0,3));
-  const intervals=cfg.intervals.map(v=>Math.max(180,v+randi(-45,45)));
-  return {chars,intervals,beat:cfg.beat};
+  const cfg=settings[round];
+
+  return {
+    chars:Array.from({length:cfg.count},()=>randi(0,3)),
+    beat:cfg.beat
+  };
 }
 
 async function startRhythmTap(p,humanIndex){
@@ -3205,7 +3246,7 @@ async function startRhythmTap(p,humanIndex){
     mobs.forEach(m=>m.classList.remove("tap-cue","cue-hit","cue-miss"));
   }
 
-  async function fourBeatCountIn(beat,label="KEEP THE BEAT"){
+  async function fourBeatCountIn(beat,label){
     message.textContent=label;
 
     for(let n=1;n<=4;n++){
@@ -3229,8 +3270,64 @@ async function startRhythmTap(p,humanIndex){
       bounceOne(pattern.chars[i],"bounce");
       beep(520+pattern.chars[i]*60,40,.012);
 
-      if(i<pattern.intervals.length)await wait(pattern.intervals[i]);
+      // 全て完全に同じ一定テンポ。
+      if(i<pattern.chars.length-1)await wait(pattern.beat);
     }
+  }
+
+  async function waitForTimedTap(target,cueTime,windowMs){
+    return new Promise(resolve=>{
+      let resolved=false;
+
+      const finish=(score,hitMob=null)=>{
+        if(resolved)return;
+        resolved=true;
+        clearTimeout(timeout);
+        area.removeEventListener("pointerdown",handler);
+
+        mobs[target].classList.remove("tap-cue");
+
+        if(hitMob!==null){
+          const hit=mobs[hitMob];
+          hit.classList.add(score>0?"cue-hit":"cue-miss");
+          setTimeout(()=>hit.classList.remove("cue-hit","cue-miss"),150);
+        }
+
+        resolve(score);
+      };
+
+      const handler=e=>{
+        const btn=e.target.closest(".rhythm-mob");
+        if(!btn)return;
+        e.preventDefault();
+
+        const char=Number(btn.dataset.rhythm);
+
+        // 本番では「実際にタップした時だけ」キャラクターが跳ねる。
+        bounceOne(char,"tap-bounce");
+
+        if(char!==target){
+          beep(180,40,.012);
+          finish(0,char);
+          return;
+        }
+
+        const error=Math.abs(performance.now()-cueTime);
+
+        // TAP表示の瞬間に近いほど高得点。
+        // 0ms=100 / 60ms≈90 / 120ms≈75 / 200ms≈50 / 300ms≈20
+        const timingScore=clamp(
+          Math.round(100-Math.pow(error/300,.82)*80),
+          0,100
+        );
+
+        beep(560+timingScore*3.2,32,.012);
+        finish(timingScore,char);
+      };
+
+      area.addEventListener("pointerdown",handler,{passive:false});
+      const timeout=setTimeout(()=>finish(0,null),windowMs);
+    });
   }
 
   async function playUserTurn(pattern){
@@ -3238,9 +3335,14 @@ async function startRhythmTap(p,humanIndex){
     message.textContent="YOUR TURN";
 
     let roundScore=0;
+    const turnStart=performance.now();
 
     for(let i=0;i<pattern.chars.length;i++){
-      if(i>0)await wait(pattern.intervals[i-1]);
+      // Cue times are absolute, so user response speed cannot change the tempo.
+      const targetTime=turnStart+i*pattern.beat;
+      const waitToCue=Math.max(0,targetTime-performance.now());
+
+      if(waitToCue>0)await wait(waitToCue);
 
       const target=pattern.chars[i];
       const targetMob=mobs[target];
@@ -3248,63 +3350,26 @@ async function startRhythmTap(p,humanIndex){
 
       clearTapCues();
       targetMob.classList.add("tap-cue");
-      bounceOne(target,"tap-bounce");
 
-      // TAP表示が出た瞬間が100点の中心。
-      const maxWindow=Math.min(470,Math.max(260,(pattern.intervals[i]||pattern.beat)*.78));
+      // IMPORTANT: no automatic bounce here.
+      // It only jumps if the user actually taps it.
 
-      const eventScore=await new Promise(resolve=>{
-        let resolved=false;
-        const started=performance.now();
-
-        const finish=(score,hitMob=null)=>{
-          if(resolved)return;
-          resolved=true;
-          clearTimeout(timeout);
-          area.removeEventListener("pointerdown",handler);
-
-          targetMob.classList.remove("tap-cue");
-
-          if(hitMob!==null){
-            const hit=mobs[hitMob];
-            hit.classList.add(score>0?"cue-hit":"cue-miss");
-            setTimeout(()=>hit.classList.remove("cue-hit","cue-miss"),160);
-          }
-
-          resolve(score);
-        };
-
-        const handler=e=>{
-          const btn=e.target.closest(".rhythm-mob");
-          if(!btn)return;
-          e.preventDefault();
-
-          const char=Number(btn.dataset.rhythm);
-          bounceOne(char,"tap-bounce");
-
-          if(char!==target){
-            beep(180,40,.012);
-            finish(0,char);
-            return;
-          }
-
-          const error=Math.abs(performance.now()-cueTime);
-
-          // 0ms=100 / 60ms≈90 / 120ms≈75 / 200ms≈50 / 300ms≈20
-          const timingScore=clamp(Math.round(100-Math.pow(error/300,.82)*80),0,100);
-          beep(560+timingScore*3.2,32,.012);
-          finish(timingScore,char);
-        };
-
-        area.addEventListener("pointerdown",handler,{passive:false});
-        const timeout=setTimeout(()=>finish(0,null),maxWindow);
-      });
+      const inputWindow=Math.min(360,pattern.beat*.68);
+      const eventStart=performance.now();
+      const eventScore=await waitForTimedTap(target,cueTime,inputWindow);
+      const spent=performance.now()-eventStart;
 
       roundScore+=eventScore;
       totalScore+=eventScore;
       totalEvents++;
-
       scoreEl.textContent=Math.round(totalScore/Math.max(1,totalEvents));
+
+      // Keep the next cue on the same exact beat even if the player tapped early.
+      const nextTime=turnStart+(i+1)*pattern.beat;
+      if(i<pattern.chars.length-1){
+        const rest=Math.max(0,nextTime-performance.now());
+        if(rest>0)await wait(rest);
+      }
     }
 
     clearTapCues();
@@ -3317,29 +3382,32 @@ async function startRhythmTap(p,humanIndex){
 
     mobs.forEach(b=>b.disabled=true);
 
-    // ROUND開始時だけ3・2・1。
-    await countdown(`ROUND ${round+1}`);
+    // Round opening only.
+    const ok=await countdown(`ROUND ${round+1}`);
+    if(!ok||!document.body.contains(area))return;
+
     await fourBeatCountIn(pattern.beat,"SAMPLE BEAT");
-    await wait(120);
+    await wait(100);
 
     await playSample(pattern);
 
-    // お手本の後は3・2・1を入れない。
-    await wait(300);
+    // お手本後はカウントダウン無し。
+    // 同じテンポの4拍だけ取り直して、そのまま本番。
+    await wait(pattern.beat);
     await fourBeatCountIn(pattern.beat,"YOUR BEAT");
-    await wait(100);
+    await wait(80);
 
     mobs.forEach(b=>b.disabled=false);
     const roundResult=await playUserTurn(pattern);
     mobs.forEach(b=>b.disabled=true);
 
     message.textContent=`ROUND ${round+1} ${roundResult}pt`;
-    await wait(520);
+    await wait(500);
   }
 
   const score=clamp(Math.round(totalScore/Math.max(1,totalEvents)),0,100);
   state.records.rhythm[p.id]=score;
-  recordScreen(14,p,humanIndex,`${score}<small>pt</small>`,`TIMING SCORE`);
+  recordScreen(14,p,humanIndex,`${score}<small>pt</small>`,`SEQUENCE TIMING`);
 }
 
 // GAME 16 -------------------------------------------------
@@ -3735,11 +3803,9 @@ async function startDontHitMob(p,humanIndex){
   let hits=0;
   let finished=false;
   let timerRAF=null;
-  let spawnTimer=null;
-  let currentHole=-1;
-  let currentType=null;
-  let currentEl=null;
+  let waveTimer=null;
   let endAt=0;
+  const active=new Map();
 
   screen.innerHTML=`<div class="dont-hit-shell">
     <div class="game-head">
@@ -3760,7 +3826,7 @@ async function startDontHitMob(p,humanIndex){
         </button>`).join("")}
     </div>
 
-    <p id="dontHitHint" class="hint">モグラだけ叩く。モブくんを叩いた瞬間に終了。</p>
+    <p id="dontHitHint" class="hint">モグラだけ叩く。2〜3体同時に出ることもあります。</p>
   </div>`;
 
   const board=document.getElementById("moleBoard");
@@ -3769,49 +3835,61 @@ async function startDontHitMob(p,humanIndex){
   const hint=document.getElementById("dontHitHint");
   const holes=[...board.querySelectorAll(".mole-hole")];
 
-  function clearCurrent(){
-    if(currentEl){
-      currentEl.classList.remove("show","mole","mob","hit");
-      currentEl.style.backgroundImage="";
-    }
-    currentHole=-1;
-    currentType=null;
-    currentEl=null;
+  function clearHole(index){
+    const entry=active.get(index);
+    if(!entry)return;
+
+    const el=entry.el;
+    el.classList.remove("show","mole","mob","hit");
+    el.style.backgroundImage="";
+    active.delete(index);
   }
 
-  function scheduleNext(delay=null){
-    if(finished)return;
-
-    clearTimeout(spawnTimer);
-
-    const d=delay??Math.max(240,520-hits*10+randi(-70,85));
-    spawnTimer=setTimeout(spawn,d);
+  function clearAll(){
+    [...active.keys()].forEach(clearHole);
   }
 
-  function spawn(){
+  function scheduleWave(delay=null){
     if(finished)return;
 
-    clearCurrent();
+    clearTimeout(waveTimer);
 
-    currentHole=randi(0,8);
-    const hole=holes[currentHole];
-    currentEl=hole.querySelector(".mole-actor");
+    const d=delay??Math.max(190,470-hits*8+randi(-55,70));
+    waveTimer=setTimeout(spawnWave,d);
+  }
 
-    const isMob=Math.random()<.18;
-    currentType=isMob?"mob":"mole";
+  function spawnWave(){
+    if(finished)return;
 
-    currentEl.classList.add("show",currentType);
+    clearAll();
 
-    if(isMob){
-      const icon=randi(1,10);
-      currentEl.style.backgroundImage=`url("icon/${String(icon).padStart(2,"0")}.png")`;
-    }
+    const roll=Math.random();
+    const actorCount=roll<.50?1:roll<.84?2:3;
+    const holeIndexes=shuffle([0,1,2,3,4,5,6,7,8]).slice(0,actorCount);
 
-    const visibleFor=Math.max(290,700-hits*13+randi(-60,80));
+    holeIndexes.forEach(index=>{
+      const hole=holes[index];
+      const el=hole.querySelector(".mole-actor");
 
-    spawnTimer=setTimeout(()=>{
-      clearCurrent();
-      scheduleNext(70);
+      // MOB chance per actor. With multi-spawns this creates meaningful visual traps.
+      const isMob=Math.random()<.15;
+      const type=isMob?"mob":"mole";
+
+      el.classList.add("show",type);
+
+      if(isMob){
+        const icon=randi(1,10);
+        el.style.backgroundImage=`url("icon/${String(icon).padStart(2,"0")}.png")`;
+      }
+
+      active.set(index,{type,el});
+    });
+
+    const visibleFor=Math.max(270,680-hits*11+randi(-50,70));
+
+    waveTimer=setTimeout(()=>{
+      clearAll();
+      scheduleWave(55);
     },visibleFor);
   }
 
@@ -3820,7 +3898,7 @@ async function startDontHitMob(p,humanIndex){
     finished=true;
 
     if(timerRAF)cancelAnimationFrame(timerRAF);
-    clearTimeout(spawnTimer);
+    clearTimeout(waveTimer);
     holes.forEach(h=>h.disabled=true);
 
     state.records.dontHitMob[p.id]=hits;
@@ -3838,11 +3916,12 @@ async function startDontHitMob(p,humanIndex){
     e.preventDefault();
 
     const index=Number(hole.dataset.hole);
+    const entry=active.get(index);
 
-    if(index!==currentHole||!currentType)return;
+    if(!entry)return;
 
-    if(currentType==="mob"){
-      currentEl.classList.add("hit");
+    if(entry.type==="mob"){
+      entry.el.classList.add("hit");
       hint.textContent="MOB HIT! END!";
       beep(130,220,.04);
       finish("MOB");
@@ -3851,22 +3930,28 @@ async function startDontHitMob(p,humanIndex){
 
     hits++;
     countEl.textContent=hits;
-    currentEl.classList.add("hit");
+    entry.el.classList.add("hit");
     hint.textContent=`MOLE ${hits}!`;
     beep(720,32,.014);
 
-    clearTimeout(spawnTimer);
-    setTimeout(()=>{
-      clearCurrent();
-      scheduleNext(45);
-    },95);
+    setTimeout(()=>clearHole(index),85);
+
+    // If all visible moles were cleared, bring the next wave a little sooner.
+    const remainingMoles=[...active.values()].filter(v=>v.type==="mole").length;
+    if(remainingMoles<=1){
+      clearTimeout(waveTimer);
+      waveTimer=setTimeout(()=>{
+        clearAll();
+        scheduleWave(35);
+      },115);
+    }
   },{passive:false});
 
-  await countdown("DON'T HIT MOB");
-  if(!document.body.contains(board))return;
+  const ok=await countdown("DON'T HIT MOB");
+  if(!ok||!document.body.contains(board))return;
 
   endAt=performance.now()+10000;
-  scheduleNext(260);
+  scheduleWave(260);
 
   const timer=now=>{
     if(finished)return;
@@ -3915,7 +4000,7 @@ async function startMobStop(p,humanIndex){
     </div>
 
     <div class="mob-stop-hud">
-      <div><span>POWER</span><b id="mobStopPower">0</b></div>
+      <div><span>PULL</span><b id="mobStopPullState">READY</b></div>
       <div><span>EDGE</span><b id="mobStopEdge">--</b></div>
     </div>
 
@@ -3939,7 +4024,7 @@ async function startMobStop(p,humanIndex){
   const bar=document.getElementById("mobStopBar");
   const mob=document.getElementById("mobStopMob");
   const pullLine=document.getElementById("mobStopPullLine");
-  const powerEl=document.getElementById("mobStopPower");
+  const pullStateEl=document.getElementById("mobStopPullState");
   const edgeEl=document.getElementById("mobStopEdge");
   const message=document.getElementById("mobStopMessage");
 
@@ -3963,7 +4048,7 @@ async function startMobStop(p,humanIndex){
     pull=clamp(px,0,maxPull);
     mobX=barStart-pull;
 
-    powerEl.textContent=Math.round(pull/maxPull*100);
+    pullStateEl.textContent=pull>8?"HOLD":"READY";
     pullLine.style.left=`${mobX}px`;
     pullLine.style.width=`${barStart-mobX}px`;
 
@@ -4018,6 +4103,7 @@ async function startMobStop(p,humanIndex){
   function launch(){
     launched=true;
     message.textContent="GO!";
+    pullStateEl.textContent="SHOT";
     beep(520,45,.018);
 
     const power=pull/maxPull;

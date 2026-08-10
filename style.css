@@ -2889,3 +2889,15 @@ body{touch-action:manipulation}
   .mole-board{gap:4px;padding:4px}
   .mob-stop-mob{width:54px;height:54px}
 }
+
+
+/* V9.1 Rhythm player-turn rule:
+   TAP cue appears, but the character itself does NOT jump until touched. */
+.rhythm-mob-v88.tap-cue:not(.tap-bounce){
+  transform:none;
+}
+
+/* V9.1 MOB STOP: no numerical power readout */
+.mob-stop-hud>div:first-child b{
+  letter-spacing:.08em;
+}
