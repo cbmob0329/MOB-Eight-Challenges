@@ -857,3 +857,308 @@ body{touch-action:manipulation}
   width:32px!important;height:32px!important;
   background:url("icon/01.png") center/contain no-repeat!important
 }
+
+
+/* =========================================================
+   V8.3 — ALL GAMEPLAY SCREENS FIT THE FIRST VIEWPORT
+   ========================================================= */
+.screen.gameplay-fit{
+  width:min(100%,760px);
+  height:calc(100dvh - 58px - env(safe-area-inset-top));
+  min-height:0;
+  overflow:hidden;
+  padding:6px 8px calc(7px + env(safe-area-inset-bottom));
+}
+.gameplay-fit .game-head{margin-bottom:5px}
+.gameplay-fit .game-head h2{font-size:21px;margin-bottom:2px}
+.gameplay-fit .game-head .lead{display:none}
+.gameplay-fit .kicker{font-size:8px;padding:3px 6px;margin-bottom:3px}
+.gameplay-fit .game-badge{width:42px;height:42px;border-radius:12px;font-size:11px}
+.gameplay-fit .hint{font-size:9px;line-height:1.25;margin-top:5px}
+.gameplay-fit .stat-box{padding:4px}
+.gameplay-fit .stat-box b{font-size:15px}
+
+/* Reaction */
+.gameplay-fit .reaction-stage{
+  height:100%;min-height:0;
+  display:grid;grid-template-rows:auto minmax(0,1fr) auto;gap:5px
+}
+.gameplay-fit .reaction-zone{min-height:0;height:100%;padding:7px}
+.gameplay-fit .mob-button{width:min(52dvh,76vw,300px);max-height:100%;box-shadow:0 7px 0 var(--ink)}
+
+/* Memory */
+.gameplay-fit .memory-status{margin-bottom:5px}
+.gameplay-fit .memory-board{gap:4px;max-width:540px;margin:0 auto}
+.gameplay-fit .memory-tile{border-width:2px;border-radius:10px}
+
+/* Number 12 */
+.gameplay-fit .number-board{height:min(45dvh,285px)!important;gap:4px!important;padding:5px!important}
+.gameplay-fit .number-game-top{margin-bottom:3px}
+.gameplay-fit .number-meta{margin-bottom:4px}
+
+/* Figure launch */
+.gameplay-fit .gauge-card{padding:7px;margin-bottom:5px;border-radius:14px}
+.gameplay-fit .gauge-title{font-size:10px;margin-bottom:5px}
+.gameplay-fit .linear-gauge{height:48px}
+.gameplay-fit .blind-help{margin-top:3px}
+.gameplay-fit .circle-gauge{width:min(28dvh,170px)!important;margin-top:18px!important}
+.gameplay-fit .circle-center{width:64px;height:64px}
+.gameplay-fit .flight-viewport{height:min(54dvh,300px)}
+.gameplay-fit .flight-hud{padding:5px 7px}
+.gameplay-fit .flight-hud b{font-size:18px}
+
+/* Stack */
+.gameplay-fit .stack-stage{
+  height:calc(100dvh - 185px - env(safe-area-inset-top))!important;
+  min-height:250px!important;
+  max-height:510px!important
+}
+.gameplay-fit .stack-hud{margin-bottom:4px!important}
+.gameplay-fit .stack-waiting-dock{top:25px;transform:translateX(-50%) scale(.82);transform-origin:top center}
+
+/* 1990 */
+.gameplay-fit .ganbare-shell{height:100%;display:flex;flex-direction:column}
+.gameplay-fit .ganbare-head{margin-bottom:4px}
+.gameplay-fit .ganbare-hud{margin-bottom:5px}
+.gameplay-fit .choice-arena{min-height:0;flex:1}
+.gameplay-fit .choice-card{min-height:0;padding:6px 4px}
+.gameplay-fit .choice-card b{font-size:15px}
+
+/* Factory */
+.gameplay-fit .factory-hud{margin-bottom:4px}
+.gameplay-fit .mob-stock{min-height:72px;width:106px;margin-bottom:4px;padding:4px}
+.gameplay-fit .stock-pile{height:38px}
+.gameplay-fit .stock-pile i{width:22px;height:22px}
+.gameplay-fit .factory-machine{padding:7px 0}
+.gameplay-fit .factory-belt{height:min(39dvh,220px)}
+
+/* UFO catcher */
+.gameplay-fit .ufo-marquee{height:34px}
+.gameplay-fit .ufo-marquee b{font-size:14px}
+.gameplay-fit .ufo-glass-wrap{padding:0 7px 5px}
+.gameplay-fit .catcher-stage.ufo-glass{height:min(48dvh,315px)!important}
+.gameplay-fit .ufo-control-panel{padding:5px}
+.gameplay-fit .ufo-width-control{padding:4px;margin-bottom:4px}
+.gameplay-fit .width-controls{grid-template-columns:42px 1fr 42px;gap:4px;margin-top:3px}
+.gameplay-fit .width-controls>button{height:34px}
+.gameplay-fit .ufo-controls button{min-height:39px!important}
+
+/* Universal compact support on short phones */
+@media(max-height:680px){
+  .screen.gameplay-fit{padding-top:4px}
+  .gameplay-fit .game-head h2{font-size:18px}
+  .gameplay-fit .game-badge{width:37px;height:37px}
+  .gameplay-fit .circle-gauge{width:min(24dvh,145px)!important}
+  .gameplay-fit .stack-stage{height:calc(100dvh - 172px - env(safe-area-inset-top))!important}
+  .gameplay-fit .catcher-stage.ufo-glass{height:min(43dvh,255px)!important}
+}
+
+/* =========================================================
+   V8.3 CRISIS — FAR APPROACH + SMALL LOW ENERGY
+   ========================================================= */
+.crisis-shell-v83{
+  width:min(100%,760px);
+  margin:0 auto
+}
+.crisis-shell-v83 .crisis-hud{
+  grid-template-columns:1fr 1fr 1fr;
+  margin-bottom:5px
+}
+.incoming-box{
+  border:3px solid var(--ink);border-radius:12px;background:#fff;
+  padding:4px;text-align:center
+}
+.incoming-box span{display:block;font-size:7px;font-weight:1000;color:var(--muted)}
+.incoming-box b{font-size:13px}
+.incoming-box.warn{background:var(--yellow);animation:incomingPulse .22s ease-in-out infinite alternate}
+@keyframes incomingPulse{to{transform:scale(.96)}}
+.crisis-stage-v83{
+  height:calc(100dvh - 185px - env(safe-area-inset-top));
+  min-height:270px;max-height:450px;
+  position:relative;overflow:hidden;border:4px solid var(--ink);border-radius:20px;
+  background:linear-gradient(#eaf8ff 0 77%,#efe4bd 77% 100%)
+}
+.crisis-distance-markers{position:absolute;inset:0;pointer-events:none}
+.crisis-distance-markers i{
+  position:absolute;bottom:58px;width:2px;height:16px;background:rgba(17,19,26,.18)
+}
+.crisis-distance-markers i:nth-child(1){left:12%}
+.crisis-distance-markers i:nth-child(2){left:30%}
+.crisis-distance-markers i:nth-child(3){left:50%}
+.crisis-distance-markers i:nth-child(4){left:70%}
+.crisis-distance-markers i:nth-child(5){left:88%}
+.crisis-stage-v83 .crisis-ground-line{bottom:60px}
+.crisis-mob-row-v83{
+  position:absolute;left:24%;right:5%;bottom:63px;
+  display:grid;grid-template-columns:repeat(3,1fr);justify-items:center;align-items:end;z-index:5
+}
+.v83-jumper{
+  position:relative!important;left:auto!important;bottom:auto!important;
+  width:54px!important;height:54px!important;
+  border:3px solid var(--ink);border-radius:15px;
+  background:#fff url("icon/01.png") center/contain no-repeat;
+  box-shadow:0 3px 0 var(--ink)
+}
+.v83-jumper span{
+  position:absolute;left:50%;bottom:-18px;transform:translateX(-50%);
+  font-size:8px;font-weight:1000
+}
+.low-energy-v83{
+  position:absolute;z-index:4;left:0;bottom:64px;
+  width:44px;height:12px;border:3px solid var(--ink);border-radius:999px;
+  background:var(--cyan);box-shadow:0 0 0 4px rgba(116,223,240,.18);
+  will-change:transform
+}
+.low-energy-v83 i{position:absolute;left:9px;right:9px;top:2px;height:2px;background:#fff;border-radius:999px}
+.energy-approach{
+  position:absolute;z-index:8;left:8px;top:18px;
+  border:3px solid var(--ink);border-radius:999px;background:#fff;
+  padding:5px 10px;opacity:0;transform:translateX(-20px);transition:.15s ease
+}
+.energy-approach.show{opacity:1;transform:translateX(0);background:var(--yellow)}
+.energy-approach span{font-size:8px;font-weight:1000}
+.energy-approach b{margin-left:6px;font-size:15px}
+.v83-jumper.dodge{animation:v83Jump .56s ease-out!important}
+@keyframes v83Jump{
+  0%,100%{transform:translateY(0)}
+  44%{transform:translateY(-72px) rotate(-6deg)}
+  72%{transform:translateY(-55px) rotate(3deg)}
+}
+
+/* =========================================================
+   V8.3 CATCHER — WIDE IS NOT AUTOMATICALLY BETTER
+   ========================================================= */
+.ufo-width-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.ufo-width-head>span{font-size:8px;font-weight:1000;letter-spacing:.09em}
+.ufo-width-head>b{
+  font-size:8px;border:2px solid var(--ink);border-radius:999px;
+  padding:3px 6px;background:var(--yellow)
+}
+.v83-catcher .ufo-prize{width:37px!important;height:37px!important}
+.ufo-slip-left{animation:ufoSlipLeft .42s ease-out forwards!important}
+.ufo-slip-right{animation:ufoSlipRight .42s ease-out forwards!important}
+@keyframes ufoSlipLeft{
+  to{transform:translate(-115%,-40%) rotate(-38deg)!important;opacity:.65}
+}
+@keyframes ufoSlipRight{
+  to{transform:translate(15%,-40%) rotate(38deg)!important;opacity:.65}
+}
+
+/* =========================================================
+   V8.3 TIDY ROOM
+   ========================================================= */
+.tidy-shell{width:min(100%,650px);height:100%;margin:0 auto;display:flex;flex-direction:column}
+.tidy-hud{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:4px}
+.tidy-hud>div{
+  border:3px solid var(--ink);border-radius:11px;background:#fff;padding:4px;text-align:center
+}
+.tidy-hud span{display:block;font-size:7px;font-weight:1000;color:var(--muted)}
+.tidy-hud b{font-size:16px}
+.tidy-room-stack{flex:1;min-height:0;display:grid;grid-template-rows:auto minmax(0,1fr) auto minmax(0,1fr);gap:3px}
+.tidy-room-label{display:flex;justify-content:space-between;align-items:center}
+.tidy-room-label b{font-size:10px}
+.tidy-room-label span{font-size:7px;font-weight:1000;color:var(--muted)}
+.tidy-room{
+  position:relative;min-height:0;border:3px solid var(--ink);border-radius:13px;
+  background:#f8f1df;overflow:hidden;touch-action:none
+}
+.tidy-room.reference{background:#eef8ff}
+.tidy-shelf{
+  position:absolute;left:12%;right:12%;top:24%;height:8px;
+  border:2px solid var(--ink);background:#b47a4d;border-radius:4px
+}
+.tidy-shelf:before,.tidy-shelf:after{
+  content:"";position:absolute;top:-30px;width:7px;height:36px;background:#8c5e3d;border:2px solid var(--ink)
+}
+.tidy-shelf:before{left:8%}.tidy-shelf:after{right:8%}
+.tidy-table{
+  position:absolute;left:10%;right:10%;top:53%;height:10px;border:2px solid var(--ink);
+  background:#d59e68;border-radius:4px
+}
+.tidy-table i{position:absolute;top:8px;width:7px;height:39px;background:#aa754b;border:2px solid var(--ink)}
+.tidy-table i:first-child{left:8%}.tidy-table i:last-child{right:8%}
+.tidy-rug{
+  position:absolute;left:18%;right:18%;bottom:6%;height:23%;border:2px solid var(--ink);
+  border-radius:50%;background:#d8ebc6
+}
+.tidy-box{
+  position:absolute;right:7%;bottom:5%;width:16%;height:18%;
+  border:2px solid var(--ink);border-radius:5px;background:#c99a63
+}
+.tidy-mob{
+  position:absolute;width:34px;height:34px;transform:translate(-50%,-50%);
+  background:url("icon/01.png") center/contain no-repeat;z-index:5
+}
+.tidy-mob.static{pointer-events:none}
+.tidy-mob.movable{
+  border:2px solid rgba(17,19,26,.55);border-radius:10px;background-color:#fff;
+  box-shadow:0 2px 0 var(--ink);touch-action:none;cursor:grab
+}
+.tidy-mob.movable.dragging{z-index:20;transform:translate(-50%,-50%) scale(1.15);cursor:grabbing}
+.tidy-mob.snap{animation:tidySnap .18s ease}
+@keyframes tidySnap{50%{transform:translate(-50%,-50%) scale(1.28)}}
+
+/* =========================================================
+   V8.3 SKI JUMP
+   ========================================================= */
+.ski-shell{width:min(100%,700px);height:100%;margin:0 auto;display:flex;flex-direction:column}
+.ski-hud{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:5px}
+.ski-hud>div{
+  border:3px solid var(--ink);border-radius:11px;background:#fff;padding:4px;text-align:center
+}
+.ski-hud span{display:block;font-size:7px;font-weight:1000;color:var(--muted)}
+.ski-hud b{font-size:16px}
+.ski-stage{
+  flex:1;min-height:0;position:relative;overflow:hidden;
+  border:4px solid var(--ink);border-radius:18px;
+  background:linear-gradient(#dff5ff 0 68%,#f7fbff 68% 100%);
+  padding:0;touch-action:none
+}
+.ski-mountain{
+  position:absolute;left:-5%;top:7%;width:78%;height:62%;
+  background:#eef3f5;clip-path:polygon(0 0,68% 0,100% 100%,0 100%);
+  border-bottom:4px solid var(--ink)
+}
+.ski-ramp{
+  position:absolute;left:3%;top:16%;width:72%;height:7px;
+  background:#fff;border:3px solid var(--ink);border-radius:999px;
+  transform:rotate(28deg);transform-origin:left center
+}
+.ski-ramp i{
+  position:absolute;right:-11px;top:-7px;width:28px;height:18px;
+  border:3px solid var(--ink);border-radius:0 12px 12px 0;background:var(--yellow)
+}
+.ski-takeoff-zone{
+  position:absolute;left:70%;top:61%;width:9%;height:18%;
+  border:3px dashed var(--red);border-radius:10px;background:rgba(230,75,67,.09);
+  display:grid;place-items:center
+}
+.ski-takeoff-zone span{
+  font-size:8px;font-weight:1000;transform:rotate(-12deg);color:var(--red)
+}
+.ski-landing-hill{
+  position:absolute;left:70%;right:-5%;bottom:-12%;height:50%;
+  background:#edf2f2;border-top:4px solid var(--ink);
+  transform:skewY(13deg);transform-origin:left top
+}
+.ski-jumper{
+  position:absolute;left:6%;top:14%;width:48px;height:48px;z-index:8;
+  transform:translate(-50%,-50%);will-change:left,top,transform
+}
+.ski-mob{
+  position:absolute;left:5px;top:0;width:38px;height:38px;
+  background:url("icon/01.png") center/contain no-repeat
+}
+.ski-board{
+  position:absolute;bottom:2px;width:43px;height:5px;border:2px solid var(--ink);
+  border-radius:999px;background:var(--yellow)
+}
+.ski-board.b1{left:0;transform:rotate(4deg)}
+.ski-board.b2{left:5px;transform:rotate(-2deg)}
+.ski-meter-line{
+  position:absolute;bottom:8%;border-left:2px solid rgba(17,19,26,.35);
+  height:15%;font-size:7px;font-weight:1000;color:var(--muted);padding-left:3px
+}
+.ski-meter-line.m80{left:78%}
+.ski-meter-line.m160{left:87%}
+.ski-meter-line.m240{left:96%}

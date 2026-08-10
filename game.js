@@ -37,9 +37,11 @@ const GAMES=[
   {no:4,key:"launch",title:"フィギュア飛ばし",sub:"感覚で狙う最大2000m"},
   {no:5,key:"stack",title:"グラグラモブくん",sub:"10秒で何体積めるか"},
   {no:6,key:"breakdance",title:"1990世界大会",sub:"10秒で1990を見抜いて世界へ"},
-  {no:7,key:"crisis",title:"モブくん危機一髪",sub:"3体全員をエネルギーから回避"},
+  {no:7,key:"crisis",title:"モブくん危機一髪",sub:"3体で足元エネルギーを連続回避"},
   {no:8,key:"factory",title:"モブくん人形大人気",sub:"10秒で箱詰め・封印を量産"},
-  {no:9,key:"catcher",title:"モブくんキャッチャー",sub:"1回のクレーンで何体取れるか"}
+  {no:9,key:"catcher",title:"モブくんキャッチャー",sub:"位置・幅・高さで本当に景品をつかむ"},
+  {no:10,key:"tidy",title:"モブくん整理整頓",sub:"10秒で見本の部屋へ近づける"},
+  {no:11,key:"ski",title:"モブくんスキージャンプ",sub:"踏切タイミングで飛距離勝負"}
 ];
 
 const MODES={
@@ -66,7 +68,7 @@ function freshState(){
     roundIndex:0,
     records:{
       reaction:{},memory:{},puzzle:{},launch:{},stack:{},breakdance:{},
-      crisis:{},factory:{},catcher:{}
+      crisis:{},factory:{},catcher:{},tidy:{},ski:{}
     },
     total:{},
     roundPoints:[],
@@ -87,6 +89,13 @@ function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",
 function beep(freq=480,ms=65,vol=.025){try{if(!audioCtx)audioCtx=new(window.AudioContext||window.webkitAudioContext)();const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.frequency.value=freq;g.gain.value=vol;o.connect(g);g.connect(audioCtx.destination);o.start();setTimeout(()=>o.stop(),ms)}catch(e){}}
 function cancelActiveAnimation(){if(activeAnimation){cancelAnimationFrame(activeAnimation);activeAnimation=null}}
 function gameTop(){requestAnimationFrame(()=>{try{window.scrollTo(0,0)}catch(e){};screen.scrollTop=0;});}
+function gameFit(){
+  screen.classList.add("gameplay-fit");
+  gameTop();
+}
+function clearGameFit(){
+  screen.classList.remove("gameplay-fit");
+}
 function imgTag(p,cls="avatar"){return `<img draggable="false" class="${cls}" src="${p.img}" alt="${esc(p.name)}" onerror="this.style.visibility='hidden'">`}
 
 homeBtn.addEventListener("click",()=>{cancelActiveAnimation();renderHome()});
@@ -112,11 +121,12 @@ resetBtn.addEventListener("click",()=>{
 });
 
 function renderHome(){
+  clearGameFit();
   cancelActiveAnimation();
   state=freshState();
   screen.innerHTML=`
     <section class="hero">
-      <div><span class="kicker">SMARTPHONE PARTY GAME</span><h1>9 MINI<br>GAMES</h1><p>9種のミニゲーム。各モードでNORMALかCUSTOMを選んで遊べます。</p></div>
+      <div><span class="kicker">SMARTPHONE PARTY GAME</span><h1>11 MINI<br>GAMES</h1><p>11種のミニゲーム。各モードでNORMALかCUSTOMを選んで遊べます。</p></div>
       <div class="hero-mark">MOB</div>
     </section>
     <section class="panel">
@@ -175,6 +185,7 @@ function currentRoundLabel(){return state.freePlay?"SOLO":`ROUND ${state.roundIn
 
 
 function renderPlayStyleSelect(){
+  clearGameFit();
   const m=mode();
   screen.innerHTML=`
     <div class="game-head">
@@ -186,7 +197,7 @@ function renderPlayStyleSelect(){
       <button id="normalStyle" class="style-select-card normal" type="button">
         <span>NORMAL</span>
         <b>順番に全種目</b>
-        <small>GAME 1 → 9 を順番にプレイ</small>
+        <small>GAME 1 → 11 を順番にプレイ</small>
       </button>
       <button id="customStyle" class="style-select-card custom" type="button">
         <span>CUSTOM</span>
@@ -196,7 +207,7 @@ function renderPlayStyleSelect(){
     </div>
 
     <section class="panel flat">
-      <h3>9 MINI GAMES</h3>
+      <h3>11 MINI GAMES</h3>
       <div class="compact-game-grid">
         ${GAMES.map(g=>`<div><b>${g.no}</b><span>${g.title}</span></div>`).join("")}
       </div>
@@ -220,6 +231,7 @@ function renderPlayStyleSelect(){
 }
 
 function renderCustomPicker(){
+  clearGameFit();
   screen.innerHTML=`
     <div class="game-head">
       <div><span class="kicker">CUSTOM</span><h2>ゲームを選択</h2><p class="lead">同じゲームを何回選んでもOK。3〜10個まで。</p></div>
@@ -291,6 +303,7 @@ function renderCustomPicker(){
 }
 
 function renderModeLobby(){
+  clearGameFit();
   const m=mode();
   const scoreRules=`
     <div class="score-rule-grid">
@@ -303,6 +316,8 @@ function renderModeLobby(){
       <div><b>モブくん危機一髪</b><span>20回以上=100 / 0回=0</span></div>
       <div><b>モブくん人形大人気</b><span>25箱以上=100 / 0箱=0</span></div>
       <div><b>モブくんキャッチャー</b><span>1体=10 / 10体以上=100</span></div>
+      <div><b>モブくん整理整頓</b><span>一致率0〜100%=そのまま点数</span></div>
+      <div><b>モブくんスキージャンプ</b><span>240m=100 / 80m以下=0</span></div>
     </div>`;
 
   screen.innerHTML=`
@@ -349,11 +364,14 @@ function scoreRuleForGame(index){
     "世界1位=100点 / 世界40位=0点",
     "20回以上=100点 / 0回=0点",
     "25箱以上=100点 / 0箱=0点",
-    "1体=10点 / 10体以上=100点"
+    "1体=10点 / 10体以上=100点",
+    "見本との一致率がそのまま0〜100点",
+    "240m=100点 / 80m以下=0点"
   ][index];
 }
 
 function showGameIntro(index){
+  clearGameFit();
   state.gameIndex=index;
   const g=GAMES[index];
   let rules="";
@@ -365,17 +383,21 @@ function showGameIntro(index){
   }else if(index===2){
     rules=`<li>1〜12をランダム配置。</li><li>1 → 12の順番だけ入力可能。</li><li>12を消した瞬間のタイム。</li>`;
   }else if(index===3){
-    rules=`<li>高速横ゲージ → 円形ゲージ。</li><li>横ゲージの<strong>両端約10%は「？」フィルターで見えません</strong>。</li><li>感覚で端を狙い、最大2000m。</li>`;
+    rules=`<li>高速横ゲージ → 円形ゲージ。</li><li>横ゲージの両端約10%は「？」フィルターで見えません。</li><li>感覚で端を狙い、最大2000m。</li>`;
   }else if(index===4){
-    rules=`<li>1体ずつつかんで積みます。</li><li><strong>制限時間10秒</strong>。</li><li>時間が経つほど風が強くなり、手元もタワーもグラグラ。</li><li>崩れたらカメラが一番下まで追います。</li>`;
+    rules=`<li>1体ずつつかんで積みます。</li><li>制限時間10秒。</li><li>時間が経つほど風が強くなり、手元もタワーもグラグラ。</li>`;
   }else if(index===5){
-    rules=`<li>10秒間、毎回どちらか一方が1990。</li><li>1990=1周、5連続ごとにBONUS +1周。</li><li>罠は-1周。</li><li><strong>25周以上で世界1位確定。</strong></li>`;
+    rules=`<li>10秒間、毎回どちらか一方が1990。</li><li>1990=1周、5連続ごとにBONUS +1周。</li><li>罠は-1周。</li><li>25周以上で世界1位確定。</li>`;
   }else if(index===6){
-    rules=`<li>3体のモブくんが<strong>広く横一列</strong>に並びます。</li><li>足元の高さを<strong>短いエネルギー</strong>が横から走り抜けます。</li><li>長縄のように、同じエネルギーを3体が順番に1ジャンプで回避。</li><li>3体全員が避けて1回成功。</li><li>最初から速めですが、画面端から十分な助走距離を取ります。成功するたびさらに高速化。</li>`;
+    rules=`<li>3体を<strong>画面いっぱいに広く横一列</strong>に配置。</li><li>画面外の遠い位置から、足元の高さを短いエネルギーが接近。</li><li>同じ小さいエネルギーをP1 → P2 → P3が順番に1ジャンプで回避。</li><li>INCOMING予告のあと進入するので、突然目の前に出ません。</li><li>3体全員回避で1回。成功するほど高速化。</li>`;
   }else if(index===7){
-    rules=`<li>ベルトコンベアのMOB箱を10秒で完成させます。</li><li>空箱：右上のモブくん → 箱 → 箱をもう一度タップして封。</li><li>最初から人形入りの箱は箱を1回タップするだけ。</li><li><strong>人形入り箱にさらにモブくんを入れたら不良品扱いで箱ごと破棄。</strong></li><li>箱の状態は毎回完全ランダム。</li>`;
+    rules=`<li>ベルトコンベアのMOB箱を10秒で完成。</li><li>空箱：人形 → 箱 → 箱で封。</li><li>人形入り箱は箱を1回タップ。</li><li>人形入り箱へさらに人形を入れたら不良品として箱ごと破棄。</li>`;
+  }else if(index===8){
+    rules=`<li>①左右で位置 ②降下前にアーム幅を決定 ③降下 ④STOPで高さ決定。</li><li>大きく開けば有利、ではありません。<strong>広げすぎると閉じた時に端の景品を押し出して保持力が落ちます。</strong></li><li>STOP時に本当にアーム内へ入ったモブくんだけを実物ごと持ち上げます。</li><li>0体もあり。幅・位置・高さが噛み合った時だけ大量GET。</li>`;
+  }else if(index===9){
+    rules=`<li>上の部屋が見本、下の部屋が自分の操作エリア。</li><li>見本では棚・テーブルなどに10体のモブくんが配置。</li><li>下の10体は毎回ランダムに散らばっています。</li><li>10秒でドラッグして見本と同じ配置へ近づけます。</li><li>完全一致=100%。位置が近いほど高得点。</li>`;
   }else{
-    rules=`<li>まず矢印でクレーン位置を決めます。</li><li><strong>降下前にアーム幅を− / ＋で自分で決定</strong>。降下を押したら幅は固定。</li><li>降下中はSTOPで高さを決定し、そこから実際にアームが閉じます。</li><li>アームの内側に本当に入っているモブくんだけをつかみ、その実物がクレーンと一緒に移動。</li><li>落とし口でOPEN。狙いが悪ければ0体、上手く山を包めば最大10体。</li>`;
+    rules=`<li>3・2・1で自動滑走スタート。</li><li>ジャンプ台の踏切部分でタイミングよく画面をタップ。</li><li>タイミングが中央に近いほど飛距離が伸びます。</li><li>最高240m。早すぎても遅すぎても距離が落ちます。</li><li>100点モードは240m=100点、80m以下=0点。</li>`;
   }
 
   screen.innerHTML=`
@@ -399,6 +421,7 @@ function showGameIntro(index){
 }
 
 function humanReady(gameIndex,humanIndex){
+  clearGameFit();
   const list=humans();
   if(humanIndex>=list.length){
     return cpus().length ? simulateCpuThenResult(gameIndex) : finishGame(gameIndex);
@@ -425,7 +448,9 @@ function humanReady(gameIndex,humanIndex){
     else if(gameIndex===5)startGanbareMob(p,humanIndex);
     else if(gameIndex===6)startCrisis(p,humanIndex);
     else if(gameIndex===7)startFactory(p,humanIndex);
-    else startCatcher(p,humanIndex);
+    else if(gameIndex===8)startCatcher(p,humanIndex);
+    else if(gameIndex===9)startTidy(p,humanIndex);
+    else startSkiJump(p,humanIndex);
   },{once:true});
 }
 
@@ -441,7 +466,7 @@ function playBadge(humanIndex){
 
 // GAME 1 -------------------------------------------------
 async function startReaction(p,humanIndex){
-  gameTop();
+  gameFit();
   screen.innerHTML=`<section class="reaction-stage"><div><span class="kicker">${esc(p.name)}</span><h2>反射神経</h2></div><div id="reactionZone" class="reaction-zone"><div class="wait-dots">•••</div></div><p class="hint">MOBが出た瞬間にタップ。0.001秒単位で記録します。</p></section>`;
   await countdown();
   const zone=document.getElementById("reactionZone");
@@ -467,7 +492,7 @@ async function startReaction(p,humanIndex){
 
 // GAME 2 -------------------------------------------------
 async function startMemory(p,humanIndex){
-  gameTop();
+  gameFit();
   const ids=shuffle(Array.from({length:10},(_,i)=>i+1));const seq=shuffle([...ids]);let input=0,active=false;
   screen.innerHTML=`<div class="game-head"><div><span class="kicker">${esc(p.name)}</span><h2>記憶力ゲーム</h2></div><div class="game-badge">${playBadge(humanIndex)}</div></div><div class="memory-status"><div class="stat-box"><span>PHASE</span><b id="memPhase">WATCH</b></div><div class="stat-box"><span>CORRECT</span><b id="memCount">0 / 10</b></div></div><div id="memoryBoard" class="memory-board">${ids.map(id=>`<button type="button" class="memory-tile" data-id="${id}"><img src="icon/${String(id).padStart(2,"0")}.png" alt="icon ${id}" onerror="this.style.visibility='hidden'"></button>`).join("")}</div><p id="memHint" class="hint">3・2・1のあと、光る順番を覚えてください。</p>`;
   const board=document.getElementById("memoryBoard"),phase=document.getElementById("memPhase"),count=document.getElementById("memCount"),hint=document.getElementById("memHint");const tile=id=>board.querySelector(`[data-id="${id}"]`);
@@ -479,6 +504,7 @@ async function startMemory(p,humanIndex){
 
 // GAME 3 -------------------------------------------------
 async function startPuzzle(p,humanIndex){
+  gameFit();
   const slots=shuffle(Array.from({length:12},(_,i)=>i+1));
   let next=1;
   let finished=false;
@@ -569,7 +595,7 @@ async function startPuzzle(p,humanIndex){
 
 // GAME 4 -------------------------------------------------
 async function startLaunch(p,humanIndex){
-  gameTop();
+  gameFit();
   let linear=0,circle=0,phase="linear",start=performance.now();
   const linearPeriod=rand(350,430);
 
@@ -690,6 +716,7 @@ async function launchAnimation(p,humanIndex,power,linear,circle){
 
 // GAME 5 -------------------------------------------------
 async function startStack(p,humanIndex){
+  gameFit();
   let count=0;
   let active=null;
   let pointerId=null;
@@ -1020,6 +1047,7 @@ function build1990WorldRanking(laps){
 }
 
 async function startGanbareMob(p,humanIndex){
+  gameFit();
   let hits=0,streak=0,bonus=0,penalty=0,currentDecoy=null,targetSide=0,running=false,finished=false,lastDecoy="",endAt=0,pairLocked=false;
 
   screen.innerHTML=`<div class="ganbare-shell n1990-shell">
@@ -1056,6 +1084,7 @@ async function startGanbareMob(p,humanIndex){
 }
 
 function show1990Summary(p,humanIndex,data){
+  clearGameFit();
   screen.innerHTML=`<div class="ganbare-transition n1990-summary"><span class="kicker">1990 COMPLETE</span><h2>モブくんは世界大会で<br><strong>1990を${data.laps}周</strong>披露した</h2>
     <div class="ganbare-summary"><div><span>1990 HIT</span><b>${data.hits}</b></div><div><span>5 STREAK BONUS</span><b>+${data.bonus}</b></div><div><span>TRAP</span><b>-${data.penalty}</b></div></div>
     <button id="worldRankingBtn" class="primary">世界ランキングを見る</button></div>`;gameTop();
@@ -1063,6 +1092,7 @@ function show1990Summary(p,humanIndex,data){
 }
 
 function show1990WorldRanking(p,humanIndex,data){
+  clearGameFit();
   screen.innerHTML=`<div class="world-ranking-shell"><div class="world-title"><div><span class="kicker">1990 WORLD CHAMPIONSHIP</span><h2>WORLD RANKING</h2></div><div class="mob-rank-badge">MOB<br><b>${data.rank}位</b></div></div>
     <div class="world-ranking-list">${data.ranking.map(e=>`<div class="world-row ${e.mob?"mob":""}"><span class="world-place">${e.rank}</span><b>${e.name}</b><small>${e.mob?`1990 ${data.laps}周`:"COUNTRY"}</small></div>`).join("")}</div>
     <div class="world-sticky"><button id="worldResultBtn" class="primary">結果を見る</button></div></div>`;gameTop();
@@ -1070,6 +1100,7 @@ function show1990WorldRanking(p,humanIndex,data){
 }
 
 function show1990Final(p,humanIndex,laps,rank){
+  clearGameFit();
   const tail=state.freePlay?`<button id="gAgain" class="primary">同じゲームをもう一度</button><div style="height:8px"></div><button id="gHome" class="secondary">メインメニューへ</button>`:`<button id="gNext" class="primary">${humanIndex+1<humans().length?"次のプレイヤー":cpus().length?"CPU高速処理へ":"GAME 6 RESULT"}</button>`;
   screen.innerHTML=`<div class="ganbare-final"><span class="kicker">FINAL MESSAGE</span><div class="ganbare-final-rank">${rank}<small>位</small></div><h2>モブくんは世界大会で1990を<strong>${laps}周</strong>披露し、<br><strong>${rank}位</strong>という成績を収めた。</h2>${tail}</div>`;gameTop();
   if(state.freePlay){document.getElementById("gAgain").addEventListener("click",()=>startFreeGame(5));document.getElementById("gHome").addEventListener("click",renderHome)}else document.getElementById("gNext").addEventListener("click",()=>humanReady(5,humanIndex+1));
@@ -1077,40 +1108,49 @@ function show1990Final(p,humanIndex,laps,rank){
 
 // GAME 7 -------------------------------------------------
 async function startCrisis(p,humanIndex){
+  gameFit();
+
   let wave=0;
   let finished=false;
   let waveRAF=null;
   const dodgeUntil=[0,0,0];
 
-  screen.innerHTML=`<div class="crisis-shell crisis-shell-wide">
+  screen.innerHTML=`<div class="crisis-shell crisis-shell-v83">
     <div class="game-head">
-      <div><span class="kicker">${esc(p.name)}</span><h2>モブくん危機一髪</h2><p class="lead">足元エネルギーを3人で順番にJUMP</p></div>
+      <div><span class="kicker">${esc(p.name)}</span><h2>モブくん危機一髪</h2></div>
       <div class="game-badge">${playBadge(humanIndex)}</div>
     </div>
 
     <div class="crisis-hud">
       <div><span>ALL DODGE</span><b id="crisisCount">0</b></div>
       <div><span>SPEED</span><b id="crisisSpeed">1.0x</b></div>
+      <div id="incomingBox" class="incoming-box"><span>ENERGY</span><b>WAIT</b></div>
     </div>
 
-    <div id="crisisStage" class="crisis-stage crisis-stage-long">
-      <div class="crisis-runway"></div>
+    <div id="crisisStage" class="crisis-stage crisis-stage-v83">
+      <div class="crisis-distance-markers"><i></i><i></i><i></i><i></i><i></i></div>
       <div class="crisis-ground-line"></div>
-      <div id="lowEnergy" class="low-energy"><i></i></div>
 
-      <div class="crisis-mob-row crisis-mob-row-wide">
-        ${[0,1,2].map(i=>`<button class="crisis-mob low-jump-mob" data-mob="${i}" type="button" aria-label="モブくん${i+1}">
+      <div id="energyApproach" class="energy-approach">
+        <span>INCOMING</span><b>› › ›</b>
+      </div>
+
+      <div id="lowEnergy" class="low-energy low-energy-v83"><i></i></div>
+
+      <div class="crisis-mob-row crisis-mob-row-v83">
+        ${[0,1,2].map(i=>`<button class="crisis-mob low-jump-mob v83-jumper" data-mob="${i}" type="button" aria-label="モブくん${i+1}">
           <span>P${i+1}</span>
         </button>`).join("")}
       </div>
     </div>
 
-    <p id="crisisHint" class="hint">小さいエネルギーが足元を横切ります。P1 → P2 → P3の順にジャンプ！</p>
+    <p id="crisisHint" class="hint">INCOMINGを見て準備。小さい足元エネルギーをP1 → P2 → P3が順番にジャンプ。</p>
   </div>`;
-  gameTop();
 
   const stage=document.getElementById("crisisStage");
   const energy=document.getElementById("lowEnergy");
+  const approach=document.getElementById("energyApproach");
+  const incomingBox=document.getElementById("incomingBox");
   const countEl=document.getElementById("crisisCount");
   const speedEl=document.getElementById("crisisSpeed");
   const hint=document.getElementById("crisisHint");
@@ -1121,7 +1161,7 @@ async function startCrisis(p,humanIndex){
     e.preventDefault();
 
     const now=performance.now();
-    dodgeUntil[i]=now+520;
+    dodgeUntil[i]=now+560;
 
     mob.classList.remove("dodge");
     void mob.offsetWidth;
@@ -1139,25 +1179,31 @@ async function startCrisis(p,humanIndex){
       return r.left-stageRect.left+r.width/2;
     });
 
-    // Quick, but the energy starts well outside the first player and the three
-    // players are spread across almost the whole stage.
-    const speed=Math.min(980,420+wave*27);
-    const startX=-78;
-    const endX=stageW+78;
+    const speed=Math.min(880,250+wave*24);
+    const startX=-220;
+    const endX=stageW+90;
     const totalDistance=endX-startX;
     const duration=totalDistance/speed*1000;
     const crossed=[false,false,false];
     const safe=[false,false,false];
 
-    speedEl.textContent=`${(speed/420).toFixed(1)}x`;
-    energy.classList.remove("hit","clear","warning");
+    speedEl.textContent=`${(speed/250).toFixed(1)}x`;
+    energy.className="low-energy low-energy-v83";
     energy.style.opacity="1";
     energy.style.transform=`translateX(${startX}px)`;
 
-    hint.textContent="ENERGY READY…";
-    energy.classList.add("warning");
-    await wait(Math.max(250,480-wave*7));
-    energy.classList.remove("warning");
+    incomingBox.classList.add("warn");
+    incomingBox.querySelector("b").textContent="IN!";
+    approach.classList.add("show");
+    hint.textContent="INCOMING… まだ遠い。タイミングを見て準備！";
+    beep(330,55,.012);
+
+    await wait(Math.max(650,920-wave*9));
+
+    approach.classList.remove("show");
+    incomingBox.classList.remove("warn");
+    incomingBox.querySelector("b").textContent="GO";
+    hint.textContent="ENERGY GO! P1 → P2 → P3";
 
     const start=performance.now();
 
@@ -1172,9 +1218,7 @@ async function startCrisis(p,humanIndex){
         for(let i=0;i<3;i++){
           if(crossed[i])continue;
 
-          // The energy is a short low bar, so each MOB only has to jump once
-          // when this same bar reaches his feet.
-          if(x>=mobCenters[i]-12){
+          if(x>=mobCenters[i]-10){
             crossed[i]=true;
             const isSafe=dodgeUntil[i]>=now;
             safe[i]=isSafe;
@@ -1202,7 +1246,7 @@ async function startCrisis(p,humanIndex){
 
     if(finished){
       state.records.crisis[p.id]=wave;
-      await wait(500);
+      await wait(430);
       recordScreen(6,p,humanIndex,`${wave}<small>回</small>`,`LOW ENERGY DODGE`);
       return;
     }
@@ -1211,10 +1255,11 @@ async function startCrisis(p,humanIndex){
       wave++;
       countEl.textContent=wave;
       energy.classList.add("clear");
+      incomingBox.querySelector("b").textContent="CLEAR";
       hint.textContent=`ALL DODGE ${wave}!`;
       beep(880,75,.025);
 
-      await wait(Math.max(75,210-wave*5));
+      await wait(Math.max(80,210-wave*5));
       runWave();
     }
   }
@@ -1226,6 +1271,7 @@ async function startCrisis(p,humanIndex){
 
 // GAME 8 -------------------------------------------------
 async function startFactory(p,humanIndex){
+  gameFit();
   let completed=0;
   let discarded=0;
   let current=null;
@@ -1432,47 +1478,46 @@ async function startFactory(p,humanIndex){
 
 // GAME 9 -------------------------------------------------
 async function startCatcher(p,humanIndex){
+  gameFit();
+
   let phase="position";
   let craneX=.56;
-  let craneY=38;
+  let craneY=36;
   let armOpen=.58;
   let animRAF=null;
   const dolls=[];
 
-  const dollCount=42;
+  const dollCount=44;
   for(let i=0;i<dollCount;i++){
-    const centerBias=Math.random()<.68;
+    const cluster=Math.random()<.72;
     dolls.push({
-      x:centerBias?clamp(.56+rand(-.21,.21),.14,.90):rand(.14,.90),
-      y:centerBias?rand(.72,.91):rand(.68,.93),
+      x:cluster?clamp(.57+rand(-.22,.22),.13,.91):rand(.13,.91),
+      y:cluster?rand(.70,.91):rand(.67,.93),
       rot:rand(-30,30),
       id:i
     });
   }
 
-  screen.innerHTML=`<div class="catcher-shell ufo-catcher-shell">
+  screen.innerHTML=`<div class="catcher-shell ufo-catcher-shell v83-catcher">
     <div class="game-head">
-      <div><span class="kicker">${esc(p.name)}</span><h2>モブくんキャッチャー</h2><p class="lead">MOB UFO CATCHER</p></div>
+      <div><span class="kicker">${esc(p.name)}</span><h2>モブくんキャッチャー</h2></div>
       <div class="game-badge">${playBadge(humanIndex)}</div>
     </div>
 
     <div class="ufo-cabinet">
-      <div class="ufo-marquee">
-        <span>★</span><b>MOB CATCHER</b><span>★</span>
-      </div>
+      <div class="ufo-marquee"><span>★</span><b>MOB CATCHER</b><span>★</span></div>
 
       <div class="ufo-glass-wrap">
         <div class="ufo-side-post left"></div>
         <div class="ufo-side-post right"></div>
         <div class="ufo-top-beam"></div>
 
-        <div id="catcherStage" class="catcher-stage ufo-glass">
+        <div id="catcherStage" class="catcher-stage ufo-glass v83-ufo-glass">
           <div class="ufo-back-logo">MOB</div>
           <div class="ufo-prize-floor"></div>
 
           <div class="catcher-chute ufo-chute">
-            <b>PRIZE</b>
-            <span id="chuteCount">0</span>
+            <b>PRIZE</b><span id="chuteCount">0</span>
           </div>
 
           <div id="dollPile" class="catcher-dolls ufo-prize-pile">
@@ -1495,7 +1540,11 @@ async function startCatcher(p,humanIndex){
 
       <div class="ufo-control-panel">
         <div class="ufo-width-control">
-          <span>ARM WIDTH</span>
+          <div class="ufo-width-head">
+            <span>ARM WIDTH</span>
+            <b id="widthStrategy">BALANCE</b>
+          </div>
+
           <div class="width-controls">
             <button id="armNarrow" type="button">−</button>
             <div class="catcher-meter ufo-meter">
@@ -1504,7 +1553,8 @@ async function startCatcher(p,humanIndex){
             </div>
             <button id="armWide" type="button">＋</button>
           </div>
-          <small>降下前に決める / 降下後は固定</small>
+
+          <small id="widthHint">広げすぎると閉じる時に端の景品がこぼれます。</small>
         </div>
 
         <div class="catcher-controls ufo-controls">
@@ -1516,9 +1566,8 @@ async function startCatcher(p,humanIndex){
       </div>
     </div>
 
-    <p id="catcherHint" class="hint">①位置 ②アーム幅 ③降下 ④高さをSTOP。アーム内に本当に入った人形だけGET。</p>
+    <p id="catcherHint" class="hint">幅を最大にするだけでは取れません。山の形に合う幅・位置・深さを選びます。</p>
   </div>`;
-  gameTop();
 
   const stage=document.getElementById("catcherStage");
   const crane=document.getElementById("crane");
@@ -1529,6 +1578,8 @@ async function startCatcher(p,humanIndex){
   const heldLayer=document.getElementById("heldDolls");
   const armValue=document.getElementById("armValue");
   const armFill=document.getElementById("armFill");
+  const widthStrategy=document.getElementById("widthStrategy");
+  const widthHint=document.getElementById("widthHint");
   const narrowBtn=document.getElementById("armNarrow");
   const wideBtn=document.getElementById("armWide");
   const leftBtn=document.getElementById("craneLeft");
@@ -1538,12 +1589,17 @@ async function startCatcher(p,humanIndex){
   const hint=document.getElementById("catcherHint");
   const chuteCount=document.getElementById("chuteCount");
 
+  function strategyText(){
+    if(armOpen<=.42)return ["NARROW","安定しやすい / 一度に少量"];
+    if(armOpen<=.68)return ["BALANCE","包み込みと保持力のバランス"];
+    return ["TOO WIDE","広すぎる / 端の景品がこぼれやすい"];
+  }
+
   function renderCrane(){
     crane.style.left=`${craneX*100}%`;
     cable.style.height=`${craneY}px`;
     head.style.top=`${craneY}px`;
 
-    // Width is selected by the player before descent and remains locked.
     const angle=22+armOpen*42;
     const spread=8+armOpen*20;
     leftArm.style.transform=`rotate(${-angle}deg) translateX(${-spread*.12}px)`;
@@ -1551,11 +1607,15 @@ async function startCatcher(p,humanIndex){
 
     armValue.textContent=`${Math.round(armOpen*100)}%`;
     armFill.style.width=`${armOpen*100}%`;
+
+    const [label,text]=strategyText();
+    widthStrategy.textContent=label;
+    widthHint.textContent=text;
   }
 
   function move(dx){
     if(phase!=="position")return;
-    craneX=clamp(craneX+dx,.15,.90);
+    craneX=clamp(craneX+dx,.14,.91);
     renderCrane();
     beep(460,22,.009);
   }
@@ -1567,8 +1627,8 @@ async function startCatcher(p,humanIndex){
     beep(delta>0?580:510,25,.01);
   }
 
-  leftBtn.addEventListener("pointerdown",e=>{e.preventDefault();move(-.06)},{passive:false});
-  rightBtn.addEventListener("pointerdown",e=>{e.preventDefault();move(.06)},{passive:false});
+  leftBtn.addEventListener("pointerdown",e=>{e.preventDefault();move(-.055)},{passive:false});
+  rightBtn.addEventListener("pointerdown",e=>{e.preventDefault();move(.055)},{passive:false});
   narrowBtn.addEventListener("pointerdown",e=>{e.preventDefault();changeWidth(-.10)},{passive:false});
   wideBtn.addEventListener("pointerdown",e=>{e.preventDefault();changeWidth(.10)},{passive:false});
 
@@ -1583,17 +1643,18 @@ async function startCatcher(p,humanIndex){
     wideBtn.disabled=true;
     dropBtn.disabled=true;
     stopBtn.disabled=false;
-    hint.textContent=`ARM ${Math.round(armOpen*100)}% LOCK / 高さをSTOPで決定`;
+
+    hint.textContent=`ARM ${Math.round(armOpen*100)}% LOCK / STOPで深さを決定`;
 
     const start=performance.now();
     const frame=now=>{
       if(phase!=="descending")return;
 
       const t=(now-start)/1000;
-      craneY=clamp(38+t*142,38,252);
+      craneY=clamp(36+t*145,36,248);
       renderCrane();
 
-      if(craneY>=252){
+      if(craneY>=248){
         stopCatch();
         return;
       }
@@ -1613,47 +1674,49 @@ async function startCatcher(p,humanIndex){
 
     const headCenterX=headRect.left-stageRect.left+headRect.width/2;
     const headBottom=headRect.bottom-stageRect.top;
+    const stageH=stage.clientHeight;
 
-    // Real claw envelope based on the selected arm width.
-    // This is measured against the actual DOM prize positions.
-    const gripWidth=42+armOpen*118;
-    const gripTop=headBottom+18;
+    const gripWidth=36+armOpen*112;
+    const gripTop=headBottom+15;
     const gripBottom=headBottom+86;
     const gripLeft=headCenterX-gripWidth/2;
     const gripRight=headCenterX+gripWidth/2;
-    const gripCenterX=headCenterX;
     const gripCenterY=(gripTop+gripBottom)/2;
 
-    const candidates=[...stage.querySelectorAll(".catcher-doll")].map(el=>{
+    const depthNorm=clamp(gripCenterY/stageH,0,1);
+    const depthQuality=clamp(1-Math.abs(depthNorm-.79)/.18,0,1);
+
+    // Sweet spot is around 58–64%. Both too narrow and too wide lose capacity.
+    const widthQuality=clamp(1-Math.abs(armOpen-.61)/.30,0,1);
+
+    const all=[...stage.querySelectorAll(".catcher-doll")].map(el=>{
       const r=el.getBoundingClientRect();
       const cx=r.left-stageRect.left+r.width/2;
       const cy=r.top-stageRect.top+r.height/2;
+      const dx=Math.abs(cx-headCenterX)/(gripWidth/2);
+      const dy=Math.abs(cy-gripCenterY)/((gripBottom-gripTop)/2);
       const inside=cx>=gripLeft&&cx<=gripRight&&cy>=gripTop&&cy<=gripBottom;
 
-      const dx=Math.abs(cx-gripCenterX)/(gripWidth/2);
-      const dy=Math.abs(cy-gripCenterY)/((gripBottom-gripTop)/2);
-      const centerQuality=inside ? 1-(dx*.62+dy*.38) : -1;
+      const centerQuality=inside ? clamp(1-(dx*.68+dy*.32),0,1) : -1;
+      return {el,id:Number(el.dataset.id),cx,cy,centerQuality,side:cx<headCenterX?-1:1};
+    });
 
-      return {el,id:Number(el.dataset.id),cx,cy,centerQuality};
-    }).filter(x=>x.centerQuality>=0).sort((a,b)=>b.centerQuality-a.centerQuality);
+    const inside=all.filter(x=>x.centerQuality>=0).sort((a,b)=>b.centerQuality-a.centerQuality);
 
-    // Width is strategic:
-    // narrow = precise but low capacity, medium = balanced, very wide = many
-    // candidates but weaker hold at the edges.
-    const widthCapacity=clamp(Math.round(1+(armOpen-.28)/.60*9),1,10);
-    const stability=clamp(1-Math.abs(armOpen-.64)/.52,.28,1);
-    const qualityThreshold=.19+.22*(1-stability);
+    // Wide arms sweep more prizes, but the grip becomes weak and edges slip.
+    const widePenalty=armOpen>.68 ? (armOpen-.68)/.20 : 0;
+    const narrowPenalty=armOpen<.40 ? (.40-armOpen)/.12 : 0;
+    const stability=clamp(widthQuality*.66+depthQuality*.34-widePenalty*.32-narrowPenalty*.08,0,1);
 
-    const held=candidates
-      .filter(c=>c.centerQuality>=qualityThreshold)
-      .slice(0,widthCapacity);
+    const capacity=clamp(Math.floor(1+9*Math.pow(stability,1.85)),0,10);
+    const threshold=.23+(1-stability)*.42+widePenalty*.12;
 
-    return {
-      held,
-      gripWidth,
-      stability,
-      capacity:widthCapacity
-    };
+    const held=inside.filter(c=>c.centerQuality>=threshold).slice(0,capacity);
+    const heldIds=new Set(held.map(x=>x.id));
+
+    const slipped=inside.filter(c=>!heldIds.has(c.id)).slice(0,8);
+
+    return {held,slipped,stability,capacity,depthQuality,widthQuality};
   }
 
   function attachRealHeldDolls(held){
@@ -1669,7 +1732,6 @@ async function startCatcher(p,humanIndex){
       const left=50+(col-(cols-1)/2)*17;
       const top=35+row*17+(i%2?4:0);
 
-      // Reparent the exact same DOM prize element into the claw.
       el.className="held-doll";
       el.style.left=`${left}%`;
       el.style.top=`${top}px`;
@@ -1691,8 +1753,14 @@ async function startCatcher(p,humanIndex){
     const caught=held.length;
 
     hint.textContent=caught
-      ? `アーム内に${caught}体！CLOSE…`
-      : "アーム内にモブくんがいない！";
+      ? `CLOSE… ${caught}体を保持できる位置！`
+      : "CLOSE… アーム内にいても保持できず空振り！";
+
+    // Show prizes pushed/slipped out by an overly wide or poorly centered grab.
+    grip.slipped.forEach(item=>{
+      if(!item.el)return;
+      item.el.classList.add(item.side<0?"ufo-slip-left":"ufo-slip-right");
+    });
 
     const lockedOpen=armOpen;
     const closeStart=performance.now();
@@ -1724,9 +1792,9 @@ async function startCatcher(p,humanIndex){
 
     await new Promise(resolve=>{
       const lift=now=>{
-        const t=clamp((now-liftStart)/720,0,1);
+        const t=clamp((now-liftStart)/700,0,1);
         const e=1-Math.pow(1-t,3);
-        craneY=startY+(48-startY)*e;
+        craneY=startY+(46-startY)*e;
         renderCrane();
 
         if(t<1)requestAnimationFrame(lift);
@@ -1737,7 +1805,7 @@ async function startCatcher(p,humanIndex){
 
     phase="returning";
     hint.textContent=caught
-      ? `${caught}体を本当に抱えたままPRIZEへ移動…`
+      ? `${caught}体を抱えたままPRIZEへ移動…`
       : "空振りのままPRIZEへ…";
 
     const returnStart=performance.now();
@@ -1745,7 +1813,7 @@ async function startCatcher(p,humanIndex){
 
     await new Promise(resolve=>{
       const back=now=>{
-        const t=clamp((now-returnStart)/900,0,1);
+        const t=clamp((now-returnStart)/860,0,1);
         const e=1-Math.pow(1-t,3);
         craneX=startX+(.17-startX)*e;
         renderCrane();
@@ -1762,7 +1830,7 @@ async function startCatcher(p,humanIndex){
     const openStart=performance.now();
     await new Promise(resolve=>{
       const open=now=>{
-        const t=clamp((now-openStart)/420,0,1);
+        const t=clamp((now-openStart)/400,0,1);
         const fakeOpen=.07+lockedOpen*t;
         const angle=22+fakeOpen*42;
         const spread=8+fakeOpen*20;
@@ -1782,7 +1850,7 @@ async function startCatcher(p,humanIndex){
     beep(caught?900:210,100,.03);
 
     state.records.catcher[p.id]=caught;
-    await wait(560);
+    await wait(470);
     recordScreen(8,p,humanIndex,`${caught}<small>体</small>`,caught>=8?"BIG CATCH!":caught===0?"MISS":"UFO CATCH");
   }
 
@@ -1790,8 +1858,377 @@ async function startCatcher(p,humanIndex){
 }
 
 
+// GAME 10 -------------------------------------------------
+const TIDY_TARGETS=[
+  {x:.22,y:.22},{x:.50,y:.22},{x:.78,y:.22},
+  {x:.18,y:.51},{x:.39,y:.51},{x:.61,y:.51},{x:.82,y:.51},
+  {x:.27,y:.80},{x:.52,y:.80},{x:.76,y:.80}
+];
+
+function tidyFurniture(){
+  return `<div class="tidy-shelf"></div>
+    <div class="tidy-table"><i></i><i></i></div>
+    <div class="tidy-rug"></div>
+    <div class="tidy-box"></div>`;
+}
+
+function generateTidyStart(){
+  const pts=[];
+  const zones=[
+    [.13,.67],[.27,.87],[.45,.72],[.64,.90],[.83,.70],
+    [.18,.90],[.36,.80],[.56,.67],[.73,.82],[.88,.90]
+  ];
+
+  const shuffled=shuffle(zones);
+  for(const [x,y] of shuffled){
+    pts.push({
+      x:clamp(x+rand(-.055,.055),.08,.92),
+      y:clamp(y+rand(-.035,.035),.62,.93)
+    });
+  }
+  return pts;
+}
+
+function tidySimilarity(positions){
+  const n=10;
+  const full=1<<n;
+  const dp=new Array(full).fill(Infinity);
+  dp[0]=0;
+
+  const pop=new Uint8Array(full);
+  for(let i=1;i<full;i++)pop[i]=pop[i>>1]+(i&1);
+
+  for(let mask=0;mask<full;mask++){
+    const k=pop[mask];
+    if(k>=n||!Number.isFinite(dp[mask]))continue;
+
+    const pos=positions[k];
+    for(let j=0;j<n;j++){
+      if(mask&(1<<j))continue;
+      const t=TIDY_TARGETS[j];
+      const d=Math.hypot(pos.x-t.x,pos.y-t.y);
+      const next=mask|(1<<j);
+      const cost=dp[mask]+d;
+      if(cost<dp[next])dp[next]=cost;
+    }
+  }
+
+  const avg=dp[full-1]/n;
+  return clamp(Math.round((1-avg/.42)*100),0,100);
+}
+
+async function startTidy(p,humanIndex){
+  gameFit();
+
+  let positions=generateTidyStart();
+  let dragging=null;
+  let pointerId=null;
+  let finished=false;
+  let timerRAF=null;
+  let endAt=0;
+
+  screen.innerHTML=`<div class="tidy-shell">
+    <div class="game-head">
+      <div><span class="kicker">${esc(p.name)}</span><h2>モブくん整理整頓</h2></div>
+      <div class="game-badge">${playBadge(humanIndex)}</div>
+    </div>
+
+    <div class="tidy-hud">
+      <div><span>TIME</span><b id="tidyTime">10.00</b></div>
+      <div><span>MATCH</span><b id="tidyScore">${tidySimilarity(positions)}%</b></div>
+    </div>
+
+    <div class="tidy-room-stack">
+      <div class="tidy-room-label"><b>見本</b><span>REFERENCE</span></div>
+      <div class="tidy-room reference">
+        ${tidyFurniture()}
+        ${TIDY_TARGETS.map((t,i)=>`<div class="tidy-mob static" style="left:${t.x*100}%;top:${t.y*100}%"></div>`).join("")}
+      </div>
+
+      <div class="tidy-room-label"><b>自分の部屋</b><span>DRAG 10 MOB</span></div>
+      <div id="tidyPlayRoom" class="tidy-room play">
+        ${tidyFurniture()}
+        ${positions.map((t,i)=>`<div class="tidy-mob movable" data-tidy="${i}" style="left:${t.x*100}%;top:${t.y*100}%"></div>`).join("")}
+      </div>
+    </div>
+
+    <p id="tidyHint" class="hint">下のモブくんをドラッグ。上の見本と同じ場所へ近づけよう。</p>
+  </div>`;
+
+  const room=document.getElementById("tidyPlayRoom");
+  const timeEl=document.getElementById("tidyTime");
+  const scoreEl=document.getElementById("tidyScore");
+  const hint=document.getElementById("tidyHint");
+
+  function updateScore(){
+    scoreEl.textContent=`${tidySimilarity(positions)}%`;
+  }
+
+  function setPosition(index,clientX,clientY){
+    const rect=room.getBoundingClientRect();
+    const x=clamp((clientX-rect.left)/rect.width,.06,.94);
+    const y=clamp((clientY-rect.top)/rect.height,.08,.94);
+
+    positions[index]={x,y};
+
+    const el=room.querySelector(`[data-tidy="${index}"]`);
+    if(el){
+      el.style.left=`${x*100}%`;
+      el.style.top=`${y*100}%`;
+    }
+  }
+
+  room.addEventListener("pointerdown",e=>{
+    const mob=e.target.closest(".tidy-mob.movable");
+    if(!mob||finished)return;
+
+    e.preventDefault();
+    dragging=Number(mob.dataset.tidy);
+    pointerId=e.pointerId;
+    mob.classList.add("dragging");
+
+    try{mob.setPointerCapture(pointerId)}catch(_){}
+    setPosition(dragging,e.clientX,e.clientY);
+  },{passive:false});
+
+  room.addEventListener("pointermove",e=>{
+    if(dragging===null||e.pointerId!==pointerId||finished)return;
+    e.preventDefault();
+    setPosition(dragging,e.clientX,e.clientY);
+  },{passive:false});
+
+  const release=e=>{
+    if(dragging===null||e.pointerId!==pointerId||finished)return;
+    e.preventDefault();
+
+    const index=dragging;
+    const el=room.querySelector(`[data-tidy="${index}"]`);
+    if(el)el.classList.remove("dragging");
+
+    // If close enough to any target, snap exactly. This makes 100% genuinely achievable.
+    let nearest=-1;
+    let nearestD=Infinity;
+    for(let i=0;i<TIDY_TARGETS.length;i++){
+      const d=Math.hypot(positions[index].x-TIDY_TARGETS[i].x,positions[index].y-TIDY_TARGETS[i].y);
+      if(d<nearestD){nearestD=d;nearest=i}
+    }
+
+    if(nearest>=0&&nearestD<=.075){
+      positions[index]={...TIDY_TARGETS[nearest]};
+      if(el){
+        el.style.left=`${positions[index].x*100}%`;
+        el.style.top=`${positions[index].y*100}%`;
+        el.classList.add("snap");
+        setTimeout(()=>el.classList.remove("snap"),180);
+      }
+      beep(760,36,.014);
+    }
+
+    dragging=null;
+    pointerId=null;
+    updateScore();
+  };
+
+  room.addEventListener("pointerup",release,{passive:false});
+  room.addEventListener("pointercancel",release,{passive:false});
+
+  function finishTidy(){
+    if(finished)return;
+    finished=true;
+    if(timerRAF)cancelAnimationFrame(timerRAF);
+
+    const score=tidySimilarity(positions);
+    state.records.tidy[p.id]=score;
+    hint.textContent=`MATCH ${score}%`;
+
+    room.querySelectorAll(".tidy-mob").forEach(el=>el.style.pointerEvents="none");
+
+    setTimeout(()=>recordScreen(9,p,humanIndex,`${score}<small>%</small>`,score===100?"PERFECT ROOM":"ROOM MATCH"),260);
+  }
+
+  await countdown("TIDY ROOM");
+  if(!document.body.contains(room))return;
+
+  endAt=performance.now()+10000;
+
+  const timer=now=>{
+    if(finished)return;
+    const left=Math.max(0,endAt-now);
+    timeEl.textContent=(left/1000).toFixed(2);
+
+    if(left<=0){
+      finishTidy();
+      return;
+    }
+    timerRAF=requestAnimationFrame(timer);
+  };
+  timerRAF=requestAnimationFrame(timer);
+}
+
+// GAME 11 -------------------------------------------------
+function skiDistanceFromTiming(deltaMs){
+  const a=Math.abs(deltaMs);
+
+  let meters;
+  if(a<=45){
+    meters=240-a*.24;
+  }else if(a<=90){
+    meters=229.2-(a-45)*.55;
+  }else if(a<=160){
+    meters=204.45-(a-90)*.70;
+  }else if(a<=260){
+    meters=155.45-(a-160)*.55;
+  }else{
+    meters=100.45-(a-260)*.18;
+  }
+
+  return clamp(meters,55,240);
+}
+
+function skiTimingLabel(deltaMs){
+  const a=Math.abs(deltaMs);
+  if(a<=45)return "PERFECT";
+  if(a<=90)return "GREAT";
+  if(a<=160)return "GOOD";
+  return deltaMs<0?"TOO EARLY":"TOO LATE";
+}
+
+async function startSkiJump(p,humanIndex){
+  gameFit();
+
+  let running=false;
+  let jumped=false;
+  let startTime=0;
+  let runRAF=null;
+
+  const runDuration=2200;
+  const idealTime=1820;
+
+  screen.innerHTML=`<div class="ski-shell">
+    <div class="game-head">
+      <div><span class="kicker">${esc(p.name)}</span><h2>モブくんスキージャンプ</h2></div>
+      <div class="game-badge">${playBadge(humanIndex)}</div>
+    </div>
+
+    <div class="ski-hud">
+      <div><span>TIMING</span><b id="skiTiming">WAIT</b></div>
+      <div><span>DISTANCE</span><b id="skiDistance">0.0m</b></div>
+    </div>
+
+    <button id="skiStage" class="ski-stage" type="button">
+      <div class="ski-mountain"></div>
+      <div class="ski-ramp"><i></i></div>
+      <div class="ski-takeoff-zone"><span>JUMP</span></div>
+      <div class="ski-landing-hill"></div>
+      <div class="ski-meter-line m80">80m</div>
+      <div class="ski-meter-line m160">160m</div>
+      <div class="ski-meter-line m240">240m</div>
+
+      <div id="skiJumper" class="ski-jumper">
+        <div class="ski-mob"></div>
+        <div class="ski-board b1"></div>
+        <div class="ski-board b2"></div>
+      </div>
+    </button>
+
+    <p id="skiHint" class="hint">3・2・1後に自動滑走。JUMPラインへ来た瞬間を狙って1回タップ。</p>
+  </div>`;
+
+  const stage=document.getElementById("skiStage");
+  const jumper=document.getElementById("skiJumper");
+  const timingEl=document.getElementById("skiTiming");
+  const distanceEl=document.getElementById("skiDistance");
+  const hint=document.getElementById("skiHint");
+
+  function renderRun(elapsed){
+    const t=clamp(elapsed/runDuration,0,1);
+
+    const x=6+t*67;
+    const y=14+t*51;
+
+    jumper.style.left=`${x}%`;
+    jumper.style.top=`${y}%`;
+    jumper.style.transform=`translate(-50%,-50%) rotate(${12+t*15}deg)`;
+  }
+
+  async function resolveJump(delta){
+    if(jumped)return;
+    jumped=true;
+    running=false;
+    if(runRAF)cancelAnimationFrame(runRAF);
+
+    const meters=Math.round(skiDistanceFromTiming(delta)*10)/10;
+    const label=skiTimingLabel(delta);
+
+    timingEl.textContent=label;
+    hint.textContent=`${delta<0?"EARLY":"LATE"} ${Math.abs(Math.round(delta))}ms / ${label}`;
+    beep(label==="PERFECT"?950:label==="GREAT"?810:label==="GOOD"?680:260,80,.025);
+
+    const flightStart=performance.now();
+    const flightDuration=1600;
+
+    await new Promise(resolve=>{
+      const frame=now=>{
+        const t=clamp((now-flightStart)/flightDuration,0,1);
+        const e=1-Math.pow(1-t,2.25);
+        const x=73+e*23;
+        const arc=Math.sin(t*Math.PI)*28*(meters/240);
+        const y=65-arc+t*17;
+
+        jumper.style.left=`${x}%`;
+        jumper.style.top=`${y}%`;
+        jumper.style.transform=`translate(-50%,-50%) rotate(${18+t*34}deg)`;
+        distanceEl.textContent=`${(meters*t).toFixed(1)}m`;
+
+        if(t<1)requestAnimationFrame(frame);
+        else resolve();
+      };
+      requestAnimationFrame(frame);
+    });
+
+    distanceEl.textContent=`${meters.toFixed(1)}m`;
+    state.records.ski[p.id]=Math.round(meters*10);
+
+    await wait(260);
+    recordScreen(10,p,humanIndex,`${meters.toFixed(1)}<small>m</small>`,`${label} / ${delta<0?"EARLY":"LATE"} ${Math.abs(Math.round(delta))}ms`);
+  }
+
+  stage.addEventListener("pointerdown",e=>{
+    if(!running||jumped)return;
+    e.preventDefault();
+
+    const now=performance.now();
+    const delta=(now-startTime)-idealTime;
+    resolveJump(delta);
+  },{passive:false});
+
+  await countdown("SKI JUMP");
+  if(!document.body.contains(stage))return;
+
+  running=true;
+  startTime=performance.now();
+
+  const run=now=>{
+    if(!running||jumped)return;
+
+    const elapsed=now-startTime;
+    renderRun(elapsed);
+
+    // Missing the lip entirely produces a short jump automatically.
+    if(elapsed>=runDuration+260){
+      resolveJump(440);
+      return;
+    }
+
+    runRAF=requestAnimationFrame(run);
+  };
+  runRAF=requestAnimationFrame(run);
+}
+
+
 
 function recordScreen(gameIndex,p,humanIndex,main,sub=""){
+  clearGameFit();
   gameTop();
   if(state.freePlay){
     screen.innerHTML=`<div class="ready-wrap"><div class="ready-card">${imgTag(p,"ready-avatar")}<div class="record-label">${GAMES[gameIndex].title} / SOLO RECORD</div><div class="big-record">${main}</div>${sub?`<p class="lead">${sub}</p>`:""}<button id="soloReplay" class="primary">同じゲームをもう一度</button><div style="height:8px"></div><button id="soloHome" class="secondary">メインメニューへ</button></div></div>`;
@@ -1806,6 +2243,7 @@ function recordScreen(gameIndex,p,humanIndex,main,sub=""){
 
 // CPU ----------------------------------------------------
 async function simulateCpuThenResult(gameIndex){
+  clearGameFit();
   gameTop();
   const list=cpus();
   screen.innerHTML=`<div class="cpu-sim"><div class="cpu-sim-box"><span class="kicker">CPU QUICK PROCESS</span><h2>CPU RESULT</h2><p class="lead">CPUは強め。ゲームごとにまれに「超強いCPU」が抽選されます。</p><div id="cpuRows">${list.map(p=>`<div class="cpu-row" data-cpu="${p.id}">${imgTag(p)}<div><b>${esc(p.name)}</b><span>CPU</span></div><div class="cpu-dot">•••</div></div>`).join("")}</div></div></div>`;
@@ -1826,7 +2264,7 @@ async function simulateCpuThenResult(gameIndex){
 
 function cpuUltraDraw(gameIndex){
   // Game-specific draw rate. Regular values are already intentionally strong.
-  const chance=[0.12,0.10,0.14,0.16,0.12,0.13,0.14,0.12,0.15][gameIndex] ?? 0.12;
+  const chance=[0.12,0.10,0.14,0.16,0.12,0.13,0.14,0.12,0.15,0.12,0.14][gameIndex] ?? 0.12;
   return Math.random()<chance;
 }
 
@@ -1859,9 +2297,16 @@ function simulateOneCpu(gameIndex,p){
   }else if(gameIndex===7){
     const bias={c5:1,c6:3,c7:0,c8:2}[p.id]||0;
     state.records.factory[p.id]=ultra?randi(25,32):clamp(randi(16,24)+bias,15,28);
-  }else{
+  }else if(gameIndex===8){
     const bias={c5:0,c6:1,c7:-1,c8:1}[p.id]||0;
-    state.records.catcher[p.id]=ultra?randi(8,10):clamp(randi(4,8)+bias,3,10);
+    state.records.catcher[p.id]=ultra?randi(8,10):clamp(randi(2,7)+bias,1,9);
+  }else if(gameIndex===9){
+    const bias={c5:1,c6:3,c7:0,c8:2}[p.id]||0;
+    state.records.tidy[p.id]=ultra?randi(96,100):clamp(randi(72,92)+bias,68,96);
+  }else{
+    const bias={c5:15,c6:25,c7:0,c8:30}[p.id]||0;
+    const meters=ultra?rand(226,240):clamp(rand(174,222)+bias/10,166,232);
+    state.records.ski[p.id]=Math.round(meters*10);
   }
   return ultra;
 }
@@ -1882,7 +2327,9 @@ function performancePoints(gameIndex,v){
   if(gameIndex===5)return clamp(Math.round((40-v)/39*100),0,100);
   if(gameIndex===6)return clamp(Math.round(v/20*100),0,100);
   if(gameIndex===7)return clamp(Math.round(v/25*100),0,100);
-  return clamp(Math.round(v*10),0,100);
+  if(gameIndex===8)return clamp(Math.round(v*10),0,100);
+  if(gameIndex===9)return clamp(Math.round(v),0,100);
+  return clamp(Math.round(((v/10)-80)/160*100),0,100);
 }
 
 function rankRecords(gameIndex){
@@ -1907,8 +2354,11 @@ function formatRecord(gameIndex,v){
   if(gameIndex===5)return `世界${v}位`;
   if(gameIndex===6)return `${v}回`;
   if(gameIndex===7)return `${v}箱`;
-  return `${v}体`;
+  if(gameIndex===8)return `${v}体`;
+  if(gameIndex===9)return `${v}%`;
+  return `${(v/10).toFixed(1)}m`;
 }
+
 function applyPoints(gameIndex,ranked){
   const gp={};
   ranked.forEach(e=>{
@@ -1921,6 +2371,7 @@ function competitionRankTotals(){const arr=participants().map(p=>({p,points:stat
 function teamTotals(){if(!mode().team)return null;const sum=t=>mode().teams[t].reduce((s,id)=>s+(state.total[id]||0),0);return {A:sum("A"),B:sum("B")}}
 function finishGame(gameIndex){const ranked=rankRecords(gameIndex);applyPoints(gameIndex,ranked);renderGameResult(gameIndex,ranked)}
 function renderGameResult(gameIndex,ranked){
+  clearGameFit();
   const totals=competitionRankTotals(),tt=teamTotals(),g=GAMES[gameIndex],scoreMode=mode().performance;
   const hasNext=state.roundIndex+1<state.playlist.length;
 
@@ -1964,6 +2415,7 @@ function renderGameResult(gameIndex,ranked){
 function rankRow(p,rank,record,badge){const tier=p.cpu&&!state.freePlay?state.cpuTier[`${state.roundIndex}:${p.id}`]:null;return `<div class="rank-row"><div class="rank-place">${rank}位</div>${imgTag(p)}<div class="rank-name">${esc(p.name)}<span>${p.cpu?"CPU":`PLAYER ${p.no}`}${mode().team?` / ${teamName(p.id)}`:""}${tier==="SUPER"?" / SUPER CPU":""}</span></div><div class="rank-score"><b>${record}</b><span class="point-badge">${badge}</span></div></div>`}
 
 function renderFinal(){
+  clearGameFit();
   const totals=competitionRankTotals(),tt=teamTotals();
   let winner="";
 
