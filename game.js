@@ -52,7 +52,7 @@ const GAMES=[
   {no:12,key:"slot",title:"モブくんスロット",sub:"キャラクタースロットでコイン勝負"},
   {no:13,key:"rope",title:"モブ跳び",sub:"横から走ってくるモブくんを飛び越える"},
   {no:14,key:"pk",title:"モブくんPK",sub:"10本のシュートを止める"},
-  {no:15,key:"rhythm",title:"モブくんリズムタップ",sub:"TAP表示のタイミングに合わせる"},
+  {no:15,key:"rhythm",title:"モブくん椅子取りゲーム",sub:"♪が消えた瞬間に椅子をタップ"},
   {no:16,key:"cut",title:"モブくんカットゲーム",sub:"指定%を感覚で切り分ける"},
   {no:17,key:"climb",title:"モブくん木登り",sub:"中央タップで10秒登る"},
   {no:18,key:"errand",title:"お使いモブくん",sub:"1000円を10秒で使い切る"},
@@ -88,6 +88,8 @@ let audioCtx=null;
 let activeAnimation=null;
 let countdownSerial=0;
 let activeCountdownLayer=null;
+let activeGameRunId=0;
+let gameSessionActive=false;
 
 function freshState(){
   return {
@@ -125,6 +127,19 @@ function cancelCountdown(){
   if(activeCountdownLayer&&activeCountdownLayer.isConnected)activeCountdownLayer.remove();
   activeCountdownLayer=null;
 }
+function invalidateGameRun(){
+  gameSessionActive=false;
+  activeGameRunId++;
+  cancelCountdown();
+}
+function beginGameRun(){
+  gameSessionActive=true;
+  activeGameRunId++;
+  return activeGameRunId;
+}
+function isGameRunValid(runId){
+  return gameSessionActive&&runId===activeGameRunId;
+}
 function gameTop(){requestAnimationFrame(()=>{try{window.scrollTo(0,0)}catch(e){};screen.scrollTop=0;});}
 function gameFit(){
   screen.classList.add("gameplay-fit");
@@ -137,11 +152,12 @@ function imgTag(p,cls="avatar"){return `<img draggable="false" class="${cls}" sr
 
 homeBtn.addEventListener("click",()=>{
   cancelActiveAnimation();
-  cancelCountdown();
+  invalidateGameRun();
   renderHome();
 });
 resetBtn.addEventListener("click",()=>{
   cancelActiveAnimation();
+  invalidateGameRun();
   if(state.freePlay && state.freeGameIndex!==null){startFreeGame(state.freeGameIndex);return;}
 
   if(state.modeKey){
@@ -164,7 +180,7 @@ resetBtn.addEventListener("click",()=>{
 function renderHome(){
   clearGameFit();
   cancelActiveAnimation();
-  cancelCountdown();
+  invalidateGameRun();
   state=freshState();
   screen.innerHTML=`
     <section class="hero">
@@ -365,7 +381,7 @@ function renderModeLobby(){
       <div><b>モブくんスロット</b><span>3000コイン以上=100 / 1000以下=0</span></div>
       <div><b>モブ跳び</b><span>30回以上=100 / 0回=0</span></div>
       <div><b>モブくんPK</b><span>10セーブ=100 / 1セーブ=10</span></div>
-      <div><b>モブくんリズムタップ</b><span>リズム精度0〜100</span></div>
+      <div><b>モブくん椅子取りゲーム</b><span>ベスト反応0.180秒以下=100</span></div>
       <div><b>モブくんカットゲーム</b><span>3回の誤差から0〜100</span></div>
       <div><b>モブくん木登り</b><span>700m以上=100 / 0m=0</span></div>
       <div><b>お使いモブくん</b><span>残金0円=100 / 10円=90 / 100円以上=0</span></div>
@@ -423,7 +439,7 @@ function scoreRuleForGame(index){
     "3000コイン以上=100点 / 1000コイン以下=0点",
     "30体回避=100点 / 0体=0点",
     "10本セーブ=100点 / 1本=10点",
-    "TAP表示とのタイミング精度0〜100点",
+    "0.180秒以下=100点 / 0.210秒≈90点 / 0.300秒≈55点",
     "3回のカット精度を0〜100点化",
     "700m以上=100点 / 0m=0点",
     "残金0円=100点 / 残金10円=90点 / 残金100円以上=0点",
@@ -467,7 +483,7 @@ function showGameIntro(index){
   }else if(index===13){
     rules=`<li>3・2・1後、様々なモブくんが合計10本シュート。</li><li>左スワイプ / 中央タップ / 右スワイプでセーブ。</li><li>基本速度は少し遅め。たまに高速シュートが混ざります。</li><li>10本全部止めれば100点。</li>`;
   }else if(index===14){
-    rules=`<li>4人のモブくんが4拍ジャンプしてテンポを提示。</li><li>お手本のリズムを見た後はカウントダウンなし。</li><li>本番前にも4人が4拍ジャンプ。</li><li>押すべきキャラにTAP表示が出るので、その瞬間に近いほど高得点。</li><li>全3ROUND、後半ほど少し速くなり順番が長くなります。</li>`;
+    rules=`<li>プレイヤー1人 + CPU4人で椅子取り反射勝負。</li><li>中央の椅子の周りで♪が流れている間は待機。</li><li><strong>♪が消えた瞬間</strong>に中央の椅子をタップ。</li><li>早押しはFOUL。</li><li>全2回。1回目はCPU最速が約0.30秒、2回目は約0.21秒が勝負ライン。</li><li>2回のうち<strong>良かったタイム</strong>を最終記録にします。</li>`;
   }else if(index===15){
     rules=`<li>「右側を○%残せ！」と表示。</li><li>長い棒を縦スワイプしてカット。</li><li>右側に残った割合と指定%の誤差を判定。</li><li>3回の平均精度で0〜100点。</li>`;
   }else if(index===16){
@@ -517,32 +533,38 @@ function humanReady(gameIndex,humanIndex){
   gameTop();
 
   document.getElementById("readyBtn").addEventListener("click",()=>{
-    if(gameIndex===0)startReaction(p,humanIndex);
-    else if(gameIndex===1)startMemory(p,humanIndex);
-    else if(gameIndex===2)startPuzzle(p,humanIndex);
-    else if(gameIndex===3)startLaunch(p,humanIndex);
-    else if(gameIndex===4)startStack(p,humanIndex);
-    else if(gameIndex===5)startGanbareMob(p,humanIndex);
-    else if(gameIndex===6)startCrisis(p,humanIndex);
-    else if(gameIndex===7)startFactory(p,humanIndex);
-    else if(gameIndex===8)startCatcher(p,humanIndex);
-    else if(gameIndex===9)startTidy(p,humanIndex);
-    else if(gameIndex===10)startSkiJump(p,humanIndex);
-    else if(gameIndex===11)startMobSlot(p,humanIndex);
-    else if(gameIndex===12)startJumpRope(p,humanIndex);
-    else if(gameIndex===13)startPK(p,humanIndex);
-    else if(gameIndex===14)startRhythmTap(p,humanIndex);
-    else if(gameIndex===15)startCutGame(p,humanIndex);
-    else if(gameIndex===16)startTreeClimb(p,humanIndex);
-    else if(gameIndex===17)startErrand(p,humanIndex);
-    else if(gameIndex===18)startDontHitMob(p,humanIndex);
-    else startMobStop(p,humanIndex);
+    const runId=beginGameRun();
+
+    if(gameIndex===0)startReaction(p,humanIndex,runId);
+    else if(gameIndex===1)startMemory(p,humanIndex,runId);
+    else if(gameIndex===2)startPuzzle(p,humanIndex,runId);
+    else if(gameIndex===3)startLaunch(p,humanIndex,runId);
+    else if(gameIndex===4)startStack(p,humanIndex,runId);
+    else if(gameIndex===5)startGanbareMob(p,humanIndex,runId);
+    else if(gameIndex===6)startCrisis(p,humanIndex,runId);
+    else if(gameIndex===7)startFactory(p,humanIndex,runId);
+    else if(gameIndex===8)startCatcher(p,humanIndex,runId);
+    else if(gameIndex===9)startTidy(p,humanIndex,runId);
+    else if(gameIndex===10)startSkiJump(p,humanIndex,runId);
+    else if(gameIndex===11)startMobSlot(p,humanIndex,runId);
+    else if(gameIndex===12)startJumpRope(p,humanIndex,runId);
+    else if(gameIndex===13)startPK(p,humanIndex,runId);
+    else if(gameIndex===14)startMusicalChairs(p,humanIndex,runId);
+    else if(gameIndex===15)startCutGame(p,humanIndex,runId);
+    else if(gameIndex===16)startTreeClimb(p,humanIndex,runId);
+    else if(gameIndex===17)startErrand(p,humanIndex,runId);
+    else if(gameIndex===18)startDontHitMob(p,humanIndex,runId);
+    else startMobStop(p,humanIndex,runId);
   },{once:true});
 }
 
-async function countdown(label="COUNTDOWN"){
+async function countdown(label="COUNTDOWN",runId=activeGameRunId){
+  if(!isGameRunValid(runId))return false;
+
   cancelCountdown();
   const serial=++countdownSerial;
+
+  if(!isGameRunValid(runId))return false;
 
   const layer=document.createElement("div");
   layer.className="countdown-layer";
@@ -553,20 +575,32 @@ async function countdown(label="COUNTDOWN"){
   const n=layer.querySelector(".count-number");
 
   for(const v of [3,2,1]){
-    if(serial!==countdownSerial||!layer.isConnected)return false;
+    if(
+      serial!==countdownSerial||
+      !layer.isConnected||
+      !isGameRunValid(runId)
+    )return false;
 
     n.textContent=v;
     beep(310+(3-v)*85,80);
     await wait(620);
   }
 
-  if(serial!==countdownSerial||!layer.isConnected)return false;
+  if(
+    serial!==countdownSerial||
+    !layer.isConnected||
+    !isGameRunValid(runId)
+  )return false;
 
   n.textContent="GO!";
   beep(710,100);
   await wait(300);
 
-  if(serial!==countdownSerial||!layer.isConnected)return false;
+  if(
+    serial!==countdownSerial||
+    !layer.isConnected||
+    !isGameRunValid(runId)
+  )return false;
 
   layer.remove();
   if(activeCountdownLayer===layer)activeCountdownLayer=null;
@@ -578,10 +612,10 @@ function playBadge(humanIndex){
 }
 
 // GAME 1 -------------------------------------------------
-async function startReaction(p,humanIndex){
+async function startReaction(p,humanIndex,runId){
   gameFit();
   screen.innerHTML=`<section class="reaction-stage"><div><span class="kicker">${esc(p.name)}</span><h2>反射神経</h2></div><div id="reactionZone" class="reaction-zone"><div class="wait-dots">•••</div></div><p class="hint">モブくんが出た瞬間にタップ。0.0001秒単位で表示します。</p></section>`;
-  await countdown();
+  if(!(await countdown("COUNTDOWN",runId)))return;
   const zone=document.getElementById("reactionZone");
   if(!zone)return;
   await wait(rand(650,1900));
@@ -605,19 +639,19 @@ async function startReaction(p,humanIndex){
 }
 
 // GAME 2 -------------------------------------------------
-async function startMemory(p,humanIndex){
+async function startMemory(p,humanIndex,runId){
   gameFit();
   const ids=shuffle(Array.from({length:10},(_,i)=>i+1));const seq=shuffle([...ids]);let input=0,active=false;
   screen.innerHTML=`<div class="game-head"><div><span class="kicker">${esc(p.name)}</span><h2>記憶力ゲーム</h2></div><div class="game-badge">${playBadge(humanIndex)}</div></div><div class="memory-status"><div class="stat-box"><span>PHASE</span><b id="memPhase">WATCH</b></div><div class="stat-box"><span>CORRECT</span><b id="memCount">0 / 10</b></div></div><div id="memoryBoard" class="memory-board">${ids.map(id=>`<button type="button" class="memory-tile" data-id="${id}"><img src="icon/${String(id).padStart(2,"0")}.png" alt="icon ${id}" onerror="this.style.visibility='hidden'"></button>`).join("")}</div><p id="memHint" class="hint">3・2・1のあと、光る順番を覚えてください。</p>`;
   const board=document.getElementById("memoryBoard"),phase=document.getElementById("memPhase"),count=document.getElementById("memCount"),hint=document.getElementById("memHint");const tile=id=>board.querySelector(`[data-id="${id}"]`);
-  await countdown("WATCH");
+  if(!(await countdown("WATCH",runId)))return;
   for(const id of seq){if(!document.body.contains(board))return;tile(id).classList.add("showing");beep(400+id*18,55,.018);await wait(390);tile(id).classList.remove("showing");await wait(125)}
-  phase.textContent="READY";hint.textContent="次の3・2・1のあと、同じ順番でタップ。";await wait(300);await countdown("TAP");phase.textContent="TAP";hint.textContent="光った順にタップしてください。";active=true;
+  phase.textContent="READY";hint.textContent="次の3・2・1のあと、同じ順番でタップ。";await wait(300);if(!isGameRunValid(runId))return;if(!(await countdown("TAP",runId)))return;phase.textContent="TAP";hint.textContent="光った順にタップしてください。";active=true;
   board.addEventListener("pointerdown",async e=>{const t=e.target.closest(".memory-tile");if(!t||!active)return;const id=Number(t.dataset.id);if(id===seq[input]){t.classList.add("correct");setTimeout(()=>t.classList.remove("correct"),170);beep(730,45,.02);input++;count.textContent=`${input} / 10`;if(input===10){active=false;state.records.memory[p.id]=10;await wait(240);recordScreen(1,p,humanIndex,`10<small>/10</small>`)}}else{active=false;t.classList.add("wrong");beep(170,160,.03);state.records.memory[p.id]=input;hint.textContent="MISS";await wait(430);recordScreen(1,p,humanIndex,`${input}<small>/10</small>`)}});
 }
 
 // GAME 3 -------------------------------------------------
-async function startPuzzle(p,humanIndex){
+async function startPuzzle(p,humanIndex,runId){
   gameFit();
   const slots=shuffle(Array.from({length:12},(_,i)=>i+1));
   let next=1;
@@ -660,7 +694,7 @@ async function startPuzzle(p,humanIndex){
     });
   };
 
-  await countdown("NUMBER 12");
+  if(!(await countdown("NUMBER 12",runId)))return;
   if(!document.body.contains(board))return;
 
   board.classList.remove("prestart");
@@ -708,7 +742,7 @@ async function startPuzzle(p,humanIndex){
 }
 
 // GAME 4 -------------------------------------------------
-async function startLaunch(p,humanIndex){
+async function startLaunch(p,humanIndex,runId){
   gameFit();
   let linear=0,circle=0,phase="linear",start=performance.now();
   const linearPeriod=rand(350,430);
@@ -829,7 +863,7 @@ async function launchAnimation(p,humanIndex,power,linear,circle){
 }
 
 // GAME 5 -------------------------------------------------
-async function startStack(p,humanIndex){
+async function startStack(p,humanIndex,runId){
   gameFit();
   let count=0;
   let active=null;
@@ -1102,7 +1136,7 @@ async function startStack(p,humanIndex){
 
   renderStack();
   startWobble();
-  await countdown("10 SECOND STACK");
+  if(!(await countdown("10 SECOND STACK",runId)))return;
   if(!document.body.contains(stage))return;
 
   endAt=performance.now()+10000;
@@ -1158,7 +1192,7 @@ function build1990WorldRanking(laps){
   return entries;
 }
 
-async function startGanbareMob(p,humanIndex){
+async function startGanbareMob(p,humanIndex,runId){
   gameFit();
 
   let hits=0,streak=0,bonus=0,penalty=0;
@@ -1277,7 +1311,7 @@ async function startGanbareMob(p,humanIndex){
     pick(Number(btn.dataset.choice));
   },{passive:false});
 
-  await countdown("1990");
+  if(!(await countdown("1990",runId)))return;
   if(!document.body.contains(grid))return;
 
   running=true;
@@ -1337,7 +1371,7 @@ function show1990Final(p,humanIndex,laps,rank){
 }
 
 // GAME 7 -------------------------------------------------
-async function startCrisis(p,humanIndex){
+async function startCrisis(p,humanIndex,runId){
   gameFit();
 
   let wave=0;
@@ -1494,13 +1528,13 @@ async function startCrisis(p,humanIndex){
     }
   }
 
-  await countdown("LOW ENERGY");
+  if(!(await countdown("LOW ENERGY",runId)))return;
   if(!document.body.contains(stage))return;
   runWave();
 }
 
 // GAME 8 -------------------------------------------------
-async function startFactory(p,humanIndex){
+async function startFactory(p,humanIndex,runId){
   gameFit();
   let completed=0;
   let discarded=0;
@@ -1686,7 +1720,7 @@ async function startFactory(p,humanIndex){
     recordScreen(7,p,humanIndex,`${completed}<small>箱</small>`,`DISCARD ${discarded}`);
   }
 
-  await countdown("FACTORY");
+  if(!(await countdown("FACTORY",runId)))return;
   if(!document.body.contains(box))return;
 
   endAt=performance.now()+10000;
@@ -1707,7 +1741,7 @@ async function startFactory(p,humanIndex){
 }
 
 // GAME 9 -------------------------------------------------
-async function startCatcher(p,humanIndex){
+async function startCatcher(p,humanIndex,runId){
   gameFit();
 
   let phase="width";
@@ -2194,7 +2228,7 @@ function tidySimilarity(positions,targets){
   return clamp(Math.round((1-avg/.205)*100),0,100);
 }
 
-async function startTidy(p,humanIndex){
+async function startTidy(p,humanIndex,runId){
   gameFit();
 
   const targets=generateTidyTargets();
@@ -2306,7 +2340,7 @@ async function startTidy(p,humanIndex){
     setTimeout(()=>recordScreen(9,p,humanIndex,`${score}<small>%</small>`,score===100?"PERFECT ROOM":"ROOM MATCH"),240);
   }
 
-  await countdown("TIDY ROOM");
+  if(!(await countdown("TIDY ROOM",runId)))return;
   if(!document.body.contains(room))return;
 
   endAt=performance.now()+10000;
@@ -2346,7 +2380,7 @@ function skiTimingLabel(deltaMs){
   return deltaMs<0?"EARLY":"LATE";
 }
 
-async function startSkiJump(p,humanIndex){
+async function startSkiJump(p,humanIndex,runId){
   gameFit();
 
   let running=false;
@@ -2553,7 +2587,7 @@ async function startSkiJump(p,humanIndex){
     resolveJump(delta);
   },{passive:false});
 
-  await countdown("SKI JUMP");
+  if(!(await countdown("SKI JUMP",runId)))return;
   if(!document.body.contains(stage))return;
 
   running=true;
@@ -2605,7 +2639,7 @@ function slotPayout(keys){
   return {mult:2,label:"MATCH ×2"};
 }
 
-async function startMobSlot(p,humanIndex){
+async function startMobSlot(p,humanIndex,runId){
   gameFit();
 
   let coins=1000;
@@ -2820,7 +2854,7 @@ async function startMobSlot(p,humanIndex){
   renderReel(1,1,.5);
   renderReel(2,2,.5);
 
-  await countdown("SLOT");
+  if(!(await countdown("SLOT",runId)))return;
   if(!document.body.contains(mainBtn))return;
 
   running=true;
@@ -2843,7 +2877,7 @@ async function startMobSlot(p,humanIndex){
 }
 
 // GAME 13 -------------------------------------------------
-async function startJumpRope(p,humanIndex){
+async function startJumpRope(p,humanIndex,runId){
   gameFit();
 
   let count=0;
@@ -2951,7 +2985,7 @@ async function startJumpRope(p,humanIndex){
     setTimeout(()=>recordScreen(12,p,humanIndex,`${count}<small>体</small>`,`MOB JUMP`),320);
   }
 
-  await countdown("MOB JUMP");
+  if(!(await countdown("MOB JUMP",runId)))return;
   if(!document.body.contains(stage))return;
 
   nextSpawnAt=performance.now()+1050;
@@ -3028,7 +3062,7 @@ async function startJumpRope(p,humanIndex){
 }
 
 // GAME 14 -------------------------------------------------
-async function startPK(p,humanIndex){
+async function startPK(p,humanIndex,runId){
   gameFit();
 
   let shot=0;
@@ -3109,7 +3143,7 @@ async function startPK(p,humanIndex){
 
   field.addEventListener("pointercancel",()=>{gestureStart=null},{passive:false});
 
-  await countdown("PK");
+  if(!(await countdown("PK",runId)))return;
   if(!document.body.contains(ball))return;
 
   for(shot=1;shot<=10;shot++){
@@ -3185,232 +3219,274 @@ async function startPK(p,humanIndex){
 }
 
 // GAME 15 -------------------------------------------------
-function makeRhythmPattern(round){
-  const settings=[
-    {count:4,beat:680},
-    {count:5,beat:590},
-    {count:6,beat:510}
-  ];
+function musicalChairCpuTimes(round){
+  if(round===0){
+    const fastest=rand(285,325);
+    return shuffle([
+      fastest,
+      fastest+rand(28,72),
+      fastest+rand(70,125),
+      fastest+rand(115,180)
+    ]);
+  }
 
-  const cfg=settings[round];
-
-  return {
-    chars:Array.from({length:cfg.count},()=>randi(0,3)),
-    beat:cfg.beat
-  };
+  const fastest=rand(198,225);
+  return shuffle([
+    fastest,
+    fastest+rand(22,58),
+    fastest+rand(55,100),
+    fastest+rand(95,150)
+  ]);
 }
 
-async function startRhythmTap(p,humanIndex){
+async function startMusicalChairs(p,humanIndex,runId){
   gameFit();
 
-  let totalScore=0;
-  let totalEvents=0;
+  const roundTimes=[];
+  const cpuPlayers=[
+    {name:"CPU 1",icon:2},
+    {name:"CPU 2",icon:3},
+    {name:"CPU 3",icon:4},
+    {name:"CPU 4",icon:5}
+  ];
 
-  screen.innerHTML=`<div class="rhythm-shell rhythm-shell-v88">
+  screen.innerHTML=`<div class="chair-shell">
     <div class="game-head">
-      <div><span class="kicker">${esc(p.name)}</span><h2>モブくんリズムタップ</h2></div>
+      <div><span class="kicker">${esc(p.name)}</span><h2>モブくん椅子取りゲーム</h2></div>
       <div class="game-badge">${playBadge(humanIndex)}</div>
     </div>
 
-    <div class="rhythm-hud">
-      <div><span>ROUND</span><b id="rhythmRound">1 / 3</b></div>
-      <div><span>SCORE</span><b id="rhythmScore">0</b></div>
+    <div class="chair-hud">
+      <div><span>ROUND</span><b id="chairRound">1 / 2</b></div>
+      <div><span>BEST</span><b id="chairBest">--</b></div>
     </div>
 
-    <div id="rhythmCharacters" class="rhythm-characters rhythm-row-v88">
-      ${[1,2,3,4].map((id,i)=>`
-        <button class="rhythm-mob rhythm-mob-v88" data-rhythm="${i}" type="button" style="background-image:url('icon/${String(id).padStart(2,"0")}.png')">
-          <span class="rhythm-tap-badge">TAP</span>
-        </button>`).join("")}
+    <div id="chairArena" class="chair-arena">
+      <div id="musicRing" class="music-ring">
+        ${Array.from({length:10},(_,i)=>`<span style="--i:${i}">♪</span>`).join("")}
+      </div>
+
+      <button id="chairButton" class="chair-button" type="button" aria-label="椅子">
+        <span class="chair-back"></span>
+        <span class="chair-seat"></span>
+        <i class="chair-leg l1"></i>
+        <i class="chair-leg l2"></i>
+      </button>
+
+      <div class="chair-racers">
+        <div class="chair-racer player">
+          <i style="background-image:url('${p.img}')"></i>
+          <b>YOU</b>
+          <em id="chairYouTime">--</em>
+        </div>
+        ${cpuPlayers.map((cpu,i)=>`
+          <div class="chair-racer cpu" data-chair-cpu="${i}">
+            <i style="background-image:url('icon/${String(cpu.icon).padStart(2,"0")}.png')"></i>
+            <b>${cpu.name}</b>
+            <em>--</em>
+          </div>`).join("")}
+      </div>
+
+      <div id="chairMessage" class="chair-message">♪ MUSIC ♪</div>
     </div>
 
-    <div id="rhythmMessage" class="rhythm-message">WATCH</div>
+    <div id="chairRoundResult" class="chair-round-result">
+      <div class="chair-result-card">
+        <span id="chairResultLabel">ROUND 1 RESULT</span>
+        <strong id="chairResultTime">0.300</strong>
+        <div id="chairResultRank">1 / 5</div>
+        <button id="chairNext" class="primary" type="button">NEXT</button>
+      </div>
+    </div>
   </div>`;
 
-  const area=document.getElementById("rhythmCharacters");
-  const mobs=[...screen.querySelectorAll(".rhythm-mob")];
-  const roundEl=document.getElementById("rhythmRound");
-  const scoreEl=document.getElementById("rhythmScore");
-  const message=document.getElementById("rhythmMessage");
+  const arena=document.getElementById("chairArena");
+  const musicRing=document.getElementById("musicRing");
+  const chair=document.getElementById("chairButton");
+  const roundEl=document.getElementById("chairRound");
+  const bestEl=document.getElementById("chairBest");
+  const message=document.getElementById("chairMessage");
+  const youTimeEl=document.getElementById("chairYouTime");
+  const cpuEls=[...arena.querySelectorAll("[data-chair-cpu]")];
 
-  function bounceOne(index,cls="bounce"){
-    const mob=mobs[index];
-    mob.classList.remove("bounce","tap-bounce","group-bounce");
-    void mob.offsetWidth;
-    mob.classList.add(cls);
-    setTimeout(()=>mob.classList.remove(cls),190);
-  }
+  const overlay=document.getElementById("chairRoundResult");
+  const resultLabel=document.getElementById("chairResultLabel");
+  const resultTime=document.getElementById("chairResultTime");
+  const resultRank=document.getElementById("chairResultRank");
+  const nextBtn=document.getElementById("chairNext");
 
-  function clearTapCues(){
-    mobs.forEach(m=>m.classList.remove("tap-cue","cue-hit","cue-miss"));
-  }
-
-  async function fourBeatCountIn(beat,label){
-    message.textContent=label;
-
-    for(let n=1;n<=4;n++){
-      mobs.forEach(mob=>{
-        mob.classList.remove("group-bounce");
-        void mob.offsetWidth;
-        mob.classList.add("group-bounce");
-        setTimeout(()=>mob.classList.remove("group-bounce"),190);
-      });
-
-      message.textContent=`${n} / 4`;
-      beep(440,42,.012);
-
-      // 4拍目のあとに余計な1拍を待たない。
-      // これで4回目のジャンプ直後に次のフェーズへ移る。
-      if(n<4)await wait(beat);
-    }
-  }
-
-  async function playSample(pattern){
-    message.textContent="WATCH";
-
-    for(let i=0;i<pattern.chars.length;i++){
-      bounceOne(pattern.chars[i],"bounce");
-      beep(520+pattern.chars[i]*60,40,.012);
-
-      // 全て完全に同じ一定テンポ。
-      if(i<pattern.chars.length-1)await wait(pattern.beat);
-    }
-  }
-
-  async function waitForTimedTap(target,cueTime,windowMs){
+  async function waitForNext(){
     return new Promise(resolve=>{
-      let resolved=false;
-
-      const finish=(score,hitMob=null)=>{
-        if(resolved)return;
-        resolved=true;
-        clearTimeout(timeout);
-        area.removeEventListener("pointerdown",handler);
-
-        mobs[target].classList.remove("tap-cue");
-
-        if(hitMob!==null){
-          const hit=mobs[hitMob];
-          hit.classList.add(score>0?"cue-hit":"cue-miss");
-          setTimeout(()=>hit.classList.remove("cue-hit","cue-miss"),150);
-        }
-
-        resolve(score);
+      nextBtn.onclick=()=>{
+        overlay.classList.remove("show");
+        nextBtn.onclick=null;
+        resolve();
       };
-
-      const handler=e=>{
-        const btn=e.target.closest(".rhythm-mob");
-        if(!btn)return;
-        e.preventDefault();
-
-        const char=Number(btn.dataset.rhythm);
-
-        // 本番では「実際にタップした時だけ」キャラクターが跳ねる。
-        bounceOne(char,"tap-bounce");
-
-        if(char!==target){
-          beep(180,40,.012);
-          finish(0,char);
-          return;
-        }
-
-        const error=Math.abs(performance.now()-cueTime);
-
-        // TAP表示の瞬間に近いほど高得点。
-        // 0ms=100 / 60ms≈90 / 120ms≈75 / 200ms≈50 / 300ms≈20
-        const timingScore=clamp(
-          Math.round(100-Math.pow(error/300,.82)*80),
-          0,100
-        );
-
-        beep(560+timingScore*3.2,32,.012);
-        finish(timingScore,char);
-      };
-
-      area.addEventListener("pointerdown",handler,{passive:false});
-      const timeout=setTimeout(()=>finish(0,null),windowMs);
     });
   }
 
-  async function playUserTurn(pattern){
-    clearTapCues();
-    message.textContent="YOUR TURN";
+  async function playRound(round){
+    if(!isGameRunValid(runId))return null;
 
-    let roundScore=0;
-    const turnStart=performance.now();
+    roundEl.textContent=`${round+1} / 2`;
+    message.textContent="♪ MUSIC ♪";
+    message.className="chair-message playing";
+    musicRing.classList.remove("stopped");
+    chair.classList.remove("ready","pressed","foul","winner");
+    youTimeEl.textContent="--";
 
-    for(let i=0;i<pattern.chars.length;i++){
-      // Cue times are absolute, so user response speed cannot change the tempo.
-      const targetTime=turnStart+i*pattern.beat;
-      const waitToCue=Math.max(0,targetTime-performance.now());
+    cpuEls.forEach(el=>{
+      el.classList.remove("winner","arrived");
+      el.querySelector("em").textContent="--";
+    });
 
-      if(waitToCue>0)await wait(waitToCue);
+    const ok=await countdown(`ROUND ${round+1}`,runId);
+    if(!ok||!isGameRunValid(runId))return null;
 
-      const target=pattern.chars[i];
-      const targetMob=mobs[target];
-      const cueTime=performance.now();
+    let stopped=false;
+    let stopAt=0;
+    let resolved=false;
+    let falseStart=false;
+    const cpuTimes=musicalChairCpuTimes(round);
 
-      clearTapCues();
-      targetMob.classList.add("tap-cue");
-
-      // IMPORTANT: no automatic bounce here.
-      // It only jumps if the user actually taps it.
-
-      const inputWindow=Math.min(360,pattern.beat*.68);
-      const eventStart=performance.now();
-      const eventScore=await waitForTimedTap(target,cueTime,inputWindow);
-      const spent=performance.now()-eventStart;
-
-      roundScore+=eventScore;
-      totalScore+=eventScore;
-      totalEvents++;
-      scoreEl.textContent=Math.round(totalScore/Math.max(1,totalEvents));
-
-      // Keep the next cue on the same exact beat even if the player tapped early.
-      const nextTime=turnStart+(i+1)*pattern.beat;
-      if(i<pattern.chars.length-1){
-        const rest=Math.max(0,nextTime-performance.now());
-        if(rest>0)await wait(rest);
+    const musicInterval=setInterval(()=>{
+      if(!isGameRunValid(runId)||stopped){
+        clearInterval(musicInterval);
+        return;
       }
+      beep(430+randi(-40,55),34,.008);
+    },330);
+
+    const playerResultPromise=new Promise(resolve=>{
+      const finish=value=>{
+        if(resolved)return;
+        resolved=true;
+        chair.removeEventListener("pointerdown",onTap);
+        resolve(value);
+      };
+
+      const onTap=e=>{
+        e.preventDefault();
+
+        if(!isGameRunValid(runId)){
+          finish(null);
+          return;
+        }
+
+        if(!stopped){
+          falseStart=true;
+          chair.classList.add("foul");
+          message.textContent="FOUL!";
+          message.className="chair-message foul";
+          beep(140,160,.035);
+          finish(999);
+          return;
+        }
+
+        const ms=Math.max(.1,performance.now()-stopAt);
+        chair.classList.add("pressed");
+        youTimeEl.textContent=`${(ms/1000).toFixed(3)}s`;
+        beep(860,70,.022);
+        finish(ms);
+      };
+
+      chair.addEventListener("pointerdown",onTap,{passive:false});
+    });
+
+    const musicDuration=rand(2200,4200);
+    const musicStart=performance.now();
+
+    while(performance.now()-musicStart<musicDuration){
+      if(!isGameRunValid(runId)){
+        clearInterval(musicInterval);
+        return null;
+      }
+      await wait(40);
     }
 
-    clearTapCues();
-    return Math.round(roundScore/pattern.chars.length);
+    if(!isGameRunValid(runId)){
+      clearInterval(musicInterval);
+      return null;
+    }
+
+    stopped=true;
+    stopAt=performance.now();
+    clearInterval(musicInterval);
+
+    musicRing.classList.add("stopped");
+    chair.classList.add("ready");
+    message.textContent="STOP!";
+    message.className="chair-message stopped";
+    beep(930,65,.02);
+
+    cpuTimes.forEach((ms,i)=>{
+      setTimeout(()=>{
+        if(!isGameRunValid(runId))return;
+        cpuEls[i].classList.add("arrived");
+        cpuEls[i].querySelector("em").textContent=`${(ms/1000).toFixed(3)}s`;
+      },ms);
+    });
+
+    const playerMs=await Promise.race([
+      playerResultPromise,
+      new Promise(resolve=>setTimeout(()=>resolve(1200),1200))
+    ]);
+
+    if(!isGameRunValid(runId)||playerMs===null)return null;
+
+    const effectivePlayer=playerMs;
+    if(effectivePlayer>=1200){
+      youTimeEl.textContent="1.200s";
+      message.textContent="TOO LATE";
+    }
+
+    const ranking=[
+      {name:"YOU",ms:effectivePlayer,you:true},
+      ...cpuTimes.map((ms,i)=>({name:`CPU ${i+1}`,ms,you:false,index:i}))
+    ].sort((a,b)=>a.ms-b.ms);
+
+    const rank=ranking.findIndex(x=>x.you)+1;
+    const winner=ranking[0];
+
+    if(winner.you){
+      chair.classList.add("winner");
+    }else if(winner.index!==undefined&&cpuEls[winner.index]){
+      cpuEls[winner.index].classList.add("winner");
+    }
+
+    roundTimes.push(effectivePlayer);
+    const best=Math.min(...roundTimes);
+    bestEl.textContent=`${(best/1000).toFixed(3)}s`;
+
+    resultLabel.textContent=`ROUND ${round+1} RESULT`;
+    resultTime.textContent=falseStart?"FOUL":`${(effectivePlayer/1000).toFixed(3)}s`;
+    resultRank.textContent=`${rank} / 5`;
+    nextBtn.textContent=round===0?"ROUND 2":"FINAL";
+    overlay.classList.add("show");
+
+    await waitForNext();
+
+    return effectivePlayer;
   }
 
-  for(let round=0;round<3;round++){
-    roundEl.textContent=`${round+1} / 3`;
-    const pattern=makeRhythmPattern(round);
+  const r1=await playRound(0);
+  if(r1===null||!isGameRunValid(runId))return;
 
-    mobs.forEach(b=>b.disabled=true);
+  const r2=await playRound(1);
+  if(r2===null||!isGameRunValid(runId))return;
 
-    // Round opening only.
-    const ok=await countdown(`ROUND ${round+1}`);
-    if(!ok||!document.body.contains(area))return;
+  const best=Math.min(r1,r2);
+  state.records.rhythm[p.id]=best;
 
-    await fourBeatCountIn(pattern.beat,"SAMPLE BEAT");
-    await playSample(pattern);
-
-    // お手本後はカウントダウン無し。
-    // 1拍だけ間を置いて本番用の4拍へ。その4拍目の直後に即スタート。
-    await wait(pattern.beat);
-    await fourBeatCountIn(pattern.beat,"YOUR BEAT");
-
-    mobs.forEach(b=>b.disabled=false);
-    const roundResult=await playUserTurn(pattern);
-    mobs.forEach(b=>b.disabled=true);
-
-    message.textContent=`ROUND ${round+1} ${roundResult}pt`;
-    await wait(500);
-  }
-
-  const score=clamp(Math.round(totalScore/Math.max(1,totalEvents)),0,100);
-  state.records.rhythm[p.id]=score;
-  recordScreen(14,p,humanIndex,`${score}<small>pt</small>`,`SEQUENCE TIMING`);
+  recordScreen(
+    14,p,humanIndex,
+    `${(best/1000).toFixed(3)}<small>秒</small>`,
+    `BEST OF 2`
+  );
 }
 
 // GAME 16 -------------------------------------------------
-async function startCutGame(p,humanIndex){
+async function startCutGame(p,humanIndex,runId){
   gameFit();
 
   const scores=[];
@@ -3579,7 +3655,7 @@ async function startCutGame(p,humanIndex){
 }
 
 // GAME 17 -------------------------------------------------
-async function startTreeClimb(p,humanIndex){
+async function startTreeClimb(p,humanIndex,runId){
   gameFit();
 
   let distance=0;
@@ -3658,7 +3734,7 @@ async function startTreeClimb(p,humanIndex){
     beep(400+quality*500,35,.015);
   },{passive:false});
 
-  await countdown("CLIMB");
+  if(!(await countdown("CLIMB",runId)))return;
   if(!document.body.contains(gauge))return;
 
   endAt=performance.now()+10000;
@@ -3697,7 +3773,7 @@ const ERRAND_ITEMS=[
   ["ミント",3],["小ねぎ",12],["輪ゴム",7],["飴1個",9],["駄菓子",18],["小袋ソース",11],["小袋醤油",6],["ふりかけ",28],["梅1個",21],["小袋ナッツ",33]
 ];
 
-async function startErrand(p,humanIndex){
+async function startErrand(p,humanIndex,runId){
   gameFit();
 
   let remaining=1000;
@@ -3763,7 +3839,7 @@ async function startErrand(p,humanIndex){
     }
   },{passive:false});
 
-  await countdown("SHOPPING");
+  if(!(await countdown("SHOPPING",runId)))return;
   if(!document.body.contains(grid))return;
 
   endAt=performance.now()+10000;
@@ -3796,7 +3872,7 @@ async function startErrand(p,humanIndex){
 
 
 // GAME 19 -------------------------------------------------
-async function startDontHitMob(p,humanIndex){
+async function startDontHitMob(p,humanIndex,runId){
   gameFit();
 
   let hits=0;
@@ -3969,7 +4045,7 @@ async function startDontHitMob(p,humanIndex){
     }
   },{passive:false});
 
-  const ok=await countdown("DON'T HIT MOB");
+  const ok=await countdown("DON'T HIT MOB",runId);
   if(!ok||!document.body.contains(board))return;
 
   endAt=performance.now()+10000;
@@ -4005,7 +4081,7 @@ function mobStopScore(remainingRatio,fell){
   return 0;
 }
 
-async function startMobStop(p,humanIndex){
+async function startMobStop(p,humanIndex,runId){
   gameFit();
 
   let dragging=false;
@@ -4050,7 +4126,7 @@ async function startMobStop(p,humanIndex){
   const edgeEl=document.getElementById("mobStopEdge");
   const message=document.getElementById("mobStopMessage");
 
-  await countdown("MOB STOP");
+  if(!(await countdown("MOB STOP",runId)))return;
   if(!document.body.contains(stage))return;
 
   const stageRect=stage.getBoundingClientRect();
@@ -4281,7 +4357,7 @@ function simulateOneCpu(gameIndex,p){
   }else if(gameIndex===13){
     state.records.pk[p.id]=ultra?randi(9,10):randi(5,9);
   }else if(gameIndex===14){
-    state.records.rhythm[p.id]=ultra?randi(93,100):randi(65,92);
+    state.records.rhythm[p.id]=ultra?rand(145,195):rand(185,315);
   }else if(gameIndex===15){
     state.records.cut[p.id]=ultra?randi(94,100):randi(60,92);
   }else if(gameIndex===16){
@@ -4318,7 +4394,13 @@ function performancePoints(gameIndex,v){
   if(gameIndex===11)return clamp(Math.round((v-1000)/2000*100),0,100);
   if(gameIndex===12)return clamp(Math.round(v/30*100),0,100);
   if(gameIndex===13)return clamp(Math.round(v*10),0,100);
-  if(gameIndex===14)return clamp(Math.round(v),0,100);
+  if(gameIndex===14){
+    if(v<=180)return 100;
+    if(v<=210)return Math.round(100-(v-180)/30*10);
+    if(v<=300)return Math.round(90-(v-210)/90*35);
+    if(v<=500)return Math.round(55-(v-300)/200*55);
+    return 0;
+  }
   if(gameIndex===15)return clamp(Math.round(v),0,100);
   if(gameIndex===16)return clamp(Math.round((v/10)/700*100),0,100);
   if(gameIndex===17)return clamp(Math.round(v-900),0,100);
@@ -4327,7 +4409,7 @@ function performancePoints(gameIndex,v){
 }
 
 function rankRecords(gameIndex){
-  const key=GAMES[gameIndex].key,records=state.records[key],ascRaw=(gameIndex===0||gameIndex===2||gameIndex===5);
+  const key=GAMES[gameIndex].key,records=state.records[key],ascRaw=(gameIndex===0||gameIndex===2||gameIndex===5||gameIndex===14);
   const arr=participants().map(p=>({p,value:records[p.id]}));
   if(mode().performance){
     arr.forEach(e=>e.points=performancePoints(gameIndex,e.value));
@@ -4354,7 +4436,7 @@ function formatRecord(gameIndex,v){
   if(gameIndex===11)return `${v} COIN`;
   if(gameIndex===12)return `${v}回`;
   if(gameIndex===13)return `${v}/10`;
-  if(gameIndex===14)return `${v}pt`;
+  if(gameIndex===14)return `${(v/1000).toFixed(3)}秒`;
   if(gameIndex===15)return `${v}pt`;
   if(gameIndex===16)return `${(v/10).toFixed(1)}m`;
   if(gameIndex===17)return `¥${v}使用`;
