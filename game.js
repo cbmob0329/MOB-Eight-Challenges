@@ -79,9 +79,10 @@ const GAMES=[
   {no:39,key:"giantMob",title:"巨大モブくん大進撃",sub:"1.000秒を刻みながらビル破壊"},
   {no:40,key:"wizardMob",title:"魔法使いモブくん",sub:"闇の炎を円で囲んで町を守る"},
   {no:41,key:"brawlerMob",title:"モブくんは喧嘩番長",sub:"学校で黒モブくんをぶっ飛ばす"},
-  {no:42,key:"summonerMob",title:"モブくんは召喚師",sub:"描いた召喚獣が横スクロールでオートバトル"},
+  {no:42,key:"summonerMob",title:"モブくんは召喚師",sub:"描いた姿そのままで近距離オートバトル"},
   {no:43,key:"blackjackMob",title:"ブラックジャックの決戦",sub:"動く13枚を追って21を作る"},
-  {no:44,key:"mobIssen",title:"モブくん一閃",sub:"落下する木の白いセンターを斬る"}
+  {no:44,key:"mobIssen",title:"モブくん一閃",sub:"3回の一閃 合計300ポイント"},
+  {no:45,key:"crowEscape",title:"カラスから逃げろ！",sub:"2体のカラスから20秒逃げ切る"}
 ];
 
 const MODES={
@@ -116,7 +117,7 @@ function freshState(){
     roundIndex:0,
     records:{
       reaction:{},memory:{},puzzle:{},launch:{},stack:{},breakdance:{},
-      crisis:{},factory:{},catcher:{},tidy:{},ski:{},slot:{},rope:{},pk:{},rhythm:{},cut:{},climb:{},errand:{},dontHitMob:{},mobStop:{},overlap:{},shutter:{},cup:{},darts:{},parachute:{},mobCount:{},brake:{},feint:{},bomb:{},overlapMaster:{},jumpingMob:{},heroMaybe:{},popularGame:{},planetEnergy:{},painter:{},bikeJump:{},trampoline:{},mobTrain:{},giantMob:{},wizardMob:{},brawlerMob:{},summonerMob:{},blackjackMob:{},mobIssen:{}
+      crisis:{},factory:{},catcher:{},tidy:{},ski:{},slot:{},rope:{},pk:{},rhythm:{},cut:{},climb:{},errand:{},dontHitMob:{},mobStop:{},overlap:{},shutter:{},cup:{},darts:{},parachute:{},mobCount:{},brake:{},feint:{},bomb:{},overlapMaster:{},jumpingMob:{},heroMaybe:{},popularGame:{},planetEnergy:{},painter:{},bikeJump:{},trampoline:{},mobTrain:{},giantMob:{},wizardMob:{},brawlerMob:{},summonerMob:{},blackjackMob:{},mobIssen:{},crowEscape:{}
     },
     total:{},
     roundPoints:[],
@@ -198,7 +199,7 @@ function renderHome(){
   state=freshState();
   screen.innerHTML=`
     <section class="hero">
-      <div><span class="kicker">SMARTPHONE PARTY GAME</span><h1>44 MINI<br>GAMES</h1><p>44種のミニゲーム。各モードでNORMALかCUSTOMを選んで遊べます。</p></div>
+      <div><span class="kicker">SMARTPHONE PARTY GAME</span><h1>45 MINI<br>GAMES</h1><p>45種のミニゲーム。各モードでNORMALかCUSTOMを選んで遊べます。</p></div>
       <div class="hero-mark">MOB</div>
     </section>
     <section class="panel">
@@ -321,7 +322,7 @@ function renderPlayStyleSelect(){
       <button id="normalStyle" class="style-select-card normal" type="button">
         <span>NORMAL</span>
         <b>順番に全種目</b>
-        <small>GAME 1 → 44 を順番にプレイ</small>
+        <small>GAME 1 → 45 を順番にプレイ</small>
       </button>
       <button id="customStyle" class="style-select-card custom" type="button">
         <span>CUSTOM</span>
@@ -331,7 +332,7 @@ function renderPlayStyleSelect(){
     </div>
 
     <section class="panel flat">
-      <h3>44 MINI GAMES</h3>
+      <h3>45 MINI GAMES</h3>
       <div class="compact-game-grid">
         ${GAMES.map(g=>`<div><b>${g.no}</b><span>${g.title}</span></div>`).join("")}
       </div>
@@ -545,7 +546,8 @@ function scoreRuleForGame(index){
     "黒モブくん30体撃破=100点 / 0体=0点",
     "黒スライム40体撃破=100点 / 0体=0点",
     "21=100点 / 22→1、23→2の循環ルール",
-    "白いセンター完全一致=100点"
+    "3回合計300pt=100点 / 0pt=0点",
+    "20.00秒生存=100点 / 0秒=0点"
   ][index];
 }
 
@@ -638,11 +640,13 @@ function showGameIntro(index){
   }else if(index===40){
     rules=`<li>10秒間の横スクロール爽快アクション。</li><li>← →で移動。左へ行く時はモブくんが左向きになります。</li><li>サイズの違う黒モブくんが大量に左右から迫ってきます。たまに巨大な黒モブくんも出現。</li><li>通常PUNCHでも前方の複数体をまとめてぶっ飛ばします。</li><li>10体KOごとに必殺パンチを1回だけ使用可能。ストックは1回まで。</li>`;
   }else if(index===41){
-    rules=`<li>最初の5秒で、自分だけのモンスターを自由に描きます。</li><li>大きさだけでは強さは決まりません。縦横比・複雑さ・線のまとまり・曲がり方を解析。</li><li>約20種類の攻撃候補から、描いた形との相性を使ってランダムに3種類を習得。</li><li>召喚後は番長ゲームのような横スクロールステージを10秒間自動進撃。</li><li>黒スライムが大量に迫り、召喚獣が3つの技を自動で使い分けます。倒した数が記録。</li>`;
+    rules=`<li>最初の5秒で、決められた描画エリア内にモンスターを自由に描きます。</li><li>戦闘時の枠は一切なし。描いたサイズを縮めたり統一せず、その大きさのまま召喚。</li><li>線の位置関係から頭・手・足・武器・尻尾・離れ部位などを自動推定し、実際に部位を動かして攻撃。</li><li>約20種類の攻撃候補から絵との相性で3種類を習得。近距離攻撃中心で遠距離は少なめ。</li><li>10秒間の横スクロールオートバトルで黒スライムを倒した数が記録。</li>`;
   }else if(index===42){
-    rules=`<li>1〜13のモブくんカード13枚を最初に表向きで確認。</li><li>3・2・1後、5秒間カードがランダムに位置をシャッフル。</li><li>最後の1秒はカードが暗くなって「？」だけになりますが、位置移動は続きます。</li><li>終了後、まず2枚選択。合計が21でなければ「もう1枚」か「FINISH」を選べます。</li><li>21を超えた場合は循環し、22→1、23→2。21で100点。</li>`;
+    rules=`<li>1〜13のモブくんカード13枚を最初に表向きで確認。</li><li>3・2・1後、5秒間カードがランダムに位置をシャッフル。</li><li>最後の1秒はカードが暗くなって「？」だけになりますが、位置移動は続きます。</li><li>終了後、まず2枚選択。選んだカードはその場で必ず表向きになり、数字とモブくんを確認できます。</li><li>21でなければ「もう1枚」か「FINISH」。22→1、23→2の循環方式。</li>`;
+  }else if(index===43){
+    rules=`<li>巨大な木が上から3回落下します。</li><li>木の中央には白いCENTER帯。画面中央のSLASHライン通過時にタップ。</li><li>1回ごとに0〜100点。木は真っ二つになり強い一閃演出。</li><li>3回の合計ポイントが正式記録。最大300pt。</li>`;
   }else{
-    rules=`<li>上から巨大な木が落ちてきます。</li><li>木の中央には白いCENTER帯があります。</li><li>画面中央の斬撃ラインを白い帯が通過する瞬間にタップ。</li><li>中心とのズレが小さいほど高得点。</li><li>斬った瞬間は木が真っ二つになり、強い一閃演出が入ります。</li>`;
+    rules=`<li>空飛ぶ2体のカラスから20秒逃げ切るゲーム。</li><li>カラス画像は enemy/karasu.png。元画像は左向きなので右へ飛ぶ時だけ左右反転。</li><li>← →とJUMPのみ。ジャンプは2段ジャンプ可能。</li><li>テーブルや木箱の上に乗れます。カラスは障害物を無視して貫通。</li><li>最初はカラスが少し遅く、5秒で同速、8秒以降はプレイヤーより速い。ブレーキが苦手で勢い余って通り過ぎます。</li>`;
   }
   screen.innerHTML=`
     <div class="game-head">
@@ -726,7 +730,8 @@ function humanReady(gameIndex,humanIndex){
     else if(gameIndex===40)startBrawlerMob(p,humanIndex,runId);
     else if(gameIndex===41)startSummonerMob(p,humanIndex,runId);
     else if(gameIndex===42)startBlackjackMob(p,humanIndex,runId);
-    else startMobIssen(p,humanIndex,runId);
+    else if(gameIndex===43)startMobIssen(p,humanIndex,runId);
+    else startCrowEscape(p,humanIndex,runId);
   },{once:true});
 }
 
@@ -6355,11 +6360,8 @@ async function startMobTrain(p,humanIndex,runId){
   let points=[];
   let trainRAF=null;
   let drawRAF=null;
-  let finished=false;
-  let cameraX=0;
-  let lastPointerScreenX=0;
 
-  screen.innerHTML=`<div class="train-shell train-v105">
+  screen.innerHTML=`<div class="train-shell train-v106">
     <div class="game-head">
       <div><span class="kicker">${esc(p.name)}</span><h2>モブくん列車出発進行！</h2></div>
       <div class="game-badge">${playBadge(humanIndex)}</div>
@@ -6371,42 +6373,38 @@ async function startMobTrain(p,humanIndex,runId){
     </div>
 
     <div id="trainStage" class="train-stage">
-      <div id="trainWorld" class="train-world-v105">
-        <div class="train-grass"></div>
+      <div class="train-grass train-grass-v106"></div>
 
-        <svg id="trainSvg" class="train-svg">
-          <polyline id="trainLine" points="" class="train-line"></polyline>
-        </svg>
+      <svg id="trainSvg" class="train-svg">
+        <polyline id="trainLine" points="" class="train-line"></polyline>
+      </svg>
 
-        <div id="trainObstacles"></div>
+      <div id="trainObstacles"></div>
 
-        <div id="trainStartRail" class="train-start-rail">
-          <i></i><i></i><i></i><i></i>
-        </div>
-
-        <div id="trainGoal" class="train-goal">
-          <i class="train-goal-pole"></i>
-          <b>GOAL</b>
-        </div>
-
-        <div id="mobTrain" class="mob-train">
-          <div class="train-engine">
-            <span class="train-window" style="background-image:url('icon/01.png')"></span>
-            <i class="train-smoke"></i>
-          </div>
-          <i class="train-wheel tw1"></i>
-          <i class="train-wheel tw2"></i>
-        </div>
+      <div id="trainStartRail" class="train-start-rail">
+        <i></i><i></i><i></i><i></i>
       </div>
 
-      <div id="trainMessage" class="train-message">列車からGOALまで線を描く</div>
+      <div id="trainGoal" class="train-goal">
+        <i class="train-goal-pole"></i>
+        <b>GOAL</b>
+      </div>
+
+      <div id="mobTrain" class="mob-train">
+        <div class="train-engine">
+          <span class="train-window" style="background-image:url('icon/01.png')"></span>
+          <i class="train-smoke"></i>
+        </div>
+        <i class="train-wheel tw1"></i>
+        <i class="train-wheel tw2"></i>
+      </div>
+
+      <div id="trainMessage" class="train-message">列車から旗まで線を描く</div>
       <div id="trainGoPop" class="train-go-pop">GO!</div>
-      <div class="train-map-hint">端まで描くとMAPがスクロール</div>
     </div>
   </div>`;
 
   const stage=document.getElementById('trainStage');
-  const world=document.getElementById('trainWorld');
   const svg=document.getElementById('trainSvg');
   const line=document.getElementById('trainLine');
   const obstacleLayer=document.getElementById('trainObstacles');
@@ -6418,22 +6416,24 @@ async function startMobTrain(p,humanIndex,runId){
   const message=document.getElementById('trainMessage');
   const goPop=document.getElementById('trainGoPop');
 
-  const vw=stage.clientWidth;
+  const w=stage.clientWidth;
   const h=stage.clientHeight;
-  const worldW=Math.round(vw*2.45);
 
-  world.style.width=`${worldW}px`;
-  svg.setAttribute('viewBox',`0 0 ${worldW} ${h}`);
+  svg.setAttribute('viewBox',`0 0 ${w} ${h}`);
 
-  const startPt={x:48,y:h*.72};
+  const startPt={
+    x:34,
+    y:h*rand(.62,.78)
+  };
+
   const goalPt={
-    x:worldW-62,
-    y:h*rand(.29,.67)
+    x:w-34,
+    y:h*rand(.25,.56)
   };
 
   points=[startPt];
 
-  startRail.style.left=`${startPt.x-34}px`;
+  startRail.style.left=`${startPt.x-30}px`;
   startRail.style.top=`${startPt.y-10}px`;
 
   train.style.left=`${startPt.x}px`;
@@ -6442,29 +6442,40 @@ async function startMobTrain(p,humanIndex,runId){
   goalEl.style.left=`${goalPt.x}px`;
   goalEl.style.top=`${goalPt.y}px`;
 
-  const goalSafeRadius=Math.max(122,vw*.30);
-  const startSafeRadius=96;
+  // Dense randomized map, but everything remains visible in one screen.
+  const goalSafeRadius=Math.max(78,w*.17);
+  const startSafeRadius=74;
   const obsData=[];
   const obstacleTypes=['rock','tree','water'];
-  const desired=randi(20,26);
+  const desired=randi(17,22);
 
   let attempts=0;
 
-  while(obsData.length<desired&&attempts<420){
+  while(obsData.length<desired&&attempts<360){
     attempts++;
 
     const type=obstacleTypes[randi(0,obstacleTypes.length-1)];
-    const r=type==='water'?rand(30,42):rand(23,34);
+    const r=
+      type==='water'
+        ? rand(22,31)
+        : rand(18,27);
+
     const o={
-      x:rand(vw*.26,worldW-vw*.30),
-      y:rand(h*.23,h*.80),
+      x:rand(w*.13,w*.87),
+      y:rand(h*.20,h*.80),
       r,
       type
     };
 
     if(Math.hypot(o.x-goalPt.x,o.y-goalPt.y)<=goalSafeRadius)continue;
     if(Math.hypot(o.x-startPt.x,o.y-startPt.y)<=startSafeRadius)continue;
-    if(obsData.some(q=>Math.hypot(o.x-q.x,o.y-q.y)<o.r+q.r+20))continue;
+
+    if(
+      obsData.some(q=>
+        Math.hypot(o.x-q.x,o.y-q.y)<
+        o.r+q.r+13
+      )
+    )continue;
 
     obsData.push(o);
   }
@@ -6472,57 +6483,48 @@ async function startMobTrain(p,humanIndex,runId){
   obstacleLayer.innerHTML=obsData.map((o,i)=>`
     <div class="train-obstacle ${o.type}"
       data-ob="${i}"
-      style="left:${o.x}px;top:${o.y}px;width:${o.r*2}px;height:${o.r*2}px">
+      style="
+        left:${o.x}px;
+        top:${o.y}px;
+        width:${o.r*2}px;
+        height:${o.r*2}px
+      ">
       ${o.type==='rock'?'◆':o.type==='tree'?'♣':'≈'}
-    </div>`).join('');
-
-  function setCamera(x){
-    cameraX=clamp(x,0,worldW-vw);
-    world.style.transform=`translateX(${-cameraX}px)`;
-  }
+    </div>
+  `).join('');
 
   function renderLine(){
     line.setAttribute(
       'points',
-      points.map(pt=>`${pt.x.toFixed(1)},${pt.y.toFixed(1)}`).join(' ')
+      points
+        .map(pt=>`${pt.x.toFixed(1)},${pt.y.toFixed(1)}`)
+        .join(' ')
     );
   }
+
   renderLine();
 
   function localPoint(e){
     const rect=stage.getBoundingClientRect();
-    const sx=clamp(e.clientX-rect.left,0,vw);
-    const sy=clamp(e.clientY-rect.top,5,h-5);
-    lastPointerScreenX=sx;
 
     return {
-      x:clamp(sx+cameraX,5,worldW-5),
-      y:sy
+      x:clamp(e.clientX-rect.left,5,w-5),
+      y:clamp(e.clientY-rect.top,5,h-5)
     };
   }
 
-  function autoPanWhileDrawing(){
-    if(!drawingOpen||!drawing)return;
-
-    let delta=0;
-
-    if(lastPointerScreenX>vw*.76){
-      delta=8+(lastPointerScreenX-vw*.76)/(vw*.24)*13;
-    }else if(lastPointerScreenX<vw*.17){
-      delta=-(7+(vw*.17-lastPointerScreenX)/(vw*.17)*10);
-    }
-
-    if(delta!==0)setCamera(cameraX+delta);
-  }
-
   stage.addEventListener('pointerdown',e=>{
-    if(!drawingOpen||finished||!isGameRunValid(runId))return;
+    if(
+      !drawingOpen||
+      !isGameRunValid(runId)
+    )return;
+
     e.preventDefault();
 
     const pt=localPoint(e);
     const last=points[points.length-1];
 
-    if(Math.hypot(pt.x-last.x,pt.y-last.y)>66){
+    if(Math.hypot(pt.x-last.x,pt.y-last.y)>55){
       message.textContent='線の続きから描いて！';
       beep(190,45,.01);
       return;
@@ -6535,18 +6537,21 @@ async function startMobTrain(p,humanIndex,runId){
   },{passive:false});
 
   stage.addEventListener('pointermove',e=>{
-    if(!drawing||e.pointerId!==pointerId||!drawingOpen)return;
+    if(
+      !drawing||
+      e.pointerId!==pointerId||
+      !drawingOpen
+    )return;
+
     e.preventDefault();
 
     const pt=localPoint(e);
     const prev=points[points.length-1];
 
-    if(Math.hypot(pt.x-prev.x,pt.y-prev.y)>=3.0){
+    if(Math.hypot(pt.x-prev.x,pt.y-prev.y)>=2.8){
       points.push(pt);
       renderLine();
     }
-
-    autoPanWhileDrawing();
   },{passive:false});
 
   stage.addEventListener('pointerup',e=>{
@@ -6560,18 +6565,16 @@ async function startMobTrain(p,humanIndex,runId){
   if(!(await countdown('DRAW RAIL',runId)))return;
 
   drawingOpen=true;
-  message.textContent='5秒！ 障害物を避けてGOALへ！';
+  message.textContent='5秒！ 障害物を避けて旗へ！';
 
   const drawStart=performance.now();
 
   await new Promise(resolve=>{
-    const drawTimer=now=>{
+    const timer=now=>{
       if(!isGameRunValid(runId)){resolve();return;}
 
       const rem=5000-(now-drawStart);
       drawTimeEl.textContent=(Math.max(0,rem)/1000).toFixed(1);
-
-      if(drawing)autoPanWhileDrawing();
 
       if(rem<=0){
         drawingOpen=false;
@@ -6580,10 +6583,10 @@ async function startMobTrain(p,humanIndex,runId){
         return;
       }
 
-      drawRAF=requestAnimationFrame(drawTimer);
+      drawRAF=requestAnimationFrame(timer);
     };
 
-    drawRAF=requestAnimationFrame(drawTimer);
+    drawRAF=requestAnimationFrame(timer);
   });
 
   if(!isGameRunValid(runId))return;
@@ -6591,7 +6594,11 @@ async function startMobTrain(p,humanIndex,runId){
   drawTimeEl.textContent='0.0';
 
   const last=points[points.length-1];
-  const reachesGoal=Math.hypot(last.x-goalPt.x,last.y-goalPt.y)<=68;
+  const reachesGoal=
+    Math.hypot(
+      last.x-goalPt.x,
+      last.y-goalPt.y
+    )<=50;
 
   if(reachesGoal){
     points.push(goalPt);
@@ -6601,22 +6608,28 @@ async function startMobTrain(p,humanIndex,runId){
   if(points.length<3){
     state.records.mobTrain[p.id]=99999;
     message.textContent='線路がない！';
+
     beep(150,170,.03);
 
-    await wait(650);
+    await wait(600);
 
     if(isGameRunValid(runId)){
-      recordScreen(37,p,humanIndex,`0<small>pt</small>`,`NO RAIL`);
+      recordScreen(
+        37,p,humanIndex,
+        `0<small>pt</small>`,
+        `NO RAIL`
+      );
     }
+
     return;
   }
 
-  setCamera(0);
   goPop.classList.add('show');
   message.textContent='出発進行！';
+
   beep(880,100,.03);
 
-  await wait(330);
+  await wait(300);
 
   if(!isGameRunValid(runId))return;
 
@@ -6628,10 +6641,11 @@ async function startMobTrain(p,humanIndex,runId){
       points[i].x-points[i-1].x,
       points[i].y-points[i-1].y
     );
+
     cumulative.push(totalLen);
   }
 
-  const trainSpeed=255;
+  const trainSpeed=126;
   const goStart=performance.now();
   let collided=false;
 
@@ -6640,15 +6654,27 @@ async function startMobTrain(p,humanIndex,runId){
 
     for(let i=1;i<cumulative.length;i++){
       if(d<=cumulative[i]){
-        const segLen=cumulative[i]-cumulative[i-1]||1;
-        const t=(d-cumulative[i-1])/segLen;
+        const segLen=
+          cumulative[i]-cumulative[i-1]||
+          1;
+
+        const t=
+          (d-cumulative[i-1])/
+          segLen;
+
         const a=points[i-1];
         const b=points[i];
 
         return {
           x:a.x+(b.x-a.x)*t,
           y:a.y+(b.y-a.y)*t,
-          angle:Math.atan2(b.y-a.y,b.x-a.x)*180/Math.PI
+          angle:
+            Math.atan2(
+              b.y-a.y,
+              b.x-a.x
+            )*
+            180/
+            Math.PI
         };
       }
     }
@@ -6659,7 +6685,13 @@ async function startMobTrain(p,humanIndex,runId){
     return {
       x:b.x,
       y:b.y,
-      angle:Math.atan2(b.y-a.y,b.x-a.x)*180/Math.PI
+      angle:
+        Math.atan2(
+          b.y-a.y,
+          b.x-a.x
+        )*
+        180/
+        Math.PI
     };
   }
 
@@ -6669,9 +6701,14 @@ async function startMobTrain(p,humanIndex,runId){
       const dy=pt.y-o.y;
 
       if(o.type==='water'){
-        if((dx/(o.r*1.18))**2+(dy/(o.r*.72))**2<1.0)return o;
-      }else{
-        if(Math.hypot(dx,dy)<o.r+15)return o;
+        if(
+          (dx/(o.r*1.18))**2+
+          (dy/(o.r*.72))**2<
+          1
+        )return o;
+
+      }else if(Math.hypot(dx,dy)<o.r+13){
+        return o;
       }
     }
 
@@ -6683,14 +6720,20 @@ async function startMobTrain(p,humanIndex,runId){
       if(!isGameRunValid(runId)){resolve();return;}
 
       const elapsed=now-goStart;
-      const d=Math.min(totalLen,elapsed/1000*trainSpeed);
+      const d=Math.min(
+        totalLen,
+        elapsed/1000*trainSpeed
+      );
+
       const pt=pointAtDistance(d);
 
       train.style.left=`${pt.x}px`;
       train.style.top=`${pt.y}px`;
-      train.style.transform=`translate(-50%,-50%) rotate(${pt.angle}deg)`;
+      train.style.transform=
+        `translate(-50%,-50%) rotate(${pt.angle}deg)`;
 
-      goalTimeEl.textContent=(elapsed/1000).toFixed(2);
+      goalTimeEl.textContent=
+        (elapsed/1000).toFixed(2);
 
       const hit=hitsObstacle(pt);
 
@@ -6710,8 +6753,6 @@ async function startMobTrain(p,humanIndex,runId){
         return;
       }
 
-      setCamera(pt.x-vw*.38);
-
       if(d>=totalLen){
         resolve();
         return;
@@ -6730,9 +6771,11 @@ async function startMobTrain(p,humanIndex,runId){
   if(collided||!reachesGoal){
     state.records.mobTrain[p.id]=99999;
 
-    if(!collided)message.textContent='GOALまで線が届いていない！';
+    if(!collided){
+      message.textContent='旗まで線が届いていない！';
+    }
 
-    await wait(650);
+    await wait(600);
 
     if(isGameRunValid(runId)){
       recordScreen(
@@ -6741,6 +6784,7 @@ async function startMobTrain(p,humanIndex,runId){
         collided?'COLLISION':'NO GOAL'
       );
     }
+
     return;
   }
 
@@ -6749,11 +6793,12 @@ async function startMobTrain(p,humanIndex,runId){
 
   train.classList.add('goal');
   message.textContent='GOAL!!';
-  goalTimeEl.textContent=(recordMs/1000).toFixed(2);
+  goalTimeEl.textContent=
+    (recordMs/1000).toFixed(2);
 
   beep(1040,130,.035);
 
-  await wait(700);
+  await wait(650);
 
   if(isGameRunValid(runId)){
     recordScreen(
@@ -7397,11 +7442,11 @@ async function startBrawlerMob(p,humanIndex,runId){
   let lastSpawn=0;
   let enemyId=0;
   let punchReady=true;
-  const enemies=[];
 
+  const enemies=[];
   const worldW=3900;
 
-  screen.innerHTML=`<div class="brawler-shell">
+  screen.innerHTML=`<div class="brawler-shell brawler-v106">
     <div class="game-head">
       <div><span class="kicker">${esc(p.name)}</span><h2>モブくんは喧嘩番長</h2></div>
       <div class="game-badge">${playBadge(humanIndex)}</div>
@@ -7418,14 +7463,16 @@ async function startBrawlerMob(p,humanIndex,runId){
         <div class="school-wall">
           ${Array.from({length:12},(_,i)=>`
             <div class="school-window" style="left:${130+i*320}px"></div>
-            <div class="school-door" style="left:${285+i*640}px"><span>CLASS</span></div>
+            <div class="school-door" data-door="${i}" style="left:${285+i*320}px">
+              <span>CLASS</span>
+              <i></i>
+            </div>
           `).join('')}
           <div class="school-board b1">MOB HIGH SCHOOL</div>
           <div class="school-board b2">FIGHT!</div>
         </div>
 
         <div class="school-floor"></div>
-
         <div id="brawlerEnemies"></div>
 
         <div id="brawlerPlayer" class="brawler-player">
@@ -7435,6 +7482,7 @@ async function startBrawlerMob(p,humanIndex,runId){
       </div>
 
       <div id="brawlerImpact" class="brawler-impact"></div>
+      <div id="brawlerEntryCall" class="brawler-entry-call"></div>
     </div>
 
     <div class="brawler-controls">
@@ -7454,9 +7502,11 @@ async function startBrawlerMob(p,humanIndex,runId){
   const specialEl=document.getElementById('brawlerSpecial');
   const specialText=document.getElementById('brawlerSpecialText');
   const impact=document.getElementById('brawlerImpact');
+  const entryCall=document.getElementById('brawlerEntryCall');
   const left=document.getElementById('brawlerLeft');
   const right=document.getElementById('brawlerRight');
   const punch=document.getElementById('brawlerPunch');
+  const doorEls=[...world.querySelectorAll('.school-door')];
 
   player.style.left=`${playerX}px`;
 
@@ -7466,10 +7516,12 @@ async function startBrawlerMob(p,humanIndex,runId){
       moveDir=dir;
       facing=dir;
       player.classList.toggle('face-left',facing<0);
+
       try{btn.setPointerCapture(e.pointerId)}catch(_){}
     },{passive:false});
 
     const stop=()=>{if(moveDir===dir)moveDir=0};
+
     btn.addEventListener('pointerup',stop);
     btn.addEventListener('pointercancel',stop);
     btn.addEventListener('lostpointercapture',stop);
@@ -7481,7 +7533,9 @@ async function startBrawlerMob(p,humanIndex,runId){
   function updateSpecial(){
     if(kills>=nextSpecialAt){
       const earned=Math.floor((kills-(nextSpecialAt-10))/10);
+
       if(earned>0){
+        // One charge maximum. Every 10 KOs only unlocks one use.
         specialCharges=Math.min(1,specialCharges+earned);
         nextSpecialAt+=earned*10;
       }
@@ -7490,45 +7544,112 @@ async function startBrawlerMob(p,humanIndex,runId){
     specialEl.disabled=specialCharges<=0;
     specialEl.classList.toggle('ready',specialCharges>0);
 
-    if(specialCharges>0){
-      specialText.textContent='READY';
-    }else{
-      specialText.textContent=`${kills%10} / 10`;
-    }
+    specialText.textContent=
+      specialCharges>0
+        ? 'READY'
+        : `${kills%10} / 10`;
   }
 
-  function spawnEnemy(now,progress,forceSide=null){
-    if(enemies.filter(e=>!e.dead).length>=30)return;
+  function showEntry(text){
+    entryCall.textContent=text;
+    entryCall.classList.remove('show');
+    void entryCall.offsetWidth;
+    entryCall.classList.add('show');
+  }
 
-    const side=forceSide??(Math.random()<.5?-1:1);
-    const x=clamp(
-      playerX+side*rand(210,520),
-      80,
-      worldW-80
-    );
+  function nearestDoorX(){
+    const doorXs=doorEls.map((_,i)=>285+i*320);
+    const nearby=doorXs.filter(x=>Math.abs(x-playerX)<620);
+    const list=nearby.length?nearby:doorXs;
+    return list[randi(0,list.length-1)];
+  }
+
+  function spawnEnemy(now,progress,source='auto',forcedSide=null){
+    if(enemies.filter(e=>!e.dead).length>=46)return;
+
+    if(source==='auto'){
+      const r=Math.random();
+
+      // Side enemies still exist, but many enemies now appear from doors and above.
+      source=
+        r<.37?'side':
+        r<.68?'door':
+        'drop';
+    }
+
+    const side=forcedSide??(Math.random()<.5?-1:1);
+
+    let x;
+    let entryLock=0;
+
+    if(source==='door'){
+      x=nearestDoorX()+rand(-24,24);
+      entryLock=now+260;
+
+      const doorIndex=clamp(Math.round((x-285)/320),0,doorEls.length-1);
+      const door=doorEls[doorIndex];
+
+      if(door){
+        door.classList.remove('open');
+        void door.offsetWidth;
+        door.classList.add('open');
+      }
+
+    }else if(source==='drop'){
+      // Drop around the player, including behind him, so holding right + punch is not enough.
+      x=clamp(
+        playerX+rand(-390,390),
+        70,
+        worldW-70
+      );
+      entryLock=now+330;
+
+    }else{
+      x=clamp(
+        playerX+side*rand(170,560),
+        70,
+        worldW-70
+      );
+    }
 
     const el=document.createElement('div');
     el.className='brawler-enemy';
-    el.style.backgroundImage=`url('icon/${String(randi(1,10)).padStart(2,'0')}.png')`;
+    el.style.backgroundImage=
+      `url('icon/${String(randi(1,10)).padStart(2,'0')}.png')`;
 
     const roll=Math.random();
-    const giant=roll<.10;
-    const small=!giant&&roll<.38;
+    const giant=roll<.11;
+    const small=!giant&&roll<.40;
 
-    const width=giant?rand(98,132):small?rand(42,55):rand(60,82);
+    const width=
+      giant?rand(102,138):
+      small?rand(40,54):
+      rand(58,84);
+
     const height=width*rand(1.04,1.18);
 
     if(giant)el.classList.add('giant');
     if(small)el.classList.add('small');
+    if(source==='door')el.classList.add('door-in');
+    if(source==='drop')el.classList.add('drop-in');
 
     const enemy={
       id:++enemyId,
       el,
       x,
       y:64+randi(-5,6),
-      speed:(giant?rand(70,95):small?rand(115,155):rand(90,132))+progress*105,
+      speed:
+        (
+          giant?rand(84,112):
+          small?rand(135,178):
+          rand(108,154)
+        )+
+        progress*118,
       width,
-      dead:false
+      dead:false,
+      source,
+      entryLock,
+      wobble:Math.random()*Math.PI*2
     };
 
     el.style.width=`${width}px`;
@@ -7544,29 +7665,51 @@ async function startBrawlerMob(p,humanIndex,runId){
   function popImpact(text,x=stage.clientWidth*.5){
     impact.textContent=text;
     impact.style.left=`${clamp(x,60,stage.clientWidth-60)}px`;
+
     impact.classList.remove('show');
     void impact.offsetWidth;
     impact.classList.add('show');
   }
 
-  function defeat(enemy,dir,strong=false){
+  function defeat(enemy,dir,strong=false,fanIndex=0){
     if(enemy.dead)return;
+
     enemy.dead=true;
     kills++;
     killsEl.textContent=kills;
 
-    const fly=dir*(strong?rand(270,430):rand(170,285));
-    const arcRoll=Math.random();
-    const flyY=strong
-      ? (arcRoll<.50?rand(-210,-145):rand(-150,-85))
-      : (arcRoll<.33?rand(-185,-125):arcRoll<.70?rand(-125,-70):rand(-80,-35));
+    const fly=
+      dir*
+      (
+        strong?rand(300,470):
+        rand(175,305)
+      );
+
+    // Wide variety of launch angles: low diagonal / diagonal / very high diagonal.
+    const arcRoll=(Math.random()+fanIndex*.13)%1;
+    const flyY=
+      strong
+        ? (
+            arcRoll<.40?rand(-235,-170):
+            arcRoll<.75?rand(-175,-115):
+            rand(-115,-65)
+          )
+        : (
+            arcRoll<.28?rand(-205,-145):
+            arcRoll<.68?rand(-150,-90):
+            rand(-90,-38)
+          );
 
     enemy.el.style.setProperty('--fly-x',`${fly}px`);
     enemy.el.style.setProperty('--fly-y',`${flyY}px`);
-    enemy.el.style.setProperty('--fly-spin',`${dir*(strong?rand(900,1350):rand(520,920))}deg`);
+    enemy.el.style.setProperty(
+      '--fly-spin',
+      `${dir*(strong?rand(980,1450):rand(560,980))}deg`
+    );
+
     enemy.el.classList.add(strong?'super-hit':'hit');
 
-    setTimeout(()=>enemy.el.remove(),strong?650:520);
+    setTimeout(()=>enemy.el.remove(),strong?680:540);
 
     updateSpecial();
   }
@@ -7575,6 +7718,7 @@ async function startBrawlerMob(p,humanIndex,runId){
     if(finished||!punchReady||!isGameRunValid(runId))return;
 
     punchReady=false;
+
     player.classList.remove('punching');
     void player.offsetWidth;
     player.classList.add('punching');
@@ -7583,31 +7727,35 @@ async function startBrawlerMob(p,humanIndex,runId){
       .filter(e=>!e.dead)
       .map(e=>({
         e,
-        dx:(e.x-playerX)*facing
+        dx:(e.x-playerX)*facing,
+        distance:Math.abs(e.x-playerX)
       }))
-      .filter(o=>o.dx>=-28&&o.dx<=185)
-      .sort((a,b)=>a.dx-b.dx);
+      .filter(o=>o.dx>=-34&&o.dx<=215)
+      .sort((a,b)=>a.distance-b.distance);
 
     if(candidates.length){
-      const victims=candidates.slice(0,4);
+      // Normal punch is intentionally a crowd-clearing attack too.
+      const victims=candidates.slice(0,6);
+
       victims.forEach((o,i)=>{
         setTimeout(()=>{
-          if(!o.e.dead)defeat(o.e,facing,false);
-        },i*22);
+          if(!o.e.dead)defeat(o.e,facing,false,i);
+        },i*20);
       });
 
       popImpact(
-        victims.length>=4?'BAM ×4!':
+        victims.length>=5?`BAM ×${victims.length}!`:
         victims.length>=2?`BAM ×${victims.length}!`:
         'BAM!',
         stage.clientWidth*.54
       );
-      beep(230,45,.015);
+
+      beep(235,45,.015);
     }else{
       beep(145,28,.006);
     }
 
-    setTimeout(()=>{punchReady=true},165);
+    setTimeout(()=>{punchReady=true},155);
   }
 
   punch.addEventListener('pointerdown',e=>{
@@ -7617,23 +7765,35 @@ async function startBrawlerMob(p,humanIndex,runId){
 
   specialEl.addEventListener('pointerdown',e=>{
     e.preventDefault();
-    if(finished||specialCharges<=0||!isGameRunValid(runId))return;
 
-    specialCharges--;
+    if(
+      finished||
+      specialCharges<=0||
+      !isGameRunValid(runId)
+    )return;
+
+    specialCharges=0;
+
     player.classList.remove('special-punching');
     void player.offsetWidth;
     player.classList.add('special-punching');
 
     const victims=enemies
-      .filter(en=>!en.dead&&Math.abs(en.x-playerX)<=390);
+      .filter(en=>!en.dead&&Math.abs(en.x-playerX)<=465);
 
-    // If nobody is close, it still consumes the stored special.
-    for(const enemy of victims){
+    victims.forEach((enemy,i)=>{
       const dir=enemy.x<playerX?-1:1;
-      defeat(enemy,dir,true);
-    }
+      defeat(enemy,dir,true,i);
+    });
 
-    popImpact(victims.length?`必殺 ${victims.length} HIT!`:'必殺 MISS!');
+    popImpact(
+      victims.length
+        ? `必殺 ${victims.length} HIT!`
+        : '必殺 MISS!'
+    );
+
+    showEntry('必殺は次の10KOまで再使用不可');
+
     beep(680,120,.035);
     updateSpecial();
   },{passive:false});
@@ -7644,10 +7804,22 @@ async function startBrawlerMob(p,humanIndex,runId){
   last=startTime;
   lastSpawn=startTime-500;
 
-  // Start with a real crowd on both sides.
-  for(let i=0;i<16;i++){
-    spawnEnemy(startTime,0,i%2?-1:1);
+  // Immediate chaos: sides + doors + ceiling.
+  for(let i=0;i<22;i++){
+    const source=
+      i%5===0?'drop':
+      i%3===0?'door':
+      'side';
+
+    spawnEnemy(
+      startTime,
+      0,
+      source,
+      i%2?-1:1
+    );
   }
+
+  showEntry('左右・教室・上空から来るぞ！');
 
   function frame(now){
     if(finished||!isGameRunValid(runId))return;
@@ -7661,33 +7833,52 @@ async function startBrawlerMob(p,humanIndex,runId){
 
     timeEl.textContent=(Math.max(0,remaining)/1000).toFixed(1);
 
-    playerX=clamp(playerX+moveDir*285*dt,60,worldW-60);
+    playerX=clamp(
+      playerX+moveDir*292*dt,
+      60,
+      worldW-60
+    );
+
     player.style.left=`${playerX}px`;
 
-    const spawnEvery=215-progress*105;
+    // Much denser than V10.5.
+    const spawnEvery=125-progress*52;
+
     if(now-lastSpawn>=spawnEvery){
       lastSpawn=now;
 
-      spawnEnemy(now,progress);
+      const count=
+        progress>.55
+          ? randi(3,5)
+          : randi(2,4);
 
-      if(Math.random()<.72){
-        spawnEnemy(now,progress);
-      }
-
-      if(progress>.42&&Math.random()<.48){
-        spawnEnemy(now,progress);
+      for(let i=0;i<count;i++){
+        spawnEnemy(now,progress,'auto');
       }
     }
 
     for(const enemy of enemies){
       if(enemy.dead)continue;
 
+      enemy.wobble+=dt*7;
+
+      if(now<enemy.entryLock){
+        // Door/drop entrance gets a short dramatic pause before rushing.
+        enemy.el.style.setProperty(
+          '--enemy-entry-bob',
+          `${Math.sin(enemy.wobble)*4}px`
+        );
+        continue;
+      }
+
       const dx=playerX-enemy.x;
       const dir=Math.sign(dx)||1;
 
-      // Crowd moves toward the player, but keeps a small fighting distance.
-      if(Math.abs(dx)>38){
+      if(Math.abs(dx)>34){
         enemy.x+=dir*enemy.speed*dt;
+      }else{
+        // They surge past slightly instead of perfectly parking in front.
+        enemy.x+=dir*enemy.speed*.26*dt;
       }
 
       enemy.el.style.left=`${enemy.x}px`;
@@ -7695,10 +7886,11 @@ async function startBrawlerMob(p,humanIndex,runId){
     }
 
     const cam=clamp(
-      playerX-stage.clientWidth*.36,
+      playerX-stage.clientWidth*.38,
       0,
       worldW-stage.clientWidth
     );
+
     world.style.transform=`translateX(${-cam}px)`;
 
     if(remaining<=0){
@@ -7717,6 +7909,7 @@ async function startBrawlerMob(p,humanIndex,runId){
           );
         }
       },700);
+
       return;
     }
 
@@ -7726,79 +7919,92 @@ async function startBrawlerMob(p,humanIndex,runId){
   raf=requestAnimationFrame(frame);
 }
 
-
-
 // GAME 42 -------------------------------------------------
-const SUMMON_ATTACKS=[
-  {id:'moon_wave',name:'ムーンウェーブ',family:'WAVE',reach:320,hits:5,cd:650,fx:'moon'},
-  {id:'twin_wave',name:'ツインウェーブ',family:'WAVE',reach:350,hits:6,cd:760,fx:'twin'},
-  {id:'wind_cutter',name:'ウィンドカッター',family:'WAVE',reach:290,hits:4,cd:500,fx:'wind'},
-  {id:'wide_tail',name:'ワイドテイル',family:'WAVE',reach:260,hits:7,cd:820,fx:'tail'},
-  {id:'light_lance',name:'ライトランス',family:'PIERCE',reach:430,hits:6,cd:720,fx:'lance'},
-  {id:'drill',name:'スパイラルドリル',family:'PIERCE',reach:390,hits:7,cd:850,fx:'drill'},
-  {id:'laser',name:'モブレーザー',family:'PIERCE',reach:500,hits:5,cd:920,fx:'laser'},
-  {id:'needle',name:'ニードルレイン',family:'PIERCE',reach:330,hits:8,cd:780,fx:'needle'},
-  {id:'nova',name:'ノヴァバースト',family:'BURST',reach:220,hits:8,cd:900,fx:'nova'},
-  {id:'quake',name:'グランドクエイク',family:'BURST',reach:245,hits:9,cd:1050,fx:'quake'},
-  {id:'meteor',name:'ミニメテオ',family:'BURST',reach:275,hits:7,cd:980,fx:'meteor'},
-  {id:'shock',name:'ショックリング',family:'BURST',reach:205,hits:10,cd:1100,fx:'shock'},
-  {id:'rapid_orb',name:'ラピッドオーブ',family:'RAPID',reach:350,hits:4,cd:360,fx:'orb'},
-  {id:'triple_shot',name:'トリプルショット',family:'RAPID',reach:380,hits:5,cd:430,fx:'triple'},
-  {id:'homing',name:'ホーミングスター',family:'RAPID',reach:410,hits:4,cd:520,fx:'homing'},
-  {id:'chain',name:'チェインボルト',family:'RAPID',reach:320,hits:6,cd:560,fx:'chain'},
-  {id:'boomerang',name:'ブーメランエッジ',family:'WAVE',reach:360,hits:6,cd:700,fx:'boomerang'},
-  {id:'dash',name:'ビーストダッシュ',family:'PIERCE',reach:300,hits:8,cd:880,fx:'dash'},
-  {id:'cyclone',name:'サイクロン',family:'BURST',reach:250,hits:9,cd:960,fx:'cyclone'},
-  {id:'ice_flame',name:'氷炎ブレス',family:'RAPID',reach:300,hits:7,cd:620,fx:'breath'}
+const SUMMON_ATTACKS_V106=[
+  {id:'right_hook',name:'右腕フック',family:'MELEE',part:'handR',reach:145,hits:3,cd:430,move:'hook'},
+  {id:'left_hook',name:'左腕フック',family:'MELEE',part:'handL',reach:145,hits:3,cd:430,move:'hookL'},
+  {id:'double_claw',name:'ダブルクロー',family:'MELEE',part:'hands',reach:165,hits:5,cd:560,move:'claw'},
+  {id:'headbutt',name:'ヘッドバット',family:'MELEE',part:'head',reach:125,hits:3,cd:500,move:'head'},
+  {id:'bite',name:'かみつき',family:'MELEE',part:'head',reach:135,hits:4,cd:570,move:'bite'},
+  {id:'front_kick',name:'フロントキック',family:'MELEE',part:'footR',reach:175,hits:4,cd:520,move:'kick'},
+  {id:'double_kick',name:'ダブルキック',family:'MELEE',part:'feet',reach:185,hits:5,cd:650,move:'doubleKick'},
+  {id:'sweep',name:'足払い',family:'MELEE',part:'feet',reach:205,hits:6,cd:700,move:'sweep'},
+  {id:'tail_whip',name:'テイルウィップ',family:'MELEE',part:'tail',reach:235,hits:7,cd:680,move:'tail'},
+  {id:'weapon_slash',name:'ウェポンスラッシュ',family:'MELEE',part:'weapon',reach:245,hits:7,cd:720,move:'weapon'},
+  {id:'uppercut',name:'アッパー',family:'MELEE',part:'handR',reach:155,hits:4,cd:590,move:'upper'},
+  {id:'body_press',name:'ボディプレス',family:'MELEE',part:'body',reach:185,hits:6,cd:760,move:'bodyPress'},
+  {id:'spin_attack',name:'スピンアタック',family:'MELEE',part:'body',reach:215,hits:8,cd:830,move:'spin'},
+  {id:'jump_slam',name:'ジャンプスラム',family:'MELEE',part:'feet',reach:225,hits:8,cd:900,move:'slam'},
+  {id:'detached_orbit',name:'離れ部位ラッシュ',family:'MELEE',part:'detached',reach:240,hits:8,cd:780,move:'detached'},
+  {id:'beast_dash',name:'ビーストダッシュ',family:'MELEE',part:'body',reach:270,hits:7,cd:820,move:'dash'},
+  {id:'short_breath',name:'ショートブレス',family:'RANGE',part:'head',reach:300,hits:5,cd:800,move:'breath'},
+  {id:'needle_shot',name:'ニードルショット',family:'RANGE',part:'weapon',reach:330,hits:4,cd:850,move:'needle'},
+  {id:'small_orb',name:'スモールオーブ',family:'RANGE',part:'detached',reach:315,hits:4,cd:830,move:'orb'},
+  {id:'tiny_wave',name:'ミニウェーブ',family:'RANGE',part:'tail',reach:290,hits:5,cd:780,move:'wave'}
 ];
 
-function analyzeSummonedMonster(strokes,stageW,stageH){
-  const flat=strokes.flat();
+function summonStrokeStats(stroke){
+  let minX=Infinity,minY=Infinity,maxX=-Infinity,maxY=-Infinity,len=0;
 
-  if(flat.length<8){
+  stroke.forEach((p,i)=>{
+    minX=Math.min(minX,p.x);
+    minY=Math.min(minY,p.y);
+    maxX=Math.max(maxX,p.x);
+    maxY=Math.max(maxY,p.y);
+
+    if(i){
+      len+=Math.hypot(
+        p.x-stroke[i-1].x,
+        p.y-stroke[i-1].y
+      );
+    }
+  });
+
+  return {
+    minX,minY,maxX,maxY,
+    w:Math.max(1,maxX-minX),
+    h:Math.max(1,maxY-minY),
+    cx:(minX+maxX)/2,
+    cy:(minY+maxY)/2,
+    len
+  };
+}
+
+function analyzeSummonedMonsterV106(strokes,zoneW,zoneH){
+  const valid=strokes.filter(s=>s.length>=2);
+  const flat=valid.flat();
+
+  if(flat.length<6){
     return {
-      type:'RAPID',
       power:.42,
       speed:.48,
-      range:.48,
-      score:38,
-      width:70,
-      height:70,
-      complexity:.2,
-      turnDensity:.2,
+      range:.46,
+      complexity:.18,
+      turnDensity:.15,
       aspect:1,
-      sizeNorm:.25,
-      label:'ちいさな落書き獣'
+      sizeNorm:.20,
+      minX:zoneW*.38,
+      minY:zoneH*.34,
+      maxX:zoneW*.62,
+      maxY:zoneH*.66,
+      width:zoneW*.24,
+      height:zoneH*.32,
+      label:'ちいさな落書き獣',
+      parts:{body:[],head:[],handL:[],handR:[],footL:[],footR:[],tail:[],weapon:[],detached:[]}
     };
   }
 
   let minX=Infinity,minY=Infinity,maxX=-Infinity,maxY=-Infinity;
+  let pathLen=0,totalTurn=0,turnCount=0;
 
-  for(const pt of flat){
-    minX=Math.min(minX,pt.x);
-    minY=Math.min(minY,pt.y);
-    maxX=Math.max(maxX,pt.x);
-    maxY=Math.max(maxY,pt.y);
-  }
+  const stats=valid.map((stroke,index)=>{
+    const s=summonStrokeStats(stroke);
 
-  const bw=Math.max(10,maxX-minX);
-  const bh=Math.max(10,maxY-minY);
-  const aspect=bw/bh;
-  const boxArea=bw*bh;
-  const stageArea=stageW*stageH;
-  const sizeNorm=clamp(Math.sqrt(boxArea/stageArea)/.56,0,1);
-
-  let pathLen=0;
-  let totalTurn=0;
-  let segmentCount=0;
-
-  for(const stroke of strokes){
-    for(let i=1;i<stroke.length;i++){
-      pathLen+=Math.hypot(
-        stroke[i].x-stroke[i-1].x,
-        stroke[i].y-stroke[i-1].y
-      );
-    }
+    minX=Math.min(minX,s.minX);
+    minY=Math.min(minY,s.minY);
+    maxX=Math.max(maxX,s.maxX);
+    maxY=Math.max(maxY,s.maxY);
+    pathLen+=s.len;
 
     for(let i=2;i<stroke.length;i++){
       const a1=Math.atan2(
@@ -7814,142 +8020,225 @@ function analyzeSummonedMonster(strokes,stageW,stageH){
       while(d>Math.PI)d=Math.abs(d-Math.PI*2);
 
       totalTurn+=d;
-      segmentCount++;
+      turnCount++;
     }
-  }
+
+    return {...s,index};
+  });
+
+  const bw=Math.max(16,maxX-minX);
+  const bh=Math.max(16,maxY-minY);
+  const aspect=bw/bh;
+  const boxArea=bw*bh;
+  const sizeNorm=clamp(
+    Math.sqrt(boxArea/(zoneW*zoneH))/.78,
+    0,1
+  );
 
   const complexity=clamp(
-    (pathLen/(2*(bw+bh)+1)-.70)/3.6,
+    (pathLen/(2*(bw+bh)+1)-.55)/4.1,
     0,1
   );
 
-  const turnDensity=segmentCount
-    ? clamp(totalTurn/segmentCount/.85,0,1)
-    : 0;
+  const turnDensity=
+    turnCount
+      ? clamp(totalTurn/turnCount/.90,0,1)
+      : 0;
 
-  // Medium-size drawings are efficient.
-  // Oversized drawings lose balance, so size alone never dominates.
   const sizeBalance=clamp(
-    1-Math.abs(sizeNorm-.56)/.56,
+    1-Math.abs(sizeNorm-.55)/.58,
     0,1
   );
 
-  const strokeBonus=clamp(strokes.length/5,0,1);
+  // Classify strokes / disconnected components into moving parts.
+  const parts={
+    body:[],
+    head:[],
+    handL:[],
+    handR:[],
+    footL:[],
+    footR:[],
+    tail:[],
+    weapon:[],
+    detached:[]
+  };
 
-  let type='RAPID';
+  const centerX=(minX+maxX)/2;
+  const centerY=(minY+maxY)/2;
 
-  if(aspect>=1.48){
-    type='WAVE';
-  }else if(aspect<=.68){
-    type='PIERCE';
-  }else if(complexity<.36&&turnDensity<.52){
-    type='BURST';
+  const longest=[...stats].sort((a,b)=>b.len-a.len)[0];
+  if(longest)parts.body.push(longest.index);
+
+  for(const s of stats){
+    if(longest&&s.index===longest.index)continue;
+
+    const nx=(s.cx-minX)/bw;
+    const ny=(s.cy-minY)/bh;
+    const thin=Math.max(s.w,s.h)/(Math.min(s.w,s.h)+4);
+    const distFromCenter=
+      Math.hypot(
+        (s.cx-centerX)/bw,
+        (s.cy-centerY)/bh
+      );
+
+    if(distFromCenter>.58&&s.len<Math.max(bw,bh)*.75){
+      parts.detached.push(s.index);
+      continue;
+    }
+
+    if(ny<.30){
+      parts.head.push(s.index);
+      continue;
+    }
+
+    if(ny>.72){
+      if(nx<.50)parts.footL.push(s.index);
+      else parts.footR.push(s.index);
+      continue;
+    }
+
+    if(nx<.22){
+      if(s.len>bw*.55)parts.tail.push(s.index);
+      else parts.handL.push(s.index);
+      continue;
+    }
+
+    if(nx>.78){
+      if(thin>2.25&&s.len>bh*.35)parts.weapon.push(s.index);
+      else parts.handR.push(s.index);
+      continue;
+    }
+
+    if(thin>3.2&&nx>.58){
+      parts.weapon.push(s.index);
+      continue;
+    }
+
+    parts.body.push(s.index);
   }
 
+  // Fallback part assignment so every drawing can animate.
+  const byPos=[...stats].sort((a,b)=>a.cx-b.cx);
+  const byY=[...stats].sort((a,b)=>a.cy-b.cy);
+
+  if(!parts.head.length&&byY.length)parts.head.push(byY[0].index);
+  if(!parts.footL.length&&byY.length)parts.footL.push(byY[byY.length-1].index);
+  if(!parts.handL.length&&byPos.length)parts.handL.push(byPos[0].index);
+  if(!parts.handR.length&&byPos.length)parts.handR.push(byPos[byPos.length-1].index);
+
   let power=clamp(
-    .43+
+    .42+
     sizeBalance*.18+
     complexity*.18+
-    turnDensity*.12+
-    strokeBonus*.09,
+    turnDensity*.14+
+    clamp(valid.length/7,0,1)*.08,
     .38,1
   );
 
   let speed=clamp(
     .45+
-    complexity*.25+
-    turnDensity*.20+
-    (1-sizeNorm)*.10,
+    complexity*.22+
+    turnDensity*.18+
+    (1-sizeNorm)*.12,
     .38,1
   );
 
   let range=clamp(
-    .43+
-    Math.min(1,Math.max(aspect,1/aspect)/2.0)*.24+
-    sizeBalance*.18+
-    complexity*.10,
+    .42+
+    Math.min(1,Math.max(aspect,1/aspect)/2.1)*.18+
+    sizeBalance*.14+
+    (
+      parts.tail.length+
+      parts.weapon.length+
+      parts.detached.length
+    )*.035,
     .38,1
   );
 
-  if(type==='WAVE'){
-    range=clamp(range+.12,0,1);
-    speed=clamp(speed-.05,0,1);
-  }else if(type==='PIERCE'){
-    power=clamp(power+.08,0,1);
-    range=clamp(range+.08,0,1);
-  }else if(type==='BURST'){
-    power=clamp(power+.05,0,1);
-    speed=clamp(speed-.04,0,1);
-  }else{
-    speed=clamp(speed+.12,0,1);
-    power=clamp(power-.03,0,1);
-  }
-
-  const score=Math.round((power*.46+speed*.28+range*.26)*100);
-
-  const labels={
-    WAVE:'横薙ぎウェーブ獣',
-    PIERCE:'貫通ランス獣',
-    BURST:'爆裂サークル獣',
-    RAPID:'連射スピード獣'
-  };
+  const labels=[];
+  if(parts.weapon.length)labels.push('武器');
+  if(parts.tail.length)labels.push('尻尾');
+  if(parts.detached.length)labels.push('離れ部位');
+  if(parts.footL.length||parts.footR.length)labels.push('脚');
+  if(parts.handL.length||parts.handR.length)labels.push('腕');
+  if(parts.head.length)labels.push('頭');
 
   return {
-    type,power,speed,range,score,
-    width:bw,height:bh,
-    complexity,turnDensity,aspect,sizeNorm,
+    power,speed,range,
+    complexity,turnDensity,
+    aspect,sizeNorm,
     minX,minY,maxX,maxY,
-    label:labels[type]
+    width:bw,height:bh,
+    label:labels.length?labels.slice(0,3).join('・')+'型':'不思議型',
+    parts
   };
 }
 
-function summonAttackAffinity(attack,a){
-  let score=Math.random()*.22;
-
-  if(attack.family===a.type)score+=.62;
-
-  if(attack.family==='WAVE'){
-    score+=clamp((a.aspect-1)/1.3,0,.30);
-    score+=a.range*.20;
-  }else if(attack.family==='PIERCE'){
-    score+=clamp((1-a.aspect)/.7,0,.30);
-    score+=a.power*.22;
-  }else if(attack.family==='BURST'){
-    score+=(1-a.complexity)*.18;
-    score+=(1-Math.abs(a.aspect-1))*0.16;
-    score+=a.power*.12;
-  }else{
-    score+=a.complexity*.20;
-    score+=a.turnDensity*.16;
-    score+=a.speed*.18;
+function summonHasPart(a,part){
+  if(part==='hands'){
+    return a.parts.handL.length||a.parts.handR.length;
   }
 
-  // Individual attack quirks so the same family doesn't always return the same trio.
-  if(attack.id==='laser')score+=a.range*.14;
-  if(attack.id==='drill')score+=a.power*.13;
-  if(attack.id==='cyclone')score+=a.turnDensity*.14;
-  if(attack.id==='meteor')score+=(1-a.speed)*.10;
-  if(attack.id==='homing')score+=a.complexity*.10;
-  if(attack.id==='dash')score+=a.speed*.12;
-  if(attack.id==='ice_flame')score+=a.sizeNorm*.08;
-  if(attack.id==='boomerang')score+=Math.abs(a.aspect-1)*.08;
+  if(part==='feet'){
+    return a.parts.footL.length||a.parts.footR.length;
+  }
+
+  return (a.parts[part]||[]).length>0;
+}
+
+function summonAttackAffinityV106(atk,a){
+  let score=Math.random()*.34;
+
+  if(summonHasPart(a,atk.part))score+=.74;
+  else score+=.10;
+
+  if(atk.family==='MELEE'){
+    score+=a.power*.18;
+    score+=a.speed*.13;
+  }else{
+    score+=a.range*.17;
+    // Ranged attacks intentionally receive a lower base.
+    score-=.18;
+  }
+
+  if(atk.part==='weapon')score+=a.parts.weapon.length*.12;
+  if(atk.part==='tail')score+=a.parts.tail.length*.12;
+  if(atk.part==='detached')score+=a.parts.detached.length*.13;
+  if(atk.part==='feet')score+=a.speed*.12;
+  if(atk.part==='head')score+=(1-a.complexity)*.06;
 
   return score;
 }
 
-function chooseSummonAttacks(analysis){
-  const ranked=SUMMON_ATTACKS
-    .map(atk=>({atk,score:summonAttackAffinity(atk,analysis)}))
-    .sort((a,b)=>b.score-a.score);
+function chooseSummonAttacksV106(a){
+  const ranked=SUMMON_ATTACKS_V106
+    .map(atk=>({
+      atk,
+      score:summonAttackAffinityV106(atk,a)
+    }))
+    .sort((x,y)=>y.score-x.score);
 
-  // Randomly pick 3 from the drawing-compatible top group.
-  const pool=ranked.slice(0,8).map(x=>x.atk);
+  // Mostly choose from melee-compatible top group.
+  const meleePool=ranked
+    .filter(x=>x.atk.family==='MELEE')
+    .slice(0,10)
+    .map(x=>x.atk);
+
+  const rangePool=ranked
+    .filter(x=>x.atk.family==='RANGE')
+    .slice(0,4)
+    .map(x=>x.atk);
+
   const picked=[];
 
-  while(picked.length<3&&pool.length){
-    const idx=randi(0,pool.length-1);
-    const atk=pool.splice(idx,1)[0];
-    if(!picked.some(p=>p.id===atk.id))picked.push(atk);
+  while(picked.length<3&&meleePool.length){
+    const idx=randi(0,meleePool.length-1);
+    picked.push(meleePool.splice(idx,1)[0]);
+  }
+
+  // Only around 28% of summoned monsters receive one ranged move.
+  if(Math.random()<.28&&rangePool.length){
+    picked[randi(0,2)]=rangePool[randi(0,rangePool.length-1)];
   }
 
   return picked;
@@ -7970,13 +8259,13 @@ async function startSummonerMob(p,humanIndex,runId){
   let lastAttack=0;
   let slimeId=0;
   let startBattle=0;
-  let monsterX=560;
+  let monsterX=520;
 
   const strokes=[];
   const slimes=[];
-  const worldW=4300;
+  const worldW=3900;
 
-  screen.innerHTML=`<div class="summoner-shell summoner-v105">
+  screen.innerHTML=`<div class="summoner-shell summoner-v106">
     <div class="game-head">
       <div><span class="kicker">${esc(p.name)}</span><h2>モブくんは召喚師</h2></div>
       <div class="game-badge">${playBadge(humanIndex)}</div>
@@ -7984,12 +8273,12 @@ async function startSummonerMob(p,humanIndex,runId){
 
     <div class="summoner-hud">
       <div><span>TIME</span><b id="summonDrawTime">5.0</b></div>
-      <div><span>SKILLS</span><b id="summonType">???</b></div>
+      <div><span>TYPE</span><b id="summonType">???</b></div>
       <div><span>KO</span><b id="summonKills">0</b></div>
     </div>
 
     <div id="summonerStage" class="summoner-stage">
-      <div id="summonWorld" class="summon-world-v105" style="width:${worldW}px">
+      <div id="summonWorld" class="summon-world-v106" style="width:${worldW}px">
         <div class="summoner-side-bg">
           ${Array.from({length:13},(_,i)=>`
             <div class="summon-ruin" style="left:${150+i*320}px"></div>
@@ -8000,30 +8289,24 @@ async function startSummonerMob(p,humanIndex,runId){
         <div class="summon-ground-v105"></div>
         <div id="summonSlimes"></div>
 
-        <div id="summonMonster" class="summon-monster-v105 hidden">
-          <svg id="summonMonsterSvg" viewBox="0 0 300 300"></svg>
+        <div id="summonMonster" class="summon-monster-v106 hidden">
+          <svg id="summonMonsterSvg"></svg>
           <i class="summon-eye e1"></i>
           <i class="summon-eye e2"></i>
         </div>
       </div>
 
-      <div id="summonCircle" class="summon-circle">
-        <i></i><i></i><i></i>
-      </div>
-
-      <svg id="summonDrawSvg" class="summon-draw-svg"></svg>
-
-      <div id="summonAttackFx" class="summon-attack-fx-v105"></div>
+      <svg id="summonDrawSvg" class="summon-draw-svg-v106"></svg>
+      <div id="summonAttackFx" class="summon-attack-fx-v106"></div>
       <div class="summoner-caster" style="background-image:url('icon/01.png')"></div>
       <div id="summonSkillList" class="summon-skill-list hidden"></div>
-      <div id="summonMessage" class="summon-message">5秒でモンスターを自由に描け！</div>
+      <div id="summonMessage" class="summon-message">5秒で自由に描け！</div>
     </div>
   </div>`;
 
   const stage=document.getElementById('summonerStage');
   const world=document.getElementById('summonWorld');
   const drawSvg=document.getElementById('summonDrawSvg');
-  const circle=document.getElementById('summonCircle');
   const monster=document.getElementById('summonMonster');
   const monsterSvg=document.getElementById('summonMonsterSvg');
   const slimeLayer=document.getElementById('summonSlimes');
@@ -8037,14 +8320,24 @@ async function startSummonerMob(p,humanIndex,runId){
   const sw=stage.clientWidth;
   const sh=stage.clientHeight;
 
-  drawSvg.setAttribute('viewBox',`0 0 ${sw} ${sh}`);
+  // Fixed invisible drawing area.
+  const zoneW=Math.min(sw*.82,340);
+  const zoneH=Math.min(sh*.67,300);
+  const zoneX=(sw-zoneW)/2;
+  const zoneY=Math.max(28,(sh-zoneH)/2-8);
+
+  drawSvg.style.left=`${zoneX}px`;
+  drawSvg.style.top=`${zoneY}px`;
+  drawSvg.style.width=`${zoneW}px`;
+  drawSvg.style.height=`${zoneH}px`;
+  drawSvg.setAttribute('viewBox',`0 0 ${zoneW} ${zoneH}`);
 
   function localPoint(e){
-    const r=stage.getBoundingClientRect();
+    const r=drawSvg.getBoundingClientRect();
 
     return {
-      x:clamp(e.clientX-r.left,4,sw-4),
-      y:clamp(e.clientY-r.top,4,sh-4)
+      x:clamp(e.clientX-r.left,2,zoneW-2),
+      y:clamp(e.clientY-r.top,2,zoneH-2)
     };
   }
 
@@ -8056,11 +8349,18 @@ async function startSummonerMob(p,humanIndex,runId){
 
     el.setAttribute('class','summon-user-stroke');
     drawSvg.appendChild(el);
+
     return el;
   }
 
-  stage.addEventListener('pointerdown',e=>{
-    if(!drawingOpen||finished||drawing||!isGameRunValid(runId))return;
+  drawSvg.addEventListener('pointerdown',e=>{
+    if(
+      !drawingOpen||
+      finished||
+      drawing||
+      !isGameRunValid(runId)
+    )return;
+
     e.preventDefault();
 
     drawing=true;
@@ -8073,17 +8373,22 @@ async function startSummonerMob(p,humanIndex,runId){
 
     strokes.push(currentStroke.points);
 
-    try{stage.setPointerCapture(pointerId)}catch(_){}
+    try{drawSvg.setPointerCapture(pointerId)}catch(_){}
   },{passive:false});
 
-  stage.addEventListener('pointermove',e=>{
-    if(!drawingOpen||!drawing||e.pointerId!==pointerId)return;
+  drawSvg.addEventListener('pointermove',e=>{
+    if(
+      !drawingOpen||
+      !drawing||
+      e.pointerId!==pointerId
+    )return;
+
     e.preventDefault();
 
     const pt=localPoint(e);
     const prev=currentStroke.points[currentStroke.points.length-1];
 
-    if(Math.hypot(pt.x-prev.x,pt.y-prev.y)>=2.4){
+    if(Math.hypot(pt.x-prev.x,pt.y-prev.y)>=2.1){
       currentStroke.points.push(pt);
 
       currentStroke.el.setAttribute(
@@ -8097,18 +8402,19 @@ async function startSummonerMob(p,humanIndex,runId){
 
   const endStroke=e=>{
     if(!drawing||e.pointerId!==pointerId)return;
+
     e.preventDefault();
     drawing=false;
     currentStroke=null;
   };
 
-  stage.addEventListener('pointerup',endStroke,{passive:false});
-  stage.addEventListener('pointercancel',endStroke,{passive:false});
+  drawSvg.addEventListener('pointerup',endStroke,{passive:false});
+  drawSvg.addEventListener('pointercancel',endStroke,{passive:false});
 
   if(!(await countdown('SUMMON DRAW',runId)))return;
 
   drawingOpen=true;
-  message.textContent='自由に描け！ 大きさだけでは強さは決まらない';
+  message.textContent='枠なし。好きな大きさで描け！';
 
   const drawStart=performance.now();
 
@@ -8134,76 +8440,83 @@ async function startSummonerMob(p,humanIndex,runId){
 
   if(!isGameRunValid(runId))return;
 
-  const analysis=analyzeSummonedMonster(strokes,sw,sh);
-  const learned=chooseSummonAttacks(analysis);
+  const analysis=analyzeSummonedMonsterV106(
+    strokes,
+    zoneW,
+    zoneH
+  );
 
-  typeEl.textContent=analysis.type;
+  const learned=chooseSummonAttacksV106(analysis);
+
+  typeEl.textContent=analysis.label;
+
   skillList.innerHTML=learned.map((a,i)=>`
     <span>${i+1}. ${a.name}</span>
   `).join('');
+
   skillList.classList.remove('hidden');
 
   message.textContent=`召喚！ ${analysis.label}`;
 
-  const flat=strokes.flat();
+  // Exact size from drawing bbox — no standardized 132px frame.
+  const battleW=clamp(analysis.width,34,zoneW);
+  const battleH=clamp(analysis.height,34,zoneH);
 
-  if(flat.length>=2){
-    let minX=Infinity,minY=Infinity,maxX=-Infinity,maxY=-Infinity;
+  monster.style.width=`${battleW}px`;
+  monster.style.height=`${battleH}px`;
+  monster.style.left=`${monsterX}px`;
 
-    for(const pt of flat){
-      minX=Math.min(minX,pt.x);
-      minY=Math.min(minY,pt.y);
-      maxX=Math.max(maxX,pt.x);
-      maxY=Math.max(maxY,pt.y);
-    }
+  monsterSvg.setAttribute(
+    'viewBox',
+    `${analysis.minX} ${analysis.minY} ${analysis.width} ${analysis.height}`
+  );
 
-    const bw=Math.max(12,maxX-minX);
-    const bh=Math.max(12,maxY-minY);
-    const pad=18;
+  // Build independently animated groups from automatically judged body parts.
+  const reversePart={};
 
-    monsterSvg.setAttribute(
-      'viewBox',
-      `${minX-pad} ${minY-pad} ${bw+pad*2} ${bh+pad*2}`
-    );
+  Object.entries(analysis.parts).forEach(([part,indexes])=>{
+    indexes.forEach(idx=>{
+      if(reversePart[idx]===undefined)reversePart[idx]=part;
+    });
+  });
 
-    monsterSvg.innerHTML=strokes.map(stroke=>`
+  const validStrokes=strokes.filter(s=>s.length>=2);
+
+  monsterSvg.innerHTML=validStrokes.map((stroke,i)=>{
+    const part=reversePart[i]||'body';
+
+    return `<g class="summon-part" data-part="${part}">
       <polyline
         class="summon-monster-stroke"
         points="${stroke.map(q=>`${q.x.toFixed(1)},${q.y.toFixed(1)}`).join(' ')}">
       </polyline>
-    `).join('');
-  }else{
-    monsterSvg.setAttribute('viewBox','0 0 100 100');
-    monsterSvg.innerHTML=
-      '<circle class="summon-monster-stroke" cx="50" cy="50" r="28"></circle>';
-  }
+    </g>`;
+  }).join('');
 
-  circle.classList.add('active');
   drawSvg.classList.add('fade-out');
 
-  await wait(620);
+  await wait(420);
 
   if(!isGameRunValid(runId))return;
 
-  circle.classList.remove('active');
   drawSvg.classList.add('hidden');
   stage.classList.add('battle');
 
   monster.classList.remove('hidden');
-  monster.style.left=`${monsterX}px`;
 
   drawTimeEl.textContent='10.0';
-  message.textContent='AUTO SIDE-SCROLL BATTLE!';
+  message.textContent='AUTO CLOSE BATTLE!';
 
   function spawnSlime(now,progress,sideOverride=null){
-    if(slimes.filter(s=>!s.dead).length>=28)return;
+    if(slimes.filter(s=>!s.dead).length>=30)return;
 
-    const side=sideOverride??(Math.random()<.22?-1:1);
+    const side=sideOverride??(Math.random()<.18?-1:1);
     const big=Math.random()<(.10+progress*.08);
     const size=big?rand(58,82):rand(34,50);
 
     const el=document.createElement('div');
     el.className='summon-slime-v105';
+
     if(big)el.classList.add('big');
 
     el.style.width=`${size}px`;
@@ -8212,11 +8525,17 @@ async function startSummonerMob(p,humanIndex,runId){
     const s={
       id:++slimeId,
       el,
-      x:side>0
-        ? clamp(monsterX+rand(280,680),80,worldW-70)
-        : clamp(monsterX-rand(210,400),70,worldW-70),
+      x:
+        side>0
+          ? clamp(monsterX+rand(180,520),80,worldW-70)
+          : clamp(monsterX-rand(150,330),70,worldW-70),
       y:66+randi(-5,10),
-      speed:(big?rand(62,88):rand(96,142))+progress*85,
+      speed:
+        (
+          big?rand(65,92):
+          rand(100,148)
+        )+
+        progress*90,
       hp:big?2:1,
       dead:false
     };
@@ -8238,17 +8557,17 @@ async function startSummonerMob(p,humanIndex,runId){
 
     s.el.style.setProperty(
       '--summon-fly-x',
-      `${dir*(strong?rand(180,300):rand(110,210))}px`
+      `${dir*(strong?rand(190,310):rand(120,220))}px`
     );
 
     s.el.style.setProperty(
       '--summon-fly-y',
-      `${strong?rand(-180,-110):rand(-120,-55)}px`
+      `${strong?rand(-190,-115):rand(-130,-55)}px`
     );
 
     s.el.style.setProperty(
       '--summon-fly-spin',
-      `${dir*rand(520,960)}deg`
+      `${dir*rand(520,980)}deg`
     );
 
     s.el.classList.add(strong?'blast':'defeated');
@@ -8270,14 +8589,26 @@ async function startSummonerMob(p,humanIndex,runId){
     }
   }
 
-  function showAttack(atk,dir){
-    attackFx.className=
-      `summon-attack-fx-v105 ${atk.family.toLowerCase()} fx-${atk.fx} ${dir<0?'left':'right'} show`;
+  function clearMonsterAttackClasses(){
+    [...monster.classList]
+      .filter(c=>c.startsWith('summon-atk-'))
+      .forEach(c=>monster.classList.remove(c));
+  }
 
-    attackFx.innerHTML=`<b>${atk.name}</b>`;
+  function showAttack(atk,dir){
+    clearMonsterAttackClasses();
+
+    monster.classList.toggle('face-left',dir<0);
+    monster.classList.add(`summon-atk-${atk.move}`);
+
+    attackFx.className=
+      `summon-attack-fx-v106 ${atk.family.toLowerCase()} move-${atk.move} ${dir<0?'left':'right'} show`;
+
+    attackFx.innerHTML=`<b>${atk.name}</b><i></i>`;
 
     setTimeout(()=>{
-      attackFx.className='summon-attack-fx-v105';
+      clearMonsterAttackClasses();
+      attackFx.className='summon-attack-fx-v106';
       attackFx.innerHTML='';
     },300);
   }
@@ -8290,43 +8621,28 @@ async function startSummonerMob(p,humanIndex,runId){
     const rightCount=alive.length-leftCount;
     const dir=rightCount>=leftCount?1:-1;
 
-    const powerBonus=.75+analysis.power*.65;
-    const range=atk.reach*(.78+analysis.range*.46);
-    const maxHits=Math.max(2,Math.round(atk.hits*powerBonus));
+    const range=
+      atk.reach*
+      (.84+analysis.range*.38);
+
+    const maxHits=Math.max(
+      2,
+      Math.round(
+        atk.hits*
+        (.76+analysis.power*.52)
+      )
+    );
 
     let victims=[];
 
-    if(atk.family==='WAVE'){
+    if(atk.family==='MELEE'){
       victims=alive
         .map(s=>({
           s,
           dx:(s.x-monsterX)*dir,
-          dy:Math.abs(s.y-72)
+          d:Math.abs(s.x-monsterX)
         }))
-        .filter(o=>o.dx>=-35&&o.dx<=range&&o.dy<=100)
-        .sort((a,b)=>a.dx-b.dx)
-        .slice(0,maxHits)
-        .map(o=>o.s);
-
-    }else if(atk.family==='PIERCE'){
-      victims=alive
-        .map(s=>({
-          s,
-          dx:(s.x-monsterX)*dir,
-          dy:Math.abs(s.y-72)
-        }))
-        .filter(o=>o.dx>=-45&&o.dx<=range&&o.dy<=70)
-        .sort((a,b)=>a.dx-b.dx)
-        .slice(0,maxHits)
-        .map(o=>o.s);
-
-    }else if(atk.family==='BURST'){
-      victims=alive
-        .map(s=>({
-          s,
-          d:Math.hypot(s.x-monsterX,(s.y-72)*1.7)
-        }))
-        .filter(o=>o.d<=range)
+        .filter(o=>o.dx>=-45&&o.dx<=range)
         .sort((a,b)=>a.d-b.d)
         .slice(0,maxHits)
         .map(o=>o.s);
@@ -8335,34 +8651,40 @@ async function startSummonerMob(p,humanIndex,runId){
       victims=alive
         .map(s=>({
           s,
+          dx:(s.x-monsterX)*dir,
           d:Math.abs(s.x-monsterX)
         }))
+        .filter(o=>o.dx>=-40&&o.dx<=range)
         .sort((a,b)=>a.d-b.d)
         .slice(0,maxHits)
         .map(o=>o.s);
     }
 
     const strong=
-      analysis.power>.77 ||
-      ['laser','drill','meteor','quake','dash'].includes(atk.id);
+      analysis.power>.78 ||
+      ['jump_slam','weapon_slash','beast_dash','headbutt'].includes(atk.id);
 
     victims.forEach((s,i)=>{
       setTimeout(()=>{
-        if(!s.dead)hitSlime(s,strong,Math.sign(s.x-monsterX)||dir);
+        if(!s.dead){
+          hitSlime(
+            s,
+            strong,
+            Math.sign(s.x-monsterX)||dir
+          );
+        }
       },i*18);
     });
 
     showAttack(atk,dir);
 
-    monster.classList.remove('attacking');
-    void monster.offsetWidth;
-    monster.classList.add('attacking');
-
     beep(
-      atk.family==='BURST'?500:
-      atk.family==='PIERCE'?700:
-      atk.family==='WAVE'?440:780,
-      30,.007
+      atk.family==='RANGE'?720:
+      atk.part==='feet'?430:
+      atk.part==='head'?520:
+      atk.part==='weapon'?660:
+      360,
+      32,.008
     );
   }
 
@@ -8370,8 +8692,12 @@ async function startSummonerMob(p,humanIndex,runId){
   lastSpawn=startBattle-500;
   lastAttack=startBattle-600;
 
-  for(let i=0;i<12;i++){
-    spawnSlime(startBattle,0,i<2?-1:1);
+  for(let i=0;i<13;i++){
+    spawnSlime(
+      startBattle,
+      0,
+      i<2?-1:1
+    );
   }
 
   function battle(now){
@@ -8383,45 +8709,45 @@ async function startSummonerMob(p,humanIndex,runId){
 
     drawTimeEl.textContent=(Math.max(0,remaining)/1000).toFixed(1);
 
-    // Summoned monster advances like the brawler stage.
+    // Advance in close-combat distance rather than shooting from far away.
     monsterX=clamp(
-      560+elapsed/1000*(125+analysis.speed*65),
-      100,
-      worldW-520
+      520+elapsed/1000*(105+analysis.speed*55),
+      90,
+      worldW-430
     );
 
     monster.style.left=`${monsterX}px`;
 
-    const spawnEvery=210-progress*88;
+    const spawnEvery=195-progress*82;
 
     if(now-lastSpawn>=spawnEvery){
-      spawnSlime(now,progress);
+      const count=progress>.5?randi(2,4):randi(1,3);
 
-      if(Math.random()<.68){
-        spawnSlime(now,progress);
-      }
-
-      if(progress>.45&&Math.random()<.42){
+      for(let i=0;i<count;i++){
         spawnSlime(now,progress);
       }
     }
 
     const avgCd=
-      learned.reduce((s,a)=>s+a.cd,0)/learned.length;
+      learned.reduce((s,a)=>s+a.cd,0)/
+      learned.length;
 
     const attackEvery=clamp(
-      avgCd*(1.05-analysis.speed*.34),
-      260,780
+      avgCd*(1.02-analysis.speed*.30),
+      280,780
     );
 
     if(now-lastAttack>=attackEvery){
       lastAttack=now;
 
-      // Cycle with randomness so all three learned attacks appear.
-      const baseIndex=Math.floor(elapsed/attackEvery)%learned.length;
-      const atk=Math.random()<.58
-        ? learned[baseIndex]
-        : learned[randi(0,learned.length-1)];
+      const cycle=
+        Math.floor(elapsed/attackEvery)%
+        learned.length;
+
+      const atk=
+        Math.random()<.62
+          ? learned[cycle]
+          : learned[randi(0,learned.length-1)];
 
       useAttack(atk);
     }
@@ -8432,7 +8758,8 @@ async function startSummonerMob(p,humanIndex,runId){
       const dx=monsterX-s.x;
       const dir=Math.sign(dx)||1;
 
-      if(Math.abs(dx)>62){
+      // Slimes intentionally crowd into close range.
+      if(Math.abs(dx)>52){
         s.x+=dir*s.speed*.016;
       }
 
@@ -8450,10 +8777,17 @@ async function startSummonerMob(p,humanIndex,runId){
 
     if(remaining<=0){
       finished=true;
+
       state.records.summonerMob[p.id]=kills;
 
       message.textContent=`召喚獣が ${kills}体 撃破！`;
-      beep(kills>=40?1050:kills>=28?850:620,140,.035);
+
+      beep(
+        kills>=40?1050:
+        kills>=28?850:
+        620,
+        140,.035
+      );
 
       setTimeout(()=>{
         if(isGameRunValid(runId)){
@@ -8473,8 +8807,6 @@ async function startSummonerMob(p,humanIndex,runId){
 
   battleRAF=requestAnimationFrame(battle);
 }
-
-
 
 // GAME 43 -------------------------------------------------
 function blackjackMobValue(sum){
@@ -8678,7 +9010,9 @@ async function startBlackjackMob(p,humanIndex,runId){
     selected.push(card);
     rawSum+=card.num;
 
-    btn.classList.add('selected');
+    // Selection must reveal the actual card immediately.
+    // Unselected cards remain hidden.
+    btn.classList.add('selected','revealed');
     totalEl.textContent=currentValue();
 
     beep(620+card.num*12,45,.012);
@@ -8712,19 +9046,29 @@ async function startBlackjackMob(p,humanIndex,runId){
 async function startMobIssen(p,humanIndex,runId){
   gameFit();
 
+  let round=0;
+  let total=0;
+  let activeRound=false;
+  let roundResolve=null;
   let raf=null;
-  let done=false;
   let start=0;
+  let speed=0;
+  let startY=0;
+  let logHeight=0;
+  let bandOffset=0;
 
-  screen.innerHTML=`<div class="issen-shell">
+  const roundScores=[];
+
+  screen.innerHTML=`<div class="issen-shell issen-v106">
     <div class="game-head">
       <div><span class="kicker">${esc(p.name)}</span><h2>モブくん一閃</h2></div>
       <div class="game-badge">${playBadge(humanIndex)}</div>
     </div>
 
-    <div class="issen-hud">
-      <div><span>FOCUS</span><b id="issenState">READY</b></div>
-      <div><span>SCORE</span><b id="issenScore">--</b></div>
+    <div class="issen-hud issen-hud-v106">
+      <div><span>ROUND</span><b id="issenRound">1 / 3</b></div>
+      <div><span>ROUND SCORE</span><b id="issenScore">--</b></div>
+      <div><span>TOTAL</span><b id="issenTotal">0</b></div>
     </div>
 
     <button id="issenStage" class="issen-stage" type="button">
@@ -8742,7 +9086,7 @@ async function startMobIssen(p,humanIndex,runId){
 
       <div id="issenLog" class="issen-log">
         <div class="issen-log-bark"></div>
-        <div id="issenWhiteBand" class="issen-white-band">CENTER</div>
+        <div class="issen-white-band">CENTER</div>
       </div>
 
       <div id="issenLeftPiece" class="issen-piece left"></div>
@@ -8754,6 +9098,7 @@ async function startMobIssen(p,humanIndex,runId){
 
       <div id="issenSlashFx" class="issen-slash-fx"></div>
       <div id="issenParticles" class="issen-particles"></div>
+      <div id="issenRoundPop" class="issen-round-pop"></div>
       <div id="issenMessage" class="issen-message">白いCENTERを狙え</div>
     </button>
   </div>`;
@@ -8761,142 +9106,695 @@ async function startMobIssen(p,humanIndex,runId){
   const stage=document.getElementById('issenStage');
   const log=document.getElementById('issenLog');
   const target=document.getElementById('issenTargetLine');
-  const band=document.getElementById('issenWhiteBand');
   const leftPiece=document.getElementById('issenLeftPiece');
   const rightPiece=document.getElementById('issenRightPiece');
   const slashFx=document.getElementById('issenSlashFx');
   const particles=document.getElementById('issenParticles');
-  const stateEl=document.getElementById('issenState');
+  const roundEl=document.getElementById('issenRound');
   const scoreEl=document.getElementById('issenScore');
+  const totalEl=document.getElementById('issenTotal');
+  const roundPop=document.getElementById('issenRoundPop');
   const message=document.getElementById('issenMessage');
 
   const sh=stage.clientHeight;
   const targetY=sh*.52;
+
   target.style.top=`${targetY}px`;
 
-  const logHeight=Math.min(285,sh*.46);
-  log.style.height=`${logHeight}px`;
-
-  const startY=-logHeight-40;
-  const speed=rand(265,335);
-  const bandOffset=logHeight*.50;
-
-  log.style.top=`${startY}px`;
-
   function makeParticles(score){
-    particles.innerHTML=Array.from({length:score>=90?18:10},(_,i)=>{
-      const angle=rand(-155,-25);
-      const dist=rand(45,150);
-      const dx=Math.cos(angle*Math.PI/180)*dist;
-      const dy=Math.sin(angle*Math.PI/180)*dist;
+    particles.innerHTML=Array.from(
+      {length:score>=90?20:12},
+      (_,i)=>{
+        const angle=rand(-155,-25);
+        const dist=rand(45,155);
+        const dx=Math.cos(angle*Math.PI/180)*dist;
+        const dy=Math.sin(angle*Math.PI/180)*dist;
 
-      return `<i style="--px:${dx.toFixed(0)}px;--py:${dy.toFixed(0)}px;--r:${randi(-160,160)}deg;--d:${(i%4)*.025}s"></i>`;
-    }).join('');
+        return `<i style="
+          --px:${dx.toFixed(0)}px;
+          --py:${dy.toFixed(0)}px;
+          --r:${randi(-180,180)}deg;
+          --d:${(i%4)*.025}s
+        "></i>`;
+      }
+    ).join('');
+
+    particles.classList.remove('show');
+    void particles.offsetWidth;
     particles.classList.add('show');
   }
 
-  stage.addEventListener('pointerdown',e=>{
-    if(done||!isGameRunValid(runId))return;
-    e.preventDefault();
+  function roundBanner(text){
+    roundPop.textContent=text;
+    roundPop.classList.remove('show');
+    void roundPop.offsetWidth;
+    roundPop.classList.add('show');
+  }
 
-    done=true;
+  function resetVisual(){
     if(raf)cancelAnimationFrame(raf);
+
+    stage.classList.remove(
+      'issen-perfect',
+      'issen-cut'
+    );
+
+    log.classList.remove('cut');
+
+    leftPiece.classList.remove('show');
+    rightPiece.classList.remove('show');
+    slashFx.classList.remove('show');
+    particles.classList.remove('show');
+
+    log.style.opacity='1';
+  }
+
+  function finishRound(score,logTop,miss=false){
+    if(!activeRound)return;
+
+    activeRound=false;
+    if(raf)cancelAnimationFrame(raf);
+
+    roundScores.push(score);
+    total+=score;
+
+    scoreEl.textContent=score;
+    totalEl.textContent=total;
+
+    if(miss){
+      message.textContent='斬れなかった！';
+      roundBanner('MISS 0');
+      beep(180,180,.03);
+
+    }else{
+      message.textContent=
+        score===100?'完全一閃！！':
+        score>=90?'一閃！！':
+        score>=70?'斬！':'ズレた！';
+
+      log.classList.add('cut');
+
+      leftPiece.style.top=`${logTop}px`;
+      rightPiece.style.top=`${logTop}px`;
+      leftPiece.style.height=`${logHeight}px`;
+      rightPiece.style.height=`${logHeight}px`;
+
+      leftPiece.classList.add('show');
+      rightPiece.classList.add('show');
+      slashFx.classList.add('show');
+
+      stage.classList.add(
+        score>=90
+          ? 'issen-perfect'
+          : 'issen-cut'
+      );
+
+      makeParticles(score);
+      roundBanner(`+${score}`);
+
+      beep(
+        score>=95?1080:
+        score>=80?820:
+        score>=55?590:
+        300,
+        110,.035
+      );
+    }
+
+    const resolve=roundResolve;
+    roundResolve=null;
+
+    setTimeout(()=>{
+      if(resolve)resolve(score);
+    },650);
+  }
+
+  stage.addEventListener('pointerdown',e=>{
+    if(
+      !activeRound||
+      !isGameRunValid(runId)
+    )return;
+
+    e.preventDefault();
 
     const logTop=parseFloat(log.style.top)||0;
     const bandY=logTop+bandOffset;
     const errorPx=Math.abs(bandY-targetY);
 
-    let score;
+    const score=
+      errorPx<=2
+        ? 100
+        : clamp(
+            Math.round(100-errorPx/1.05),
+            0,100
+          );
 
-    if(errorPx<=2){
-      score=100;
-    }else{
-      score=clamp(Math.round(100-errorPx/1.05),0,100);
+    finishRound(score,logTop,false);
+  },{passive:false});
+
+  async function runRound(roundIndex){
+    resetVisual();
+
+    round=roundIndex;
+    roundEl.textContent=`${round+1} / 3`;
+    scoreEl.textContent='--';
+
+    roundBanner(`ROUND ${round+1}`);
+
+    await wait(300);
+
+    if(!isGameRunValid(runId))return 0;
+
+    logHeight=Math.min(
+      285,
+      sh*.46
+    );
+
+    log.style.height=`${logHeight}px`;
+
+    startY=-logHeight-40;
+    bandOffset=logHeight*.50;
+
+    // Each round feels slightly different.
+    speed=rand(
+      270+round*12,
+      338+round*18
+    );
+
+    log.style.top=`${startY}px`;
+    message.textContent='白いCENTERを狙え';
+
+    activeRound=true;
+    start=performance.now();
+
+    return await new Promise(resolve=>{
+      roundResolve=resolve;
+
+      const frame=now=>{
+        if(
+          !activeRound||
+          !isGameRunValid(runId)
+        )return;
+
+        const elapsed=(now-start)/1000;
+        const y=startY+speed*elapsed;
+
+        log.style.top=`${y}px`;
+
+        if(y>sh+30){
+          finishRound(
+            0,
+            y,
+            true
+          );
+          return;
+        }
+
+        raf=requestAnimationFrame(frame);
+      };
+
+      raf=requestAnimationFrame(frame);
+    });
+  }
+
+  if(!(await countdown('一閃',runId)))return;
+
+  for(let i=0;i<3;i++){
+    await runRound(i);
+
+    if(!isGameRunValid(runId))return;
+
+    if(i<2){
+      await wait(180);
+    }
+  }
+
+  state.records.mobIssen[p.id]=total;
+
+  message.textContent=
+    total>=285
+      ? '三連一閃・極！！'
+      : `3回合計 ${total}pt`;
+
+  roundBanner(`${total} / 300`);
+
+  beep(
+    total>=285?1120:
+    total>=240?900:
+    650,
+    160,.04
+  );
+
+  await wait(850);
+
+  if(isGameRunValid(runId)){
+    recordScreen(
+      43,p,humanIndex,
+      `${total}<small>pt</small>`,
+      `3 SLASH TOTAL / 300`
+    );
+  }
+}
+
+
+
+// GAME 45 -------------------------------------------------
+async function startCrowEscape(p,humanIndex,runId){
+  gameFit();
+
+  let finished=false;
+  let raf=null;
+  let startTime=0;
+  let last=0;
+  let moveDir=0;
+  let jumpCount=0;
+
+  const worldW=2450;
+  const groundY=58;
+  const gravity=1180;
+  const jumpV=510;
+  const playerSpeed=270;
+
+  let playerX=worldW*.50;
+  let playerY=groundY;
+  let vy=0;
+  let grounded=true;
+
+  const platforms=[
+    {x:250,w:155,h:78,type:'table'},
+    {x:510,w:105,h:62,type:'box'},
+    {x:760,w:170,h:88,type:'table'},
+    {x:1030,w:92,h:70,type:'box'},
+    {x:1275,w:150,h:92,type:'table'},
+    {x:1515,w:110,h:58,type:'box'},
+    {x:1760,w:165,h:84,type:'table'},
+    {x:2050,w:100,h:68,type:'box'}
+  ];
+
+  screen.innerHTML=`<div class="crow-shell">
+    <div class="game-head">
+      <div><span class="kicker">${esc(p.name)}</span><h2>カラスから逃げろ！</h2></div>
+      <div class="game-badge">${playBadge(humanIndex)}</div>
+    </div>
+
+    <div class="crow-hud">
+      <div><span>TIME</span><b id="crowTime">0.00</b></div>
+      <div><span>JUMP</span><b id="crowJump">2段OK</b></div>
+    </div>
+
+    <div id="crowStage" class="crow-stage">
+      <div id="crowWorld" class="crow-world" style="width:${worldW}px">
+        <div class="crow-sky-bg">
+          ${Array.from({length:8},(_,i)=>`
+            <i class="crow-cloud" style="left:${180+i*300}px;top:${32+(i%3)*42}px">☁</i>
+          `).join('')}
+          ${Array.from({length:10},(_,i)=>`
+            <i class="crow-tree-bg" style="left:${90+i*260}px"></i>
+          `).join('')}
+        </div>
+
+        <div class="crow-ground"></div>
+
+        <div class="crow-platform-layer">
+          ${platforms.map((pl,i)=>`
+            <div
+              class="crow-platform ${pl.type}"
+              data-platform="${i}"
+              style="
+                left:${pl.x}px;
+                width:${pl.w}px;
+                height:${pl.h}px
+              ">
+              ${pl.type==='table'
+                ? '<i class="table-top"></i><i class="leg l1"></i><i class="leg l2"></i>'
+                : '<i class="box-line b1"></i><i class="box-line b2"></i>'
+              }
+            </div>
+          `).join('')}
+        </div>
+
+        <div id="crowPlayer" class="crow-player">
+          <div
+            class="crow-player-figure"
+            style="background-image:url('icon/01.png')">
+          </div>
+        </div>
+
+        <div id="crowA" class="crow-enemy crow-left">
+          <img
+            src="enemy/karasu.png"
+            alt="karasu"
+            draggable="false"
+            onerror="this.onerror=null;this.src='icon/10.png'">
+        </div>
+
+        <div id="crowB" class="crow-enemy crow-right">
+          <img
+            src="enemy/karasu.png"
+            alt="karasu"
+            draggable="false"
+            onerror="this.onerror=null;this.src='icon/10.png'">
+        </div>
+      </div>
+
+      <div id="crowWarning" class="crow-warning"></div>
+      <div id="crowFeathers" class="crow-feathers"></div>
+    </div>
+
+    <div class="crow-controls">
+      <button id="crowLeft" type="button">←</button>
+      <button id="crowJumpBtn" class="jump" type="button">JUMP</button>
+      <button id="crowRight" type="button">→</button>
+    </div>
+  </div>`;
+
+  const stage=document.getElementById('crowStage');
+  const world=document.getElementById('crowWorld');
+  const player=document.getElementById('crowPlayer');
+  const playerFigure=player.querySelector('.crow-player-figure');
+  const crowEls=[
+    document.getElementById('crowA'),
+    document.getElementById('crowB')
+  ];
+  const timeEl=document.getElementById('crowTime');
+  const jumpEl=document.getElementById('crowJump');
+  const warning=document.getElementById('crowWarning');
+  const feathers=document.getElementById('crowFeathers');
+  const leftBtn=document.getElementById('crowLeft');
+  const rightBtn=document.getElementById('crowRight');
+  const jumpBtn=document.getElementById('crowJumpBtn');
+
+  const crowState=[
+    {
+      x:playerX-260,
+      y:groundY+170,
+      vx:105,
+      vy:0
+    },
+    {
+      x:playerX+260,
+      y:groundY+205,
+      vx:-105,
+      vy:0
+    }
+  ];
+
+  function setPlayerFacing(dir){
+    if(dir===0)return;
+
+    playerFigure.style.transform=
+      dir<0
+        ? 'scaleX(-1)'
+        : 'scaleX(1)';
+  }
+
+  function bindHold(btn,dir){
+    btn.addEventListener('pointerdown',e=>{
+      e.preventDefault();
+      moveDir=dir;
+      setPlayerFacing(dir);
+
+      try{btn.setPointerCapture(e.pointerId)}catch(_){}
+    },{passive:false});
+
+    const stop=()=>{
+      if(moveDir===dir)moveDir=0;
+    };
+
+    btn.addEventListener('pointerup',stop);
+    btn.addEventListener('pointercancel',stop);
+    btn.addEventListener('lostpointercapture',stop);
+  }
+
+  bindHold(leftBtn,-1);
+  bindHold(rightBtn,1);
+
+  jumpBtn.addEventListener('pointerdown',e=>{
+    if(
+      finished||
+      jumpCount>=2||
+      !isGameRunValid(runId)
+    )return;
+
+    e.preventDefault();
+
+    jumpCount++;
+    grounded=false;
+    vy=jumpV;
+
+    jumpEl.textContent=
+      jumpCount===1
+        ? 'あと1回'
+        : '空中MAX';
+
+    player.classList.remove('jump-pop');
+    void player.offsetWidth;
+    player.classList.add('jump-pop');
+
+    beep(
+      jumpCount===2?760:620,
+      35,.012
+    );
+  },{passive:false});
+
+  function crowMaxSpeed(elapsed){
+    if(elapsed<5000){
+      // Slightly slower than player.
+      return 220+(elapsed/5000)*50;
     }
 
-    state.records.mobIssen[p.id]=score;
-    scoreEl.textContent=score;
+    if(elapsed<8000){
+      // Equal at 5 sec, then gets faster.
+      return 270+((elapsed-5000)/3000)*55;
+    }
 
-    stateEl.textContent=
-      score===100?'PERFECT':
-      score>=90?'MASTER':
-      score>=75?'GREAT':
-      score>=50?'GOOD':'MISS';
+    return 340;
+  }
 
-    message.textContent=
-      score===100?'完全一閃！！':
-      score>=90?'一閃！！':
-      score>=70?'斬！':'ズレた！';
+  function crowAccel(elapsed){
+    // Deliberately low acceleration = poor braking and obvious overshoot.
+    return elapsed<5000?135:elapsed<8000?150:168;
+  }
 
-    log.classList.add('cut');
-    leftPiece.classList.add('show');
-    rightPiece.classList.add('show');
+  function showWarning(text){
+    warning.textContent=text;
+    warning.classList.remove('show');
+    void warning.offsetWidth;
+    warning.classList.add('show');
+  }
 
-    leftPiece.style.top=`${logTop}px`;
-    rightPiece.style.top=`${logTop}px`;
-    leftPiece.style.height=`${logHeight}px`;
-    rightPiece.style.height=`${logHeight}px`;
+  function burstFeathers(x,y){
+    const sx=
+      x-
+      clamp(
+        playerX-stage.clientWidth*.42,
+        0,
+        worldW-stage.clientWidth
+      );
 
-    slashFx.classList.add('show');
-    stage.classList.add(score>=90?'issen-perfect':'issen-cut');
+    feathers.style.left=`${sx}px`;
+    feathers.style.bottom=`${y}px`;
 
-    makeParticles(score);
+    feathers.innerHTML=Array.from({length:12},(_,i)=>`
+      <i style="
+        --fx:${rand(-95,95).toFixed(0)}px;
+        --fy:${rand(35,120).toFixed(0)}px;
+        --fr:${randi(-220,220)}deg;
+        --fd:${(i%4)*.025}s
+      "></i>
+    `).join('');
 
-    beep(score>=95?1080:score>=80?820:score>=55?590:300,110,.035);
+    feathers.classList.remove('show');
+    void feathers.offsetWidth;
+    feathers.classList.add('show');
+  }
+
+  function finish(survivedMs,hit=false){
+    if(finished)return;
+
+    finished=true;
+
+    const seconds=
+      Math.min(
+        20,
+        survivedMs/1000
+      );
+
+    state.records.crowEscape[p.id]=
+      Math.round(seconds*100)/100;
+
+    timeEl.textContent=seconds.toFixed(2);
+
+    if(hit){
+      showWarning('カラスに捕まった！');
+      beep(130,220,.04);
+
+    }else{
+      showWarning('20秒 ESCAPE!!');
+      beep(1080,160,.04);
+    }
 
     setTimeout(()=>{
       if(isGameRunValid(runId)){
         recordScreen(
-          43,p,humanIndex,
-          `${score}<small>pt</small>`,
-          score===100?'PERFECT CENTER':`CENTER SCORE`
+          44,p,humanIndex,
+          `${seconds.toFixed(2)}<small>秒</small>`,
+          hit?'CAUGHT':'ESCAPE!'
         );
       }
-    },950);
-  },{passive:false});
+    },750);
+  }
 
-  if(!(await countdown('一閃',runId)))return;
+  if(!(await countdown('CROW ESCAPE',runId)))return;
 
-  stateEl.textContent='FOCUS';
-  start=performance.now();
+  startTime=performance.now();
+  last=startTime;
+
+  showWarning('逃げろ！');
 
   function frame(now){
-    if(done||!isGameRunValid(runId))return;
+    if(finished||!isGameRunValid(runId))return;
 
-    const elapsed=(now-start)/1000;
-    const y=startY+speed*elapsed;
+    const dt=Math.min(30,now-last)/1000;
+    last=now;
 
-    log.style.top=`${y}px`;
+    const elapsed=now-startTime;
 
-    const bandY=y+bandOffset;
-    const d=Math.abs(bandY-targetY);
+    playerX=clamp(
+      playerX+moveDir*playerSpeed*dt,
+      34,
+      worldW-34
+    );
 
-    if(d<65){
-      stateEl.textContent='NOW';
-    }else{
-      stateEl.textContent='FOCUS';
+    const prevY=playerY;
+
+    if(!grounded){
+      vy-=gravity*dt;
+      playerY+=vy*dt;
     }
 
-    if(y>sh+30){
-      done=true;
-      state.records.mobIssen[p.id]=0;
-      scoreEl.textContent='0';
-      message.textContent='斬れなかった！';
-      stateEl.textContent='MISS';
-      beep(180,180,.03);
+    // Ground collision.
+    if(playerY<=groundY){
+      playerY=groundY;
+      vy=0;
+      grounded=true;
+      jumpCount=0;
+      jumpEl.textContent='2段OK';
+    }
 
-      setTimeout(()=>{
-        if(isGameRunValid(runId)){
-          recordScreen(
-            43,p,humanIndex,
-            `0<small>pt</small>`,
-            `MISS`
-          );
+    // Platform collision from above only.
+    if(vy<=0&&playerY>groundY){
+      for(const pl of platforms){
+        const top=groundY+pl.h;
+
+        if(
+          prevY>=top&&
+          playerY<=top&&
+          Math.abs(playerX-pl.x)<=pl.w/2+18
+        ){
+          playerY=top;
+          vy=0;
+          grounded=true;
+          jumpCount=0;
+          jumpEl.textContent='2段OK';
+          break;
         }
-      },650);
+      }
+    }
 
+    if(playerY<groundY){
+      playerY=groundY;
+    }
+
+    player.style.left=`${playerX}px`;
+    player.style.bottom=`${playerY}px`;
+
+    const maxSpeed=crowMaxSpeed(elapsed);
+    const accel=crowAccel(elapsed);
+
+    crowState.forEach((c,i)=>{
+      const targetX=playerX;
+      const targetY=playerY+54;
+
+      const dx=targetX-c.x;
+      const dy=targetY-c.y;
+      const dist=Math.hypot(dx,dy)||1;
+
+      const desiredVx=dx/dist*maxSpeed;
+      const desiredVy=dy/dist*maxSpeed;
+
+      const dvx=desiredVx-c.vx;
+      const dvy=desiredVy-c.vy;
+      const dv=Math.hypot(dvx,dvy)||1;
+
+      // Limited steering acceleration makes braking / turning intentionally poor.
+      const change=Math.min(accel*dt,dv);
+
+      c.vx+=dvx/dv*change;
+      c.vy+=dvy/dv*change;
+
+      const sp=Math.hypot(c.vx,c.vy)||1;
+
+      if(sp>maxSpeed){
+        c.vx=c.vx/sp*maxSpeed;
+        c.vy=c.vy/sp*maxSpeed;
+      }
+
+      c.x=clamp(
+        c.x+c.vx*dt,
+        20,
+        worldW-20
+      );
+
+      c.y=clamp(
+        c.y+c.vy*dt,
+        groundY+30,
+        stage.clientHeight-35
+      );
+
+      const el=crowEls[i];
+
+      el.style.left=`${c.x}px`;
+      el.style.bottom=`${c.y}px`;
+      el.style.setProperty(
+        '--crow-flip',
+        c.vx>0?-1:1
+      );
+
+      // Crow collision. Obstacles are intentionally ignored.
+      if(
+        Math.hypot(
+          c.x-playerX,
+          c.y-(playerY+42)
+        )<49
+      ){
+        burstFeathers(c.x,c.y);
+        finish(elapsed,true);
+      }
+    });
+
+    const cam=clamp(
+      playerX-stage.clientWidth*.42,
+      0,
+      worldW-stage.clientWidth
+    );
+
+    world.style.transform=`translateX(${-cam}px)`;
+
+    if(elapsed>=5000&&elapsed<5050){
+      showWarning('カラスが同じ速さに！');
+    }
+
+    if(elapsed>=8000&&elapsed<8050){
+      showWarning('カラスの方が速い！');
+    }
+
+    if(elapsed>=20000){
+      finish(20000,false);
       return;
     }
+
+    timeEl.textContent=(elapsed/1000).toFixed(2);
 
     raf=requestAnimationFrame(frame);
   }
@@ -8943,7 +9841,7 @@ async function simulateCpuThenResult(gameIndex){
 
 function cpuUltraDraw(gameIndex){
   // Game-specific draw rate. Regular values are already intentionally strong.
-  const chance=[0.12,0.10,0.14,0.16,0.12,0.13,0.14,0.12,0.15,0.12,0.14,0.13,0.13,0.14,0.12,0.12,0.13,0.12,0.13,0.14,0.13,0.14,0.12,0.13,0.12,0.12,0.13,0.13,0.14,0.14,0.13,0.12,0.13,0.13,0.13,0.13,0.13,0.13,0.13,0.13,0.13,0.13,0.13,0.13][gameIndex] ?? 0.12;
+  const chance=[0.12,0.10,0.14,0.16,0.12,0.13,0.14,0.12,0.15,0.12,0.14,0.13,0.13,0.14,0.12,0.12,0.13,0.12,0.13,0.14,0.13,0.14,0.12,0.13,0.12,0.12,0.13,0.13,0.14,0.14,0.13,0.12,0.13,0.13,0.13,0.13,0.13,0.13,0.13,0.13,0.13,0.13,0.13,0.13,0.13][gameIndex] ?? 0.12;
   return Math.random()<chance;
 }
 
@@ -9041,8 +9939,10 @@ function simulateOneCpu(gameIndex,p){
     state.records.summonerMob[p.id]=ultra?randi(38,50):randi(22,41);
   }else if(gameIndex===42){
     state.records.blackjackMob[p.id]=ultra?randi(19,21):randi(13,20);
+  }else if(gameIndex===43){
+    state.records.mobIssen[p.id]=ultra?randi(255,294):randi(165,258);
   }else{
-    state.records.mobIssen[p.id]=ultra?randi(91,99):randi(58,91);
+    state.records.crowEscape[p.id]=Math.round((ultra?rand(17.5,20):rand(8.5,18.6))*100)/100;
   }
 
   return ultra;
@@ -9115,7 +10015,8 @@ function performancePoints(gameIndex,v){
   if(gameIndex===40)return clamp(Math.round(v/30*100),0,100);
   if(gameIndex===41)return clamp(Math.round(v/40*100),0,100);
   if(gameIndex===42)return clamp(Math.round(v/21*100),0,100);
-  return clamp(Math.round(v),0,100);
+  if(gameIndex===43)return clamp(Math.round(v/300*100),0,100);
+  return clamp(Math.round(v/20*100),0,100);
 }
 
 function rankRecords(gameIndex){
@@ -9175,7 +10076,8 @@ function formatRecord(gameIndex,v){
   if(gameIndex===40)return `${Math.round(v)}体`;
   if(gameIndex===41)return `${Math.round(v)}体`;
   if(gameIndex===42)return `${Math.round(v)}/21`;
-  return `${Math.round(v)}pt`;
+  if(gameIndex===43)return `${Math.round(v)}/300pt`;
+  return `${Number(v).toFixed(2)}秒`;
 }
 
 function applyPoints(gameIndex,ranked){
