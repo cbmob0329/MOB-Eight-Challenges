@@ -9761,3 +9761,417 @@ body,
 .summoner-v107 .summon-hit-pop-v109.show.sweep{
   animation-duration:.54s;
 }
+
+
+/* =========================================================
+   V10.11 TRAMPOLINE — STOP GAUGE WHILE FULLY COMPRESSED
+   ========================================================= */
+.tramp-stage-v111{position:relative}
+.tramp-mob-v111,.tramp-bed-v111{transition:transform .16s ease,bottom .16s ease}
+.tramp-mob-v111.compressed{transform:translateX(-50%) scaleY(.82)!important}
+.tramp-bed-v111.compressed .tramp-net{transform:scaleY(.48)}
+.tramp-gauge-v111{
+  position:absolute;z-index:48;left:7%;right:7%;bottom:14px;
+  border:4px solid var(--ink);border-radius:15px;background:#fff;
+  padding:7px;box-shadow:0 5px 0 rgba(17,19,26,.20)
+}
+.tramp-gauge-label{margin-bottom:5px;text-align:center;font-size:9px;font-weight:1000}
+.tramp-gauge-track{
+  position:relative;height:24px;border:3px solid var(--ink);border-radius:999px;
+  background:linear-gradient(90deg,#ef8c6d 0 18%,#f5d66b 18% 36%,#7edb91 36% 64%,#f5d66b 64% 82%,#ef8c6d 82% 100%);
+  overflow:visible
+}
+.tramp-gauge-center{
+  position:absolute;left:50%;top:-7px;bottom:-7px;width:6px;
+  transform:translateX(-50%);border:2px solid var(--ink);background:#fff
+}
+.tramp-gauge-marker{
+  position:absolute;left:0;top:50%;width:19px;height:34px;
+  transform:translate(-50%,-50%);border:4px solid var(--ink);border-radius:8px;
+  background:#4b8fff;box-shadow:0 3px 0 rgba(17,19,26,.24)
+}
+.tramp-gauge-v111 button{
+  width:100%;min-height:48px;margin-top:7px;border:4px solid var(--ink);
+  border-radius:13px;background:var(--yellow);box-shadow:0 4px 0 var(--ink);
+  font-size:17px;font-weight:1000;touch-action:none
+}
+.tramp-stage-v111.tramp-impact-v111{animation:trampImpactV111 .22s ease}
+@keyframes trampImpactV111{
+  35%{transform:translateY(5px)}
+  70%{transform:translateY(-2px)}
+  100%{transform:translateY(0)}
+}
+
+/* =========================================================
+   V10.11 SHUTTER — CAMERA VIEWFINDER
+   ========================================================= */
+.shutter-camera-body{
+  position:relative;padding:7px;border:5px solid #12151c;border-radius:18px;
+  background:#2a2f38;box-shadow:0 6px 0 #12151c
+}
+.shutter-camera-top{
+  display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;
+  color:#d9f4db;font-family:monospace;font-size:8px;font-weight:900
+}
+.shutter-camera-top b{color:#9bff8f}
+.shutter-v111 .shutter-stage{border:3px solid #090b10;border-radius:5px}
+.shutter-grid{position:absolute;z-index:12;pointer-events:none;opacity:.34}
+.shutter-grid.g1,.shutter-grid.g2{top:0;bottom:0;width:1px;background:#fff}
+.shutter-grid.g1{left:33.333%}.shutter-grid.g2{left:66.666%}
+.shutter-grid.g3,.shutter-grid.g4{left:0;right:0;height:1px;background:#fff}
+.shutter-grid.g3{top:33.333%}.shutter-grid.g4{top:66.666%}
+.shutter-focus-box{
+  position:absolute;z-index:24;left:50%;top:48%;width:92px;height:92px;
+  transform:translate(-50%,0);pointer-events:none
+}
+.shutter-focus-box i{position:absolute;width:22px;height:22px;border-color:#d9ff9c;border-style:solid}
+.shutter-focus-box i:nth-child(1){left:0;top:0;border-width:3px 0 0 3px}
+.shutter-focus-box i:nth-child(2){right:0;top:0;border-width:3px 3px 0 0}
+.shutter-focus-box i:nth-child(3){left:0;bottom:0;border-width:0 0 3px 3px}
+.shutter-focus-box i:nth-child(4){right:0;bottom:0;border-width:0 3px 3px 0}
+.shutter-focus-box.locked i{border-color:#6cff6c}
+.shutter-view-data{
+  position:absolute;z-index:26;bottom:6px;color:#d8ffd2;font-family:monospace;
+  font-size:7px;font-weight:900;line-height:1.2;pointer-events:none
+}
+.shutter-view-data.left{left:7px}
+.shutter-view-data.right{right:7px;text-align:right}
+.shutter-curtain{position:absolute;z-index:70;inset:0;pointer-events:none;overflow:hidden}
+.shutter-curtain i{position:absolute;left:0;right:0;height:50%;background:#111}
+.shutter-curtain .top{top:0;transform:translateY(-100%)}
+.shutter-curtain .bottom{bottom:0;transform:translateY(100%)}
+.shutter-curtain.snap .top{animation:shutterCurtainTop .34s ease}
+.shutter-curtain.snap .bottom{animation:shutterCurtainBottom .34s ease}
+@keyframes shutterCurtainTop{
+  0%{transform:translateY(-100%)}42%{transform:translateY(-18%)}
+  60%{transform:translateY(-18%)}100%{transform:translateY(-100%)}
+}
+@keyframes shutterCurtainBottom{
+  0%{transform:translateY(100%)}42%{transform:translateY(18%)}
+  60%{transform:translateY(18%)}100%{transform:translateY(100%)}
+}
+.shutter-snap-v111{
+  position:absolute;z-index:76;left:50%;top:15%;
+  transform:translate(-50%,-50%) scale(.5);color:#fff;
+  -webkit-text-stroke:3px #111;font-size:28px;font-weight:1000;opacity:0;pointer-events:none
+}
+.shutter-snap-v111.show{animation:shutterClickV111 .45s ease}
+@keyframes shutterClickV111{
+  20%{opacity:1;transform:translate(-50%,-50%) scale(1.15)}
+  100%{opacity:0;transform:translate(-50%,-70%) scale(1)}
+}
+.shutter-photo-v111{
+  position:absolute;z-index:64;right:8px;bottom:8px;width:88px;height:108px;
+  transform:translateY(150%) rotate(7deg);border:7px solid #fff;border-bottom-width:22px;
+  background:#d8eef4;box-shadow:0 5px 0 rgba(17,19,26,.28);overflow:hidden;pointer-events:none
+}
+.shutter-photo-v111.show{animation:shutterPhotoOut .70s ease forwards}
+@keyframes shutterPhotoOut{
+  0%{transform:translateY(150%) rotate(7deg)}
+  60%{transform:translateY(0) rotate(-4deg)}
+  100%{transform:translateY(0) rotate(2deg)}
+}
+.shutter-photo-mob{
+  position:absolute;left:50%;bottom:12px;width:62px;height:70px;
+  background-position:center;background-size:contain;background-repeat:no-repeat
+}
+.shutter-photo-v111 span{
+  position:absolute;left:0;right:0;bottom:-18px;text-align:center;color:#222;
+  font-size:7px;font-weight:1000
+}
+.shutter-exposure{
+  display:flex;justify-content:center;align-items:center;gap:7px;height:20px;
+  color:#d9f4db;font-size:7px
+}
+.shutter-exposure i{width:18px;height:2px;background:#d9f4db}
+.camera-button-v111{letter-spacing:.5px}
+.camera-lens-icon{
+  display:inline-block;width:20px;height:20px;margin-right:6px;vertical-align:middle;
+  border:4px solid #111;border-radius:50%;background:#75bde5
+}
+
+/* =========================================================
+   V10.11 BRAWLER — NO INSTANT POSITION POP
+   ========================================================= */
+.brawler-v110 .brawler-enemy.door-in{animation:brawlerDoorEnemyV111 .34s ease-out}
+@keyframes brawlerDoorEnemyV111{
+  0%{opacity:0;transform:translateX(-50%) scale(.45) translateY(-8px)}
+  70%{opacity:1;transform:translateX(-50%) scale(1.05) translateY(2px)}
+  100%{opacity:1;transform:translateX(-50%) scale(1)}
+}
+
+/* =========================================================
+   V10.11 GAME 46 — DANCING MOB
+   ========================================================= */
+.dance-shell,.guardian-shell,.sprint-shell,.sniper-shell{
+  width:min(100%,650px);height:100%;margin:0 auto;display:flex;flex-direction:column
+}
+.dance-hud,.guardian-hud,.sprint-hud,.sniper-hud{display:grid;gap:5px;margin-bottom:5px}
+.dance-hud{grid-template-columns:1fr 1fr}
+.guardian-hud,.sprint-hud,.sniper-hud{grid-template-columns:repeat(3,1fr)}
+.dance-hud>div,.guardian-hud>div,.sprint-hud>div,.sniper-hud>div{
+  border:3px solid var(--ink);border-radius:10px;background:#fff;padding:4px;text-align:center
+}
+.dance-hud span,.guardian-hud span,.sprint-hud span,.sniper-hud span{
+  display:block;color:var(--muted);font-size:7px;font-weight:1000
+}
+.dance-hud b,.guardian-hud b,.sprint-hud b,.sniper-hud b{font-size:13px}
+.dance-stage{
+  flex:1;min-height:0;position:relative;overflow:hidden;border:4px solid var(--ink);
+  border-radius:22px;background:linear-gradient(#9bdaf0 0 63%,#787fc9 63% 100%);touch-action:none
+}
+.dance-bg{position:absolute;inset:0;pointer-events:none}
+.dance-speaker{
+  position:absolute;bottom:48px;width:62px;height:92px;border:5px solid var(--ink);
+  border-radius:10px;background:#292d42
+}
+.dance-speaker.left{left:8px}.dance-speaker.right{right:8px}
+.dance-speaker:before,.dance-speaker:after{
+  content:"";position:absolute;left:50%;transform:translateX(-50%);
+  border:4px solid #111;border-radius:50%;background:#6be0ff
+}
+.dance-speaker:before{top:8px;width:24px;height:24px}
+.dance-speaker:after{bottom:8px;width:40px;height:40px}
+.dance-floor-line{position:absolute;left:-10%;width:120%;height:4px;background:rgba(255,255,255,.36)}
+.dance-floor-line.l1{bottom:31%}.dance-floor-line.l2{bottom:18%}
+.dance-svg{position:absolute;z-index:20;inset:0;width:100%;height:100%}
+.dance-user-stroke{
+  fill:none;stroke:#fff56c;stroke-width:6;stroke-linecap:round;stroke-linejoin:round;
+  filter:drop-shadow(0 0 3px rgba(47,66,103,.52))
+}
+.dance-art-piece{transform-box:fill-box;transform-origin:center}
+.dance-performance .dance-motion-0{animation:danceArt0 .48s ease-in-out infinite alternate}
+.dance-performance .dance-motion-1{animation:danceArt1 .62s ease-in-out infinite alternate}
+.dance-performance .dance-motion-2{animation:danceArt2 .38s linear infinite}
+.dance-performance .dance-motion-3{animation:danceArt3 .72s ease-in-out infinite alternate}
+.dance-performance .dance-motion-4{animation:danceArt4 .53s ease-in-out infinite alternate}
+.dance-performance .dance-motion-5{animation:danceArt5 .44s ease-in-out infinite alternate}
+@keyframes danceArt0{to{transform:translateY(-15px) rotate(8deg)}}
+@keyframes danceArt1{to{transform:translateX(13px) rotate(-10deg)}}
+@keyframes danceArt2{to{transform:rotate(360deg)}}
+@keyframes danceArt3{to{transform:scale(1.16) rotate(4deg)}}
+@keyframes danceArt4{to{transform:translate(-10px,-9px) rotate(-7deg)}}
+@keyframes danceArt5{to{transform:translate(8px,10px) rotate(12deg)}}
+.dance-mob{
+  position:absolute;z-index:28;left:50%;bottom:48px;width:78px;height:90px;
+  transform:translateX(-50%);background-position:center;background-size:contain;
+  background-repeat:no-repeat;pointer-events:none
+}
+.dance-mob.dancing{animation:danceMobV111 1.12s ease-in-out infinite}
+@keyframes danceMobV111{
+  0%{transform:translateX(-50%) translate(0,0) rotate(0)}
+  18%{transform:translateX(-50%) translate(-54px,-55px) rotate(-18deg)}
+  38%{transform:translateX(-50%) translate(38px,-18px) rotate(14deg)}
+  58%{transform:translateX(-50%) translate(65px,-68px) rotate(22deg)}
+  78%{transform:translateX(-50%) translate(-28px,-24px) rotate(-14deg)}
+  100%{transform:translateX(-50%) translate(0,0) rotate(0)}
+}
+.dance-call,.dance-score-pop{
+  position:absolute;z-index:60;left:50%;transform:translate(-50%,-50%) scale(.45);
+  text-align:center;white-space:nowrap;font-weight:1000;opacity:0;pointer-events:none
+}
+.dance-call{top:32%;color:#fff;-webkit-text-stroke:3px var(--ink);font-size:28px}
+.dance-call.show{animation:danceCallV111 .72s ease}
+.dance-score-pop{top:38%;color:#ffe75d;-webkit-text-stroke:4px var(--ink);font-size:38px}
+.dance-score-pop.show{animation:danceScoreV111 .78s ease forwards}
+@keyframes danceCallV111{
+  20%{opacity:1;transform:translate(-50%,-50%) scale(1.15)}
+  80%{opacity:1;transform:translate(-50%,-50%) scale(1)}
+  100%{opacity:0;transform:translate(-50%,-70%) scale(1)}
+}
+@keyframes danceScoreV111{
+  25%{opacity:1;transform:translate(-50%,-50%) scale(1.18)}
+  100%{opacity:1;transform:translate(-50%,-50%) scale(1)}
+}
+.dance-message{
+  position:absolute;z-index:48;left:50%;bottom:6px;transform:translateX(-50%);
+  border:3px solid var(--ink);border-radius:999px;background:#fff;padding:5px 9px;
+  font-size:8px;font-weight:1000
+}
+
+/* =========================================================
+   V10.11 GAME 47 — GUARDIAN
+   ========================================================= */
+.guardian-stage{
+  flex:1;min-height:0;position:relative;overflow:hidden;border:4px solid var(--ink);
+  border-radius:22px;background:linear-gradient(#a7dded 0 68%,#81a36c 68% 100%);touch-action:none
+}
+.guardian-bg{position:absolute;inset:0;pointer-events:none}
+.guardian-ground{
+  position:absolute;left:0;right:0;bottom:0;height:44px;border-top:4px solid var(--ink);background:#719659
+}
+.guardian-mountain{
+  position:absolute;bottom:42px;width:170px;height:105px;background:#7d9b80;
+  clip-path:polygon(50% 0,100% 100%,0 100%);opacity:.55
+}
+.guardian-mountain.m1{left:9%}.guardian-mountain.m2{right:5%;height:82px}
+.guardian-mob{
+  position:absolute;z-index:12;left:6px;bottom:42px;width:58px;height:68px;
+  background-position:center;background-size:contain;background-repeat:no-repeat
+}
+.guardian-mob.blown{animation:guardianMobBlown .75s ease-out forwards}
+@keyframes guardianMobBlown{
+  to{transform:translate(-160px,-180px) rotate(-720deg);opacity:.15}
+}
+.guardian-svg{position:absolute;z-index:22;inset:0;width:100%;height:100%}
+.guardian-user-stroke{
+  fill:none;stroke:#f5f2dd;stroke-width:7;stroke-linecap:round;stroke-linejoin:round;
+  filter:drop-shadow(0 0 2px #42566c) drop-shadow(0 2px 0 rgba(45,48,59,.40))
+}
+.guardian-structure{transform-box:fill-box;transform-origin:center bottom}
+.guardian-structure.hit{animation:guardianStructureHit .25s ease}
+.guardian-structure.destroyed{animation:guardianStructureBreak .55s ease-out forwards}
+@keyframes guardianStructureHit{
+  35%{transform:translateX(-7px) rotate(-3deg)}
+  65%{transform:translateX(6px) rotate(2deg)}
+}
+@keyframes guardianStructureBreak{
+  to{transform:translateY(70px) rotate(28deg) scale(.55);opacity:0}
+}
+.guardian-energy-v111{
+  position:absolute;z-index:45;left:calc(100% + 125px);top:48%;width:150px;height:150px;
+  transform:translate(-50%,-50%) scale(.55);border:8px solid #1f4da0;border-radius:50%;
+  background:radial-gradient(circle at 42% 38%,#fff 0 9%,#c9fbff 10% 21%,#6ddfff 22% 46%,#4b7cff 47% 67%,#6048d4 68% 82%,transparent 83%);
+  box-shadow:0 0 20px #a8f8ff,0 0 48px rgba(70,131,255,.90);
+  opacity:0;pointer-events:none
+}
+.guardian-energy-v111.active{opacity:1;animation:guardianEnergyPulse .36s ease-in-out infinite alternate}
+.guardian-energy-v111.blocked{animation:guardianEnergyBlocked .45s ease-out forwards}
+.guardian-energy-v111.mob-hit{animation:guardianEnergyHitMob .46s ease-out forwards}
+@keyframes guardianEnergyPulse{to{transform:translate(-50%,-50%) scale(.64) rotate(14deg)}}
+@keyframes guardianEnergyBlocked{to{transform:translate(-50%,-50%) scale(.12);opacity:0}}
+@keyframes guardianEnergyHitMob{to{transform:translate(-50%,-50%) scale(1.18);opacity:0}}
+.guardian-debris{position:absolute;z-index:50;width:0;height:0;pointer-events:none}
+.guardian-debris i{
+  position:absolute;width:9px;height:13px;border:2px solid #3a4252;background:#eee9d1;opacity:0
+}
+.guardian-debris.show i{animation:guardianDebrisFly .55s ease-out var(--gd) forwards}
+@keyframes guardianDebrisFly{
+  0%{opacity:1;transform:translate(0,0) rotate(0)}
+  100%{opacity:0;transform:translate(var(--gx),var(--gy)) rotate(var(--gr))}
+}
+.guardian-call{
+  position:absolute;z-index:65;left:50%;top:26%;transform:translate(-50%,-50%) scale(.45);
+  color:#fff36f;-webkit-text-stroke:4px var(--ink);font-size:32px;font-weight:1000;opacity:0;pointer-events:none
+}
+.guardian-call.show{animation:guardianCall .82s ease}
+@keyframes guardianCall{
+  25%{opacity:1;transform:translate(-50%,-50%) scale(1.12)}
+  76%{opacity:1;transform:translate(-50%,-50%) scale(1)}
+  100%{opacity:0;transform:translate(-50%,-70%) scale(1)}
+}
+.guardian-message{
+  position:absolute;z-index:62;left:50%;bottom:6px;transform:translateX(-50%);
+  min-width:190px;border:3px solid var(--ink);border-radius:999px;background:#fff;
+  padding:5px 9px;text-align:center;font-size:8px;font-weight:1000
+}
+
+/* =========================================================
+   V10.11 GAME 48 — 50m RUN
+   ========================================================= */
+.sprint-stage{
+  flex:1;min-height:0;position:relative;overflow:hidden;border:4px solid var(--ink);
+  border-radius:22px;background:#9ddbec
+}
+.sprint-sky{
+  position:absolute;inset:0;
+  background:radial-gradient(circle at 15% 18%,rgba(255,255,255,.8) 0 28px,transparent 29px),
+  linear-gradient(#9ddbec 0 62%,#90b96b 62% 100%)
+}
+.sprint-track{
+  position:absolute;left:3%;right:3%;bottom:45px;height:118px;
+  transform:perspective(500px) rotateX(12deg);transform-origin:center bottom;
+  border:4px solid #5c392b;background:#c7795d
+}
+.sprint-lane{position:absolute;left:0;right:0;height:3px;background:#fff}
+.sprint-lane.l1{top:33%}.sprint-lane.l2{top:66%}
+.sprint-marker{position:absolute;top:0;bottom:0;width:3px;background:rgba(255,255,255,.82)}
+.sprint-marker b{
+  position:absolute;top:-20px;left:50%;transform:translateX(-50%);color:#444;font-size:7px
+}
+.sprint-mob{
+  position:absolute;z-index:24;left:6%;bottom:86px;width:56px;height:64px;
+  transform:translateX(-50%);background-position:center;background-size:contain;background-repeat:no-repeat;
+  transition:left .09s linear
+}
+.sprint-mob.step-left{animation:sprintStepLeft .13s ease}
+.sprint-mob.step-right{animation:sprintStepRight .13s ease}
+.sprint-mob.goal{animation:sprintGoal .55s ease}
+@keyframes sprintStepLeft{50%{transform:translateX(-50%) translateY(-8px) rotate(-8deg)}}
+@keyframes sprintStepRight{50%{transform:translateX(-50%) translateY(-8px) rotate(8deg)}}
+@keyframes sprintGoal{45%{transform:translateX(-50%) translateY(-26px) rotate(8deg) scale(1.12)}}
+.sprint-message{
+  position:absolute;z-index:40;left:50%;top:13px;transform:translateX(-50%);
+  border:3px solid var(--ink);border-radius:999px;background:#fff;padding:5px 10px;
+  font-size:9px;font-weight:1000
+}
+.sprint-controls{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:6px}
+.sprint-controls button{
+  min-height:70px;border:4px solid var(--ink);border-radius:15px;box-shadow:0 5px 0 var(--ink);
+  font-size:17px;font-weight:1000;touch-action:none
+}
+.sprint-controls .left-foot{background:#81d8ff}
+.sprint-controls .right-foot{background:#ffbd79}
+
+/* =========================================================
+   V10.11 GAME 49 — SNIPER
+   ========================================================= */
+.sniper-stage{
+  flex:1;min-height:0;position:relative;overflow:hidden;border:4px solid var(--ink);
+  border-radius:22px;background:linear-gradient(#c1dfec 0 52%,#9db29f 52% 100%);touch-action:none
+}
+.sniper-distance-bg{position:absolute;inset:0;pointer-events:none}
+.sniper-horizon{position:absolute;left:0;right:0;top:52%;height:4px;background:#667b72}
+.sniper-distance{
+  position:absolute;bottom:12px;color:rgba(35,45,49,.56);font-size:7px;font-weight:1000
+}
+.sniper-distance.d1{left:30%}.sniper-distance.d2{left:55%}.sniper-distance.d3{left:79%}
+.sniper-shooter{
+  position:absolute;z-index:22;width:33px;height:39px;transform:translate(-50%,-50%);
+  background-position:center;background-size:contain;background-repeat:no-repeat
+}
+.sniper-rifle{
+  position:absolute;left:25px;top:17px;width:52px;height:5px;border:2px solid #161a1c;
+  border-radius:999px;background:#545d62
+}
+.sniper-target{
+  position:absolute;z-index:26;width:31px;height:31px;transform:translate(-50%,-50%);
+  border:4px solid #8e1d2a;border-radius:50%;background:#fff;
+  box-shadow:inset 0 0 0 5px #e14e58,inset 0 0 0 10px #fff
+}
+.sniper-target i{
+  position:absolute;left:50%;top:100%;width:1px;height:46px;background:#3e5254
+}
+.sniper-target b{
+  position:absolute;left:50%;top:-18px;transform:translateX(-50%);color:#6e2630;font-size:7px
+}
+.sniper-target.hit{animation:sniperTargetHit .30s ease}
+@keyframes sniperTargetHit{40%{transform:translate(-50%,-50%) scale(1.35) rotate(16deg)}}
+.sniper-crosshair{
+  position:absolute;z-index:50;width:34px;height:34px;transform:translate(-50%,-50%);
+  border:2px solid rgba(20,30,35,.70);border-radius:50%;opacity:0;pointer-events:none
+}
+.sniper-crosshair i:first-child{position:absolute;left:50%;top:-9px;bottom:-9px;width:1px;background:#20292d}
+.sniper-crosshair i:last-child{position:absolute;top:50%;left:-9px;right:-9px;height:1px;background:#20292d}
+.sniper-crosshair.show{animation:sniperCrossShow .52s ease}
+@keyframes sniperCrossShow{15%{opacity:1}100%{opacity:.25}}
+.sniper-bullet-v111{
+  position:absolute;z-index:60;width:9px;height:4px;border-radius:999px;background:#ffeb84;
+  box-shadow:0 0 7px #fff5a3;transform:translate(-50%,-50%);
+  animation:sniperBulletFly .43s linear forwards;pointer-events:none
+}
+@keyframes sniperBulletFly{
+  to{transform:translate(var(--sx),var(--sy)) translate(-50%,-50%)}
+}
+.sniper-message{
+  position:absolute;z-index:48;left:50%;bottom:6px;transform:translateX(-50%);
+  min-width:180px;border:3px solid var(--ink);border-radius:999px;background:#fff;
+  padding:5px 9px;text-align:center;font-size:8px;font-weight:1000
+}
+
+@media(max-height:690px){
+  .tramp-gauge-v111{bottom:6px;padding:5px}
+  .tramp-gauge-v111 button{min-height:40px}
+  .dance-mob{width:66px;height:78px}
+  .sprint-controls button{min-height:58px}
+}
