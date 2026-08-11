@@ -11787,3 +11787,759 @@ body,
     height:52px;
   }
 }
+
+/* V10.15 DANCING MOB BACKGROUND */
+.dance-stage{
+  background-image:url('back/001.png')!important;
+  background-size:cover!important;
+  background-position:center!important;
+  background-repeat:no-repeat!important;
+}
+.dance-bg{
+  background:rgba(255,255,255,.06);
+}
+
+/* =========================================================
+   V10.15 MOB RACE — READABLE CLUES
+   ========================================================= */
+.race-clue-hud{
+  grid-template-columns:auto auto 1fr!important;
+  gap:10px!important;
+  padding:7px 9px!important;
+}
+.race-clue-hud span,
+.race-clue-hud em{
+  font-size:9px!important;
+}
+.race-clue-hud b{
+  font-size:23px!important;
+}
+.race-speech{
+  left:22%!important;
+  right:7%!important;
+  top:4px!important;
+  max-width:none!important;
+  min-height:34px;
+  display:flex;
+  align-items:center;
+  border-width:3px!important;
+  border-radius:13px!important;
+  padding:6px 8px!important;
+  font-size:10px!important;
+  line-height:1.16!important;
+  opacity:1!important;
+  white-space:normal;
+}
+.race-speech:after{
+  content:""!important;
+  position:absolute!important;
+  left:-11px!important;
+  bottom:7px!important;
+  width:0!important;
+  height:0!important;
+  background:transparent!important;
+  transform:none!important;
+  border-top:7px solid transparent!important;
+  border-bottom:7px solid transparent!important;
+  border-right:11px solid var(--ink)!important;
+  border-left:0!important;
+}
+.race-speech:before{
+  content:"";
+  position:absolute;
+  z-index:2;
+  left:-6px;
+  bottom:9px;
+  width:0;
+  height:0;
+  border-top:5px solid transparent;
+  border-bottom:5px solid transparent;
+  border-right:8px solid #fff;
+}
+.race-lane-no{
+  top:auto!important;
+  bottom:4px!important;
+}
+.race-runner{
+  width:55px!important;
+  height:62px!important;
+}
+
+/* =========================================================
+   V10.15 BANCHOU DUEL — STRATEGY
+   ========================================================= */
+.duel-controls-v115{
+  grid-template-columns:.9fr 1.2fr 1.05fr .9fr!important;
+}
+.duel-controls-v115 .special{
+  background:#d989ff!important;
+  font-size:13px!important;
+}
+.duel-controls-v115 .special.used{
+  background:#b8b8bd!important;
+  opacity:.55;
+}
+.duel-clash-v115{
+  position:absolute;
+  z-index:88;
+  left:50%;
+  top:47%;
+  width:190px;
+  height:190px;
+  transform:translate(-50%,-50%) scale(.25);
+  opacity:0;
+  pointer-events:none;
+}
+.duel-clash-v115 i{
+  position:absolute;
+  inset:12px;
+  border:7px solid #ffe861;
+  border-radius:50%;
+}
+.duel-clash-v115 i:nth-child(2){
+  inset:38px;
+  border-color:#fff;
+}
+.duel-clash-v115 b{
+  position:absolute;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
+  color:#fff35d;
+  -webkit-text-stroke:4px var(--ink);
+  font-size:31px;
+  font-weight:1000;
+}
+.duel-clash-v115.show{
+  animation:duelClashV115 .42s ease;
+}
+@keyframes duelClashV115{
+  20%{opacity:1;transform:translate(-50%,-50%) scale(1.15)}
+  100%{opacity:0;transform:translate(-50%,-50%) scale(1.7)}
+}
+.duel-player.clash-hit-v115,
+.duel-enemy.clash-hit-v115{
+  animation:duelClashBodyV115 .28s ease;
+}
+@keyframes duelClashBodyV115{
+  45%{transform:translateX(-50%) rotate(10deg) scale(.9)}
+}
+.duel-enemy.backstep-v115{
+  animation:duelBackstepV115 .26s ease;
+}
+@keyframes duelBackstepV115{
+  35%{transform:translateX(-50%) scale(.92) skewX(-9deg)}
+  100%{transform:translateX(-50%) scale(1)}
+}
+.duel-enemy.special-damaged-v115{
+  animation:duelSpecialDamagedV115 .24s ease;
+}
+@keyframes duelSpecialDamagedV115{
+  45%{transform:translateX(-50%) scale(.88) rotate(-9deg)}
+}
+.duel-player.special-punch-v115{
+  animation:duelPlayerSpecialV115 .30s ease;
+}
+@keyframes duelPlayerSpecialV115{
+  40%{transform:translateX(-50%) scale(1.13) rotate(-8deg)}
+}
+
+/* V10.15 PLUSH ARM VARIABLES */
+.plush-head .arm.left{
+  transform:rotate(var(--plush-left-angle,24deg))!important;
+}
+.plush-head .arm.right{
+  transform:rotate(var(--plush-right-angle,-24deg))!important;
+}
+
+
+/* =========================================================
+   V10.15 GAME 54 — TOY ON/OFF
+   ========================================================= */
+.toy-switch-shell,
+.dodge-shell,
+.amida-shell,
+.katana-shell,
+.homerun-shell{
+  width:min(100%,650px);
+  height:100%;
+  margin:0 auto;
+  display:flex;
+  flex-direction:column;
+}
+.toy-switch-hud,
+.dodge-hud,
+.katana-hud,
+.homerun-hud{
+  display:grid;
+  gap:5px;
+  margin-bottom:5px;
+}
+.toy-switch-hud{grid-template-columns:1fr 1fr}
+.dodge-hud{grid-template-columns:repeat(3,1fr)}
+.katana-hud,
+.homerun-hud{grid-template-columns:1fr 1fr}
+.toy-switch-hud>div,
+.dodge-hud>div,
+.katana-hud>div,
+.homerun-hud>div{
+  border:3px solid var(--ink);
+  border-radius:10px;
+  background:#fff;
+  padding:4px;
+  text-align:center;
+}
+.toy-switch-hud span,
+.dodge-hud span,
+.katana-hud span,
+.homerun-hud span{
+  display:block;
+  color:var(--muted);
+  font-size:7px;
+  font-weight:1000;
+}
+.toy-switch-hud b,
+.dodge-hud b,
+.katana-hud b,
+.homerun-hud b{
+  font-size:13px;
+}
+.toy-switch-stage{
+  flex:1;
+  min-height:0;
+  position:relative;
+  overflow:hidden;
+  border:4px solid var(--ink);
+  border-radius:21px;
+  background:#c7e5ef;
+}
+.toy-switch-sign{
+  position:absolute;
+  z-index:30;
+  left:50%;
+  top:5px;
+  transform:translateX(-50%);
+  border:3px solid var(--ink);
+  border-radius:999px;
+  background:#fff;
+  padding:4px 8px;
+  font-size:8px;
+  font-weight:1000;
+}
+.toy-switch-board{
+  position:absolute;
+  inset:30px 4px 4px;
+}
+.toy-switch-item{
+  position:absolute;
+  z-index:12;
+  width:17%;
+  height:13%;
+  transform:translate(-50%,-50%);
+  border:0;
+  background:transparent;
+  padding:0;
+  touch-action:none;
+}
+.toy-switch-item img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  pointer-events:none;
+}
+.toy-switch-item.off{
+  filter:drop-shadow(0 0 5px rgba(255,79,79,.65));
+}
+.toy-switch-item.turned-on{
+  animation:toyTurnOnV115 .36s ease;
+}
+@keyframes toyTurnOnV115{
+  35%{transform:translate(-50%,-50%) scale(1.35) rotate(8deg)}
+  100%{transform:translate(-50%,-50%) scale(1)}
+}
+.toy-switch-board.all-on{
+  animation:toyAllOnV115 .45s ease;
+}
+@keyframes toyAllOnV115{
+  45%{transform:scale(1.03)}
+}
+
+/* =========================================================
+   V10.15 GAME 55 — DODGEBALL
+   ========================================================= */
+.dodge-stage{
+  flex:1;
+  min-height:0;
+  position:relative;
+  overflow:hidden;
+  border:4px solid var(--ink);
+  border-radius:21px;
+  background:#c7e2ed;
+}
+.dodge-court{
+  position:absolute;
+  inset:44% 0 0;
+  border-top:4px solid var(--ink);
+  background:#db9e69;
+}
+.dodge-court>i:first-child{
+  position:absolute;
+  left:50%;
+  top:0;
+  bottom:0;
+  width:4px;
+  background:#fff;
+}
+.dodge-court>i:last-child{
+  position:absolute;
+  left:0;right:0;
+  top:50%;
+  height:3px;
+  background:rgba(255,255,255,.65);
+}
+.dodge-player,
+.dodge-enemy{
+  position:absolute;
+  z-index:24;
+  bottom:13%;
+  width:72px;
+  height:84px;
+}
+.dodge-player{left:9%}
+.dodge-enemy{right:9%}
+.dodge-player img,
+.dodge-enemy img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+}
+.dodge-enemy img{
+  filter:brightness(0);
+}
+.dodge-enemy>b{
+  position:absolute;
+  left:50%;
+  bottom:100%;
+  transform:translateX(-50%);
+  width:80px;
+  text-align:center;
+  font-size:8px;
+}
+.dodge-enemy.defeated{
+  animation:dodgeEnemyFlyV115 .70s ease-out forwards;
+}
+@keyframes dodgeEnemyFlyV115{
+  to{transform:translate(210px,-130px) rotate(900deg);opacity:0}
+}
+.dodge-enemy.catching{
+  animation:dodgeCatchV115 .38s ease;
+}
+@keyframes dodgeCatchV115{
+  45%{transform:translateX(-22px) scale(1.14)}
+}
+.dodge-ball{
+  position:absolute;
+  z-index:34;
+  left:18%;
+  top:66%;
+  width:32px;
+  height:32px;
+}
+.dodge-ball img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+}
+.dodge-ball.throw-hit{
+  animation:dodgeBallHitV115 .55s ease-in forwards;
+}
+.dodge-ball.throw-catch{
+  animation:dodgeBallCatchV115 .55s ease-out forwards;
+}
+@keyframes dodgeBallHitV115{
+  to{left:82%;top:54%;transform:scale(1.35) rotate(620deg)}
+}
+@keyframes dodgeBallCatchV115{
+  to{left:78%;top:62%;transform:scale(.75) rotate(420deg)}
+}
+.dodge-gauge{
+  position:absolute;
+  z-index:48;
+  left:50%;
+  top:16%;
+  transform:translateX(-50%);
+  border:0;
+  background:transparent;
+  touch-action:none;
+}
+.dodge-gauge-ring{
+  --dodge-power:0%;
+  width:118px;
+  height:118px;
+  display:grid;
+  place-items:center;
+  border:5px solid var(--ink);
+  border-radius:50%;
+  background:
+    radial-gradient(circle,#fff 0 55%,transparent 56%),
+    conic-gradient(#53c97c 0 var(--dodge-power),#d8dde3 var(--dodge-power) 100%);
+  box-shadow:0 5px 0 rgba(17,19,26,.25);
+}
+.dodge-gauge-ring span{
+  font-size:24px;
+  font-weight:1000;
+}
+.dodge-gauge>b{
+  display:block;
+  margin-top:5px;
+  color:var(--ink);
+  font-size:10px;
+}
+.dodge-message{
+  position:absolute;
+  z-index:54;
+  left:50%;
+  bottom:7px;
+  transform:translateX(-50%);
+  min-width:185px;
+  border:3px solid var(--ink);
+  border-radius:999px;
+  background:#fff;
+  padding:5px 9px;
+  text-align:center;
+  font-size:9px;
+  font-weight:1000;
+}
+
+/* =========================================================
+   V10.15 GAME 56 — AMIDAKUJI
+   ========================================================= */
+.amida-viewport{
+  flex:1;
+  min-height:0;
+  position:relative;
+  overflow:hidden;
+  border:4px solid var(--ink);
+  border-radius:21px;
+  background:#f4ead6;
+}
+.amida-world{
+  position:absolute;
+  left:0;
+  top:0;
+  width:100%;
+  will-change:transform;
+}
+.amida-svg{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+}
+.amida-vertical,
+.amida-horizontal{
+  stroke:#26272b;
+  stroke-width:8;
+  stroke-linecap:round;
+}
+.amida-goals{
+  position:absolute;
+  left:0;
+  right:0;
+  top:1044px;
+  height:62px;
+}
+.amida-goals b{
+  position:absolute;
+  transform:translateX(-50%);
+  width:48px;
+  height:48px;
+  display:grid;
+  place-items:center;
+  border:4px solid var(--ink);
+  border-radius:12px;
+  background:#ffe06a;
+  font-size:16px;
+}
+.amida-mob{
+  position:absolute;
+  z-index:25;
+  width:44px;
+  height:50px;
+  transform:translate(-50%,-50%);
+  background-position:center;
+  background-size:contain;
+  background-repeat:no-repeat;
+}
+.amida-hint{
+  position:absolute;
+  z-index:56;
+  left:50%;
+  bottom:7px;
+  transform:translateX(-50%);
+  min-width:210px;
+  border:3px solid var(--ink);
+  border-radius:999px;
+  background:#fff;
+  padding:5px 9px;
+  text-align:center;
+  font-size:9px;
+  font-weight:1000;
+}
+.amida-entrances{
+  position:absolute;
+  z-index:64;
+  left:4%;
+  right:4%;
+  top:7px;
+  display:grid;
+  grid-template-columns:repeat(6,1fr);
+  gap:3px;
+}
+.amida-entrances[hidden]{display:none!important}
+.amida-entrances button{
+  min-height:46px;
+  border:3px solid var(--ink);
+  border-radius:10px;
+  background:#fff;
+  font-size:16px;
+  font-weight:1000;
+  box-shadow:0 3px 0 var(--ink);
+}
+
+/* =========================================================
+   V10.15 GAME 57 — KATANA SMITH
+   ========================================================= */
+.katana-stage{
+  flex:1;
+  min-height:0;
+  position:relative;
+  overflow:hidden;
+  border:4px solid var(--ink);
+  border-radius:21px;
+  background:#41434a;
+  touch-action:none;
+}
+.katana-forge-bg{
+  position:absolute;
+  inset:0;
+  background:#555965;
+}
+.forge-anvil{
+  position:absolute;
+  left:50%;
+  bottom:12px;
+  width:150px;
+  height:45px;
+  transform:translateX(-50%);
+  border:4px solid #1b1c20;
+  border-radius:9px 9px 24px 24px;
+  background:#878b91;
+}
+.forge-fire{
+  position:absolute;
+  bottom:18px;
+  width:64px;
+  height:85px;
+  border:5px solid #261d18;
+  border-radius:50% 50% 20% 20%;
+  background:#f07847;
+}
+.forge-fire.f1{left:14px}
+.forge-fire.f2{right:14px}
+.katana-svg{
+  position:absolute;
+  z-index:20;
+  inset:0;
+  width:100%;
+  height:100%;
+}
+.katana-user-stroke{
+  fill:none;
+  stroke:#f0f1e8;
+  stroke-width:7;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+  filter:drop-shadow(0 2px 0 rgba(0,0,0,.45));
+}
+.katana-stage.forged .katana-user-stroke{
+  animation:katanaForgedV115 .66s ease;
+  filter:
+    drop-shadow(0 0 5px #fff)
+    drop-shadow(0 0 10px #77c8ff);
+}
+@keyframes katanaForgedV115{
+  40%{stroke-width:10}
+}
+.katana-call,
+.katana-score{
+  position:absolute;
+  z-index:55;
+  left:50%;
+  transform:translate(-50%,-50%);
+  color:#fff;
+  -webkit-text-stroke:3px var(--ink);
+  font-weight:1000;
+  pointer-events:none;
+}
+.katana-call{
+  top:10%;
+  font-size:19px;
+}
+.katana-score{
+  top:40%;
+  color:#ffe65e;
+  font-size:38px;
+  opacity:0;
+}
+.katana-score.show{
+  animation:katanaScoreV115 .78s ease forwards;
+}
+@keyframes katanaScoreV115{
+  25%{opacity:1;transform:translate(-50%,-50%) scale(1.18)}
+  100%{opacity:1;transform:translate(-50%,-50%) scale(1)}
+}
+
+/* =========================================================
+   V10.15 GAME 58 — HOME RUN
+   ========================================================= */
+.homerun-stage{
+  flex:1;
+  min-height:0;
+  position:relative;
+  overflow:hidden;
+  border:4px solid var(--ink);
+  border-radius:21px;
+  background:#9fdcef;
+}
+.homerun-world{
+  position:absolute;
+  left:0;
+  top:0;
+  width:2700px;
+  height:100%;
+  will-change:transform;
+}
+.homerun-field{
+  position:absolute;
+  left:0;right:0;
+  bottom:0;
+  height:42%;
+  border-top:4px solid #31553c;
+  background:#79a85f;
+}
+.homerun-tree{
+  position:absolute;
+  bottom:40%;
+  width:32px;
+  height:70px;
+  border:3px solid #3d4b39;
+  border-radius:50% 50% 20% 20%;
+  background:#73925b;
+}
+.homerun-meter{
+  position:absolute;
+  bottom:43%;
+  border:2px solid var(--ink);
+  border-radius:999px;
+  background:#fff;
+  padding:2px 5px;
+  font-size:7px;
+}
+.homerun-batter{
+  position:absolute;
+  z-index:24;
+  left:13%;
+  bottom:16%;
+  width:72px;
+  height:84px;
+  background-position:center;
+  background-size:contain;
+  background-repeat:no-repeat;
+}
+.homerun-bat{
+  position:absolute;
+  right:-32px;
+  top:29px;
+  width:54px;
+  height:9px;
+  transform-origin:left center;
+  border:3px solid #3c291a;
+  border-radius:999px;
+  background:#d6a568;
+}
+.homerun-batter.swinging .homerun-bat,
+.homerun-batter.hit-swing .homerun-bat{
+  animation:homeRunSwingV115 .34s ease;
+}
+@keyframes homeRunSwingV115{
+  0%{transform:rotate(-72deg)}
+  55%{transform:rotate(28deg)}
+  100%{transform:rotate(74deg)}
+}
+.homerun-ball{
+  position:absolute;
+  z-index:35;
+  left:94%;
+  top:61%;
+  width:18px;
+  height:18px;
+  border:3px solid #be3e3e;
+  border-radius:50%;
+  background:#fff;
+  box-shadow:0 2px 0 rgba(17,19,26,.25);
+}
+.homerun-ball.home-run{
+  box-shadow:0 0 9px #fff,0 0 16px #ffdd63;
+}
+.homerun-ball.missed{
+  animation:homeRunMissV115 .38s ease forwards;
+}
+@keyframes homeRunMissV115{
+  to{left:4%;opacity:.3}
+}
+.homerun-impact{
+  position:absolute;
+  z-index:58;
+  left:24%;
+  top:54%;
+  transform:translate(-50%,-50%) scale(.4);
+  color:#ffe65e;
+  -webkit-text-stroke:4px var(--ink);
+  font-size:35px;
+  font-weight:1000;
+  opacity:0;
+}
+.homerun-impact.show{
+  animation:homeRunImpactV115 .55s ease;
+}
+@keyframes homeRunImpactV115{
+  22%{opacity:1;transform:translate(-50%,-50%) scale(1.18)}
+  100%{opacity:0;transform:translate(-50%,-75%) scale(1)}
+}
+.homerun-message{
+  position:absolute;
+  z-index:50;
+  left:50%;
+  top:7px;
+  transform:translateX(-50%);
+  min-width:180px;
+  border:3px solid var(--ink);
+  border-radius:999px;
+  background:#fff;
+  padding:5px 9px;
+  text-align:center;
+  font-size:9px;
+  font-weight:1000;
+}
+.homerun-swing{
+  min-height:64px;
+  margin-top:6px;
+  border:4px solid var(--ink);
+  border-radius:15px;
+  background:#ffb55f;
+  box-shadow:0 5px 0 var(--ink);
+  font-size:22px;
+  font-weight:1000;
+  touch-action:none;
+}
