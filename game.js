@@ -72,7 +72,9 @@ const GAMES=[
   {no:32,key:"heroMaybe",title:"モブくんは勇者かも",sub:"10秒で勇者を育てる"},
   {no:33,key:"popularGame",title:"あの人気者のゲーム",sub:"モブくんでモグラ踏み"},
   {no:34,key:"planetEnergy",title:"この星を..！",sub:"3回チャージして高層ビルを貫く"},
-  {no:35,key:"headSpinner",title:"モブくんはヘッドスピナー",sub:"円をなぞって100周スピン"}
+  {no:35,key:"painter",title:"モブくんは画家志望",sub:"猫の顔型を1回で綺麗になぞる"},
+  {no:36,key:"bikeJump",title:"バイクでジャンピング",sub:"ジャンプ台の中央を狙って最大2000m"},
+  {no:37,key:"trampoline",title:"ダイナミックトラポリン",sub:"5回の勢いを繋いで最大2000m"}
 ];
 
 const MODES={
@@ -107,7 +109,7 @@ function freshState(){
     roundIndex:0,
     records:{
       reaction:{},memory:{},puzzle:{},launch:{},stack:{},breakdance:{},
-      crisis:{},factory:{},catcher:{},tidy:{},ski:{},slot:{},rope:{},pk:{},rhythm:{},cut:{},climb:{},errand:{},dontHitMob:{},mobStop:{},overlap:{},shutter:{},cup:{},darts:{},parachute:{},mobCount:{},brake:{},feint:{},bomb:{},overlapMaster:{},jumpingMob:{},heroMaybe:{},popularGame:{},planetEnergy:{},headSpinner:{}
+      crisis:{},factory:{},catcher:{},tidy:{},ski:{},slot:{},rope:{},pk:{},rhythm:{},cut:{},climb:{},errand:{},dontHitMob:{},mobStop:{},overlap:{},shutter:{},cup:{},darts:{},parachute:{},mobCount:{},brake:{},feint:{},bomb:{},overlapMaster:{},jumpingMob:{},heroMaybe:{},popularGame:{},planetEnergy:{},painter:{},bikeJump:{},trampoline:{}
     },
     total:{},
     roundPoints:[],
@@ -189,7 +191,7 @@ function renderHome(){
   state=freshState();
   screen.innerHTML=`
     <section class="hero">
-      <div><span class="kicker">SMARTPHONE PARTY GAME</span><h1>35 MINI<br>GAMES</h1><p>35種のミニゲーム。各モードでNORMALかCUSTOMを選んで遊べます。</p></div>
+      <div><span class="kicker">SMARTPHONE PARTY GAME</span><h1>37 MINI<br>GAMES</h1><p>37種のミニゲーム。各モードでNORMALかCUSTOMを選んで遊べます。</p></div>
       <div class="hero-mark">MOB</div>
     </section>
     <section class="panel">
@@ -312,7 +314,7 @@ function renderPlayStyleSelect(){
       <button id="normalStyle" class="style-select-card normal" type="button">
         <span>NORMAL</span>
         <b>順番に全種目</b>
-        <small>GAME 1 → 35 を順番にプレイ</small>
+        <small>GAME 1 → 37 を順番にプレイ</small>
       </button>
       <button id="customStyle" class="style-select-card custom" type="button">
         <span>CUSTOM</span>
@@ -322,7 +324,7 @@ function renderPlayStyleSelect(){
     </div>
 
     <section class="panel flat">
-      <h3>35 MINI GAMES</h3>
+      <h3>37 MINI GAMES</h3>
       <div class="compact-game-grid">
         ${GAMES.map(g=>`<div><b>${g.no}</b><span>${g.title}</span></div>`).join("")}
       </div>
@@ -517,7 +519,7 @@ function scoreRuleForGame(index){
     "頂点誤差0秒=100点 / 0.150秒以上=0点",
     "限界ギリギリ=100点 / あふれたら0点",
     "中心距離0%=100点 / 外周100%=0点",
-    "中央着地=100点 / 25m以上または激突=0点",
+    "！から3.000秒後が100点 / 誤差1.000秒以上=0点",
     "正解=100点 / 誤差1人=75 / 2人=50 / 3人=25",
     "停止差0m=100点 / 10m以上または衝突=0点",
     "0.150秒以下=100点 / 0.300秒=50点 / フェイント押し=0点",
@@ -527,7 +529,9 @@ function scoreRuleForGame(index){
     "勇者ポイント0〜100がそのまま得点",
     "20体以上=100点 / 0体=0点",
     "100km到達=100点 / 0km=0点",
-    "100周=100点 / 0周=0点"
+    "猫の顔型との一致率100%=100点",
+    "2000m=100点 / 0m=0点",
+    "5回目2000m=100点 / 0m=0点"
   ][index];
 }
 
@@ -586,7 +590,7 @@ function showGameIntro(index){
   }else if(index===23){
     rules=`<li>的は固定。</li><li>3・2・1後、縦ゲージの中央ラインでSTOP。</li><li>続けて横ゲージの中央ラインでSTOP。</li><li>2軸から命中地点を決定。中心からの距離が小さいほど上位。</li>`;
   }else if(index===24){
-    rules=`<li>3・2・1後、モブくんが高空から落下。</li><li>好きなタイミングでパラシュート展開。</li><li>早すぎると風に流されます。</li><li>3秒を超えるとデッドゾーン。中央に「！」が出て、その後は地面激突。</li><li>カメラはモブくんを追跡。</li>`;
+    rules=`<li>3・2・1後、モブくんが高空から落下。</li><li>途中で中央に「！」が出ます。</li><li><strong>！が出てから3.000秒後</strong>にパラシュートを開くと中央へ着地。</li><li>3.000秒との時間誤差が小さいほど高得点。</li><li>遅れすぎると地面激突。カメラはモブくんを追跡。</li>`;
   }else if(index===25){
     rules=`<li>3・2・1後、21〜30体のモブくんを3秒表示。</li><li>消えた後、21〜30から人数を回答。</li><li>正解で100点。誤差が小さいほど高得点。</li>`;
   }else if(index===26){
@@ -605,8 +609,12 @@ function showGameIntro(index){
     rules=`<li>3・2・1後10秒の横スクロールアクション。</li><li>← →で移動、JUMPでジャンプ。</li><li>モグラは最大4体。上から踏むと+1体、倒すと1体リポップ。</li><li>カメラはモブくんを左右に追跡。</li><li>20体踏みつけで100点。</li>`;
   }else if(index===33){
     rules=`<li>3・2・1後、円形ゲージでエネルギーを3回チャージ。</li><li>中の玉が最大まで膨らみ、外周ゲージと同じ大きさになった瞬間をタップ。</li><li>3回の合計精度で最終エネルギーサイズが決定。最大時は画面いっぱい近くまで巨大化しカメラが引きます。</li><li>「放つ！」でエネルギーが頭上へ上がってから右へ発射。</li><li>カメラが追跡し、高層ビルを破壊しながら最大100km進みます。</li>`;
+  }else if(index===34){
+    rules=`<li>3・2・1後、猫の顔型を指で1周なぞります。</li><li>1回勝負。線への近さ・輪郭をどれだけ覆えたか・始点と終点のつながりを判定。</li><li>青い線が自分の描いた軌跡。</li><li>猫の輪郭との一致率がそのまま記録になります。</li>`;
+  }else if(index===35){
+    rules=`<li>3・2・1後、バイクが高速でジャンプ台へ向かいます。</li><li>ジャンプ台中央のラインにバイクが来た瞬間をタップ。</li><li>中央とのタイミング誤差が小さいほど遠くへ飛びます。</li><li>ジャンプ後はカメラがバイクを追跡。最高2000m。</li>`;
   }else{
-    rules=`<li>モブくんは最初から逆さのヘッドスピン姿勢。</li><li>円形ガイドを指で1周、できるだけ綺麗になぞります。</li><li>半径のズレ・一周できたか・逆戻りの少なさ・始点と終点の近さから一致度を判定。</li><li>全3回。一致度でエネルギーが蓄積。</li><li>最後に「スピン！」を押すと高速回転。最大100周。</li>`;
+    rules=`<li>3・2・1後、トラポリンで5回連続ジャンプ。</li><li>トラポリンが一番沈んだ瞬間にタップ。</li><li>1〜4回目の最大は100m / 200m / 300m / 400m。</li><li>5回目は特大ジャンプで最大2000m。</li><li>前の回で失った%は次の回へ引き継がれます。</li>`;
   }
   screen.innerHTML=`
     <div class="game-head">
@@ -681,7 +689,9 @@ function humanReady(gameIndex,humanIndex){
     else if(gameIndex===31)startHeroMaybe(p,humanIndex,runId);
     else if(gameIndex===32)startPopularGame(p,humanIndex,runId);
     else if(gameIndex===33)startPlanetEnergy(p,humanIndex,runId);
-    else startHeadSpinner(p,humanIndex,runId);
+    else if(gameIndex===34)startPainterMob(p,humanIndex,runId);
+    else if(gameIndex===35)startBikeJump(p,humanIndex,runId);
+    else startDynamicTrampoline(p,humanIndex,runId);
   },{once:true});
 }
 
@@ -4742,30 +4752,222 @@ async function startDartsOneShot(p,humanIndex,runId){
   raf=requestAnimationFrame(frame);
 }
 
-// GAME 25 -------------------------------------------------// GAME 25 -------------------------------------------------
+// GAME 25 -------------------------------------------------
 async function startParachute(p,humanIndex,runId){
   gameFit();
-  let raf=null,done=false,deployed=false,start=0,deployedAt=0,deployProgress=0,warningShown=false;
-  const worldH=1850,groundY=1650,warningAt=2400,graceMs=3000,crashAt=warningAt+graceMs,wind=Math.random()<.5?-1:1;
+
+  let raf=null;
+  let done=false;
+  let deployed=false;
+  let start=0;
+  let warningShown=false;
+  let warningMoment=0;
+  let deployedAt=0;
+  let timingErrorMs=0;
+
+  const worldH=2050;
+  const groundY=1830;
+  const warningAt=2200;
+  const idealAfterWarning=3000;
+  const crashLate=1450;
+  const wind=Math.random()<.5?-1:1;
   let centerX=0;
-  screen.innerHTML=`<div class="para-shell"><div class="game-head"><div><span class="kicker">${esc(p.name)}</span><h2>モブくんとパラシュート</h2></div><div class="game-badge">${playBadge(humanIndex)}</div></div><div class="para-hud"><span>WIND</span><b>${wind<0?'←':'→'}</b></div><button id="paraStage" class="para-stage" type="button"><div id="paraWorld" class="para-world" style="height:${worldH}px"><div class="para-cloud c1">☁</div><div class="para-cloud c2">☁</div><div class="para-target">TARGET</div><div class="para-ground"></div><div id="paraMob" class="para-mob" style="background-image:url('${p.img}')"><div class="para-canopy"></div></div></div><div id="paraDanger" class="para-danger">!</div><div class="para-tap">TAP = PARACHUTE</div></button></div>`;
-  const stage=document.getElementById('paraStage'),world=document.getElementById('paraWorld'),mob=document.getElementById('paraMob'),danger=document.getElementById('paraDanger');
-  centerX=stage.clientWidth/2;mob.style.left=`${centerX}px`;
-  if(!(await countdown('PARACHUTE',runId)))return;start=performance.now();
-  function camera(y){const vh=stage.clientHeight,cam=clamp(y-vh*.40,0,worldH-vh);world.style.transform=`translateY(${-cam}px)`}
-  function finishCrash(){if(done)return;done=true;state.records.parachute[p.id]=999;mob.classList.add('crash');danger.classList.add('show');beep(130,220,.04);setTimeout(()=>{if(isGameRunValid(runId))recordScreen(24,p,humanIndex,`0<small>pt</small>`,`GROUND CRASH`)},620)}
-  stage.addEventListener('pointerdown',e=>{if(done||deployed||!isGameRunValid(runId))return;e.preventDefault();const elapsed=performance.now()-start;if(elapsed>=crashAt){finishCrash();return;}deployProgress=clamp(elapsed/crashAt,0,1);deployedAt=elapsed;deployed=true;danger.classList.remove('show');mob.classList.add('open');beep(720,80,.022)},{passive:false});
-  function frame(now){if(done||!isGameRunValid(runId))return;const elapsed=now-start;
-    if(!deployed){const pr=clamp(elapsed/crashAt,0,1),y=110+pr*(groundY-130);mob.style.left=`${centerX}px`;mob.style.top=`${y}px`;camera(y);if(elapsed>=warningAt&&!warningShown){
-      warningShown=true;
-      danger.classList.add('show');
-      danger.textContent='!';
-      beep(980,90,.03);
+
+  screen.innerHTML=`<div class="para-shell para-v101">
+    <div class="game-head">
+      <div><span class="kicker">${esc(p.name)}</span><h2>モブくんとパラシュート</h2></div>
+      <div class="game-badge">${playBadge(humanIndex)}</div>
+    </div>
+
+    <div class="para-hud">
+      <span>TARGET</span><b>! + 3.000 sec</b>
+    </div>
+
+    <button id="paraStage" class="para-stage" type="button">
+      <div id="paraWorld" class="para-world" style="height:${worldH}px">
+        <div class="para-cloud c1">☁</div>
+        <div class="para-cloud c2">☁</div>
+        <div class="para-cloud c3">☁</div>
+        <div class="para-target">CENTER</div>
+        <div class="para-ground"></div>
+
+        <div id="paraMob" class="para-mob" style="background-image:url('${p.img}')">
+          <div class="para-canopy"></div>
+        </div>
+      </div>
+
+      <div id="paraDanger" class="para-danger para-danger-v101">
+        <strong>!</strong>
+        <span id="paraDangerTimer">3.000</span>
+      </div>
+
+      <div id="paraTiming" class="para-timing-v101">! が出たら3秒数える</div>
+      <div class="para-tap">TAP = PARACHUTE</div>
+    </button>
+  </div>`;
+
+  const stage=document.getElementById('paraStage');
+  const world=document.getElementById('paraWorld');
+  const mob=document.getElementById('paraMob');
+  const danger=document.getElementById('paraDanger');
+  const dangerTimer=document.getElementById('paraDangerTimer');
+  const timing=document.getElementById('paraTiming');
+
+  centerX=stage.clientWidth/2;
+  mob.style.left=`${centerX}px`;
+
+  if(!(await countdown('PARACHUTE',runId)))return;
+  start=performance.now();
+
+  function camera(y){
+    const vh=stage.clientHeight;
+    const cam=clamp(y-vh*.40,0,worldH-vh);
+    world.style.transform=`translateY(${-cam}px)`;
+  }
+
+  function finishCrash(){
+    if(done)return;
+    done=true;
+    state.records.parachute[p.id]=9999;
+    mob.classList.add('crash');
+    danger.classList.add('show','late');
+    timing.textContent='GROUND CRASH';
+    beep(130,220,.04);
+
+    setTimeout(()=>{
+      if(isGameRunValid(runId)){
+        recordScreen(24,p,humanIndex,`0<small>pt</small>`,`GROUND CRASH`);
+      }
+    },650);
+  }
+
+  stage.addEventListener('pointerdown',e=>{
+    if(done||deployed||!isGameRunValid(runId))return;
+    e.preventDefault();
+
+    const elapsed=performance.now()-start;
+
+    if(!warningShown){
+      // Tapping before ! is a huge early miss, but still visually deploys.
+      warningMoment=start+warningAt;
     }
-    if(elapsed>=crashAt){finishCrash();return;}raf=requestAnimationFrame(frame);return;}
-    const landDuration=1350+(1-deployProgress)*820,lt=clamp((elapsed-deployedAt)/landDuration,0,1),offset=wind*(.56-deployProgress)*620,finalX=centerX+offset,startY=110+(deployedAt/crashAt)*(groundY-130),y=startY+(groundY-startY)*lt,x=centerX+(finalX-centerX)*lt;mob.style.left=`${x}px`;mob.style.top=`${y}px`;camera(y);
-    if(lt>=1){done=true;const meters=Math.abs(finalX-centerX)/8;state.records.parachute[p.id]=Math.round(meters*10)/10;mob.classList.add('landed');beep(meters<=3?960:meters<=10?720:420,90,.025);setTimeout(()=>{if(isGameRunValid(runId))recordScreen(24,p,humanIndex,`${meters.toFixed(1)}<small>m</small>`,`CENTER ERROR`)},600);return;}raf=requestAnimationFrame(frame)
-  }raf=requestAnimationFrame(frame);
+
+    const targetMoment=(warningShown?warningMoment:(start+warningAt))+idealAfterWarning;
+    const now=performance.now();
+
+    if(now>targetMoment+crashLate){
+      finishCrash();
+      return;
+    }
+
+    timingErrorMs=Math.abs(now-targetMoment);
+    deployedAt=elapsed;
+    deployed=true;
+
+    danger.classList.remove('show');
+    mob.classList.add('open');
+
+    timing.textContent=`3.000秒との誤差 ${(timingErrorMs/1000).toFixed(3)}秒`;
+    beep(timingErrorMs<=40?990:timingErrorMs<=180?760:520,80,.025);
+  },{passive:false});
+
+  function frame(now){
+    if(done||!isGameRunValid(runId))return;
+
+    const elapsed=now-start;
+    const targetMoment=start+warningAt+idealAfterWarning;
+
+    if(!deployed){
+      const fallTotal=warningAt+idealAfterWarning+crashLate;
+      const pr=clamp(elapsed/fallTotal,0,1);
+      const y=95+pr*(groundY-115);
+
+      mob.style.left=`${centerX}px`;
+      mob.style.top=`${y}px`;
+      camera(y);
+
+      if(elapsed>=warningAt&&!warningShown){
+        warningShown=true;
+        warningMoment=now;
+        danger.classList.add('show');
+        timing.textContent='ここから3.000秒！';
+        beep(980,100,.035);
+      }
+
+      if(warningShown){
+        const sinceWarning=now-warningMoment;
+        const remaining=idealAfterWarning-sinceWarning;
+        dangerTimer.textContent=remaining>=0
+          ? (remaining/1000).toFixed(3)
+          : `+${Math.abs(remaining/1000).toFixed(3)}`;
+
+        if(Math.abs(remaining)<=70)danger.classList.add('perfect-window');
+        else danger.classList.remove('perfect-window');
+
+        if(sinceWarning>idealAfterWarning+crashLate){
+          finishCrash();
+          return;
+        }
+      }
+
+      raf=requestAnimationFrame(frame);
+      return;
+    }
+
+    // Perfect 3.000 sec => exact center.
+    // Earlier/later deployment creates symmetric landing error.
+    const signedError=(performance.now()-(warningMoment+idealAfterWarning));
+    const absErr=Math.abs(signedError);
+
+    const maxOffset=stage.clientWidth*.40;
+    const offsetPx=clamp(absErr/1000*stage.clientWidth*.24,0,maxOffset);
+
+    const dir=signedError<0?wind:-wind;
+    const finalX=centerX+dir*offsetPx;
+
+    const startY=95+clamp(deployedAt/(warningAt+idealAfterWarning+crashLate),0,1)*(groundY-115);
+    const landDuration=1450;
+    const lt=clamp((elapsed-deployedAt)/landDuration,0,1);
+    const y=startY+(groundY-startY)*lt;
+    const x=centerX+(finalX-centerX)*lt;
+
+    mob.style.left=`${x}px`;
+    mob.style.top=`${y}px`;
+    camera(y);
+
+    if(lt>=1){
+      done=true;
+
+      const errorMs=timingErrorMs;
+      const centerMeters=errorMs/1000*22;
+      state.records.parachute[p.id]=Math.round(errorMs*10)/10;
+
+      mob.classList.add('landed');
+
+      if(errorMs<=20){
+        timing.textContent='PERFECT CENTER!';
+        beep(1040,120,.035);
+      }else{
+        timing.textContent=`CENTER誤差 ${centerMeters.toFixed(1)}m`;
+        beep(errorMs<=150?880:errorMs<=450?680:420,90,.025);
+      }
+
+      setTimeout(()=>{
+        if(isGameRunValid(runId)){
+          recordScreen(
+            24,p,humanIndex,
+            `${(errorMs/1000).toFixed(3)}<small>秒</small>`,
+            errorMs<=20?'PERFECT CENTER':'3.000 SEC ERROR'
+          );
+        }
+      },650);
+      return;
+    }
+
+    raf=requestAnimationFrame(frame);
+  }
+
+  raf=requestAnimationFrame(frame);
 }
 
 // GAME 26 -------------------------------------------------// GAME 26 -------------------------------------------------
@@ -5465,134 +5667,123 @@ async function startPlanetEnergy(p,humanIndex,runId){
 }
 
 // GAME 35 -------------------------------------------------
-function scoreHeadSpinTrace(points,w,h){
-  if(points.length<12)return 0;
+function painterTraceScore(points,targetPath){
+  if(points.length<16)return 0;
 
-  const cx=w/2;
-  const cy=h/2;
-  const targetR=Math.min(w,h)*.31;
+  const samples=[];
+  const total=targetPath.getTotalLength();
+  const sampleCount=150;
 
-  let radialError=0;
-  let totalAngle=0;
-  let netAngle=0;
-  const angles=[];
-
-  for(const pt of points){
-    const dx=pt.x-cx;
-    const dy=pt.y-cy;
-    const r=Math.hypot(dx,dy);
-    radialError+=Math.abs(r-targetR)/targetR;
-    angles.push(Math.atan2(dy,dx));
+  for(let i=0;i<sampleCount;i++){
+    const pt=targetPath.getPointAtLength(total*i/(sampleCount-1));
+    samples.push({x:pt.x,y:pt.y});
   }
 
-  for(let i=1;i<angles.length;i++){
-    let d=angles[i]-angles[i-1];
-    while(d>Math.PI)d-=Math.PI*2;
-    while(d<-Math.PI)d+=Math.PI*2;
-    totalAngle+=Math.abs(d);
-    netAngle+=d;
+  let distSum=0;
+
+  for(const p of points){
+    let best=9999;
+    for(const t of samples){
+      const d=Math.hypot(p.x-t.x,p.y-t.y);
+      if(d<best)best=d;
+    }
+    distSum+=best;
   }
 
-  radialError/=points.length;
+  const avgDist=distSum/points.length;
+  const accuracy=clamp(100-avgDist*5.0,0,100);
 
-  const radialScore=clamp(100-radialError*260,0,100);
-  const coverage=clamp(totalAngle/(Math.PI*2),0,1);
-  const coverageScore=coverage*100;
-  const directionScore=totalAngle>0
-    ? clamp(Math.abs(netAngle)/totalAngle,0,1)*100
-    : 0;
+  let covered=0;
+  for(const t of samples){
+    let best=9999;
+    for(const p of points){
+      const d=Math.hypot(p.x-t.x,p.y-t.y);
+      if(d<best)best=d;
+    }
+    if(best<=13.5)covered++;
+  }
+  const coverage=covered/sampleCount*100;
 
-  const start=points[0];
-  const end=points[points.length-1];
-  const closeDist=Math.hypot(start.x-end.x,start.y-end.y);
-  const closeScore=clamp(100-closeDist/(targetR*1.45)*100,0,100);
-  const tooMuchPenalty=Math.max(0,(totalAngle/(Math.PI*2)-1.22)*42);
+  let strokeLen=0;
+  for(let i=1;i<points.length;i++){
+    strokeLen+=Math.hypot(points[i].x-points[i-1].x,points[i].y-points[i-1].y);
+  }
+  const lengthScore=clamp(100-Math.abs(strokeLen-total)/total*100,0,100);
+
+  const closeDist=Math.hypot(
+    points[0].x-points[points.length-1].x,
+    points[0].y-points[points.length-1].y
+  );
+  const closure=clamp(100-closeDist/75*100,0,100);
 
   return clamp(
-    radialScore*.46+
-    coverageScore*.29+
-    directionScore*.15+
-    closeScore*.10-
-    tooMuchPenalty,
+    accuracy*.50+
+    coverage*.32+
+    lengthScore*.10+
+    closure*.08,
     0,100
   );
 }
 
-async function startHeadSpinner(p,humanIndex,runId){
+async function startPainterMob(p,humanIndex,runId){
   gameFit();
 
-  let tracing=false;
+  let drawing=false;
+  let used=false;
   let pointerId=null;
   let points=[];
-  let round=0;
-  let finished=false;
-  const matches=[];
 
-  screen.innerHTML=`<div class="headspin-shell headspin-v100">
+  screen.innerHTML=`<div class="painter-shell">
     <div class="game-head">
-      <div><span class="kicker">${esc(p.name)}</span><h2>モブくんはヘッドスピナー</h2></div>
+      <div><span class="kicker">${esc(p.name)}</span><h2>モブくんは画家志望</h2></div>
       <div class="game-badge">${playBadge(humanIndex)}</div>
     </div>
 
-    <div class="headspin-hud">
-      <div><span>TRACE</span><b id="headspinRound">1 / 3</b></div>
-      <div><span>ENERGY</span><b id="headspinEnergy">0%</b></div>
+    <div class="painter-hud">
+      <div><span>CHANCE</span><b>1回</b></div>
+      <div><span>MATCH</span><b id="painterScore">--</b></div>
     </div>
 
-    <div id="headspinStage" class="headspin-stage-v100">
-      <div class="headspin-floor"></div>
-
-      <div class="headspin-guide-v100">
-        <svg id="headspinSvg" viewBox="0 0 300 300" preserveAspectRatio="none">
-          <circle cx="150" cy="150" r="94" class="headspin-guide-circle"></circle>
-          <polyline id="headspinPath" points="" class="headspin-user-path"></polyline>
+    <div id="painterStage" class="painter-stage">
+      <div class="painter-paper">
+        <svg id="painterSvg" viewBox="0 0 300 300" preserveAspectRatio="xMidYMid meet">
+          <path id="catGuide" class="cat-guide"
+            d="M70 205
+               C48 187 42 153 54 120
+               L43 62
+               L96 87
+               C124 69 176 69 204 87
+               L257 62
+               L246 120
+               C258 153 252 187 230 205
+               C209 228 181 239 150 239
+               C119 239 91 228 70 205 Z"></path>
+          <polyline id="painterStroke" class="painter-stroke" points=""></polyline>
         </svg>
-        <div class="headspin-arrow">↻</div>
-      </div>
 
-      <div id="headspinFx" class="headspin-fx">
-        <div class="headspin-speed-ring ring1"></div>
-        <div class="headspin-speed-ring ring2"></div>
-        <div class="headspin-speed-ring ring3"></div>
-        <i class="headspin-speed-line l1"></i>
-        <i class="headspin-speed-line l2"></i>
-        <i class="headspin-speed-line l3"></i>
-        <i class="headspin-speed-line l4"></i>
-        <i class="headspin-dust d1"></i>
-        <i class="headspin-dust d2"></i>
-        <i class="headspin-dust d3"></i>
-      </div>
-
-      <div id="headspinPivot" class="headspin-pivot">
-        <div id="headspinSpinner" class="headspin-spinner">
-          <div class="headspin-figure" style="background-image:url('icon/01.png')"></div>
+        <div class="cat-face-detail">
+          <i class="cat-eye e1"></i>
+          <i class="cat-eye e2"></i>
+          <i class="cat-nose"></i>
+          <i class="cat-whisker w1"></i><i class="cat-whisker w2"></i>
+          <i class="cat-whisker w3"></i><i class="cat-whisker w4"></i>
         </div>
       </div>
 
-      <div id="headspinMessage" class="headspin-message-v100">円を1周なぞる</div>
-    </div>
+      <div class="painter-mob" style="background-image:url('icon/01.png')">
+        <span class="painter-brush"></span>
+      </div>
 
-    <button id="headspinSpin" class="headspin-spin hidden" type="button">スピン！</button>
-
-    <div id="headspinResult" class="headspin-result-v100 hidden">
-      <span>HEAD SPIN</span>
-      <strong id="headspinLaps">0</strong>
-      <b>周</b>
+      <div id="painterMessage" class="painter-message">猫の輪郭を1周なぞる</div>
     </div>
   </div>`;
 
-  const stage=document.getElementById('headspinStage');
-  const svg=document.getElementById('headspinSvg');
-  const path=document.getElementById('headspinPath');
-  const pivot=document.getElementById('headspinPivot');
-  const spinner=document.getElementById('headspinSpinner');
-  const fx=document.getElementById('headspinFx');
-  const msg=document.getElementById('headspinMessage');
-  const roundEl=document.getElementById('headspinRound');
-  const energyEl=document.getElementById('headspinEnergy');
-  const spinBtn=document.getElementById('headspinSpin');
-  const result=document.getElementById('headspinResult');
-  const lapsEl=document.getElementById('headspinLaps');
+  const stage=document.getElementById('painterStage');
+  const svg=document.getElementById('painterSvg');
+  const guide=document.getElementById('catGuide');
+  const stroke=document.getElementById('painterStroke');
+  const scoreEl=document.getElementById('painterScore');
+  const message=document.getElementById('painterMessage');
 
   function localPoint(e){
     const rect=svg.getBoundingClientRect();
@@ -5602,157 +5793,454 @@ async function startHeadSpinner(p,humanIndex,runId){
     };
   }
 
-  function renderPath(){
-    path.setAttribute(
+  function renderStroke(){
+    stroke.setAttribute(
       'points',
       points.map(pt=>`${pt.x.toFixed(1)},${pt.y.toFixed(1)}`).join(' ')
     );
   }
 
-  function beginTrace(e){
-    if(finished||round>=3||tracing||!isGameRunValid(runId))return;
+  stage.addEventListener('pointerdown',e=>{
+    if(used||drawing||!isGameRunValid(runId))return;
     e.preventDefault();
 
-    tracing=true;
+    used=true;
+    drawing=true;
     pointerId=e.pointerId;
     points=[localPoint(e)];
-    path.setAttribute('points','');
-    msg.textContent=`TRACE ${round+1} / 3`;
+    message.textContent='そのまま1周！';
 
     try{stage.setPointerCapture(pointerId)}catch(_){}
-  }
+  },{passive:false});
 
-  function moveTrace(e){
-    if(!tracing||e.pointerId!==pointerId)return;
+  stage.addEventListener('pointermove',e=>{
+    if(!drawing||e.pointerId!==pointerId)return;
     e.preventDefault();
 
     const pt=localPoint(e);
     const prev=points[points.length-1];
 
-    if(!prev||Math.hypot(pt.x-prev.x,pt.y-prev.y)>=2.2){
+    if(!prev||Math.hypot(pt.x-prev.x,pt.y-prev.y)>=2.0){
       points.push(pt);
-      renderPath();
-    }
-  }
-
-  function endTrace(e){
-    if(!tracing||e.pointerId!==pointerId)return;
-    e.preventDefault();
-
-    tracing=false;
-
-    const score=scoreHeadSpinTrace(points,300,300);
-    matches.push(score);
-    round++;
-
-    const avg=matches.reduce((a,b)=>a+b,0)/matches.length;
-    energyEl.textContent=`${avg.toFixed(1)}%`;
-    msg.textContent=`MATCH ${score.toFixed(1)}%`;
-
-    beep(score>=95?1000:score>=85?820:score>=65?620:330,70,.022);
-
-    if(round<3){
-      roundEl.textContent=`${round+1} / 3`;
-      setTimeout(()=>{
-        if(!isGameRunValid(runId)||finished)return;
-        points=[];
-        path.setAttribute('points','');
-        msg.textContent='次の円をなぞる';
-      },620);
-    }else{
-      roundEl.textContent='3 / 3';
-      setTimeout(()=>{
-        if(!isGameRunValid(runId)||finished)return;
-        spinBtn.classList.remove('hidden');
-        msg.textContent='ENERGY READY';
-      },620);
-    }
-  }
-
-  stage.addEventListener('pointerdown',beginTrace,{passive:false});
-  stage.addEventListener('pointermove',moveTrace,{passive:false});
-  stage.addEventListener('pointerup',endTrace,{passive:false});
-  stage.addEventListener('pointercancel',e=>{
-    if(tracing&&e.pointerId===pointerId){
-      tracing=false;
-      points=[];
-      path.setAttribute('points','');
-      msg.textContent='もう一度なぞる';
+      renderStroke();
     }
   },{passive:false});
 
-  spinBtn.addEventListener('pointerdown',async e=>{
-    if(finished||round<3||!isGameRunValid(runId))return;
+  async function finishDraw(e){
+    if(!drawing||e.pointerId!==pointerId)return;
     e.preventDefault();
 
-    finished=true;
-    spinBtn.disabled=true;
-    spinBtn.classList.add('hidden');
+    drawing=false;
 
-    const avg=matches.reduce((a,b)=>a+b,0)/3;
-    const laps=clamp(Math.round(Math.pow(avg/100,1.28)*100),0,100);
+    const score=painterTraceScore(points,guide);
+    const rounded=Math.round(score*10)/10;
 
-    result.classList.remove('hidden');
-    fx.classList.add('active');
-    pivot.classList.add('spinning');
-    msg.textContent='SPIN!!';
+    scoreEl.textContent=`${rounded.toFixed(1)}%`;
+    state.records.painter[p.id]=rounded;
 
+    guide.classList.add('judged');
+    stroke.classList.add(score>=90?'excellent':score>=75?'good':'rough');
+
+    message.textContent=score>=95
+      ? '天才画家！？'
+      : score>=85
+        ? 'かなり猫！'
+        : score>=70
+          ? '猫に見える！'
+          : '個性的な猫！';
+
+    beep(score>=95?1040:score>=85?850:score>=70?650:380,100,.03);
+
+    await wait(800);
+
+    if(isGameRunValid(runId)){
+      recordScreen(
+        34,p,humanIndex,
+        `${rounded.toFixed(1)}<small>%</small>`,
+        `CAT TRACE`
+      );
+    }
+  }
+
+  stage.addEventListener('pointerup',finishDraw,{passive:false});
+  stage.addEventListener('pointercancel',finishDraw,{passive:false});
+
+  if(!(await countdown('PAINT',runId)))return;
+  message.textContent='1回勝負！ 猫の輪郭をなぞる';
+}
+
+// GAME 36 -------------------------------------------------
+async function startBikeJump(p,humanIndex,runId){
+  gameFit();
+
+  let raf=null;
+  let done=false;
+  let started=false;
+  let launchX=0;
+  const worldW=9200;
+
+  screen.innerHTML=`<div class="bike-shell">
+    <div class="game-head">
+      <div><span class="kicker">${esc(p.name)}</span><h2>バイクでジャンピング</h2></div>
+      <div class="game-badge">${playBadge(humanIndex)}</div>
+    </div>
+
+    <div class="bike-hud">
+      <div><span>TIMING</span><b id="bikeTiming">READY</b></div>
+      <div><span>DISTANCE</span><b id="bikeDistance">0m</b></div>
+    </div>
+
+    <button id="bikeStage" class="bike-stage" type="button">
+      <div id="bikeWorld" class="bike-world" style="width:${worldW}px">
+        <div class="bike-sky">
+          ${Array.from({length:16},(_,i)=>`<i class="bike-cloud" style="left:${180+i*480}px;top:${25+(i%3)*44}px">☁</i>`).join('')}
+          ${Array.from({length:18},(_,i)=>`<i class="bike-hill" style="left:${120+i*460}px"></i>`).join('')}
+        </div>
+
+        <div class="bike-road"></div>
+
+        <div id="bikeRamp" class="bike-ramp">
+          <div class="bike-ramp-line"></div>
+          <span>CENTER</span>
+        </div>
+
+        <div id="bikeRider" class="bike-rider">
+          <div class="bike-mob" style="background-image:url('icon/01.png')"></div>
+          <div class="bike-body"></div>
+          <i class="bike-wheel w1"></i>
+          <i class="bike-wheel w2"></i>
+        </div>
+      </div>
+
+      <div id="bikeMessage" class="bike-message">ジャンプ台中央でTAP！</div>
+    </button>
+  </div>`;
+
+  const stage=document.getElementById('bikeStage');
+  const world=document.getElementById('bikeWorld');
+  const rider=document.getElementById('bikeRider');
+  const ramp=document.getElementById('bikeRamp');
+  const timingEl=document.getElementById('bikeTiming');
+  const distanceEl=document.getElementById('bikeDistance');
+  const message=document.getElementById('bikeMessage');
+
+  const rampCenter=760;
+  let bikeX=80;
+  const speed=610;
+  const roadY=78;
+  rider.style.left=`${bikeX}px`;
+  rider.style.bottom=`${roadY}px`;
+
+  if(!(await countdown('BIKE JUMP',runId)))return;
+  started=true;
+
+  stage.addEventListener('pointerdown',e=>{
+    if(done||!started||!isGameRunValid(runId))return;
+    e.preventDefault();
+
+    done=true;
+    if(raf)cancelAnimationFrame(raf);
+
+    const errorPx=Math.abs(bikeX-rampCenter);
+    const accuracy=clamp(100-errorPx/1.18,0,100);
+    const distance=Math.round(2000*Math.pow(accuracy/100,1.38)*10)/10;
+
+    timingEl.textContent=`${accuracy.toFixed(1)}%`;
+    distanceEl.textContent=`${distance.toFixed(1)}m`;
+
+    if(errorPx<=8)message.textContent='PERFECT TAKE OFF!';
+    else if(errorPx<=32)message.textContent='GREAT TAKE OFF!';
+    else message.textContent='JUMP!';
+
+    beep(accuracy>=97?1040:accuracy>=85?820:accuracy>=60?620:360,85,.03);
+
+    const startX=bikeX;
+    const travelPx=distance/2000*(worldW-1250);
+    const startTime=performance.now();
+    const duration=1050+distance/2000*2800;
+    const peak=120+distance/2000*520;
+
+    state.records.bikeJump[p.id]=distance;
+
+    const fly=now=>{
+      if(!isGameRunValid(runId))return;
+
+      const t=clamp((now-startTime)/duration,0,1);
+      const eased=1-Math.pow(1-t,1.7);
+      const x=startX+travelPx*eased;
+      const y=roadY+Math.sin(t*Math.PI)*peak;
+
+      rider.style.left=`${x}px`;
+      rider.style.bottom=`${y}px`;
+      rider.style.transform=`rotate(${Math.sin(t*Math.PI)*-9}deg)`;
+
+      distanceEl.textContent=`${(distance*eased).toFixed(1)}m`;
+
+      const cam=clamp(x-stage.clientWidth*.37,0,worldW-stage.clientWidth);
+      world.style.transform=`translateX(${-cam}px)`;
+
+      if(t<1){
+        raf=requestAnimationFrame(fly);
+      }else{
+        rider.classList.add('land');
+        distanceEl.textContent=`${distance.toFixed(1)}m`;
+
+        setTimeout(()=>{
+          if(isGameRunValid(runId)){
+            recordScreen(
+              35,p,humanIndex,
+              `${distance.toFixed(1)}<small>m</small>`,
+              `TAKE OFF ${accuracy.toFixed(1)}%`
+            );
+          }
+        },700);
+      }
+    };
+
+    raf=requestAnimationFrame(fly);
+  },{passive:false});
+
+  let last=performance.now();
+
+  function run(now){
+    if(done||!isGameRunValid(runId))return;
+
+    const dt=Math.min(30,now-last)/1000;
+    last=now;
+
+    bikeX+=speed*dt;
+    rider.style.left=`${bikeX}px`;
+
+    const cam=clamp(bikeX-stage.clientWidth*.28,0,worldW-stage.clientWidth);
+    world.style.transform=`translateX(${-cam}px)`;
+
+    if(bikeX>rampCenter+145){
+      done=true;
+      state.records.bikeJump[p.id]=0;
+      timingEl.textContent='MISS';
+      message.textContent='ジャンプ台を通過！';
+
+      setTimeout(()=>{
+        if(isGameRunValid(runId)){
+          recordScreen(35,p,humanIndex,`0<small>m</small>`,`MISS TAKE OFF`);
+        }
+      },650);
+      return;
+    }
+
+    raf=requestAnimationFrame(run);
+  }
+
+  raf=requestAnimationFrame(run);
+}
+
+// GAME 37 -------------------------------------------------
+async function startDynamicTrampoline(p,humanIndex,runId){
+  gameFit();
+
+  const baseHeights=[100,200,300,400,2000];
+  let cumulativePenalty=0;
+  let finalHeight=0;
+  let currentRound=0;
+  let activeTap=null;
+  let stageRAF=null;
+
+  screen.innerHTML=`<div class="tramp-shell">
+    <div class="game-head">
+      <div><span class="kicker">${esc(p.name)}</span><h2>ダイナミックトラポリン</h2></div>
+      <div class="game-badge">${playBadge(humanIndex)}</div>
+    </div>
+
+    <div class="tramp-hud">
+      <div><span>JUMP</span><b id="trampRound">1 / 5</b></div>
+      <div><span>MOMENTUM</span><b id="trampMomentum">100%</b></div>
+      <div><span>HEIGHT</span><b id="trampHeight">0m</b></div>
+    </div>
+
+    <button id="trampStage" class="tramp-stage" type="button">
+      <div id="trampWorld" class="tramp-world">
+        <div class="tramp-sky-lines"></div>
+        <div id="trampMob" class="tramp-mob" style="background-image:url('icon/01.png')"></div>
+        <div id="trampBed" class="tramp-bed">
+          <div class="tramp-net"></div>
+          <i class="tramp-leg l1"></i>
+          <i class="tramp-leg l2"></i>
+        </div>
+      </div>
+
+      <div id="trampMessage" class="tramp-message">一番沈んだ瞬間にTAP！</div>
+      <div id="trampTimingRing" class="tramp-timing-ring"></div>
+    </button>
+  </div>`;
+
+  const stage=document.getElementById('trampStage');
+  const world=document.getElementById('trampWorld');
+  const mob=document.getElementById('trampMob');
+  const bed=document.getElementById('trampBed');
+  const roundEl=document.getElementById('trampRound');
+  const momentumEl=document.getElementById('trampMomentum');
+  const heightEl=document.getElementById('trampHeight');
+  const message=document.getElementById('trampMessage');
+  const ring=document.getElementById('trampTimingRing');
+
+  async function animateHeight(height,round){
+    const visualMax=Math.min(2360,95+height*1.08);
+    const duration=round===4?1700:900+round*90;
     const start=performance.now();
-    const duration=1900;
-    let lastShown=-1;
 
-    await new Promise(resolve=>{
-      const animate=now=>{
+    return new Promise(resolve=>{
+      const frame=now=>{
         if(!isGameRunValid(runId)){resolve();return;}
 
         const t=clamp((now-start)/duration,0,1);
-        const eased=1-Math.pow(1-t,2.25);
-        const shown=Math.round(laps*eased);
-        lapsEl.textContent=shown;
+        const arc=Math.sin(t*Math.PI);
+        const y=95+arc*visualMax;
 
-        // Actual visual rotation count is scaled for readability,
-        // but pivot remains exactly on the head contact point.
-        const visualTurns=eased*(8+laps*.21);
-        spinner.style.transform=`rotate(${visualTurns*360}deg)`;
+        mob.style.bottom=`${y}px`;
+        heightEl.textContent=`${(height*arc).toFixed(0)}m`;
 
-        // Shrink the spin radius illusion as speed builds: stays on the spot.
-        const speed=Math.min(1,t*1.5);
-        fx.style.setProperty('--spin-speed',speed.toFixed(3));
+        const vh=stage.clientHeight;
+        const cam=Math.max(0,y-vh*.43);
+        world.style.transform=`translateY(${cam}px)`;
 
-        if(shown!==lastShown&&shown%10===0){
-          lastShown=shown;
-          beep(520+Math.min(390,shown*4),24,.007);
+        if(t<1){
+          stageRAF=requestAnimationFrame(frame);
+        }else{
+          world.style.transform='translateY(0px)';
+          mob.style.bottom='95px';
+          heightEl.textContent=`${height.toFixed(1)}m`;
+          resolve();
+        }
+      };
+      stageRAF=requestAnimationFrame(frame);
+    });
+  }
+
+  function waitTapWindow(round){
+    return new Promise(resolve=>{
+      const cycleStart=performance.now();
+      const targetMs=620;
+      const endMs=1120;
+      let resolved=false;
+
+      message.textContent=`${round+1}回目 / 一番沈んだ瞬間！`;
+      ring.classList.remove('perfect');
+      bed.classList.remove('deep');
+
+      const finish=error=>{
+        if(resolved)return;
+        resolved=true;
+        activeTap=null;
+        resolve(error);
+      };
+
+      activeTap=()=>{
+        const elapsed=performance.now()-cycleStart;
+        finish(elapsed-targetMs);
+      };
+
+      const compress=now=>{
+        if(resolved||!isGameRunValid(runId))return;
+
+        const elapsed=now-cycleStart;
+        const d=Math.abs(elapsed-targetMs);
+
+        const sink=Math.exp(-Math.pow(d/175,2));
+        const mobDrop=sink*24;
+        const bedScale=1-sink*.38;
+
+        mob.style.bottom=`${95-mobDrop}px`;
+        bed.style.transform=`translateX(-50%) scaleY(${bedScale})`;
+
+        if(d<=48){
+          ring.classList.add('perfect');
+          bed.classList.add('deep');
+        }else{
+          ring.classList.remove('perfect');
+          bed.classList.remove('deep');
         }
 
-        if(t<1)requestAnimationFrame(animate);
-        else resolve();
+        if(elapsed>=endMs){
+          finish(endMs-targetMs);
+          return;
+        }
+
+        stageRAF=requestAnimationFrame(compress);
       };
-      requestAnimationFrame(animate);
+
+      stageRAF=requestAnimationFrame(compress);
     });
+  }
 
-    if(!isGameRunValid(runId))return;
-
-    spinner.style.transform=`rotate(${(8+laps*.21)*360}deg)`;
-    lapsEl.textContent=laps;
-    fx.classList.add('finish-burst');
-    msg.textContent=laps>=95?'LEGEND SPIN!!':laps>=80?'SUPER SPIN!':'SPIN COMPLETE';
-
-    state.records.headSpinner[p.id]=laps;
-    beep(laps>=95?1080:laps>=80?900:650,160,.04);
-
-    setTimeout(()=>{
-      if(isGameRunValid(runId)){
-        recordScreen(
-          34,p,humanIndex,
-          `${laps}<small>周</small>`,
-          `TRACE AVG ${avg.toFixed(1)}%`
-        );
-      }
-    },900);
+  stage.addEventListener('pointerdown',e=>{
+    if(!activeTap||!isGameRunValid(runId))return;
+    e.preventDefault();
+    const fn=activeTap;
+    activeTap=null;
+    fn();
   },{passive:false});
 
-  if(!(await countdown('HEAD SPIN',runId)))return;
-  msg.textContent='円を1周なぞる';
+  if(!(await countdown('TRAMPOLINE',runId)))return;
+
+  for(let round=0;round<5;round++){
+    currentRound=round;
+    roundEl.textContent=`${round+1} / 5`;
+    heightEl.textContent='0m';
+
+    const error=await waitTapWindow(round);
+    if(!isGameRunValid(runId))return;
+
+    bed.style.transform='translateX(-50%) scaleY(1)';
+    mob.style.bottom='95px';
+
+    const absErr=Math.abs(error);
+
+    // 0ms = 100%. About 450ms or more = 0%.
+    const rawPct=clamp(100-absErr/4.5,0,100);
+
+    // Example:
+    // 1st raw 97 -> inherited penalty 0 -> effective 97, penalty becomes 3
+    // 2nd raw 95 -> 95 - previous 3 = 92.
+    const effectivePct=clamp(rawPct-cumulativePenalty,0,100);
+    const inheritedBefore=cumulativePenalty;
+    cumulativePenalty+=100-rawPct;
+
+    const height=Math.round(baseHeights[round]*effectivePct/100*10)/10;
+    if(round===4)finalHeight=height;
+
+    momentumEl.textContent=`${effectivePct.toFixed(1)}%`;
+    heightEl.textContent=`${height.toFixed(1)}m`;
+
+    message.textContent=
+      `${rawPct.toFixed(1)}% → 勢い ${effectivePct.toFixed(1)}%`+
+      (inheritedBefore>0?` / 引継ぎ -${inheritedBefore.toFixed(1)}%`:'');
+
+    beep(rawPct>=97?1020:rawPct>=85?820:rawPct>=65?620:360,80,.025);
+
+    await wait(300);
+    if(!isGameRunValid(runId))return;
+
+    await animateHeight(height,round);
+    if(!isGameRunValid(runId))return;
+
+    if(round<4){
+      await wait(180);
+    }
+  }
+
+  state.records.trampoline[p.id]=finalHeight;
+  message.textContent=finalHeight>=1950?'DYNAMIC PERFECT!!':'5th JUMP COMPLETE!';
+  beep(finalHeight>=1900?1080:finalHeight>=1400?900:650,150,.04);
+
+  await wait(700);
+
+  if(isGameRunValid(runId)){
+    recordScreen(
+      36,p,humanIndex,
+      `${finalHeight.toFixed(1)}<small>m</small>`,
+      `5th JUMP`
+    );
+  }
 }
 
 
@@ -5794,7 +6282,7 @@ async function simulateCpuThenResult(gameIndex){
 
 function cpuUltraDraw(gameIndex){
   // Game-specific draw rate. Regular values are already intentionally strong.
-  const chance=[0.12,0.10,0.14,0.16,0.12,0.13,0.14,0.12,0.15,0.12,0.14,0.13,0.13,0.14,0.12,0.12,0.13,0.12,0.13,0.14,0.13,0.14,0.12,0.13,0.12,0.12,0.13,0.13,0.14,0.14,0.13,0.12,0.13,0.13,0.13][gameIndex] ?? 0.12;
+  const chance=[0.12,0.10,0.14,0.16,0.12,0.13,0.14,0.12,0.15,0.12,0.14,0.13,0.13,0.14,0.12,0.12,0.13,0.12,0.13,0.14,0.13,0.14,0.12,0.13,0.12,0.12,0.13,0.13,0.14,0.14,0.13,0.12,0.13,0.13,0.13,0.13,0.13][gameIndex] ?? 0.12;
   return Math.random()<chance;
 }
 
@@ -5855,7 +6343,7 @@ function simulateOneCpu(gameIndex,p){
   }else if(gameIndex===23){
     state.records.darts[p.id]=Math.round((ultra?rand(1.5,7):rand(7,34))*10)/10;
   }else if(gameIndex===24){
-    state.records.parachute[p.id]=Math.round((ultra?rand(.5,3.5):rand(3,18))*10)/10;
+    state.records.parachute[p.id]=ultra?rand(18,85):rand(80,520);
   }else if(gameIndex===25){
     state.records.mobCount[p.id]=ultra?(Math.random()<.85?0:1):randi(0,3);
   }else if(gameIndex===26){
@@ -5874,8 +6362,12 @@ function simulateOneCpu(gameIndex,p){
     state.records.popularGame[p.id]=ultra?randi(17,23):randi(9,18);
   }else if(gameIndex===33){
     state.records.planetEnergy[p.id]=Math.round((ultra?rand(82,98):rand(38,84))*10)/10;
+  }else if(gameIndex===34){
+    state.records.painter[p.id]=Math.round((ultra?rand(88,97):rand(58,88))*10)/10;
+  }else if(gameIndex===35){
+    state.records.bikeJump[p.id]=Math.round((ultra?rand(1720,1975):rand(820,1760))*10)/10;
   }else{
-    state.records.headSpinner[p.id]=ultra?randi(84,97):randi(45,84);
+    state.records.trampoline[p.id]=Math.round((ultra?rand(1650,1960):rand(760,1660))*10)/10;
   }
 
   return ultra;
@@ -5918,7 +6410,7 @@ function performancePoints(gameIndex,v){
   if(gameIndex===21)return clamp(Math.round(100-v/150*100),0,100);
   if(gameIndex===22)return clamp(Math.round(v),0,100);
   if(gameIndex===23)return clamp(Math.round(100-v),0,100);
-  if(gameIndex===24)return v>=900?0:clamp(Math.round(100-v/25*100),0,100);
+  if(gameIndex===24)return v>=9000?0:clamp(Math.round(100-v/10),0,100);
   if(gameIndex===25)return [100,75,50,25,0][Math.min(4,Math.round(v))];
   if(gameIndex===26)return v>=900?0:clamp(Math.round(100-v/10*100),0,100);
   if(gameIndex===27){
@@ -5934,7 +6426,9 @@ function performancePoints(gameIndex,v){
   if(gameIndex===31)return clamp(Math.round(v),0,100);
   if(gameIndex===32)return clamp(Math.round(v/20*100),0,100);
   if(gameIndex===33)return clamp(Math.round(v),0,100);
-  return clamp(Math.round(v),0,100);
+  if(gameIndex===34)return clamp(Math.round(v),0,100);
+  if(gameIndex===35)return clamp(Math.round(v/2000*100),0,100);
+  return clamp(Math.round(v/2000*100),0,100);
 }
 
 function rankRecords(gameIndex){
@@ -5975,7 +6469,7 @@ function formatRecord(gameIndex,v){
   if(gameIndex===21)return `${(v/1000).toFixed(3)}秒`;
   if(gameIndex===22)return `${Number(v).toFixed(1)}pt`;
   if(gameIndex===23)return `${Number(v).toFixed(1)}%`;
-  if(gameIndex===24)return v>=900?`CRASH`:`${Number(v).toFixed(1)}m`;
+  if(gameIndex===24)return v>=9000?`CRASH`:`誤差${(v/1000).toFixed(3)}秒`;
   if(gameIndex===25)return v===0?`PERFECT`:`誤差${v}人`;
   if(gameIndex===26)return v>=900?`CRASH`:`${Number(v).toFixed(1)}m`;
   if(gameIndex===27)return v>=900?`FOUL`:`${(v/1000).toFixed(4)}秒`;
@@ -5985,7 +6479,9 @@ function formatRecord(gameIndex,v){
   if(gameIndex===31)return `${Math.round(v)}pt`;
   if(gameIndex===32)return `${Math.round(v)}体`;
   if(gameIndex===33)return `${Number(v).toFixed(1)}km`;
-  return `${Math.round(v)}周`;
+  if(gameIndex===34)return `${Number(v).toFixed(1)}%`;
+  if(gameIndex===35)return `${Number(v).toFixed(1)}m`;
+  return `${Number(v).toFixed(1)}m`;
 }
 
 function applyPoints(gameIndex,ranked){

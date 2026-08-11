@@ -4710,3 +4710,508 @@ body{touch-action:manipulation}
     top:66%;
   }
 }
+
+
+/* =========================================================
+   V10.1 PARACHUTE — ! + 3.000 SEC TARGET
+   ========================================================= */
+.para-danger-v101{
+  width:150px!important;
+  height:150px!important;
+  border-radius:50%!important;
+  background:#fff!important;
+  border:6px solid var(--ink)!important;
+  display:none;
+  place-items:center;
+  align-content:center;
+  color:#ff3b30!important;
+}
+.para-danger-v101.show{
+  display:grid!important;
+}
+.para-danger-v101 strong{
+  display:block;
+  font-size:76px;
+  line-height:.78;
+}
+.para-danger-v101 span{
+  display:block;
+  margin-top:8px;
+  border:3px solid var(--ink);
+  border-radius:999px;
+  background:var(--yellow);
+  padding:4px 8px;
+  color:var(--ink);
+  font-size:13px;
+  font-weight:1000;
+}
+.para-danger-v101.perfect-window{
+  transform:translate(-50%,-50%) scale(1.10)!important;
+  box-shadow:0 0 0 9px rgba(83,201,104,.22);
+}
+.para-danger-v101.late{
+  background:#ffd8d4!important;
+}
+.para-timing-v101{
+  position:absolute;
+  z-index:26;
+  left:50%;
+  top:14px;
+  transform:translateX(-50%);
+  min-width:210px;
+  border:3px solid var(--ink);
+  border-radius:999px;
+  background:#fff;
+  padding:6px 10px;
+  font-size:10px;
+  font-weight:1000;
+  text-align:center;
+}
+
+/* =========================================================
+   V10.1 GAME 35 — MOB PAINTER
+   ========================================================= */
+.painter-shell,
+.bike-shell,
+.tramp-shell{
+  width:min(100%,650px);
+  height:100%;
+  margin:0 auto;
+  display:flex;
+  flex-direction:column;
+}
+.painter-hud,
+.bike-hud,
+.tramp-hud{
+  display:grid;
+  gap:5px;
+  margin-bottom:5px;
+}
+.painter-hud,
+.bike-hud{grid-template-columns:1fr 1fr}
+.tramp-hud{grid-template-columns:repeat(3,1fr)}
+.painter-hud>div,
+.bike-hud>div,
+.tramp-hud>div{
+  border:3px solid var(--ink);
+  border-radius:11px;
+  background:#fff;
+  padding:4px;
+  text-align:center;
+}
+.painter-hud span,
+.bike-hud span,
+.tramp-hud span{
+  display:block;
+  font-size:7px;
+  font-weight:1000;
+  color:var(--muted);
+}
+.painter-hud b,
+.bike-hud b,
+.tramp-hud b{
+  font-size:14px;
+}
+.painter-stage{
+  flex:1;
+  min-height:0;
+  position:relative;
+  overflow:hidden;
+  border:4px solid var(--ink);
+  border-radius:21px;
+  background:#e9d6b2;
+  touch-action:none;
+}
+.painter-paper{
+  position:absolute;
+  left:50%;
+  top:46%;
+  width:min(82vw,390px);
+  aspect-ratio:1;
+  transform:translate(-50%,-50%);
+  border:5px solid var(--ink);
+  border-radius:18px;
+  background:#fffdf3;
+  box-shadow:0 8px 0 rgba(17,19,26,.18);
+}
+#painterSvg{
+  position:absolute;
+  inset:4%;
+  width:92%;
+  height:92%;
+  overflow:visible;
+}
+.cat-guide{
+  fill:none;
+  stroke:#232832;
+  stroke-width:9;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+  stroke-dasharray:3 5;
+}
+.cat-guide.judged{
+  stroke:#646b73;
+  opacity:.55;
+}
+.painter-stroke{
+  fill:none;
+  stroke:#258cff;
+  stroke-width:10;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+  filter:drop-shadow(0 0 4px rgba(37,140,255,.35));
+}
+.painter-stroke.excellent{stroke:#28aa5b}
+.painter-stroke.good{stroke:#258cff}
+.painter-stroke.rough{stroke:#f09a31}
+.cat-face-detail{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+}
+.cat-eye{
+  position:absolute;
+  top:47%;
+  width:18px;
+  height:24px;
+  border:4px solid var(--ink);
+  border-radius:50%;
+}
+.cat-eye.e1{left:35%}
+.cat-eye.e2{right:35%}
+.cat-nose{
+  position:absolute;
+  left:50%;
+  top:60%;
+  width:14px;
+  height:10px;
+  transform:translateX(-50%) rotate(45deg);
+  border:3px solid var(--ink);
+  border-radius:4px;
+  background:#ef9ca3;
+}
+.cat-whisker{
+  position:absolute;
+  top:64%;
+  width:48px;
+  height:3px;
+  background:var(--ink);
+}
+.cat-whisker.w1{left:17%;transform:rotate(8deg)}
+.cat-whisker.w2{left:17%;margin-top:16px;transform:rotate(-8deg)}
+.cat-whisker.w3{right:17%;transform:rotate(-8deg)}
+.cat-whisker.w4{right:17%;margin-top:16px;transform:rotate(8deg)}
+.painter-mob{
+  position:absolute;
+  z-index:10;
+  right:2%;
+  bottom:1%;
+  width:62px;
+  height:72px;
+  background-position:center;
+  background-size:contain;
+  background-repeat:no-repeat;
+}
+.painter-brush{
+  position:absolute;
+  left:-10px;
+  top:20px;
+  width:42px;
+  height:7px;
+  border:2px solid var(--ink);
+  border-radius:999px;
+  background:#c48445;
+  transform:rotate(-35deg);
+}
+.painter-brush:after{
+  content:"";
+  position:absolute;
+  left:-8px;
+  top:-4px;
+  width:14px;
+  height:11px;
+  border:2px solid var(--ink);
+  border-radius:8px 2px 2px 8px;
+  background:#258cff;
+}
+.painter-message,
+.bike-message,
+.tramp-message{
+  position:absolute;
+  z-index:30;
+  left:50%;
+  bottom:7px;
+  transform:translateX(-50%);
+  min-width:210px;
+  max-width:94%;
+  border:3px solid var(--ink);
+  border-radius:999px;
+  background:#fff;
+  padding:6px 10px;
+  text-align:center;
+  font-size:10px;
+  font-weight:1000;
+}
+
+/* =========================================================
+   V10.1 GAME 36 — BIKE JUMP
+   ========================================================= */
+.bike-stage{
+  flex:1;
+  min-height:0;
+  position:relative;
+  overflow:hidden;
+  border:4px solid var(--ink);
+  border-radius:21px;
+  background:linear-gradient(#a9e5ff 0 70%,#e9f7ff 70% 100%);
+  touch-action:none;
+}
+.bike-world{
+  position:absolute;
+  left:0;
+  top:0;
+  bottom:0;
+  will-change:transform;
+}
+.bike-sky{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+}
+.bike-cloud{
+  position:absolute;
+  font-size:52px;
+  opacity:.85;
+}
+.bike-hill{
+  position:absolute;
+  bottom:78px;
+  width:280px;
+  height:115px;
+  border:4px solid var(--ink);
+  border-bottom:none;
+  border-radius:180px 180px 0 0;
+  background:#7bc96d;
+}
+.bike-road{
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  height:82px;
+  border-top:4px solid var(--ink);
+  background:
+    linear-gradient(#707780 0 72%,#4d535b 72% 100%);
+}
+.bike-road:after{
+  content:"";
+  position:absolute;
+  left:0;
+  right:0;
+  top:35px;
+  height:5px;
+  background:repeating-linear-gradient(90deg,#fff 0 34px,transparent 34px 68px);
+}
+.bike-ramp{
+  position:absolute;
+  left:650px;
+  bottom:78px;
+  width:220px;
+  height:74px;
+  transform:skewX(-22deg);
+  border:4px solid var(--ink);
+  background:#d98a44;
+}
+.bike-ramp-line{
+  position:absolute;
+  left:50%;
+  top:-5px;
+  bottom:-5px;
+  width:8px;
+  transform:translateX(-50%);
+  background:var(--yellow);
+  border-left:3px solid var(--ink);
+  border-right:3px solid var(--ink);
+}
+.bike-ramp>span{
+  position:absolute;
+  left:50%;
+  top:-27px;
+  transform:translateX(-50%) skewX(22deg);
+  border:2px solid var(--ink);
+  border-radius:999px;
+  background:#fff;
+  padding:2px 6px;
+  font-size:8px;
+  font-weight:1000;
+}
+.bike-rider{
+  position:absolute;
+  z-index:15;
+  width:96px;
+  height:72px;
+  transform-origin:center center;
+}
+.bike-mob{
+  position:absolute;
+  z-index:4;
+  left:25px;
+  top:-25px;
+  width:52px;
+  height:58px;
+  background-position:center;
+  background-size:contain;
+  background-repeat:no-repeat;
+}
+.bike-body{
+  position:absolute;
+  left:20px;
+  top:28px;
+  width:58px;
+  height:19px;
+  border:4px solid var(--ink);
+  border-radius:16px;
+  background:#e65345;
+}
+.bike-body:before{
+  content:"";
+  position:absolute;
+  right:-16px;
+  top:-19px;
+  width:26px;
+  height:24px;
+  border-top:5px solid var(--ink);
+  border-right:5px solid var(--ink);
+  transform:skewX(-16deg);
+}
+.bike-wheel{
+  position:absolute;
+  top:43px;
+  width:30px;
+  height:30px;
+  border:5px solid var(--ink);
+  border-radius:50%;
+  background:#4e555e;
+  box-shadow:inset 0 0 0 5px #a9b0b7;
+}
+.bike-wheel.w1{left:11px}
+.bike-wheel.w2{right:6px}
+.bike-rider.land{
+  animation:bikeLand .36s ease;
+}
+@keyframes bikeLand{
+  50%{transform:translateY(8px) rotate(5deg)}
+}
+
+/* =========================================================
+   V10.1 GAME 37 — DYNAMIC TRAMPOLINE
+   ========================================================= */
+.tramp-stage{
+  flex:1;
+  min-height:0;
+  position:relative;
+  overflow:hidden;
+  border:4px solid var(--ink);
+  border-radius:21px;
+  background:linear-gradient(#9edfff,#effcff);
+  touch-action:none;
+}
+.tramp-world{
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  height:2800px;
+  will-change:transform;
+}
+.tramp-sky-lines{
+  position:absolute;
+  inset:0;
+  background:
+    repeating-linear-gradient(
+      0deg,
+      transparent 0 145px,
+      rgba(54,128,170,.10) 145px 148px
+    );
+}
+.tramp-sky-lines:after{
+  content:"100m\\A200m\\A300m\\A400m\\A1000m\\A2000m";
+  white-space:pre;
+  position:absolute;
+  left:12px;
+  bottom:160px;
+  line-height:145px;
+  font-size:9px;
+  font-weight:1000;
+  color:rgba(17,19,26,.45);
+}
+.tramp-mob{
+  position:absolute;
+  z-index:15;
+  left:50%;
+  bottom:95px;
+  width:70px;
+  height:80px;
+  transform:translateX(-50%);
+  background-position:center;
+  background-size:contain;
+  background-repeat:no-repeat;
+  filter:drop-shadow(0 4px 0 rgba(17,19,26,.18));
+}
+.tramp-bed{
+  position:absolute;
+  z-index:10;
+  left:50%;
+  bottom:54px;
+  width:min(72vw,310px);
+  height:52px;
+  transform:translateX(-50%) scaleY(1);
+  transform-origin:center bottom;
+  transition:filter .08s ease;
+}
+.tramp-net{
+  position:absolute;
+  inset:0;
+  border:5px solid var(--ink);
+  border-radius:50%;
+  background:
+    repeating-linear-gradient(90deg,#4e7a91 0 3px,transparent 3px 16px),
+    repeating-linear-gradient(0deg,#4e7a91 0 3px,#d8f5ff 3px 16px);
+}
+.tramp-leg{
+  position:absolute;
+  bottom:-48px;
+  width:8px;
+  height:52px;
+  border:3px solid var(--ink);
+  background:#77818b;
+}
+.tramp-leg.l1{left:35px;transform:rotate(14deg)}
+.tramp-leg.l2{right:35px;transform:rotate(-14deg)}
+.tramp-bed.deep{
+  filter:drop-shadow(0 0 9px rgba(255,214,63,.80));
+}
+.tramp-timing-ring{
+  position:absolute;
+  z-index:24;
+  left:50%;
+  bottom:77px;
+  width:88px;
+  height:22px;
+  transform:translateX(-50%);
+  border:4px solid rgba(17,19,26,.28);
+  border-radius:50%;
+  pointer-events:none;
+}
+.tramp-timing-ring.perfect{
+  border-color:#39b95b;
+  box-shadow:0 0 0 8px rgba(57,185,91,.16);
+}
+
+@media(max-height:690px){
+  .painter-paper{width:300px}
+  .painter-mob{width:50px;height:60px}
+  .bike-rider{transform:scale(.86)}
+  .tramp-mob{width:58px;height:68px}
+  .tramp-bed{width:245px}
+}
