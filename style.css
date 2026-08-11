@@ -13641,3 +13641,21 @@ body,
 @keyframes balanceTapV117{
   50%{filter:brightness(1.04)}
 }
+\n/* V10.18 duel edge burst */\n.duel-enemy.edge-burst-v118{animation:duelEdgeBurstV118 .34s cubic-bezier(.2,.75,.2,1)}\n@keyframes duelEdgeBurstV118{0%{transform:translateX(-50%) scale(1)}28%{transform:translateX(-50%) scale(.88) rotate(-8deg)}58%{transform:translateX(-50%) translateY(-8px) scale(1.18) rotate(8deg)}100%{transform:translateX(-50%) scale(1)}}\n.duel-player.edge-blown-v118{animation:duelEdgeBlownV118 .48s ease}\n@keyframes duelEdgeBlownV118{45%{transform:translateX(-50%) translateY(-18px) rotate(22deg) scale(.9)}100%{transform:translateX(-50%) translateY(0) rotate(0)}}\n\n/* V10.18 golf swing: bottom -> impact -> high follow-through */\n.power-club{transform:rotate(112deg)!important}\n.power-golfer.golf-swing .power-club{animation:powerGolfSwingV118 .54s cubic-bezier(.18,.75,.18,1) forwards!important}\n@keyframes powerGolfSwingV118{0%{transform:rotate(112deg)}18%{transform:rotate(128deg)}48%{transform:rotate(20deg)}64%{transform:rotate(-18deg)}100%{transform:rotate(-82deg)}}\n.power-golfer.golf-swing{animation:powerGolferTurnV118 .54s ease forwards!important}\n@keyframes powerGolferTurnV118{0%{transform:rotate(2deg) translateY(0)}45%{transform:rotate(-7deg) translateY(2px)}100%{transform:rotate(8deg) translateY(-2px)}}\n.power-golfer.camera-left-behind-v118{animation:powerGolferCameraLeaveV118 .38s ease forwards!important}\n@keyframes powerGolferCameraLeaveV118{to{opacity:0;transform:translateX(-80px) scale(.72)}}\n.power-gauges.flight-hide-v118{opacity:0;pointer-events:none;transform:translateY(18px);transition:opacity .25s ease,transform .25s ease}\n
+/* V10.18 GAME 62 — MOB DICE */
+.dice-shell{width:min(100%,650px);height:100%;margin:0 auto;display:flex;flex-direction:column}
+.dice-hud{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:5px}
+.dice-hud>div{border:3px solid var(--ink);border-radius:10px;background:#fff;padding:4px;text-align:center}
+.dice-hud span{display:block;color:var(--muted);font-size:7px;font-weight:1000}.dice-hud b{font-size:15px}
+.dice-stage{flex:1;min-height:0;position:relative;overflow:hidden;border:4px solid var(--ink);border-radius:21px;background:#cce3eb}
+.dice-table{position:absolute;left:4%;right:4%;bottom:10%;height:52%;border:5px solid #3b2b25;border-radius:50% 50% 18px 18px;background:#7eaa6f}
+.dice-tray{position:absolute;z-index:30;left:7%;right:7%;bottom:24%;display:grid;grid-template-columns:repeat(5,1fr);gap:6px;align-items:end}
+.mob-die{aspect-ratio:1;display:grid;place-items:center;border:4px solid #1c1e22;border-radius:15px;background:#fff;box-shadow:inset -7px -8px 0 rgba(190,195,200,.22),0 5px 0 rgba(17,19,26,.22)}
+.die-face{font-size:30px;font-weight:1000}.mob-die.rolling{animation:diceRollV118 .62s cubic-bezier(.2,.72,.2,1) var(--dice-delay)}
+@keyframes diceRollV118{0%{transform:translate(0,0) rotate(0) scale(1)}45%{transform:translate(var(--dice-x),var(--dice-y)) rotate(var(--dice-r)) scale(1.13)}100%{transform:translate(0,0) rotate(0) scale(1)}}
+.mob-die.settled{animation:diceSettleV118 .25s ease}@keyframes diceSettleV118{45%{transform:scale(1.16)}}
+.dice-mob{position:absolute;z-index:20;left:50%;top:6%;width:70px;height:80px;transform:translateX(-50%);background-size:contain;background-position:center;background-repeat:no-repeat}
+.dice-message{position:absolute;z-index:55;left:50%;top:24%;transform:translateX(-50%);min-width:180px;border:3px solid var(--ink);border-radius:999px;background:#fff;padding:5px 9px;text-align:center;font-size:9px;font-weight:1000}
+.dice-jackpot{position:absolute;z-index:70;left:50%;top:47%;transform:translate(-50%,-50%) scale(.4);color:#ffe45c;-webkit-text-stroke:4px var(--ink);font-size:38px;font-weight:1000;opacity:0}.dice-jackpot.show{animation:diceJackpotV118 .85s ease forwards}
+@keyframes diceJackpotV118{24%{opacity:1;transform:translate(-50%,-50%) scale(1.22)}100%{opacity:1;transform:translate(-50%,-50%) scale(1)}}
+.dice-roll{min-height:62px;margin-top:6px;border:4px solid var(--ink);border-radius:15px;background:#ffd05f;box-shadow:0 5px 0 var(--ink);font-size:20px;font-weight:1000;touch-action:none}

@@ -110,7 +110,8 @@ const GAMES=[
   {no:58,key:"homeRunMob",title:"モブくんはパワーヒッター",sub:"角度とパワーを決めて最大3000m"},
   {no:59,key:"mobMisfortune",title:"モブくんの災難",sub:"大量の落石を左右移動で避ける"},
   {no:60,key:"aimMob",title:"狙ってモブくん！",sub:"弓矢で木の細い白線を狙う"},
-  {no:61,key:"balanceMob",title:"極限バランスモブくん",sub:"細い棒の上で10秒耐える"}
+  {no:61,key:"balanceMob",title:"極限バランスモブくん",sub:"細い棒の上で10秒耐える"},
+  {no:62,key:"mobDice",title:"モブくんのサイコロ",sub:"5個のサイコロで大きな合計を狙う"}
 ];
 
 const MODES={
@@ -147,7 +148,7 @@ function freshState(){
     roundIndex:0,
     records:{
       reaction:{},memory:{},puzzle:{},launch:{},stack:{},breakdance:{},
-      crisis:{},factory:{},catcher:{},tidy:{},ski:{},slot:{},rope:{},pk:{},rhythm:{},cut:{},climb:{},errand:{},dontHitMob:{},mobStop:{},overlap:{},shutter:{},cup:{},darts:{},parachute:{},mobCount:{},brake:{},feint:{},bomb:{},overlapMaster:{},jumpingMob:{},heroMaybe:{},popularGame:{},planetEnergy:{},painter:{},bikeJump:{},trampoline:{},mobTrain:{},giantMob:{},wizardMob:{},brawlerMob:{},summonerMob:{},blackjackMob:{},mobIssen:{},crowEscape:{},dancingMob:{},guardianMob:{},mob50m:{},sniperMob:{},mobRacePredict:{},mobRocket:{},bossDuel:{},plushCatcher:{},toyOnOff:{},dodgeballMob:{},amidakujiMob:{},katanaSmith:{},homeRunMob:{},mobMisfortune:{},aimMob:{},balanceMob:{}
+      crisis:{},factory:{},catcher:{},tidy:{},ski:{},slot:{},rope:{},pk:{},rhythm:{},cut:{},climb:{},errand:{},dontHitMob:{},mobStop:{},overlap:{},shutter:{},cup:{},darts:{},parachute:{},mobCount:{},brake:{},feint:{},bomb:{},overlapMaster:{},jumpingMob:{},heroMaybe:{},popularGame:{},planetEnergy:{},painter:{},bikeJump:{},trampoline:{},mobTrain:{},giantMob:{},wizardMob:{},brawlerMob:{},summonerMob:{},blackjackMob:{},mobIssen:{},crowEscape:{},dancingMob:{},guardianMob:{},mob50m:{},sniperMob:{},mobRacePredict:{},mobRocket:{},bossDuel:{},plushCatcher:{},toyOnOff:{},dodgeballMob:{},amidakujiMob:{},katanaSmith:{},homeRunMob:{},mobMisfortune:{},aimMob:{},balanceMob:{},mobDice:{}
     },
     total:{},
     roundPoints:[],
@@ -249,7 +250,7 @@ function renderHome(){
   state=freshState();
   screen.innerHTML=`
     <section class="hero">
-      <div><span class="kicker">SMARTPHONE PARTY GAME</span><h1>61 MINI<br>GAMES</h1><p>61種のミニゲーム。各モードでNORMALかCUSTOMを選んで遊べます。</p></div>
+      <div><span class="kicker">SMARTPHONE PARTY GAME</span><h1>62 MINI<br>GAMES</h1><p>62種のミニゲーム。各モードでNORMALかCUSTOMを選んで遊べます。</p></div>
       <div class="hero-mark">MOB</div>
     </section>
     <section class="panel">
@@ -497,7 +498,7 @@ function renderPlayStyleSelect(){
       <button id="normalStyle" class="style-select-card normal" type="button">
         <span>NORMAL</span>
         <b>順番に全種目</b>
-        <small>GAME 1 → 61 を順番にプレイ</small>
+        <small>GAME 1 → 62 を順番にプレイ</small>
       </button>
       <button id="customStyle" class="style-select-card custom" type="button">
         <span>CUSTOM</span>
@@ -507,7 +508,7 @@ function renderPlayStyleSelect(){
     </div>
 
     <section class="panel flat">
-      <h3>61 MINI GAMES</h3>
+      <h3>62 MINI GAMES</h3>
       <div class="compact-game-grid">
         ${GAMES.map(g=>`<div><b>${g.no}</b><span>${g.title}</span></div>`).join("")}
       </div>
@@ -747,6 +748,7 @@ function renderModeLobby(){
       <div><b>モブくんの災難</b><span>12秒生存=100点</span></div>
       <div><b>狙ってモブくん！</b><span>白線との誤差0px=100点</span></div>
       <div><b>極限バランスモブくん</b><span>10秒維持=100点</span></div>
+      <div><b>モブくんのサイコロ</b><span>合計5=1点 / 合計30=100点</span></div>
     </div>`;
 
   screen.innerHTML=`
@@ -845,7 +847,8 @@ function scoreRuleForGame(index){
     "ゴルフショット3000m=100点 / 0m=0点",
     "12.00秒生存=100点 / 岩直撃までの時間",
     "白線との誤差0px=100点 / 約45px以上=0点",
-    "10.00秒維持=100点 / 倒れるまでの時間"
+    "10.00秒維持=100点 / 倒れるまでの時間",
+    "5個合計5=1点 / 合計30=100点"
   ][index];
 }
 
@@ -968,15 +971,17 @@ function showGameIntro(index){
   }else if(index===55){
     rules=`<li>6本のあみだくじ。ゴールは0 / 15 / 30 / 50 / 75 / 100。</li><li>最初はゴール側からカメラが始まり、あみだの一部をヒントとして見せてから入口へ移動。</li><li>入口を1つ選ぶとモブくんが自動で線をたどり、カメラが追従してゴールへ。</li><li>あみだの横線・数字の配置は毎回ランダム。</li>`;
   }else if(index===56){
-    rules=`<li>鍔・柄・柄頭は最初から完成済み。プレイヤーが描くのは刀身だけ。</li><li>刀は縦向き。黄色い根元から上へ、好きな形のカッコイイ刀身を7秒で描きます。</li><li>長さ・根元への接続・縦の細長さ・滑らかさなどを採点。</li><li>まっすぐでも少し曲がっていてもOK。1〜100点。</li>`;
+    rules=`<li>鍔・柄・柄頭は最初から完成済み。プレイヤーが描くのは刀身だけ。</li><li>刀は縦向き。黄色い根元から上へ、好きな形のカッコイイ刀身を7秒で描きます。</li><li>長さ・根元への接続・滑らかさ・中央バランスなどを採点。刀身の太さは自由です。</li><li>まっすぐでも少し曲がっていてもOK。1〜100点。</li>`;
   }else if(index===57){
     rules=`<li>野球ではなくゴルフのパワーヒッターゲーム。</li><li>最初にANGLEゲージをSTOPして10〜70°から打ち出し角を決定。</li><li>次にPOWERゲージをSTOP。100%に近いほど強いショット。</li><li>自動でゴルフスイングし、カメラがボールを追跡。角度45°付近＋POWER100%で最大3000m。</li>`;
   }else if(index===58){
     rules=`<li>上から大量の岩が落下。← →でモブくんを動かして避けます。</li><li>岩に1回でも当たったら即終了。</li><li>7秒までは徐々に難しくなり、7秒以降は落石数・速度が一気に上がるROCK STORM。</li><li>最大12秒生存。</li>`;
   }else if(index===59){
     rules=`<li>右側の巨大な木に、矢と同じくらい細い白線があります。</li><li>左のモブくんを▲ ▼で上下移動。</li><li>FIREまたは画面タップで矢を1発だけ真っすぐ発射。</li><li>矢が刺さった高さと白線の誤差から0〜100点。</li>`;
+  }else if(index===60){
+    rules=`<li>細い棒の上にモブくん。10秒間倒れないように維持。</li><li>右へ傾いたらLEFT、左へ傾いたらRIGHTをタップして補正。</li><li>後半ほど風と傾き加速が強くなります。</li><li>約26°から補正不能、32°で転倒。</li>`;
   }else{
-    rules=`<li>細い棒の上にモブくん。10秒間倒れないように維持。</li><li>右へ傾いたらLEFT、左へ傾いたらRIGHTをタップして補正。</li><li>傾きが大きいほど1タップの補正も強くなります。</li><li>ただし約29°の限界域まで傾くと補正が効かなくなり、34°で転倒。</li>`;
+    rules=`<li>5個のサイコロを1回だけ振る完全な運勝負。</li><li>全部1なら1点、全部6なら100点。</li><li>途中の合計は5〜30を1〜100点へ比例換算。</li>`;
   }
   screen.innerHTML=`
     <div class="game-head">
@@ -1077,7 +1082,8 @@ function humanReady(gameIndex,humanIndex){
     else if(gameIndex===57)startPowerHitter(p,humanIndex,runId);
     else if(gameIndex===58)startMobMisfortune(p,humanIndex,runId);
     else if(gameIndex===59)startAimMob(p,humanIndex,runId);
-    else startBalanceMob(p,humanIndex,runId);
+    else if(gameIndex===60)startBalanceMob(p,humanIndex,runId);
+    else startMobDice(p,humanIndex,runId);
   },{once:true});
 }
 
@@ -13575,6 +13581,7 @@ async function startBossDuel(p,humanIndex,runId){
   let enemyLeapFromX=0;
   let enemyLeapToX=0;
   let nextEnemyLeap=0;
+  let nextEdgeBurst=0;
 
   screen.innerHTML=`<div class="duel-shell duel-v115">
     <div class="game-head">
@@ -13744,6 +13751,34 @@ async function startBossDuel(p,humanIndex,runId){
     },900);
   }
 
+  function enemyEdgeBurst(now){
+    if(finished||now<nextEdgeBurst||now<enemyLeapUntil)return false;
+    const nearLeft=enemyX<=fieldMin+36;
+    const nearRight=enemyX>=fieldMax-36;
+    if(!(nearLeft||nearRight)||Math.abs(enemyX-playerX)>132)return false;
+    nextEdgeBurst=now+2200;
+    clearEnemyAttack();
+    const dir=playerX<enemyX?-1:1;
+    enemy.classList.remove('edge-burst-v118','attacking','special-attacking');
+    void enemy.offsetWidth;
+    enemy.classList.add('edge-burst-v118');
+    popImpact('壁際反撃！！',enemyX);
+    beep(390,90,.03);
+    setTimeout(()=>{
+      if(finished||!isGameRunValid(runId)||Math.abs(enemyX-playerX)>155)return;
+      playerVX=dir*980;
+      playerStunUntil=performance.now()+720;
+      enemyVX=nearLeft?360:-360;
+      enemyBackstepUntil=performance.now()+260;
+      player.classList.remove('hit','special-hit','edge-blown-v118');
+      void player.offsetWidth;
+      player.classList.add('edge-blown-v118');
+      popImpact('BLOW AWAY!!',playerX);
+      beep(105,145,.045);
+    },115);
+    return true;
+  }
+
   function applyEnemyDamage(damage,{specialHit=false}={}){
     if(finished)return;
 
@@ -13769,6 +13804,8 @@ async function startBossDuel(p,humanIndex,runId){
     }
 
     normalHitCount++;
+
+    if(enemyEdgeBurst(performance.now()))return;
 
     if(normalHitCount%3===0){
       const dir=enemyX>=playerX?1:-1;
@@ -15450,16 +15487,8 @@ function scoreKatanaDrawing(strokes,w,h,anchorX,anchorY){
   const maxY=Math.max(...points.map(p=>p.y));
 
   const bladeHeight=Math.max(1,anchorY-minY);
-  const bladeWidth=Math.max(1,maxX-minX);
-
   const heightScore=clamp(
     bladeHeight/(h*.68),
-    0,1
-  );
-
-  const verticalSlimness=bladeHeight/bladeWidth;
-  const slimScore=clamp(
-    (verticalSlimness-1.5)/5.0,
     0,1
   );
 
@@ -15523,13 +15552,12 @@ function scoreKatanaDrawing(strokes,w,h,anchorX,anchorY){
 
   const raw=
     8+
-    heightScore*31+
-    connectScore*22+
-    slimScore*15+
-    smoothScore*10+
-    centeredScore*7+
-    styleScore*4+
-    countScore*3;
+    heightScore*38+
+    connectScore*25+
+    smoothScore*14+
+    centeredScore*10+
+    styleScore*7+
+    countScore*6;
 
   return clamp(
     Math.round(raw),
@@ -15859,7 +15887,10 @@ async function startPowerHitter(p,humanIndex,runId){
 
     impact.classList.add('show');
     ball.classList.add('launched');
+    stage.classList.add('ball-camera-v118');
+    document.querySelector('.power-gauges')?.classList.add('flight-hide-v118');
     beep(940,100,.035);
+    setTimeout(()=>{if(golfer&&golfer.isConnected)golfer.classList.add('camera-left-behind-v118');},120);
 
     const angleRad=angleDeg*Math.PI/180;
     const angleFactor=clamp(
@@ -16495,11 +16526,11 @@ async function startBalanceMob(p,humanIndex,runId){
   gameFit();
 
   const MAX_MS=10000;
-  const FALL_ANGLE=34;
-  const NO_CONTROL_ANGLE=29;
+  const FALL_ANGLE=32;
+  const NO_CONTROL_ANGLE=26;
 
-  let angle=rand(-2.2,2.2);
-  let angularVelocity=rand(-1.3,1.3);
+  let angle=rand(-4.2,4.2);
+  let angularVelocity=rand(-2.0,2.0);
 
   let startTime=0;
   let last=0;
@@ -16551,18 +16582,11 @@ async function startBalanceMob(p,humanIndex,runId){
       return 0;
     }
 
-    const base=2.0+a*.37;
+    const base=1.25+a*.24;
 
-    if(a<=23){
-      return base;
-    }
+    if(a<=19)return base;
 
-    return base*
-      clamp(
-        (NO_CONTROL_ANGLE-a)/
-        (NO_CONTROL_ANGLE-23),
-        0,1
-      );
+    return base*clamp((NO_CONTROL_ANGLE-a)/(NO_CONTROL_ANGLE-19),0,1);
   }
 
   function correct(dir){
@@ -16650,25 +16674,12 @@ async function startBalanceMob(p,humanIndex,runId){
     const elapsed=now-startTime;
     const t=elapsed/1000;
 
-    // Inverted-pendulum instability + changing side wind.
-    const gust=
-      Math.sin(t*1.9+gustPhase)*1.15+
-      Math.sin(t*.71+gustPhase*.43)*.72;
-
-    angularVelocity+=
-      (
-        angle*.29+
-        gust
-      )*
-      dt;
-
-    angularVelocity*=Math.pow(.95,dt*60);
-    angle+=angularVelocity*dt*16;
-
-    // Tiny randomness prevents memorizing one rhythm.
-    if(Math.random()<dt*1.6){
-      angularVelocity+=rand(-.55,.55);
-    }
+    const difficulty=1+clamp(t/10,0,1)*1.25;
+    const gust=(Math.sin(t*2.35+gustPhase)*1.85+Math.sin(t*.83+gustPhase*.43)*1.10+Math.sin(t*4.10+gustPhase*.19)*.46)*difficulty;
+    angularVelocity+=(angle*.44*difficulty+gust)*dt;
+    angularVelocity*=Math.pow(.965,dt*60);
+    angle+=angularVelocity*dt*18.5;
+    if(Math.random()<dt*(2.0+t*.20)){angularVelocity+=rand(-.82,.82)*(1+t*.07);}
 
     rig.style.transform=
       `translateX(-50%) rotate(${angle}deg)`;
@@ -16679,7 +16690,7 @@ async function startBalanceMob(p,humanIndex,runId){
     if(Math.abs(angle)>=NO_CONTROL_ANGLE){
       tiltEl.classList.add('danger');
       message.textContent='限界域！ 補正不能！';
-    }else if(Math.abs(angle)>=22){
+    }else if(Math.abs(angle)>=19){
       tiltEl.classList.add('warning');
       message.textContent='強く傾いてる！ 逆方向！';
     }else{
@@ -16702,6 +16713,101 @@ async function startBalanceMob(p,humanIndex,runId){
   raf=requestAnimationFrame(frame);
 }
 
+
+
+// GAME 62 -------------------------------------------------
+async function startMobDice(p,humanIndex,runId){
+  gameFit();
+  let rolled=false;
+  let finished=false;
+
+  screen.innerHTML=`<div class="dice-shell">
+    <div class="game-head"><div><span class="kicker">${esc(p.name)}</span><h2>モブくんのサイコロ</h2></div><div class="game-badge">${playBadge(humanIndex)}</div></div>
+    <div class="dice-hud"><div><span>TOTAL</span><b id="diceTotal">---</b></div><div><span>SCORE</span><b id="diceScore">---</b></div></div>
+    <div class="dice-stage">
+      <div class="dice-table"></div>
+      <div id="diceTray" class="dice-tray">${Array.from({length:5},(_,i)=>`<div class="mob-die" data-die="${i}"><div class="die-face">?</div></div>`).join('')}</div>
+      <div class="dice-mob" style="background-image:url('icon/01.png')"></div>
+      <div id="diceMessage" class="dice-message">運だけで勝負！</div>
+      <div id="diceJackpot" class="dice-jackpot">ALL 6!!</div>
+    </div>
+    <button id="diceRoll" class="dice-roll" type="button">5 DICE ROLL!</button>
+  </div>`;
+
+  const dice=[...screen.querySelectorAll('.mob-die')];
+  const totalEl=document.getElementById('diceTotal');
+  const scoreEl=document.getElementById('diceScore');
+  const message=document.getElementById('diceMessage');
+  const jackpot=document.getElementById('diceJackpot');
+  const rollBtn=document.getElementById('diceRoll');
+
+  function scoreFromTotal(total){
+    if(total<=5)return 1;
+    if(total>=30)return 100;
+    return clamp(Math.round(1+(total-5)/25*99),1,100);
+  }
+
+  async function rollDice(){
+    if(rolled||finished||!isGameRunValid(runId))return;
+    rolled=true;
+    rollBtn.disabled=true;
+    message.textContent='ROLL!!';
+
+    dice.forEach((die,i)=>{
+      die.style.setProperty('--dice-x',`${rand(-36,36).toFixed(0)}px`);
+      die.style.setProperty('--dice-y',`${rand(-72,-35).toFixed(0)}px`);
+      die.style.setProperty('--dice-r',`${randi(-480,480)}deg`);
+      die.style.setProperty('--dice-delay',`${i*.045}s`);
+      die.classList.remove('rolling','settled');
+      void die.offsetWidth;
+      die.classList.add('rolling');
+    });
+    beep(520,80,.015);
+
+    for(let step=0;step<9;step++){
+      if(!isGameRunValid(runId))return;
+      dice.forEach(d=>d.querySelector('.die-face').textContent=randi(1,6));
+      await wait(65);
+    }
+
+    const values=[];
+    dice.forEach((die,i)=>{
+      const value=randi(1,6);
+      values.push(value);
+      die.querySelector('.die-face').textContent=value;
+      setTimeout(()=>{if(die.isConnected)die.classList.add('settled')},i*70);
+    });
+
+    await wait(470);
+    if(!isGameRunValid(runId))return;
+
+    const total=values.reduce((a,b)=>a+b,0);
+    const score=scoreFromTotal(total);
+    state.records.mobDice[p.id]=score;
+    totalEl.textContent=total;
+    scoreEl.textContent=`${score}pt`;
+
+    if(values.every(v=>v===6)){
+      jackpot.classList.add('show');
+      message.textContent='奇跡！ ALL 6！！';
+      beep(1180,220,.05);
+    }else if(values.every(v=>v===1)){
+      message.textContent='ALL 1… 1 POINT';
+      beep(150,180,.035);
+    }else{
+      message.textContent=total>=25?'LUCKY!!':total>=18?'GOOD!':'運は次回に…';
+      beep(score>=80?980:score>=55?760:score>=30?560:330,140,.035);
+    }
+
+    finished=true;
+    await wait(850);
+    if(isGameRunValid(runId))recordScreen(61,p,humanIndex,`${score}<small>pt</small>`,`${values.join(' + ')} = ${total}`);
+  }
+
+  rollBtn.addEventListener('pointerdown',e=>{e.preventDefault();rollDice()},{passive:false});
+  if(!(await countdown('DICE',runId)))return;
+  message.textContent='5個まとめて振れ！';
+}
 
 
 function recordScreen(gameIndex,p,humanIndex,main,sub=""){
@@ -16750,7 +16856,7 @@ async function simulateCpuThenResult(gameIndex){
 
 function cpuUltraDraw(gameIndex){
   // Game-specific draw rate. Regular values are already intentionally strong.
-  const chance=[0.12,0.10,0.14,0.16,0.12,0.13,0.14,0.12,0.15,0.12,0.14,0.13,0.13,0.14,0.12,0.12,0.13,0.12,0.13,0.14,0.13,0.14,0.12,0.13,0.12,0.12,0.13,0.13,0.14,0.14,0.13,0.12,0.13,0.13,0.13,0.13,0.13,0.13,0.13,0.13,0.13,0.13,0.13,0.13,0.13,0.13,0.13,0.14,0.13,0.13,0.13,0.14,0.13,0.13,0.14,0.12,0.13,0.14,0.13,0.13,0.14][gameIndex] ?? 0.12;
+  const chance=[0.12,0.10,0.14,0.16,0.12,0.13,0.14,0.12,0.15,0.12,0.14,0.13,0.13,0.14,0.12,0.12,0.13,0.12,0.13,0.14,0.13,0.14,0.12,0.13,0.12,0.12,0.13,0.13,0.14,0.14,0.13,0.12,0.13,0.13,0.13,0.13,0.13,0.13,0.13,0.13,0.13,0.13,0.13,0.13,0.13,0.13,0.13,0.14,0.13,0.13,0.13,0.14,0.13,0.13,0.14,0.12,0.13,0.14,0.13,0.13,0.14,0.12][gameIndex] ?? 0.12;
   return Math.random()<chance;
 }
 
@@ -16888,8 +16994,11 @@ function simulateOneCpu(gameIndex,p){
     state.records.mobMisfortune[p.id]=Math.round((ultra?rand(10.3,12):rand(5.6,10.8))*100)/100;
   }else if(gameIndex===59){
     state.records.aimMob[p.id]=ultra?randi(91,100):randi(38,91);
+  }else if(gameIndex===60){
+    state.records.balanceMob[p.id]=Math.round((ultra?rand(7.9,10):rand(3.6,8.3))*100)/100;
   }else{
-    state.records.balanceMob[p.id]=Math.round((ultra?rand(8.8,10):rand(4.8,9.1))*100)/100;
+    const diceTotal=ultra?randi(21,30):randi(10,25);
+    state.records.mobDice[p.id]=clamp(Math.round(diceTotal<=5?1:diceTotal>=30?100:1+(diceTotal-5)/25*99),1,100);
   }
 
   return ultra;
@@ -16995,7 +17104,8 @@ function performancePoints(gameIndex,v){
   if(gameIndex===57)return clamp(Math.round(v/3000*100),0,100);
   if(gameIndex===58)return clamp(Math.round(v/12*100),0,100);
   if(gameIndex===59)return clamp(Math.round(v),0,100);
-  return clamp(Math.round(v/10*100),0,100);
+  if(gameIndex===60)return clamp(Math.round(v/10*100),0,100);
+  return clamp(Math.round(v),0,100);
 }
 
 function rankRecords(gameIndex){
@@ -17072,7 +17182,8 @@ function formatRecord(gameIndex,v){
   if(gameIndex===57)return `${Number(v).toFixed(1)}m`;
   if(gameIndex===58)return `${Number(v).toFixed(2)}秒`;
   if(gameIndex===59)return `${Math.round(v)}pt`;
-  return `${Number(v).toFixed(2)}秒`;
+  if(gameIndex===60)return `${Number(v).toFixed(2)}秒`;
+  return `${Math.round(v)}pt`;
 }
 
 function applyPoints(gameIndex,ranked){
