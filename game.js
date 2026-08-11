@@ -79,7 +79,7 @@ const GAMES=[
   {no:39,key:"giantMob",title:"巨大モブくん大進撃",sub:"1.000秒を刻みながらビル破壊"},
   {no:40,key:"wizardMob",title:"魔法使いモブくん",sub:"闇の炎を円で囲んで町を守る"},
   {no:41,key:"brawlerMob",title:"モブくんは喧嘩番長",sub:"学校で黒モブくんをぶっ飛ばす"},
-  {no:42,key:"summonerMob",title:"モブくんは召喚師",sub:"描いた姿そのままで中央オート無双"},
+  {no:42,key:"summonerMob",title:"モブくんは召喚師",sub:"広く描いて超火力の中央オート無双"},
   {no:43,key:"blackjackMob",title:"ブラックジャックの決戦",sub:"動く13枚を追って21を作る"},
   {no:44,key:"mobIssen",title:"モブくん一閃",sub:"3回の一閃 合計300ポイント"},
   {no:45,key:"crowEscape",title:"カラスから逃げろ！",sub:"4体のカラスから20秒逃げ切る"}
@@ -542,9 +542,9 @@ function scoreRuleForGame(index){
     "3回目2000m=100点 / 0m=0点",
     "2.80秒以下=100点 / 6.00秒以上または衝突=0点",
     "30棟破壊=100点 / 0棟=0点",
-    "闇の炎15個消去=100点 / 0個=0点",
-    "黒モブくん30体撃破=100点 / 0体=0点",
-    "黒スライム40体撃破=100点 / 0体=0点",
+    "闇の炎20個消去=100点 / 0個=0点",
+    "黒モブくん350体撃破=100点 / 0体=0点",
+    "黒スライム60体撃破=100点 / 0体=0点",
     "21=100点 / 22→1、23→2の循環ルール",
     "3回合計300pt=100点 / 0pt=0点",
     "20.00秒生存=100点 / 0秒=0点"
@@ -636,11 +636,11 @@ function showGameIntro(index){
   }else if(index===38){
     rules=`<li>巨大モブくんが自動で進撃し、高層ビルを次々破壊します。</li><li>エネルギーは100から開始。</li><li>円形エネルギーのストップウォッチを<strong>1.000秒ピッタリ</strong>でタップ。</li><li>1.000秒との誤差×100だけエネルギー減少。例：0.500秒差なら-50。</li><li>エネルギーが0になるまでに破壊したビル数が記録。30棟=100点。</li>`;
   }else if(index===39){
-    rules=`<li>田舎町へ闇の炎が高速で降ってきます。小さなモブくん達は逃げ回っています。</li><li>闇の炎の周りを指で円形に囲むと、魔法のステッキが反応して炎を消します。</li><li>大きな闇の炎も出現します。大きいほど囲む円も大きく必要。</li><li>炎を消せなくても、モブくんに当たらなければ継続。接触した瞬間に終了。</li><li>10秒勝負。後半ほど落下速度・数・同時出現数が上がります。</li>`;
+    rules=`<li>田舎町へ闇の炎が高速で降ってきます。小さなモブくん達は逃げ回っています。</li><li>闇の炎の周りを指で円形に囲むと、魔法のステッキが反応して炎を消します。</li><li>民も低確率で小さなエネルギー弾を撃ち、闇の炎をほんの少しだけ減速させます。</li><li>大きな闇の炎も出現。大きい炎は遅め。炎を消せなくてもモブくんに当たらなければ継続。</li><li>10秒勝負。20個消去=100点。後半ほど落下速度・数・同時出現数が上がります。</li>`;
   }else if(index===40){
-    rules=`<li>10秒間の横スクロール爽快アクション。</li><li>← →で移動。左へ行く時はモブくんが左向きになります。</li><li>サイズの違う黒モブくんが大量に左右から迫ってきます。たまに巨大な黒モブくんも出現。</li><li>通常PUNCHでも前方の複数体をまとめてぶっ飛ばします。</li><li>10体KOごとに必殺パンチを1回だけ使用可能。ストックは1回まで。</li>`;
+    rules=`<li>10秒間の横スクロール爽快アクション。</li><li>← →で移動。左へ行く時はモブくんが左向きになります。</li><li>黒モブくんは左右・教室・上空から大量出現。味方2体も別行動で自動的に敵を殴ります。</li><li>通常PUNCHでも前方の複数体をまとめてぶっ飛ばします。</li><li>10体KOごとに必殺パンチを1回だけ使用可能。350体KO=100点。</li>`;
   }else if(index===41){
-    rules=`<li>最初の5秒で、決められた描画エリア内にモンスターを自由に描きます。</li><li>眼も含めて全部自分で描きます。戦闘開始時は描画画面・枠・召喚師表示を消し、描いた召喚獣だけが残ります。</li><li>描いたサイズを統一せず、その大きさのまま中央から戦闘開始。</li><li>頭・手・足・武器・尻尾・離れ部位などを自動推定し、部位攻撃・ジャンプ・高速移動・分身・炎・雷などを使用。</li><li>左右から大量の黒スライムが襲来する10秒オート無双。倒した数が記録です。</li>`;
+    rules=`<li>最初の5秒で、画面の大部分を使ってモンスターを自由に描きます。</li><li>眼も含めて全部自分で描きます。戦闘開始時は元の描画・枠・召喚師表示をすべて消し、描いた召喚獣だけが残ります。</li><li>描いたサイズを統一せず、その大きさのまま中央から戦闘開始。</li><li>部位攻撃・ジャンプ・高速移動・分身に加え、巨大エネルギー、炎ブレス、落雷、レーザー、メテオなど一掃技を使用。</li><li>左右から大量の黒スライムが襲来する10秒オート無双。60体KO=100点。</li>`;
   }else if(index===42){
     rules=`<li>1〜13のモブくんカード13枚を最初に表向きで確認。</li><li>3・2・1後、5秒間カードがランダムに位置をシャッフル。</li><li>最後の1秒はカードが暗くなって「？」だけになりますが、位置移動は続きます。</li><li>終了後、まず2枚選択。選んだカードはその場で必ず表向きになり、数字とモブくんを確認できます。</li><li>21でなければ「もう1枚」か「FINISH」。22→1、23→2の循環方式。</li>`;
   }else if(index===43){
@@ -7137,6 +7137,7 @@ async function startWizardMob(p,humanIndex,runId){
   let kills=0;
   let startTime=0;
   let lastSpawn=0;
+  let nextCitizenShot=0;
   let flameId=0;
   let raf=null;
   let drawing=false;
@@ -7255,7 +7256,8 @@ async function startWizardMob(p,humanIndex,runId){
         : rand(178,235)+progress*195,
       drift:rand(-28,28),
       dead:false,
-      big
+      big,
+      slowUntil:0
     };
 
     el.style.width=`${size}px`;
@@ -7289,6 +7291,52 @@ async function startWizardMob(p,humanIndex,runId){
     }else{
       f.el.remove();
     }
+  }
+
+  function citizenEnergyShot(now){
+    const alive=flames.filter(f=>!f.dead);
+    if(!alive.length||!villagers.length)return;
+
+    const target=alive
+      .map(f=>({
+        f,
+        danger:sh-f.y
+      }))
+      .sort((a,b)=>a.danger-b.danger)[0]?.f;
+
+    if(!target)return;
+
+    const shooter=villagers[randi(0,villagers.length-1)];
+
+    const orb=document.createElement('i');
+    orb.className='wizard-citizen-orb';
+
+    const dx=target.x-shooter.x;
+    const dy=target.y-shooter.y;
+
+    orb.style.left=`${shooter.x}px`;
+    orb.style.top=`${shooter.y}px`;
+    orb.style.setProperty('--wizard-shot-x',`${dx}px`);
+    orb.style.setProperty('--wizard-shot-y',`${dy}px`);
+
+    stage.appendChild(orb);
+
+    setTimeout(()=>{
+      orb.remove();
+
+      if(!target.dead){
+        // Only a small gameplay assist: 13% slowdown for 0.72 sec.
+        target.slowUntil=performance.now()+720;
+        target.el.classList.remove('citizen-slow');
+        void target.el.offsetWidth;
+        target.el.classList.add('citizen-slow');
+      }
+    },360);
+
+    beep(470,28,.005);
+
+    // Deliberately infrequent.
+    nextCitizenShot=now+rand(1900,2900);
   }
 
   function failGame(){
@@ -7389,6 +7437,7 @@ async function startWizardMob(p,humanIndex,runId){
   spawnVillagers();
   startTime=performance.now();
   lastSpawn=startTime-700;
+  nextCitizenShot=startTime+rand(1300,2200);
 
   function frame(now){
     if(finished||!isGameRunValid(runId))return;
@@ -7423,11 +7472,16 @@ async function startWizardMob(p,humanIndex,runId){
         `translate(-50%,-50%) translateY(${Math.sin(v.phase)*4}px) scaleX(${v.speed<0?-1:1})`;
     }
 
+    if(now>=nextCitizenShot){
+      citizenEnergyShot(now);
+    }
+
     for(const f of flames){
       if(f.dead)continue;
 
-      f.y+=f.vy*.016;
-      f.x+=f.drift*.016;
+      const slowFactor=now<f.slowUntil?.87:1;
+      f.y+=f.vy*.016*slowFactor;
+      f.x+=f.drift*.016*slowFactor;
 
       f.el.style.left=`${f.x}px`;
       f.el.style.top=`${f.y}px`;
@@ -7570,19 +7624,19 @@ async function startBrawlerMob(p,humanIndex,runId){
   const allies=[
     {
       el:allyEls[0],
-      x:playerX-118,
-      offset:-118,
-      speed:360,
-      cd:470,
+      x:worldW*.34,
+      home:worldW*.34,
+      speed:430,
+      cd:285,
       lastAttack:0,
       phase:.7
     },
     {
       el:allyEls[1],
-      x:playerX+108,
-      offset:108,
-      speed:345,
-      cd:560,
+      x:worldW*.68,
+      home:worldW*.68,
+      speed:415,
+      cd:330,
       lastAttack:0,
       phase:2.3
     }
@@ -7647,7 +7701,7 @@ async function startBrawlerMob(p,humanIndex,runId){
   }
 
   function spawnEnemy(now,progress,source='auto',forcedSide=null){
-    if(enemies.filter(e=>!e.dead).length>=46)return;
+    if(enemies.filter(e=>!e.dead).length>=78)return;
 
     if(source==='auto'){
       const r=Math.random();
@@ -7798,50 +7852,61 @@ async function startBrawlerMob(p,humanIndex,runId){
 
   function updateAllies(now,dt){
     allies.forEach((ally,index)=>{
-      ally.phase+=dt*(5.4+index*.5);
+      ally.phase+=dt*(4.8+index*.4);
 
-      const desired=clamp(
-        playerX+ally.offset+Math.sin(ally.phase)*22,
-        52,
-        worldW-52
-      );
-
-      const dx=desired-ally.x;
-      ally.x+=clamp(dx,-ally.speed*dt,ally.speed*dt);
-
-      const nearest=enemies
+      // Allies fight independently around their own sector instead of following the player.
+      const nearbyEnemies=enemies
         .filter(e=>!e.dead)
         .map(e=>({
           e,
           d:Math.abs(e.x-ally.x)
         }))
-        .filter(o=>o.d<=175)
-        .sort((a,b)=>a.d-b.d)
-        .slice(0,index===0?2:1);
+        .sort((a,b)=>a.d-b.d);
 
-      const faceTarget=nearest[0]?.e.x??playerX;
+      const target=nearbyEnemies[0]?.e;
+
+      let desired=ally.home+Math.sin(ally.phase)*150;
+
+      if(target&&Math.abs(target.x-ally.x)<520){
+        desired=target.x+(target.x<ally.x?48:-48);
+      }
+
+      const dx=clamp(desired,70,worldW-70)-ally.x;
+      ally.x+=clamp(dx,-ally.speed*dt,ally.speed*dt);
+
+      const victims=enemies
+        .filter(e=>!e.dead)
+        .map(e=>({
+          e,
+          d:Math.abs(e.x-ally.x)
+        }))
+        .filter(o=>o.d<=205)
+        .sort((a,b)=>a.d-b.d)
+        .slice(0,index===0?5:4);
+
+      const faceTarget=victims[0]?.e.x??desired;
       const dir=faceTarget<ally.x?-1:1;
 
       ally.el.style.left=`${ally.x}px`;
       ally.el.classList.toggle('face-left',dir<0);
 
-      if(nearest.length&&now-ally.lastAttack>=ally.cd){
+      if(victims.length&&now-ally.lastAttack>=ally.cd){
         ally.lastAttack=now;
 
         ally.el.classList.remove('attacking');
         void ally.el.offsetWidth;
         ally.el.classList.add('attacking');
 
-        nearest.forEach((o,i)=>{
+        victims.forEach((o,i)=>{
           setTimeout(()=>{
             if(!o.e.dead){
               const flyDir=o.e.x<ally.x?-1:1;
-              defeat(o.e,flyDir,false,i+2);
+              defeat(o.e,flyDir,false,i+3);
             }
-          },i*25);
+          },i*14);
         });
 
-        beep(index===0?310:380,28,.006);
+        beep(index===0?310:380,25,.005);
       }
     });
   }
@@ -7937,7 +8002,7 @@ async function startBrawlerMob(p,humanIndex,runId){
   lastSpawn=startTime-500;
 
   // Immediate chaos: sides + doors + ceiling.
-  for(let i=0;i<22;i++){
+  for(let i=0;i<34;i++){
     const source=
       i%5===0?'drop':
       i%3===0?'door':
@@ -7976,15 +8041,15 @@ async function startBrawlerMob(p,humanIndex,runId){
     updateAllies(now,dt);
 
     // Much denser than V10.5.
-    const spawnEvery=125-progress*52;
+    const spawnEvery=72-progress*28;
 
     if(now-lastSpawn>=spawnEvery){
       lastSpawn=now;
 
       const count=
         progress>.55
-          ? randi(3,5)
-          : randi(2,4);
+          ? randi(4,7)
+          : randi(3,6);
 
       for(let i=0;i<count;i++){
         spawnEnemy(now,progress,'auto');
@@ -8054,29 +8119,32 @@ async function startBrawlerMob(p,humanIndex,runId){
 }
 
 // GAME 42 -------------------------------------------------
-const SUMMON_ATTACKS_V107=[
-  {id:'right_hook',name:'右腕フック',role:'part',part:'handR',reach:155,hits:3,cd:430,move:'hook'},
-  {id:'left_hook',name:'左腕フック',role:'part',part:'handL',reach:155,hits:3,cd:430,move:'hookL'},
-  {id:'double_claw',name:'ダブルクロー',role:'part',part:'hands',reach:175,hits:5,cd:560,move:'claw'},
-  {id:'headbutt',name:'ヘッドバット',role:'part',part:'head',reach:145,hits:4,cd:500,move:'head'},
-  {id:'bite',name:'かみつき',role:'part',part:'head',reach:150,hits:4,cd:560,move:'bite'},
-  {id:'front_kick',name:'フロントキック',role:'part',part:'footR',reach:185,hits:4,cd:520,move:'kick'},
-  {id:'sweep',name:'足払い',role:'part',part:'feet',reach:215,hits:6,cd:680,move:'sweep'},
-  {id:'tail_whip',name:'テイルウィップ',role:'part',part:'tail',reach:235,hits:7,cd:690,move:'tail'},
-  {id:'weapon_slash',name:'ウェポンスラッシュ',role:'part',part:'weapon',reach:255,hits:7,cd:710,move:'weapon'},
-  {id:'detached_rush',name:'離れ部位ラッシュ',role:'part',part:'detached',reach:245,hits:7,cd:730,move:'detached'},
+const SUMMON_ATTACKS_V108=[
+  {id:'right_hook',name:'右腕フック',role:'part',part:'handR',reach:165,hits:4,cd:410,move:'hook'},
+  {id:'double_claw',name:'ダブルクロー',role:'part',part:'hands',reach:185,hits:6,cd:520,move:'claw'},
+  {id:'headbutt',name:'ヘッドバット',role:'part',part:'head',reach:155,hits:5,cd:480,move:'head'},
+  {id:'front_kick',name:'フロントキック',role:'part',part:'footR',reach:195,hits:5,cd:500,move:'kick'},
+  {id:'sweep',name:'足払い',role:'part',part:'feet',reach:225,hits:7,cd:640,move:'sweep'},
+  {id:'tail_whip',name:'テイルウィップ',role:'part',part:'tail',reach:245,hits:8,cd:650,move:'tail'},
+  {id:'weapon_slash',name:'ウェポンスラッシュ',role:'part',part:'weapon',reach:270,hits:9,cd:670,move:'weapon'},
+  {id:'detached_rush',name:'離れ部位ラッシュ',role:'part',part:'detached',reach:255,hits:9,cd:690,move:'detached'},
 
-  {id:'jump_slam',name:'ジャンプスラム',role:'mobility',part:'feet',reach:245,hits:8,cd:880,move:'slam'},
-  {id:'speed_dash',name:'高速ダッシュ',role:'mobility',part:'body',reach:285,hits:7,cd:760,move:'dash'},
-  {id:'clone_rush',name:'瞬間分身ラッシュ',role:'mobility',part:'body',reach:275,hits:8,cd:840,move:'clone'},
-  {id:'teleport_strike',name:'瞬間移動アタック',role:'mobility',part:'body',reach:260,hits:7,cd:820,move:'teleport'},
-  {id:'spin_attack',name:'高速スピン',role:'mobility',part:'body',reach:225,hits:8,cd:790,move:'spin'},
+  {id:'jump_slam',name:'ジャンプスラム',role:'mobility',part:'feet',reach:255,hits:10,cd:790,move:'slam'},
+  {id:'speed_dash',name:'高速ダッシュ',role:'mobility',part:'body',reach:300,hits:10,cd:690,move:'dash'},
+  {id:'clone_rush',name:'瞬間分身ラッシュ',role:'mobility',part:'body',reach:300,hits:11,cd:740,move:'clone'},
+  {id:'teleport_strike',name:'瞬間移動アタック',role:'mobility',part:'body',reach:285,hits:10,cd:730,move:'teleport'},
+  {id:'spin_attack',name:'高速スピン',role:'mobility',part:'body',reach:245,hits:11,cd:700,move:'spin'},
 
-  {id:'fire_breath',name:'火炎ブレス',role:'element',part:'head',reach:300,hits:7,cd:850,move:'fire'},
-  {id:'thunder_drop',name:'落雷',role:'element',part:'detached',reach:330,hits:7,cd:890,move:'thunder'},
-  {id:'ice_stomp',name:'氷結ストンプ',role:'element',part:'feet',reach:235,hits:8,cd:900,move:'ice'},
-  {id:'wind_cyclone',name:'旋風',role:'element',part:'tail',reach:255,hits:8,cd:870,move:'wind'},
-  {id:'dark_burst',name:'ダークバースト',role:'element',part:'weapon',reach:245,hits:8,cd:910,move:'dark'}
+  {id:'planet_energy',name:'超巨大エネルギー',role:'sweep',part:'body',reach:999,hits:22,cd:1150,move:'planet'},
+  {id:'fire_breath',name:'超火炎ブレス',role:'sweep',part:'head',reach:999,hits:18,cd:980,move:'fire'},
+  {id:'thunder_storm',name:'サンダーストーム',role:'sweep',part:'detached',reach:999,hits:18,cd:1050,move:'thunder'},
+  {id:'energy_wave',name:'エネルギー大波',role:'sweep',part:'hands',reach:999,hits:20,cd:1020,move:'energyWave'},
+  {id:'laser_sweep',name:'極太レーザー',role:'sweep',part:'weapon',reach:999,hits:19,cd:1000,move:'laser'},
+  {id:'meteor_rain',name:'メテオレイン',role:'sweep',part:'detached',reach:999,hits:20,cd:1100,move:'meteor'},
+  {id:'tornado',name:'巨大竜巻',role:'sweep',part:'tail',reach:999,hits:18,cd:1040,move:'tornado'},
+  {id:'ice_nova',name:'アイスノヴァ',role:'sweep',part:'feet',reach:999,hits:18,cd:1060,move:'iceNova'},
+  {id:'dark_sun',name:'ダークサン',role:'sweep',part:'body',reach:999,hits:21,cd:1120,move:'darkSun'},
+  {id:'star_burst',name:'スターバースト',role:'sweep',part:'head',reach:999,hits:20,cd:1080,move:'starBurst'}
 ];
 
 function summonStrokeStatsV107(stroke){
@@ -8340,8 +8408,10 @@ function summonAttackAffinityV107(atk,a){
     score+=a.speed*.21;
     score+=a.complexity*.13;
   }else{
-    score+=a.range*.13;
-    score+=a.turnDensity*.09;
+    // Cinematic clearing attacks are always viable;
+    // drawing shape only biases WHICH one is selected.
+    score+=.22+a.range*.10;
+    score+=a.turnDensity*.07;
   }
 
   if(atk.part==='weapon')score+=a.parts.weapon.length*.11;
@@ -8355,14 +8425,14 @@ function summonAttackAffinityV107(atk,a){
 
 function chooseSummonAttacksV107(a){
   function pickRole(role){
-    const pool=SUMMON_ATTACKS_V107
+    const pool=SUMMON_ATTACKS_V108
       .filter(atk=>atk.role===role)
       .map(atk=>({
         atk,
         score:summonAttackAffinityV107(atk,a)
       }))
       .sort((x,y)=>y.score-x.score)
-      .slice(0,Math.min(6,SUMMON_ATTACKS_V107.filter(v=>v.role===role).length));
+      .slice(0,Math.min(6,SUMMON_ATTACKS_V108.filter(v=>v.role===role).length));
 
     // Random from the compatible top candidates.
     return pool[randi(0,pool.length-1)].atk;
@@ -8371,7 +8441,7 @@ function chooseSummonAttacksV107(a){
   return [
     pickRole('part'),
     pickRole('mobility'),
-    pickRole('element')
+    pickRole('sweep')
   ];
 }
 
@@ -8447,10 +8517,10 @@ async function startSummonerMob(p,humanIndex,runId){
   const sh=stage.clientHeight;
   const groundY=54;
 
-  const zoneW=Math.min(sw*.84,350);
-  const zoneH=Math.min(sh*.68,310);
+  const zoneW=Math.min(sw*.96,430);
+  const zoneH=Math.min(sh*.82,390);
   const zoneX=(sw-zoneW)/2;
-  const zoneY=Math.max(24,(sh-zoneH)/2-8);
+  const zoneY=Math.max(8,(sh-zoneH)/2-2);
 
   drawSvg.style.left=`${zoneX}px`;
   drawSvg.style.top=`${zoneY}px`;
@@ -8659,7 +8729,7 @@ async function startSummonerMob(p,humanIndex,runId){
   }
 
   function spawnSlime(now,progress,forcedSide=null){
-    if(slimes.filter(s=>!s.dead).length>=34)return;
+    if(slimes.filter(s=>!s.dead).length>=48)return;
 
     const side=
       forcedSide??
@@ -8718,12 +8788,12 @@ async function startSummonerMob(p,humanIndex,runId){
 
     s.el.style.setProperty(
       '--summon-fly-x',
-      `${dir*(strong?rand(210,340):rand(135,245))*sizeBoost}px`
+      `${dir*(strong?rand(290,460):rand(185,320))*sizeBoost}px`
     );
 
     s.el.style.setProperty(
       '--summon-fly-y',
-      `${strong?rand(-210,-125):rand(-150,-65)}px`
+      `${strong?rand(-260,-150):rand(-190,-82)}px`
     );
 
     s.el.style.setProperty(
@@ -8825,33 +8895,32 @@ async function startSummonerMob(p,humanIndex,runId){
       )
     );
 
-    let victims=
-      alive
-        .map(s=>({
-          s,
-          dx:(s.x-monsterX)*dir,
-          d:Math.abs(s.x-monsterX)
-        }))
-        .filter(o=>{
-          if(atk.move==='thunder'){
-            return o.d<=range*1.30;
-          }
+    let victims;
 
-          if(atk.move==='fire'){
-            return o.dx>=-25&&o.dx<=range*1.25;
-          }
+    if(atk.role==='sweep'){
+      // Sweeps deliberately clear both sides for a musou-style payoff.
+      victims=[...alive]
+        .sort((a,b)=>Math.abs(a.x-monsterX)-Math.abs(b.x-monsterX))
+        .slice(0,maxHits);
+    }else{
+      victims=
+        alive
+          .map(s=>({
+            s,
+            dx:(s.x-monsterX)*dir,
+            d:Math.abs(s.x-monsterX)
+          }))
+          .filter(o=>{
+            if(['spin','slam'].includes(atk.move)){
+              return o.d<=range;
+            }
 
-          if(
-            ['spin','slam','ice','wind','dark'].includes(atk.move)
-          ){
-            return o.d<=range;
-          }
-
-          return o.dx>=-35&&o.dx<=range;
-        })
-        .sort((a,b)=>a.d-b.d)
-        .slice(0,maxHits)
-        .map(o=>o.s);
+            return o.dx>=-35&&o.dx<=range;
+          })
+          .sort((a,b)=>a.d-b.d)
+          .slice(0,maxHits)
+          .map(o=>o.s);
+    }
 
     // Mobility attacks can hunt down a target even if the crowd is momentarily farther away.
     if(
@@ -8863,7 +8932,8 @@ async function startSummonerMob(p,humanIndex,runId){
 
     const strong=
       analysis.power>.77||
-      ['slam','dash','teleport','thunder','fire','weapon'].includes(atk.move);
+      atk.role==='sweep'||
+      ['slam','dash','teleport','weapon'].includes(atk.move);
 
     victims.forEach((s,i)=>{
       setTimeout(()=>{
@@ -8895,7 +8965,7 @@ async function startSummonerMob(p,humanIndex,runId){
   lastSpawn=startBattle-600;
   lastAttack=startBattle-600;
 
-  for(let i=0;i<18;i++){
+  for(let i=0;i<24;i++){
     spawnSlime(
       startBattle,
       0,
@@ -8912,13 +8982,13 @@ async function startSummonerMob(p,humanIndex,runId){
 
     timeEl.textContent=(Math.max(0,remaining)/1000).toFixed(1);
 
-    const spawnEvery=150-progress*55;
+    const spawnEvery=105-progress*38;
 
     if(now-lastSpawn>=spawnEvery){
       const count=
         progress>.58
-          ? randi(3,5)
-          : randi(2,4);
+          ? randi(4,7)
+          : randi(3,5);
 
       for(let i=0;i<count;i++){
         spawnSlime(now,progress);
@@ -8937,14 +9007,13 @@ async function startSummonerMob(p,humanIndex,runId){
     if(now-lastAttack>=attackEvery){
       lastAttack=now;
 
-      const cycle=
-        Math.floor(elapsed/attackEvery)%
-        learned.length;
+      const attackNo=Math.floor(elapsed/attackEvery);
+      const sweep=learned.find(a=>a.role==='sweep');
 
       const atk=
-        Math.random()<.70
-          ? learned[cycle]
-          : learned[randi(0,learned.length-1)];
+        sweep&&attackNo%2===1
+          ? sweep
+          : learned[attackNo%learned.length];
 
       useAttack(atk);
     }
@@ -10137,11 +10206,11 @@ function simulateOneCpu(gameIndex,p){
   }else if(gameIndex===38){
     state.records.giantMob[p.id]=ultra?randi(23,30):randi(10,22);
   }else if(gameIndex===39){
-    state.records.wizardMob[p.id]=ultra?randi(14,20):randi(7,15);
+    state.records.wizardMob[p.id]=ultra?randi(18,23):randi(9,18);
   }else if(gameIndex===40){
-    state.records.brawlerMob[p.id]=ultra?randi(31,42):randi(20,34);
+    state.records.brawlerMob[p.id]=ultra?randi(325,385):randi(205,345);
   }else if(gameIndex===41){
-    state.records.summonerMob[p.id]=ultra?randi(38,50):randi(22,41);
+    state.records.summonerMob[p.id]=ultra?randi(58,76):randi(34,61);
   }else if(gameIndex===42){
     state.records.blackjackMob[p.id]=ultra?randi(19,21):randi(13,20);
   }else if(gameIndex===43){
@@ -10216,9 +10285,9 @@ function performancePoints(gameIndex,v){
     return clamp(Math.round((6000-v)/3200*100),0,100);
   }
   if(gameIndex===38)return clamp(Math.round(v/30*100),0,100);
-  if(gameIndex===39)return clamp(Math.round(v/15*100),0,100);
-  if(gameIndex===40)return clamp(Math.round(v/30*100),0,100);
-  if(gameIndex===41)return clamp(Math.round(v/40*100),0,100);
+  if(gameIndex===39)return clamp(Math.round(v/20*100),0,100);
+  if(gameIndex===40)return clamp(Math.round(v/350*100),0,100);
+  if(gameIndex===41)return clamp(Math.round(v/60*100),0,100);
   if(gameIndex===42)return clamp(Math.round(v/21*100),0,100);
   if(gameIndex===43)return clamp(Math.round(v/300*100),0,100);
   return clamp(Math.round(v/20*100),0,100);

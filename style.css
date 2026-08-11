@@ -8911,3 +8911,369 @@ body{touch-action:manipulation}
     height:150px;
   }
 }
+
+
+/* =========================================================
+   V10.8 WIZARD — CITIZEN ASSIST ENERGY
+   ========================================================= */
+.wizard-citizen-orb{
+  position:absolute;
+  z-index:27;
+  width:10px;
+  height:10px;
+  border:2px solid #163957;
+  border-radius:50%;
+  background:#80f5ff;
+  box-shadow:
+    0 0 8px #80f5ff,
+    0 0 14px rgba(128,245,255,.75);
+  transform:translate(-50%,-50%);
+  pointer-events:none;
+  animation:wizardCitizenShot .36s linear forwards;
+}
+@keyframes wizardCitizenShot{
+  from{
+    opacity:1;
+    transform:translate(-50%,-50%) translate(0,0) scale(.8);
+  }
+  to{
+    opacity:.1;
+    transform:
+      translate(-50%,-50%)
+      translate(var(--wizard-shot-x),var(--wizard-shot-y))
+      scale(1.35);
+  }
+}
+.wizard-dark-flame.citizen-slow{
+  filter:saturate(.88) brightness(1.12);
+  box-shadow:
+    0 0 17px rgba(128,44,221,.65),
+    0 0 0 4px rgba(128,245,255,.28);
+}
+
+/* =========================================================
+   V10.8 BRAWLER — INDEPENDENT ALLIES / MASS KO
+   ========================================================= */
+.brawler-v106 .brawler-ally{
+  opacity:.96;
+}
+.brawler-v106 .brawler-ally.attacking .brawler-ally-figure{
+  filter:
+    drop-shadow(0 3px 0 rgba(17,19,26,.20))
+    drop-shadow(0 0 7px rgba(133,230,255,.65));
+}
+
+/* =========================================================
+   V10.8 SUMMONER — BIGGER DRAW / BRIGHTER ARENA
+   ========================================================= */
+.summoner-v107 .summoner-arena-v107{
+  background:
+    radial-gradient(circle at 50% 34%,rgba(255,255,255,.50),transparent 34%),
+    linear-gradient(#86c9e6 0 44%,#9eafdc 44% 70%,#6d7899 70% 100%)!important;
+}
+.summoner-v107 .summoner-arena-bg{
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.14),transparent 35%);
+}
+.summoner-v107 .summon-gate{
+  background:#8792b4!important;
+  border-color:#26334c!important;
+}
+.summoner-v107 .summon-gate:before{
+  background:#33415b!important;
+  border-color:#28354c!important;
+}
+.summoner-v107 .summon-ground-v107{
+  border-top-color:#26334c!important;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      #7788a5 0 54px,
+      #8797b3 54px 108px
+    )!important;
+}
+.summoner-v107 .summon-draw-svg-v107{
+  z-index:35;
+}
+
+/* More explosive slime exits */
+.summoner-v107 .summon-slime-v107.defeated,
+.summoner-v107 .summon-slime-v107.blast{
+  filter:drop-shadow(0 0 10px rgba(130,238,255,.60));
+}
+
+/* Giant "This Planet" style energy sphere */
+.summon-attack-fx-v107.move-planet{
+  overflow:visible;
+}
+.summon-attack-fx-v107.move-planet i{
+  position:absolute;
+  left:50%;
+  top:45%;
+  width:min(92vw,560px);
+  height:min(92vw,560px);
+  transform:translate(-50%,-50%) scale(.08);
+  border:9px solid #183a74;
+  border-radius:50%;
+  background:
+    radial-gradient(
+      circle at 43% 38%,
+      #fff 0 8%,
+      #c8f9ff 9% 19%,
+      #72dcff 20% 44%,
+      #4487ff 45% 66%,
+      rgba(73,70,236,.76) 67% 78%,
+      rgba(76,53,201,.20) 79% 100%
+    );
+  box-shadow:
+    0 0 22px #aaf8ff,
+    0 0 55px rgba(78,144,255,.95),
+    0 0 95px rgba(82,73,245,.65);
+  animation:summonPlanetEnergyV108 .62s cubic-bezier(.15,.82,.25,1) forwards;
+}
+.summon-attack-fx-v107.move-planet em{
+  position:absolute;
+  left:3%;
+  right:3%;
+  top:44%;
+  height:11px;
+  border-radius:999px;
+  background:#d9fbff;
+  box-shadow:
+    0 0 16px #fff,
+    0 0 34px #61d9ff;
+  animation:summonPlanetBeamV108 .48s .16s ease-out forwards;
+}
+@keyframes summonPlanetEnergyV108{
+  0%{opacity:0;transform:translate(-50%,-42%) scale(.05)}
+  28%{opacity:1;transform:translate(-50%,-52%) scale(.72)}
+  65%{opacity:1;transform:translate(-50%,-52%) scale(1)}
+  100%{opacity:0;transform:translate(-50%,-52%) scale(1.10)}
+}
+@keyframes summonPlanetBeamV108{
+  from{opacity:0;transform:scaleX(.06)}
+  35%{opacity:1;transform:scaleX(1)}
+  to{opacity:0;transform:scaleX(1)}
+}
+
+/* Huge fire breath */
+.summon-attack-fx-v107.move-fire i{
+  left:50%;
+  top:50%;
+  width:52%;
+  height:35%;
+  border:8px solid #592311;
+  border-left:none;
+  border-radius:0 85% 85% 0;
+  background:
+    radial-gradient(circle at 0 50%,#fff6a4 0 9%,#ffc84f 18%,#ff6c3d 46%,#d92f31 68%,transparent 74%);
+  box-shadow:0 0 24px rgba(255,105,48,.78);
+  animation:summonFireBreathV108 .42s ease-out forwards;
+}
+.summon-attack-fx-v107.left.move-fire i{
+  transform:scaleX(-1);
+  transform-origin:left center;
+}
+.summon-attack-fx-v107.move-fire em{
+  left:16%;
+  right:16%;
+  top:48%;
+  height:9px;
+  background:#ffdf6b;
+  box-shadow:0 0 22px #ff784c;
+  animation:summonSweepFadeV108 .36s ease-out forwards;
+}
+@keyframes summonFireBreathV108{
+  from{opacity:1;scale:.18}
+  to{opacity:0;scale:1.18}
+}
+
+/* Thunder storm: multiple bolts */
+.summon-attack-fx-v107.move-thunder i,
+.summon-attack-fx-v107.move-thunder em{
+  top:0;
+  width:13px;
+  height:74%;
+  background:#fff46d;
+  box-shadow:0 0 18px #fff46d;
+  clip-path:polygon(38% 0,100% 0,61% 43%,100% 43%,0 100%,31% 54%,0 54%);
+  animation:summonThunderStormV108 .34s ease-out forwards;
+}
+.summon-attack-fx-v107.move-thunder i{left:22%}
+.summon-attack-fx-v107.move-thunder em{left:72%;animation-delay:.05s}
+.summon-attack-fx-v107.move-thunder:after{
+  content:"";
+  position:absolute;
+  left:50%;
+  top:0;
+  width:15px;
+  height:80%;
+  transform:translateX(-50%);
+  background:#d9fbff;
+  box-shadow:0 0 20px #fff46d;
+  clip-path:polygon(38% 0,100% 0,61% 43%,100% 43%,0 100%,31% 54%,0 54%);
+  animation:summonThunderStormV108 .34s .09s ease-out forwards;
+}
+@keyframes summonThunderStormV108{
+  0%{opacity:0;scale:.7 0}
+  28%{opacity:1;scale:1 1}
+  100%{opacity:0;scale:1 1}
+}
+
+/* Energy wave */
+.summon-attack-fx-v107.move-energyWave i{
+  left:-8%;
+  right:-8%;
+  top:50%;
+  height:90px;
+  border:10px solid #9cf7ff;
+  border-left:none;
+  border-right:none;
+  border-radius:50%;
+  box-shadow:
+    0 0 18px #75eaff,
+    inset 0 0 22px rgba(104,206,255,.75);
+  animation:summonEnergyWaveV108 .40s ease-out forwards;
+}
+@keyframes summonEnergyWaveV108{
+  from{opacity:1;transform:scaleX(.10) scaleY(.35)}
+  to{opacity:0;transform:scaleX(1.05) scaleY(1)}
+}
+
+/* Laser */
+.summon-attack-fx-v107.move-laser i{
+  left:2%;
+  right:2%;
+  top:45%;
+  height:28px;
+  border-radius:999px;
+  background:#e9ffff;
+  box-shadow:
+    0 0 16px #fff,
+    0 0 35px #6ddfff,
+    0 0 58px #8875ff;
+  animation:summonLaserV108 .38s ease-out forwards;
+}
+@keyframes summonLaserV108{
+  from{opacity:0;transform:scaleX(.03)}
+  30%{opacity:1;transform:scaleX(1)}
+  to{opacity:0;transform:scaleX(1)}
+}
+
+/* Meteor rain */
+.summon-attack-fx-v107.move-meteor i,
+.summon-attack-fx-v107.move-meteor em{
+  top:-12%;
+  width:36px;
+  height:36px;
+  border:5px solid #4a1f12;
+  border-radius:50%;
+  background:#ff8f43;
+  box-shadow:
+    -40px 60px 0 #f36842,
+    80px 90px 0 #ff9b45,
+    155px 35px 0 #f25b45,
+    235px 105px 0 #ff9b45,
+    320px 55px 0 #f36842;
+  animation:summonMeteorV108 .52s ease-in forwards;
+}
+.summon-attack-fx-v107.move-meteor i{left:6%}
+.summon-attack-fx-v107.move-meteor em{left:42%;animation-delay:.07s}
+@keyframes summonMeteorV108{
+  to{opacity:0;transform:translate(-130px,420px) rotate(-55deg) scale(1.2)}
+}
+
+/* Tornado */
+.summon-attack-fx-v107.move-tornado i{
+  left:50%;
+  top:44%;
+  width:72%;
+  height:70%;
+  transform:translate(-50%,-50%);
+  border:13px solid rgba(224,255,255,.88);
+  border-left-color:transparent;
+  border-right-color:#74dfff;
+  border-radius:50%;
+  box-shadow:0 0 28px #74dfff;
+  animation:summonTornadoV108 .45s linear forwards;
+}
+@keyframes summonTornadoV108{
+  to{opacity:0;transform:translate(-50%,-50%) rotate(760deg) scale(1.2)}
+}
+
+/* Ice nova */
+.summon-attack-fx-v107.move-iceNova i{
+  left:50%;
+  top:53%;
+  width:80%;
+  height:45%;
+  transform:translate(-50%,-50%) scale(.15);
+  border:12px solid #c6f7ff;
+  border-radius:50%;
+  box-shadow:
+    0 0 22px #95edff,
+    inset 0 0 30px rgba(91,214,255,.60);
+  animation:summonNovaV108 .42s ease-out forwards;
+}
+
+/* Dark sun */
+.summon-attack-fx-v107.move-darkSun i{
+  left:50%;
+  top:42%;
+  width:260px;
+  height:260px;
+  transform:translate(-50%,-50%) scale(.12);
+  border:9px solid #321646;
+  border-radius:50%;
+  background:
+    radial-gradient(circle,#9044c5 0 22%,#321746 52%,#100b1d 74%,transparent 76%);
+  box-shadow:0 0 45px rgba(138,71,206,.90);
+  animation:summonNovaV108 .46s ease-out forwards;
+}
+
+/* Star burst */
+.summon-attack-fx-v107.move-starBurst i{
+  left:50%;
+  top:50%;
+  width:310px;
+  height:310px;
+  transform:translate(-50%,-50%) scale(.08) rotate(0);
+  background:
+    conic-gradient(
+      from 0deg,
+      transparent 0 5%,
+      #fff7a8 6% 8%,
+      transparent 9% 17%,
+      #8cecff 18% 20%,
+      transparent 21% 29%,
+      #fff 30% 32%,
+      transparent 33% 100%
+    );
+  animation:summonStarBurstV108 .44s ease-out forwards;
+}
+@keyframes summonStarBurstV108{
+  to{opacity:0;transform:translate(-50%,-50%) scale(1.18) rotate(150deg)}
+}
+@keyframes summonNovaV108{
+  0%{opacity:1;transform:translate(-50%,-50%) scale(.08)}
+  70%{opacity:1;transform:translate(-50%,-50%) scale(1)}
+  100%{opacity:0;transform:translate(-50%,-50%) scale(1.12)}
+}
+@keyframes summonSweepFadeV108{
+  from{opacity:1;transform:scaleX(.08)}
+  to{opacity:0;transform:scaleX(1)}
+}
+
+/* Stronger mass-hit presentation */
+.summoner-v107 .summon-slime-v107.blast{
+  box-shadow:0 0 16px rgba(138,239,255,.70);
+}
+
+/* =========================================================
+   V10.8 RESPONSIVE
+   ========================================================= */
+@media(max-height:690px){
+  .summoner-v107 .summon-skill-list-v107{
+    top:4px;
+  }
+}
