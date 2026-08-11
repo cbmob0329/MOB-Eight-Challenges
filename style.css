@@ -5829,3 +5829,587 @@ body{touch-action:manipulation}
     font-size:14px;
   }
 }
+
+
+/* =========================================================
+   V10.3 BIKE — RIDER LEFT / REAL SLOPE
+   ========================================================= */
+.bike-ramp-v102{
+  height:160px!important;
+  bottom:78px!important;
+  border:none!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  overflow:visible!important;
+  transform:none!important;
+}
+.bike-ramp-v102:before{
+  content:"";
+  position:absolute;
+  inset:0;
+  border:5px solid var(--ink);
+  background:
+    repeating-linear-gradient(
+      135deg,
+      #d47d36 0 28px,
+      #efaa59 28px 56px
+    );
+  clip-path:polygon(0 100%,100% 0,100% 100%);
+  filter:drop-shadow(0 8px 0 rgba(17,19,26,.18));
+}
+.bike-ramp-v102:after{
+  content:"";
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:-5px;
+  height:8px;
+  background:var(--ink);
+}
+.bike-ramp-v102 .bike-ramp-line{
+  left:50%!important;
+  top:50%!important;
+  bottom:auto!important;
+  width:14px!important;
+  height:94px!important;
+  transform:translate(-50%,-50%) rotate(34deg)!important;
+  transform-origin:center!important;
+  background:var(--yellow)!important;
+  border:3px solid var(--ink)!important;
+  border-radius:999px;
+  box-shadow:0 0 0 4px rgba(255,255,255,.68);
+}
+.bike-ramp-v102>span{
+  left:50%!important;
+  top:34%!important;
+  transform:translate(-50%,-50%)!important;
+  z-index:5;
+}
+.bike-ramp-v102 .bike-ramp-arrow{
+  z-index:4;
+  transform:none!important;
+}
+.bike-stage:before{
+  content:"BIKE";
+  position:absolute;
+  z-index:35;
+  left:7px;
+  top:8px;
+  font-size:7px;
+  font-weight:1000;
+  color:rgba(17,19,26,.45);
+}
+
+/* =========================================================
+   V10.3 TRAMPOLINE — NO TIMING GLOW / DEEP SINK
+   ========================================================= */
+.tramp-v103 .tramp-timing-ring,
+.tramp-v103 .tramp-stage:after{
+  display:none!important;
+}
+.tramp-mob-v103,
+.tramp-bed-v103{
+  transition:none!important;
+  will-change:bottom,transform;
+}
+.tramp-bed-v103{
+  height:62px!important;
+}
+.tramp-bed-v103 .tramp-net{
+  border-width:6px!important;
+}
+
+/* =========================================================
+   V10.3 GIANT MOB CLOCK LOWER
+   ========================================================= */
+.giant-energy-clock{
+  top:66px!important;
+}
+.giant-timing{
+  top:18px!important;
+  max-width:calc(100% - 20px)!important;
+}
+
+/* =========================================================
+   V10.3 GAME 40 — WIZARD MOB
+   ========================================================= */
+.wizard-shell,
+.brawler-shell{
+  width:min(100%,650px);
+  height:100%;
+  margin:0 auto;
+  display:flex;
+  flex-direction:column;
+}
+.wizard-hud{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:5px;
+  margin-bottom:5px;
+}
+.wizard-hud>div,
+.brawler-hud>div{
+  border:3px solid var(--ink);
+  border-radius:11px;
+  background:#fff;
+  padding:4px;
+  text-align:center;
+}
+.wizard-hud span,
+.brawler-hud span{
+  display:block;
+  font-size:7px;
+  font-weight:1000;
+  color:var(--muted);
+}
+.wizard-hud b,
+.brawler-hud b{
+  font-size:14px;
+}
+.wizard-stage{
+  flex:1;
+  min-height:0;
+  position:relative;
+  overflow:hidden;
+  border:4px solid var(--ink);
+  border-radius:21px;
+  background:linear-gradient(#9ed7ee 0 58%,#94c66e 58% 100%);
+  touch-action:none;
+}
+.wizard-town-bg{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+}
+.wizard-mountain{
+  position:absolute;
+  bottom:38%;
+  width:220px;
+  height:110px;
+  border:4px solid var(--ink);
+  border-bottom:none;
+  border-radius:130px 130px 0 0;
+  background:#7daf70;
+}
+.wizard-mountain.m1{left:-40px}
+.wizard-mountain.m2{right:-50px;background:#88b97a}
+.wizard-house{
+  position:absolute;
+  bottom:20%;
+  width:100px;
+  height:80px;
+  border:4px solid var(--ink);
+  background:#f1d6a2;
+}
+.wizard-house:before{
+  content:"";
+  position:absolute;
+  left:-12px;
+  top:-48px;
+  border-left:61px solid transparent;
+  border-right:61px solid transparent;
+  border-bottom:50px solid #b9584d;
+}
+.wizard-house i{
+  position:absolute;
+  left:37px;
+  bottom:0;
+  width:26px;
+  height:44px;
+  border:3px solid var(--ink);
+  background:#7d5a42;
+}
+.wizard-house.h1{left:5%}
+.wizard-house.h2{left:39%;transform:scale(.86)}
+.wizard-house.h3{right:4%;transform:scale(.92)}
+.wizard-fence{
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:13%;
+  height:32px;
+  background:
+    repeating-linear-gradient(90deg,#7c5638 0 8px,transparent 8px 42px),
+    linear-gradient(transparent 12px,#7c5638 12px 19px,transparent 19px);
+}
+.wizard-villager{
+  position:absolute;
+  z-index:8;
+  width:42px;
+  height:47px;
+  background-position:center;
+  background-size:contain;
+  background-repeat:no-repeat;
+  filter:drop-shadow(0 3px 0 rgba(17,19,26,.18));
+}
+.wizard-dark-flame{
+  position:absolute;
+  z-index:18;
+  transform:translate(-50%,-50%);
+  border-radius:50% 50% 48% 48%;
+  background:
+    radial-gradient(circle at 50% 64%,#913aff 0 14%,#451379 38%,#16051d 70%,#050107 100%);
+  border:3px solid #16051d;
+  box-shadow:0 0 16px rgba(128,44,221,.65);
+  animation:wizardFlame .22s ease-in-out infinite alternate;
+}
+.wizard-dark-flame:before,
+.wizard-dark-flame:after{
+  content:"";
+  position:absolute;
+  background:#1b0526;
+  border-radius:60% 0 60% 40%;
+  transform:rotate(45deg);
+}
+.wizard-dark-flame:before{
+  width:52%;
+  height:52%;
+  left:4%;
+  top:-14%;
+}
+.wizard-dark-flame:after{
+  width:47%;
+  height:47%;
+  right:2%;
+  top:-10%;
+}
+@keyframes wizardFlame{
+  to{transform:translate(-50%,-50%) scale(.92,1.08)}
+}
+.wizard-dark-flame.dispelled{
+  animation:wizardDispel .26s ease forwards;
+}
+@keyframes wizardDispel{
+  to{transform:translate(-50%,-50%) scale(2.1);opacity:0;filter:blur(6px)}
+}
+.wizard-trace-svg{
+  position:absolute;
+  z-index:30;
+  inset:0;
+  width:100%;
+  height:100%;
+  pointer-events:none;
+}
+.wizard-trace{
+  fill:none;
+  stroke:#74efff;
+  stroke-width:7;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+  filter:drop-shadow(0 0 5px #fff) drop-shadow(0 0 8px #41c9ff);
+}
+.wizard-caster{
+  position:absolute;
+  z-index:25;
+  left:10px;
+  bottom:8px;
+  width:78px;
+  height:82px;
+  pointer-events:none;
+}
+.wizard-caster-mob{
+  position:absolute;
+  left:0;
+  bottom:0;
+  width:62px;
+  height:70px;
+  background-position:center;
+  background-size:contain;
+  background-repeat:no-repeat;
+}
+.wizard-wand{
+  position:absolute;
+  right:4px;
+  top:20px;
+  width:48px;
+  height:7px;
+  border:2px solid var(--ink);
+  border-radius:999px;
+  background:#8b5a33;
+  transform:rotate(-36deg);
+  transform-origin:right center;
+}
+.wizard-wand i{
+  position:absolute;
+  left:-7px;
+  top:-7px;
+  width:17px;
+  height:17px;
+  border:3px solid var(--ink);
+  border-radius:50%;
+  background:#77e9ff;
+  box-shadow:0 0 9px #77e9ff;
+}
+.wizard-message{
+  position:absolute;
+  z-index:50;
+  left:50%;
+  top:8px;
+  transform:translateX(-50%);
+  min-width:190px;
+  border:3px solid var(--ink);
+  border-radius:999px;
+  background:#fff;
+  padding:5px 9px;
+  text-align:center;
+  font-size:9px;
+  font-weight:1000;
+}
+.wizard-burst{
+  position:absolute;
+  z-index:35;
+  width:24px;
+  height:24px;
+  transform:translate(-50%,-50%);
+  border:5px solid #8df4ff;
+  border-radius:50%;
+  opacity:0;
+  pointer-events:none;
+}
+.wizard-burst.show{
+  animation:wizardBurst .42s ease-out;
+}
+@keyframes wizardBurst{
+  0%{opacity:1;transform:translate(-50%,-50%) scale(.3)}
+  100%{opacity:0;transform:translate(-50%,-50%) scale(5.4)}
+}
+.wizard-stage.wizard-fail{
+  filter:saturate(.75);
+}
+
+/* =========================================================
+   V10.3 GAME 41 — BRAWLER MOB
+   ========================================================= */
+.brawler-hud{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:5px;
+  margin-bottom:5px;
+}
+.brawler-stage{
+  flex:1;
+  min-height:0;
+  position:relative;
+  overflow:hidden;
+  border:4px solid var(--ink);
+  border-radius:21px;
+  background:#dbe7ed;
+}
+.brawler-world{
+  position:absolute;
+  left:0;
+  top:0;
+  bottom:0;
+  will-change:transform;
+}
+.school-wall{
+  position:absolute;
+  inset:0 0 72px;
+  border-bottom:5px solid var(--ink);
+  background:
+    repeating-linear-gradient(0deg,#e6e0d3 0 42px,#d7d1c5 42px 45px);
+}
+.school-window{
+  position:absolute;
+  top:45px;
+  width:126px;
+  height:108px;
+  border:6px solid var(--ink);
+  background:
+    linear-gradient(90deg,transparent 47%,var(--ink) 47% 53%,transparent 53%),
+    linear-gradient(transparent 47%,var(--ink) 47% 53%,transparent 53%),
+    #a9ddf0;
+}
+.school-door{
+  position:absolute;
+  bottom:0;
+  width:82px;
+  height:148px;
+  border:5px solid var(--ink);
+  background:#b78d65;
+}
+.school-door span{
+  position:absolute;
+  left:50%;
+  top:23px;
+  transform:translateX(-50%);
+  border:2px solid var(--ink);
+  background:#fff;
+  padding:2px 5px;
+  font-size:7px;
+  font-weight:1000;
+}
+.school-board{
+  position:absolute;
+  top:178px;
+  border:4px solid var(--ink);
+  border-radius:6px;
+  background:#305b49;
+  color:#fff;
+  padding:7px 14px;
+  font-size:11px;
+  font-weight:1000;
+}
+.school-board.b1{left:420px}
+.school-board.b2{left:2280px}
+.school-floor{
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  height:76px;
+  border-top:4px solid var(--ink);
+  background:
+    repeating-linear-gradient(90deg,#c7a77c 0 58px,#d6b98e 58px 116px);
+}
+.brawler-player{
+  position:absolute;
+  z-index:18;
+  bottom:58px;
+  width:76px;
+  height:88px;
+  transform:translateX(-50%);
+}
+.brawler-player-figure{
+  position:absolute;
+  inset:0;
+  background-position:center;
+  background-size:contain;
+  background-repeat:no-repeat;
+  transform-origin:center bottom;
+  transition:transform .08s;
+}
+.brawler-player.face-left .brawler-player-figure{
+  transform:scaleX(-1);
+}
+.brawler-fist{
+  position:absolute;
+  z-index:3;
+  right:-5px;
+  top:35px;
+  width:24px;
+  height:18px;
+  border:4px solid var(--ink);
+  border-radius:50%;
+  background:#f4c797;
+  opacity:0;
+}
+.brawler-player.face-left .brawler-fist{
+  right:auto;
+  left:-5px;
+}
+.brawler-player.punching .brawler-fist{
+  opacity:1;
+  animation:brawlerPunch .16s ease;
+}
+@keyframes brawlerPunch{
+  50%{transform:translateX(32px) scale(1.25)}
+}
+.brawler-player.face-left.punching .brawler-fist{
+  animation:brawlerPunchLeft .16s ease;
+}
+@keyframes brawlerPunchLeft{
+  50%{transform:translateX(-32px) scale(1.25)}
+}
+.brawler-player.special-punching{
+  animation:brawlerSpecialPlayer .35s ease;
+}
+@keyframes brawlerSpecialPlayer{
+  30%{transform:translateX(-50%) scale(1.22)}
+  60%{transform:translateX(-50%) scale(.96)}
+}
+.brawler-enemy{
+  position:absolute;
+  z-index:14;
+  bottom:62px;
+  width:60px;
+  height:68px;
+  background-position:center;
+  background-size:contain;
+  background-repeat:no-repeat;
+  filter:brightness(0) drop-shadow(0 3px 0 rgba(17,19,26,.22));
+  transform:translateX(-50%) scaleX(var(--enemy-face,1));
+  will-change:left,transform,opacity;
+}
+.brawler-enemy.hit,
+.brawler-enemy.super-hit{
+  animation:brawlerFly .52s cubic-bezier(.14,.73,.21,1) forwards;
+}
+.brawler-enemy.super-hit{
+  animation-duration:.65s;
+}
+@keyframes brawlerFly{
+  0%{
+    opacity:1;
+    transform:translateX(-50%) translate(0,0) rotate(0deg) scaleX(var(--enemy-face,1));
+  }
+  100%{
+    opacity:0;
+    transform:
+      translateX(-50%)
+      translate(var(--fly-x),var(--fly-y))
+      rotate(var(--fly-spin))
+      scale(.55);
+  }
+}
+.brawler-impact{
+  position:absolute;
+  z-index:50;
+  top:39%;
+  transform:translate(-50%,-50%) scale(.5);
+  font-size:40px;
+  font-weight:1000;
+  color:var(--yellow);
+  -webkit-text-stroke:3px var(--ink);
+  opacity:0;
+  pointer-events:none;
+}
+.brawler-impact.show{
+  animation:brawlerImpact .50s ease;
+}
+@keyframes brawlerImpact{
+  0%{opacity:0;transform:translate(-50%,-50%) scale(.45)}
+  30%{opacity:1;transform:translate(-50%,-50%) scale(1.16)}
+  100%{opacity:0;transform:translate(-50%,-65%) scale(1)}
+}
+.brawler-controls{
+  display:grid;
+  grid-template-columns:.8fr 1.25fr 1.25fr .8fr;
+  gap:5px;
+  margin-top:6px;
+}
+.brawler-controls button{
+  min-height:54px;
+  border:4px solid var(--ink);
+  border-radius:13px;
+  background:#fff;
+  box-shadow:0 4px 0 var(--ink);
+  font-size:13px;
+  font-weight:1000;
+  touch-action:none;
+}
+.brawler-controls .punch{
+  background:#ffbc6d;
+}
+.brawler-controls .special{
+  background:#c8d0d8;
+  font-size:10px;
+}
+.brawler-controls .special.ready{
+  background:var(--yellow);
+  animation:brawlerReady .42s ease-in-out infinite alternate;
+}
+@keyframes brawlerReady{
+  to{transform:translateY(-3px)}
+}
+.brawler-controls .special:disabled{
+  opacity:.62;
+}
+
+@media(max-height:690px){
+  .giant-energy-clock{top:56px!important}
+  .wizard-caster{transform:scale(.82);transform-origin:left bottom}
+  .brawler-player{width:62px;height:74px}
+  .brawler-enemy{width:50px;height:58px}
+  .brawler-controls button{min-height:46px}
+}

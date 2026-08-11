@@ -74,9 +74,11 @@ const GAMES=[
   {no:34,key:"planetEnergy",title:"この星を..！",sub:"3回チャージして高層ビルを貫く"},
   {no:35,key:"painter",title:"モブくんは画家志望",sub:"猫の顔型を1回で綺麗になぞる"},
   {no:36,key:"bikeJump",title:"バイクでジャンピング",sub:"約5秒走って巨大ジャンプ台へ"},
-  {no:37,key:"trampoline",title:"ダイナミックトラポリン",sub:"止まらず5回跳ねて最大2000m"},
+  {no:37,key:"trampoline",title:"ダイナミックトラポリン",sub:"3回連続で跳ねて3回目が記録"},
   {no:38,key:"mobTrain",title:"モブくん列車出発進行！",sub:"5秒で線路を描いてゴールへ"},
-  {no:39,key:"giantMob",title:"巨大モブくん大進撃",sub:"1.000秒を刻みながらビル破壊"}
+  {no:39,key:"giantMob",title:"巨大モブくん大進撃",sub:"1.000秒を刻みながらビル破壊"},
+  {no:40,key:"wizardMob",title:"魔法使いモブくん",sub:"闇の炎を円で囲んで町を守る"},
+  {no:41,key:"brawlerMob",title:"モブくんは喧嘩番長",sub:"学校で黒モブくんをぶっ飛ばす"}
 ];
 
 const MODES={
@@ -111,7 +113,7 @@ function freshState(){
     roundIndex:0,
     records:{
       reaction:{},memory:{},puzzle:{},launch:{},stack:{},breakdance:{},
-      crisis:{},factory:{},catcher:{},tidy:{},ski:{},slot:{},rope:{},pk:{},rhythm:{},cut:{},climb:{},errand:{},dontHitMob:{},mobStop:{},overlap:{},shutter:{},cup:{},darts:{},parachute:{},mobCount:{},brake:{},feint:{},bomb:{},overlapMaster:{},jumpingMob:{},heroMaybe:{},popularGame:{},planetEnergy:{},painter:{},bikeJump:{},trampoline:{},mobTrain:{},giantMob:{}
+      crisis:{},factory:{},catcher:{},tidy:{},ski:{},slot:{},rope:{},pk:{},rhythm:{},cut:{},climb:{},errand:{},dontHitMob:{},mobStop:{},overlap:{},shutter:{},cup:{},darts:{},parachute:{},mobCount:{},brake:{},feint:{},bomb:{},overlapMaster:{},jumpingMob:{},heroMaybe:{},popularGame:{},planetEnergy:{},painter:{},bikeJump:{},trampoline:{},mobTrain:{},giantMob:{},wizardMob:{},brawlerMob:{}
     },
     total:{},
     roundPoints:[],
@@ -193,7 +195,7 @@ function renderHome(){
   state=freshState();
   screen.innerHTML=`
     <section class="hero">
-      <div><span class="kicker">SMARTPHONE PARTY GAME</span><h1>39 MINI<br>GAMES</h1><p>39種のミニゲーム。各モードでNORMALかCUSTOMを選んで遊べます。</p></div>
+      <div><span class="kicker">SMARTPHONE PARTY GAME</span><h1>41 MINI<br>GAMES</h1><p>41種のミニゲーム。各モードでNORMALかCUSTOMを選んで遊べます。</p></div>
       <div class="hero-mark">MOB</div>
     </section>
     <section class="panel">
@@ -316,7 +318,7 @@ function renderPlayStyleSelect(){
       <button id="normalStyle" class="style-select-card normal" type="button">
         <span>NORMAL</span>
         <b>順番に全種目</b>
-        <small>GAME 1 → 39 を順番にプレイ</small>
+        <small>GAME 1 → 41 を順番にプレイ</small>
       </button>
       <button id="customStyle" class="style-select-card custom" type="button">
         <span>CUSTOM</span>
@@ -326,7 +328,7 @@ function renderPlayStyleSelect(){
     </div>
 
     <section class="panel flat">
-      <h3>39 MINI GAMES</h3>
+      <h3>41 MINI GAMES</h3>
       <div class="compact-game-grid">
         ${GAMES.map(g=>`<div><b>${g.no}</b><span>${g.title}</span></div>`).join("")}
       </div>
@@ -533,9 +535,11 @@ function scoreRuleForGame(index){
     "100km到達=100点 / 0km=0点",
     "猫の顔型との一致率100%=100点",
     "2000m=100点 / 0m=0点",
-    "5回目2000m=100点 / 0m=0点",
+    "3回目2000m=100点 / 0m=0点",
     "2.80秒以下=100点 / 6.00秒以上または衝突=0点",
-    "25棟破壊=100点 / 0棟=0点"
+    "30棟破壊=100点 / 0棟=0点",
+    "闇の炎15個消去=100点 / 0個=0点",
+    "黒モブくん30体撃破=100点 / 0体=0点"
   ][index];
 }
 
@@ -618,11 +622,15 @@ function showGameIntro(index){
   }else if(index===35){
     rules=`<li>3・2・1後、まず約5秒間高速走行。</li><li>その後、大きなジャンプ台が前方から見えてきます。</li><li>ジャンプ台中央の太いCENTERラインにバイクが来た瞬間をタップ。</li><li>中央とのタイミング誤差が小さいほど遠くへ飛びます。</li><li>ジャンプ後はカメラが追跡。最高2000m。</li>`;
   }else if(index===36){
-    rules=`<li>3・2・1の間、モブくんが高いところからトランポリンへ落下してきます。</li><li>着地後は止まらず、そのまま5回連続で跳ね続けます。</li><li>トランポリンが一番沈んだ瞬間にタップ。</li><li>1〜4回目の最大は100m / 200m / 300m / 400m。5回目は最大2000m。</li><li>前の回で失った%は次の回へ累積して引き継がれます。</li>`;
+    rules=`<li>3・2・1が終わってから、モブくんが高いところからトランポリンへ落下。</li><li>着地したら止まらず3回連続で跳ね続けます。</li><li>トランポリンがしっかり深く沈んだ<strong>一番下</strong>の瞬間にタップ。</li><li>1回目最大500m、2回目最大1000m、3回目最大2000m。</li><li>前の回で失った%は次の回へ累積。正式記録は3回目の高さです。</li>`;
   }else if(index===37){
-    rules=`<li>3・2・1後、5秒間だけ線路を描けます。</li><li>列車が乗っている左側の短い線路から、右側のGOAL旗まで線をつなぎます。</li><li>岩・水・木を避けて線を描いてください。</li><li>5秒後にGO！ 列車は描いた線の上を自動走行。</li><li>障害物にぶつかると0点。無事ゴールしたタイムを競います。</li>`;
+    rules=`<li>3・2・1後、5秒間だけ線路を描けます。</li><li>列車が乗っている左側の短い線路から、右側のGOAL旗まで線をつなぎます。</li><li>岩・水・木を避けて線を描いてください。</li><li>GOAL周辺には障害物が出ない安全エリアがあります。</li><li>5秒後にGO！ 障害物にぶつかると0点。ゴールタイムを競います。</li>`;
+  }else if(index===38){
+    rules=`<li>巨大モブくんが自動で進撃し、高層ビルを次々破壊します。</li><li>エネルギーは100から開始。</li><li>円形エネルギーのストップウォッチを<strong>1.000秒ピッタリ</strong>でタップ。</li><li>1.000秒との誤差×100だけエネルギー減少。例：0.500秒差なら-50。</li><li>エネルギーが0になるまでに破壊したビル数が記録。30棟=100点。</li>`;
+  }else if(index===39){
+    rules=`<li>田舎町へ闇の炎が降ってきます。小さなモブくん達は逃げ回っています。</li><li>闇の炎の周りを指で円形に囲むと、魔法のステッキが反応して炎を消します。</li><li>炎を消せなくても、モブくんに当たらなければ継続。</li><li>闇の炎がモブくんに当たった瞬間に終了。</li><li>10秒勝負。後半ほど炎の出現ペースが上がります。</li>`;
   }else{
-    rules=`<li>巨大モブくんが自動で進撃し、高層ビルを次々破壊します。</li><li>エネルギーは100から開始。</li><li>円形エネルギーのストップウォッチを<strong>1.000秒ピッタリ</strong>でタップ。</li><li>1.000秒との誤差×100だけエネルギー減少。例：0.500秒差なら-50。</li><li>エネルギーが0になるまでに破壊したビル数が記録です。</li>`;
+    rules=`<li>10秒間の横スクロール爽快アクション。</li><li>← →で移動。左へ行く時はモブくんが左向きになります。</li><li>PUNCHは長めの判定で、黒モブくんを1発でぶっ飛ばします。</li><li>10体倒すごとに必殺パンチを1回使用可能。</li><li>必殺パンチは広範囲の黒モブくんをまとめて回転させながら吹き飛ばします。</li>`;
   }
   screen.innerHTML=`
     <div class="game-head">
@@ -701,7 +709,9 @@ function humanReady(gameIndex,humanIndex){
     else if(gameIndex===35)startBikeJump(p,humanIndex,runId);
     else if(gameIndex===36)startDynamicTrampoline(p,humanIndex,runId);
     else if(gameIndex===37)startMobTrain(p,humanIndex,runId);
-    else startGiantMob(p,humanIndex,runId);
+    else if(gameIndex===38)startGiantMob(p,humanIndex,runId);
+    else if(gameIndex===39)startWizardMob(p,humanIndex,runId);
+    else startBrawlerMob(p,humanIndex,runId);
   },{once:true});
 }
 
@@ -6009,7 +6019,7 @@ async function startBikeJump(p,humanIndex,runId){
 
       distanceEl.textContent=`${(distance*eased).toFixed(1)}m`;
 
-      const cam=clamp(x-stage.clientWidth*.37,0,worldW-stage.clientWidth);
+      const cam=clamp(x-stage.clientWidth*.24,0,worldW-stage.clientWidth);
       world.style.transform=`translateX(${-cam}px)`;
 
       if(t<1){
@@ -6044,7 +6054,18 @@ async function startBikeJump(p,humanIndex,runId){
     bikeX+=speed*dt;
     rider.style.left=`${bikeX}px`;
 
-    const cam=clamp(bikeX-stage.clientWidth*.28,0,worldW-stage.clientWidth);
+    // The bike physically rides UP the ramp instead of passing in front of a background shape.
+    if(bikeX>=rampLeft&&bikeX<=rampRight){
+      const rp=clamp((bikeX-rampLeft)/rampWidth,0,1);
+      rider.style.bottom=`${roadY+rp*150}px`;
+      rider.style.transform=`rotate(-20deg)`;
+    }else if(bikeX<rampLeft){
+      rider.style.bottom=`${roadY}px`;
+      rider.style.transform='rotate(0deg)';
+    }
+
+    // Keep rider further left so more of the upcoming course is visible.
+    const cam=clamp(bikeX-stage.clientWidth*.18,0,worldW-stage.clientWidth);
     world.style.transform=`translateX(${-cam}px)`;
 
     const timeToRamp=(rampLeft-(bikeX+stage.clientWidth*.72))/speed;
@@ -6085,21 +6106,21 @@ async function startBikeJump(p,humanIndex,runId){
 async function startDynamicTrampoline(p,humanIndex,runId){
   gameFit();
 
-  const baseHeights=[100,200,300,400,2000];
+  const baseHeights=[500,1000,2000];
 
   let cumulativePenalty=0;
   let finalHeight=0;
   let activeTap=null;
   let stageRAF=null;
 
-  screen.innerHTML=`<div class="tramp-shell tramp-v102">
+  screen.innerHTML=`<div class="tramp-shell tramp-v103">
     <div class="game-head">
       <div><span class="kicker">${esc(p.name)}</span><h2>ダイナミックトラポリン</h2></div>
       <div class="game-badge">${playBadge(humanIndex)}</div>
     </div>
 
     <div class="tramp-hud">
-      <div><span>JUMP</span><b id="trampRound">1 / 5</b></div>
+      <div><span>JUMP</span><b id="trampRound">1 / 3</b></div>
       <div><span>MOMENTUM</span><b id="trampMomentum">100%</b></div>
       <div><span>HEIGHT</span><b id="trampHeight">0m</b></div>
     </div>
@@ -6107,16 +6128,15 @@ async function startDynamicTrampoline(p,humanIndex,runId){
     <button id="trampStage" class="tramp-stage" type="button">
       <div id="trampWorld" class="tramp-world">
         <div class="tramp-sky-lines"></div>
-        <div id="trampMob" class="tramp-mob tramp-mob-v102" style="background-image:url('icon/01.png')"></div>
-        <div id="trampBed" class="tramp-bed">
+        <div id="trampMob" class="tramp-mob tramp-mob-v103" style="background-image:url('icon/01.png')"></div>
+        <div id="trampBed" class="tramp-bed tramp-bed-v103">
           <div class="tramp-net"></div>
           <i class="tramp-leg l1"></i>
           <i class="tramp-leg l2"></i>
         </div>
       </div>
 
-      <div id="trampMessage" class="tramp-message">上から降ってくる！</div>
-      <div id="trampTimingRing" class="tramp-timing-ring"></div>
+      <div id="trampMessage" class="tramp-message">カウントダウン後に上から落下！</div>
     </button>
   </div>`;
 
@@ -6128,13 +6148,14 @@ async function startDynamicTrampoline(p,humanIndex,runId){
   const momentumEl=document.getElementById('trampMomentum');
   const heightEl=document.getElementById('trampHeight');
   const message=document.getElementById('trampMessage');
-  const ring=document.getElementById('trampTimingRing');
 
-  function animateInitialDrop(duration){
+  function animateInitialDrop(){
     const start=performance.now();
-    const topY=Math.min(520,Math.max(310,stage.clientHeight*.78));
+    const duration=900;
+    const topY=Math.max(390,stage.clientHeight*.96);
 
     mob.style.bottom=`${topY}px`;
+    message.textContent='落ちてくる！';
 
     return new Promise(resolve=>{
       const frame=now=>{
@@ -6145,7 +6166,7 @@ async function startDynamicTrampoline(p,humanIndex,runId){
         const y=topY+(95-topY)*eased;
 
         mob.style.bottom=`${y}px`;
-        mob.style.transform=`translateX(-50%) rotate(${Math.sin(t*Math.PI)*7}deg)`;
+        mob.style.transform=`translateX(-50%) rotate(${Math.sin(t*Math.PI)*6}deg)`;
 
         if(t<1){
           stageRAF=requestAnimationFrame(frame);
@@ -6162,55 +6183,46 @@ async function startDynamicTrampoline(p,humanIndex,runId){
 
   function compressionCycle(round){
     return new Promise(resolve=>{
-      const duration=640;
+      const duration=760;
       const targetMs=duration/2;
       const start=performance.now();
 
       let tapError=null;
       let ended=false;
 
-      roundEl.textContent=`${round+1} / 5`;
-      message.textContent=`${round+1}回目 / 一番沈んだ瞬間にTAP！`;
+      roundEl.textContent=`${round+1} / 3`;
+      message.textContent=`${round+1}回目 / 一番深く沈んだ瞬間！`;
 
       activeTap=()=>{
         if(tapError!==null||ended)return;
         tapError=(performance.now()-start)-targetMs;
 
         const abs=Math.abs(tapError);
-        message.textContent=abs<=38?'PERFECT TIMING!':abs<=110?'GREAT!':'TIMING!';
-        beep(abs<=38?1020:abs<=110?820:560,55,.018);
+        message.textContent=abs<=55?'PERFECT!':abs<=145?'GREAT!':'TIMING!';
+        beep(abs<=55?1020:abs<=145?820:560,55,.018);
       };
 
       const frame=now=>{
-        if(!isGameRunValid(runId)){resolve(320);return;}
+        if(!isGameRunValid(runId)){resolve(targetMs);return;}
 
         const elapsed=now-start;
         const t=clamp(elapsed/duration,0,1);
+
+        // Smooth, visibly deep trampoline compression.
         const sink=Math.sin(t*Math.PI);
-        const d=Math.abs(elapsed-targetMs);
+        const mobDrop=sink*50;
+        const bedScale=1-sink*.62;
 
-        mob.style.bottom=`${95-sink*28}px`;
-        bed.style.transform=`translateX(-50%) scaleY(${1-sink*.43})`;
-
-        if(d<=46){
-          ring.classList.add('perfect');
-          bed.classList.add('deep');
-        }else{
-          ring.classList.remove('perfect');
-          bed.classList.remove('deep');
-        }
+        mob.style.bottom=`${95-mobDrop}px`;
+        bed.style.transform=`translateX(-50%) scaleY(${bedScale})`;
 
         if(t<1){
           stageRAF=requestAnimationFrame(frame);
         }else{
           ended=true;
           activeTap=null;
-
           mob.style.bottom='95px';
           bed.style.transform='translateX(-50%) scaleY(1)';
-          ring.classList.remove('perfect');
-          bed.classList.remove('deep');
-
           resolve(tapError===null?targetMs:tapError);
         }
       };
@@ -6220,13 +6232,15 @@ async function startDynamicTrampoline(p,humanIndex,runId){
   }
 
   function bounceFlight(height,round){
-    const visualMax=round===4
-      ? Math.min(2380,150+height*1.08)
-      : Math.min(620,115+height*.90);
+    const visualMax=
+      round===2
+        ? Math.min(2420,180+height*1.06)
+        : Math.min(1080,170+height*.76);
 
-    const duration=round===4
-      ? 1680
-      : 650+round*85;
+    const duration=
+      round===2
+        ? 1640
+        : 820+round*130;
 
     const start=performance.now();
 
@@ -6248,7 +6262,6 @@ async function startDynamicTrampoline(p,humanIndex,runId){
         if(t<1){
           stageRAF=requestAnimationFrame(frame);
         }else{
-          // It arrives directly back onto the trampoline.
           world.style.transform='translateY(0px)';
           mob.style.bottom='95px';
           heightEl.textContent=`${height.toFixed(1)}m`;
@@ -6263,33 +6276,29 @@ async function startDynamicTrampoline(p,humanIndex,runId){
   stage.addEventListener('pointerdown',e=>{
     if(!activeTap||!isGameRunValid(runId))return;
     e.preventDefault();
-
-    const fn=activeTap;
-    fn();
+    activeTap();
   },{passive:false});
 
-  // During 3・2・1 MOB is already falling from above.
-  const dropPromise=animateInitialDrop(2150);
-  const ok=await countdown('TRAMPOLINE',runId);
-  await dropPromise;
+  // Countdown first. Only AFTER GO does MOB fall from above.
+  if(!(await countdown('TRAMPOLINE',runId)))return;
+  await animateInitialDrop();
+  if(!isGameRunValid(runId))return;
 
-  if(!ok||!isGameRunValid(runId))return;
-
-  message.textContent='LANDING!';
-
-  for(let round=0;round<5;round++){
+  for(let round=0;round<3;round++){
     const error=await compressionCycle(round);
     if(!isGameRunValid(runId))return;
 
     const absErr=Math.abs(error);
-    const rawPct=clamp(100-absErr/4.5,0,100);
+
+    // Slightly easier than V10.2. ±0.60 sec roughly reaches 0%.
+    const rawPct=clamp(100-absErr/6.0,0,100);
     const inheritedBefore=cumulativePenalty;
     const effectivePct=clamp(rawPct-inheritedBefore,0,100);
 
     cumulativePenalty+=100-rawPct;
 
     const height=Math.round(baseHeights[round]*effectivePct/100*10)/10;
-    if(round===4)finalHeight=height;
+    if(round===2)finalHeight=height;
 
     momentumEl.textContent=`${effectivePct.toFixed(1)}%`;
     heightEl.textContent=`${height.toFixed(1)}m`;
@@ -6298,9 +6307,8 @@ async function startDynamicTrampoline(p,humanIndex,runId){
       `${rawPct.toFixed(1)}% → 勢い ${effectivePct.toFixed(1)}%`+
       (inheritedBefore>0?` / 引継ぎ -${inheritedBefore.toFixed(1)}%`:'');
 
-    // No pause: compression releases straight into the next jump.
+    // Keep moving immediately. No result pause between bounces.
     await bounceFlight(height,round);
-
     if(!isGameRunValid(runId))return;
   }
 
@@ -6308,17 +6316,17 @@ async function startDynamicTrampoline(p,humanIndex,runId){
 
   message.textContent=finalHeight>=1950
     ? 'DYNAMIC PERFECT!!'
-    : '5th JUMP COMPLETE!';
+    : '3rd JUMP COMPLETE!';
 
   beep(finalHeight>=1900?1080:finalHeight>=1400?900:650,150,.04);
 
-  await wait(650);
+  await wait(550);
 
   if(isGameRunValid(runId)){
     recordScreen(
       36,p,humanIndex,
       `${finalHeight.toFixed(1)}<small>m</small>`,
-      `5th JUMP`
+      `3rd JUMP`
     );
   }
 }
@@ -6409,15 +6417,25 @@ async function startMobTrain(p,humanIndex,runId){
   goalEl.style.left=`${goalPt.x}px`;
   goalEl.style.top=`${goalPt.y}px`;
 
-  const obsData=[
-    {x:w*.22,y:h*.34,r:26,type:'rock'},
-    {x:w*.31,y:h*.67,r:28,type:'tree'},
-    {x:w*.43,y:h*.46,r:34,type:'water'},
-    {x:w*.55,y:h*.72,r:27,type:'rock'},
-    {x:w*.64,y:h*.31,r:29,type:'tree'},
-    {x:w*.74,y:h*.56,r:36,type:'water'},
-    {x:w*.83,y:h*.28,r:25,type:'rock'}
+  const obstacleCandidates=[
+    {x:w*.20,y:h*.34,r:26,type:'rock'},
+    {x:w*.29,y:h*.67,r:28,type:'tree'},
+    {x:w*.39,y:h*.46,r:34,type:'water'},
+    {x:w*.49,y:h*.72,r:27,type:'rock'},
+    {x:w*.58,y:h*.31,r:29,type:'tree'},
+    {x:w*.66,y:h*.58,r:34,type:'water'},
+    {x:w*.72,y:h*.39,r:25,type:'rock'}
   ];
+
+  // Guaranteed clear approach around both START and GOAL.
+  // This prevents an obstacle from covering the flag and making a run impossible.
+  const goalSafeRadius=Math.max(105,w*.26);
+  const startSafeRadius=82;
+
+  const obsData=obstacleCandidates.filter(o=>
+    Math.hypot(o.x-goalPt.x,o.y-goalPt.y)>goalSafeRadius &&
+    Math.hypot(o.x-startPt.x,o.y-startPt.y)>startSafeRadius
+  );
 
   obstacleLayer.innerHTML=obsData.map((o,i)=>`
     <div class="train-obstacle ${o.type}"
@@ -6787,7 +6805,7 @@ async function startGiantMob(p,humanIndex,runId){
     timing.textContent=reason;
     needle.style.transform='translateX(-50%) rotate(0deg)';
 
-    beep(destroyed>=25?1040:destroyed>=15?820:480,150,.035);
+    beep(destroyed>=30?1040:destroyed>=18?820:480,150,.035);
 
     setTimeout(()=>{
       if(isGameRunValid(runId)){
@@ -6914,6 +6932,681 @@ async function startGiantMob(p,humanIndex,runId){
 
 
 
+// GAME 40 -------------------------------------------------
+function wizardCircleQuality(points,flameX,flameY){
+  if(points.length<14)return 0;
+
+  let cx=0,cy=0;
+  for(const pt of points){cx+=pt.x;cy+=pt.y}
+  cx/=points.length;
+  cy/=points.length;
+
+  const radii=points.map(pt=>Math.hypot(pt.x-cx,pt.y-cy));
+  const avgR=radii.reduce((a,b)=>a+b,0)/radii.length;
+
+  if(avgR<25||avgR>105)return 0;
+
+  const radialDev=
+    radii.reduce((s,r)=>s+Math.abs(r-avgR),0)/
+    radii.length/
+    avgR;
+
+  let totalAngle=0;
+  let netAngle=0;
+  let prev=Math.atan2(points[0].y-cy,points[0].x-cx);
+
+  for(let i=1;i<points.length;i++){
+    const a=Math.atan2(points[i].y-cy,points[i].x-cx);
+    let d=a-prev;
+    while(d>Math.PI)d-=Math.PI*2;
+    while(d<-Math.PI)d+=Math.PI*2;
+    totalAngle+=Math.abs(d);
+    netAngle+=d;
+    prev=a;
+  }
+
+  const coverage=clamp(totalAngle/(Math.PI*2),0,1);
+  const direction=totalAngle>0?Math.abs(netAngle)/totalAngle:0;
+  const flameCenterError=Math.hypot(flameX-cx,flameY-cy);
+  const centerScore=clamp(1-flameCenterError/(avgR*.72),0,1);
+  const roundScore=clamp(1-radialDev/.40,0,1);
+
+  return clamp(
+    coverage*.38+
+    direction*.15+
+    centerScore*.30+
+    roundScore*.17,
+    0,1
+  );
+}
+
+async function startWizardMob(p,humanIndex,runId){
+  gameFit();
+
+  let finished=false;
+  let kills=0;
+  let startTime=0;
+  let lastSpawn=0;
+  let flameId=0;
+  let raf=null;
+  let drawing=false;
+  let pointerId=null;
+  let trace=[];
+
+  const flames=[];
+  const villagers=[];
+
+  screen.innerHTML=`<div class="wizard-shell">
+    <div class="game-head">
+      <div><span class="kicker">${esc(p.name)}</span><h2>魔法使いモブくん</h2></div>
+      <div class="game-badge">${playBadge(humanIndex)}</div>
+    </div>
+
+    <div class="wizard-hud">
+      <div><span>TIME</span><b id="wizardTime">10.0</b></div>
+      <div><span>DISPEL</span><b id="wizardKills">0</b></div>
+    </div>
+
+    <div id="wizardStage" class="wizard-stage">
+      <div class="wizard-town-bg">
+        <div class="wizard-mountain m1"></div>
+        <div class="wizard-mountain m2"></div>
+        <div class="wizard-house h1"><i></i></div>
+        <div class="wizard-house h2"><i></i></div>
+        <div class="wizard-house h3"><i></i></div>
+        <div class="wizard-fence"></div>
+      </div>
+
+      <div id="wizardVillagers"></div>
+      <div id="wizardFlames"></div>
+
+      <svg id="wizardTraceSvg" class="wizard-trace-svg">
+        <polyline id="wizardTrace" points="" class="wizard-trace"></polyline>
+      </svg>
+
+      <div class="wizard-caster">
+        <div class="wizard-caster-mob" style="background-image:url('icon/01.png')"></div>
+        <div class="wizard-wand"><i></i></div>
+      </div>
+
+      <div id="wizardMessage" class="wizard-message">闇の炎を円で囲め！</div>
+      <div id="wizardBurst" class="wizard-burst"></div>
+    </div>
+  </div>`;
+
+  const stage=document.getElementById('wizardStage');
+  const flameLayer=document.getElementById('wizardFlames');
+  const villagerLayer=document.getElementById('wizardVillagers');
+  const svg=document.getElementById('wizardTraceSvg');
+  const traceLine=document.getElementById('wizardTrace');
+  const timeEl=document.getElementById('wizardTime');
+  const killsEl=document.getElementById('wizardKills');
+  const message=document.getElementById('wizardMessage');
+  const burst=document.getElementById('wizardBurst');
+
+  const sw=stage.clientWidth;
+  const sh=stage.clientHeight;
+  svg.setAttribute('viewBox',`0 0 ${sw} ${sh}`);
+
+  function spawnVillagers(){
+    const count=5;
+    for(let i=0;i<count;i++){
+      const el=document.createElement('div');
+      el.className='wizard-villager';
+      el.style.backgroundImage=`url('icon/${String((i%9)+2).padStart(2,'0')}.png')`;
+
+      const v={
+        el,
+        x:55+i*(sw-110)/(count-1),
+        y:sh-randi(58,86),
+        speed:rand(18,32)*(i%2?1:-1),
+        phase:Math.random()*Math.PI*2
+      };
+
+      el.style.left=`${v.x}px`;
+      el.style.top=`${v.y}px`;
+
+      villagerLayer.appendChild(el);
+      villagers.push(v);
+    }
+  }
+
+  function spawnFlame(now,progress){
+    const el=document.createElement('div');
+    el.className='wizard-dark-flame';
+    el.innerHTML='<i></i><b></b>';
+
+    const x=rand(38,sw-38);
+    const size=rand(34,50);
+
+    const f={
+      id:++flameId,
+      el,
+      x,
+      y:-45,
+      size,
+      vy:rand(82,112)+progress*88,
+      drift:rand(-18,18),
+      dead:false
+    };
+
+    el.style.width=`${size}px`;
+    el.style.height=`${size*1.28}px`;
+
+    flameLayer.appendChild(el);
+    flames.push(f);
+
+    lastSpawn=now;
+  }
+
+  function removeFlame(f,magic=false){
+    if(f.dead)return;
+    f.dead=true;
+
+    if(magic){
+      f.el.classList.add('dispelled');
+      kills++;
+      killsEl.textContent=kills;
+
+      burst.style.left=`${f.x}px`;
+      burst.style.top=`${f.y}px`;
+      burst.classList.remove('show');
+      void burst.offsetWidth;
+      burst.classList.add('show');
+
+      message.textContent='DISPEL!';
+      beep(900+randi(0,120),55,.018);
+
+      setTimeout(()=>f.el.remove(),260);
+    }else{
+      f.el.remove();
+    }
+  }
+
+  function failGame(){
+    if(finished)return;
+    finished=true;
+
+    state.records.wizardMob[p.id]=kills;
+    message.textContent='モブくんに当たった！';
+    stage.classList.add('wizard-fail');
+    beep(130,220,.04);
+
+    setTimeout(()=>{
+      if(isGameRunValid(runId)){
+        recordScreen(
+          39,p,humanIndex,
+          `${kills}<small>個</small>`,
+          `DARK FIRE DISPEL`
+        );
+      }
+    },750);
+  }
+
+  function localPoint(e){
+    const r=stage.getBoundingClientRect();
+    return {
+      x:clamp(e.clientX-r.left,0,sw),
+      y:clamp(e.clientY-r.top,0,sh)
+    };
+  }
+
+  function drawTrace(){
+    traceLine.setAttribute(
+      'points',
+      trace.map(pt=>`${pt.x.toFixed(1)},${pt.y.toFixed(1)}`).join(' ')
+    );
+  }
+
+  stage.addEventListener('pointerdown',e=>{
+    if(finished||drawing||!isGameRunValid(runId))return;
+    e.preventDefault();
+
+    drawing=true;
+    pointerId=e.pointerId;
+    trace=[localPoint(e)];
+    drawTrace();
+
+    try{stage.setPointerCapture(pointerId)}catch(_){}
+  },{passive:false});
+
+  stage.addEventListener('pointermove',e=>{
+    if(!drawing||e.pointerId!==pointerId)return;
+    e.preventDefault();
+
+    const pt=localPoint(e);
+    const prev=trace[trace.length-1];
+
+    if(!prev||Math.hypot(pt.x-prev.x,pt.y-prev.y)>=2.4){
+      trace.push(pt);
+      drawTrace();
+    }
+  },{passive:false});
+
+  function finishCircle(e){
+    if(!drawing||e.pointerId!==pointerId)return;
+    e.preventDefault();
+
+    drawing=false;
+
+    let target=null;
+    let best=0;
+
+    for(const f of flames){
+      if(f.dead)continue;
+
+      const q=wizardCircleQuality(trace,f.x,f.y);
+      if(q>best){
+        best=q;
+        target=f;
+      }
+    }
+
+    if(target&&best>=.66){
+      removeFlame(target,true);
+    }else{
+      message.textContent='もっと円く囲もう！';
+      beep(250,40,.009);
+    }
+
+    trace=[];
+    traceLine.setAttribute('points','');
+  }
+
+  stage.addEventListener('pointerup',finishCircle,{passive:false});
+  stage.addEventListener('pointercancel',finishCircle,{passive:false});
+
+  if(!(await countdown('MAGIC',runId)))return;
+
+  spawnVillagers();
+  startTime=performance.now();
+  lastSpawn=startTime-700;
+
+  function frame(now){
+    if(finished||!isGameRunValid(runId))return;
+
+    const elapsed=now-startTime;
+    const remaining=10000-elapsed;
+    const progress=clamp(elapsed/10000,0,1);
+
+    timeEl.textContent=(Math.max(0,remaining)/1000).toFixed(1);
+
+    const spawnEvery=900-progress*570;
+
+    if(now-lastSpawn>=spawnEvery&&flames.filter(f=>!f.dead).length<8){
+      spawnFlame(now,progress);
+
+      if(progress>.58&&Math.random()<.30){
+        spawnFlame(now+1,progress);
+      }
+    }
+
+    for(const v of villagers){
+      v.x+=v.speed*.016;
+      if(v.x<28||v.x>sw-28)v.speed*=-1;
+
+      v.phase+=.13;
+      v.el.style.left=`${v.x}px`;
+      v.el.style.transform=
+        `translate(-50%,-50%) translateY(${Math.sin(v.phase)*4}px) scaleX(${v.speed<0?-1:1})`;
+    }
+
+    for(const f of flames){
+      if(f.dead)continue;
+
+      f.y+=f.vy*.016;
+      f.x+=f.drift*.016;
+
+      f.el.style.left=`${f.x}px`;
+      f.el.style.top=`${f.y}px`;
+
+      for(const v of villagers){
+        if(Math.hypot(f.x-v.x,f.y-v.y)<f.size*.42+18){
+          failGame();
+          return;
+        }
+      }
+
+      if(f.y>sh+45){
+        removeFlame(f,false);
+      }
+    }
+
+    if(remaining<=0){
+      finished=true;
+      state.records.wizardMob[p.id]=kills;
+      message.textContent='町を守り切った！';
+      beep(1040,130,.035);
+
+      setTimeout(()=>{
+        if(isGameRunValid(runId)){
+          recordScreen(
+            39,p,humanIndex,
+            `${kills}<small>個</small>`,
+            `10 SECOND DISPEL`
+          );
+        }
+      },700);
+      return;
+    }
+
+    raf=requestAnimationFrame(frame);
+  }
+
+  raf=requestAnimationFrame(frame);
+}
+
+// GAME 41 -------------------------------------------------
+async function startBrawlerMob(p,humanIndex,runId){
+  gameFit();
+
+  let finished=false;
+  let kills=0;
+  let specialCharges=0;
+  let nextSpecialAt=10;
+  let playerX=700;
+  let moveDir=0;
+  let facing=1;
+  let raf=null;
+  let last=0;
+  let startTime=0;
+  let lastSpawn=0;
+  let enemyId=0;
+  let punchReady=true;
+  const enemies=[];
+
+  const worldW=3900;
+
+  screen.innerHTML=`<div class="brawler-shell">
+    <div class="game-head">
+      <div><span class="kicker">${esc(p.name)}</span><h2>モブくんは喧嘩番長</h2></div>
+      <div class="game-badge">${playBadge(humanIndex)}</div>
+    </div>
+
+    <div class="brawler-hud">
+      <div><span>TIME</span><b id="brawlerTime">10.0</b></div>
+      <div><span>KO</span><b id="brawlerKills">0</b></div>
+      <div><span>SPECIAL</span><b id="brawlerSpecialText">0 / 10</b></div>
+    </div>
+
+    <div id="brawlerStage" class="brawler-stage">
+      <div id="brawlerWorld" class="brawler-world" style="width:${worldW}px">
+        <div class="school-wall">
+          ${Array.from({length:12},(_,i)=>`
+            <div class="school-window" style="left:${130+i*320}px"></div>
+            <div class="school-door" style="left:${285+i*640}px"><span>CLASS</span></div>
+          `).join('')}
+          <div class="school-board b1">MOB HIGH SCHOOL</div>
+          <div class="school-board b2">FIGHT!</div>
+        </div>
+
+        <div class="school-floor"></div>
+
+        <div id="brawlerEnemies"></div>
+
+        <div id="brawlerPlayer" class="brawler-player">
+          <div class="brawler-player-figure" style="background-image:url('icon/01.png')"></div>
+          <div class="brawler-fist"></div>
+        </div>
+      </div>
+
+      <div id="brawlerImpact" class="brawler-impact"></div>
+    </div>
+
+    <div class="brawler-controls">
+      <button id="brawlerLeft" type="button">←</button>
+      <button id="brawlerPunch" class="punch" type="button">PUNCH</button>
+      <button id="brawlerSpecial" class="special" type="button" disabled>必殺<br>PUNCH</button>
+      <button id="brawlerRight" type="button">→</button>
+    </div>
+  </div>`;
+
+  const stage=document.getElementById('brawlerStage');
+  const world=document.getElementById('brawlerWorld');
+  const player=document.getElementById('brawlerPlayer');
+  const enemyLayer=document.getElementById('brawlerEnemies');
+  const timeEl=document.getElementById('brawlerTime');
+  const killsEl=document.getElementById('brawlerKills');
+  const specialEl=document.getElementById('brawlerSpecial');
+  const specialText=document.getElementById('brawlerSpecialText');
+  const impact=document.getElementById('brawlerImpact');
+  const left=document.getElementById('brawlerLeft');
+  const right=document.getElementById('brawlerRight');
+  const punch=document.getElementById('brawlerPunch');
+
+  player.style.left=`${playerX}px`;
+
+  function bindHold(btn,dir){
+    btn.addEventListener('pointerdown',e=>{
+      e.preventDefault();
+      moveDir=dir;
+      facing=dir;
+      player.classList.toggle('face-left',facing<0);
+      try{btn.setPointerCapture(e.pointerId)}catch(_){}
+    },{passive:false});
+
+    const stop=()=>{if(moveDir===dir)moveDir=0};
+    btn.addEventListener('pointerup',stop);
+    btn.addEventListener('pointercancel',stop);
+    btn.addEventListener('lostpointercapture',stop);
+  }
+
+  bindHold(left,-1);
+  bindHold(right,1);
+
+  function updateSpecial(){
+    if(kills>=nextSpecialAt){
+      const earned=Math.floor((kills-(nextSpecialAt-10))/10);
+      if(earned>0){
+        specialCharges+=earned;
+        nextSpecialAt+=earned*10;
+      }
+    }
+
+    specialEl.disabled=specialCharges<=0;
+    specialEl.classList.toggle('ready',specialCharges>0);
+
+    if(specialCharges>0){
+      specialText.textContent=`READY ×${specialCharges}`;
+    }else{
+      specialText.textContent=`${kills%10} / 10`;
+    }
+  }
+
+  function spawnEnemy(now,progress,forceSide=null){
+    if(enemies.filter(e=>!e.dead).length>=13)return;
+
+    const side=forceSide??(Math.random()<.5?-1:1);
+    const x=clamp(
+      playerX+side*rand(210,520),
+      80,
+      worldW-80
+    );
+
+    const el=document.createElement('div');
+    el.className='brawler-enemy';
+    el.style.backgroundImage=`url('icon/${String(randi(1,10)).padStart(2,'0')}.png')`;
+
+    const enemy={
+      id:++enemyId,
+      el,
+      x,
+      y:64+randi(-4,5),
+      speed:rand(34,52)+progress*38,
+      dead:false
+    };
+
+    el.style.left=`${x}px`;
+    el.style.bottom=`${enemy.y}px`;
+    el.style.setProperty('--enemy-face',x<playerX?1:-1);
+
+    enemyLayer.appendChild(el);
+    enemies.push(enemy);
+  }
+
+  function popImpact(text,x=stage.clientWidth*.5){
+    impact.textContent=text;
+    impact.style.left=`${clamp(x,60,stage.clientWidth-60)}px`;
+    impact.classList.remove('show');
+    void impact.offsetWidth;
+    impact.classList.add('show');
+  }
+
+  function defeat(enemy,dir,strong=false){
+    if(enemy.dead)return;
+    enemy.dead=true;
+    kills++;
+    killsEl.textContent=kills;
+
+    const fly=dir*(strong?rand(250,390):rand(155,250));
+    enemy.el.style.setProperty('--fly-x',`${fly}px`);
+    enemy.el.style.setProperty('--fly-y',`${strong?rand(-150,-95):rand(-110,-65)}px`);
+    enemy.el.style.setProperty('--fly-spin',`${dir*(strong?1080:720)}deg`);
+    enemy.el.classList.add(strong?'super-hit':'hit');
+
+    setTimeout(()=>enemy.el.remove(),strong?650:520);
+
+    updateSpecial();
+  }
+
+  function doPunch(){
+    if(finished||!punchReady||!isGameRunValid(runId))return;
+
+    punchReady=false;
+    player.classList.remove('punching');
+    void player.offsetWidth;
+    player.classList.add('punching');
+
+    const candidates=enemies
+      .filter(e=>!e.dead)
+      .map(e=>({
+        e,
+        dx:(e.x-playerX)*facing
+      }))
+      .filter(o=>o.dx>=-20&&o.dx<=155)
+      .sort((a,b)=>a.dx-b.dx);
+
+    if(candidates.length){
+      defeat(candidates[0].e,facing,false);
+      popImpact('BAM!',stage.clientWidth*.54);
+      beep(230,45,.015);
+    }else{
+      beep(145,28,.006);
+    }
+
+    setTimeout(()=>{punchReady=true},165);
+  }
+
+  punch.addEventListener('pointerdown',e=>{
+    e.preventDefault();
+    doPunch();
+  },{passive:false});
+
+  specialEl.addEventListener('pointerdown',e=>{
+    e.preventDefault();
+    if(finished||specialCharges<=0||!isGameRunValid(runId))return;
+
+    specialCharges--;
+    player.classList.remove('special-punching');
+    void player.offsetWidth;
+    player.classList.add('special-punching');
+
+    const victims=enemies
+      .filter(en=>!en.dead&&Math.abs(en.x-playerX)<=330);
+
+    // If nobody is close, it still consumes the stored special.
+    for(const enemy of victims){
+      const dir=enemy.x<playerX?-1:1;
+      defeat(enemy,dir,true);
+    }
+
+    popImpact(victims.length?`必殺 ${victims.length} HIT!`:'必殺 MISS!');
+    beep(680,120,.035);
+    updateSpecial();
+  },{passive:false});
+
+  if(!(await countdown('BRAWLER',runId)))return;
+
+  startTime=performance.now();
+  last=startTime;
+  lastSpawn=startTime-500;
+
+  // Start with a crowd.
+  for(let i=0;i<7;i++){
+    spawnEnemy(startTime,0,i%2?-1:1);
+  }
+
+  function frame(now){
+    if(finished||!isGameRunValid(runId))return;
+
+    const dt=Math.min(32,now-last)/1000;
+    last=now;
+
+    const elapsed=now-startTime;
+    const remaining=10000-elapsed;
+    const progress=clamp(elapsed/10000,0,1);
+
+    timeEl.textContent=(Math.max(0,remaining)/1000).toFixed(1);
+
+    playerX=clamp(playerX+moveDir*285*dt,60,worldW-60);
+    player.style.left=`${playerX}px`;
+
+    const spawnEvery=430-progress*180;
+    if(now-lastSpawn>=spawnEvery){
+      lastSpawn=now;
+      spawnEnemy(now,progress);
+      if(progress>.52&&Math.random()<.42)spawnEnemy(now,progress);
+    }
+
+    for(const enemy of enemies){
+      if(enemy.dead)continue;
+
+      const dx=playerX-enemy.x;
+      const dir=Math.sign(dx)||1;
+
+      // Crowd moves toward the player, but keeps a small fighting distance.
+      if(Math.abs(dx)>52){
+        enemy.x+=dir*enemy.speed*dt;
+      }
+
+      enemy.el.style.left=`${enemy.x}px`;
+      enemy.el.style.setProperty('--enemy-face',dir);
+    }
+
+    const cam=clamp(
+      playerX-stage.clientWidth*.36,
+      0,
+      worldW-stage.clientWidth
+    );
+    world.style.transform=`translateX(${-cam}px)`;
+
+    if(remaining<=0){
+      finished=true;
+      state.records.brawlerMob[p.id]=kills;
+
+      popImpact('TIME!');
+      beep(930,110,.03);
+
+      setTimeout(()=>{
+        if(isGameRunValid(runId)){
+          recordScreen(
+            40,p,humanIndex,
+            `${kills}<small>体</small>`,
+            `10 SECOND KO`
+          );
+        }
+      },700);
+      return;
+    }
+
+    raf=requestAnimationFrame(frame);
+  }
+
+  raf=requestAnimationFrame(frame);
+}
+
+
+
 function recordScreen(gameIndex,p,humanIndex,main,sub=""){
   clearGameFit();
   gameTop();
@@ -6951,7 +7644,7 @@ async function simulateCpuThenResult(gameIndex){
 
 function cpuUltraDraw(gameIndex){
   // Game-specific draw rate. Regular values are already intentionally strong.
-  const chance=[0.12,0.10,0.14,0.16,0.12,0.13,0.14,0.12,0.15,0.12,0.14,0.13,0.13,0.14,0.12,0.12,0.13,0.12,0.13,0.14,0.13,0.14,0.12,0.13,0.12,0.12,0.13,0.13,0.14,0.14,0.13,0.12,0.13,0.13,0.13,0.13,0.13,0.13,0.13][gameIndex] ?? 0.12;
+  const chance=[0.12,0.10,0.14,0.16,0.12,0.13,0.14,0.12,0.15,0.12,0.14,0.13,0.13,0.14,0.12,0.12,0.13,0.12,0.13,0.14,0.13,0.14,0.12,0.13,0.12,0.12,0.13,0.13,0.14,0.14,0.13,0.12,0.13,0.13,0.13,0.13,0.13,0.13,0.13,0.13,0.13][gameIndex] ?? 0.12;
   return Math.random()<chance;
 }
 
@@ -7036,11 +7729,15 @@ function simulateOneCpu(gameIndex,p){
   }else if(gameIndex===35){
     state.records.bikeJump[p.id]=Math.round((ultra?rand(1720,1975):rand(820,1760))*10)/10;
   }else if(gameIndex===36){
-    state.records.trampoline[p.id]=Math.round((ultra?rand(1650,1960):rand(760,1660))*10)/10;
+    state.records.trampoline[p.id]=Math.round((ultra?rand(1660,1965):rand(850,1690))*10)/10;
   }else if(gameIndex===37){
     state.records.mobTrain[p.id]=ultra?randi(2750,3350):randi(3300,5200);
+  }else if(gameIndex===38){
+    state.records.giantMob[p.id]=ultra?randi(23,30):randi(10,22);
+  }else if(gameIndex===39){
+    state.records.wizardMob[p.id]=ultra?randi(13,18):randi(6,13);
   }else{
-    state.records.giantMob[p.id]=ultra?randi(20,28):randi(9,20);
+    state.records.brawlerMob[p.id]=ultra?randi(27,35):randi(14,28);
   }
 
   return ultra;
@@ -7108,7 +7805,9 @@ function performancePoints(gameIndex,v){
     if(v>=6000)return 0;
     return clamp(Math.round((6000-v)/3200*100),0,100);
   }
-  return clamp(Math.round(v/25*100),0,100);
+  if(gameIndex===38)return clamp(Math.round(v/30*100),0,100);
+  if(gameIndex===39)return clamp(Math.round(v/15*100),0,100);
+  return clamp(Math.round(v/30*100),0,100);
 }
 
 function rankRecords(gameIndex){
@@ -7163,7 +7862,9 @@ function formatRecord(gameIndex,v){
   if(gameIndex===35)return `${Number(v).toFixed(1)}m`;
   if(gameIndex===36)return `${Number(v).toFixed(1)}m`;
   if(gameIndex===37)return v>=90000?`CRASH`:`${(v/1000).toFixed(2)}秒`;
-  return `${Math.round(v)}棟`;
+  if(gameIndex===38)return `${Math.round(v)}棟`;
+  if(gameIndex===39)return `${Math.round(v)}個`;
+  return `${Math.round(v)}体`;
 }
 
 function applyPoints(gameIndex,ranked){
