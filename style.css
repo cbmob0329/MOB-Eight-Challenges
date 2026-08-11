@@ -5215,3 +5215,617 @@ body{touch-action:manipulation}
   .tramp-mob{width:58px;height:68px}
   .tramp-bed{width:245px}
 }
+
+
+/* =========================================================
+   V10.2 BIKE — BIG RAMP / 5 SECOND APPROACH
+   ========================================================= */
+.bike-ramp-v102{
+  height:138px!important;
+  bottom:78px!important;
+  transform:skewX(-18deg)!important;
+  border-width:6px!important;
+  border-radius:12px 12px 0 0!important;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      #d47d36 0 34px,
+      #f1a454 34px 68px
+    )!important;
+  box-shadow:0 9px 0 rgba(17,19,26,.18);
+}
+.bike-ramp-v102 .bike-ramp-line{
+  width:14px!important;
+  border-left-width:4px!important;
+  border-right-width:4px!important;
+  background:#ffe04b!important;
+  box-shadow:0 0 0 4px rgba(255,255,255,.74);
+}
+.bike-ramp-v102>span{
+  top:-42px!important;
+  padding:5px 12px!important;
+  font-size:12px!important;
+  border-width:3px!important;
+  transform:translateX(-50%) skewX(18deg)!important;
+}
+.bike-ramp-arrow{
+  position:absolute;
+  bottom:14px;
+  font-style:normal;
+  font-size:24px;
+  color:#fff;
+  -webkit-text-stroke:2px var(--ink);
+  transform:skewX(18deg);
+}
+.bike-ramp-arrow.a1{left:27%}
+.bike-ramp-arrow.a2{right:27%}
+
+/* =========================================================
+   V10.2 TRAMPOLINE — CONTINUOUS BOUNCING
+   ========================================================= */
+.tramp-v102 .tramp-message{
+  transition:none!important;
+}
+.tramp-mob-v102{
+  transition:none!important;
+  will-change:bottom,transform;
+}
+.tramp-v102 .tramp-bed{
+  transition:none!important;
+  will-change:transform;
+}
+.tramp-v102 .tramp-timing-ring{
+  transition:none!important;
+}
+.tramp-v102 .tramp-stage:after{
+  content:"TAP AT DEEPEST";
+  position:absolute;
+  z-index:8;
+  right:8px;
+  top:9px;
+  border:2px solid var(--ink);
+  border-radius:999px;
+  background:rgba(255,255,255,.86);
+  padding:3px 6px;
+  font-size:7px;
+  font-weight:1000;
+}
+
+/* =========================================================
+   V10.2 GAME 38 — MOB TRAIN
+   ========================================================= */
+.train-shell,
+.giant-shell{
+  width:min(100%,650px);
+  height:100%;
+  margin:0 auto;
+  display:flex;
+  flex-direction:column;
+}
+.train-hud,
+.giant-hud{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:5px;
+  margin-bottom:5px;
+}
+.train-hud>div,
+.giant-hud>div{
+  border:3px solid var(--ink);
+  border-radius:11px;
+  background:#fff;
+  padding:4px;
+  text-align:center;
+}
+.train-hud span,
+.giant-hud span{
+  display:block;
+  font-size:7px;
+  font-weight:1000;
+  color:var(--muted);
+}
+.train-hud b,
+.giant-hud b{
+  font-size:14px;
+}
+.train-stage{
+  flex:1;
+  min-height:0;
+  position:relative;
+  overflow:hidden;
+  border:4px solid var(--ink);
+  border-radius:21px;
+  background:
+    linear-gradient(#a9e6ff 0 23%,#c7ec8e 23% 100%);
+  touch-action:none;
+}
+.train-grass{
+  position:absolute;
+  inset:23% 0 0;
+  opacity:.45;
+  background:
+    radial-gradient(circle at 18% 25%,#70bc63 0 7px,transparent 8px),
+    radial-gradient(circle at 62% 58%,#78c267 0 6px,transparent 7px),
+    radial-gradient(circle at 84% 29%,#68af5c 0 5px,transparent 6px);
+  background-size:100px 90px;
+}
+.train-svg{
+  position:absolute;
+  z-index:14;
+  inset:0;
+  width:100%;
+  height:100%;
+  pointer-events:none;
+}
+.train-line{
+  fill:none;
+  stroke:#534839;
+  stroke-width:9;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+  filter:drop-shadow(0 2px 0 #cda76a);
+}
+.train-line:after{
+  stroke-dasharray:6 10;
+}
+.train-start-rail{
+  position:absolute;
+  z-index:12;
+  width:72px;
+  height:21px;
+  transform:rotate(0deg);
+  border-top:5px solid #4c433a;
+  border-bottom:5px solid #4c433a;
+}
+.train-start-rail i{
+  position:absolute;
+  top:-8px;
+  width:5px;
+  height:30px;
+  background:#b08354;
+}
+.train-start-rail i:nth-child(1){left:5px}
+.train-start-rail i:nth-child(2){left:25px}
+.train-start-rail i:nth-child(3){left:45px}
+.train-start-rail i:nth-child(4){left:64px}
+.train-goal{
+  position:absolute;
+  z-index:13;
+  width:60px;
+  height:76px;
+  transform:translate(-50%,-82%);
+  pointer-events:none;
+}
+.train-goal-pole{
+  position:absolute;
+  left:13px;
+  top:10px;
+  width:5px;
+  height:62px;
+  border:2px solid var(--ink);
+  background:#e9e9e9;
+}
+.train-goal:before{
+  content:"";
+  position:absolute;
+  left:18px;
+  top:10px;
+  width:35px;
+  height:23px;
+  border:3px solid var(--ink);
+  background:
+    linear-gradient(45deg,#fff 25%,#222 25% 50%,#fff 50% 75%,#222 75%);
+  background-size:14px 14px;
+}
+.train-goal b{
+  position:absolute;
+  left:18px;
+  top:-15px;
+  font-size:9px;
+}
+.train-obstacle{
+  position:absolute;
+  z-index:10;
+  transform:translate(-50%,-50%);
+  display:grid;
+  place-items:center;
+  font-weight:1000;
+  pointer-events:none;
+}
+.train-obstacle.rock{
+  border:4px solid var(--ink);
+  border-radius:45% 55% 48% 52%;
+  background:#7d858b;
+  font-size:18px;
+  color:#50565b;
+}
+.train-obstacle.tree{
+  border-radius:50%;
+  border:4px solid var(--ink);
+  background:#56aa54;
+  color:#266e32;
+  font-size:24px;
+  box-shadow:0 14px 0 -8px #8a6138;
+}
+.train-obstacle.water{
+  height:44px!important;
+  border:4px solid #2a6f9e;
+  border-radius:50%;
+  background:#62c8ef;
+  color:#fff;
+  font-size:24px;
+}
+.mob-train{
+  position:absolute;
+  z-index:20;
+  width:66px;
+  height:48px;
+  transform:translate(-50%,-50%);
+  transform-origin:center;
+  will-change:left,top,transform;
+}
+.train-engine{
+  position:absolute;
+  left:5px;
+  top:3px;
+  width:54px;
+  height:31px;
+  border:4px solid var(--ink);
+  border-radius:8px 12px 6px 6px;
+  background:#df4c42;
+}
+.train-engine:before{
+  content:"";
+  position:absolute;
+  right:-14px;
+  bottom:2px;
+  border-left:14px solid var(--ink);
+  border-top:9px solid transparent;
+  border-bottom:9px solid transparent;
+}
+.train-window{
+  position:absolute;
+  left:7px;
+  top:-20px;
+  width:30px;
+  height:30px;
+  border:3px solid var(--ink);
+  border-radius:50%;
+  background-color:#fff;
+  background-position:center;
+  background-size:contain;
+  background-repeat:no-repeat;
+}
+.train-smoke{
+  position:absolute;
+  right:5px;
+  top:-18px;
+  width:10px;
+  height:20px;
+  border:3px solid var(--ink);
+  background:#464c52;
+}
+.train-smoke:after{
+  content:"☁";
+  position:absolute;
+  left:-10px;
+  top:-20px;
+  font-size:18px;
+  color:#90979e;
+}
+.train-wheel{
+  position:absolute;
+  top:31px;
+  width:18px;
+  height:18px;
+  border:4px solid var(--ink);
+  border-radius:50%;
+  background:#555d65;
+}
+.train-wheel.tw1{left:10px}
+.train-wheel.tw2{right:8px}
+.mob-train.crashed{
+  animation:trainCrash .42s ease forwards;
+}
+@keyframes trainCrash{
+  55%{transform:translate(-50%,-50%) rotate(35deg) scale(1.12)}
+  100%{transform:translate(-50%,-50%) rotate(68deg) translateY(14px)}
+}
+.mob-train.goal{
+  animation:trainGoal .45s ease;
+}
+@keyframes trainGoal{
+  50%{transform:translate(-50%,-50%) scale(1.18)}
+}
+.train-message{
+  position:absolute;
+  z-index:40;
+  left:50%;
+  bottom:7px;
+  transform:translateX(-50%);
+  min-width:220px;
+  max-width:94%;
+  border:3px solid var(--ink);
+  border-radius:999px;
+  background:#fff;
+  padding:6px 10px;
+  text-align:center;
+  font-size:10px;
+  font-weight:1000;
+}
+.train-go-pop{
+  position:absolute;
+  z-index:50;
+  left:50%;
+  top:44%;
+  transform:translate(-50%,-50%) scale(.5);
+  font-size:64px;
+  font-weight:1000;
+  color:var(--yellow);
+  -webkit-text-stroke:4px var(--ink);
+  opacity:0;
+  pointer-events:none;
+}
+.train-go-pop.show{
+  animation:trainGoPop .55s ease forwards;
+}
+@keyframes trainGoPop{
+  0%{opacity:0;transform:translate(-50%,-50%) scale(.45)}
+  35%{opacity:1;transform:translate(-50%,-50%) scale(1.12)}
+  100%{opacity:0;transform:translate(-50%,-54%) scale(1)}
+}
+
+/* =========================================================
+   V10.2 GAME 39 — GIANT MOB
+   ========================================================= */
+.giant-stage{
+  flex:1;
+  min-height:0;
+  position:relative;
+  overflow:hidden;
+  border:4px solid var(--ink);
+  border-radius:21px;
+  background:linear-gradient(#9eddf9 0 68%,#dbefff 68% 100%);
+  touch-action:none;
+}
+.giant-world{
+  position:absolute;
+  left:0;
+  top:0;
+  bottom:0;
+  will-change:transform;
+}
+.giant-sky{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+}
+.giant-cloud{
+  position:absolute;
+  font-size:54px;
+  opacity:.75;
+}
+.giant-ground{
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  height:54px;
+  border-top:4px solid var(--ink);
+  background:
+    repeating-linear-gradient(90deg,#5c6268 0 50px,#696f75 50px 100px);
+}
+.giant-buildings{
+  position:absolute;
+  inset:0;
+}
+.giant-building{
+  position:absolute;
+  z-index:5;
+  bottom:54px;
+  border:4px solid var(--ink);
+  border-radius:7px 7px 0 0;
+  background:#59677a;
+  transform-origin:bottom center;
+  transition:transform .24s ease,opacity .24s ease;
+}
+.giant-building.gb1{background:#776077}
+.giant-building.gb2{background:#597b7c}
+.giant-building.gb3{background:#796a50}
+.giant-building.gb4{background:#526e91}
+.giant-windows{
+  position:absolute;
+  inset:12px 8px 10px;
+  opacity:.72;
+  background:
+    repeating-linear-gradient(0deg,transparent 0 19px,#ffe680 19px 27px),
+    repeating-linear-gradient(90deg,#ffe680 0 9px,transparent 9px 21px);
+}
+.giant-building.destroyed{
+  transform:
+    translateY(42px)
+    rotate(calc(var(--giant-break-dir,1) * 19deg))
+    scale(.42,.24);
+  opacity:.10;
+}
+.giant-mob{
+  position:absolute;
+  z-index:18;
+  left:145px;
+  bottom:48px;
+  width:190px;
+  height:235px;
+  transform:translateX(-50%);
+  will-change:left;
+}
+.giant-figure{
+  position:absolute;
+  inset:0;
+  background-position:center bottom;
+  background-size:contain;
+  background-repeat:no-repeat;
+  filter:drop-shadow(0 8px 0 rgba(17,19,26,.22));
+  animation:giantHappyMarch .31s ease-in-out infinite alternate;
+}
+@keyframes giantHappyMarch{
+  from{transform:translateY(0) rotate(-2deg)}
+  to{transform:translateY(-15px) rotate(2deg)}
+}
+.giant-mob.thump .giant-step-wave{
+  animation:giantStepWave .30s ease-out;
+}
+.giant-step-wave{
+  position:absolute;
+  left:50%;
+  bottom:3px;
+  width:90px;
+  height:22px;
+  transform:translateX(-50%);
+  border:5px solid rgba(17,19,26,.52);
+  border-radius:50%;
+  opacity:0;
+}
+@keyframes giantStepWave{
+  0%{opacity:.65;transform:translateX(-50%) scale(.35)}
+  100%{opacity:0;transform:translateX(-50%) scale(2.4)}
+}
+.giant-mob.stopped .giant-figure{
+  animation:none;
+}
+.giant-debris{
+  position:absolute;
+  z-index:24;
+  width:18px;
+  height:18px;
+  border-radius:4px;
+  background:#7e8791;
+  box-shadow:
+    -25px -14px 0 #565f69,
+    27px -8px 0 #929aa2,
+    -15px 22px 0 #68727c,
+    31px 19px 0 #4f5862;
+  animation:giantDebris .58s ease-out forwards;
+}
+@keyframes giantDebris{
+  to{transform:scale(4.3) rotate(68deg);opacity:0}
+}
+.giant-energy-clock{
+  position:absolute;
+  z-index:50;
+  right:10px;
+  top:10px;
+  width:124px;
+  height:124px;
+  border:5px solid var(--ink);
+  border-radius:50%;
+  background:rgba(255,255,255,.94);
+  box-shadow:0 5px 0 rgba(17,19,26,.18);
+}
+.giant-clock-ring{
+  position:absolute;
+  inset:8px;
+  border:5px solid #4a9fe8;
+  border-radius:50%;
+}
+.giant-clock-needle{
+  position:absolute;
+  z-index:3;
+  left:50%;
+  top:12px;
+  width:5px;
+  height:50px;
+  transform:translateX(-50%) rotate(0deg);
+  transform-origin:50% 50px;
+  border-radius:999px;
+  background:#e64f45;
+  will-change:transform;
+}
+.giant-clock-needle:after{
+  content:"";
+  position:absolute;
+  left:50%;
+  top:-5px;
+  width:13px;
+  height:13px;
+  transform:translateX(-50%);
+  border:3px solid var(--ink);
+  border-radius:50%;
+  background:var(--yellow);
+}
+.giant-clock-center{
+  position:absolute;
+  z-index:5;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
+  width:68px;
+  border:3px solid var(--ink);
+  border-radius:12px;
+  background:#fff;
+  padding:4px 2px;
+  text-align:center;
+}
+.giant-clock-center small{
+  display:block;
+  font-size:6px;
+  font-weight:1000;
+}
+.giant-clock-center b{
+  display:block;
+  font-size:17px;
+}
+.giant-timing{
+  position:absolute;
+  z-index:52;
+  left:8px;
+  top:10px;
+  max-width:calc(100% - 150px);
+  border:3px solid var(--ink);
+  border-radius:999px;
+  background:#fff;
+  padding:6px 9px;
+  font-size:9px;
+  font-weight:1000;
+}
+.giant-impact{
+  position:absolute;
+  z-index:60;
+  left:50%;
+  top:42%;
+  transform:translate(-50%,-50%) scale(.55);
+  font-size:46px;
+  font-weight:1000;
+  color:var(--yellow);
+  -webkit-text-stroke:3px var(--ink);
+  opacity:0;
+  pointer-events:none;
+}
+.giant-impact.show{
+  animation:giantImpact .55s ease;
+}
+@keyframes giantImpact{
+  0%{opacity:0;transform:translate(-50%,-50%) scale(.45)}
+  35%{opacity:1;transform:translate(-50%,-50%) scale(1.12)}
+  100%{opacity:0;transform:translate(-50%,-58%) scale(1)}
+}
+
+@media(max-height:690px){
+  .giant-mob{
+    width:155px;
+    height:195px;
+  }
+  .giant-energy-clock{
+    width:106px;
+    height:106px;
+  }
+  .giant-clock-needle{
+    height:42px;
+    transform-origin:50% 42px;
+  }
+  .giant-clock-center{
+    width:58px;
+  }
+  .giant-clock-center b{
+    font-size:14px;
+  }
+}
