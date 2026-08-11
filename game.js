@@ -949,17 +949,17 @@ function showGameIntro(index){
   }else if(index===50){
     rules=`<li>モブくんが乗ったコクピットは完成済み。7秒でその周りにロケットを自由に描きます。</li><li>描き終えたら3・2・1で発射。カメラが上空〜宇宙まで追従。</li><li>大きさだけではなく、左右バランス・縦長形状・線量・複雑さ・コクピットとの接続を評価。</li><li>描いたロケットによって飛行距離が変化。最大100km。</li>`;
   }else if(index===51){
-    rules=`<li>学校の屋上で他校の番長とタイマン。相手の耐久値は表示されません。</li><li>相手は基本スーパーアーマー。同時に攻撃がぶつかるとCLASHになり、お互い横へ弾け飛びます。</li><li>通常PUNCHを3回受けるごとに番長は高速バックステップ。追いかける必要があります。</li><li>プレイヤーは1回だけSPECIALを使用可能。命中すると5ダメージ。</li><li>相手も積極的に攻め、まれに強い必殺攻撃。倒すまでの時間を競います。</li>`;
+    rules=`<li>学校の屋上で他校の番長とタイマン。相手の耐久値は表示されません。</li><li>相手は基本スーパーアーマー。同時に攻撃がぶつかるとCLASHになり、お互い横へ弾け飛びます。</li><li>超密着でPUNCHを連打すると、番長が時々ジャンプして背後へ回り込みます。</li><li>通常PUNCHを3回受けるごとに番長は高速バックステップ。追いかける必要があります。</li><li>プレイヤーは1回だけSPECIALを使用可能。命中すると5ダメージ。</li><li>相手も積極的に攻め、まれに強い必殺攻撃。倒すまでの時間を競います。</li>`;
   }else if(index===52){
-    rules=`<li>巨大モブくんぬいぐるみ1個だけのUFOキャッチャー。</li><li>まずARM WIDTHゲージをSTOPしてアームの広さを決定。狭すぎても広すぎても掴みにくく、適度な幅が重要。</li><li>その後◀ ▶で横位置を合わせて「降下」。降下中のSTOPは高さだけ。</li><li>アーム幅・横位置・高さの3条件でGET。3回GET=100点。</li><li>2回GETは80点から、1回GETは50点から。使った合計時間が短いほど追加点。</li>`;
+    rules=`<li>巨大モブくんぬいぐるみ1個だけのUFOキャッチャー。</li><li>まずARM WIDTHゲージをSTOPしてアームの広さを決定。狭すぎても広すぎても掴みにくく、適度な幅が重要。</li><li>その後◀ ▶で横位置を合わせて「降下」。降下中のSTOPは高さだけ。</li><li>アーム幅・横位置・高さでまず掴みます。ただし掴み方が浅いと持ち上げ中に滑り落ちることがあります。</li><li>3回とも景品口まで運べたら100点。</li><li>2回GETは80点から、1回GETは50点から。使った合計時間が短いほど追加点。</li>`;
   }else if(index===53){
     rules=`<li>play/001.png=ON、play/002.png=OFF。</li><li>30体のおもちゃがランダム位置に出現。ON25体・OFF5体。</li><li>OFFだけを素早くタップするとONへ変化。</li><li>5体すべてONになった瞬間までのタイムを競います。</li>`;
   }else if(index===54){
-    rules=`<li>play/003.pngのモブくんが投手。対戦相手は黒塗りモブくん。</li><li>時計回りに溜まる円形POWERゲージをタップして投球。</li><li>1人目50%以上 / 2人目80%以上 / 3人目97%以上で吹っ飛ばして撃破。</li><li>足りない場合は相手にキャッチされて終了。その時点までの最高POWER%が記録。</li>`;
+    rules=`<li>play/003.pngのモブくんが投手。対戦相手は黒塗りモブくん。</li><li>時計回りに溜まる円形POWERゲージをタップして投球。</li><li>1人目50%以上 / 2人目80%以上 / 3人目97%以上で吹っ飛ばして撃破。</li><li>足りない場合は相手にキャッチされて終了。1人目でCATCHなら最高POWERの50%、2人目なら75%、3人目なら100%が記録。</li>`;
   }else if(index===55){
     rules=`<li>6本のあみだくじ。ゴールは0 / 15 / 30 / 50 / 75 / 100。</li><li>最初はゴール側からカメラが始まり、あみだの一部をヒントとして見せてから入口へ移動。</li><li>入口を1つ選ぶとモブくんが自動で線をたどり、カメラが追従してゴールへ。</li><li>あみだの横線・数字の配置は毎回ランダム。</li>`;
   }else if(index===56){
-    rules=`<li>7秒間で好きなカッコイイ刀を自由に描きます。</li><li>長く細い刀身、直線性、適度な鍔・柄、全体サイズなどを自動評価。</li><li>大きく塗り潰すだけでは高得点になりません。</li><li>完成した刀を1〜100点で採点。</li>`;
+    rules=`<li>7秒間で好きなカッコイイ刀を描きます。画面に「左下→右上」の薄いガイドを表示。</li><li>まず長く細い刀身を描き、根元付近へ横向きの鍔、その下へ柄を足すと高得点になりやすいです。</li><li>大きく塗り潰すだけでは高得点になりません。</li><li>完成した刀を1〜100点で採点。</li>`;
   }else{
     rules=`<li>剛速球が1球だけ飛んできます。</li><li>タイミングを見てSWING。ボールが打点へ来た瞬間ほど強いホームラン。</li><li>ヒット後はカメラが打球を追跡して飛距離を表示。</li><li>最高1000m。タイミングを外して空振りすると0m。</li>`;
   }
@@ -5132,7 +5132,7 @@ async function startShutterChance(p,humanIndex,runId){
           <i></i><i></i><i></i><i></i>
         </div>
 
-        <div id="shutterMob" class="shutter-mob" style="background-image:url('${p.img}')"></div>
+        <div id="shutterMob" class="shutter-mob shutter-mob-v116" style="background-image:url('icon/01.png')"></div>
 
         <div class="shutter-view-data left">1/500<br>F2.8</div>
         <div class="shutter-view-data right">RAW<br>50mm</div>
@@ -5144,7 +5144,7 @@ async function startShutterChance(p,humanIndex,runId){
         <div id="shutterSnap" class="shutter-snap-v111">CLICK!</div>
 
         <div id="shutterPhoto" class="shutter-photo-v111">
-          <div id="shutterPhotoMob" class="shutter-photo-mob" style="background-image:url('${p.img}')"></div>
+          <div id="shutterPhotoMob" class="shutter-photo-mob" style="background-image:url('icon/01.png')"></div>
           <span>CAPTURED</span>
         </div>
       </div>
@@ -5170,6 +5170,11 @@ async function startShutterChance(p,humanIndex,runId){
   const snap=document.getElementById('shutterSnap');
   const photo=document.getElementById('shutterPhoto');
   const photoMob=document.getElementById('shutterPhotoMob');
+
+  // V10.16: camera body used to collapse the flex stage to almost 0px.
+  // Force the subject visible before any countdown begins.
+  mob.style.opacity='1';
+  mob.style.display='block';
 
   function animateJump(height,duration){
     return new Promise(resolve=>{
@@ -12704,6 +12709,7 @@ async function startMobRacePredict(p,humanIndex,runId){
 
   let selectedIndex=null;
   let dragState=null;
+  let dragGhost=null;
 
   function renderOrder(){
     editor.innerHTML=prediction.map((lane,index)=>`
@@ -12717,7 +12723,7 @@ async function startMobRacePredict(p,humanIndex,runId){
           alt="LANE ${lane}"
           draggable="false">
         <b>LANE ${lane}</b>
-        <small>${selectedIndex===index?'もう1体をタップ':'TAP / SWIPE'}</small>
+        <small>${selectedIndex===index?'もう1体をタップ':'TAP / DRAG'}</small>
       </button>
     `).join('');
   }
@@ -12739,6 +12745,52 @@ async function startMobRacePredict(p,humanIndex,runId){
     beep(610,35,.010);
   }
 
+  function movePrediction(from,to){
+    if(
+      from<0||
+      to<0||
+      from>=prediction.length||
+      to>=prediction.length||
+      from===to
+    )return from;
+
+    const [lane]=prediction.splice(from,1);
+    prediction.splice(to,0,lane);
+
+    selectedIndex=null;
+    renderOrder();
+    beep(545,22,.006);
+    return to;
+  }
+
+  function targetIndexFromPointer(clientX,clientY){
+    const cards=[...editor.querySelectorAll('[data-race-order-index]')];
+
+    let best=0;
+    let bestDist=Infinity;
+
+    cards.forEach((card,index)=>{
+      const rect=card.getBoundingClientRect();
+      const cx=rect.left+rect.width/2;
+      const cy=rect.top+rect.height/2;
+      const d=Math.hypot(clientX-cx,clientY-cy);
+
+      if(d<bestDist){
+        bestDist=d;
+        best=index;
+      }
+    });
+
+    return best;
+  }
+
+  function removeGhost(){
+    if(dragGhost){
+      dragGhost.remove();
+      dragGhost=null;
+    }
+  }
+
   renderOrder();
 
   editor.addEventListener('pointerdown',e=>{
@@ -12747,17 +12799,28 @@ async function startMobRacePredict(p,humanIndex,runId){
 
     e.preventDefault();
 
+    const rect=card.getBoundingClientRect();
+
     dragState={
       index:Number(card.dataset.raceOrderIndex),
+      startIndex:Number(card.dataset.raceOrderIndex),
       x:e.clientX,
       y:e.clientY,
-      card,
-      pointerId:e.pointerId
+      pointerId:e.pointerId,
+      moved:false
     };
 
-    card.classList.add('dragging');
+    dragGhost=card.cloneNode(true);
+    dragGhost.classList.add('race-drag-ghost-v116');
+    dragGhost.style.width=`${rect.width}px`;
+    dragGhost.style.height=`${rect.height}px`;
+    dragGhost.style.left=`${rect.left}px`;
+    dragGhost.style.top=`${rect.top}px`;
 
-    try{card.setPointerCapture(e.pointerId)}catch(_){}
+    document.body.appendChild(dragGhost);
+    card.classList.add('drag-source-v116');
+
+    try{editor.setPointerCapture(e.pointerId)}catch(_){}
   },{passive:false});
 
   editor.addEventListener('pointermove',e=>{
@@ -12768,8 +12831,31 @@ async function startMobRacePredict(p,humanIndex,runId){
     const dx=e.clientX-dragState.x;
     const dy=e.clientY-dragState.y;
 
-    dragState.card.style.transform=
-      `translate(${clamp(dx,-55,55)}px,${clamp(dy,-36,36)}px) scale(1.03)`;
+    if(Math.hypot(dx,dy)>=10){
+      dragState.moved=true;
+    }
+
+    if(dragGhost){
+      dragGhost.style.transform=
+        `translate(${dx}px,${dy}px) scale(1.05) rotate(${clamp(dx/18,-5,5)}deg)`;
+    }
+
+    if(!dragState.moved)return;
+
+    const target=targetIndexFromPointer(e.clientX,e.clientY);
+
+    if(target!==dragState.index){
+      dragState.index=movePrediction(dragState.index,target);
+
+      editor.querySelectorAll('.drag-source-v116')
+        .forEach(el=>el.classList.remove('drag-source-v116'));
+
+      const source=editor.querySelector(
+        `[data-race-order-index="${dragState.index}"]`
+      );
+
+      if(source)source.classList.add('drag-source-v116');
+    }
   },{passive:false});
 
   function finishPredictionPointer(e){
@@ -12777,31 +12863,18 @@ async function startMobRacePredict(p,humanIndex,runId){
 
     e.preventDefault();
 
-    const {index,x,y,card}=dragState;
-    const dx=e.clientX-x;
-    const dy=e.clientY-y;
+    const {
+      index,
+      startIndex,
+      moved
+    }=dragState;
 
-    card.style.transform='';
-    card.classList.remove('dragging');
+    editor.querySelectorAll('.drag-source-v116')
+      .forEach(el=>el.classList.remove('drag-source-v116'));
 
-    const absX=Math.abs(dx);
-    const absY=Math.abs(dy);
+    removeGhost();
 
-    if(Math.max(absX,absY)>=30){
-      const direction=
-        absX>=absY
-          ? Math.sign(dx)
-          : Math.sign(dy);
-
-      const target=clamp(
-        index+direction,
-        0,
-        prediction.length-1
-      );
-
-      swapPrediction(index,target);
-
-    }else{
+    if(!moved){
       if(selectedIndex===null){
         selectedIndex=index;
         renderOrder();
@@ -12814,18 +12887,29 @@ async function startMobRacePredict(p,humanIndex,runId){
       }else{
         swapPrediction(selectedIndex,index);
       }
+    }else{
+      selectedIndex=null;
+      renderOrder();
+
+      if(startIndex!==index){
+        beep(690,38,.012);
+      }
     }
 
     dragState=null;
   }
 
   editor.addEventListener('pointerup',finishPredictionPointer,{passive:false});
+
   editor.addEventListener('pointercancel',e=>{
     if(!dragState)return;
 
-    dragState.card.style.transform='';
-    dragState.card.classList.remove('dragging');
+    editor.querySelectorAll('.drag-source-v116')
+      .forEach(el=>el.classList.remove('drag-source-v116'));
+
+    removeGhost();
     dragState=null;
+    renderOrder();
   },{passive:false});
 
   await new Promise(resolve=>{
@@ -13464,6 +13548,13 @@ async function startBossDuel(p,humanIndex,runId){
   let nextEnemySpecial=0;
 
   let clashLockUntil=0;
+  let lastPlayerPunchAt=0;
+  let closeMashCount=0;
+  let enemyLeapUntil=0;
+  let enemyLeapStart=0;
+  let enemyLeapFromX=0;
+  let enemyLeapToX=0;
+  let nextEnemyLeap=0;
 
   screen.innerHTML=`<div class="duel-shell duel-v115">
     <div class="game-head">
@@ -13688,6 +13779,47 @@ async function startBossDuel(p,humanIndex,runId){
     );
   }
 
+  function startLeapBehind(now){
+    if(
+      finished||
+      now<enemyLeapUntil||
+      now<enemyBackstepUntil||
+      now<clashLockUntil
+    )return false;
+
+    const side=
+      playerX<stage.clientWidth*.50
+        ? 1
+        : -1;
+
+    enemyLeapStart=now;
+    enemyLeapUntil=now+520;
+    enemyLeapFromX=enemyX;
+    enemyLeapToX=clamp(
+      playerX+side*82,
+      fieldMin,
+      fieldMax
+    );
+
+    nextEnemyLeap=now+rand(1700,2900);
+    nextEnemyAttack=enemyLeapUntil+80;
+    clearEnemyAttack();
+
+    enemy.classList.remove(
+      'attacking',
+      'special-attacking',
+      'backstep-v115',
+      'leap-behind-v116'
+    );
+
+    void enemy.offsetWidth;
+    enemy.classList.add('leap-behind-v116');
+
+    popImpact('背後へ！',enemyX);
+    beep(520,65,.018);
+    return true;
+  }
+
   function normalPunch(){
     const now=performance.now();
 
@@ -13701,11 +13833,42 @@ async function startBossDuel(p,humanIndex,runId){
     punchReady=false;
     playerAttackUntil=now+175;
 
+    const distance=Math.abs(enemyX-playerX);
+    const interval=now-lastPlayerPunchAt;
+    lastPlayerPunchAt=now;
+
+    if(distance<=88&&interval<=270){
+      closeMashCount++;
+    }else{
+      closeMashCount=1;
+    }
+
+    // At point-blank range, repeated mashing makes the rival evade behind you.
+    if(
+      closeMashCount>=4&&
+      now>=nextEnemyLeap&&
+      distance<=92
+    ){
+      closeMashCount=0;
+
+      if(startLeapBehind(now)){
+        player.classList.remove('punching');
+        void player.offsetWidth;
+        player.classList.add('punching');
+
+        popImpact('MISS!',playerX);
+
+        setTimeout(()=>{
+          punchReady=true;
+        },175);
+
+        return;
+      }
+    }
+
     player.classList.remove('punching');
     void player.offsetWidth;
     player.classList.add('punching');
-
-    const distance=Math.abs(enemyX-playerX);
 
     if(
       distance<=132&&
@@ -13768,8 +13931,8 @@ async function startBossDuel(p,humanIndex,runId){
 
   function enemyNormalAttack(now){
     const serial=++enemyAttackSerial;
-    enemyAttackWindowStart=now+70;
-    enemyAttackWindowEnd=now+205;
+    enemyAttackWindowStart=now;
+    enemyAttackWindowEnd=now+245;
 
     enemy.classList.remove('attacking','special-attacking');
     void enemy.offsetWidth;
@@ -13815,8 +13978,8 @@ async function startBossDuel(p,humanIndex,runId){
 
   function enemySpecialAttack(now){
     const serial=++enemyAttackSerial;
-    enemyAttackWindowStart=now+120;
-    enemyAttackWindowEnd=now+300;
+    enemyAttackWindowStart=now+45;
+    enemyAttackWindowEnd=now+340;
 
     enemy.classList.remove('attacking','special-attacking');
     void enemy.offsetWidth;
@@ -13891,8 +14054,9 @@ async function startBossDuel(p,humanIndex,runId){
 
   startTime=performance.now();
   last=startTime;
-  nextEnemyAttack=startTime+450;
+  nextEnemyAttack=startTime+420;
   nextEnemySpecial=startTime+rand(1700,3000);
+  nextEnemyLeap=startTime+rand(900,1500);
   call.classList.add('show');
 
   function frame(now){
@@ -13919,35 +14083,74 @@ async function startBossDuel(p,humanIndex,runId){
       fieldMax
     );
 
-    enemyX=clamp(
-      enemyX+enemyVX*dt,
-      fieldMin,
-      fieldMax
-    );
+    if(now<enemyLeapUntil){
+      const t=clamp(
+        (now-enemyLeapStart)/
+        Math.max(1,enemyLeapUntil-enemyLeapStart),
+        0,1
+      );
 
-    if(
-      !finished&&
-      now>=enemyBackstepUntil&&
-      Math.abs(enemyVX)<12
-    ){
-      const dx=playerX-enemyX;
-      const dir=Math.sign(dx)||1;
-      const distance=Math.abs(dx);
+      const e=t<.5
+        ? 2*t*t
+        : 1-Math.pow(-2*t+2,2)/2;
 
-      if(distance>70){
-        const speed=distance>185?230:188;
-        enemyX=clamp(
-          enemyX+dir*speed*dt,
-          fieldMin,
-          fieldMax
-        );
+      enemyX=
+        enemyLeapFromX+
+        (enemyLeapToX-enemyLeapFromX)*e;
+
+      const jumpY=Math.sin(t*Math.PI)*108;
+
+      enemy.style.left=`${enemyX}px`;
+      enemy.style.transform=
+        `translateX(-50%) translateY(${-jumpY}px) rotate(${(enemyLeapToX>=enemyLeapFromX?1:-1)*Math.sin(t*Math.PI)*16}deg)`;
+
+      if(t>=.98){
+        enemy.style.transform='';
       }
 
-      enemyAI(now);
+    }else{
+      enemy.style.transform='';
+
+      enemyX=clamp(
+        enemyX+enemyVX*dt,
+        fieldMin,
+        fieldMax
+      );
+
+      if(
+        !finished&&
+        now>=enemyBackstepUntil&&
+        Math.abs(enemyVX)<12
+      ){
+        const dx=playerX-enemyX;
+        const dir=Math.sign(dx)||1;
+        const distance=Math.abs(dx);
+
+        if(
+          now>=nextEnemyLeap&&
+          distance<=108&&
+          Math.random()<dt*.55
+        ){
+          startLeapBehind(now);
+
+        }else{
+          if(distance>70){
+            const speed=distance>185?230:188;
+            enemyX=clamp(
+              enemyX+dir*speed*dt,
+              fieldMin,
+              fieldMax
+            );
+          }
+
+          enemyAI(now);
+        }
+      }
+
+      enemy.style.left=`${enemyX}px`;
     }
 
     player.style.left=`${playerX}px`;
-    enemy.style.left=`${enemyX}px`;
 
     enemy.classList.toggle(
       'face-left',
@@ -14161,12 +14364,32 @@ async function startPlushCatcher(p,humanIndex,runId){
     head.classList.add('closed');
 
     if(success){
-      catches++;
-      getEl.textContent=catches;
-      message.textContent='GET!!';
+      message.textContent='つかんだ！ 持ち上げろ…';
 
       prize.classList.add('caught');
       crane.classList.add('holding');
+
+      const alignQuality=clamp(
+        1-dx/Math.max(.001,armCatchWidth),
+        0,1
+      );
+
+      const depthQuality=clamp(
+        1-depthError/Math.max(.001,heightWindow),
+        0,1
+      );
+
+      // Even after the arms close, an unstable grab can slip.
+      // A nearly perfect grab is very reliable, but never literally 100%.
+      const holdChance=clamp(
+        .22+
+        gripQuality*.34+
+        alignQuality*.23+
+        depthQuality*.17,
+        .22,.94
+      );
+
+      const willHold=Math.random()<holdChance;
 
       beep(900,90,.03);
 
@@ -14199,8 +14422,24 @@ async function startPlushCatcher(p,humanIndex,runId){
         requestAnimationFrame(frame);
       });
 
-      const backStart=performance.now();
-      const startX=craneX;
+      if(!willHold){
+        crane.classList.remove('holding');
+        head.classList.remove('closed');
+        prize.classList.remove('caught');
+        prize.classList.add('slipped-v116');
+
+        message.textContent=
+          `つかんだ…が落ちた！ HOLD ${Math.round(holdChance*100)}%`;
+
+        beep(155,130,.03);
+
+        await wait(560);
+
+      }else{
+        message.textContent='HOLD！ PRIZEへ運べ！';
+
+        const backStart=performance.now();
+        const startX=craneX;
 
       await new Promise(resolve=>{
         const frame=now=>{
@@ -14227,8 +14466,15 @@ async function startPlushCatcher(p,humanIndex,runId){
         requestAnimationFrame(frame);
       });
 
-      prize.classList.add('released');
-      await wait(280);
+        prize.classList.add('released');
+
+        catches++;
+        getEl.textContent=catches;
+        message.textContent='GET!!';
+
+        beep(980,90,.03);
+        await wait(280);
+      }
 
     }else{
       message.textContent='MISS…';
@@ -14676,10 +14922,17 @@ async function startDodgeballMob(p,humanIndex,runId){
     finished=true;
     charging=false;
 
+    const caughtRate=
+      round===0
+        ? .50
+        : round===1
+          ? .75
+          : 1;
+
     const score=
       round>=3
         ? 100
-        : Math.round(bestPower);
+        : Math.round(bestPower*caughtRate);
 
     state.records.dodgeballMob[p.id]=score;
 
@@ -14687,7 +14940,7 @@ async function startDodgeballMob(p,humanIndex,runId){
       round>=3
         ? '3人撃破！ PERFECT!!'
         : caught
-          ? `CATCHされた！ BEST ${score}%`
+          ? `CATCH！ 記録 ${score}%`
           : `BEST ${score}%`;
 
     beep(
@@ -14722,15 +14975,48 @@ async function startDodgeballMob(p,humanIndex,runId){
     ring.style.setProperty('--dodge-power',`${power}%`);
     powerEl.textContent=`${power.toFixed(1)}%`;
 
-    ball.classList.add(success?'throw-hit':'throw-catch');
-    enemy.classList.add(success?'defeated':'catching');
+    ball.classList.remove(
+      'throw-hit',
+      'throw-catch',
+      'impact-v116'
+    );
+
+    void ball.offsetWidth;
+    ball.classList.add('throw-to-rival-v116');
 
     message.textContent=
-      success
-        ? `${power.toFixed(1)}%！ ぶっ飛ばした！`
-        : `${power.toFixed(1)}%… CATCH！`;
+      `${power.toFixed(1)}%！ ボール発射！`;
 
-    beep(success?760:230,90,.025);
+    beep(760,55,.018);
+
+    // The ball visibly reaches the rival FIRST.
+    setTimeout(()=>{
+      if(!isGameRunValid(runId)||finished)return;
+
+      ball.classList.remove('throw-to-rival-v116');
+      ball.classList.add('impact-v116');
+
+      if(success){
+        enemy.classList.remove('defeated','catching');
+        void enemy.offsetWidth;
+        enemy.classList.add('defeated');
+
+        message.textContent=
+          `HIT！ ${power.toFixed(1)}%でぶっ飛ばした！`;
+
+        beep(980,95,.03);
+
+      }else{
+        enemy.classList.remove('defeated','catching');
+        void enemy.offsetWidth;
+        enemy.classList.add('catching');
+
+        message.textContent=
+          `${power.toFixed(1)}%… CATCHされた！`;
+
+        beep(230,90,.025);
+      }
+    },430);
 
     setTimeout(()=>{
       if(!isGameRunValid(runId)||finished)return;
@@ -14747,7 +15033,7 @@ async function startDodgeballMob(p,humanIndex,runId){
       }else{
         finish(true);
       }
-    },720);
+    },980);
   }
 
   gauge.addEventListener('pointerdown',e=>{
@@ -15044,123 +15330,142 @@ async function startAmidakujiMob(p,humanIndex,runId){
 // GAME 57 -------------------------------------------------
 function scoreKatanaDrawing(strokes,w,h){
   const valid=strokes.filter(s=>s.length>=2);
-  const points=valid.flat();
 
-  if(points.length<6){
-    return 1;
-  }
+  if(!valid.length)return 1;
 
-  const meanX=points.reduce((s,p)=>s+p.x,0)/points.length;
-  const meanY=points.reduce((s,p)=>s+p.y,0)/points.length;
+  const stats=valid.map(st=>({
+    stroke:st,
+    stat:drawingStrokeStats(st)
+  }));
 
-  let xx=0,yy=0,xy=0;
-
-  points.forEach(pt=>{
-    const dx=pt.x-meanX;
-    const dy=pt.y-meanY;
-    xx+=dx*dx;
-    yy+=dy*dy;
-    xy+=dx*dy;
-  });
-
-  xx/=points.length;
-  yy/=points.length;
-  xy/=points.length;
-
-  const trace=xx+yy;
-  const disc=Math.sqrt(
-    Math.max(0,(xx-yy)*(xx-yy)+4*xy*xy)
-  );
-
-  const l1=(trace+disc)/2;
-  const l2=Math.max(1,(trace-disc)/2);
-
-  const angle=.5*Math.atan2(2*xy,xx-yy);
-  const ux=Math.cos(angle);
-  const uy=Math.sin(angle);
-
-  let minMain=Infinity,maxMain=-Infinity;
-  let minSide=Infinity,maxSide=-Infinity;
-
-  points.forEach(pt=>{
-    const dx=pt.x-meanX;
-    const dy=pt.y-meanY;
-
-    const main=dx*ux+dy*uy;
-    const side=-dx*uy+dy*ux;
-
-    minMain=Math.min(minMain,main);
-    maxMain=Math.max(maxMain,main);
-    minSide=Math.min(minSide,side);
-    maxSide=Math.max(maxSide,side);
-  });
-
-  const mainSpan=Math.max(1,maxMain-minMain);
-  const sideSpan=Math.max(1,maxSide-minSide);
-  const elongation=mainSpan/sideSpan;
-
-  const longest=valid
-    .map(s=>({
-      stroke:s,
-      stat:drawingStrokeStats(s)
-    }))
+  const longest=[...stats]
     .sort((a,b)=>b.stat.len-a.stat.len)[0];
 
-  const a=longest.stroke[0];
-  const b=longest.stroke[longest.stroke.length-1];
+  const blade=longest.stroke;
+  const bladeStat=longest.stat;
+
+  const p0=blade[0];
+  const p1=blade[blade.length-1];
+
+  const chord=Math.hypot(
+    p1.x-p0.x,
+    p1.y-p0.y
+  );
+
   const straightness=clamp(
-    Math.hypot(b.x-a.x,b.y-a.y)/
-    Math.max(1,longest.stat.len),
+    chord/Math.max(1,bladeStat.len),
     0,1
   );
 
-  const totalLen=valid.reduce(
-    (s,st)=>s+drawingStrokeStats(st).len,
-    0
+  // The guide explicitly asks for bottom-left -> top-right.
+  const dx=p1.x-p0.x;
+  const dy=p1.y-p0.y;
+  let angle=Math.atan2(dy,dx);
+
+  // Direction itself does not matter: same line reversed is valid.
+  if(angle>Math.PI/2)angle-=Math.PI;
+  if(angle<-Math.PI/2)angle+=Math.PI;
+
+  const targetAngle=-Math.PI/4;
+  const angleError=Math.abs(angle-targetAngle);
+  const angleScore=clamp(
+    1-angleError/(Math.PI*.38),
+    0,1
   );
 
-  let guardFound=false;
+  const diag=Math.hypot(w,h);
+  const bladeLengthRatio=chord/diag;
+  const lengthScore=clamp(
+    1-Math.abs(bladeLengthRatio-.62)/.34,
+    0,1
+  );
 
-  valid.forEach(st=>{
-    const stat=drawingStrokeStats(st);
-    if(stat.len<24||stat.len>180)return;
+  const sideThickness=
+    Math.min(bladeStat.w,bladeStat.h)/
+    Math.max(1,Math.max(bladeStat.w,bladeStat.h));
 
-    const p0=st[0];
-    const p1=st[st.length-1];
-    const sa=Math.atan2(p1.y-p0.y,p1.x-p0.x);
+  const slimScore=clamp(
+    1-sideThickness/.46,
+    0,1
+  );
 
-    let diff=Math.abs(sa-angle);
-    while(diff>Math.PI)diff-=Math.PI;
-    diff=Math.min(diff,Math.PI-diff);
+  // Search for a short stroke crossing near the lower quarter of the blade = tsuba.
+  const bladeLowX=p0.x*.72+p1.x*.28;
+  const bladeLowY=p0.y*.72+p1.y*.28;
+  const bladeAngle=Math.atan2(dy,dx);
 
-    if(Math.abs(Math.sin(diff))>.72){
-      guardFound=true;
+  let guardScore=0;
+  let handleScore=0;
+
+  stats.forEach(item=>{
+    if(item===longest)return;
+
+    const st=item.stroke;
+    const a=st[0];
+    const b=st[st.length-1];
+    const stAngle=Math.atan2(b.y-a.y,b.x-a.x);
+
+    const cx=item.stat.cx;
+    const cy=item.stat.cy;
+
+    const nearGuard=Math.hypot(
+      cx-bladeLowX,
+      cy-bladeLowY
+    );
+
+    let angleDiff=Math.abs(stAngle-bladeAngle);
+    while(angleDiff>Math.PI)angleDiff-=Math.PI;
+    angleDiff=Math.min(angleDiff,Math.PI-angleDiff);
+
+    const perpendicular=Math.abs(Math.sin(angleDiff));
+
+    if(
+      item.stat.len>=24&&
+      item.stat.len<=170&&
+      nearGuard<=Math.max(90,diag*.18)
+    ){
+      guardScore=Math.max(
+        guardScore,
+        clamp(perpendicular,0,1)
+      );
+    }
+
+    // Short continuation near the lower end acts as a handle.
+    const nearHandle=Math.min(
+      Math.hypot(item.stat.cx-p0.x,item.stat.cy-p0.y),
+      Math.hypot(item.stat.cx-p1.x,item.stat.cy-p1.y)
+    );
+
+    if(
+      item.stat.len>=35&&
+      item.stat.len<=210&&
+      nearHandle<=Math.max(95,diag*.18)
+    ){
+      handleScore=Math.max(
+        handleScore,
+        clamp(item.stat.len/110,0,1)
+      );
     }
   });
 
-  const sizeScore=clamp(
-    1-Math.abs(mainSpan/(Math.max(w,h)*.72)-1),
-    0,1
+  const strokeCountScore=clamp(
+    1-Math.abs(valid.length-4)/7,
+    .25,1
   );
 
-  const elongScore=clamp((elongation-2.0)/5.2,0,1);
-  const straightScore=clamp((straightness-.38)/.55,0,1);
-  const lineScore=clamp(totalLen/(Math.max(w,h)*3.1),0,1);
-  const strokeScore=clamp(
-    1-Math.abs(valid.length-5)/8,
-    .15,1
-  );
+  // A clear blade alone already gets a sensible mid score.
+  // Tsuba + handle + good guide alignment push it into 80–100.
+  const raw=
+    12+
+    straightness*27+
+    lengthScore*20+
+    slimScore*10+
+    angleScore*9+
+    guardScore*12+
+    handleScore*6+
+    strokeCountScore*4;
 
-  const score=
-    1+
-    elongScore*28+
-    straightScore*25+
-    sizeScore*19+
-    lineScore*12+
-    strokeScore*8+
-    (guardFound?8:0);
-
-  return clamp(Math.round(score),1,100);
+  return clamp(Math.round(raw),1,100);
 }
 
 async function startKatanaSmith(p,humanIndex,runId){
@@ -15192,8 +15497,17 @@ async function startKatanaSmith(p,humanIndex,runId){
         <div class="forge-anvil"></div>
       </div>
 
+      <div class="katana-guide-v116">
+        <div class="katana-guide-blade-v116"></div>
+        <div class="katana-guide-guard-v116"></div>
+        <div class="katana-guide-handle-v116"></div>
+        <span class="blade-label">刀身：左下 → 右上</span>
+        <span class="guard-label">鍔</span>
+        <span class="handle-label">柄</span>
+      </div>
+
       <svg id="katanaSvg" class="katana-svg"></svg>
-      <div id="katanaCall" class="katana-call">カッコイイ刀を描け！</div>
+      <div id="katanaCall" class="katana-call">ガイドを参考に刀を描け！</div>
       <div id="katanaScore" class="katana-score"></div>
     </div>
   </div>`;
@@ -15321,7 +15635,11 @@ async function startKatanaSmith(p,humanIndex,runId){
     recordScreen(
       56,p,humanIndex,
       `${score}<small>pt</small>`,
-      `KATANA FORGE`
+      score>=85
+        ? `名刀！`
+        : score>=65
+          ? `良い刀！`
+          : `刀身・鍔・柄を意識！`
     );
   }
 }

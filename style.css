@@ -12543,3 +12543,209 @@ body,
   font-weight:1000;
   touch-action:none;
 }
+
+/* V10.16 SUMMONER — BLACK DRAWING */
+.summoner-v107 .summon-user-stroke{
+  stroke:#111!important;
+  filter:none!important;
+}
+.summoner-v107 .summon-monster-stroke,
+.summon-monster-v106 .summon-monster-stroke{
+  stroke:#111!important;
+  filter:none!important;
+}
+
+/* V10.16 DODGEBALL */
+.dodge-enemy img{
+  transform:scaleX(-1);
+  transform-origin:center;
+}
+.dodge-ball.throw-to-rival-v116{
+  animation:dodgeBallToRivalV116 .43s cubic-bezier(.18,.72,.18,1) forwards!important;
+}
+@keyframes dodgeBallToRivalV116{
+  0%{
+    left:18%;
+    top:66%;
+    transform:scale(.85) rotate(0deg);
+  }
+  100%{
+    left:82%;
+    top:61%;
+    transform:scale(1.12) rotate(620deg);
+  }
+}
+.dodge-ball.impact-v116{
+  left:82%!important;
+  top:61%!important;
+  animation:dodgeBallImpactV116 .18s ease forwards;
+}
+@keyframes dodgeBallImpactV116{
+  45%{transform:scale(1.55)}
+  100%{transform:scale(.65);opacity:.35}
+}
+
+/* =========================================================
+   V10.16 KATANA — DIRECTION GUIDE
+   ========================================================= */
+.katana-guide-v116{
+  position:absolute;
+  z-index:12;
+  inset:0;
+  pointer-events:none;
+  opacity:.52;
+}
+.katana-guide-blade-v116{
+  position:absolute;
+  left:21%;
+  bottom:22%;
+  width:68%;
+  height:8px;
+  transform-origin:left center;
+  transform:rotate(-47deg);
+  border:2px dashed rgba(255,255,255,.82);
+  border-radius:999px;
+}
+.katana-guide-guard-v116{
+  position:absolute;
+  left:28%;
+  bottom:27%;
+  width:68px;
+  height:7px;
+  transform:rotate(43deg);
+  border:2px dashed #ffd76b;
+  border-radius:999px;
+}
+.katana-guide-handle-v116{
+  position:absolute;
+  left:15%;
+  bottom:12%;
+  width:82px;
+  height:9px;
+  transform:rotate(-47deg);
+  border:2px dashed #93d8ff;
+  border-radius:999px;
+}
+.katana-guide-v116 span{
+  position:absolute;
+  border:2px solid rgba(20,22,27,.75);
+  border-radius:999px;
+  background:rgba(255,255,255,.88);
+  padding:3px 6px;
+  color:#24262b;
+  font-size:7px;
+  font-weight:1000;
+}
+.katana-guide-v116 .blade-label{
+  right:5%;
+  top:17%;
+}
+.katana-guide-v116 .guard-label{
+  left:25%;
+  bottom:33%;
+}
+.katana-guide-v116 .handle-label{
+  left:8%;
+  bottom:7%;
+}
+.katana-stage.forged .katana-guide-v116{
+  opacity:.12;
+}
+
+/* =========================================================
+   V10.16 HOME RUN — BASEBALL SWING
+   ========================================================= */
+.homerun-batter{
+  transform-origin:50% 72%;
+}
+.homerun-bat{
+  left:39px!important;
+  right:auto!important;
+  top:22px!important;
+  width:68px!important;
+  height:9px!important;
+  transform-origin:5px 50%!important;
+  transform:rotate(-138deg);
+}
+.homerun-batter.swinging{
+  animation:homeRunBodyTurnV116 .34s ease;
+}
+.homerun-batter.swinging .homerun-bat,
+.homerun-batter.hit-swing .homerun-bat{
+  animation:homeRunBaseballSwingV116 .34s cubic-bezier(.18,.72,.24,1) forwards!important;
+}
+@keyframes homeRunBaseballSwingV116{
+  0%{transform:rotate(-138deg)}
+  18%{transform:rotate(-118deg)}
+  58%{transform:rotate(-6deg)}
+  100%{transform:rotate(24deg)}
+}
+@keyframes homeRunBodyTurnV116{
+  0%{transform:rotate(0) translateX(0)}
+  45%{transform:rotate(-5deg) translateX(-3px)}
+  100%{transform:rotate(7deg) translateX(4px)}
+}
+
+/* =========================================================
+   V10.16 SHUTTER — FIXED CAMERA LAYOUT
+   ========================================================= */
+.shutter-shell.shutter-v111{
+  min-height:0!important;
+  display:flex!important;
+  flex-direction:column!important;
+}
+.shutter-camera-body{
+  flex:1!important;
+  min-height:0!important;
+  display:flex!important;
+  flex-direction:column!important;
+}
+.shutter-v111 .shutter-stage{
+  flex:1!important;
+  min-height:220px!important;
+}
+.shutter-mob-v116{
+  z-index:30!important;
+  opacity:1!important;
+  display:block!important;
+}
+
+/* =========================================================
+   V10.16 RACE — LIVE DRAG & DROP
+   ========================================================= */
+.race-drag-ghost-v116{
+  position:fixed!important;
+  z-index:10050!important;
+  margin:0!important;
+  pointer-events:none!important;
+  opacity:.92!important;
+  box-shadow:0 12px 22px rgba(17,19,26,.28)!important;
+  transform-origin:center!important;
+}
+.race-predict-character-v114.drag-source-v116{
+  opacity:.28;
+  outline:3px dashed var(--ink);
+}
+.race-character-order-v114{
+  touch-action:none!important;
+}
+
+/* =========================================================
+   V10.16 DUEL — JUMP BEHIND
+   ========================================================= */
+.duel-enemy.leap-behind-v116{
+  z-index:70!important;
+  filter:drop-shadow(0 8px 0 rgba(17,19,26,.18));
+}
+
+/* =========================================================
+   V10.16 PLUSH — SLIP AFTER GRAB
+   ========================================================= */
+.giant-plush-v112.slipped-v116{
+  animation:plushSlipV116 .55s cubic-bezier(.18,.72,.25,1) forwards;
+}
+@keyframes plushSlipV116{
+  0%{transform:translate(-50%,-50%) rotate(0)}
+  45%{transform:translate(-50%,5px) rotate(12deg)}
+  100%{transform:translate(-50%,90px) rotate(34deg);opacity:.48}
+}
