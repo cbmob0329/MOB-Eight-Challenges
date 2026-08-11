@@ -79,10 +79,10 @@ const GAMES=[
   {no:39,key:"giantMob",title:"巨大モブくん大進撃",sub:"1.000秒を刻みながらビル破壊"},
   {no:40,key:"wizardMob",title:"魔法使いモブくん",sub:"闇の炎を円で囲んで町を守る"},
   {no:41,key:"brawlerMob",title:"モブくんは喧嘩番長",sub:"学校で黒モブくんをぶっ飛ばす"},
-  {no:42,key:"summonerMob",title:"モブくんは召喚師",sub:"描いた姿そのままで近距離オートバトル"},
+  {no:42,key:"summonerMob",title:"モブくんは召喚師",sub:"描いた姿そのままで中央オート無双"},
   {no:43,key:"blackjackMob",title:"ブラックジャックの決戦",sub:"動く13枚を追って21を作る"},
   {no:44,key:"mobIssen",title:"モブくん一閃",sub:"3回の一閃 合計300ポイント"},
-  {no:45,key:"crowEscape",title:"カラスから逃げろ！",sub:"2体のカラスから20秒逃げ切る"}
+  {no:45,key:"crowEscape",title:"カラスから逃げろ！",sub:"4体のカラスから20秒逃げ切る"}
 ];
 
 const MODES={
@@ -640,13 +640,13 @@ function showGameIntro(index){
   }else if(index===40){
     rules=`<li>10秒間の横スクロール爽快アクション。</li><li>← →で移動。左へ行く時はモブくんが左向きになります。</li><li>サイズの違う黒モブくんが大量に左右から迫ってきます。たまに巨大な黒モブくんも出現。</li><li>通常PUNCHでも前方の複数体をまとめてぶっ飛ばします。</li><li>10体KOごとに必殺パンチを1回だけ使用可能。ストックは1回まで。</li>`;
   }else if(index===41){
-    rules=`<li>最初の5秒で、決められた描画エリア内にモンスターを自由に描きます。</li><li>戦闘時の枠は一切なし。描いたサイズを縮めたり統一せず、その大きさのまま召喚。</li><li>線の位置関係から頭・手・足・武器・尻尾・離れ部位などを自動推定し、実際に部位を動かして攻撃。</li><li>約20種類の攻撃候補から絵との相性で3種類を習得。近距離攻撃中心で遠距離は少なめ。</li><li>10秒間の横スクロールオートバトルで黒スライムを倒した数が記録。</li>`;
+    rules=`<li>最初の5秒で、決められた描画エリア内にモンスターを自由に描きます。</li><li>眼も含めて全部自分で描きます。戦闘開始時は描画画面・枠・召喚師表示を消し、描いた召喚獣だけが残ります。</li><li>描いたサイズを統一せず、その大きさのまま中央から戦闘開始。</li><li>頭・手・足・武器・尻尾・離れ部位などを自動推定し、部位攻撃・ジャンプ・高速移動・分身・炎・雷などを使用。</li><li>左右から大量の黒スライムが襲来する10秒オート無双。倒した数が記録です。</li>`;
   }else if(index===42){
     rules=`<li>1〜13のモブくんカード13枚を最初に表向きで確認。</li><li>3・2・1後、5秒間カードがランダムに位置をシャッフル。</li><li>最後の1秒はカードが暗くなって「？」だけになりますが、位置移動は続きます。</li><li>終了後、まず2枚選択。選んだカードはその場で必ず表向きになり、数字とモブくんを確認できます。</li><li>21でなければ「もう1枚」か「FINISH」。22→1、23→2の循環方式。</li>`;
   }else if(index===43){
     rules=`<li>巨大な木が上から3回落下します。</li><li>木の中央には白いCENTER帯。画面中央のSLASHライン通過時にタップ。</li><li>1回ごとに0〜100点。木は真っ二つになり強い一閃演出。</li><li>3回の合計ポイントが正式記録。最大300pt。</li>`;
   }else{
-    rules=`<li>空飛ぶ2体のカラスから20秒逃げ切るゲーム。</li><li>カラス画像は enemy/karasu.png。元画像は左向きなので右へ飛ぶ時だけ左右反転。</li><li>← →とJUMPのみ。ジャンプは2段ジャンプ可能。</li><li>テーブルや木箱の上に乗れます。カラスは障害物を無視して貫通。</li><li>最初はカラスが少し遅く、5秒で同速、8秒以降はプレイヤーより速い。ブレーキが苦手で勢い余って通り過ぎます。</li>`;
+    rules=`<li>ランダム配置された空飛ぶ4体のカラスから20秒逃げ切るゲーム。</li><li>カラス画像は enemy/karasu.png。元画像は左向きなので右へ飛ぶ時だけ左右反転。</li><li>← →とJUMPのみ。ジャンプは2段ジャンプ可能。フィールド左右には越えられない境界があります。</li><li>テーブルや木箱の上に乗れますが、端から出れば必ず落下します。カラスは障害物を無視して貫通。</li><li>最初はカラスが少し遅く、5秒で同速、8秒以降はプレイヤーより速い。ブレーキが苦手で勢い余って通り過ぎます。</li>`;
   }
   screen.innerHTML=`
     <div class="game-head">
@@ -6361,7 +6361,7 @@ async function startMobTrain(p,humanIndex,runId){
   let trainRAF=null;
   let drawRAF=null;
 
-  screen.innerHTML=`<div class="train-shell train-v106">
+  screen.innerHTML=`<div class="train-shell train-v107">
     <div class="game-head">
       <div><span class="kicker">${esc(p.name)}</span><h2>モブくん列車出発進行！</h2></div>
       <div class="game-badge">${playBadge(humanIndex)}</div>
@@ -6373,7 +6373,7 @@ async function startMobTrain(p,humanIndex,runId){
     </div>
 
     <div id="trainStage" class="train-stage">
-      <div class="train-grass train-grass-v106"></div>
+      <div class="train-grass train-grass-v107"></div>
 
       <svg id="trainSvg" class="train-svg">
         <polyline id="trainLine" points="" class="train-line"></polyline>
@@ -6447,18 +6447,50 @@ async function startMobTrain(p,humanIndex,runId){
   const startSafeRadius=74;
   const obsData=[];
   const obstacleTypes=['rock','tree','water'];
-  const desired=randi(17,22);
+  const desired=randi(14,18);
+
+  // Hidden guaranteed route corridor.
+  // Obstacles are never placed directly on this route, so every map has at least one solution.
+  const safeRoute=[
+    startPt,
+    {x:w*.34,y:h*rand(.28,.72)},
+    {x:w*.66,y:h*rand(.28,.72)},
+    goalPt
+  ];
+
+  function pointToSegmentDistance(px,py,a,b){
+    const vx=b.x-a.x;
+    const vy=b.y-a.y;
+    const len2=vx*vx+vy*vy||1;
+    const t=clamp(((px-a.x)*vx+(py-a.y)*vy)/len2,0,1);
+    const qx=a.x+vx*t;
+    const qy=a.y+vy*t;
+    return Math.hypot(px-qx,py-qy);
+  }
+
+  function nearSafeRoute(o){
+    for(let i=1;i<safeRoute.length;i++){
+      if(
+        pointToSegmentDistance(
+          o.x,o.y,
+          safeRoute[i-1],
+          safeRoute[i]
+        )<o.r+25
+      )return true;
+    }
+    return false;
+  }
 
   let attempts=0;
 
-  while(obsData.length<desired&&attempts<360){
+  while(obsData.length<desired&&attempts<420){
     attempts++;
 
     const type=obstacleTypes[randi(0,obstacleTypes.length-1)];
     const r=
       type==='water'
-        ? rand(22,31)
-        : rand(18,27);
+        ? rand(17,23)
+        : rand(14,21);
 
     const o={
       x:rand(w*.13,w*.87),
@@ -6469,11 +6501,12 @@ async function startMobTrain(p,humanIndex,runId){
 
     if(Math.hypot(o.x-goalPt.x,o.y-goalPt.y)<=goalSafeRadius)continue;
     if(Math.hypot(o.x-startPt.x,o.y-startPt.y)<=startSafeRadius)continue;
+    if(nearSafeRoute(o))continue;
 
     if(
       obsData.some(q=>
         Math.hypot(o.x-q.x,o.y-q.y)<
-        o.r+q.r+13
+        o.r+q.r+17
       )
     )continue;
 
@@ -6707,7 +6740,7 @@ async function startMobTrain(p,humanIndex,runId){
           1
         )return o;
 
-      }else if(Math.hypot(dx,dy)<o.r+13){
+      }else if(Math.hypot(dx,dy)<o.r+8){
         return o;
       }
     }
@@ -7197,7 +7230,17 @@ async function startWizardMob(p,humanIndex,runId){
     if(big)el.classList.add('giant');
 
     const size=big?rand(78,108):rand(40,64);
-    const x=rand(size*.48,sw-size*.48);
+
+    // Keep enough empty space on both sides to physically draw a full circle.
+    // The flame itself can never spawn flush against the screen edge.
+    const circleMargin=Math.min(
+      sw*.34,
+      size*.55+(big?82:66)
+    );
+    const x=rand(
+      circleMargin,
+      sw-circleMargin
+    );
 
     const f={
       id:++flameId,
@@ -7479,6 +7522,16 @@ async function startBrawlerMob(p,humanIndex,runId){
           <div class="brawler-player-figure" style="background-image:url('icon/01.png')"></div>
           <div class="brawler-fist"></div>
         </div>
+
+        <div id="brawlerAllyA" class="brawler-ally ally-a">
+          <div class="brawler-ally-figure" style="background-image:url('icon/02.png')"></div>
+          <i class="brawler-ally-fist"></i>
+        </div>
+
+        <div id="brawlerAllyB" class="brawler-ally ally-b">
+          <div class="brawler-ally-figure" style="background-image:url('icon/03.png')"></div>
+          <i class="brawler-ally-fist"></i>
+        </div>
       </div>
 
       <div id="brawlerImpact" class="brawler-impact"></div>
@@ -7496,6 +7549,10 @@ async function startBrawlerMob(p,humanIndex,runId){
   const stage=document.getElementById('brawlerStage');
   const world=document.getElementById('brawlerWorld');
   const player=document.getElementById('brawlerPlayer');
+  const allyEls=[
+    document.getElementById('brawlerAllyA'),
+    document.getElementById('brawlerAllyB')
+  ];
   const enemyLayer=document.getElementById('brawlerEnemies');
   const timeEl=document.getElementById('brawlerTime');
   const killsEl=document.getElementById('brawlerKills');
@@ -7509,6 +7566,31 @@ async function startBrawlerMob(p,humanIndex,runId){
   const doorEls=[...world.querySelectorAll('.school-door')];
 
   player.style.left=`${playerX}px`;
+
+  const allies=[
+    {
+      el:allyEls[0],
+      x:playerX-118,
+      offset:-118,
+      speed:360,
+      cd:470,
+      lastAttack:0,
+      phase:.7
+    },
+    {
+      el:allyEls[1],
+      x:playerX+108,
+      offset:108,
+      speed:345,
+      cd:560,
+      lastAttack:0,
+      phase:2.3
+    }
+  ];
+
+  allies.forEach(a=>{
+    a.el.style.left=`${a.x}px`;
+  });
 
   function bindHold(btn,dir){
     btn.addEventListener('pointerdown',e=>{
@@ -7714,6 +7796,56 @@ async function startBrawlerMob(p,humanIndex,runId){
     updateSpecial();
   }
 
+  function updateAllies(now,dt){
+    allies.forEach((ally,index)=>{
+      ally.phase+=dt*(5.4+index*.5);
+
+      const desired=clamp(
+        playerX+ally.offset+Math.sin(ally.phase)*22,
+        52,
+        worldW-52
+      );
+
+      const dx=desired-ally.x;
+      ally.x+=clamp(dx,-ally.speed*dt,ally.speed*dt);
+
+      const nearest=enemies
+        .filter(e=>!e.dead)
+        .map(e=>({
+          e,
+          d:Math.abs(e.x-ally.x)
+        }))
+        .filter(o=>o.d<=175)
+        .sort((a,b)=>a.d-b.d)
+        .slice(0,index===0?2:1);
+
+      const faceTarget=nearest[0]?.e.x??playerX;
+      const dir=faceTarget<ally.x?-1:1;
+
+      ally.el.style.left=`${ally.x}px`;
+      ally.el.classList.toggle('face-left',dir<0);
+
+      if(nearest.length&&now-ally.lastAttack>=ally.cd){
+        ally.lastAttack=now;
+
+        ally.el.classList.remove('attacking');
+        void ally.el.offsetWidth;
+        ally.el.classList.add('attacking');
+
+        nearest.forEach((o,i)=>{
+          setTimeout(()=>{
+            if(!o.e.dead){
+              const flyDir=o.e.x<ally.x?-1:1;
+              defeat(o.e,flyDir,false,i+2);
+            }
+          },i*25);
+        });
+
+        beep(index===0?310:380,28,.006);
+      }
+    });
+  }
+
   function doPunch(){
     if(finished||!punchReady||!isGameRunValid(runId))return;
 
@@ -7841,6 +7973,8 @@ async function startBrawlerMob(p,humanIndex,runId){
 
     player.style.left=`${playerX}px`;
 
+    updateAllies(now,dt);
+
     // Much denser than V10.5.
     const spawnEvery=125-progress*52;
 
@@ -7920,30 +8054,32 @@ async function startBrawlerMob(p,humanIndex,runId){
 }
 
 // GAME 42 -------------------------------------------------
-const SUMMON_ATTACKS_V106=[
-  {id:'right_hook',name:'右腕フック',family:'MELEE',part:'handR',reach:145,hits:3,cd:430,move:'hook'},
-  {id:'left_hook',name:'左腕フック',family:'MELEE',part:'handL',reach:145,hits:3,cd:430,move:'hookL'},
-  {id:'double_claw',name:'ダブルクロー',family:'MELEE',part:'hands',reach:165,hits:5,cd:560,move:'claw'},
-  {id:'headbutt',name:'ヘッドバット',family:'MELEE',part:'head',reach:125,hits:3,cd:500,move:'head'},
-  {id:'bite',name:'かみつき',family:'MELEE',part:'head',reach:135,hits:4,cd:570,move:'bite'},
-  {id:'front_kick',name:'フロントキック',family:'MELEE',part:'footR',reach:175,hits:4,cd:520,move:'kick'},
-  {id:'double_kick',name:'ダブルキック',family:'MELEE',part:'feet',reach:185,hits:5,cd:650,move:'doubleKick'},
-  {id:'sweep',name:'足払い',family:'MELEE',part:'feet',reach:205,hits:6,cd:700,move:'sweep'},
-  {id:'tail_whip',name:'テイルウィップ',family:'MELEE',part:'tail',reach:235,hits:7,cd:680,move:'tail'},
-  {id:'weapon_slash',name:'ウェポンスラッシュ',family:'MELEE',part:'weapon',reach:245,hits:7,cd:720,move:'weapon'},
-  {id:'uppercut',name:'アッパー',family:'MELEE',part:'handR',reach:155,hits:4,cd:590,move:'upper'},
-  {id:'body_press',name:'ボディプレス',family:'MELEE',part:'body',reach:185,hits:6,cd:760,move:'bodyPress'},
-  {id:'spin_attack',name:'スピンアタック',family:'MELEE',part:'body',reach:215,hits:8,cd:830,move:'spin'},
-  {id:'jump_slam',name:'ジャンプスラム',family:'MELEE',part:'feet',reach:225,hits:8,cd:900,move:'slam'},
-  {id:'detached_orbit',name:'離れ部位ラッシュ',family:'MELEE',part:'detached',reach:240,hits:8,cd:780,move:'detached'},
-  {id:'beast_dash',name:'ビーストダッシュ',family:'MELEE',part:'body',reach:270,hits:7,cd:820,move:'dash'},
-  {id:'short_breath',name:'ショートブレス',family:'RANGE',part:'head',reach:300,hits:5,cd:800,move:'breath'},
-  {id:'needle_shot',name:'ニードルショット',family:'RANGE',part:'weapon',reach:330,hits:4,cd:850,move:'needle'},
-  {id:'small_orb',name:'スモールオーブ',family:'RANGE',part:'detached',reach:315,hits:4,cd:830,move:'orb'},
-  {id:'tiny_wave',name:'ミニウェーブ',family:'RANGE',part:'tail',reach:290,hits:5,cd:780,move:'wave'}
+const SUMMON_ATTACKS_V107=[
+  {id:'right_hook',name:'右腕フック',role:'part',part:'handR',reach:155,hits:3,cd:430,move:'hook'},
+  {id:'left_hook',name:'左腕フック',role:'part',part:'handL',reach:155,hits:3,cd:430,move:'hookL'},
+  {id:'double_claw',name:'ダブルクロー',role:'part',part:'hands',reach:175,hits:5,cd:560,move:'claw'},
+  {id:'headbutt',name:'ヘッドバット',role:'part',part:'head',reach:145,hits:4,cd:500,move:'head'},
+  {id:'bite',name:'かみつき',role:'part',part:'head',reach:150,hits:4,cd:560,move:'bite'},
+  {id:'front_kick',name:'フロントキック',role:'part',part:'footR',reach:185,hits:4,cd:520,move:'kick'},
+  {id:'sweep',name:'足払い',role:'part',part:'feet',reach:215,hits:6,cd:680,move:'sweep'},
+  {id:'tail_whip',name:'テイルウィップ',role:'part',part:'tail',reach:235,hits:7,cd:690,move:'tail'},
+  {id:'weapon_slash',name:'ウェポンスラッシュ',role:'part',part:'weapon',reach:255,hits:7,cd:710,move:'weapon'},
+  {id:'detached_rush',name:'離れ部位ラッシュ',role:'part',part:'detached',reach:245,hits:7,cd:730,move:'detached'},
+
+  {id:'jump_slam',name:'ジャンプスラム',role:'mobility',part:'feet',reach:245,hits:8,cd:880,move:'slam'},
+  {id:'speed_dash',name:'高速ダッシュ',role:'mobility',part:'body',reach:285,hits:7,cd:760,move:'dash'},
+  {id:'clone_rush',name:'瞬間分身ラッシュ',role:'mobility',part:'body',reach:275,hits:8,cd:840,move:'clone'},
+  {id:'teleport_strike',name:'瞬間移動アタック',role:'mobility',part:'body',reach:260,hits:7,cd:820,move:'teleport'},
+  {id:'spin_attack',name:'高速スピン',role:'mobility',part:'body',reach:225,hits:8,cd:790,move:'spin'},
+
+  {id:'fire_breath',name:'火炎ブレス',role:'element',part:'head',reach:300,hits:7,cd:850,move:'fire'},
+  {id:'thunder_drop',name:'落雷',role:'element',part:'detached',reach:330,hits:7,cd:890,move:'thunder'},
+  {id:'ice_stomp',name:'氷結ストンプ',role:'element',part:'feet',reach:235,hits:8,cd:900,move:'ice'},
+  {id:'wind_cyclone',name:'旋風',role:'element',part:'tail',reach:255,hits:8,cd:870,move:'wind'},
+  {id:'dark_burst',name:'ダークバースト',role:'element',part:'weapon',reach:245,hits:8,cd:910,move:'dark'}
 ];
 
-function summonStrokeStats(stroke){
+function summonStrokeStatsV107(stroke){
   let minX=Infinity,minY=Infinity,maxX=-Infinity,maxY=-Infinity,len=0;
 
   stroke.forEach((p,i)=>{
@@ -7970,27 +8106,32 @@ function summonStrokeStats(stroke){
   };
 }
 
-function analyzeSummonedMonsterV106(strokes,zoneW,zoneH){
+function analyzeSummonedMonsterV107(strokes,zoneW,zoneH){
   const valid=strokes.filter(s=>s.length>=2);
   const flat=valid.flat();
 
   if(flat.length<6){
     return {
-      power:.42,
-      speed:.48,
+      power:.43,
+      speed:.50,
       range:.46,
       complexity:.18,
       turnDensity:.15,
       aspect:1,
       sizeNorm:.20,
-      minX:zoneW*.38,
-      minY:zoneH*.34,
-      maxX:zoneW*.62,
-      maxY:zoneH*.66,
-      width:zoneW*.24,
-      height:zoneH*.32,
+      minX:zoneW*.40,
+      minY:zoneH*.38,
+      maxX:zoneW*.60,
+      maxY:zoneH*.62,
+      width:zoneW*.20,
+      height:zoneH*.24,
       label:'ちいさな落書き獣',
-      parts:{body:[],head:[],handL:[],handR:[],footL:[],footR:[],tail:[],weapon:[],detached:[]}
+      parts:{
+        body:[],head:[],
+        handL:[],handR:[],
+        footL:[],footR:[],
+        tail:[],weapon:[],detached:[]
+      }
     };
   }
 
@@ -7998,7 +8139,7 @@ function analyzeSummonedMonsterV106(strokes,zoneW,zoneH){
   let pathLen=0,totalTurn=0,turnCount=0;
 
   const stats=valid.map((stroke,index)=>{
-    const s=summonStrokeStats(stroke);
+    const s=summonStrokeStatsV107(stroke);
 
     minX=Math.min(minX,s.minX);
     minY=Math.min(minY,s.minY);
@@ -8026,8 +8167,8 @@ function analyzeSummonedMonsterV106(strokes,zoneW,zoneH){
     return {...s,index};
   });
 
-  const bw=Math.max(16,maxX-minX);
-  const bh=Math.max(16,maxY-minY);
+  const bw=Math.max(12,maxX-minX);
+  const bh=Math.max(12,maxY-minY);
   const aspect=bw/bh;
   const boxArea=bw*bh;
   const sizeNorm=clamp(
@@ -8050,7 +8191,6 @@ function analyzeSummonedMonsterV106(strokes,zoneW,zoneH){
     0,1
   );
 
-  // Classify strokes / disconnected components into moving parts.
   const parts={
     body:[],
     head:[],
@@ -8081,7 +8221,7 @@ function analyzeSummonedMonsterV106(strokes,zoneW,zoneH){
         (s.cy-centerY)/bh
       );
 
-    if(distFromCenter>.58&&s.len<Math.max(bw,bh)*.75){
+    if(distFromCenter>.58&&s.len<Math.max(bw,bh)*.78){
       parts.detached.push(s.index);
       continue;
     }
@@ -8117,7 +8257,6 @@ function analyzeSummonedMonsterV106(strokes,zoneW,zoneH){
     parts.body.push(s.index);
   }
 
-  // Fallback part assignment so every drawing can animate.
   const byPos=[...stats].sort((a,b)=>a.cx-b.cx);
   const byY=[...stats].sort((a,b)=>a.cy-b.cy);
 
@@ -8126,7 +8265,7 @@ function analyzeSummonedMonsterV106(strokes,zoneW,zoneH){
   if(!parts.handL.length&&byPos.length)parts.handL.push(byPos[0].index);
   if(!parts.handR.length&&byPos.length)parts.handR.push(byPos[byPos.length-1].index);
 
-  let power=clamp(
+  const power=clamp(
     .42+
     sizeBalance*.18+
     complexity*.18+
@@ -8135,7 +8274,7 @@ function analyzeSummonedMonsterV106(strokes,zoneW,zoneH){
     .38,1
   );
 
-  let speed=clamp(
+  const speed=clamp(
     .45+
     complexity*.22+
     turnDensity*.18+
@@ -8143,7 +8282,7 @@ function analyzeSummonedMonsterV106(strokes,zoneW,zoneH){
     .38,1
   );
 
-  let range=clamp(
+  const range=clamp(
     .42+
     Math.min(1,Math.max(aspect,1/aspect)/2.1)*.18+
     sizeBalance*.14+
@@ -8169,12 +8308,14 @@ function analyzeSummonedMonsterV106(strokes,zoneW,zoneH){
     aspect,sizeNorm,
     minX,minY,maxX,maxY,
     width:bw,height:bh,
-    label:labels.length?labels.slice(0,3).join('・')+'型':'不思議型',
+    label:labels.length
+      ? labels.slice(0,3).join('・')+'型'
+      : '不思議型',
     parts
   };
 }
 
-function summonHasPart(a,part){
+function summonHasPartV107(a,part){
   if(part==='hands'){
     return a.parts.handL.length||a.parts.handR.length;
   }
@@ -8186,62 +8327,52 @@ function summonHasPart(a,part){
   return (a.parts[part]||[]).length>0;
 }
 
-function summonAttackAffinityV106(atk,a){
-  let score=Math.random()*.34;
+function summonAttackAffinityV107(atk,a){
+  let score=Math.random()*.30;
 
-  if(summonHasPart(a,atk.part))score+=.74;
-  else score+=.10;
+  if(summonHasPartV107(a,atk.part))score+=.70;
+  else score+=.08;
 
-  if(atk.family==='MELEE'){
-    score+=a.power*.18;
-    score+=a.speed*.13;
+  if(atk.role==='part'){
+    score+=a.power*.16;
+    score+=a.speed*.10;
+  }else if(atk.role==='mobility'){
+    score+=a.speed*.21;
+    score+=a.complexity*.13;
   }else{
-    score+=a.range*.17;
-    // Ranged attacks intentionally receive a lower base.
-    score-=.18;
+    score+=a.range*.13;
+    score+=a.turnDensity*.09;
   }
 
-  if(atk.part==='weapon')score+=a.parts.weapon.length*.12;
-  if(atk.part==='tail')score+=a.parts.tail.length*.12;
-  if(atk.part==='detached')score+=a.parts.detached.length*.13;
-  if(atk.part==='feet')score+=a.speed*.12;
-  if(atk.part==='head')score+=(1-a.complexity)*.06;
+  if(atk.part==='weapon')score+=a.parts.weapon.length*.11;
+  if(atk.part==='tail')score+=a.parts.tail.length*.11;
+  if(atk.part==='detached')score+=a.parts.detached.length*.12;
+  if(atk.part==='feet')score+=a.speed*.10;
+  if(atk.part==='head')score+=(1-a.complexity)*.05;
 
   return score;
 }
 
-function chooseSummonAttacksV106(a){
-  const ranked=SUMMON_ATTACKS_V106
-    .map(atk=>({
-      atk,
-      score:summonAttackAffinityV106(atk,a)
-    }))
-    .sort((x,y)=>y.score-x.score);
+function chooseSummonAttacksV107(a){
+  function pickRole(role){
+    const pool=SUMMON_ATTACKS_V107
+      .filter(atk=>atk.role===role)
+      .map(atk=>({
+        atk,
+        score:summonAttackAffinityV107(atk,a)
+      }))
+      .sort((x,y)=>y.score-x.score)
+      .slice(0,Math.min(6,SUMMON_ATTACKS_V107.filter(v=>v.role===role).length));
 
-  // Mostly choose from melee-compatible top group.
-  const meleePool=ranked
-    .filter(x=>x.atk.family==='MELEE')
-    .slice(0,10)
-    .map(x=>x.atk);
-
-  const rangePool=ranked
-    .filter(x=>x.atk.family==='RANGE')
-    .slice(0,4)
-    .map(x=>x.atk);
-
-  const picked=[];
-
-  while(picked.length<3&&meleePool.length){
-    const idx=randi(0,meleePool.length-1);
-    picked.push(meleePool.splice(idx,1)[0]);
+    // Random from the compatible top candidates.
+    return pool[randi(0,pool.length-1)].atk;
   }
 
-  // Only around 28% of summoned monsters receive one ranged move.
-  if(Math.random()<.28&&rangePool.length){
-    picked[randi(0,2)]=rangePool[randi(0,rangePool.length-1)];
-  }
-
-  return picked;
+  return [
+    pickRole('part'),
+    pickRole('mobility'),
+    pickRole('element')
+  ];
 }
 
 async function startSummonerMob(p,humanIndex,runId){
@@ -8259,72 +8390,67 @@ async function startSummonerMob(p,humanIndex,runId){
   let lastAttack=0;
   let slimeId=0;
   let startBattle=0;
-  let monsterX=520;
+  let facing=1;
 
   const strokes=[];
   const slimes=[];
-  const worldW=3900;
 
-  screen.innerHTML=`<div class="summoner-shell summoner-v106">
+  screen.innerHTML=`<div class="summoner-shell summoner-v107">
     <div class="game-head">
       <div><span class="kicker">${esc(p.name)}</span><h2>モブくんは召喚師</h2></div>
       <div class="game-badge">${playBadge(humanIndex)}</div>
     </div>
 
     <div class="summoner-hud">
-      <div><span>TIME</span><b id="summonDrawTime">5.0</b></div>
+      <div><span>TIME</span><b id="summonTime">5.0</b></div>
       <div><span>TYPE</span><b id="summonType">???</b></div>
       <div><span>KO</span><b id="summonKills">0</b></div>
     </div>
 
-    <div id="summonerStage" class="summoner-stage">
-      <div id="summonWorld" class="summon-world-v106" style="width:${worldW}px">
-        <div class="summoner-side-bg">
-          ${Array.from({length:13},(_,i)=>`
-            <div class="summon-ruin" style="left:${150+i*320}px"></div>
-            <div class="summon-torch" style="left:${275+i*320}px"></div>
-          `).join('')}
-        </div>
-
-        <div class="summon-ground-v105"></div>
-        <div id="summonSlimes"></div>
-
-        <div id="summonMonster" class="summon-monster-v106 hidden">
-          <svg id="summonMonsterSvg"></svg>
-          <i class="summon-eye e1"></i>
-          <i class="summon-eye e2"></i>
-        </div>
+    <div id="summonerStage" class="summoner-stage summoner-arena-v107">
+      <div class="summoner-arena-bg">
+        <div class="summon-gate left"></div>
+        <div class="summon-gate right"></div>
+        <div class="summon-ground-v107"></div>
       </div>
 
-      <svg id="summonDrawSvg" class="summon-draw-svg-v106"></svg>
-      <div id="summonAttackFx" class="summon-attack-fx-v106"></div>
-      <div class="summoner-caster" style="background-image:url('icon/01.png')"></div>
-      <div id="summonSkillList" class="summon-skill-list hidden"></div>
+      <div id="summonSlimes"></div>
+
+      <div id="summonMonster" class="summon-monster-v107 hidden">
+        <svg id="summonMonsterSvg"></svg>
+      </div>
+
+      <svg id="summonDrawSvg" class="summon-draw-svg-v107"></svg>
+
+      <div id="summonAttackFx" class="summon-attack-fx-v107"></div>
+      <div id="summonSkillList" class="summon-skill-list-v107 hidden"></div>
+
+      <div id="summonCaster" class="summoner-caster-v107" style="background-image:url('icon/01.png')"></div>
       <div id="summonMessage" class="summon-message">5秒で自由に描け！</div>
     </div>
   </div>`;
 
   const stage=document.getElementById('summonerStage');
-  const world=document.getElementById('summonWorld');
   const drawSvg=document.getElementById('summonDrawSvg');
   const monster=document.getElementById('summonMonster');
   const monsterSvg=document.getElementById('summonMonsterSvg');
   const slimeLayer=document.getElementById('summonSlimes');
   const attackFx=document.getElementById('summonAttackFx');
   const skillList=document.getElementById('summonSkillList');
-  const drawTimeEl=document.getElementById('summonDrawTime');
+  const caster=document.getElementById('summonCaster');
+  const timeEl=document.getElementById('summonTime');
   const typeEl=document.getElementById('summonType');
   const killsEl=document.getElementById('summonKills');
   const message=document.getElementById('summonMessage');
 
   const sw=stage.clientWidth;
   const sh=stage.clientHeight;
+  const groundY=54;
 
-  // Fixed invisible drawing area.
-  const zoneW=Math.min(sw*.82,340);
-  const zoneH=Math.min(sh*.67,300);
+  const zoneW=Math.min(sw*.84,350);
+  const zoneH=Math.min(sh*.68,310);
   const zoneX=(sw-zoneW)/2;
-  const zoneY=Math.max(28,(sh-zoneH)/2-8);
+  const zoneY=Math.max(24,(sh-zoneH)/2-8);
 
   drawSvg.style.left=`${zoneX}px`;
   drawSvg.style.top=`${zoneY}px`;
@@ -8349,7 +8475,6 @@ async function startSummonerMob(p,humanIndex,runId){
 
     el.setAttribute('class','summon-user-stroke');
     drawSvg.appendChild(el);
-
     return el;
   }
 
@@ -8414,7 +8539,7 @@ async function startSummonerMob(p,humanIndex,runId){
   if(!(await countdown('SUMMON DRAW',runId)))return;
 
   drawingOpen=true;
-  message.textContent='枠なし。好きな大きさで描け！';
+  message.textContent='眼も含めて全部描け！';
 
   const drawStart=performance.now();
 
@@ -8423,7 +8548,7 @@ async function startSummonerMob(p,humanIndex,runId){
       if(!isGameRunValid(runId)){resolve();return;}
 
       const rem=5000-(now-drawStart);
-      drawTimeEl.textContent=(Math.max(0,rem)/1000).toFixed(1);
+      timeEl.textContent=(Math.max(0,rem)/1000).toFixed(1);
 
       if(rem<=0){
         drawingOpen=false;
@@ -8440,38 +8565,42 @@ async function startSummonerMob(p,humanIndex,runId){
 
   if(!isGameRunValid(runId))return;
 
-  const analysis=analyzeSummonedMonsterV106(
+  const analysis=analyzeSummonedMonsterV107(
     strokes,
     zoneW,
     zoneH
   );
 
-  const learned=chooseSummonAttacksV106(analysis);
+  const learned=chooseSummonAttacksV107(analysis);
 
   typeEl.textContent=analysis.label;
 
-  skillList.innerHTML=learned.map((a,i)=>`
-    <span>${i+1}. ${a.name}</span>
-  `).join('');
+  skillList.innerHTML=
+    learned
+      .map((a,i)=>`<span>${i+1}. ${a.name}</span>`)
+      .join('');
 
   skillList.classList.remove('hidden');
 
   message.textContent=`召喚！ ${analysis.label}`;
 
-  // Exact size from drawing bbox — no standardized 132px frame.
-  const battleW=clamp(analysis.width,34,zoneW);
-  const battleH=clamp(analysis.height,34,zoneH);
+  const battleW=Math.max(12,analysis.width);
+  const battleH=Math.max(12,analysis.height);
 
   monster.style.width=`${battleW}px`;
   monster.style.height=`${battleH}px`;
+
+  const monsterX=sw*.50;
   monster.style.left=`${monsterX}px`;
+  monster.style.bottom=`${groundY}px`;
+
+  const pad=5;
 
   monsterSvg.setAttribute(
     'viewBox',
-    `${analysis.minX} ${analysis.minY} ${analysis.width} ${analysis.height}`
+    `${analysis.minX-pad} ${analysis.minY-pad} ${analysis.width+pad*2} ${analysis.height+pad*2}`
   );
 
-  // Build independently animated groups from automatically judged body parts.
   const reversePart={};
 
   Object.entries(analysis.parts).forEach(([part,indexes])=>{
@@ -8482,62 +8611,87 @@ async function startSummonerMob(p,humanIndex,runId){
 
   const validStrokes=strokes.filter(s=>s.length>=2);
 
-  monsterSvg.innerHTML=validStrokes.map((stroke,i)=>{
-    const part=reversePart[i]||'body';
+  monsterSvg.innerHTML=
+    validStrokes.length
+      ? validStrokes.map((stroke,i)=>{
+          const part=reversePart[i]||'body';
 
-    return `<g class="summon-part" data-part="${part}">
-      <polyline
-        class="summon-monster-stroke"
-        points="${stroke.map(q=>`${q.x.toFixed(1)},${q.y.toFixed(1)}`).join(' ')}">
-      </polyline>
-    </g>`;
-  }).join('');
+          return `<g class="summon-part" data-part="${part}">
+            <polyline
+              class="summon-monster-stroke"
+              points="${stroke.map(q=>`${q.x.toFixed(1)},${q.y.toFixed(1)}`).join(' ')}">
+            </polyline>
+          </g>`;
+        }).join('')
+      : `<g class="summon-part" data-part="body">
+           <circle class="summon-monster-stroke" cx="50" cy="50" r="25"></circle>
+         </g>`;
 
   drawSvg.classList.add('fade-out');
 
-  await wait(420);
+  await wait(440);
 
   if(!isGameRunValid(runId))return;
 
-  drawSvg.classList.add('hidden');
-  stage.classList.add('battle');
+  // All drawing UI and the original drawing disappear now.
+  drawSvg.remove();
+  caster.remove();
+  skillList.classList.add('hidden');
 
+  stage.classList.add('battle');
   monster.classList.remove('hidden');
 
-  drawTimeEl.textContent='10.0';
-  message.textContent='AUTO CLOSE BATTLE!';
+  timeEl.textContent='10.0';
+  message.textContent='AUTO MUSOU 10 SEC!';
 
-  function spawnSlime(now,progress,sideOverride=null){
-    if(slimes.filter(s=>!s.dead).length>=30)return;
+  function slimeSizePattern(progress){
+    const r=Math.random();
 
-    const side=sideOverride??(Math.random()<.18?-1:1);
-    const big=Math.random()<(.10+progress*.08);
-    const size=big?rand(58,82):rand(34,50);
+    if(r<.14)return {kind:'tiny',size:rand(25,32)};
+    if(r<.35)return {kind:'small',size:rand(35,43)};
+    if(r<.67)return {kind:'normal',size:rand(47,58)};
+    if(r<.88)return {kind:'large',size:rand(64,78)};
+
+    return {
+      kind:'giant',
+      size:rand(88,108)+progress*5
+    };
+  }
+
+  function spawnSlime(now,progress,forcedSide=null){
+    if(slimes.filter(s=>!s.dead).length>=34)return;
+
+    const side=
+      forcedSide??
+      (Math.random()<.5?-1:1);
+
+    const pat=slimeSizePattern(progress);
 
     const el=document.createElement('div');
-    el.className='summon-slime-v105';
+    el.className=`summon-slime-v107 ${pat.kind}`;
 
-    if(big)el.classList.add('big');
-
-    el.style.width=`${size}px`;
-    el.style.height=`${size*.72}px`;
+    el.style.width=`${pat.size}px`;
+    el.style.height=`${pat.size*.72}px`;
 
     const s={
       id:++slimeId,
       el,
       x:
-        side>0
-          ? clamp(monsterX+rand(180,520),80,worldW-70)
-          : clamp(monsterX-rand(150,330),70,worldW-70),
-      y:66+randi(-5,10),
+        side<0
+          ? -pat.size*.8
+          : sw+pat.size*.8,
+      y:groundY+randi(-2,10),
       speed:
         (
-          big?rand(65,92):
-          rand(100,148)
+          pat.kind==='giant'?rand(65,82):
+          pat.kind==='large'?rand(84,108):
+          pat.kind==='tiny'?rand(125,158):
+          rand(100,138)
         )+
-        progress*90,
-      hp:big?2:1,
-      dead:false
+        progress*72,
+      dead:false,
+      kind:pat.kind,
+      size:pat.size
     };
 
     el.style.left=`${s.x}px`;
@@ -8545,6 +8699,7 @@ async function startSummonerMob(p,humanIndex,runId){
 
     slimeLayer.appendChild(el);
     slimes.push(s);
+
     lastSpawn=now;
   }
 
@@ -8555,148 +8710,196 @@ async function startSummonerMob(p,humanIndex,runId){
     kills++;
     killsEl.textContent=kills;
 
+    const sizeBoost=
+      s.kind==='giant'?1.30:
+      s.kind==='large'?1.15:
+      s.kind==='tiny'?.82:
+      1;
+
     s.el.style.setProperty(
       '--summon-fly-x',
-      `${dir*(strong?rand(190,310):rand(120,220))}px`
+      `${dir*(strong?rand(210,340):rand(135,245))*sizeBoost}px`
     );
 
     s.el.style.setProperty(
       '--summon-fly-y',
-      `${strong?rand(-190,-115):rand(-130,-55)}px`
+      `${strong?rand(-210,-125):rand(-150,-65)}px`
     );
 
     s.el.style.setProperty(
       '--summon-fly-spin',
-      `${dir*rand(520,980)}deg`
+      `${dir*rand(620,1120)}deg`
     );
 
     s.el.classList.add(strong?'blast':'defeated');
 
-    setTimeout(()=>s.el.remove(),480);
+    setTimeout(()=>s.el.remove(),520);
   }
 
-  function hitSlime(s,strong=false,dir=1){
-    if(s.dead)return;
+  function createGhost(offset,delay){
+    const ghost=monster.cloneNode(true);
+    ghost.removeAttribute('id');
+    ghost.className='summon-monster-ghost-v107';
 
-    s.hp-=strong?2:1;
+    ghost.style.width=monster.style.width;
+    ghost.style.height=monster.style.height;
+    ghost.style.left=`${monsterX+offset}px`;
+    ghost.style.bottom=monster.style.bottom;
+    ghost.style.animationDelay=`${delay}ms`;
 
-    if(s.hp<=0){
-      defeatSlime(s,strong,dir);
-    }else{
-      s.el.classList.remove('hurt');
-      void s.el.offsetWidth;
-      s.el.classList.add('hurt');
+    stage.appendChild(ghost);
+
+    setTimeout(()=>ghost.remove(),360);
+  }
+
+  function showAttackFx(atk,dir,targetX){
+    attackFx.className=
+      `summon-attack-fx-v107 move-${atk.move} ${dir<0?'left':'right'} show`;
+
+    attackFx.style.setProperty(
+      '--target-x',
+      `${clamp(targetX,20,sw-20)}px`
+    );
+
+    attackFx.innerHTML=
+      `<b>${atk.name}</b><i></i><em></em>`;
+
+    if(atk.move==='clone'){
+      createGhost(-52,0);
+      createGhost(52,45);
     }
+
+    setTimeout(()=>{
+      attackFx.className='summon-attack-fx-v107';
+      attackFx.innerHTML='';
+    },360);
   }
 
-  function clearMonsterAttackClasses(){
+  function clearAttackClasses(){
     [...monster.classList]
       .filter(c=>c.startsWith('summon-atk-'))
       .forEach(c=>monster.classList.remove(c));
   }
 
-  function showAttack(atk,dir){
-    clearMonsterAttackClasses();
+  function animateMonsterAttack(atk,dir){
+    clearAttackClasses();
 
+    facing=dir;
     monster.classList.toggle('face-left',dir<0);
     monster.classList.add(`summon-atk-${atk.move}`);
 
-    attackFx.className=
-      `summon-attack-fx-v106 ${atk.family.toLowerCase()} move-${atk.move} ${dir<0?'left':'right'} show`;
+    if(
+      ['dash','teleport','clone'].includes(atk.move)
+    ){
+      const shift=dir*clamp(70+analysis.speed*85,85,150);
+      monster.style.setProperty('--summon-dash-x',`${shift}px`);
+    }
 
-    attackFx.innerHTML=`<b>${atk.name}</b><i></i>`;
-
-    setTimeout(()=>{
-      clearMonsterAttackClasses();
-      attackFx.className='summon-attack-fx-v106';
-      attackFx.innerHTML='';
-    },300);
+    setTimeout(clearAttackClasses,350);
   }
 
   function useAttack(atk){
     const alive=slimes.filter(s=>!s.dead);
     if(!alive.length)return;
 
-    const leftCount=alive.filter(s=>s.x<monsterX).length;
-    const rightCount=alive.length-leftCount;
-    const dir=rightCount>=leftCount?1:-1;
+    const nearest=
+      alive
+        .map(s=>({
+          s,
+          d:Math.abs(s.x-monsterX)
+        }))
+        .sort((a,b)=>a.d-b.d)[0];
+
+    const target=nearest.s;
+    const dir=target.x<monsterX?-1:1;
 
     const range=
       atk.reach*
-      (.84+analysis.range*.38);
+      (.88+analysis.range*.30);
 
     const maxHits=Math.max(
       2,
       Math.round(
         atk.hits*
-        (.76+analysis.power*.52)
+        (.78+analysis.power*.50)
       )
     );
 
-    let victims=[];
-
-    if(atk.family==='MELEE'){
-      victims=alive
+    let victims=
+      alive
         .map(s=>({
           s,
           dx:(s.x-monsterX)*dir,
           d:Math.abs(s.x-monsterX)
         }))
-        .filter(o=>o.dx>=-45&&o.dx<=range)
+        .filter(o=>{
+          if(atk.move==='thunder'){
+            return o.d<=range*1.30;
+          }
+
+          if(atk.move==='fire'){
+            return o.dx>=-25&&o.dx<=range*1.25;
+          }
+
+          if(
+            ['spin','slam','ice','wind','dark'].includes(atk.move)
+          ){
+            return o.d<=range;
+          }
+
+          return o.dx>=-35&&o.dx<=range;
+        })
         .sort((a,b)=>a.d-b.d)
         .slice(0,maxHits)
         .map(o=>o.s);
 
-    }else{
-      victims=alive
-        .map(s=>({
-          s,
-          dx:(s.x-monsterX)*dir,
-          d:Math.abs(s.x-monsterX)
-        }))
-        .filter(o=>o.dx>=-40&&o.dx<=range)
-        .sort((a,b)=>a.d-b.d)
-        .slice(0,maxHits)
-        .map(o=>o.s);
+    // Mobility attacks can hunt down a target even if the crowd is momentarily farther away.
+    if(
+      !victims.length&&
+      ['dash','teleport','clone','slam'].includes(atk.move)
+    ){
+      victims=[target];
     }
 
     const strong=
-      analysis.power>.78 ||
-      ['jump_slam','weapon_slash','beast_dash','headbutt'].includes(atk.id);
+      analysis.power>.77||
+      ['slam','dash','teleport','thunder','fire','weapon'].includes(atk.move);
 
     victims.forEach((s,i)=>{
       setTimeout(()=>{
         if(!s.dead){
-          hitSlime(
+          defeatSlime(
             s,
             strong,
             Math.sign(s.x-monsterX)||dir
           );
         }
-      },i*18);
+      },i*20);
     });
 
-    showAttack(atk,dir);
+    animateMonsterAttack(atk,dir);
+    showAttackFx(atk,dir,target.x);
 
     beep(
-      atk.family==='RANGE'?720:
-      atk.part==='feet'?430:
-      atk.part==='head'?520:
-      atk.part==='weapon'?660:
-      360,
-      32,.008
+      atk.move==='thunder'?900:
+      atk.move==='fire'?620:
+      atk.move==='dash'?420:
+      atk.move==='clone'?760:
+      atk.move==='slam'?360:
+      520,
+      34,.009
     );
   }
 
   startBattle=performance.now();
-  lastSpawn=startBattle-500;
+  lastSpawn=startBattle-600;
   lastAttack=startBattle-600;
 
-  for(let i=0;i<13;i++){
+  for(let i=0;i<18;i++){
     spawnSlime(
       startBattle,
       0,
-      i<2?-1:1
+      i%2?-1:1
     );
   }
 
@@ -8707,21 +8910,15 @@ async function startSummonerMob(p,humanIndex,runId){
     const remaining=10000-elapsed;
     const progress=clamp(elapsed/10000,0,1);
 
-    drawTimeEl.textContent=(Math.max(0,remaining)/1000).toFixed(1);
+    timeEl.textContent=(Math.max(0,remaining)/1000).toFixed(1);
 
-    // Advance in close-combat distance rather than shooting from far away.
-    monsterX=clamp(
-      520+elapsed/1000*(105+analysis.speed*55),
-      90,
-      worldW-430
-    );
-
-    monster.style.left=`${monsterX}px`;
-
-    const spawnEvery=195-progress*82;
+    const spawnEvery=150-progress*55;
 
     if(now-lastSpawn>=spawnEvery){
-      const count=progress>.5?randi(2,4):randi(1,3);
+      const count=
+        progress>.58
+          ? randi(3,5)
+          : randi(2,4);
 
       for(let i=0;i<count;i++){
         spawnSlime(now,progress);
@@ -8733,8 +8930,8 @@ async function startSummonerMob(p,humanIndex,runId){
       learned.length;
 
     const attackEvery=clamp(
-      avgCd*(1.02-analysis.speed*.30),
-      280,780
+      avgCd*(.92-analysis.speed*.24),
+      270,690
     );
 
     if(now-lastAttack>=attackEvery){
@@ -8745,7 +8942,7 @@ async function startSummonerMob(p,humanIndex,runId){
         learned.length;
 
       const atk=
-        Math.random()<.62
+        Math.random()<.70
           ? learned[cycle]
           : learned[randi(0,learned.length-1)];
 
@@ -8758,22 +8955,14 @@ async function startSummonerMob(p,humanIndex,runId){
       const dx=monsterX-s.x;
       const dir=Math.sign(dx)||1;
 
-      // Slimes intentionally crowd into close range.
-      if(Math.abs(dx)>52){
+      // They rush the fixed center from both directions.
+      if(Math.abs(dx)>44){
         s.x+=dir*s.speed*.016;
       }
 
       s.el.style.left=`${s.x}px`;
       s.el.style.setProperty('--summon-face',dir);
     }
-
-    const cam=clamp(
-      monsterX-stage.clientWidth*.34,
-      0,
-      worldW-stage.clientWidth
-    );
-
-    world.style.transform=`translateX(${-cam}px)`;
 
     if(remaining<=0){
       finished=true;
@@ -8797,7 +8986,7 @@ async function startSummonerMob(p,humanIndex,runId){
             learned.map(a=>a.name).join(' / ')
           );
         }
-      },750);
+      },760);
 
       return;
     }
@@ -9369,7 +9558,9 @@ async function startCrowEscape(p,humanIndex,runId){
   let moveDir=0;
   let jumpCount=0;
 
-  const worldW=2450;
+  const worldW=1480;
+  const fieldMinX=78;
+  const fieldMaxX=worldW-78;
   const groundY=58;
   const gravity=1180;
   const jumpV=510;
@@ -9381,17 +9572,16 @@ async function startCrowEscape(p,humanIndex,runId){
   let grounded=true;
 
   const platforms=[
-    {x:250,w:155,h:78,type:'table'},
-    {x:510,w:105,h:62,type:'box'},
-    {x:760,w:170,h:88,type:'table'},
-    {x:1030,w:92,h:70,type:'box'},
-    {x:1275,w:150,h:92,type:'table'},
-    {x:1515,w:110,h:58,type:'box'},
-    {x:1760,w:165,h:84,type:'table'},
-    {x:2050,w:100,h:68,type:'box'}
+    {x:190,w:142,h:72,type:'table'},
+    {x:365,w:92,h:58,type:'box'},
+    {x:535,w:154,h:84,type:'table'},
+    {x:735,w:100,h:66,type:'box'},
+    {x:930,w:150,h:92,type:'table'},
+    {x:1115,w:96,h:60,type:'box'},
+    {x:1290,w:135,h:78,type:'table'}
   ];
 
-  screen.innerHTML=`<div class="crow-shell">
+  screen.innerHTML=`<div class="crow-shell crow-v107">
     <div class="game-head">
       <div><span class="kicker">${esc(p.name)}</span><h2>カラスから逃げろ！</h2></div>
       <div class="game-badge">${playBadge(humanIndex)}</div>
@@ -9405,15 +9595,17 @@ async function startCrowEscape(p,humanIndex,runId){
     <div id="crowStage" class="crow-stage">
       <div id="crowWorld" class="crow-world" style="width:${worldW}px">
         <div class="crow-sky-bg">
-          ${Array.from({length:8},(_,i)=>`
-            <i class="crow-cloud" style="left:${180+i*300}px;top:${32+(i%3)*42}px">☁</i>
+          ${Array.from({length:6},(_,i)=>`
+            <i class="crow-cloud" style="left:${160+i*245}px;top:${32+(i%3)*42}px">☁</i>
           `).join('')}
-          ${Array.from({length:10},(_,i)=>`
-            <i class="crow-tree-bg" style="left:${90+i*260}px"></i>
+          ${Array.from({length:7},(_,i)=>`
+            <i class="crow-tree-bg" style="left:${100+i*215}px"></i>
           `).join('')}
         </div>
 
         <div class="crow-ground"></div>
+        <div class="crow-boundary left"><b>STOP</b></div>
+        <div class="crow-boundary right"><b>STOP</b></div>
 
         <div class="crow-platform-layer">
           ${platforms.map((pl,i)=>`
@@ -9440,21 +9632,15 @@ async function startCrowEscape(p,humanIndex,runId){
           </div>
         </div>
 
-        <div id="crowA" class="crow-enemy crow-left">
-          <img
-            src="enemy/karasu.png"
-            alt="karasu"
-            draggable="false"
-            onerror="this.onerror=null;this.src='icon/10.png'">
-        </div>
-
-        <div id="crowB" class="crow-enemy crow-right">
-          <img
-            src="enemy/karasu.png"
-            alt="karasu"
-            draggable="false"
-            onerror="this.onerror=null;this.src='icon/10.png'">
-        </div>
+        ${Array.from({length:4},(_,i)=>`
+          <div id="crow${i}" class="crow-enemy">
+            <img
+              src="enemy/karasu.png"
+              alt="karasu"
+              draggable="false"
+              onerror="this.onerror=null;this.src='icon/10.png'">
+          </div>
+        `).join('')}
       </div>
 
       <div id="crowWarning" class="crow-warning"></div>
@@ -9472,10 +9658,7 @@ async function startCrowEscape(p,humanIndex,runId){
   const world=document.getElementById('crowWorld');
   const player=document.getElementById('crowPlayer');
   const playerFigure=player.querySelector('.crow-player-figure');
-  const crowEls=[
-    document.getElementById('crowA'),
-    document.getElementById('crowB')
-  ];
+  const crowEls=Array.from({length:4},(_,i)=>document.getElementById(`crow${i}`));
   const timeEl=document.getElementById('crowTime');
   const jumpEl=document.getElementById('crowJump');
   const warning=document.getElementById('crowWarning');
@@ -9484,20 +9667,34 @@ async function startCrowEscape(p,humanIndex,runId){
   const rightBtn=document.getElementById('crowRight');
   const jumpBtn=document.getElementById('crowJumpBtn');
 
-  const crowState=[
-    {
-      x:playerX-260,
-      y:groundY+170,
-      vx:105,
-      vy:0
-    },
-    {
-      x:playerX+260,
-      y:groundY+205,
-      vx:-105,
-      vy:0
+  function randomCrowX(){
+    let x=playerX;
+
+    for(let tries=0;tries<30;tries++){
+      x=rand(fieldMinX+60,fieldMaxX-60);
+
+      if(Math.abs(x-playerX)>175)break;
     }
-  ];
+
+    return x;
+  }
+
+  const crowState=Array.from({length:4},(_,i)=>{
+    const x=randomCrowX();
+    const y=rand(
+      groundY+115,
+      Math.max(groundY+150,stage.clientHeight-80)
+    );
+
+    const toward=playerX>x?1:-1;
+
+    return {
+      x,y,
+      vx:toward*rand(75,125),
+      vy:rand(-18,18),
+      phase:Math.random()*Math.PI*2
+    };
+  });
 
   function setPlayerFacing(dir){
     if(dir===0)return;
@@ -9559,12 +9756,10 @@ async function startCrowEscape(p,humanIndex,runId){
 
   function crowMaxSpeed(elapsed){
     if(elapsed<5000){
-      // Slightly slower than player.
       return 220+(elapsed/5000)*50;
     }
 
     if(elapsed<8000){
-      // Equal at 5 sec, then gets faster.
       return 270+((elapsed-5000)/3000)*55;
     }
 
@@ -9572,8 +9767,7 @@ async function startCrowEscape(p,humanIndex,runId){
   }
 
   function crowAccel(elapsed){
-    // Deliberately low acceleration = poor braking and obvious overshoot.
-    return elapsed<5000?135:elapsed<8000?150:168;
+    return elapsed<5000?128:elapsed<8000?143:160;
   }
 
   function showWarning(text){
@@ -9584,22 +9778,20 @@ async function startCrowEscape(p,humanIndex,runId){
   }
 
   function burstFeathers(x,y){
-    const sx=
-      x-
-      clamp(
-        playerX-stage.clientWidth*.42,
-        0,
-        worldW-stage.clientWidth
-      );
+    const cam=clamp(
+      playerX-stage.clientWidth*.42,
+      0,
+      worldW-stage.clientWidth
+    );
 
-    feathers.style.left=`${sx}px`;
+    feathers.style.left=`${x-cam}px`;
     feathers.style.bottom=`${y}px`;
 
-    feathers.innerHTML=Array.from({length:12},(_,i)=>`
+    feathers.innerHTML=Array.from({length:14},(_,i)=>`
       <i style="
-        --fx:${rand(-95,95).toFixed(0)}px;
-        --fy:${rand(35,120).toFixed(0)}px;
-        --fr:${randi(-220,220)}deg;
+        --fx:${rand(-105,105).toFixed(0)}px;
+        --fy:${rand(35,125).toFixed(0)}px;
+        --fr:${randi(-240,240)}deg;
         --fd:${(i%4)*.025}s
       "></i>
     `).join('');
@@ -9614,11 +9806,7 @@ async function startCrowEscape(p,humanIndex,runId){
 
     finished=true;
 
-    const seconds=
-      Math.min(
-        20,
-        survivedMs/1000
-      );
+    const seconds=Math.min(20,survivedMs/1000);
 
     state.records.crowEscape[p.id]=
       Math.round(seconds*100)/100;
@@ -9628,7 +9816,6 @@ async function startCrowEscape(p,humanIndex,runId){
     if(hit){
       showWarning('カラスに捕まった！');
       beep(130,220,.04);
-
     }else{
       showWarning('20秒 ESCAPE!!');
       beep(1080,160,.04);
@@ -9642,7 +9829,7 @@ async function startCrowEscape(p,humanIndex,runId){
           hit?'CAUGHT':'ESCAPE!'
         );
       }
-    },750);
+    },760);
   }
 
   if(!(await countdown('CROW ESCAPE',runId)))return;
@@ -9650,7 +9837,12 @@ async function startCrowEscape(p,humanIndex,runId){
   startTime=performance.now();
   last=startTime;
 
-  showWarning('逃げろ！');
+  crowState.forEach((c,i)=>{
+    crowEls[i].style.left=`${c.x}px`;
+    crowEls[i].style.bottom=`${c.y}px`;
+  });
+
+  showWarning('4体から逃げろ！');
 
   function frame(now){
     if(finished||!isGameRunValid(runId))return;
@@ -9662,9 +9854,28 @@ async function startCrowEscape(p,humanIndex,runId){
 
     playerX=clamp(
       playerX+moveDir*playerSpeed*dt,
-      34,
-      worldW-34
+      fieldMinX,
+      fieldMaxX
     );
+
+    // If standing on a platform and walking past its edge,
+    // immediately lose support and start falling.
+    if(grounded&&playerY>groundY+2){
+      const support=platforms.find(pl=>{
+        const top=groundY+pl.h;
+
+        return (
+          Math.abs(playerY-top)<=3&&
+          Math.abs(playerX-pl.x)<=pl.w/2+15
+        );
+      });
+
+      if(!support){
+        grounded=false;
+        vy=0;
+        jumpEl.textContent='あと1回';
+      }
+    }
 
     const prevY=playerY;
 
@@ -9673,7 +9884,6 @@ async function startCrowEscape(p,humanIndex,runId){
       playerY+=vy*dt;
     }
 
-    // Ground collision.
     if(playerY<=groundY){
       playerY=groundY;
       vy=0;
@@ -9682,7 +9892,6 @@ async function startCrowEscape(p,humanIndex,runId){
       jumpEl.textContent='2段OK';
     }
 
-    // Platform collision from above only.
     if(vy<=0&&playerY>groundY){
       for(const pl of platforms){
         const top=groundY+pl.h;
@@ -9690,7 +9899,7 @@ async function startCrowEscape(p,humanIndex,runId){
         if(
           prevY>=top&&
           playerY<=top&&
-          Math.abs(playerX-pl.x)<=pl.w/2+18
+          Math.abs(playerX-pl.x)<=pl.w/2+15
         ){
           playerY=top;
           vy=0;
@@ -9702,10 +9911,6 @@ async function startCrowEscape(p,humanIndex,runId){
       }
     }
 
-    if(playerY<groundY){
-      playerY=groundY;
-    }
-
     player.style.left=`${playerX}px`;
     player.style.bottom=`${playerY}px`;
 
@@ -9713,8 +9918,10 @@ async function startCrowEscape(p,humanIndex,runId){
     const accel=crowAccel(elapsed);
 
     crowState.forEach((c,i)=>{
+      c.phase+=dt*4.8;
+
       const targetX=playerX;
-      const targetY=playerY+54;
+      const targetY=playerY+50+Math.sin(c.phase)*8;
 
       const dx=targetX-c.x;
       const dy=targetY-c.y;
@@ -9727,7 +9934,6 @@ async function startCrowEscape(p,humanIndex,runId){
       const dvy=desiredVy-c.vy;
       const dv=Math.hypot(dvx,dvy)||1;
 
-      // Limited steering acceleration makes braking / turning intentionally poor.
       const change=Math.min(accel*dt,dv);
 
       c.vx+=dvx/dv*change;
@@ -9742,14 +9948,14 @@ async function startCrowEscape(p,humanIndex,runId){
 
       c.x=clamp(
         c.x+c.vx*dt,
-        20,
-        worldW-20
+        18,
+        worldW-18
       );
 
       c.y=clamp(
         c.y+c.vy*dt,
-        groundY+30,
-        stage.clientHeight-35
+        groundY+25,
+        stage.clientHeight-32
       );
 
       const el=crowEls[i];
@@ -9761,12 +9967,11 @@ async function startCrowEscape(p,humanIndex,runId){
         c.vx>0?-1:1
       );
 
-      // Crow collision. Obstacles are intentionally ignored.
       if(
         Math.hypot(
           c.x-playerX,
-          c.y-(playerY+42)
-        )<49
+          c.y-(playerY+40)
+        )<47
       ){
         burstFeathers(c.x,c.y);
         finish(elapsed,true);
@@ -9782,11 +9987,11 @@ async function startCrowEscape(p,humanIndex,runId){
     world.style.transform=`translateX(${-cam}px)`;
 
     if(elapsed>=5000&&elapsed<5050){
-      showWarning('カラスが同じ速さに！');
+      showWarning('同じ速さ！');
     }
 
     if(elapsed>=8000&&elapsed<8050){
-      showWarning('カラスの方が速い！');
+      showWarning('カラスが速い！');
     }
 
     if(elapsed>=20000){
@@ -9942,7 +10147,7 @@ function simulateOneCpu(gameIndex,p){
   }else if(gameIndex===43){
     state.records.mobIssen[p.id]=ultra?randi(255,294):randi(165,258);
   }else{
-    state.records.crowEscape[p.id]=Math.round((ultra?rand(17.5,20):rand(8.5,18.6))*100)/100;
+    state.records.crowEscape[p.id]=Math.round((ultra?rand(16.8,20):rand(7.2,17.4))*100)/100;
   }
 
   return ultra;

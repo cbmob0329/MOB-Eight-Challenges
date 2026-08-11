@@ -8352,3 +8352,562 @@ body{touch-action:manipulation}
     stroke-width:6;
   }
 }
+
+
+/* =========================================================
+   V10.7 WIZARD — EDGE SAFE
+   ========================================================= */
+.wizard-stage{
+  overflow:hidden;
+}
+
+/* =========================================================
+   V10.7 BRAWLER — TWO ALLIES
+   ========================================================= */
+.brawler-ally{
+  position:absolute;
+  z-index:17;
+  bottom:58px;
+  width:64px;
+  height:74px;
+  transform:translateX(-50%);
+  will-change:left,transform;
+}
+.brawler-ally-figure{
+  position:absolute;
+  inset:0;
+  background-position:center;
+  background-size:contain;
+  background-repeat:no-repeat;
+  filter:drop-shadow(0 3px 0 rgba(17,19,26,.20));
+}
+.brawler-ally.face-left .brawler-ally-figure{
+  transform:scaleX(-1);
+}
+.brawler-ally-fist{
+  position:absolute;
+  z-index:3;
+  right:-6px;
+  top:30px;
+  width:20px;
+  height:15px;
+  border:3px solid var(--ink);
+  border-radius:50%;
+  background:#cdeaff;
+  opacity:0;
+}
+.brawler-ally.face-left .brawler-ally-fist{
+  right:auto;
+  left:-6px;
+}
+.brawler-ally.attacking .brawler-ally-fist{
+  opacity:1;
+  animation:brawlerAllyPunch .22s ease;
+}
+@keyframes brawlerAllyPunch{
+  50%{transform:translateX(30px) scale(1.18)}
+}
+.brawler-ally.face-left.attacking .brawler-ally-fist{
+  animation:brawlerAllyPunchLeft .22s ease;
+}
+@keyframes brawlerAllyPunchLeft{
+  50%{transform:translateX(-30px) scale(1.18)}
+}
+.brawler-ally.attacking .brawler-ally-figure{
+  animation:brawlerAllyBody .22s ease;
+}
+@keyframes brawlerAllyBody{
+  50%{translate:0 -5px}
+}
+
+/* =========================================================
+   V10.7 TRAIN — SMALLER + GUARANTEED CORRIDOR
+   ========================================================= */
+.train-v107 .train-obstacle{
+  font-size:11px!important;
+}
+.train-v107 .mob-train{
+  width:52px!important;
+  height:38px!important;
+}
+.train-v107 .train-engine{
+  left:4px!important;
+  top:3px!important;
+  width:42px!important;
+  height:25px!important;
+  border-width:3px!important;
+}
+.train-v107 .train-window{
+  left:5px!important;
+  top:-15px!important;
+  width:24px!important;
+  height:24px!important;
+  border-width:2px!important;
+}
+.train-v107 .train-smoke{
+  right:4px!important;
+  top:-14px!important;
+  width:8px!important;
+  height:16px!important;
+  border-width:2px!important;
+}
+.train-v107 .train-wheel{
+  top:26px!important;
+  width:14px!important;
+  height:14px!important;
+  border-width:3px!important;
+}
+.train-v107 .train-wheel.tw1{left:8px!important}
+.train-v107 .train-wheel.tw2{right:7px!important}
+.train-grass-v107{
+  position:absolute!important;
+  inset:23% 0 0!important;
+}
+
+/* =========================================================
+   V10.7 SUMMONER — CENTRAL MUSOU / NO EYES / NO FRAME
+   ========================================================= */
+.summoner-arena-v107{
+  background:
+    radial-gradient(circle at 50% 42%,rgba(98,91,175,.16),transparent 36%),
+    linear-gradient(#17182f 0 71%,#27293b 71% 100%)!important;
+}
+.summoner-arena-bg{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+}
+.summon-gate{
+  position:absolute;
+  bottom:54px;
+  width:82px;
+  height:150px;
+  border:5px solid #111426;
+  background:#4c5064;
+}
+.summon-gate.left{
+  left:-18px;
+  border-radius:0 22px 0 0;
+}
+.summon-gate.right{
+  right:-18px;
+  border-radius:22px 0 0 0;
+}
+.summon-gate:before{
+  content:"";
+  position:absolute;
+  inset:18px 16px 0;
+  border:4px solid #17192a;
+  border-bottom:none;
+  border-radius:45px 45px 0 0;
+  background:#090b15;
+}
+.summon-ground-v107{
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  height:56px;
+  border-top:5px solid #111426;
+  background:
+    repeating-linear-gradient(90deg,#42465b 0 54px,#4e5269 54px 108px);
+}
+.summon-draw-svg-v107{
+  position:absolute;
+  z-index:32;
+  overflow:visible;
+  touch-action:none;
+}
+.summon-draw-svg-v107.fade-out{
+  opacity:.12;
+  transition:opacity .30s ease;
+}
+.summoner-caster-v107{
+  position:absolute;
+  z-index:25;
+  left:10px;
+  bottom:8px;
+  width:58px;
+  height:68px;
+  background-position:center;
+  background-size:contain;
+  background-repeat:no-repeat;
+}
+.summon-skill-list-v107{
+  position:absolute;
+  z-index:48;
+  left:50%;
+  top:10px;
+  transform:translateX(-50%);
+  display:flex;
+  gap:4px;
+  max-width:92%;
+}
+.summon-skill-list-v107 span{
+  border:2px solid var(--ink);
+  border-radius:999px;
+  background:#fff;
+  padding:3px 6px;
+  white-space:nowrap;
+  font-size:7px;
+  font-weight:1000;
+}
+.summon-monster-v107{
+  position:absolute;
+  z-index:30;
+  transform:translateX(-50%);
+  border:none!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  overflow:visible;
+  pointer-events:none;
+  will-change:transform;
+}
+.summon-monster-v107 svg{
+  width:100%;
+  height:100%;
+  overflow:visible;
+}
+.summon-monster-v107 .summon-monster-stroke{
+  fill:none;
+  stroke:#d8fbff;
+  stroke-width:7;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+  vector-effect:non-scaling-stroke;
+  filter:
+    drop-shadow(0 0 3px #7cefff)
+    drop-shadow(0 0 6px #6c61ff);
+}
+.summon-monster-v107 .summon-part{
+  transform-box:fill-box;
+  transform-origin:center;
+}
+.summon-monster-v107.face-left{
+  transform:translateX(-50%) scaleX(-1);
+}
+
+/* Idle / locomotion */
+.summon-monster-v107:not([class*="summon-atk-"]) [data-part="footL"]{
+  animation:summonV107FootL .28s ease-in-out infinite alternate;
+}
+.summon-monster-v107:not([class*="summon-atk-"]) [data-part="footR"]{
+  animation:summonV107FootR .28s ease-in-out infinite alternate;
+}
+.summon-monster-v107:not([class*="summon-atk-"]) [data-part="body"]{
+  animation:summonV107Body .26s ease-in-out infinite alternate;
+}
+.summon-monster-v107:not([class*="summon-atk-"]) [data-part="detached"]{
+  animation:summonV107Detached .62s ease-in-out infinite alternate;
+}
+@keyframes summonV107FootL{to{transform:translate(7px,-3px) rotate(11deg)}}
+@keyframes summonV107FootR{to{transform:translate(-7px,2px) rotate(-11deg)}}
+@keyframes summonV107Body{to{transform:translateY(-4px) rotate(1.8deg)}}
+@keyframes summonV107Detached{to{transform:translateY(-12px) rotate(12deg)}}
+
+/* Part attacks */
+.summon-atk-hook [data-part="handR"]{animation:summonV107Hook .28s ease}
+.summon-atk-hookL [data-part="handL"]{animation:summonV107HookL .28s ease}
+.summon-atk-claw [data-part="handL"],
+.summon-atk-claw [data-part="handR"]{animation:summonV107Claw .30s ease}
+.summon-atk-head [data-part="head"],
+.summon-atk-bite [data-part="head"]{animation:summonV107Head .30s ease}
+.summon-atk-kick [data-part="footR"]{animation:summonV107Kick .31s ease}
+.summon-atk-sweep [data-part="footL"],
+.summon-atk-sweep [data-part="footR"]{animation:summonV107Sweep .34s ease}
+.summon-atk-tail [data-part="tail"]{animation:summonV107Tail .34s ease}
+.summon-atk-weapon [data-part="weapon"]{animation:summonV107Weapon .32s ease}
+.summon-atk-detached [data-part="detached"]{animation:summonV107DetachedRush .35s ease}
+@keyframes summonV107Hook{50%{transform:translate(42px,-4px) rotate(-40deg)}}
+@keyframes summonV107HookL{50%{transform:translate(38px,4px) rotate(38deg)}}
+@keyframes summonV107Claw{50%{transform:translate(40px,-10px) rotate(-30deg) scale(1.12)}}
+@keyframes summonV107Head{50%{transform:translate(32px,-4px) rotate(10deg)}}
+@keyframes summonV107Kick{50%{transform:translate(42px,-20px) rotate(-48deg)}}
+@keyframes summonV107Sweep{50%{transform:translate(42px,8px) rotate(72deg)}}
+@keyframes summonV107Tail{50%{transform:translate(50px,-3px) rotate(-84deg)}}
+@keyframes summonV107Weapon{50%{transform:translate(52px,-18px) rotate(-84deg) scale(1.14)}}
+@keyframes summonV107DetachedRush{50%{transform:translate(64px,-15px) rotate(180deg) scale(1.20)}}
+
+/* Mobility / cinematic actions */
+.summon-atk-slam{
+  animation:summonV107JumpSlam .38s ease;
+}
+@keyframes summonV107JumpSlam{
+  0%{transform:translateX(-50%)}
+  45%{transform:translateX(-50%) translateY(-85px) rotate(-5deg)}
+  76%{transform:translateX(-50%) translateY(12px) scaleY(.82)}
+  100%{transform:translateX(-50%)}
+}
+.summon-atk-dash{
+  animation:summonV107Dash .30s ease;
+}
+@keyframes summonV107Dash{
+  45%{
+    transform:
+      translateX(-50%)
+      translateX(var(--summon-dash-x))
+      scaleX(1.10)
+  }
+}
+.summon-atk-clone{
+  animation:summonV107CloneBody .34s ease;
+}
+@keyframes summonV107CloneBody{
+  35%{opacity:.45;transform:translateX(-50%) translateX(var(--summon-dash-x))}
+  60%{opacity:1;transform:translateX(-50%) translateX(calc(var(--summon-dash-x) * -.35))}
+}
+.summon-atk-teleport{
+  animation:summonV107Teleport .34s ease;
+}
+@keyframes summonV107Teleport{
+  0%{opacity:1;transform:translateX(-50%)}
+  25%{opacity:0;transform:translateX(-50%) scale(.55)}
+  55%{opacity:0;transform:translateX(-50%) translateX(var(--summon-dash-x)) scale(.55)}
+  80%{opacity:1;transform:translateX(-50%) translateX(var(--summon-dash-x))}
+  100%{opacity:1;transform:translateX(-50%)}
+}
+.summon-atk-spin{
+  animation:summonV107Spin .38s ease;
+}
+@keyframes summonV107Spin{
+  50%{transform:translateX(-50%) rotate(400deg) scale(1.08)}
+}
+
+/* Element moves */
+.summon-atk-fire [data-part="head"]{animation:summonV107FireHead .34s ease}
+.summon-atk-thunder{animation:summonV107ThunderBody .32s ease}
+.summon-atk-ice [data-part="footL"],
+.summon-atk-ice [data-part="footR"]{animation:summonV107IceFoot .34s ease}
+.summon-atk-wind{animation:summonV107WindBody .38s ease}
+.summon-atk-dark [data-part="weapon"]{animation:summonV107DarkWeapon .36s ease}
+@keyframes summonV107FireHead{50%{transform:translate(24px,-3px) scale(1.14)}}
+@keyframes summonV107ThunderBody{50%{transform:translateX(-50%) translateY(-16px) scale(1.08)}}
+@keyframes summonV107IceFoot{55%{transform:translateY(12px) scaleY(.82)}}
+@keyframes summonV107WindBody{50%{transform:translateX(-50%) rotate(360deg)}}
+@keyframes summonV107DarkWeapon{50%{transform:translate(48px,-20px) rotate(-92deg) scale(1.18)}}
+
+.summon-monster-ghost-v107{
+  position:absolute;
+  z-index:28;
+  transform:translateX(-50%);
+  opacity:.38;
+  filter:hue-rotate(55deg);
+  pointer-events:none;
+  animation:summonV107Ghost .34s ease-out forwards;
+}
+.summon-monster-ghost-v107 svg{
+  width:100%;
+  height:100%;
+  overflow:visible;
+}
+.summon-monster-ghost-v107 .summon-monster-stroke{
+  fill:none;
+  stroke:#b4f9ff;
+  stroke-width:7;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+@keyframes summonV107Ghost{
+  to{opacity:0;translate:38px -8px;scale:1.08}
+}
+
+.summon-slime-v107{
+  position:absolute;
+  z-index:18;
+  transform:translateX(-50%) scaleX(var(--summon-face,1));
+  border:4px solid #050509;
+  border-radius:50% 50% 42% 42%;
+  background:#09090f;
+  will-change:left,transform,opacity;
+}
+.summon-slime-v107:before,
+.summon-slime-v107:after{
+  content:"";
+  position:absolute;
+  top:34%;
+  width:6px;
+  height:8px;
+  border-radius:50%;
+  background:#fff;
+}
+.summon-slime-v107:before{left:27%}
+.summon-slime-v107:after{right:27%}
+.summon-slime-v107.tiny{border-width:3px}
+.summon-slime-v107.small{opacity:.94}
+.summon-slime-v107.large{
+  border-width:5px;
+  box-shadow:0 4px 0 rgba(0,0,0,.16);
+}
+.summon-slime-v107.giant{
+  border-width:6px;
+  box-shadow:0 6px 0 rgba(0,0,0,.22);
+}
+.summon-slime-v107.defeated,
+.summon-slime-v107.blast{
+  animation:summonV107SlimeFly .52s ease-out forwards;
+}
+@keyframes summonV107SlimeFly{
+  to{
+    transform:
+      translateX(-50%)
+      translate(var(--summon-fly-x),var(--summon-fly-y))
+      rotate(var(--summon-fly-spin))
+      scale(.26);
+    opacity:0;
+  }
+}
+
+.summon-attack-fx-v107{
+  position:absolute;
+  z-index:44;
+  inset:0;
+  pointer-events:none;
+}
+.summon-attack-fx-v107 b{
+  position:absolute;
+  left:50%;
+  top:24%;
+  transform:translateX(-50%);
+  white-space:nowrap;
+  color:#fff;
+  -webkit-text-stroke:2px #111;
+  font-size:14px;
+  font-weight:1000;
+}
+.summon-attack-fx-v107 i,
+.summon-attack-fx-v107 em{
+  position:absolute;
+  display:block;
+  pointer-events:none;
+}
+
+/* Fire breath */
+.summon-attack-fx-v107.move-fire i{
+  left:50%;
+  top:48%;
+  width:190px;
+  height:70px;
+  border:6px solid #4d1b0f;
+  border-left:none;
+  border-radius:0 80% 80% 0;
+  background:
+    radial-gradient(circle at 0 50%,#fff39c 0 10%,#ff9a42 30%,#e9492f 62%,transparent 70%);
+  animation:summonV107FireFx .34s ease-out forwards;
+}
+.summon-attack-fx-v107.left.move-fire i{
+  transform:scaleX(-1);
+  transform-origin:left center;
+}
+@keyframes summonV107FireFx{
+  from{opacity:1;scale:.25}
+  to{opacity:0;scale:1.12}
+}
+
+/* Lightning */
+.summon-attack-fx-v107.move-thunder i{
+  left:var(--target-x);
+  top:4%;
+  width:12px;
+  height:62%;
+  transform:translateX(-50%) skewX(-12deg);
+  background:#fff36f;
+  box-shadow:0 0 16px #fff36f;
+  clip-path:polygon(35% 0,100% 0,62% 43%,100% 43%,0 100%,30% 54%,0 54%);
+  animation:summonV107ThunderFx .30s ease-out forwards;
+}
+@keyframes summonV107ThunderFx{
+  0%{opacity:0;scale:.7 0}
+  30%{opacity:1;scale:1 1}
+  100%{opacity:0;scale:1 1}
+}
+
+/* Clone / dash speed lines */
+.summon-attack-fx-v107.move-dash i,
+.summon-attack-fx-v107.move-clone i,
+.summon-attack-fx-v107.move-teleport i{
+  left:18%;
+  right:18%;
+  top:52%;
+  height:4px;
+  background:#8df5ff;
+  box-shadow:
+    0 -24px 0 rgba(141,245,255,.50),
+    0 24px 0 rgba(141,245,255,.35);
+  animation:summonV107SpeedFx .26s ease-out forwards;
+}
+@keyframes summonV107SpeedFx{
+  from{opacity:1;scale:.15 1}
+  to{opacity:0;scale:1 1}
+}
+
+/* Impact ring for remaining close / elemental attacks */
+.summon-attack-fx-v107:not(.move-fire):not(.move-thunder):not(.move-dash):not(.move-clone):not(.move-teleport) i{
+  left:50%;
+  top:54%;
+  width:170px;
+  height:90px;
+  transform:translate(-50%,-50%) scale(.2);
+  border:9px solid rgba(128,238,255,.90);
+  border-radius:50%;
+  animation:summonV107Impact .30s ease-out forwards;
+}
+@keyframes summonV107Impact{
+  to{transform:translate(-50%,-50%) scale(1.15);opacity:0}
+}
+
+/* =========================================================
+   V10.7 CROW — FOUR CROWS / HARD BOUNDS / PLATFORM FIX
+   ========================================================= */
+.crow-v107 .crow-world{
+  overflow:visible;
+}
+.crow-boundary{
+  position:absolute;
+  z-index:12;
+  bottom:58px;
+  width:34px;
+  height:190px;
+  border:5px solid var(--ink);
+  background:
+    repeating-linear-gradient(
+      -45deg,
+      #ef5750 0 14px,
+      #fff 14px 28px
+    );
+}
+.crow-boundary.left{left:44px}
+.crow-boundary.right{right:44px}
+.crow-boundary b{
+  position:absolute;
+  left:50%;
+  top:12px;
+  transform:translateX(-50%) rotate(-90deg);
+  font-size:9px;
+  font-weight:1000;
+  color:var(--ink);
+}
+.crow-v107 .crow-enemy{
+  width:66px;
+  height:54px;
+}
+.crow-v107 .crow-platform{
+  z-index:10;
+}
+
+/* =========================================================
+   V10.7 RESPONSIVE
+   ========================================================= */
+@media(max-height:690px){
+  .brawler-ally{
+    width:54px;
+    height:64px;
+  }
+  .summon-monster-v107 .summon-monster-stroke,
+  .summon-monster-ghost-v107 .summon-monster-stroke{
+    stroke-width:6;
+  }
+  .crow-boundary{
+    height:150px;
+  }
+}
