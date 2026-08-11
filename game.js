@@ -73,13 +73,15 @@ const GAMES=[
   {no:33,key:"popularGame",title:"あの人気者のゲーム",sub:"モブくんでモグラ踏み"},
   {no:34,key:"planetEnergy",title:"この星を..！",sub:"3回チャージして高層ビルを貫く"},
   {no:35,key:"painter",title:"モブくんは画家志望",sub:"猫の顔型を1回で綺麗になぞる"},
-  {no:36,key:"bikeJump",title:"バイクでジャンピング",sub:"約5秒走って巨大ジャンプ台へ"},
+  {no:36,key:"bikeJump",title:"バイクでジャンピング",sub:"約3秒走って巨大ジャンプ台へ"},
   {no:37,key:"trampoline",title:"ダイナミックトラポリン",sub:"3回連続で跳ねて3回目が記録"},
   {no:38,key:"mobTrain",title:"モブくん列車出発進行！",sub:"5秒で線路を描いてゴールへ"},
   {no:39,key:"giantMob",title:"巨大モブくん大進撃",sub:"1.000秒を刻みながらビル破壊"},
   {no:40,key:"wizardMob",title:"魔法使いモブくん",sub:"闇の炎を円で囲んで町を守る"},
   {no:41,key:"brawlerMob",title:"モブくんは喧嘩番長",sub:"学校で黒モブくんをぶっ飛ばす"},
-  {no:42,key:"summonerMob",title:"モブくんは召喚師",sub:"5秒で描いたモンスターが10秒オートバトル"}
+  {no:42,key:"summonerMob",title:"モブくんは召喚師",sub:"描いた召喚獣が横スクロールでオートバトル"},
+  {no:43,key:"blackjackMob",title:"ブラックジャックの決戦",sub:"動く13枚を追って21を作る"},
+  {no:44,key:"mobIssen",title:"モブくん一閃",sub:"落下する木の白いセンターを斬る"}
 ];
 
 const MODES={
@@ -114,7 +116,7 @@ function freshState(){
     roundIndex:0,
     records:{
       reaction:{},memory:{},puzzle:{},launch:{},stack:{},breakdance:{},
-      crisis:{},factory:{},catcher:{},tidy:{},ski:{},slot:{},rope:{},pk:{},rhythm:{},cut:{},climb:{},errand:{},dontHitMob:{},mobStop:{},overlap:{},shutter:{},cup:{},darts:{},parachute:{},mobCount:{},brake:{},feint:{},bomb:{},overlapMaster:{},jumpingMob:{},heroMaybe:{},popularGame:{},planetEnergy:{},painter:{},bikeJump:{},trampoline:{},mobTrain:{},giantMob:{},wizardMob:{},brawlerMob:{},summonerMob:{}
+      crisis:{},factory:{},catcher:{},tidy:{},ski:{},slot:{},rope:{},pk:{},rhythm:{},cut:{},climb:{},errand:{},dontHitMob:{},mobStop:{},overlap:{},shutter:{},cup:{},darts:{},parachute:{},mobCount:{},brake:{},feint:{},bomb:{},overlapMaster:{},jumpingMob:{},heroMaybe:{},popularGame:{},planetEnergy:{},painter:{},bikeJump:{},trampoline:{},mobTrain:{},giantMob:{},wizardMob:{},brawlerMob:{},summonerMob:{},blackjackMob:{},mobIssen:{}
     },
     total:{},
     roundPoints:[],
@@ -196,7 +198,7 @@ function renderHome(){
   state=freshState();
   screen.innerHTML=`
     <section class="hero">
-      <div><span class="kicker">SMARTPHONE PARTY GAME</span><h1>42 MINI<br>GAMES</h1><p>42種のミニゲーム。各モードでNORMALかCUSTOMを選んで遊べます。</p></div>
+      <div><span class="kicker">SMARTPHONE PARTY GAME</span><h1>44 MINI<br>GAMES</h1><p>44種のミニゲーム。各モードでNORMALかCUSTOMを選んで遊べます。</p></div>
       <div class="hero-mark">MOB</div>
     </section>
     <section class="panel">
@@ -319,7 +321,7 @@ function renderPlayStyleSelect(){
       <button id="normalStyle" class="style-select-card normal" type="button">
         <span>NORMAL</span>
         <b>順番に全種目</b>
-        <small>GAME 1 → 42 を順番にプレイ</small>
+        <small>GAME 1 → 44 を順番にプレイ</small>
       </button>
       <button id="customStyle" class="style-select-card custom" type="button">
         <span>CUSTOM</span>
@@ -329,7 +331,7 @@ function renderPlayStyleSelect(){
     </div>
 
     <section class="panel flat">
-      <h3>42 MINI GAMES</h3>
+      <h3>44 MINI GAMES</h3>
       <div class="compact-game-grid">
         ${GAMES.map(g=>`<div><b>${g.no}</b><span>${g.title}</span></div>`).join("")}
       </div>
@@ -541,7 +543,9 @@ function scoreRuleForGame(index){
     "30棟破壊=100点 / 0棟=0点",
     "闇の炎15個消去=100点 / 0個=0点",
     "黒モブくん30体撃破=100点 / 0体=0点",
-    "黒スライム40体撃破=100点 / 0体=0点"
+    "黒スライム40体撃破=100点 / 0体=0点",
+    "21=100点 / 22→1、23→2の循環ルール",
+    "白いセンター完全一致=100点"
   ][index];
 }
 
@@ -622,7 +626,7 @@ function showGameIntro(index){
   }else if(index===34){
     rules=`<li>3・2・1後、猫の顔型を指で1周なぞります。</li><li>1回勝負。線への近さ・輪郭をどれだけ覆えたか・始点と終点のつながりを判定。</li><li>青い線が自分の描いた軌跡。</li><li>猫の輪郭との一致率がそのまま記録になります。</li>`;
   }else if(index===35){
-    rules=`<li>3・2・1後、まず約5秒間高速走行。</li><li>その後、大きなジャンプ台が前方から見えてきます。</li><li>ジャンプ台中央の太いCENTERラインにバイクが来た瞬間をタップ。</li><li>中央とのタイミング誤差が小さいほど遠くへ飛びます。</li><li>ジャンプ後はカメラが追跡。最高2000m。</li>`;
+    rules=`<li>3・2・1後、まず約3秒間高速走行。</li><li>その後、大きなジャンプ台が前方から見えてきます。</li><li>ジャンプ台中央の太いCENTERラインにバイクが来た瞬間をタップ。</li><li>中央とのタイミング誤差が小さいほど遠くへ飛びます。</li><li>ジャンプ後はカメラが追跡。最高2000m。</li>`;
   }else if(index===36){
     rules=`<li>3・2・1が終わってから、モブくんが高いところからトランポリンへ落下。</li><li>着地したら止まらず3回連続で跳ね続けます。</li><li>トランポリンがしっかり深く沈んだ<strong>一番下</strong>の瞬間にタップ。</li><li>1回目最大500m、2回目最大1000m、3回目最大2000m。</li><li>前の回で失った%は次の回へ累積。正式記録は3回目の高さです。</li>`;
   }else if(index===37){
@@ -632,9 +636,13 @@ function showGameIntro(index){
   }else if(index===39){
     rules=`<li>田舎町へ闇の炎が高速で降ってきます。小さなモブくん達は逃げ回っています。</li><li>闇の炎の周りを指で円形に囲むと、魔法のステッキが反応して炎を消します。</li><li>大きな闇の炎も出現します。大きいほど囲む円も大きく必要。</li><li>炎を消せなくても、モブくんに当たらなければ継続。接触した瞬間に終了。</li><li>10秒勝負。後半ほど落下速度・数・同時出現数が上がります。</li>`;
   }else if(index===40){
-    rules=`<li>10秒間の横スクロール爽快アクション。</li><li>← →で移動。左へ行く時はモブくんが左向きになります。</li><li>サイズの違う黒モブくんが大量に左右から迫ってきます。たまに巨大な黒モブくんも出現。</li><li>PUNCHは長めの判定で敵を1発でぶっ飛ばします。</li><li>10体倒すごとに必殺パンチを1回使用可能。必殺は広範囲をまとめて吹き飛ばします。</li>`;
+    rules=`<li>10秒間の横スクロール爽快アクション。</li><li>← →で移動。左へ行く時はモブくんが左向きになります。</li><li>サイズの違う黒モブくんが大量に左右から迫ってきます。たまに巨大な黒モブくんも出現。</li><li>通常PUNCHでも前方の複数体をまとめてぶっ飛ばします。</li><li>10体KOごとに必殺パンチを1回だけ使用可能。ストックは1回まで。</li>`;
+  }else if(index===41){
+    rules=`<li>最初の5秒で、自分だけのモンスターを自由に描きます。</li><li>大きさだけでは強さは決まりません。縦横比・複雑さ・線のまとまり・曲がり方を解析。</li><li>約20種類の攻撃候補から、描いた形との相性を使ってランダムに3種類を習得。</li><li>召喚後は番長ゲームのような横スクロールステージを10秒間自動進撃。</li><li>黒スライムが大量に迫り、召喚獣が3つの技を自動で使い分けます。倒した数が記録。</li>`;
+  }else if(index===42){
+    rules=`<li>1〜13のモブくんカード13枚を最初に表向きで確認。</li><li>3・2・1後、5秒間カードがランダムに位置をシャッフル。</li><li>最後の1秒はカードが暗くなって「？」だけになりますが、位置移動は続きます。</li><li>終了後、まず2枚選択。合計が21でなければ「もう1枚」か「FINISH」を選べます。</li><li>21を超えた場合は循環し、22→1、23→2。21で100点。</li>`;
   }else{
-    rules=`<li>最初の5秒で、自分だけのモンスターを自由に描きます。</li><li>描いた形・縦横比・線の複雑さ・まとまり方から強さと攻撃タイプが決定。</li><li>大きく描くだけでは最強になりません。形によってWAVE / PIERCE / BURST / RAPIDへ変化。</li><li>召喚後は10秒間オートバトル。黒スライムモブが大量に押し寄せます。</li><li>自分で描いたモンスターが自動攻撃し、倒した黒スライム数が記録です。</li>`;
+    rules=`<li>上から巨大な木が落ちてきます。</li><li>木の中央には白いCENTER帯があります。</li><li>画面中央の斬撃ラインを白い帯が通過する瞬間にタップ。</li><li>中心とのズレが小さいほど高得点。</li><li>斬った瞬間は木が真っ二つになり、強い一閃演出が入ります。</li>`;
   }
   screen.innerHTML=`
     <div class="game-head">
@@ -716,7 +724,9 @@ function humanReady(gameIndex,humanIndex){
     else if(gameIndex===38)startGiantMob(p,humanIndex,runId);
     else if(gameIndex===39)startWizardMob(p,humanIndex,runId);
     else if(gameIndex===40)startBrawlerMob(p,humanIndex,runId);
-    else startSummonerMob(p,humanIndex,runId);
+    else if(gameIndex===41)startSummonerMob(p,humanIndex,runId);
+    else if(gameIndex===42)startBlackjackMob(p,humanIndex,runId);
+    else startMobIssen(p,humanIndex,runId);
   },{once:true});
 }
 
@@ -6346,8 +6356,10 @@ async function startMobTrain(p,humanIndex,runId){
   let trainRAF=null;
   let drawRAF=null;
   let finished=false;
+  let cameraX=0;
+  let lastPointerScreenX=0;
 
-  screen.innerHTML=`<div class="train-shell">
+  screen.innerHTML=`<div class="train-shell train-v105">
     <div class="game-head">
       <div><span class="kicker">${esc(p.name)}</span><h2>モブくん列車出発進行！</h2></div>
       <div class="game-badge">${playBadge(humanIndex)}</div>
@@ -6359,38 +6371,42 @@ async function startMobTrain(p,humanIndex,runId){
     </div>
 
     <div id="trainStage" class="train-stage">
-      <div class="train-grass"></div>
+      <div id="trainWorld" class="train-world-v105">
+        <div class="train-grass"></div>
 
-      <svg id="trainSvg" class="train-svg">
-        <polyline id="trainLine" points="" class="train-line"></polyline>
-      </svg>
+        <svg id="trainSvg" class="train-svg">
+          <polyline id="trainLine" points="" class="train-line"></polyline>
+        </svg>
 
-      <div id="trainObstacles"></div>
+        <div id="trainObstacles"></div>
 
-      <div id="trainStartRail" class="train-start-rail">
-        <i></i><i></i><i></i><i></i>
-      </div>
-
-      <div id="trainGoal" class="train-goal">
-        <i class="train-goal-pole"></i>
-        <b>GOAL</b>
-      </div>
-
-      <div id="mobTrain" class="mob-train">
-        <div class="train-engine">
-          <span class="train-window" style="background-image:url('icon/01.png')"></span>
-          <i class="train-smoke"></i>
+        <div id="trainStartRail" class="train-start-rail">
+          <i></i><i></i><i></i><i></i>
         </div>
-        <i class="train-wheel tw1"></i>
-        <i class="train-wheel tw2"></i>
+
+        <div id="trainGoal" class="train-goal">
+          <i class="train-goal-pole"></i>
+          <b>GOAL</b>
+        </div>
+
+        <div id="mobTrain" class="mob-train">
+          <div class="train-engine">
+            <span class="train-window" style="background-image:url('icon/01.png')"></span>
+            <i class="train-smoke"></i>
+          </div>
+          <i class="train-wheel tw1"></i>
+          <i class="train-wheel tw2"></i>
+        </div>
       </div>
 
       <div id="trainMessage" class="train-message">列車からGOALまで線を描く</div>
       <div id="trainGoPop" class="train-go-pop">GO!</div>
+      <div class="train-map-hint">端まで描くとMAPがスクロール</div>
     </div>
   </div>`;
 
   const stage=document.getElementById('trainStage');
+  const world=document.getElementById('trainWorld');
   const svg=document.getElementById('trainSvg');
   const line=document.getElementById('trainLine');
   const obstacleLayer=document.getElementById('trainObstacles');
@@ -6402,13 +6418,18 @@ async function startMobTrain(p,humanIndex,runId){
   const message=document.getElementById('trainMessage');
   const goPop=document.getElementById('trainGoPop');
 
-  const w=stage.clientWidth;
+  const vw=stage.clientWidth;
   const h=stage.clientHeight;
+  const worldW=Math.round(vw*2.45);
 
-  svg.setAttribute('viewBox',`0 0 ${w} ${h}`);
+  world.style.width=`${worldW}px`;
+  svg.setAttribute('viewBox',`0 0 ${worldW} ${h}`);
 
-  const startPt={x:42,y:h*.72};
-  const goalPt={x:w-42,y:h*(Math.random()<.5?.30:.42)};
+  const startPt={x:48,y:h*.72};
+  const goalPt={
+    x:worldW-62,
+    y:h*rand(.29,.67)
+  };
 
   points=[startPt];
 
@@ -6421,31 +6442,29 @@ async function startMobTrain(p,humanIndex,runId){
   goalEl.style.left=`${goalPt.x}px`;
   goalEl.style.top=`${goalPt.y}px`;
 
-  // Randomized every play: many obstacles, but START / GOAL stay safe.
-  const goalSafeRadius=Math.max(112,w*.22);
-  const startSafeRadius=88;
+  const goalSafeRadius=Math.max(122,vw*.30);
+  const startSafeRadius=96;
   const obsData=[];
   const obstacleTypes=['rock','tree','water'];
-  const desired=randi(12,16);
+  const desired=randi(20,26);
 
   let attempts=0;
-  while(obsData.length<desired&&attempts<180){
+
+  while(obsData.length<desired&&attempts<420){
     attempts++;
 
     const type=obstacleTypes[randi(0,obstacleTypes.length-1)];
-    const r=type==='water'?rand(31,42):rand(24,34);
+    const r=type==='water'?rand(30,42):rand(23,34);
     const o={
-      x:rand(w*.16,w*.80),
-      y:rand(h*.24,h*.79),
+      x:rand(vw*.26,worldW-vw*.30),
+      y:rand(h*.23,h*.80),
       r,
       type
     };
 
     if(Math.hypot(o.x-goalPt.x,o.y-goalPt.y)<=goalSafeRadius)continue;
     if(Math.hypot(o.x-startPt.x,o.y-startPt.y)<=startSafeRadius)continue;
-
-    // Keep individual objects separated enough that a route always exists.
-    if(obsData.some(q=>Math.hypot(o.x-q.x,o.y-q.y)<o.r+q.r+24))continue;
+    if(obsData.some(q=>Math.hypot(o.x-q.x,o.y-q.y)<o.r+q.r+20))continue;
 
     obsData.push(o);
   }
@@ -6457,6 +6476,11 @@ async function startMobTrain(p,humanIndex,runId){
       ${o.type==='rock'?'◆':o.type==='tree'?'♣':'≈'}
     </div>`).join('');
 
+  function setCamera(x){
+    cameraX=clamp(x,0,worldW-vw);
+    world.style.transform=`translateX(${-cameraX}px)`;
+  }
+
   function renderLine(){
     line.setAttribute(
       'points',
@@ -6467,10 +6491,28 @@ async function startMobTrain(p,humanIndex,runId){
 
   function localPoint(e){
     const rect=stage.getBoundingClientRect();
+    const sx=clamp(e.clientX-rect.left,0,vw);
+    const sy=clamp(e.clientY-rect.top,5,h-5);
+    lastPointerScreenX=sx;
+
     return {
-      x:clamp(e.clientX-rect.left,8,w-8),
-      y:clamp(e.clientY-rect.top,8,h-8)
+      x:clamp(sx+cameraX,5,worldW-5),
+      y:sy
     };
+  }
+
+  function autoPanWhileDrawing(){
+    if(!drawingOpen||!drawing)return;
+
+    let delta=0;
+
+    if(lastPointerScreenX>vw*.76){
+      delta=8+(lastPointerScreenX-vw*.76)/(vw*.24)*13;
+    }else if(lastPointerScreenX<vw*.17){
+      delta=-(7+(vw*.17-lastPointerScreenX)/(vw*.17)*10);
+    }
+
+    if(delta!==0)setCamera(cameraX+delta);
   }
 
   stage.addEventListener('pointerdown',e=>{
@@ -6480,7 +6522,7 @@ async function startMobTrain(p,humanIndex,runId){
     const pt=localPoint(e);
     const last=points[points.length-1];
 
-    if(Math.hypot(pt.x-last.x,pt.y-last.y)>48){
+    if(Math.hypot(pt.x-last.x,pt.y-last.y)>66){
       message.textContent='線の続きから描いて！';
       beep(190,45,.01);
       return;
@@ -6503,11 +6545,14 @@ async function startMobTrain(p,humanIndex,runId){
       points.push(pt);
       renderLine();
     }
+
+    autoPanWhileDrawing();
   },{passive:false});
 
   stage.addEventListener('pointerup',e=>{
     if(e.pointerId===pointerId)drawing=false;
   },{passive:false});
+
   stage.addEventListener('pointercancel',e=>{
     if(e.pointerId===pointerId)drawing=false;
   },{passive:false});
@@ -6525,6 +6570,8 @@ async function startMobTrain(p,humanIndex,runId){
 
       const rem=5000-(now-drawStart);
       drawTimeEl.textContent=(Math.max(0,rem)/1000).toFixed(1);
+
+      if(drawing)autoPanWhileDrawing();
 
       if(rem<=0){
         drawingOpen=false;
@@ -6544,7 +6591,7 @@ async function startMobTrain(p,humanIndex,runId){
   drawTimeEl.textContent='0.0';
 
   const last=points[points.length-1];
-  const reachesGoal=Math.hypot(last.x-goalPt.x,last.y-goalPt.y)<=52;
+  const reachesGoal=Math.hypot(last.x-goalPt.x,last.y-goalPt.y)<=68;
 
   if(reachesGoal){
     points.push(goalPt);
@@ -6564,11 +6611,13 @@ async function startMobTrain(p,humanIndex,runId){
     return;
   }
 
+  setCamera(0);
   goPop.classList.add('show');
   message.textContent='出発進行！';
   beep(880,100,.03);
 
   await wait(330);
+
   if(!isGameRunValid(runId))return;
 
   const cumulative=[0];
@@ -6582,7 +6631,7 @@ async function startMobTrain(p,humanIndex,runId){
     cumulative.push(totalLen);
   }
 
-  const trainSpeed=126;
+  const trainSpeed=255;
   const goStart=performance.now();
   let collided=false;
 
@@ -6606,6 +6655,7 @@ async function startMobTrain(p,humanIndex,runId){
 
     const a=points[points.length-2];
     const b=points[points.length-1];
+
     return {
       x:b.x,
       y:b.y,
@@ -6624,6 +6674,7 @@ async function startMobTrain(p,humanIndex,runId){
         if(Math.hypot(dx,dy)<o.r+15)return o;
       }
     }
+
     return null;
   }
 
@@ -6646,6 +6697,7 @@ async function startMobTrain(p,humanIndex,runId){
       if(hit){
         collided=true;
         train.classList.add('crashed');
+
         message.textContent=
           hit.type==='water'
             ? '水に落ちた！'
@@ -6657,6 +6709,8 @@ async function startMobTrain(p,humanIndex,runId){
         resolve();
         return;
       }
+
+      setCamera(pt.x-vw*.38);
 
       if(d>=totalLen){
         resolve();
@@ -6839,10 +6893,10 @@ async function startGiantMob(p,humanIndex,runId){
     const elapsed=now-cycleStart;
     const errorMs=Math.abs(elapsed-1000);
 
-    // V10.4 difficulty:
-    // before 16th building = old penalty ×2
-    // after 15 buildings       = old penalty ×3
-    const penaltyMultiplier=destroyed>15?3:2;
+    // V10.5 difficulty:
+    // 0〜14 destroyed: base penalty ×4
+    // once 15 buildings have been destroyed: ×8
+    const penaltyMultiplier=destroyed>=15?8:4;
     const loss=clamp((errorMs/10)*penaltyMultiplier,0,100);
 
     energy=clamp(energy-loss,0,100);
@@ -7106,7 +7160,11 @@ async function startWizardMob(p,humanIndex,runId){
       x,
       y:-size*.75,
       size,
-      vy:(big?rand(132,178):rand(160,215))+progress*185,
+      // Giant flames are deliberately slower and easier to read,
+      // while normal flames stay fast.
+      vy:big
+        ? rand(92,126)+progress*92
+        : rand(178,235)+progress*195,
       drift:rand(-28,28),
       dead:false,
       big
@@ -7424,7 +7482,7 @@ async function startBrawlerMob(p,humanIndex,runId){
     if(kills>=nextSpecialAt){
       const earned=Math.floor((kills-(nextSpecialAt-10))/10);
       if(earned>0){
-        specialCharges+=earned;
+        specialCharges=Math.min(1,specialCharges+earned);
         nextSpecialAt+=earned*10;
       }
     }
@@ -7433,7 +7491,7 @@ async function startBrawlerMob(p,humanIndex,runId){
     specialEl.classList.toggle('ready',specialCharges>0);
 
     if(specialCharges>0){
-      specialText.textContent=`READY ×${specialCharges}`;
+      specialText.textContent='READY';
     }else{
       specialText.textContent=`${kills%10} / 10`;
     }
@@ -7497,10 +7555,15 @@ async function startBrawlerMob(p,humanIndex,runId){
     kills++;
     killsEl.textContent=kills;
 
-    const fly=dir*(strong?rand(250,390):rand(155,250));
+    const fly=dir*(strong?rand(270,430):rand(170,285));
+    const arcRoll=Math.random();
+    const flyY=strong
+      ? (arcRoll<.50?rand(-210,-145):rand(-150,-85))
+      : (arcRoll<.33?rand(-185,-125):arcRoll<.70?rand(-125,-70):rand(-80,-35));
+
     enemy.el.style.setProperty('--fly-x',`${fly}px`);
-    enemy.el.style.setProperty('--fly-y',`${strong?rand(-150,-95):rand(-110,-65)}px`);
-    enemy.el.style.setProperty('--fly-spin',`${dir*(strong?1080:720)}deg`);
+    enemy.el.style.setProperty('--fly-y',`${flyY}px`);
+    enemy.el.style.setProperty('--fly-spin',`${dir*(strong?rand(900,1350):rand(520,920))}deg`);
     enemy.el.classList.add(strong?'super-hit':'hit');
 
     setTimeout(()=>enemy.el.remove(),strong?650:520);
@@ -7526,8 +7589,19 @@ async function startBrawlerMob(p,humanIndex,runId){
       .sort((a,b)=>a.dx-b.dx);
 
     if(candidates.length){
-      defeat(candidates[0].e,facing,false);
-      popImpact('BAM!',stage.clientWidth*.54);
+      const victims=candidates.slice(0,4);
+      victims.forEach((o,i)=>{
+        setTimeout(()=>{
+          if(!o.e.dead)defeat(o.e,facing,false);
+        },i*22);
+      });
+
+      popImpact(
+        victims.length>=4?'BAM ×4!':
+        victims.length>=2?`BAM ×${victims.length}!`:
+        'BAM!',
+        stage.clientWidth*.54
+      );
       beep(230,45,.015);
     }else{
       beep(145,28,.006);
@@ -7655,8 +7729,32 @@ async function startBrawlerMob(p,humanIndex,runId){
 
 
 // GAME 42 -------------------------------------------------
+const SUMMON_ATTACKS=[
+  {id:'moon_wave',name:'ムーンウェーブ',family:'WAVE',reach:320,hits:5,cd:650,fx:'moon'},
+  {id:'twin_wave',name:'ツインウェーブ',family:'WAVE',reach:350,hits:6,cd:760,fx:'twin'},
+  {id:'wind_cutter',name:'ウィンドカッター',family:'WAVE',reach:290,hits:4,cd:500,fx:'wind'},
+  {id:'wide_tail',name:'ワイドテイル',family:'WAVE',reach:260,hits:7,cd:820,fx:'tail'},
+  {id:'light_lance',name:'ライトランス',family:'PIERCE',reach:430,hits:6,cd:720,fx:'lance'},
+  {id:'drill',name:'スパイラルドリル',family:'PIERCE',reach:390,hits:7,cd:850,fx:'drill'},
+  {id:'laser',name:'モブレーザー',family:'PIERCE',reach:500,hits:5,cd:920,fx:'laser'},
+  {id:'needle',name:'ニードルレイン',family:'PIERCE',reach:330,hits:8,cd:780,fx:'needle'},
+  {id:'nova',name:'ノヴァバースト',family:'BURST',reach:220,hits:8,cd:900,fx:'nova'},
+  {id:'quake',name:'グランドクエイク',family:'BURST',reach:245,hits:9,cd:1050,fx:'quake'},
+  {id:'meteor',name:'ミニメテオ',family:'BURST',reach:275,hits:7,cd:980,fx:'meteor'},
+  {id:'shock',name:'ショックリング',family:'BURST',reach:205,hits:10,cd:1100,fx:'shock'},
+  {id:'rapid_orb',name:'ラピッドオーブ',family:'RAPID',reach:350,hits:4,cd:360,fx:'orb'},
+  {id:'triple_shot',name:'トリプルショット',family:'RAPID',reach:380,hits:5,cd:430,fx:'triple'},
+  {id:'homing',name:'ホーミングスター',family:'RAPID',reach:410,hits:4,cd:520,fx:'homing'},
+  {id:'chain',name:'チェインボルト',family:'RAPID',reach:320,hits:6,cd:560,fx:'chain'},
+  {id:'boomerang',name:'ブーメランエッジ',family:'WAVE',reach:360,hits:6,cd:700,fx:'boomerang'},
+  {id:'dash',name:'ビーストダッシュ',family:'PIERCE',reach:300,hits:8,cd:880,fx:'dash'},
+  {id:'cyclone',name:'サイクロン',family:'BURST',reach:250,hits:9,cd:960,fx:'cyclone'},
+  {id:'ice_flame',name:'氷炎ブレス',family:'RAPID',reach:300,hits:7,cd:620,fx:'breath'}
+];
+
 function analyzeSummonedMonster(strokes,stageW,stageH){
   const flat=strokes.flat();
+
   if(flat.length<8){
     return {
       type:'RAPID',
@@ -7666,11 +7764,16 @@ function analyzeSummonedMonster(strokes,stageW,stageH){
       score:38,
       width:70,
       height:70,
+      complexity:.2,
+      turnDensity:.2,
+      aspect:1,
+      sizeNorm:.25,
       label:'ちいさな落書き獣'
     };
   }
 
   let minX=Infinity,minY=Infinity,maxX=-Infinity,maxY=-Infinity;
+
   for(const pt of flat){
     minX=Math.min(minX,pt.x);
     minY=Math.min(minY,pt.y);
@@ -7724,7 +7827,8 @@ function analyzeSummonedMonster(strokes,stageW,stageH){
     ? clamp(totalTurn/segmentCount/.85,0,1)
     : 0;
 
-  // Medium-size drawings are efficient; huge drawings do NOT automatically win.
+  // Medium-size drawings are efficient.
+  // Oversized drawings lose balance, so size alone never dominates.
   const sizeBalance=clamp(
     1-Math.abs(sizeNorm-.56)/.56,
     0,1
@@ -7733,14 +7837,13 @@ function analyzeSummonedMonster(strokes,stageW,stageH){
   const strokeBonus=clamp(strokes.length/5,0,1);
 
   let type='RAPID';
+
   if(aspect>=1.48){
     type='WAVE';
   }else if(aspect<=.68){
     type='PIERCE';
   }else if(complexity<.36&&turnDensity<.52){
     type='BURST';
-  }else{
-    type='RAPID';
   }
 
   let power=clamp(
@@ -7792,16 +7895,64 @@ function analyzeSummonedMonster(strokes,stageW,stageH){
   };
 
   return {
-    type,
-    power,
-    speed,
-    range,
-    score,
-    width:bw,
-    height:bh,
+    type,power,speed,range,score,
+    width:bw,height:bh,
+    complexity,turnDensity,aspect,sizeNorm,
     minX,minY,maxX,maxY,
     label:labels[type]
   };
+}
+
+function summonAttackAffinity(attack,a){
+  let score=Math.random()*.22;
+
+  if(attack.family===a.type)score+=.62;
+
+  if(attack.family==='WAVE'){
+    score+=clamp((a.aspect-1)/1.3,0,.30);
+    score+=a.range*.20;
+  }else if(attack.family==='PIERCE'){
+    score+=clamp((1-a.aspect)/.7,0,.30);
+    score+=a.power*.22;
+  }else if(attack.family==='BURST'){
+    score+=(1-a.complexity)*.18;
+    score+=(1-Math.abs(a.aspect-1))*0.16;
+    score+=a.power*.12;
+  }else{
+    score+=a.complexity*.20;
+    score+=a.turnDensity*.16;
+    score+=a.speed*.18;
+  }
+
+  // Individual attack quirks so the same family doesn't always return the same trio.
+  if(attack.id==='laser')score+=a.range*.14;
+  if(attack.id==='drill')score+=a.power*.13;
+  if(attack.id==='cyclone')score+=a.turnDensity*.14;
+  if(attack.id==='meteor')score+=(1-a.speed)*.10;
+  if(attack.id==='homing')score+=a.complexity*.10;
+  if(attack.id==='dash')score+=a.speed*.12;
+  if(attack.id==='ice_flame')score+=a.sizeNorm*.08;
+  if(attack.id==='boomerang')score+=Math.abs(a.aspect-1)*.08;
+
+  return score;
+}
+
+function chooseSummonAttacks(analysis){
+  const ranked=SUMMON_ATTACKS
+    .map(atk=>({atk,score:summonAttackAffinity(atk,analysis)}))
+    .sort((a,b)=>b.score-a.score);
+
+  // Randomly pick 3 from the drawing-compatible top group.
+  const pool=ranked.slice(0,8).map(x=>x.atk);
+  const picked=[];
+
+  while(picked.length<3&&pool.length){
+    const idx=randi(0,pool.length-1);
+    const atk=pool.splice(idx,1)[0];
+    if(!picked.some(p=>p.id===atk.id))picked.push(atk);
+  }
+
+  return picked;
 }
 
 async function startSummonerMob(p,humanIndex,runId){
@@ -7819,28 +7970,41 @@ async function startSummonerMob(p,humanIndex,runId){
   let lastAttack=0;
   let slimeId=0;
   let startBattle=0;
+  let monsterX=560;
 
   const strokes=[];
   const slimes=[];
+  const worldW=4300;
 
-  screen.innerHTML=`<div class="summoner-shell">
+  screen.innerHTML=`<div class="summoner-shell summoner-v105">
     <div class="game-head">
       <div><span class="kicker">${esc(p.name)}</span><h2>モブくんは召喚師</h2></div>
       <div class="game-badge">${playBadge(humanIndex)}</div>
     </div>
 
     <div class="summoner-hud">
-      <div><span>DRAW</span><b id="summonDrawTime">5.0</b></div>
-      <div><span>TYPE</span><b id="summonType">???</b></div>
+      <div><span>TIME</span><b id="summonDrawTime">5.0</b></div>
+      <div><span>SKILLS</span><b id="summonType">???</b></div>
       <div><span>KO</span><b id="summonKills">0</b></div>
     </div>
 
     <div id="summonerStage" class="summoner-stage">
-      <div class="summoner-bg">
-        <div class="summoner-moon"></div>
-        <div class="summoner-stone s1"></div>
-        <div class="summoner-stone s2"></div>
-        <div class="summoner-stone s3"></div>
+      <div id="summonWorld" class="summon-world-v105" style="width:${worldW}px">
+        <div class="summoner-side-bg">
+          ${Array.from({length:13},(_,i)=>`
+            <div class="summon-ruin" style="left:${150+i*320}px"></div>
+            <div class="summon-torch" style="left:${275+i*320}px"></div>
+          `).join('')}
+        </div>
+
+        <div class="summon-ground-v105"></div>
+        <div id="summonSlimes"></div>
+
+        <div id="summonMonster" class="summon-monster-v105 hidden">
+          <svg id="summonMonsterSvg" viewBox="0 0 300 300"></svg>
+          <i class="summon-eye e1"></i>
+          <i class="summon-eye e2"></i>
+        </div>
       </div>
 
       <div id="summonCircle" class="summon-circle">
@@ -7849,27 +8013,22 @@ async function startSummonerMob(p,humanIndex,runId){
 
       <svg id="summonDrawSvg" class="summon-draw-svg"></svg>
 
-      <div id="summonMonster" class="summon-monster hidden">
-        <svg id="summonMonsterSvg" viewBox="0 0 300 300"></svg>
-        <i class="summon-eye e1"></i>
-        <i class="summon-eye e2"></i>
-      </div>
-
-      <div id="summonSlimes"></div>
-      <div id="summonAttackFx" class="summon-attack-fx"></div>
-
+      <div id="summonAttackFx" class="summon-attack-fx-v105"></div>
       <div class="summoner-caster" style="background-image:url('icon/01.png')"></div>
+      <div id="summonSkillList" class="summon-skill-list hidden"></div>
       <div id="summonMessage" class="summon-message">5秒でモンスターを自由に描け！</div>
     </div>
   </div>`;
 
   const stage=document.getElementById('summonerStage');
+  const world=document.getElementById('summonWorld');
   const drawSvg=document.getElementById('summonDrawSvg');
   const circle=document.getElementById('summonCircle');
   const monster=document.getElementById('summonMonster');
   const monsterSvg=document.getElementById('summonMonsterSvg');
   const slimeLayer=document.getElementById('summonSlimes');
   const attackFx=document.getElementById('summonAttackFx');
+  const skillList=document.getElementById('summonSkillList');
   const drawTimeEl=document.getElementById('summonDrawTime');
   const typeEl=document.getElementById('summonType');
   const killsEl=document.getElementById('summonKills');
@@ -7877,10 +8036,12 @@ async function startSummonerMob(p,humanIndex,runId){
 
   const sw=stage.clientWidth;
   const sh=stage.clientHeight;
+
   drawSvg.setAttribute('viewBox',`0 0 ${sw} ${sh}`);
 
   function localPoint(e){
     const r=stage.getBoundingClientRect();
+
     return {
       x:clamp(e.clientX-r.left,4,sw-4),
       y:clamp(e.clientY-r.top,4,sh-4)
@@ -7888,7 +8049,11 @@ async function startSummonerMob(p,humanIndex,runId){
   }
 
   function createStrokeElement(){
-    const el=document.createElementNS('http://www.w3.org/2000/svg','polyline');
+    const el=document.createElementNS(
+      'http://www.w3.org/2000/svg',
+      'polyline'
+    );
+
     el.setAttribute('class','summon-user-stroke');
     drawSvg.appendChild(el);
     return el;
@@ -7900,10 +8065,12 @@ async function startSummonerMob(p,humanIndex,runId){
 
     drawing=true;
     pointerId=e.pointerId;
+
     currentStroke={
       points:[localPoint(e)],
       el:createStrokeElement()
     };
+
     strokes.push(currentStroke.points);
 
     try{stage.setPointerCapture(pointerId)}catch(_){}
@@ -7918,6 +8085,7 @@ async function startSummonerMob(p,humanIndex,runId){
 
     if(Math.hypot(pt.x-prev.x,pt.y-prev.y)>=2.4){
       currentStroke.points.push(pt);
+
       currentStroke.el.setAttribute(
         'points',
         currentStroke.points
@@ -7927,15 +8095,15 @@ async function startSummonerMob(p,humanIndex,runId){
     }
   },{passive:false});
 
-  const endDrawStroke=e=>{
+  const endStroke=e=>{
     if(!drawing||e.pointerId!==pointerId)return;
     e.preventDefault();
     drawing=false;
     currentStroke=null;
   };
 
-  stage.addEventListener('pointerup',endDrawStroke,{passive:false});
-  stage.addEventListener('pointercancel',endDrawStroke,{passive:false});
+  stage.addEventListener('pointerup',endStroke,{passive:false});
+  stage.addEventListener('pointercancel',endStroke,{passive:false});
 
   if(!(await countdown('SUMMON DRAW',runId)))return;
 
@@ -7966,14 +8134,17 @@ async function startSummonerMob(p,humanIndex,runId){
 
   if(!isGameRunValid(runId))return;
 
-  drawTimeEl.textContent='0.0';
-
   const analysis=analyzeSummonedMonster(strokes,sw,sh);
+  const learned=chooseSummonAttacks(analysis);
+
   typeEl.textContent=analysis.type;
+  skillList.innerHTML=learned.map((a,i)=>`
+    <span>${i+1}. ${a.name}</span>
+  `).join('');
+  skillList.classList.remove('hidden');
 
   message.textContent=`召喚！ ${analysis.label}`;
 
-  // Rebuild user's drawing as the summoned monster itself.
   const flat=strokes.flat();
 
   if(flat.length>=2){
@@ -8003,35 +8174,36 @@ async function startSummonerMob(p,humanIndex,runId){
     `).join('');
   }else{
     monsterSvg.setAttribute('viewBox','0 0 100 100');
-    monsterSvg.innerHTML='<circle class="summon-monster-stroke" cx="50" cy="50" r="28"></circle>';
+    monsterSvg.innerHTML=
+      '<circle class="summon-monster-stroke" cx="50" cy="50" r="28"></circle>';
   }
 
-  drawSvg.classList.add('fade-out');
   circle.classList.add('active');
-  monster.classList.remove('hidden');
-  monster.classList.add(`type-${analysis.type.toLowerCase()}`);
+  drawSvg.classList.add('fade-out');
 
-  await wait(650);
+  await wait(620);
 
   if(!isGameRunValid(runId))return;
 
   circle.classList.remove('active');
-  stage.classList.add('battle');
   drawSvg.classList.add('hidden');
-  message.textContent='AUTO BATTLE 10 SEC!';
+  stage.classList.add('battle');
 
-  const mx=sw*.50;
-  const my=sh*.56;
+  monster.classList.remove('hidden');
+  monster.style.left=`${monsterX}px`;
 
-  function spawnSlime(now,progress){
-    if(slimes.filter(s=>!s.dead).length>=20)return;
+  drawTimeEl.textContent='10.0';
+  message.textContent='AUTO SIDE-SCROLL BATTLE!';
 
-    const side=Math.random()<.5?-1:1;
-    const big=Math.random()<(.10+progress*.07);
-    const size=big?rand(56,76):rand(34,48);
+  function spawnSlime(now,progress,sideOverride=null){
+    if(slimes.filter(s=>!s.dead).length>=28)return;
+
+    const side=sideOverride??(Math.random()<.22?-1:1);
+    const big=Math.random()<(.10+progress*.08);
+    const size=big?rand(58,82):rand(34,50);
 
     const el=document.createElement('div');
-    el.className='summon-slime';
+    el.className='summon-slime-v105';
     if(big)el.classList.add('big');
 
     el.style.width=`${size}px`;
@@ -8040,44 +8212,57 @@ async function startSummonerMob(p,humanIndex,runId){
     const s={
       id:++slimeId,
       el,
-      x:side<0?-size:sw+size,
-      y:rand(sh*.36,sh*.80),
-      speed:(big?rand(26,40):rand(42,66))+progress*30,
+      x:side>0
+        ? clamp(monsterX+rand(280,680),80,worldW-70)
+        : clamp(monsterX-rand(210,400),70,worldW-70),
+      y:66+randi(-5,10),
+      speed:(big?rand(62,88):rand(96,142))+progress*85,
       hp:big?2:1,
-      maxHp:big?2:1,
       dead:false
     };
 
     el.style.left=`${s.x}px`;
-    el.style.top=`${s.y}px`;
+    el.style.bottom=`${s.y}px`;
 
     slimeLayer.appendChild(el);
     slimes.push(s);
     lastSpawn=now;
   }
 
-  function defeatSlime(s,strong=false){
+  function defeatSlime(s,strong=false,dir=1){
     if(s.dead)return;
 
     s.dead=true;
     kills++;
     killsEl.textContent=kills;
 
-    const dir=s.x<mx?-1:1;
-    s.el.style.setProperty('--slime-fly-x',`${dir*rand(90,180)}px`);
-    s.el.style.setProperty('--slime-spin',`${dir*rand(420,760)}deg`);
+    s.el.style.setProperty(
+      '--summon-fly-x',
+      `${dir*(strong?rand(180,300):rand(110,210))}px`
+    );
+
+    s.el.style.setProperty(
+      '--summon-fly-y',
+      `${strong?rand(-180,-110):rand(-120,-55)}px`
+    );
+
+    s.el.style.setProperty(
+      '--summon-fly-spin',
+      `${dir*rand(520,960)}deg`
+    );
+
     s.el.classList.add(strong?'blast':'defeated');
 
-    setTimeout(()=>s.el.remove(),430);
+    setTimeout(()=>s.el.remove(),480);
   }
 
-  function hitSlime(s,strong=false){
+  function hitSlime(s,strong=false,dir=1){
     if(s.dead)return;
 
     s.hp-=strong?2:1;
 
     if(s.hp<=0){
-      defeatSlime(s,strong);
+      defeatSlime(s,strong,dir);
     }else{
       s.el.classList.remove('hurt');
       void s.el.offsetWidth;
@@ -8085,87 +8270,108 @@ async function startSummonerMob(p,humanIndex,runId){
     }
   }
 
-  function popAttackFx(type,dir=1){
-    attackFx.className=`summon-attack-fx ${type.toLowerCase()} dir-${dir<0?'left':'right'} show`;
-    void attackFx.offsetWidth;
-    attackFx.classList.add('show');
+  function showAttack(atk,dir){
+    attackFx.className=
+      `summon-attack-fx-v105 ${atk.family.toLowerCase()} fx-${atk.fx} ${dir<0?'left':'right'} show`;
+
+    attackFx.innerHTML=`<b>${atk.name}</b>`;
 
     setTimeout(()=>{
-      attackFx.className='summon-attack-fx';
-    },260);
+      attackFx.className='summon-attack-fx-v105';
+      attackFx.innerHTML='';
+    },300);
   }
 
-  function autoAttack(){
+  function useAttack(atk){
     const alive=slimes.filter(s=>!s.dead);
     if(!alive.length)return;
 
-    const leftCount=alive.filter(s=>s.x<mx).length;
+    const leftCount=alive.filter(s=>s.x<monsterX).length;
     const rightCount=alive.length-leftCount;
     const dir=rightCount>=leftCount?1:-1;
 
-    if(analysis.type==='WAVE'){
-      const reach=210+analysis.range*210;
-      const maxHits=2+Math.floor(analysis.power*3);
+    const powerBonus=.75+analysis.power*.65;
+    const range=atk.reach*(.78+analysis.range*.46);
+    const maxHits=Math.max(2,Math.round(atk.hits*powerBonus));
 
-      const victims=alive
-        .map(s=>({s,dx:(s.x-mx)*dir,dy:Math.abs(s.y-my)}))
-        .filter(o=>o.dx>=-25&&o.dx<=reach&&o.dy<=100)
+    let victims=[];
+
+    if(atk.family==='WAVE'){
+      victims=alive
+        .map(s=>({
+          s,
+          dx:(s.x-monsterX)*dir,
+          dy:Math.abs(s.y-72)
+        }))
+        .filter(o=>o.dx>=-35&&o.dx<=range&&o.dy<=100)
         .sort((a,b)=>a.dx-b.dx)
-        .slice(0,maxHits);
+        .slice(0,maxHits)
+        .map(o=>o.s);
 
-      for(const o of victims)hitSlime(o.s,analysis.power>.82);
-      popAttackFx('WAVE',dir);
-
-    }else if(analysis.type==='PIERCE'){
-      const reach=235+analysis.range*245;
-
-      const victims=alive
-        .map(s=>({s,dx:(s.x-mx)*dir,dy:Math.abs(s.y-my)}))
-        .filter(o=>o.dx>=-30&&o.dx<=reach&&o.dy<=60)
+    }else if(atk.family==='PIERCE'){
+      victims=alive
+        .map(s=>({
+          s,
+          dx:(s.x-monsterX)*dir,
+          dy:Math.abs(s.y-72)
+        }))
+        .filter(o=>o.dx>=-45&&o.dx<=range&&o.dy<=70)
         .sort((a,b)=>a.dx-b.dx)
-        .slice(0,3+Math.floor(analysis.power*3));
+        .slice(0,maxHits)
+        .map(o=>o.s);
 
-      for(const o of victims)hitSlime(o.s,true);
-      popAttackFx('PIERCE',dir);
-
-    }else if(analysis.type==='BURST'){
-      const radius=145+analysis.range*125;
-
-      const victims=alive
-        .map(s=>({s,d:Math.hypot(s.x-mx,s.y-my)}))
-        .filter(o=>o.d<=radius)
+    }else if(atk.family==='BURST'){
+      victims=alive
+        .map(s=>({
+          s,
+          d:Math.hypot(s.x-monsterX,(s.y-72)*1.7)
+        }))
+        .filter(o=>o.d<=range)
         .sort((a,b)=>a.d-b.d)
-        .slice(0,3+Math.floor(analysis.power*4));
-
-      for(const o of victims)hitSlime(o.s,analysis.power>.72);
-      popAttackFx('BURST',1);
+        .slice(0,maxHits)
+        .map(o=>o.s);
 
     }else{
-      const maxHits=2+Math.floor(analysis.speed*3);
-
-      const victims=alive
-        .map(s=>({s,d:Math.hypot(s.x-mx,s.y-my)}))
+      victims=alive
+        .map(s=>({
+          s,
+          d:Math.abs(s.x-monsterX)
+        }))
         .sort((a,b)=>a.d-b.d)
-        .slice(0,maxHits);
-
-      for(const o of victims)hitSlime(o.s,analysis.power>.90);
-      popAttackFx('RAPID',dir);
+        .slice(0,maxHits)
+        .map(o=>o.s);
     }
 
+    const strong=
+      analysis.power>.77 ||
+      ['laser','drill','meteor','quake','dash'].includes(atk.id);
+
+    victims.forEach((s,i)=>{
+      setTimeout(()=>{
+        if(!s.dead)hitSlime(s,strong,Math.sign(s.x-monsterX)||dir);
+      },i*18);
+    });
+
+    showAttack(atk,dir);
+
+    monster.classList.remove('attacking');
+    void monster.offsetWidth;
+    monster.classList.add('attacking');
+
     beep(
-      analysis.type==='BURST'?520:
-      analysis.type==='PIERCE'?680:
-      analysis.type==='WAVE'?460:760,
-      28,.006
+      atk.family==='BURST'?500:
+      atk.family==='PIERCE'?700:
+      atk.family==='WAVE'?440:780,
+      30,.007
     );
   }
 
   startBattle=performance.now();
   lastSpawn=startBattle-500;
-  lastAttack=startBattle-500;
+  lastAttack=startBattle-600;
 
-  for(let i=0;i<7;i++){
-    spawnSlime(startBattle,0);
+  for(let i=0;i<12;i++){
+    spawnSlime(startBattle,0,i<2?-1:1);
   }
 
   function battle(now){
@@ -8177,45 +8383,70 @@ async function startSummonerMob(p,humanIndex,runId){
 
     drawTimeEl.textContent=(Math.max(0,remaining)/1000).toFixed(1);
 
-    const spawnEvery=240-progress*95;
+    // Summoned monster advances like the brawler stage.
+    monsterX=clamp(
+      560+elapsed/1000*(125+analysis.speed*65),
+      100,
+      worldW-520
+    );
+
+    monster.style.left=`${monsterX}px`;
+
+    const spawnEvery=210-progress*88;
 
     if(now-lastSpawn>=spawnEvery){
       spawnSlime(now,progress);
 
-      if(progress>.42&&Math.random()<.42){
-        spawnSlime(now+1,progress);
+      if(Math.random()<.68){
+        spawnSlime(now,progress);
+      }
+
+      if(progress>.45&&Math.random()<.42){
+        spawnSlime(now,progress);
       }
     }
 
+    const avgCd=
+      learned.reduce((s,a)=>s+a.cd,0)/learned.length;
+
     const attackEvery=clamp(
-      650-analysis.speed*330,
-      260,520
+      avgCd*(1.05-analysis.speed*.34),
+      260,780
     );
 
     if(now-lastAttack>=attackEvery){
       lastAttack=now;
-      autoAttack();
 
-      monster.classList.remove('attacking');
-      void monster.offsetWidth;
-      monster.classList.add('attacking');
+      // Cycle with randomness so all three learned attacks appear.
+      const baseIndex=Math.floor(elapsed/attackEvery)%learned.length;
+      const atk=Math.random()<.58
+        ? learned[baseIndex]
+        : learned[randi(0,learned.length-1)];
+
+      useAttack(atk);
     }
 
     for(const s of slimes){
       if(s.dead)continue;
 
-      const dx=mx-s.x;
-      const dy=my-s.y;
-      const dist=Math.hypot(dx,dy)||1;
+      const dx=monsterX-s.x;
+      const dir=Math.sign(dx)||1;
 
-      if(dist>72){
-        s.x+=dx/dist*s.speed*.016;
-        s.y+=dy/dist*s.speed*.016;
+      if(Math.abs(dx)>62){
+        s.x+=dir*s.speed*.016;
       }
 
       s.el.style.left=`${s.x}px`;
-      s.el.style.top=`${s.y}px`;
+      s.el.style.setProperty('--summon-face',dir);
     }
+
+    const cam=clamp(
+      monsterX-stage.clientWidth*.34,
+      0,
+      worldW-stage.clientWidth
+    );
+
+    world.style.transform=`translateX(${-cam}px)`;
 
     if(remaining<=0){
       finished=true;
@@ -8229,10 +8460,11 @@ async function startSummonerMob(p,humanIndex,runId){
           recordScreen(
             41,p,humanIndex,
             `${kills}<small>体</small>`,
-            `${analysis.type} / POWER ${analysis.score}`
+            learned.map(a=>a.name).join(' / ')
           );
         }
       },750);
+
       return;
     }
 
@@ -8240,6 +8472,436 @@ async function startSummonerMob(p,humanIndex,runId){
   }
 
   battleRAF=requestAnimationFrame(battle);
+}
+
+
+
+// GAME 43 -------------------------------------------------
+function blackjackMobValue(sum){
+  return ((sum-1)%21)+1;
+}
+
+async function startBlackjackMob(p,humanIndex,runId){
+  gameFit();
+
+  let finished=false;
+  let shuffleRAF=null;
+  let shuffleTimer=null;
+  let revealHidden=false;
+  let selectionOpen=false;
+  let selected=[];
+  let rawSum=0;
+
+  screen.innerHTML=`<div class="blackjack-shell">
+    <div class="game-head">
+      <div><span class="kicker">${esc(p.name)}</span><h2>ブラックジャックの決戦</h2></div>
+      <div class="game-badge">${playBadge(humanIndex)}</div>
+    </div>
+
+    <div class="blackjack-hud">
+      <div><span>TIME</span><b id="bjTime">5.0</b></div>
+      <div><span>TOTAL</span><b id="bjTotal">--</b></div>
+    </div>
+
+    <div id="bjStage" class="blackjack-stage">
+      <div class="blackjack-table-mark">21</div>
+      <div id="bjCards" class="blackjack-cards"></div>
+      <div id="bjMessage" class="blackjack-message">13枚を覚えろ！</div>
+    </div>
+
+    <div id="bjDecision" class="blackjack-decision hidden">
+      <button id="bjHit" type="button">もう1枚</button>
+      <button id="bjFinish" type="button">FINISH</button>
+    </div>
+  </div>`;
+
+  const stage=document.getElementById('bjStage');
+  const cardsLayer=document.getElementById('bjCards');
+  const timeEl=document.getElementById('bjTime');
+  const totalEl=document.getElementById('bjTotal');
+  const message=document.getElementById('bjMessage');
+  const decision=document.getElementById('bjDecision');
+  const hitBtn=document.getElementById('bjHit');
+  const finishBtn=document.getElementById('bjFinish');
+
+  const numbers=shuffle(Array.from({length:13},(_,i)=>i+1));
+  const cards=numbers.map((num,i)=>({
+    num,
+    slot:i,
+    el:null
+  }));
+
+  const cols=4;
+  const rows=4;
+  const usableSlots=Array.from({length:16},(_,i)=>i);
+  let slotPermutation=shuffle(usableSlots).slice(0,13);
+
+  function slotPos(slot){
+    const col=slot%cols;
+    const row=Math.floor(slot/cols);
+
+    return {
+      x:(col+.5)/cols*100,
+      y:(row+.5)/rows*100
+    };
+  }
+
+  cardsLayer.innerHTML=cards.map((c,i)=>{
+    const imgNo=String(((c.num-1)%10)+1).padStart(2,'0');
+
+    return `<button class="bj-card" data-card="${i}" type="button">
+      <span class="bj-number">${c.num}</span>
+      <span class="bj-mob" style="background-image:url('icon/${imgNo}.png')"></span>
+      <span class="bj-question">?</span>
+    </button>`;
+  }).join('');
+
+  cards.forEach((c,i)=>{
+    c.el=cardsLayer.querySelector(`[data-card="${i}"]`);
+  });
+
+  function applySlots(instant=false){
+    cards.forEach((c,i)=>{
+      const slot=slotPermutation[i];
+      c.slot=slot;
+      const pos=slotPos(slot);
+
+      c.el.style.transition=instant?'none':'left .27s ease, top .27s ease, transform .16s ease';
+      c.el.style.left=`${pos.x}%`;
+      c.el.style.top=`${pos.y}%`;
+    });
+  }
+
+  applySlots(true);
+
+  await wait(550);
+
+  if(!(await countdown('BLACK JACK',runId)))return;
+
+  message.textContent='5秒シャッフル！';
+  const shuffleStart=performance.now();
+  let lastShuffle=shuffleStart-400;
+
+  await new Promise(resolve=>{
+    const frame=now=>{
+      if(!isGameRunValid(runId)){resolve();return;}
+
+      const elapsed=now-shuffleStart;
+      const rem=5000-elapsed;
+
+      timeEl.textContent=(Math.max(0,rem)/1000).toFixed(1);
+
+      if(rem<=1000&&!revealHidden){
+        revealHidden=true;
+        cardsLayer.classList.add('hidden-cards');
+        message.textContent='ラスト1秒… ？';
+        beep(320,60,.014);
+      }
+
+      if(now-lastShuffle>=360){
+        lastShuffle=now;
+        slotPermutation=shuffle(usableSlots).slice(0,13);
+        applySlots(false);
+      }
+
+      if(rem<=0){
+        resolve();
+        return;
+      }
+
+      shuffleRAF=requestAnimationFrame(frame);
+    };
+
+    shuffleRAF=requestAnimationFrame(frame);
+  });
+
+  if(!isGameRunValid(runId))return;
+
+  timeEl.textContent='0.0';
+  selectionOpen=true;
+  message.textContent='2枚選べ！';
+  cardsLayer.classList.add('selection');
+
+  function currentValue(){
+    return rawSum===0?0:blackjackMobValue(rawSum);
+  }
+
+  function finishGame(){
+    if(finished)return;
+    finished=true;
+    selectionOpen=false;
+
+    decision.classList.add('hidden');
+    cardsLayer.classList.remove('hidden-cards');
+
+    const value=currentValue();
+    state.records.blackjackMob[p.id]=value;
+
+    totalEl.textContent=value;
+    message.textContent=value===21?'BLACK JACK 21!!':`${value} / 21`;
+
+    cards.forEach(c=>{
+      if(!selected.includes(c))c.el.classList.add('dim');
+    });
+
+    beep(value===21?1080:value>=18?820:520,130,.035);
+
+    setTimeout(()=>{
+      if(isGameRunValid(runId)){
+        recordScreen(
+          42,p,humanIndex,
+          `${value}<small>/21</small>`,
+          value===21?'BLACK JACK!':`${selected.length} CARDS`
+        );
+      }
+    },800);
+  }
+
+  cardsLayer.addEventListener('pointerdown',e=>{
+    const btn=e.target.closest('.bj-card');
+
+    if(
+      !btn||
+      !selectionOpen||
+      finished||
+      !isGameRunValid(runId)
+    )return;
+
+    e.preventDefault();
+
+    const card=cards[Number(btn.dataset.card)];
+
+    if(!card||selected.includes(card))return;
+
+    if(selected.length>=3)return;
+
+    selected.push(card);
+    rawSum+=card.num;
+
+    btn.classList.add('selected');
+    totalEl.textContent=currentValue();
+
+    beep(620+card.num*12,45,.012);
+
+    if(selected.length===2){
+      const value=currentValue();
+
+      if(value===21){
+        finishGame();
+      }else{
+        selectionOpen=false;
+        decision.classList.remove('hidden');
+        message.textContent=`現在 ${value} / 21`;
+      }
+    }else if(selected.length===3){
+      finishGame();
+    }
+  },{passive:false});
+
+  hitBtn.addEventListener('click',()=>{
+    if(finished)return;
+    decision.classList.add('hidden');
+    selectionOpen=true;
+    message.textContent='最後の1枚を選べ！';
+  });
+
+  finishBtn.addEventListener('click',finishGame);
+}
+
+// GAME 44 -------------------------------------------------
+async function startMobIssen(p,humanIndex,runId){
+  gameFit();
+
+  let raf=null;
+  let done=false;
+  let start=0;
+
+  screen.innerHTML=`<div class="issen-shell">
+    <div class="game-head">
+      <div><span class="kicker">${esc(p.name)}</span><h2>モブくん一閃</h2></div>
+      <div class="game-badge">${playBadge(humanIndex)}</div>
+    </div>
+
+    <div class="issen-hud">
+      <div><span>FOCUS</span><b id="issenState">READY</b></div>
+      <div><span>SCORE</span><b id="issenScore">--</b></div>
+    </div>
+
+    <button id="issenStage" class="issen-stage" type="button">
+      <div class="issen-bg">
+        <div class="issen-moon"></div>
+        <div class="issen-ground"></div>
+        <div class="issen-bamboo b1"></div>
+        <div class="issen-bamboo b2"></div>
+        <div class="issen-bamboo b3"></div>
+      </div>
+
+      <div id="issenTargetLine" class="issen-target-line">
+        <span>SLASH</span>
+      </div>
+
+      <div id="issenLog" class="issen-log">
+        <div class="issen-log-bark"></div>
+        <div id="issenWhiteBand" class="issen-white-band">CENTER</div>
+      </div>
+
+      <div id="issenLeftPiece" class="issen-piece left"></div>
+      <div id="issenRightPiece" class="issen-piece right"></div>
+
+      <div class="issen-mob" style="background-image:url('icon/01.png')">
+        <span class="issen-sword"></span>
+      </div>
+
+      <div id="issenSlashFx" class="issen-slash-fx"></div>
+      <div id="issenParticles" class="issen-particles"></div>
+      <div id="issenMessage" class="issen-message">白いCENTERを狙え</div>
+    </button>
+  </div>`;
+
+  const stage=document.getElementById('issenStage');
+  const log=document.getElementById('issenLog');
+  const target=document.getElementById('issenTargetLine');
+  const band=document.getElementById('issenWhiteBand');
+  const leftPiece=document.getElementById('issenLeftPiece');
+  const rightPiece=document.getElementById('issenRightPiece');
+  const slashFx=document.getElementById('issenSlashFx');
+  const particles=document.getElementById('issenParticles');
+  const stateEl=document.getElementById('issenState');
+  const scoreEl=document.getElementById('issenScore');
+  const message=document.getElementById('issenMessage');
+
+  const sh=stage.clientHeight;
+  const targetY=sh*.52;
+  target.style.top=`${targetY}px`;
+
+  const logHeight=Math.min(285,sh*.46);
+  log.style.height=`${logHeight}px`;
+
+  const startY=-logHeight-40;
+  const speed=rand(265,335);
+  const bandOffset=logHeight*.50;
+
+  log.style.top=`${startY}px`;
+
+  function makeParticles(score){
+    particles.innerHTML=Array.from({length:score>=90?18:10},(_,i)=>{
+      const angle=rand(-155,-25);
+      const dist=rand(45,150);
+      const dx=Math.cos(angle*Math.PI/180)*dist;
+      const dy=Math.sin(angle*Math.PI/180)*dist;
+
+      return `<i style="--px:${dx.toFixed(0)}px;--py:${dy.toFixed(0)}px;--r:${randi(-160,160)}deg;--d:${(i%4)*.025}s"></i>`;
+    }).join('');
+    particles.classList.add('show');
+  }
+
+  stage.addEventListener('pointerdown',e=>{
+    if(done||!isGameRunValid(runId))return;
+    e.preventDefault();
+
+    done=true;
+    if(raf)cancelAnimationFrame(raf);
+
+    const logTop=parseFloat(log.style.top)||0;
+    const bandY=logTop+bandOffset;
+    const errorPx=Math.abs(bandY-targetY);
+
+    let score;
+
+    if(errorPx<=2){
+      score=100;
+    }else{
+      score=clamp(Math.round(100-errorPx/1.05),0,100);
+    }
+
+    state.records.mobIssen[p.id]=score;
+    scoreEl.textContent=score;
+
+    stateEl.textContent=
+      score===100?'PERFECT':
+      score>=90?'MASTER':
+      score>=75?'GREAT':
+      score>=50?'GOOD':'MISS';
+
+    message.textContent=
+      score===100?'完全一閃！！':
+      score>=90?'一閃！！':
+      score>=70?'斬！':'ズレた！';
+
+    log.classList.add('cut');
+    leftPiece.classList.add('show');
+    rightPiece.classList.add('show');
+
+    leftPiece.style.top=`${logTop}px`;
+    rightPiece.style.top=`${logTop}px`;
+    leftPiece.style.height=`${logHeight}px`;
+    rightPiece.style.height=`${logHeight}px`;
+
+    slashFx.classList.add('show');
+    stage.classList.add(score>=90?'issen-perfect':'issen-cut');
+
+    makeParticles(score);
+
+    beep(score>=95?1080:score>=80?820:score>=55?590:300,110,.035);
+
+    setTimeout(()=>{
+      if(isGameRunValid(runId)){
+        recordScreen(
+          43,p,humanIndex,
+          `${score}<small>pt</small>`,
+          score===100?'PERFECT CENTER':`CENTER SCORE`
+        );
+      }
+    },950);
+  },{passive:false});
+
+  if(!(await countdown('一閃',runId)))return;
+
+  stateEl.textContent='FOCUS';
+  start=performance.now();
+
+  function frame(now){
+    if(done||!isGameRunValid(runId))return;
+
+    const elapsed=(now-start)/1000;
+    const y=startY+speed*elapsed;
+
+    log.style.top=`${y}px`;
+
+    const bandY=y+bandOffset;
+    const d=Math.abs(bandY-targetY);
+
+    if(d<65){
+      stateEl.textContent='NOW';
+    }else{
+      stateEl.textContent='FOCUS';
+    }
+
+    if(y>sh+30){
+      done=true;
+      state.records.mobIssen[p.id]=0;
+      scoreEl.textContent='0';
+      message.textContent='斬れなかった！';
+      stateEl.textContent='MISS';
+      beep(180,180,.03);
+
+      setTimeout(()=>{
+        if(isGameRunValid(runId)){
+          recordScreen(
+            43,p,humanIndex,
+            `0<small>pt</small>`,
+            `MISS`
+          );
+        }
+      },650);
+
+      return;
+    }
+
+    raf=requestAnimationFrame(frame);
+  }
+
+  raf=requestAnimationFrame(frame);
 }
 
 
@@ -8281,7 +8943,7 @@ async function simulateCpuThenResult(gameIndex){
 
 function cpuUltraDraw(gameIndex){
   // Game-specific draw rate. Regular values are already intentionally strong.
-  const chance=[0.12,0.10,0.14,0.16,0.12,0.13,0.14,0.12,0.15,0.12,0.14,0.13,0.13,0.14,0.12,0.12,0.13,0.12,0.13,0.14,0.13,0.14,0.12,0.13,0.12,0.12,0.13,0.13,0.14,0.14,0.13,0.12,0.13,0.13,0.13,0.13,0.13,0.13,0.13,0.13,0.13,0.13][gameIndex] ?? 0.12;
+  const chance=[0.12,0.10,0.14,0.16,0.12,0.13,0.14,0.12,0.15,0.12,0.14,0.13,0.13,0.14,0.12,0.12,0.13,0.12,0.13,0.14,0.13,0.14,0.12,0.13,0.12,0.12,0.13,0.13,0.14,0.14,0.13,0.12,0.13,0.13,0.13,0.13,0.13,0.13,0.13,0.13,0.13,0.13,0.13,0.13][gameIndex] ?? 0.12;
   return Math.random()<chance;
 }
 
@@ -8375,8 +9037,12 @@ function simulateOneCpu(gameIndex,p){
     state.records.wizardMob[p.id]=ultra?randi(14,20):randi(7,15);
   }else if(gameIndex===40){
     state.records.brawlerMob[p.id]=ultra?randi(31,42):randi(20,34);
+  }else if(gameIndex===41){
+    state.records.summonerMob[p.id]=ultra?randi(38,50):randi(22,41);
+  }else if(gameIndex===42){
+    state.records.blackjackMob[p.id]=ultra?randi(19,21):randi(13,20);
   }else{
-    state.records.summonerMob[p.id]=ultra?randi(38,49):randi(22,40);
+    state.records.mobIssen[p.id]=ultra?randi(91,99):randi(58,91);
   }
 
   return ultra;
@@ -8447,7 +9113,9 @@ function performancePoints(gameIndex,v){
   if(gameIndex===38)return clamp(Math.round(v/30*100),0,100);
   if(gameIndex===39)return clamp(Math.round(v/15*100),0,100);
   if(gameIndex===40)return clamp(Math.round(v/30*100),0,100);
-  return clamp(Math.round(v/40*100),0,100);
+  if(gameIndex===41)return clamp(Math.round(v/40*100),0,100);
+  if(gameIndex===42)return clamp(Math.round(v/21*100),0,100);
+  return clamp(Math.round(v),0,100);
 }
 
 function rankRecords(gameIndex){
@@ -8505,7 +9173,9 @@ function formatRecord(gameIndex,v){
   if(gameIndex===38)return `${Math.round(v)}棟`;
   if(gameIndex===39)return `${Math.round(v)}個`;
   if(gameIndex===40)return `${Math.round(v)}体`;
-  return `${Math.round(v)}体`;
+  if(gameIndex===41)return `${Math.round(v)}体`;
+  if(gameIndex===42)return `${Math.round(v)}/21`;
+  return `${Math.round(v)}pt`;
 }
 
 function applyPoints(gameIndex,ranked){

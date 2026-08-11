@@ -6873,3 +6873,758 @@ body{touch-action:manipulation}
     transform-origin:center bottom;
   }
 }
+
+
+/* =========================================================
+   V10.5 GIANT MOB
+   ========================================================= */
+.giant-impact{
+  max-width:88%;
+}
+
+/* =========================================================
+   V10.5 TRAIN — WIDE CAMERA MAP
+   ========================================================= */
+.train-v105 .train-stage{
+  overflow:hidden;
+}
+.train-world-v105{
+  position:absolute;
+  left:0;
+  top:0;
+  bottom:0;
+  will-change:transform;
+}
+.train-v105 .train-grass{
+  position:absolute;
+  inset:23% 0 0;
+}
+.train-v105 .train-svg{
+  position:absolute;
+  left:0;
+  top:0;
+  height:100%;
+}
+.train-map-hint{
+  position:absolute;
+  z-index:36;
+  right:7px;
+  top:8px;
+  border:2px solid var(--ink);
+  border-radius:999px;
+  background:rgba(255,255,255,.90);
+  padding:3px 6px;
+  font-size:7px;
+  font-weight:1000;
+  pointer-events:none;
+}
+
+/* =========================================================
+   V10.5 WIZARD — GIANT FLAMES SLOW / HEAVY
+   ========================================================= */
+.wizard-dark-flame.giant{
+  animation-duration:.38s!important;
+}
+.wizard-dark-flame.giant:after{
+  box-shadow:0 0 16px rgba(143,53,219,.65);
+}
+
+/* =========================================================
+   V10.5 BRAWLER — MULTI PUNCH
+   ========================================================= */
+.brawler-player.punching .brawler-fist{
+  box-shadow:
+    22px -10px 0 -3px rgba(244,199,151,.65),
+    38px -22px 0 -5px rgba(244,199,151,.40);
+}
+.brawler-player.face-left.punching .brawler-fist{
+  box-shadow:
+    -22px -10px 0 -3px rgba(244,199,151,.65),
+    -38px -22px 0 -5px rgba(244,199,151,.40);
+}
+
+/* =========================================================
+   V10.5 SUMMONER — BRAWLER-LIKE SIDE SCROLL
+   ========================================================= */
+.summoner-v105 .summoner-stage{
+  background:linear-gradient(#191933 0 68%,#25283d 68% 100%);
+}
+.summon-world-v105{
+  position:absolute;
+  left:0;
+  top:0;
+  bottom:0;
+  will-change:transform;
+}
+.summoner-side-bg{
+  position:absolute;
+  inset:0 0 70px;
+  background:
+    repeating-linear-gradient(
+      0deg,
+      #24263f 0 47px,
+      #20223a 47px 50px
+    );
+}
+.summon-ruin{
+  position:absolute;
+  bottom:0;
+  width:120px;
+  height:145px;
+  border:5px solid #0d0f20;
+  border-bottom:none;
+  background:
+    linear-gradient(90deg,transparent 46%,#0d0f20 46% 54%,transparent 54%),
+    linear-gradient(transparent 46%,#0d0f20 46% 54%,transparent 54%),
+    #4c5065;
+}
+.summon-torch{
+  position:absolute;
+  bottom:92px;
+  width:8px;
+  height:60px;
+  border:3px solid #0d0f20;
+  background:#735136;
+}
+.summon-torch:before{
+  content:"";
+  position:absolute;
+  left:50%;
+  top:-24px;
+  width:24px;
+  height:30px;
+  transform:translateX(-50%);
+  border:3px solid #30100d;
+  border-radius:50% 50% 45% 45%;
+  background:#ff874b;
+  box-shadow:0 0 13px rgba(255,112,66,.68);
+}
+.summon-ground-v105{
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  height:74px;
+  border-top:5px solid #0d0f20;
+  background:
+    repeating-linear-gradient(90deg,#43475b 0 54px,#50556b 54px 108px);
+}
+.summon-monster-v105{
+  position:absolute;
+  z-index:26;
+  bottom:62px;
+  width:132px;
+  height:132px;
+  transform:translateX(-50%);
+  border:4px solid rgba(255,255,255,.28);
+  border-radius:30px;
+  background:rgba(21,17,47,.72);
+  box-shadow:0 0 25px rgba(113,86,255,.58);
+  will-change:left,transform;
+}
+.summon-monster-v105 svg{
+  position:absolute;
+  inset:7%;
+  width:86%;
+  height:86%;
+  overflow:visible;
+}
+.summon-monster-v105.attacking{
+  animation:summonSideAttack .22s ease;
+}
+@keyframes summonSideAttack{
+  50%{transform:translateX(-50%) scale(1.13) translateY(-7px)}
+}
+.summon-slime-v105{
+  position:absolute;
+  z-index:18;
+  bottom:64px;
+  transform:translateX(-50%) scaleX(var(--summon-face,1));
+  border:4px solid #050509;
+  border-radius:50% 50% 42% 42%;
+  background:#09090f;
+  will-change:left,transform,opacity;
+}
+.summon-slime-v105:before,
+.summon-slime-v105:after{
+  content:"";
+  position:absolute;
+  top:34%;
+  width:6px;
+  height:8px;
+  border-radius:50%;
+  background:#fff;
+}
+.summon-slime-v105:before{left:27%}
+.summon-slime-v105:after{right:27%}
+.summon-slime-v105.big{
+  border-width:6px;
+  box-shadow:0 5px 0 rgba(0,0,0,.18);
+}
+.summon-slime-v105.hurt{
+  animation:summonSlimeSideHurt .14s ease;
+}
+@keyframes summonSlimeSideHurt{
+  50%{transform:translateX(-50%) scale(.75)}
+}
+.summon-slime-v105.defeated,
+.summon-slime-v105.blast{
+  animation:summonSlimeSideFly .48s ease-out forwards;
+}
+@keyframes summonSlimeSideFly{
+  to{
+    transform:
+      translateX(-50%)
+      translate(var(--summon-fly-x),var(--summon-fly-y))
+      rotate(var(--summon-fly-spin))
+      scale(.30);
+    opacity:0;
+  }
+}
+.summon-skill-list{
+  position:absolute;
+  z-index:45;
+  left:7px;
+  top:8px;
+  display:flex;
+  flex-direction:column;
+  gap:3px;
+  pointer-events:none;
+}
+.summon-skill-list span{
+  border:2px solid var(--ink);
+  border-radius:999px;
+  background:rgba(255,255,255,.93);
+  padding:3px 6px;
+  font-size:7px;
+  font-weight:1000;
+}
+.summon-attack-fx-v105{
+  position:absolute;
+  z-index:38;
+  left:50%;
+  top:52%;
+  width:10px;
+  height:10px;
+  transform:translate(-50%,-50%);
+  pointer-events:none;
+  opacity:0;
+}
+.summon-attack-fx-v105.show{
+  opacity:1;
+}
+.summon-attack-fx-v105 b{
+  position:absolute;
+  left:50%;
+  top:-52px;
+  transform:translateX(-50%);
+  white-space:nowrap;
+  color:#fff;
+  -webkit-text-stroke:2px #111;
+  font-size:15px;
+  font-weight:1000;
+}
+.summon-attack-fx-v105.wave:before,
+.summon-attack-fx-v105.pierce:before,
+.summon-attack-fx-v105.burst:before,
+.summon-attack-fx-v105.rapid:before{
+  content:"";
+  position:absolute;
+  left:0;
+  top:0;
+}
+.summon-attack-fx-v105.wave:before{
+  width:300px;
+  height:82px;
+  border:9px solid #63ecff;
+  border-left:none;
+  border-radius:0 100px 100px 0;
+  box-shadow:0 0 18px #63ecff;
+  animation:summonV105Wave .27s ease-out forwards;
+}
+.summon-attack-fx-v105.left.wave:before{
+  transform:scaleX(-1);
+  transform-origin:left center;
+}
+@keyframes summonV105Wave{
+  from{opacity:1;scale:.25}
+  to{opacity:0;scale:1.05}
+}
+.summon-attack-fx-v105.pierce:before{
+  width:390px;
+  height:12px;
+  border-radius:999px;
+  background:#fff36f;
+  box-shadow:0 0 17px #fff36f;
+  animation:summonV105Pierce .24s ease-out forwards;
+}
+.summon-attack-fx-v105.left.pierce:before{
+  transform:scaleX(-1);
+  transform-origin:left center;
+}
+@keyframes summonV105Pierce{
+  from{opacity:1;scale:.18 1}
+  to{opacity:0;scale:1 1}
+}
+.summon-attack-fx-v105.burst:before{
+  width:260px;
+  height:260px;
+  transform:translate(-50%,-50%) scale(.15);
+  border:11px solid #df67ff;
+  border-radius:50%;
+  box-shadow:0 0 22px #df67ff;
+  animation:summonV105Burst .30s ease-out forwards;
+}
+@keyframes summonV105Burst{
+  to{transform:translate(-50%,-50%) scale(1.1);opacity:0}
+}
+.summon-attack-fx-v105.rapid:before{
+  width:18px;
+  height:18px;
+  border-radius:50%;
+  background:#7dff9b;
+  box-shadow:
+    38px -24px 0 #7dff9b,
+    78px 20px 0 #7dff9b,
+    122px -8px 0 #7dff9b,
+    165px 24px 0 #7dff9b;
+  animation:summonV105Rapid .25s ease-out forwards;
+}
+.summon-attack-fx-v105.left.rapid:before{
+  transform:scaleX(-1);
+  transform-origin:left center;
+}
+@keyframes summonV105Rapid{
+  to{translate:140px 0;opacity:0}
+}
+
+/* =========================================================
+   V10.5 GAME 43 — BLACKJACK
+   ========================================================= */
+.blackjack-shell,
+.issen-shell{
+  width:min(100%,650px);
+  height:100%;
+  margin:0 auto;
+  display:flex;
+  flex-direction:column;
+}
+.blackjack-hud,
+.issen-hud{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:5px;
+  margin-bottom:5px;
+}
+.blackjack-hud>div,
+.issen-hud>div{
+  border:3px solid var(--ink);
+  border-radius:11px;
+  background:#fff;
+  padding:4px;
+  text-align:center;
+}
+.blackjack-hud span,
+.issen-hud span{
+  display:block;
+  font-size:7px;
+  font-weight:1000;
+  color:var(--muted);
+}
+.blackjack-hud b,
+.issen-hud b{
+  font-size:14px;
+}
+.blackjack-stage{
+  flex:1;
+  min-height:0;
+  position:relative;
+  overflow:hidden;
+  border:4px solid var(--ink);
+  border-radius:22px;
+  background:
+    radial-gradient(circle at 50% 48%,#28744c 0 18%,#16533a 19% 100%);
+}
+.blackjack-table-mark{
+  position:absolute;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
+  font-size:94px;
+  font-weight:1000;
+  color:rgba(255,255,255,.06);
+}
+.blackjack-cards{
+  position:absolute;
+  inset:42px 8px 40px;
+}
+.bj-card{
+  position:absolute;
+  width:min(20vw,78px);
+  height:min(25vw,98px);
+  transform:translate(-50%,-50%);
+  border:3px solid var(--ink);
+  border-radius:10px;
+  background:#fff;
+  box-shadow:0 3px 0 rgba(17,19,26,.25);
+  padding:3px;
+  touch-action:none;
+}
+.bj-number{
+  position:absolute;
+  left:5px;
+  top:3px;
+  font-size:14px;
+  font-weight:1000;
+}
+.bj-mob{
+  position:absolute;
+  left:50%;
+  top:54%;
+  width:62%;
+  height:62%;
+  transform:translate(-50%,-50%);
+  background-position:center;
+  background-size:contain;
+  background-repeat:no-repeat;
+}
+.bj-question{
+  display:none;
+  position:absolute;
+  inset:0;
+  place-items:center;
+  color:#fff;
+  font-size:38px;
+  font-weight:1000;
+}
+.blackjack-cards.hidden-cards .bj-card{
+  background:#1e2630;
+  border-color:#0e1217;
+}
+.blackjack-cards.hidden-cards .bj-number,
+.blackjack-cards.hidden-cards .bj-mob{
+  opacity:0;
+}
+.blackjack-cards.hidden-cards .bj-question{
+  display:grid;
+}
+.blackjack-cards.selection .bj-card{
+  cursor:pointer;
+}
+.bj-card.selected{
+  transform:translate(-50%,-50%) scale(.86)!important;
+  box-shadow:0 0 0 5px var(--yellow),0 3px 0 var(--ink);
+}
+.bj-card.dim{
+  opacity:.28;
+}
+.blackjack-message{
+  position:absolute;
+  z-index:20;
+  left:50%;
+  bottom:6px;
+  transform:translateX(-50%);
+  min-width:190px;
+  border:3px solid var(--ink);
+  border-radius:999px;
+  background:#fff;
+  padding:5px 9px;
+  text-align:center;
+  font-size:9px;
+  font-weight:1000;
+}
+.blackjack-decision{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:6px;
+  margin-top:6px;
+}
+.blackjack-decision button{
+  min-height:52px;
+  border:4px solid var(--ink);
+  border-radius:13px;
+  box-shadow:0 4px 0 var(--ink);
+  background:#fff;
+  font-size:13px;
+  font-weight:1000;
+}
+.blackjack-decision button:first-child{
+  background:var(--yellow);
+}
+
+/* =========================================================
+   V10.5 GAME 44 — MOB ISSEN
+   ========================================================= */
+.issen-stage{
+  flex:1;
+  min-height:0;
+  position:relative;
+  overflow:hidden;
+  border:4px solid var(--ink);
+  border-radius:22px;
+  background:linear-gradient(#17203a 0 70%,#222a34 70% 100%);
+  touch-action:none;
+}
+.issen-bg{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+}
+.issen-moon{
+  position:absolute;
+  right:8%;
+  top:6%;
+  width:68px;
+  height:68px;
+  border-radius:50%;
+  background:#f2f4df;
+  box-shadow:0 0 22px rgba(255,255,220,.28);
+}
+.issen-ground{
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  height:58px;
+  background:#283127;
+  border-top:4px solid #101710;
+}
+.issen-bamboo{
+  position:absolute;
+  bottom:52px;
+  width:15px;
+  height:72%;
+  border:3px solid #111;
+  background:
+    repeating-linear-gradient(0deg,#668552 0 58px,#32452c 58px 64px);
+  opacity:.72;
+}
+.issen-bamboo:after{
+  content:"";
+  position:absolute;
+  left:-33px;
+  top:27%;
+  width:78px;
+  height:18px;
+  border-radius:50%;
+  background:#4c7045;
+  transform:rotate(-22deg);
+}
+.issen-bamboo.b1{left:7%}
+.issen-bamboo.b2{right:10%;height:62%}
+.issen-bamboo.b3{right:29%;height:46%;opacity:.45}
+.issen-target-line{
+  position:absolute;
+  z-index:15;
+  left:8%;
+  right:8%;
+  height:4px;
+  transform:translateY(-50%);
+  background:#fff;
+  box-shadow:0 0 13px rgba(255,255,255,.72);
+  pointer-events:none;
+}
+.issen-target-line span{
+  position:absolute;
+  right:0;
+  top:-24px;
+  border:2px solid var(--ink);
+  border-radius:999px;
+  background:#fff;
+  padding:2px 6px;
+  color:var(--ink);
+  font-size:8px;
+  font-weight:1000;
+}
+.issen-log{
+  position:absolute;
+  z-index:18;
+  left:50%;
+  width:100px;
+  transform:translateX(-50%);
+  border:5px solid #2c1b11;
+  border-radius:42px;
+  background:
+    repeating-linear-gradient(90deg,#80522f 0 15px,#98663a 15px 30px);
+  overflow:hidden;
+  will-change:top;
+}
+.issen-log.cut{
+  opacity:0;
+}
+.issen-log-bark{
+  position:absolute;
+  inset:0;
+  background:
+    repeating-linear-gradient(0deg,transparent 0 22px,rgba(53,31,18,.24) 22px 25px);
+}
+.issen-white-band{
+  position:absolute;
+  z-index:3;
+  left:-5px;
+  right:-5px;
+  top:50%;
+  height:23px;
+  transform:translateY(-50%);
+  display:grid;
+  place-items:center;
+  border-top:4px solid #222;
+  border-bottom:4px solid #222;
+  background:#fff;
+  color:#222;
+  font-size:7px;
+  font-weight:1000;
+}
+.issen-piece{
+  display:none;
+  position:absolute;
+  z-index:18;
+  left:50%;
+  width:50px;
+  border:5px solid #2c1b11;
+  background:
+    repeating-linear-gradient(90deg,#80522f 0 15px,#98663a 15px 30px);
+  transform-origin:center center;
+  pointer-events:none;
+}
+.issen-piece.left{
+  margin-left:-50px;
+  border-radius:40px 0 0 40px;
+}
+.issen-piece.right{
+  margin-left:0;
+  border-radius:0 40px 40px 0;
+}
+.issen-piece.show{
+  display:block;
+}
+.issen-piece.left.show{
+  animation:issenLeftFly .78s ease-out forwards;
+}
+.issen-piece.right.show{
+  animation:issenRightFly .78s ease-out forwards;
+}
+@keyframes issenLeftFly{
+  to{transform:translate(-130px,90px) rotate(-32deg);opacity:.20}
+}
+@keyframes issenRightFly{
+  to{transform:translate(130px,90px) rotate(32deg);opacity:.20}
+}
+.issen-mob{
+  position:absolute;
+  z-index:24;
+  left:18%;
+  bottom:58px;
+  width:68px;
+  height:78px;
+  background-position:center;
+  background-size:contain;
+  background-repeat:no-repeat;
+}
+.issen-sword{
+  position:absolute;
+  right:-38px;
+  top:24px;
+  width:70px;
+  height:8px;
+  border:3px solid #111;
+  border-radius:999px;
+  background:#dce8ef;
+  transform:rotate(-20deg);
+  transform-origin:left center;
+}
+.issen-sword:after{
+  content:"";
+  position:absolute;
+  left:-12px;
+  top:-5px;
+  width:18px;
+  height:12px;
+  border:3px solid #111;
+  background:#51423c;
+}
+.issen-slash-fx{
+  position:absolute;
+  z-index:50;
+  left:-12%;
+  top:52%;
+  width:124%;
+  height:13px;
+  transform:translateY(-50%) rotate(-7deg) scaleX(.1);
+  border-radius:999px;
+  background:#fff;
+  box-shadow:
+    0 0 14px #fff,
+    0 0 28px #71d5ff;
+  opacity:0;
+  pointer-events:none;
+}
+.issen-slash-fx.show{
+  animation:issenSlash .58s ease-out forwards;
+}
+@keyframes issenSlash{
+  0%{opacity:0;transform:translateY(-50%) rotate(-7deg) scaleX(.08)}
+  25%{opacity:1;transform:translateY(-50%) rotate(-7deg) scaleX(1)}
+  100%{opacity:0;transform:translateY(-50%) rotate(-7deg) scaleX(1.05)}
+}
+.issen-particles{
+  position:absolute;
+  z-index:52;
+  left:50%;
+  top:52%;
+  width:0;
+  height:0;
+  pointer-events:none;
+}
+.issen-particles i{
+  position:absolute;
+  width:9px;
+  height:15px;
+  border-radius:3px;
+  background:#a06d43;
+  opacity:0;
+}
+.issen-particles.show i{
+  animation:issenChip .58s ease-out var(--d) forwards;
+}
+@keyframes issenChip{
+  0%{opacity:1;transform:translate(0,0) rotate(0deg)}
+  100%{opacity:0;transform:translate(var(--px),var(--py)) rotate(var(--r))}
+}
+.issen-message{
+  position:absolute;
+  z-index:60;
+  left:50%;
+  bottom:7px;
+  transform:translateX(-50%);
+  min-width:190px;
+  border:3px solid var(--ink);
+  border-radius:999px;
+  background:#fff;
+  padding:5px 9px;
+  text-align:center;
+  font-size:9px;
+  font-weight:1000;
+}
+.issen-stage.issen-perfect{
+  animation:issenPerfectStage .40s ease;
+}
+@keyframes issenPerfectStage{
+  40%{transform:translateX(-5px)}
+  60%{transform:translateX(5px)}
+  100%{transform:translateX(0)}
+}
+
+@media(max-height:690px){
+  .bj-card{
+    width:62px;
+    height:78px;
+  }
+  .issen-log{
+    width:84px;
+  }
+  .summon-monster-v105{
+    width:106px;
+    height:106px;
+  }
+}
