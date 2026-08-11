@@ -12749,3 +12749,895 @@ body,
   45%{transform:translate(-50%,5px) rotate(12deg)}
   100%{transform:translate(-50%,90px) rotate(34deg);opacity:.48}
 }
+
+/* V10.17 SHUTTER — FULL BODY IN THE INSTANT PHOTO */
+.shutter-photo-mob{
+  width:66px!important;
+  height:78px!important;
+  bottom:2px!important;
+  background-size:contain!important;
+  background-position:center bottom!important;
+  background-repeat:no-repeat!important;
+}
+
+/* V10.17 RACE — clearer drag destination */
+.race-predict-character-v114.drag-source-v116{
+  opacity:.22!important;
+  background:#dfe7f0!important;
+}
+.race-predict-character-v114:active{
+  transform:translateY(2px) scale(.98);
+}
+
+/* =========================================================
+   V10.17 DODGEBALL — 10 SECOND KO RUSH
+   ========================================================= */
+.dodge-stage-v117{
+  background:linear-gradient(#c4e1ec 0 48%,#d99b68 48% 100%)!important;
+}
+.dodge-hud-v117{
+  grid-template-columns:repeat(3,1fr)!important;
+}
+.dodge-player-v117{
+  left:7%!important;
+  bottom:auto!important;
+  top:55%!important;
+  transform:translateY(-50%);
+}
+.dodge-player-v117 img{
+  transform:none!important;
+}
+.dodge-enemy-layer-v117,
+.dodge-ball-layer-v117{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+}
+.dodge-target-v117{
+  position:absolute;
+  z-index:28;
+  width:57px;
+  height:66px;
+  transform:translate(-50%,-50%);
+}
+.dodge-target-v117 img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  filter:brightness(0);
+  transform:scaleX(-1);
+}
+.dodge-target-v117 b{
+  position:absolute;
+  left:50%;
+  top:-8px;
+  transform:translate(-50%,-100%);
+  border:2px solid var(--ink);
+  border-radius:999px;
+  background:#fff;
+  padding:1px 4px;
+  font-size:6px;
+}
+.dodge-target-v117.hit-fly-v117{
+  animation:dodgeRushFlyV117 .65s ease-out forwards;
+}
+@keyframes dodgeRushFlyV117{
+  100%{
+    transform:translate(180px,-120px) rotate(840deg) scale(.45);
+    opacity:0;
+  }
+}
+.dodge-live-ball-v117{
+  position:absolute;
+  z-index:45;
+  width:28px;
+  height:28px;
+  transform:translate(-50%,-50%);
+}
+.dodge-live-ball-v117 img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  animation:dodgeBallSpinV117 .22s linear infinite;
+}
+@keyframes dodgeBallSpinV117{
+  to{transform:rotate(360deg)}
+}
+.dodge-shot-line-v117{
+  position:absolute;
+  z-index:12;
+  left:15%;
+  right:3%;
+  top:55%;
+  height:2px;
+  background:rgba(255,255,255,.32);
+  pointer-events:none;
+}
+.dodge-wave-v117{
+  position:absolute;
+  z-index:60;
+  left:50%;
+  top:14%;
+  transform:translate(-50%,-50%) scale(.5);
+  color:#fff;
+  -webkit-text-stroke:3px var(--ink);
+  font-size:26px;
+  font-weight:1000;
+  opacity:0;
+}
+.dodge-wave-v117.show{
+  animation:dodgeWavePopV117 .55s ease;
+}
+@keyframes dodgeWavePopV117{
+  25%{opacity:1;transform:translate(-50%,-50%) scale(1.1)}
+  100%{opacity:0;transform:translate(-50%,-75%) scale(1)}
+}
+.dodge-message-v117{
+  pointer-events:none;
+}
+.dodge-fire-v117{
+  min-height:62px;
+  margin-top:6px;
+  border:4px solid var(--ink);
+  border-radius:15px;
+  background:#ffb762;
+  box-shadow:0 5px 0 var(--ink);
+  font-size:21px;
+  font-weight:1000;
+  touch-action:none;
+}
+.dodge-fire-v117:disabled{
+  background:#c8cbd0;
+  opacity:.72;
+}
+
+/* =========================================================
+   V10.17 KATANA — VERTICAL BLADE ONLY
+   ========================================================= */
+.katana-v117 .katana-guide-v116{
+  display:none!important;
+}
+.katana-stage-v117{
+  background:#4d5058!important;
+}
+.katana-fixed-hilt-v117{
+  position:absolute;
+  z-index:17;
+  left:50%;
+  bottom:16px;
+  width:118px;
+  height:108px;
+  transform:translateX(-50%);
+  pointer-events:none;
+}
+.katana-handle-v117{
+  position:absolute;
+  left:50%;
+  bottom:4px;
+  width:24px;
+  height:76px;
+  transform:translateX(-50%);
+  border:4px solid #191a1e;
+  border-radius:9px;
+  background:
+    repeating-linear-gradient(
+      0deg,
+      #453026 0 8px,
+      #d8bd83 8px 12px
+    );
+}
+.katana-pommel-v117{
+  position:absolute;
+  left:50%;
+  bottom:0;
+  width:38px;
+  height:18px;
+  transform:translateX(-50%);
+  border:4px solid #191a1e;
+  border-radius:50%;
+  background:#a9adb1;
+}
+.katana-guard-v117{
+  position:absolute;
+  left:50%;
+  top:18px;
+  width:96px;
+  height:18px;
+  transform:translateX(-50%);
+  border:4px solid #191a1e;
+  border-radius:50%;
+  background:#d3a848;
+}
+.katana-anchor-v117{
+  position:absolute;
+  z-index:5;
+  left:50%;
+  top:9px;
+  width:18px;
+  height:18px;
+  transform:translate(-50%,-50%);
+  border:3px solid #191a1e;
+  border-radius:50%;
+  background:#fff36f;
+  box-shadow:0 0 0 5px rgba(255,243,111,.22);
+}
+.katana-blade-zone-v117{
+  position:absolute;
+  z-index:13;
+  left:50%;
+  top:48px;
+  bottom:111px;
+  width:72%;
+  transform:translateX(-50%);
+  border-left:2px dashed rgba(255,255,255,.22);
+  border-right:2px dashed rgba(255,255,255,.22);
+  pointer-events:none;
+}
+.katana-blade-zone-v117:after{
+  content:"";
+  position:absolute;
+  left:50%;
+  top:22px;
+  bottom:22px;
+  width:2px;
+  transform:translateX(-50%);
+  background:rgba(255,255,255,.12);
+}
+.katana-blade-zone-v117 span{
+  position:absolute;
+  top:3px;
+  left:50%;
+  transform:translateX(-50%);
+  border:2px solid rgba(17,19,26,.65);
+  border-radius:999px;
+  background:rgba(255,255,255,.88);
+  padding:3px 7px;
+  color:#26282d;
+  font-size:8px;
+  font-weight:1000;
+  white-space:nowrap;
+}
+.katana-blade-zone-v117 small{
+  position:absolute;
+  bottom:2px;
+  left:50%;
+  transform:translateX(-50%);
+  color:#fff;
+  font-size:8px;
+  font-weight:1000;
+}
+.katana-v117 .katana-user-stroke{
+  stroke:#f6f7f3!important;
+  stroke-width:7!important;
+}
+
+/* =========================================================
+   V10.17 POWER HITTER — GOLF
+   ========================================================= */
+.power-hit-shell{
+  width:min(100%,650px);
+  height:100%;
+  margin:0 auto;
+  display:flex;
+  flex-direction:column;
+}
+.power-hit-hud{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:5px;
+  margin-bottom:5px;
+}
+.power-hit-hud>div{
+  border:3px solid var(--ink);
+  border-radius:10px;
+  background:#fff;
+  padding:4px;
+  text-align:center;
+}
+.power-hit-hud span{
+  display:block;
+  color:var(--muted);
+  font-size:7px;
+  font-weight:1000;
+}
+.power-hit-hud b{
+  font-size:13px;
+}
+.power-stage{
+  flex:1;
+  min-height:0;
+  position:relative;
+  overflow:hidden;
+  border:4px solid var(--ink);
+  border-radius:21px;
+  background:#9fd9ed;
+}
+.power-world{
+  position:absolute;
+  left:0;
+  top:0;
+  width:2750px;
+  height:100%;
+  will-change:transform;
+}
+.power-sky{
+  position:absolute;
+  inset:0;
+  background:
+    radial-gradient(circle at 16% 16%,#fff 0 24px,transparent 25px),
+    linear-gradient(#9fd9ed 0 66%,#83b56a 66% 100%);
+}
+.power-ground{
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  height:34%;
+  border-top:4px solid #416d45;
+  background:#83b56a;
+}
+.power-meter{
+  position:absolute;
+  bottom:35%;
+  border:2px solid var(--ink);
+  border-radius:999px;
+  background:#fff;
+  padding:2px 5px;
+  font-size:7px;
+}
+.power-golfer{
+  position:absolute;
+  z-index:28;
+  left:12%;
+  bottom:20%;
+  width:72px;
+  height:84px;
+  background-size:contain;
+  background-position:center;
+  background-repeat:no-repeat;
+  transform-origin:50% 78%;
+}
+.power-club{
+  position:absolute;
+  left:44px;
+  top:31px;
+  width:92px;
+  height:5px;
+  transform-origin:4px 50%;
+  transform:rotate(-112deg);
+  border:2px solid #202329;
+  border-radius:999px;
+  background:#a5a8ad;
+}
+.power-club:after{
+  content:"";
+  position:absolute;
+  right:-5px;
+  top:-5px;
+  width:16px;
+  height:12px;
+  border:2px solid #202329;
+  border-radius:3px;
+  background:#666b70;
+}
+.power-golfer.golf-swing{
+  animation:powerGolferTurnV117 .45s ease;
+}
+.power-golfer.golf-swing .power-club{
+  animation:powerGolfSwingV117 .48s cubic-bezier(.18,.72,.22,1) forwards;
+}
+@keyframes powerGolfSwingV117{
+  0%{transform:rotate(-112deg)}
+  18%{transform:rotate(-138deg)}
+  52%{transform:rotate(-8deg)}
+  100%{transform:rotate(72deg)}
+}
+@keyframes powerGolferTurnV117{
+  45%{transform:rotate(-6deg) translateX(-4px)}
+  100%{transform:rotate(6deg) translateX(3px)}
+}
+.power-ball{
+  position:absolute;
+  z-index:39;
+  left:23%;
+  top:68%;
+  width:16px;
+  height:16px;
+  border:3px solid #bbb;
+  border-radius:50%;
+  background:#fff;
+  box-shadow:0 2px 0 rgba(17,19,26,.25);
+}
+.power-ball.launched{
+  box-shadow:0 0 8px #fff;
+}
+.power-impact{
+  position:absolute;
+  z-index:60;
+  left:24%;
+  top:62%;
+  transform:translate(-50%,-50%) scale(.4);
+  color:#ffe55e;
+  -webkit-text-stroke:4px var(--ink);
+  font-size:31px;
+  font-weight:1000;
+  opacity:0;
+}
+.power-impact.show{
+  animation:powerImpactV117 .55s ease;
+}
+@keyframes powerImpactV117{
+  22%{opacity:1;transform:translate(-50%,-50%) scale(1.15)}
+  100%{opacity:0;transform:translate(-50%,-75%) scale(1)}
+}
+.power-message{
+  position:absolute;
+  z-index:55;
+  left:50%;
+  top:7px;
+  transform:translateX(-50%);
+  min-width:190px;
+  border:3px solid var(--ink);
+  border-radius:999px;
+  background:#fff;
+  padding:5px 9px;
+  text-align:center;
+  font-size:9px;
+  font-weight:1000;
+}
+.power-gauges{
+  display:grid;
+  gap:5px;
+  margin-top:6px;
+}
+.power-gauge-box{
+  border:3px solid var(--ink);
+  border-radius:11px;
+  background:#e4e6e9;
+  padding:5px 7px;
+  opacity:.45;
+}
+.power-gauge-box.active{
+  background:#fff;
+  opacity:1;
+  outline:3px solid rgba(255,210,77,.55);
+}
+.power-gauge-box.locked{
+  opacity:.78;
+}
+.power-gauge-box>span{
+  display:block;
+  margin-bottom:3px;
+  font-size:7px;
+  font-weight:1000;
+}
+.power-gauge-track{
+  position:relative;
+  height:22px;
+  border:3px solid var(--ink);
+  border-radius:999px;
+  overflow:visible;
+}
+.power-gauge-track.angle{
+  background:
+    linear-gradient(
+      90deg,
+      #e7776b 0 28%,
+      #f2d364 28% 48%,
+      #78d68b 48% 68%,
+      #f2d364 68% 82%,
+      #e7776b 82% 100%
+    );
+}
+.power-gauge-track.power{
+  background:
+    linear-gradient(
+      90deg,
+      #e7776b 0 40%,
+      #f2d364 40% 72%,
+      #78d68b 72% 100%
+    );
+}
+.power-gauge-track .ideal{
+  position:absolute;
+  top:-5px;
+  bottom:-5px;
+  width:3px;
+  background:#fff;
+  box-shadow:0 0 0 2px var(--ink);
+}
+.power-gauge-track.angle .ideal{left:58.33%}
+.power-gauge-track.power .ideal{right:2%}
+.power-marker{
+  position:absolute;
+  top:50%;
+  left:50%;
+  width:17px;
+  height:31px;
+  transform:translate(-50%,-50%);
+  border:3px solid var(--ink);
+  border-radius:7px;
+  background:#5ca6ff;
+}
+.power-stop{
+  min-height:53px;
+  border:4px solid var(--ink);
+  border-radius:14px;
+  background:#ffbd61;
+  box-shadow:0 5px 0 var(--ink);
+  font-size:18px;
+  font-weight:1000;
+  touch-action:none;
+}
+
+/* =========================================================
+   V10.17 GAMES 59–61
+   ========================================================= */
+.misfortune-shell,
+.aim-shell,
+.balance-shell{
+  width:min(100%,650px);
+  height:100%;
+  margin:0 auto;
+  display:flex;
+  flex-direction:column;
+}
+.misfortune-hud,
+.aim-hud,
+.balance-hud{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:5px;
+  margin-bottom:5px;
+}
+.misfortune-hud>div,
+.aim-hud>div,
+.balance-hud>div{
+  border:3px solid var(--ink);
+  border-radius:10px;
+  background:#fff;
+  padding:4px;
+  text-align:center;
+}
+.misfortune-hud span,
+.aim-hud span,
+.balance-hud span{
+  display:block;
+  color:var(--muted);
+  font-size:7px;
+  font-weight:1000;
+}
+.misfortune-hud b,
+.aim-hud b,
+.balance-hud b{
+  font-size:13px;
+}
+
+/* MISFORTUNE */
+.misfortune-stage{
+  flex:1;
+  min-height:0;
+  position:relative;
+  overflow:hidden;
+  border:4px solid var(--ink);
+  border-radius:21px;
+  background:linear-gradient(#c5dce5 0 72%,#99907f 72% 100%);
+}
+.misfortune-player{
+  position:absolute;
+  z-index:34;
+  left:50%;
+  bottom:22px;
+  width:58px;
+  height:68px;
+  transform:translateX(-50%);
+  background-size:contain;
+  background-position:center;
+  background-repeat:no-repeat;
+}
+.misfortune-rock{
+  position:absolute;
+  z-index:25;
+  border:4px solid #3c3935;
+  border-radius:42% 58% 47% 53%;
+  background:#77716b;
+  box-shadow:inset -7px -8px 0 rgba(55,52,49,.24);
+}
+.misfortune-player.rock-hit{
+  animation:misfortuneHitV117 .70s ease-out forwards;
+}
+@keyframes misfortuneHitV117{
+  100%{transform:translateX(-50%) translateY(90px) rotate(620deg);opacity:.3}
+}
+.misfortune-controls{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:7px;
+  margin-top:6px;
+}
+.misfortune-controls button{
+  min-height:60px;
+  border:4px solid var(--ink);
+  border-radius:14px;
+  background:#fff;
+  box-shadow:0 5px 0 var(--ink);
+  font-size:22px;
+  font-weight:1000;
+  touch-action:none;
+}
+.misfortune-warning{
+  position:absolute;
+  z-index:60;
+  left:50%;
+  top:35%;
+  transform:translate(-50%,-50%) scale(.4);
+  color:#ffdf57;
+  -webkit-text-stroke:4px var(--ink);
+  font-size:34px;
+  font-weight:1000;
+  opacity:0;
+}
+.misfortune-warning.show{
+  animation:misfortuneWarningV117 .85s ease;
+}
+@keyframes misfortuneWarningV117{
+  20%{opacity:1;transform:translate(-50%,-50%) scale(1.18)}
+  100%{opacity:0;transform:translate(-50%,-70%) scale(1)}
+}
+.misfortune-message{
+  position:absolute;
+  z-index:55;
+  left:50%;
+  top:7px;
+  transform:translateX(-50%);
+  border:3px solid var(--ink);
+  border-radius:999px;
+  background:#fff;
+  padding:5px 9px;
+  font-size:9px;
+  font-weight:1000;
+}
+#misfortuneDanger.extreme{
+  color:#e8433d;
+}
+
+/* AIM */
+.aim-stage{
+  flex:1;
+  min-height:0;
+  position:relative;
+  overflow:hidden;
+  border:4px solid var(--ink);
+  border-radius:21px;
+  background:linear-gradient(#a8deef 0 68%,#80ab65 68% 100%);
+}
+.aim-archer{
+  position:absolute;
+  z-index:30;
+  left:22px;
+  top:50%;
+  width:64px;
+  height:72px;
+  transform:translateY(-50%);
+  background-size:contain;
+  background-position:center;
+  background-repeat:no-repeat;
+}
+.aim-bow{
+  position:absolute;
+  right:-22px;
+  top:17px;
+  width:25px;
+  height:39px;
+  border:4px solid #5d3a22;
+  border-left:0;
+  border-radius:0 50% 50% 0;
+}
+.aim-tree{
+  position:absolute;
+  z-index:22;
+  right:12px;
+  top:25px;
+  bottom:20px;
+  width:102px;
+  border:5px solid #442c20;
+  border-radius:46px 46px 15px 15px;
+  background:#7c5535;
+  overflow:visible;
+}
+.aim-tree:before{
+  content:"";
+  position:absolute;
+  left:50%;
+  top:-34px;
+  width:132px;
+  height:76px;
+  transform:translateX(-50%);
+  border:5px solid #35572f;
+  border-radius:50%;
+  background:#5e8b54;
+}
+.aim-white-line{
+  position:absolute;
+  z-index:8;
+  left:-2px;
+  right:-2px;
+  height:3px;
+  transform:translateY(-50%);
+  background:#fff;
+  box-shadow:0 0 0 1px rgba(17,19,26,.25);
+}
+.aim-arrow{
+  position:absolute;
+  z-index:45;
+  left:72px;
+  top:50%;
+  width:74px;
+  height:3px;
+  transform:translateY(-50%);
+  opacity:0;
+}
+.aim-arrow i{
+  position:absolute;
+  left:0;
+  top:0;
+  width:70px;
+  height:3px;
+  background:#f3f3ef;
+}
+.aim-arrow b{
+  position:absolute;
+  right:-6px;
+  top:50%;
+  transform:translateY(-50%);
+  border-left:10px solid #d4d6d2;
+  border-top:5px solid transparent;
+  border-bottom:5px solid transparent;
+}
+.aim-arrow.flying,
+.aim-arrow.stuck{
+  opacity:1;
+}
+.aim-controls{
+  display:grid;
+  grid-template-columns:1fr 1.3fr 1fr;
+  gap:7px;
+  margin-top:6px;
+}
+.aim-controls button{
+  min-height:58px;
+  border:4px solid var(--ink);
+  border-radius:14px;
+  background:#fff;
+  box-shadow:0 5px 0 var(--ink);
+  font-size:18px;
+  font-weight:1000;
+  touch-action:none;
+}
+.aim-controls .fire{
+  background:#ffbf62;
+}
+.aim-message{
+  position:absolute;
+  z-index:56;
+  left:50%;
+  top:7px;
+  transform:translateX(-50%);
+  border:3px solid var(--ink);
+  border-radius:999px;
+  background:#fff;
+  padding:5px 9px;
+  font-size:9px;
+  font-weight:1000;
+}
+.aim-stage.result-zoom{
+  animation:aimResultZoomV117 .55s ease;
+}
+@keyframes aimResultZoomV117{
+  45%{transform:scale(1.035)}
+}
+
+/* BALANCE */
+.balance-stage{
+  flex:1;
+  min-height:0;
+  position:relative;
+  overflow:hidden;
+  border:4px solid var(--ink);
+  border-radius:21px;
+  background:linear-gradient(#a9ddeb 0 72%,#d6c89e 72% 100%);
+}
+.balance-rig{
+  position:absolute;
+  z-index:26;
+  left:50%;
+  bottom:42px;
+  width:120px;
+  height:310px;
+  transform:translateX(-50%);
+  transform-origin:50% 100%;
+}
+.balance-pole{
+  position:absolute;
+  left:50%;
+  bottom:0;
+  width:10px;
+  height:245px;
+  transform:translateX(-50%);
+  border:3px solid #282a2d;
+  border-radius:999px;
+  background:#ddd;
+}
+.balance-mob{
+  position:absolute;
+  left:50%;
+  top:0;
+  width:66px;
+  height:76px;
+  transform:translateX(-50%);
+  background-size:contain;
+  background-position:center;
+  background-repeat:no-repeat;
+}
+.balance-limit{
+  position:absolute;
+  z-index:12;
+  top:24px;
+  bottom:42px;
+  width:3px;
+  border-left:3px dashed rgba(226,69,61,.55);
+  color:#b93732;
+  font-size:7px;
+  font-weight:1000;
+}
+.balance-limit.left{left:22%}
+.balance-limit.right{right:22%}
+.balance-controls{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:7px;
+  margin-top:6px;
+}
+.balance-controls button{
+  min-height:62px;
+  border:4px solid var(--ink);
+  border-radius:14px;
+  background:#fff;
+  box-shadow:0 5px 0 var(--ink);
+  font-size:17px;
+  font-weight:1000;
+  touch-action:none;
+}
+.balance-message{
+  position:absolute;
+  z-index:56;
+  left:50%;
+  top:7px;
+  transform:translateX(-50%);
+  border:3px solid var(--ink);
+  border-radius:999px;
+  background:#fff;
+  padding:5px 9px;
+  font-size:9px;
+  font-weight:1000;
+}
+#balanceTilt.warning{color:#db8d27}
+#balanceTilt.danger{color:#df3f3a}
+.balance-rig.fall-left{
+  animation:balanceFallLeftV117 .70s ease-in forwards;
+}
+.balance-rig.fall-right{
+  animation:balanceFallRightV117 .70s ease-in forwards;
+}
+@keyframes balanceFallLeftV117{
+  to{transform:translateX(-50%) rotate(-88deg)}
+}
+@keyframes balanceFallRightV117{
+  to{transform:translateX(-50%) rotate(88deg)}
+}
+.balance-stage.balance-tap{
+  animation:balanceTapV117 .12s ease;
+}
+@keyframes balanceTapV117{
+  50%{filter:brightness(1.04)}
+}

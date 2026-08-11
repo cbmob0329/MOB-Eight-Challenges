@@ -104,10 +104,13 @@ const GAMES=[
   {no:52,key:"bossDuel",title:"モブくん番長決戦",sub:"屋上タイマンを最速で制する"},
   {no:53,key:"plushCatcher",title:"モブくんはぬいぐるみが好き",sub:"巨大ぬいぐるみを3回キャッチ"},
   {no:54,key:"toyOnOff",title:"モブくんおもちゃON or OFF",sub:"OFF5体を全部ONにするタイムアタック"},
-  {no:55,key:"dodgeballMob",title:"モブくんドッジボール",sub:"50%・80%・97%の3人をパワー勝負"},
+  {no:55,key:"dodgeballMob",title:"モブくんドッジボール",sub:"10秒で何体の黒モブくんを倒せるか"},
   {no:56,key:"amidakujiMob",title:"モブくんのあみだくじ",sub:"6本から選んで0〜100点のゴールへ"},
-  {no:57,key:"katanaSmith",title:"モブくんは刀鍛冶",sub:"7秒でカッコイイ刀を描く"},
-  {no:58,key:"homeRunMob",title:"モブくんはホームランバッター",sub:"剛速球を打って最大1000m"}
+  {no:57,key:"katanaSmith",title:"モブくんは刀鍛冶",sub:"7秒で縦向きの刀身だけを自由に描く"},
+  {no:58,key:"homeRunMob",title:"モブくんはパワーヒッター",sub:"角度とパワーを決めて最大3000m"},
+  {no:59,key:"mobMisfortune",title:"モブくんの災難",sub:"大量の落石を左右移動で避ける"},
+  {no:60,key:"aimMob",title:"狙ってモブくん！",sub:"弓矢で木の細い白線を狙う"},
+  {no:61,key:"balanceMob",title:"極限バランスモブくん",sub:"細い棒の上で10秒耐える"}
 ];
 
 const MODES={
@@ -144,7 +147,7 @@ function freshState(){
     roundIndex:0,
     records:{
       reaction:{},memory:{},puzzle:{},launch:{},stack:{},breakdance:{},
-      crisis:{},factory:{},catcher:{},tidy:{},ski:{},slot:{},rope:{},pk:{},rhythm:{},cut:{},climb:{},errand:{},dontHitMob:{},mobStop:{},overlap:{},shutter:{},cup:{},darts:{},parachute:{},mobCount:{},brake:{},feint:{},bomb:{},overlapMaster:{},jumpingMob:{},heroMaybe:{},popularGame:{},planetEnergy:{},painter:{},bikeJump:{},trampoline:{},mobTrain:{},giantMob:{},wizardMob:{},brawlerMob:{},summonerMob:{},blackjackMob:{},mobIssen:{},crowEscape:{},dancingMob:{},guardianMob:{},mob50m:{},sniperMob:{},mobRacePredict:{},mobRocket:{},bossDuel:{},plushCatcher:{},toyOnOff:{},dodgeballMob:{},amidakujiMob:{},katanaSmith:{},homeRunMob:{}
+      crisis:{},factory:{},catcher:{},tidy:{},ski:{},slot:{},rope:{},pk:{},rhythm:{},cut:{},climb:{},errand:{},dontHitMob:{},mobStop:{},overlap:{},shutter:{},cup:{},darts:{},parachute:{},mobCount:{},brake:{},feint:{},bomb:{},overlapMaster:{},jumpingMob:{},heroMaybe:{},popularGame:{},planetEnergy:{},painter:{},bikeJump:{},trampoline:{},mobTrain:{},giantMob:{},wizardMob:{},brawlerMob:{},summonerMob:{},blackjackMob:{},mobIssen:{},crowEscape:{},dancingMob:{},guardianMob:{},mob50m:{},sniperMob:{},mobRacePredict:{},mobRocket:{},bossDuel:{},plushCatcher:{},toyOnOff:{},dodgeballMob:{},amidakujiMob:{},katanaSmith:{},homeRunMob:{},mobMisfortune:{},aimMob:{},balanceMob:{}
     },
     total:{},
     roundPoints:[],
@@ -246,7 +249,7 @@ function renderHome(){
   state=freshState();
   screen.innerHTML=`
     <section class="hero">
-      <div><span class="kicker">SMARTPHONE PARTY GAME</span><h1>58 MINI<br>GAMES</h1><p>58種のミニゲーム。各モードでNORMALかCUSTOMを選んで遊べます。</p></div>
+      <div><span class="kicker">SMARTPHONE PARTY GAME</span><h1>61 MINI<br>GAMES</h1><p>61種のミニゲーム。各モードでNORMALかCUSTOMを選んで遊べます。</p></div>
       <div class="hero-mark">MOB</div>
     </section>
     <section class="panel">
@@ -494,7 +497,7 @@ function renderPlayStyleSelect(){
       <button id="normalStyle" class="style-select-card normal" type="button">
         <span>NORMAL</span>
         <b>順番に全種目</b>
-        <small>GAME 1 → 58 を順番にプレイ</small>
+        <small>GAME 1 → 61 を順番にプレイ</small>
       </button>
       <button id="customStyle" class="style-select-card custom" type="button">
         <span>CUSTOM</span>
@@ -504,7 +507,7 @@ function renderPlayStyleSelect(){
     </div>
 
     <section class="panel flat">
-      <h3>58 MINI GAMES</h3>
+      <h3>61 MINI GAMES</h3>
       <div class="compact-game-grid">
         ${GAMES.map(g=>`<div><b>${g.no}</b><span>${g.title}</span></div>`).join("")}
       </div>
@@ -737,10 +740,13 @@ function renderModeLobby(){
       <div><b>モブくん番長決戦</b><span>5秒以内=100 / 15秒以上=0</span></div>
       <div><b>モブくんはぬいぐるみが好き</b><span>3回GET=100 / 2回・1回は時間加点</span></div>
       <div><b>モブくんおもちゃON or OFF</b><span>1.40秒以下=100 / 6.50秒以上=0</span></div>
-      <div><b>モブくんドッジボール</b><span>最高POWER% / 3人撃破=100</span></div>
+      <div><b>モブくんドッジボール</b><span>10秒 / 10体KO=100点</span></div>
       <div><b>モブくんのあみだくじ</b><span>ゴールの0 / 15 / 30 / 50 / 75 / 100がそのまま得点</span></div>
-      <div><b>モブくんは刀鍛冶</b><span>描いた刀を1〜100点で評価</span></div>
-      <div><b>モブくんはホームランバッター</b><span>1000m=100点 / MISS=0</span></div>
+      <div><b>モブくんは刀鍛冶</b><span>縦向きの刀身だけ描いて1〜100点</span></div>
+      <div><b>モブくんはパワーヒッター</b><span>ゴルフショット3000m=100点</span></div>
+      <div><b>モブくんの災難</b><span>12秒生存=100点</span></div>
+      <div><b>狙ってモブくん！</b><span>白線との誤差0px=100点</span></div>
+      <div><b>極限バランスモブくん</b><span>10秒維持=100点</span></div>
     </div>`;
 
   screen.innerHTML=`
@@ -833,10 +839,13 @@ function scoreRuleForGame(index){
     "他校番長を倒すまでのタイム / 短いほど高得点",
     "3回GET=100点 / 2回・1回はGET数+使用時間で加点",
     "OFF5体を全部ON / 1.40秒以下=100点 / 6.50秒以上=0点",
-    "パワー%が記録 / 3人撃破で100点",
+    "10秒で10体KO=100点 / 0体=0点",
     "到達したゴール数字がそのまま0〜100点",
-    "刀の形・細長さ・直線性・鍔などを1〜100点",
-    "ホームラン1000m=100点 / MISS=0点"
+    "縦向き刀身の長さ・接続・細さ・滑らかさを1〜100点",
+    "ゴルフショット3000m=100点 / 0m=0点",
+    "12.00秒生存=100点 / 岩直撃までの時間",
+    "白線との誤差0px=100点 / 約45px以上=0点",
+    "10.00秒維持=100点 / 倒れるまでの時間"
   ][index];
 }
 
@@ -955,13 +964,19 @@ function showGameIntro(index){
   }else if(index===53){
     rules=`<li>play/001.png=ON、play/002.png=OFF。</li><li>30体のおもちゃがランダム位置に出現。ON25体・OFF5体。</li><li>OFFだけを素早くタップするとONへ変化。</li><li>5体すべてONになった瞬間までのタイムを競います。</li>`;
   }else if(index===54){
-    rules=`<li>play/003.pngのモブくんが投手。対戦相手は黒塗りモブくん。</li><li>時計回りに溜まる円形POWERゲージをタップして投球。</li><li>1人目50%以上 / 2人目80%以上 / 3人目97%以上で吹っ飛ばして撃破。</li><li>足りない場合は相手にキャッチされて終了。1人目でCATCHなら最高POWERの50%、2人目なら75%、3人目なら100%が記録。</li>`;
+    rules=`<li>ドッジボール大好きなモブくんが10秒で何体倒せるか挑戦。</li><li>play/003.pngがプレイヤー。黒塗り反転モブくんが5体ずつ出現。</li><li>敵はそれぞれ上下移動し、必ず中央のボールラインを通過します。</li><li>THROWまたは画面タップで真っすぐボールを発射。1回投げるとリロード1秒。</li><li>5体全滅すると新しい5体が即登場。10秒終了時のKO数が記録。</li>`;
   }else if(index===55){
     rules=`<li>6本のあみだくじ。ゴールは0 / 15 / 30 / 50 / 75 / 100。</li><li>最初はゴール側からカメラが始まり、あみだの一部をヒントとして見せてから入口へ移動。</li><li>入口を1つ選ぶとモブくんが自動で線をたどり、カメラが追従してゴールへ。</li><li>あみだの横線・数字の配置は毎回ランダム。</li>`;
   }else if(index===56){
-    rules=`<li>7秒間で好きなカッコイイ刀を描きます。画面に「左下→右上」の薄いガイドを表示。</li><li>まず長く細い刀身を描き、根元付近へ横向きの鍔、その下へ柄を足すと高得点になりやすいです。</li><li>大きく塗り潰すだけでは高得点になりません。</li><li>完成した刀を1〜100点で採点。</li>`;
+    rules=`<li>鍔・柄・柄頭は最初から完成済み。プレイヤーが描くのは刀身だけ。</li><li>刀は縦向き。黄色い根元から上へ、好きな形のカッコイイ刀身を7秒で描きます。</li><li>長さ・根元への接続・縦の細長さ・滑らかさなどを採点。</li><li>まっすぐでも少し曲がっていてもOK。1〜100点。</li>`;
+  }else if(index===57){
+    rules=`<li>野球ではなくゴルフのパワーヒッターゲーム。</li><li>最初にANGLEゲージをSTOPして10〜70°から打ち出し角を決定。</li><li>次にPOWERゲージをSTOP。100%に近いほど強いショット。</li><li>自動でゴルフスイングし、カメラがボールを追跡。角度45°付近＋POWER100%で最大3000m。</li>`;
+  }else if(index===58){
+    rules=`<li>上から大量の岩が落下。← →でモブくんを動かして避けます。</li><li>岩に1回でも当たったら即終了。</li><li>7秒までは徐々に難しくなり、7秒以降は落石数・速度が一気に上がるROCK STORM。</li><li>最大12秒生存。</li>`;
+  }else if(index===59){
+    rules=`<li>右側の巨大な木に、矢と同じくらい細い白線があります。</li><li>左のモブくんを▲ ▼で上下移動。</li><li>FIREまたは画面タップで矢を1発だけ真っすぐ発射。</li><li>矢が刺さった高さと白線の誤差から0〜100点。</li>`;
   }else{
-    rules=`<li>剛速球が1球だけ飛んできます。</li><li>タイミングを見てSWING。ボールが打点へ来た瞬間ほど強いホームラン。</li><li>ヒット後はカメラが打球を追跡して飛距離を表示。</li><li>最高1000m。タイミングを外して空振りすると0m。</li>`;
+    rules=`<li>細い棒の上にモブくん。10秒間倒れないように維持。</li><li>右へ傾いたらLEFT、左へ傾いたらRIGHTをタップして補正。</li><li>傾きが大きいほど1タップの補正も強くなります。</li><li>ただし約29°の限界域まで傾くと補正が効かなくなり、34°で転倒。</li>`;
   }
   screen.innerHTML=`
     <div class="game-head">
@@ -1059,7 +1074,10 @@ function humanReady(gameIndex,humanIndex){
     else if(gameIndex===54)startDodgeballMob(p,humanIndex,runId);
     else if(gameIndex===55)startAmidakujiMob(p,humanIndex,runId);
     else if(gameIndex===56)startKatanaSmith(p,humanIndex,runId);
-    else startHomeRunMob(p,humanIndex,runId);
+    else if(gameIndex===57)startPowerHitter(p,humanIndex,runId);
+    else if(gameIndex===58)startMobMisfortune(p,humanIndex,runId);
+    else if(gameIndex===59)startAimMob(p,humanIndex,runId);
+    else startBalanceMob(p,humanIndex,runId);
   },{once:true});
 }
 
@@ -5217,8 +5235,10 @@ async function startShutterChance(p,humanIndex,runId){
     void snap.offsetWidth;
     snap.classList.add('show');
 
-    photoMob.style.transform=
-      `translate(-50%,${-currentY*.34}px)`;
+    // The instant-photo preview is a framed full-body photo.
+    // V10.16 moved the preview by jump height and cropped the upper body.
+    photoMob.style.transform='translateX(-50%) scale(.82)';
+    photoMob.style.bottom='2px';
 
     photo.classList.remove('show');
     void photo.offsetWidth;
@@ -13615,6 +13635,7 @@ async function startBossDuel(p,humanIndex,runId){
 
   const fieldMin=55;
   const fieldMax=stage.clientWidth-55;
+  const minBodyGap=76;
 
   playerX=stage.clientWidth*.27;
   enemyX=stage.clientWidth*.73;
@@ -14050,6 +14071,71 @@ async function startBossDuel(p,humanIndex,runId){
     }
   }
 
+  function resolveBodySeparation(){
+    if(nowDuringLeap())return;
+
+    const dx=enemyX-playerX;
+    const dist=Math.abs(dx);
+
+    if(dist>=minBodyGap)return;
+
+    const dir=
+      dist<.001
+        ? (facing>0?1:-1)
+        : Math.sign(dx);
+
+    const overlap=minBodyGap-dist;
+
+    playerX=clamp(
+      playerX-dir*overlap*.52,
+      fieldMin,
+      fieldMax
+    );
+
+    enemyX=clamp(
+      enemyX+dir*overlap*.52,
+      fieldMin,
+      fieldMax
+    );
+
+    // If one side is already against the boundary, force the other body away.
+    if(Math.abs(enemyX-playerX)<minBodyGap){
+      if(dir>0){
+        enemyX=clamp(
+          playerX+minBodyGap,
+          fieldMin,
+          fieldMax
+        );
+
+        if(Math.abs(enemyX-playerX)<minBodyGap){
+          playerX=clamp(
+            enemyX-minBodyGap,
+            fieldMin,
+            fieldMax
+          );
+        }
+      }else{
+        enemyX=clamp(
+          playerX-minBodyGap,
+          fieldMin,
+          fieldMax
+        );
+
+        if(Math.abs(enemyX-playerX)<minBodyGap){
+          playerX=clamp(
+            enemyX+minBodyGap,
+            fieldMin,
+            fieldMax
+          );
+        }
+      }
+    }
+  }
+
+  function nowDuringLeap(){
+    return performance.now()<enemyLeapUntil;
+  }
+
   if(!(await countdown('BANCHOU DUEL',runId)))return;
 
   startTime=performance.now();
@@ -14147,6 +14233,11 @@ async function startBossDuel(p,humanIndex,runId){
         }
       }
 
+      enemy.style.left=`${enemyX}px`;
+    }
+
+    if(now>=enemyLeapUntil){
+      resolveBodySeparation();
       enemy.style.left=`${enemyX}px`;
     }
 
@@ -14382,11 +14473,11 @@ async function startPlushCatcher(p,humanIndex,runId){
       // Even after the arms close, an unstable grab can slip.
       // A nearly perfect grab is very reliable, but never literally 100%.
       const holdChance=clamp(
-        .22+
-        gripQuality*.34+
-        alignQuality*.23+
-        depthQuality*.17,
-        .22,.94
+        .14+
+        gripQuality*.30+
+        alignQuality*.24+
+        depthQuality*.18,
+        .14,.86
       );
 
       const willHold=Math.random()<holdChance;
@@ -14825,240 +14916,259 @@ async function startToyOnOff(p,humanIndex,runId){
 async function startDodgeballMob(p,humanIndex,runId){
   gameFit();
 
-  const thresholds=[50,80,97];
+  const GAME_MS=10000;
+  const RELOAD_MS=1000;
 
-  let round=0;
-  let bestPower=0;
-  let charging=false;
-  let throwLocked=false;
-  let gaugeStart=0;
-  let gaugePos=0;
+  let kills=0;
+  let wave=0;
+  let reloadingUntil=0;
+  let startTime=0;
+  let last=0;
   let raf=null;
   let finished=false;
 
-  screen.innerHTML=`<div class="dodge-shell">
+  const enemies=[];
+  const balls=[];
+
+  screen.innerHTML=`<div class="dodge-shell dodge-v117">
     <div class="game-head">
       <div><span class="kicker">${esc(p.name)}</span><h2>モブくんドッジボール</h2></div>
       <div class="game-badge">${playBadge(humanIndex)}</div>
     </div>
 
-    <div class="dodge-hud">
-      <div><span>RIVAL</span><b id="dodgeRound">1 / 3</b></div>
-      <div><span>BEST</span><b id="dodgeBest">0%</b></div>
-      <div><span>NEED</span><b id="dodgeNeed">50%</b></div>
+    <div class="dodge-hud dodge-hud-v117">
+      <div><span>TIME</span><b id="dodgeTime">10.00</b></div>
+      <div><span>KO</span><b id="dodgeKills">0</b></div>
+      <div><span>RELOAD</span><b id="dodgeReload">READY</b></div>
     </div>
 
-    <div id="dodgeStage" class="dodge-stage">
+    <div id="dodgeStage" class="dodge-stage dodge-stage-v117">
       <div class="dodge-court">
         <i></i><i></i>
       </div>
 
-      <div id="dodgePlayer" class="dodge-player">
+      <div id="dodgePlayer" class="dodge-player dodge-player-v117">
         <img src="play/003.png" draggable="false" alt="player">
       </div>
 
-      <div id="dodgeEnemy" class="dodge-enemy">
-        <img src="play/003.png" draggable="false" alt="enemy">
-        <b id="dodgeEnemyNo">RIVAL 1</b>
-      </div>
+      <div id="dodgeEnemies" class="dodge-enemy-layer-v117"></div>
+      <div id="dodgeBalls" class="dodge-ball-layer-v117"></div>
 
-      <div id="dodgeBall" class="dodge-ball">
-        <img src="icon/001.png" draggable="false" alt="ball">
-      </div>
+      <div class="dodge-shot-line-v117"></div>
 
-      <button id="dodgeGauge" class="dodge-gauge" type="button">
-        <div id="dodgeGaugeRing" class="dodge-gauge-ring">
-          <span id="dodgePower">0%</span>
-        </div>
-        <b>POWER TAP!</b>
-      </button>
-
-      <div id="dodgeMessage" class="dodge-message">MAXでタップ！</div>
+      <div id="dodgeWave" class="dodge-wave-v117">WAVE 1</div>
+      <div id="dodgeMessage" class="dodge-message dodge-message-v117">中央ラインに来た敵を狙え！</div>
     </div>
+
+    <button id="dodgeFire" class="dodge-fire-v117" type="button">THROW!</button>
   </div>`;
 
   const stage=document.getElementById('dodgeStage');
-  const enemy=document.getElementById('dodgeEnemy');
-  const ball=document.getElementById('dodgeBall');
-  const gauge=document.getElementById('dodgeGauge');
-  const ring=document.getElementById('dodgeGaugeRing');
-  const powerEl=document.getElementById('dodgePower');
-  const roundEl=document.getElementById('dodgeRound');
-  const bestEl=document.getElementById('dodgeBest');
-  const needEl=document.getElementById('dodgeNeed');
-  const enemyNo=document.getElementById('dodgeEnemyNo');
+  const enemyLayer=document.getElementById('dodgeEnemies');
+  const ballLayer=document.getElementById('dodgeBalls');
+  const timeEl=document.getElementById('dodgeTime');
+  const killsEl=document.getElementById('dodgeKills');
+  const reloadEl=document.getElementById('dodgeReload');
+  const waveEl=document.getElementById('dodgeWave');
   const message=document.getElementById('dodgeMessage');
+  const fire=document.getElementById('dodgeFire');
 
-  function currentPower(now){
-    const speed=
-      round===0?1.18:
-      round===1?1.36:
-      1.56;
+  const w=stage.clientWidth;
+  const h=stage.clientHeight;
+  const shotY=h*.55;
+  const playerX=w*.14;
 
-    const cycle=((now-gaugeStart)/1000*speed)%1;
-    return cycle*100;
+  function spawnWave(){
+    wave++;
+    waveEl.textContent=`WAVE ${wave}`;
+    waveEl.classList.remove('show');
+    void waveEl.offsetWidth;
+    waveEl.classList.add('show');
+
+    const xFractions=shuffle([.55,.64,.73,.82,.90]);
+
+    for(let i=0;i<5;i++){
+      const el=document.createElement('div');
+      el.className='dodge-target-v117';
+      el.innerHTML=`
+        <img src="play/003.png" draggable="false" alt="rival">
+        <b>${wave}-${i+1}</b>
+      `;
+
+      enemyLayer.appendChild(el);
+
+      const amp=rand(52,Math.max(68,h*.20));
+      const speed=rand(.72,1.32);
+      const phase=Math.random()*Math.PI*2;
+
+      const enemy={
+        el,
+        x:w*xFractions[i],
+        y:shotY,
+        amp,
+        speed,
+        phase,
+        dead:false
+      };
+
+      enemies.push(enemy);
+    }
   }
 
-  function updateRound(){
-    roundEl.textContent=`${round+1} / 3`;
-    needEl.textContent=`${thresholds[round]}%`;
-    enemyNo.textContent=`RIVAL ${round+1}`;
-
-    enemy.className='dodge-enemy';
-    ball.className='dodge-ball';
-    ball.style.left='18%';
-    ball.style.top='66%';
-
-    message.textContent=
-      `${thresholds[round]}%以上で倒せ！`;
-
-    throwLocked=false;
-    charging=true;
-    gaugeStart=performance.now();
+  function activeEnemies(){
+    return enemies.filter(e=>!e.dead);
   }
 
-  function finish(caught=false){
-    if(finished)return;
-    finished=true;
-    charging=false;
+  function throwBall(){
+    const now=performance.now();
 
-    const caughtRate=
-      round===0
-        ? .50
-        : round===1
-          ? .75
-          : 1;
-
-    const score=
-      round>=3
-        ? 100
-        : Math.round(bestPower*caughtRate);
-
-    state.records.dodgeballMob[p.id]=score;
-
-    message.textContent=
-      round>=3
-        ? '3人撃破！ PERFECT!!'
-        : caught
-          ? `CATCH！ 記録 ${score}%`
-          : `BEST ${score}%`;
-
-    beep(
-      score>=97?1080:
-      score>=80?860:
-      score>=50?650:
-      390,
-      150,.04
-    );
-
-    setTimeout(()=>{
-      if(isGameRunValid(runId)){
-        recordScreen(
-          54,p,humanIndex,
-          `${score}<small>%</small>`,
-          round>=3?'3 RIVALS DOWN':'BALL CAUGHT'
-        );
-      }
-    },780);
-  }
-
-  function throwBall(power){
-    throwLocked=true;
-    charging=false;
-
-    bestPower=Math.max(bestPower,power);
-    bestEl.textContent=`${Math.round(bestPower)}%`;
-
-    const need=thresholds[round];
-    const success=power>=need;
-
-    ring.style.setProperty('--dodge-power',`${power}%`);
-    powerEl.textContent=`${power.toFixed(1)}%`;
-
-    ball.classList.remove(
-      'throw-hit',
-      'throw-catch',
-      'impact-v116'
-    );
-
-    void ball.offsetWidth;
-    ball.classList.add('throw-to-rival-v116');
-
-    message.textContent=
-      `${power.toFixed(1)}%！ ボール発射！`;
-
-    beep(760,55,.018);
-
-    // The ball visibly reaches the rival FIRST.
-    setTimeout(()=>{
-      if(!isGameRunValid(runId)||finished)return;
-
-      ball.classList.remove('throw-to-rival-v116');
-      ball.classList.add('impact-v116');
-
-      if(success){
-        enemy.classList.remove('defeated','catching');
-        void enemy.offsetWidth;
-        enemy.classList.add('defeated');
-
-        message.textContent=
-          `HIT！ ${power.toFixed(1)}%でぶっ飛ばした！`;
-
-        beep(980,95,.03);
-
-      }else{
-        enemy.classList.remove('defeated','catching');
-        void enemy.offsetWidth;
-        enemy.classList.add('catching');
-
-        message.textContent=
-          `${power.toFixed(1)}%… CATCHされた！`;
-
-        beep(230,90,.025);
-      }
-    },430);
-
-    setTimeout(()=>{
-      if(!isGameRunValid(runId)||finished)return;
-
-      if(success){
-        round++;
-
-        if(round>=3){
-          finish(false);
-          return;
-        }
-
-        updateRound();
-      }else{
-        finish(true);
-      }
-    },980);
-  }
-
-  gauge.addEventListener('pointerdown',e=>{
     if(
-      !charging||
-      throwLocked||
       finished||
+      now<reloadingUntil||
       !isGameRunValid(runId)
     )return;
 
+    reloadingUntil=now+RELOAD_MS;
+    fire.disabled=true;
+    reloadEl.textContent='1.00';
+
+    const el=document.createElement('div');
+    el.className='dodge-live-ball-v117';
+    el.innerHTML=`<img src="icon/001.png" draggable="false" alt="ball">`;
+    ballLayer.appendChild(el);
+
+    balls.push({
+      el,
+      x:playerX+30,
+      y:shotY,
+      alive:true
+    });
+
+    message.textContent='THROW!!';
+    beep(760,48,.016);
+  }
+
+  fire.addEventListener('pointerdown',e=>{
     e.preventDefault();
-    throwBall(currentPower(performance.now()));
+    throwBall();
   },{passive:false});
+
+  stage.addEventListener('pointerdown',e=>{
+    if(e.target.closest('.dodge-message-v117'))return;
+    e.preventDefault();
+    throwBall();
+  },{passive:false});
+
+  function hitEnemy(enemy,ball){
+    if(enemy.dead||!ball.alive)return;
+
+    enemy.dead=true;
+    ball.alive=false;
+    ball.el.remove();
+
+    kills++;
+    killsEl.textContent=kills;
+
+    enemy.el.classList.add('hit-fly-v117');
+    message.textContent=`HIT! ${kills} KO`;
+    beep(980,75,.026);
+
+    setTimeout(()=>enemy.el.remove(),650);
+
+    if(activeEnemies().length===0){
+      setTimeout(()=>{
+        if(!finished&&isGameRunValid(runId)){
+          spawnWave();
+        }
+      },230);
+    }
+  }
 
   if(!(await countdown('DODGEBALL',runId)))return;
 
-  updateRound();
+  startTime=performance.now();
+  last=startTime;
+  spawnWave();
 
   function frame(now){
     if(finished||!isGameRunValid(runId))return;
 
-    if(charging){
-      gaugePos=currentPower(now);
-      ring.style.setProperty('--dodge-power',`${gaugePos}%`);
-      powerEl.textContent=`${gaugePos.toFixed(0)}%`;
+    const dt=Math.min(30,now-last)/1000;
+    last=now;
+
+    const elapsed=now-startTime;
+    const rem=GAME_MS-elapsed;
+
+    if(rem<=0){
+      finished=true;
+      timeEl.textContent='0.00';
+
+      state.records.dodgeballMob[p.id]=kills;
+
+      message.textContent=`TIME UP！ ${kills} KO`;
+      beep(kills>=10?1080:kills>=6?820:580,150,.04);
+
+      setTimeout(()=>{
+        if(isGameRunValid(runId)){
+          recordScreen(
+            54,p,humanIndex,
+            `${kills}<small>体</small>`,
+            `${wave} WAVE`
+          );
+        }
+      },650);
+      return;
+    }
+
+    timeEl.textContent=(rem/1000).toFixed(2);
+
+    const reloadRem=Math.max(0,reloadingUntil-now);
+    if(reloadRem<=0){
+      reloadEl.textContent='READY';
+      fire.disabled=false;
+    }else{
+      reloadEl.textContent=(reloadRem/1000).toFixed(2);
+    }
+
+    for(const enemy of activeEnemies()){
+      const t=elapsed/1000;
+      enemy.y=
+        shotY+
+        Math.sin(
+          t*enemy.speed*Math.PI*2+
+          enemy.phase
+        )*
+        enemy.amp;
+
+      enemy.el.style.left=`${enemy.x}px`;
+      enemy.el.style.top=`${enemy.y}px`;
+    }
+
+    for(const ball of balls){
+      if(!ball.alive)continue;
+
+      ball.x+=620*dt;
+      ball.el.style.left=`${ball.x}px`;
+      ball.el.style.top=`${ball.y}px`;
+
+      let hit=null;
+
+      for(const enemy of activeEnemies()){
+        if(
+          Math.abs(ball.x-enemy.x)<=22&&
+          Math.abs(ball.y-enemy.y)<=31
+        ){
+          hit=enemy;
+          break;
+        }
+      }
+
+      if(hit){
+        hitEnemy(hit,ball);
+      }else if(ball.x>w+35){
+        ball.alive=false;
+        ball.el.remove();
+      }
     }
 
     raf=requestAnimationFrame(frame);
@@ -15328,144 +15438,103 @@ async function startAmidakujiMob(p,humanIndex,runId){
 }
 
 // GAME 57 -------------------------------------------------
-function scoreKatanaDrawing(strokes,w,h){
+function scoreKatanaDrawing(strokes,w,h,anchorX,anchorY){
   const valid=strokes.filter(s=>s.length>=2);
+  const points=valid.flat();
 
-  if(!valid.length)return 1;
+  if(points.length<4)return 1;
 
-  const stats=valid.map(st=>({
-    stroke:st,
-    stat:drawingStrokeStats(st)
-  }));
+  const minX=Math.min(...points.map(p=>p.x));
+  const maxX=Math.max(...points.map(p=>p.x));
+  const minY=Math.min(...points.map(p=>p.y));
+  const maxY=Math.max(...points.map(p=>p.y));
 
-  const longest=[...stats]
-    .sort((a,b)=>b.stat.len-a.stat.len)[0];
+  const bladeHeight=Math.max(1,anchorY-minY);
+  const bladeWidth=Math.max(1,maxX-minX);
 
-  const blade=longest.stroke;
-  const bladeStat=longest.stat;
-
-  const p0=blade[0];
-  const p1=blade[blade.length-1];
-
-  const chord=Math.hypot(
-    p1.x-p0.x,
-    p1.y-p0.y
-  );
-
-  const straightness=clamp(
-    chord/Math.max(1,bladeStat.len),
+  const heightScore=clamp(
+    bladeHeight/(h*.68),
     0,1
   );
 
-  // The guide explicitly asks for bottom-left -> top-right.
-  const dx=p1.x-p0.x;
-  const dy=p1.y-p0.y;
-  let angle=Math.atan2(dy,dx);
-
-  // Direction itself does not matter: same line reversed is valid.
-  if(angle>Math.PI/2)angle-=Math.PI;
-  if(angle<-Math.PI/2)angle+=Math.PI;
-
-  const targetAngle=-Math.PI/4;
-  const angleError=Math.abs(angle-targetAngle);
-  const angleScore=clamp(
-    1-angleError/(Math.PI*.38),
-    0,1
-  );
-
-  const diag=Math.hypot(w,h);
-  const bladeLengthRatio=chord/diag;
-  const lengthScore=clamp(
-    1-Math.abs(bladeLengthRatio-.62)/.34,
-    0,1
-  );
-
-  const sideThickness=
-    Math.min(bladeStat.w,bladeStat.h)/
-    Math.max(1,Math.max(bladeStat.w,bladeStat.h));
-
+  const verticalSlimness=bladeHeight/bladeWidth;
   const slimScore=clamp(
-    1-sideThickness/.46,
+    (verticalSlimness-1.5)/5.0,
     0,1
   );
 
-  // Search for a short stroke crossing near the lower quarter of the blade = tsuba.
-  const bladeLowX=p0.x*.72+p1.x*.28;
-  const bladeLowY=p0.y*.72+p1.y*.28;
-  const bladeAngle=Math.atan2(dy,dx);
+  let minAnchorDist=Infinity;
 
-  let guardScore=0;
-  let handleScore=0;
-
-  stats.forEach(item=>{
-    if(item===longest)return;
-
-    const st=item.stroke;
-    const a=st[0];
-    const b=st[st.length-1];
-    const stAngle=Math.atan2(b.y-a.y,b.x-a.x);
-
-    const cx=item.stat.cx;
-    const cy=item.stat.cy;
-
-    const nearGuard=Math.hypot(
-      cx-bladeLowX,
-      cy-bladeLowY
+  points.forEach(pt=>{
+    minAnchorDist=Math.min(
+      minAnchorDist,
+      Math.hypot(pt.x-anchorX,pt.y-anchorY)
     );
-
-    let angleDiff=Math.abs(stAngle-bladeAngle);
-    while(angleDiff>Math.PI)angleDiff-=Math.PI;
-    angleDiff=Math.min(angleDiff,Math.PI-angleDiff);
-
-    const perpendicular=Math.abs(Math.sin(angleDiff));
-
-    if(
-      item.stat.len>=24&&
-      item.stat.len<=170&&
-      nearGuard<=Math.max(90,diag*.18)
-    ){
-      guardScore=Math.max(
-        guardScore,
-        clamp(perpendicular,0,1)
-      );
-    }
-
-    // Short continuation near the lower end acts as a handle.
-    const nearHandle=Math.min(
-      Math.hypot(item.stat.cx-p0.x,item.stat.cy-p0.y),
-      Math.hypot(item.stat.cx-p1.x,item.stat.cy-p1.y)
-    );
-
-    if(
-      item.stat.len>=35&&
-      item.stat.len<=210&&
-      nearHandle<=Math.max(95,diag*.18)
-    ){
-      handleScore=Math.max(
-        handleScore,
-        clamp(item.stat.len/110,0,1)
-      );
-    }
   });
 
-  const strokeCountScore=clamp(
-    1-Math.abs(valid.length-4)/7,
-    .25,1
+  const connectScore=clamp(
+    1-minAnchorDist/82,
+    0,1
   );
 
-  // A clear blade alone already gets a sensible mid score.
-  // Tsuba + handle + good guide alignment push it into 80–100.
-  const raw=
-    12+
-    straightness*27+
-    lengthScore*20+
-    slimScore*10+
-    angleScore*9+
-    guardScore*12+
-    handleScore*6+
-    strokeCountScore*4;
+  const longest=valid
+    .map(st=>({
+      stroke:st,
+      stat:drawingStrokeStats(st)
+    }))
+    .sort((a,b)=>b.stat.len-a.stat.len)[0];
 
-  return clamp(Math.round(raw),1,100);
+  const first=longest.stroke[0];
+  const last=longest.stroke[longest.stroke.length-1];
+
+  const smoothScore=clamp(
+    Math.hypot(
+      last.x-first.x,
+      last.y-first.y
+    )/
+    Math.max(1,longest.stat.len),
+    .18,1
+  );
+
+  const totalTurn=valid.reduce(
+    (sum,st)=>sum+drawingStrokeStats(st).turn,
+    0
+  );
+
+  // A little curve/detail looks stylish; scribbling does not.
+  const styleScore=clamp(
+    1-Math.abs(totalTurn/(Math.PI*2.3)-.55),
+    .18,1
+  );
+
+  const countScore=clamp(
+    1-Math.abs(valid.length-2)/5,
+    .35,1
+  );
+
+  const centerDrift=Math.abs(
+    (minX+maxX)/2-anchorX
+  );
+
+  const centeredScore=clamp(
+    1-centerDrift/(w*.32),
+    0,1
+  );
+
+  const raw=
+    8+
+    heightScore*31+
+    connectScore*22+
+    slimScore*15+
+    smoothScore*10+
+    centeredScore*7+
+    styleScore*4+
+    countScore*3;
+
+  return clamp(
+    Math.round(raw),
+    1,100
+  );
 }
 
 async function startKatanaSmith(p,humanIndex,runId){
@@ -15479,7 +15548,7 @@ async function startKatanaSmith(p,humanIndex,runId){
 
   const strokes=[];
 
-  screen.innerHTML=`<div class="katana-shell">
+  screen.innerHTML=`<div class="katana-shell katana-v117">
     <div class="game-head">
       <div><span class="kicker">${esc(p.name)}</span><h2>モブくんは刀鍛冶</h2></div>
       <div class="game-badge">${playBadge(humanIndex)}</div>
@@ -15487,27 +15556,31 @@ async function startKatanaSmith(p,humanIndex,runId){
 
     <div class="katana-hud">
       <div><span>DRAW</span><b id="katanaTime">7.0</b></div>
-      <div><span>STROKE</span><b id="katanaStroke">0</b></div>
+      <div><span>BLADE</span><b id="katanaStroke">0</b></div>
     </div>
 
-    <div id="katanaStage" class="katana-stage">
+    <div id="katanaStage" class="katana-stage katana-stage-v117">
       <div class="katana-forge-bg">
         <i class="forge-fire f1"></i>
         <i class="forge-fire f2"></i>
         <div class="forge-anvil"></div>
       </div>
 
-      <div class="katana-guide-v116">
-        <div class="katana-guide-blade-v116"></div>
-        <div class="katana-guide-guard-v116"></div>
-        <div class="katana-guide-handle-v116"></div>
-        <span class="blade-label">刀身：左下 → 右上</span>
-        <span class="guard-label">鍔</span>
-        <span class="handle-label">柄</span>
+      <div id="katanaFixedHilt" class="katana-fixed-hilt-v117">
+        <i class="katana-pommel-v117"></i>
+        <i class="katana-handle-v117"></i>
+        <i class="katana-guard-v117"></i>
+        <b class="katana-anchor-v117"></b>
+      </div>
+
+      <div class="katana-blade-zone-v117">
+        <span>刀身だけ自由に描く</span>
+        <small>ここから上へ ↑</small>
       </div>
 
       <svg id="katanaSvg" class="katana-svg"></svg>
-      <div id="katanaCall" class="katana-call">ガイドを参考に刀を描け！</div>
+
+      <div id="katanaCall" class="katana-call">縦にカッコイイ刀身を描け！</div>
       <div id="katanaScore" class="katana-score"></div>
     </div>
   </div>`;
@@ -15522,13 +15595,25 @@ async function startKatanaSmith(p,humanIndex,runId){
   const w=stage.clientWidth;
   const h=stage.clientHeight;
 
+  const anchorX=w*.50;
+  const anchorY=h-112;
+
   svg.setAttribute('viewBox',`0 0 ${w} ${h}`);
 
   function localPoint(e){
     const r=stage.getBoundingClientRect();
+
     return {
-      x:clamp(e.clientX-r.left,4,w-4),
-      y:clamp(e.clientY-r.top,4,h-4)
+      x:clamp(
+        e.clientX-r.left,
+        8,
+        w-8
+      ),
+      y:clamp(
+        e.clientY-r.top,
+        8,
+        anchorY
+      )
     };
   }
 
@@ -15544,9 +15629,14 @@ async function startKatanaSmith(p,humanIndex,runId){
   }
 
   stage.addEventListener('pointerdown',e=>{
-    if(!drawingOpen||drawing||!isGameRunValid(runId))return;
+    if(
+      !drawingOpen||
+      drawing||
+      !isGameRunValid(runId)
+    )return;
 
     e.preventDefault();
+
     drawing=true;
     pointerId=e.pointerId;
 
@@ -15558,7 +15648,9 @@ async function startKatanaSmith(p,humanIndex,runId){
     strokes.push(current.points);
     strokeEl.textContent=strokes.length;
 
-    try{stage.setPointerCapture(pointerId)}catch(_){}
+    try{
+      stage.setPointerCapture(pointerId);
+    }catch(_){}
   },{passive:false});
 
   stage.addEventListener('pointermove',e=>{
@@ -15575,9 +15667,12 @@ async function startKatanaSmith(p,humanIndex,runId){
 
     if(Math.hypot(pt.x-prev.x,pt.y-prev.y)>=2){
       current.points.push(pt);
+
       current.el.setAttribute(
         'points',
-        current.points.map(q=>`${q.x},${q.y}`).join(' ')
+        current.points
+          .map(q=>`${q.x},${q.y}`)
+          .join(' ')
       );
     }
   },{passive:false});
@@ -15592,14 +15687,17 @@ async function startKatanaSmith(p,humanIndex,runId){
   stage.addEventListener('pointerup',end,{passive:false});
   stage.addEventListener('pointercancel',end,{passive:false});
 
-  if(!(await countdown('KATANA FORGE',runId)))return;
+  if(!(await countdown('KATANA BLADE',runId)))return;
 
   drawingOpen=true;
   const start=performance.now();
 
   await new Promise(resolve=>{
     const frame=now=>{
-      if(!isGameRunValid(runId)){resolve();return;}
+      if(!isGameRunValid(runId)){
+        resolve();
+        return;
+      }
 
       const rem=7000-(now-start);
       timeEl.textContent=(Math.max(0,rem)/1000).toFixed(1);
@@ -15619,15 +15717,27 @@ async function startKatanaSmith(p,humanIndex,runId){
 
   if(!isGameRunValid(runId))return;
 
-  const score=scoreKatanaDrawing(strokes,w,h);
+  const score=scoreKatanaDrawing(
+    strokes,
+    w,h,
+    anchorX,
+    anchorY
+  );
+
   state.records.katanaSmith[p.id]=score;
 
   stage.classList.add('forged');
-  call.textContent='焼入れ完了！';
+  call.textContent='刀 完成！';
   scoreEl.textContent=`${score} POINT`;
   scoreEl.classList.add('show');
 
-  beep(score>=90?1080:score>=70?840:score>=45?620:420,150,.04);
+  beep(
+    score>=90?1080:
+    score>=70?840:
+    score>=45?620:
+    420,
+    150,.04
+  );
 
   await wait(850);
 
@@ -15636,109 +15746,204 @@ async function startKatanaSmith(p,humanIndex,runId){
       56,p,humanIndex,
       `${score}<small>pt</small>`,
       score>=85
-        ? `名刀！`
-        : score>=65
-          ? `良い刀！`
-          : `刀身・鍔・柄を意識！`
+        ? '名刀！'
+        : score>=60
+          ? 'いい刀身！'
+          : '根元から上へ長く描こう！'
     );
   }
 }
 
 // GAME 58 -------------------------------------------------
-async function startHomeRunMob(p,humanIndex,runId){
+async function startPowerHitter(p,humanIndex,runId){
   gameFit();
 
-  let start=0;
-  let pitchDuration=0;
-  let contactAt=0;
-  let swung=false;
-  let finished=false;
+  let phase='angle';
+  let anglePos=.50;
+  let powerPos=.50;
+  let angleDeg=45;
+  let powerPct=0;
+  let gaugeStart=0;
   let raf=null;
+  let finished=false;
 
-  screen.innerHTML=`<div class="homerun-shell">
+  screen.innerHTML=`<div class="power-hit-shell">
     <div class="game-head">
-      <div><span class="kicker">${esc(p.name)}</span><h2>モブくんはホームランバッター</h2></div>
+      <div><span class="kicker">${esc(p.name)}</span><h2>モブくんはパワーヒッター</h2></div>
       <div class="game-badge">${playBadge(humanIndex)}</div>
     </div>
 
-    <div class="homerun-hud">
-      <div><span>DISTANCE</span><b id="homeRunDistance">0m</b></div>
-      <div><span>PITCH</span><b>FAST BALL</b></div>
+    <div class="power-hit-hud">
+      <div><span>ANGLE</span><b id="powerAngleText">---</b></div>
+      <div><span>POWER</span><b id="powerPowerText">---</b></div>
+      <div><span>DISTANCE</span><b id="powerDistance">0m</b></div>
     </div>
 
-    <div id="homeRunStage" class="homerun-stage">
-      <div id="homeRunWorld" class="homerun-world">
-        <div class="homerun-field"></div>
-        ${Array.from({length:9},(_,i)=>`
-          <i class="homerun-tree" style="left:${360+i*240}px"></i>
-        `).join('')}
-        ${[250,500,750,1000].map((m,i)=>`
-          <b class="homerun-meter" style="left:${650+i*470}px">${m}m</b>
+    <div id="powerStage" class="power-stage">
+      <div id="powerWorld" class="power-world">
+        <div class="power-sky"></div>
+        <div class="power-ground"></div>
+
+        ${[500,1000,1500,2000,2500,3000].map((m,i)=>`
+          <b class="power-meter" style="left:${430+i*385}px">${m}m</b>
         `).join('')}
       </div>
 
-      <div id="homeRunBatter" class="homerun-batter" style="background-image:url('icon/01.png')">
-        <i class="homerun-bat"></i>
+      <div id="powerGolfer" class="power-golfer" style="background-image:url('icon/01.png')">
+        <i class="power-club"></i>
       </div>
 
-      <div id="homeRunBall" class="homerun-ball"></div>
-      <div id="homeRunImpact" class="homerun-impact">CRACK!!</div>
-      <div id="homeRunMessage" class="homerun-message">剛速球を待て！</div>
+      <div id="powerBall" class="power-ball"></div>
+      <div id="powerImpact" class="power-impact">SMASH!!</div>
+      <div id="powerMessage" class="power-message">まず角度を決める！</div>
     </div>
 
-    <button id="homeRunSwing" class="homerun-swing" type="button">SWING!</button>
+    <div class="power-gauges">
+      <div id="angleGaugeBox" class="power-gauge-box active">
+        <span>ANGLE 10° → 70°</span>
+        <div class="power-gauge-track angle">
+          <i class="ideal"></i>
+          <b id="angleMarker" class="power-marker"></b>
+        </div>
+      </div>
+
+      <div id="powerGaugeBox" class="power-gauge-box">
+        <span>POWER 0 → 100%</span>
+        <div class="power-gauge-track power">
+          <i class="ideal"></i>
+          <b id="powerMarker" class="power-marker"></b>
+        </div>
+      </div>
+
+      <button id="powerStop" class="power-stop" type="button">ANGLE STOP</button>
+    </div>
   </div>`;
 
-  const stage=document.getElementById('homeRunStage');
-  const world=document.getElementById('homeRunWorld');
-  const batter=document.getElementById('homeRunBatter');
-  const ball=document.getElementById('homeRunBall');
-  const impact=document.getElementById('homeRunImpact');
-  const message=document.getElementById('homeRunMessage');
-  const distanceEl=document.getElementById('homeRunDistance');
-  const swing=document.getElementById('homeRunSwing');
+  const stage=document.getElementById('powerStage');
+  const world=document.getElementById('powerWorld');
+  const golfer=document.getElementById('powerGolfer');
+  const ball=document.getElementById('powerBall');
+  const impact=document.getElementById('powerImpact');
+  const message=document.getElementById('powerMessage');
+  const angleText=document.getElementById('powerAngleText');
+  const powerText=document.getElementById('powerPowerText');
+  const distanceEl=document.getElementById('powerDistance');
+  const angleBox=document.getElementById('angleGaugeBox');
+  const powerBox=document.getElementById('powerGaugeBox');
+  const angleMarker=document.getElementById('angleMarker');
+  const powerMarker=document.getElementById('powerMarker');
+  const stop=document.getElementById('powerStop');
 
   const w=stage.clientWidth;
   const h=stage.clientHeight;
 
-  function ballXAt(now){
-    const t=clamp((now-start)/pitchDuration,0,1);
-    return w*.94+(w*.18-w*.94)*t;
+  function gaugeValue(now,speed,phaseOffset=0){
+    const t=
+      (now-gaugeStart)/1000*
+      speed*
+      Math.PI*2+
+      phaseOffset;
+
+    return .5+.5*Math.sin(t);
   }
 
-  async function flyBall(distance){
-    stage.classList.add('flight');
-    world.style.width='2700px';
-    ball.classList.add('home-run');
+  function angleFromPos(pos){
+    return 10+pos*60;
+  }
 
-    const worldDistance=distance/1000*2250;
-    const startX=w*.20;
-    const startY=h*.62;
+  async function launchBall(){
+    golfer.classList.add('golf-swing');
+
+    await wait(190);
+    if(!isGameRunValid(runId))return;
+
+    impact.classList.add('show');
+    ball.classList.add('launched');
+    beep(940,100,.035);
+
+    const angleRad=angleDeg*Math.PI/180;
+    const angleFactor=clamp(
+      Math.sin(angleRad*2),
+      0,1
+    );
+
+    let distance=
+      3000*
+      Math.pow(powerPct/100,1.28)*
+      Math.pow(angleFactor,1.06);
+
+    if(
+      powerPct>=99.4&&
+      Math.abs(angleDeg-45)<=1.2
+    ){
+      distance=3000;
+    }
+
+    distance=Math.round(
+      clamp(distance,0,3000)*10
+    )/10;
+
+    state.records.homeRunMob[p.id]=distance;
+
+    message.textContent=
+      distance>=2950
+        ? 'SUPER SHOT!!'
+        : distance>=2200
+          ? 'BIG SHOT!!'
+          : distance>=1000
+            ? 'NICE SHOT!'
+            : 'SHOT!';
+
+    const worldW=2750;
+    world.style.width=`${worldW}px`;
+
+    const startX=w*.18;
+    const startY=h*.67;
+    const travel=
+      160+
+      distance/3000*2350;
+
+    const maxHeight=
+      90+
+      distance/3000*250+
+      Math.sin(angleRad)*70;
+
     const flightStart=performance.now();
-    const duration=1500+distance*.75;
+    const duration=1250+distance*.42;
 
     await new Promise(resolve=>{
       const frame=now=>{
-        if(!isGameRunValid(runId)){resolve();return;}
+        if(!isGameRunValid(runId)){
+          resolve();
+          return;
+        }
 
-        const t=clamp((now-flightStart)/duration,0,1);
-        const e=1-Math.pow(1-t,2.1);
-
-        const bx=startX+worldDistance*e;
-        const arc=Math.sin(t*Math.PI);
-        const by=startY-arc*(155+distance*.18);
-
-        const cam=clamp(
-          bx-w*.34,
-          0,
-          2700-w
+        const t=clamp(
+          (now-flightStart)/duration,
+          0,1
         );
 
-        world.style.transform=`translateX(${-cam}px)`;
+        const e=1-Math.pow(1-t,2);
+        const bx=startX+travel*e;
+        const by=
+          startY-
+          Math.sin(t*Math.PI)*
+          maxHeight;
+
+        const cam=clamp(
+          bx-w*.36,
+          0,
+          worldW-w
+        );
+
+        world.style.transform=
+          `translateX(${-cam}px)`;
+
         ball.style.left=`${bx-cam}px`;
         ball.style.top=`${by}px`;
 
-        distanceEl.textContent=`${Math.round(distance*e)}m`;
+        distanceEl.textContent=
+          `${Math.round(distance*e)}m`;
 
         if(t<1){
           raf=requestAnimationFrame(frame);
@@ -15749,97 +15954,745 @@ async function startHomeRunMob(p,humanIndex,runId){
 
       raf=requestAnimationFrame(frame);
     });
-  }
 
-  async function finishHit(error){
-    const quality=clamp(
-      1-error/175,
-      0,1
-    );
+    if(!isGameRunValid(runId))return;
 
-    let distance=
-      quality<=0
-        ? 0
-        : 1000*Math.pow(quality,1.28);
+    distanceEl.textContent=`${distance.toFixed(1)}m`;
 
-    if(error<=9)distance=1000;
-
-    distance=Math.round(distance*10)/10;
-
-    state.records.homeRunMob[p.id]=distance;
-
-    if(distance<=0){
-      ball.classList.add('missed');
-      message.textContent='STRIKE... 0m';
-      beep(180,120,.026);
-
-      await wait(650);
-
-    }else{
-      impact.classList.add('show');
-      batter.classList.add('hit-swing');
-      message.textContent=
-        distance>=950
-          ? 'PERFECT HOME RUN!!'
-          : 'HOME RUN!!';
-
-      beep(distance>=950?1080:850,110,.035);
-
-      await flyBall(distance);
-    }
+    await wait(420);
 
     if(isGameRunValid(runId)){
       recordScreen(
         57,p,humanIndex,
         `${distance.toFixed(1)}<small>m</small>`,
-        distance>=1000?'MAX 1000m':'FAST BALL'
+        `ANGLE ${angleDeg.toFixed(1)}° / POWER ${powerPct.toFixed(1)}%`
       );
     }
   }
 
-  swing.addEventListener('pointerdown',e=>{
+  stop.addEventListener('pointerdown',e=>{
+    if(finished||!isGameRunValid(runId))return;
+
+    e.preventDefault();
+
+    const now=performance.now();
+
+    if(phase==='angle'){
+      anglePos=gaugeValue(now,1.04,.2);
+      angleDeg=angleFromPos(anglePos);
+
+      angleMarker.style.left=`${anglePos*100}%`;
+      angleText.textContent=`${angleDeg.toFixed(1)}°`;
+
+      angleBox.classList.remove('active');
+      angleBox.classList.add('locked');
+      powerBox.classList.add('active');
+
+      phase='power';
+      gaugeStart=performance.now();
+
+      stop.textContent='POWER STOP';
+      message.textContent='次はパワー！ MAXを狙え！';
+
+      beep(650,55,.016);
+
+    }else if(phase==='power'){
+      powerPos=gaugeValue(now,1.32,1.1);
+      powerPct=powerPos*100;
+
+      powerMarker.style.left=`${powerPos*100}%`;
+      powerText.textContent=`${powerPct.toFixed(1)}%`;
+
+      powerBox.classList.remove('active');
+      powerBox.classList.add('locked');
+
+      phase='launch';
+      finished=true;
+      stop.disabled=true;
+      stop.textContent='SHOT!';
+
+      launchBall();
+    }
+  },{passive:false});
+
+  if(!(await countdown('POWER HITTER',runId)))return;
+
+  gaugeStart=performance.now();
+
+  function frame(now){
+    if(!isGameRunValid(runId))return;
+
+    if(phase==='angle'){
+      anglePos=gaugeValue(now,1.04,.2);
+      angleMarker.style.left=`${anglePos*100}%`;
+      angleText.textContent=
+        `${angleFromPos(anglePos).toFixed(0)}°`;
+
+    }else if(phase==='power'){
+      powerPos=gaugeValue(now,1.32,1.1);
+      powerMarker.style.left=`${powerPos*100}%`;
+      powerText.textContent=
+        `${Math.round(powerPos*100)}%`;
+    }
+
+    if(!finished){
+      raf=requestAnimationFrame(frame);
+    }
+  }
+
+  raf=requestAnimationFrame(frame);
+}
+
+
+
+// GAME 59 -------------------------------------------------
+async function startMobMisfortune(p,humanIndex,runId){
+  gameFit();
+
+  const MAX_MS=12000;
+
+  let playerX=0;
+  let moveDir=0;
+  let startTime=0;
+  let last=0;
+  let lastSpawn=0;
+  let raf=null;
+  let finished=false;
+
+  const rocks=[];
+
+  screen.innerHTML=`<div class="misfortune-shell">
+    <div class="game-head">
+      <div><span class="kicker">${esc(p.name)}</span><h2>モブくんの災難</h2></div>
+      <div class="game-badge">${playBadge(humanIndex)}</div>
+    </div>
+
+    <div class="misfortune-hud">
+      <div><span>TIME</span><b id="misfortuneTime">0.00</b></div>
+      <div><span>DANGER</span><b id="misfortuneDanger">NORMAL</b></div>
+    </div>
+
+    <div id="misfortuneStage" class="misfortune-stage">
+      <div class="misfortune-cliff left"></div>
+      <div class="misfortune-cliff right"></div>
+      <div id="misfortuneRockLayer"></div>
+
+      <div id="misfortunePlayer" class="misfortune-player" style="background-image:url('icon/01.png')"></div>
+
+      <div id="misfortuneWarning" class="misfortune-warning"></div>
+      <div id="misfortuneMessage" class="misfortune-message">岩に当たるな！</div>
+    </div>
+
+    <div class="misfortune-controls">
+      <button id="misfortuneLeft" type="button">←</button>
+      <button id="misfortuneRight" type="button">→</button>
+    </div>
+  </div>`;
+
+  const stage=document.getElementById('misfortuneStage');
+  const rockLayer=document.getElementById('misfortuneRockLayer');
+  const player=document.getElementById('misfortunePlayer');
+  const timeEl=document.getElementById('misfortuneTime');
+  const dangerEl=document.getElementById('misfortuneDanger');
+  const warning=document.getElementById('misfortuneWarning');
+  const message=document.getElementById('misfortuneMessage');
+  const left=document.getElementById('misfortuneLeft');
+  const right=document.getElementById('misfortuneRight');
+
+  const w=stage.clientWidth;
+  const h=stage.clientHeight;
+
+  playerX=w*.50;
+
+  function bindHold(btn,dir){
+    btn.addEventListener('pointerdown',e=>{
+      e.preventDefault();
+      moveDir=dir;
+      try{btn.setPointerCapture(e.pointerId)}catch(_){}
+    },{passive:false});
+
+    const stop=()=>{
+      if(moveDir===dir)moveDir=0;
+    };
+
+    btn.addEventListener('pointerup',stop);
+    btn.addEventListener('pointercancel',stop);
+    btn.addEventListener('lostpointercapture',stop);
+  }
+
+  bindHold(left,-1);
+  bindHold(right,1);
+
+  function spawnRock(now,hard){
+    const size=
+      hard
+        ? rand(34,66)
+        : rand(28,54);
+
+    const el=document.createElement('div');
+    el.className='misfortune-rock';
+    el.style.width=`${size}px`;
+    el.style.height=`${size}px`;
+
+    rockLayer.appendChild(el);
+
+    rocks.push({
+      el,
+      x:rand(28,w-28),
+      y:-size,
+      size,
+      speed:
+        hard
+          ? rand(340,520)
+          : rand(185,285),
+      spin:rand(-220,220)
+    });
+
+    lastSpawn=now;
+  }
+
+  function finish(hit,elapsed){
+    if(finished)return;
+    finished=true;
+
+    const seconds=Math.min(
+      MAX_MS,
+      elapsed
+    )/1000;
+
+    state.records.mobMisfortune[p.id]=
+      Math.round(seconds*100)/100;
+
+    timeEl.textContent=seconds.toFixed(2);
+
+    if(hit){
+      player.classList.add('rock-hit');
+      message.textContent='岩直撃！！';
+      beep(115,180,.04);
+    }else{
+      message.textContent='SURVIVED!!';
+      beep(1080,150,.04);
+    }
+
+    setTimeout(()=>{
+      if(isGameRunValid(runId)){
+        recordScreen(
+          58,p,humanIndex,
+          `${seconds.toFixed(2)}<small>秒</small>`,
+          hit?'ROCK HIT':'12 SECOND SURVIVE'
+        );
+      }
+    },700);
+  }
+
+  if(!(await countdown('ROCK FALL',runId)))return;
+
+  startTime=performance.now();
+  last=startTime;
+  lastSpawn=startTime-500;
+
+  function frame(now){
+    if(finished||!isGameRunValid(runId))return;
+
+    const dt=Math.min(30,now-last)/1000;
+    last=now;
+
+    const elapsed=now-startTime;
+    const hard=elapsed>=7000;
+
+    timeEl.textContent=(elapsed/1000).toFixed(2);
+
+    if(hard){
+      dangerEl.textContent='EXTREME';
+      dangerEl.classList.add('extreme');
+
+      if(elapsed<7100){
+        warning.textContent='ROCK STORM!!';
+        warning.classList.add('show');
+      }
+    }
+
+    playerX=clamp(
+      playerX+moveDir*270*dt,
+      32,
+      w-32
+    );
+
+    player.style.left=`${playerX}px`;
+
+    const spawnEvery=
+      hard
+        ? 145
+        : clamp(500-elapsed*.035,285,500);
+
+    if(now-lastSpawn>=spawnEvery){
+      const count=
+        hard&&Math.random()<.45
+          ? 2
+          : 1;
+
+      for(let i=0;i<count;i++){
+        spawnRock(now,hard);
+      }
+    }
+
+    for(const rock of rocks){
+      rock.y+=rock.speed*dt;
+
+      rock.el.style.left=`${rock.x}px`;
+      rock.el.style.top=`${rock.y}px`;
+      rock.el.style.transform=
+        `translate(-50%,-50%) rotate(${rock.y*rock.spin*.002}deg)`;
+
+      if(
+        rock.y>=h-82&&
+        rock.y<=h-16&&
+        Math.abs(rock.x-playerX)<
+          rock.size*.34+18
+      ){
+        finish(true,elapsed);
+        return;
+      }
+
+      if(rock.y>h+70){
+        rock.el.remove();
+        rock.y=99999;
+      }
+    }
+
+    if(elapsed>=MAX_MS){
+      finish(false,MAX_MS);
+      return;
+    }
+
+    raf=requestAnimationFrame(frame);
+  }
+
+  raf=requestAnimationFrame(frame);
+}
+
+// GAME 60 -------------------------------------------------
+async function startAimMob(p,humanIndex,runId){
+  gameFit();
+
+  let archerY=0;
+  let moveDir=0;
+  let shot=false;
+  let raf=null;
+  let last=0;
+
+  screen.innerHTML=`<div class="aim-shell">
+    <div class="game-head">
+      <div><span class="kicker">${esc(p.name)}</span><h2>狙ってモブくん！</h2></div>
+      <div class="game-badge">${playBadge(humanIndex)}</div>
+    </div>
+
+    <div class="aim-hud">
+      <div><span>ERROR</span><b id="aimError">---</b></div>
+      <div><span>SCORE</span><b id="aimScore">---</b></div>
+    </div>
+
+    <div id="aimStage" class="aim-stage">
+      <div id="aimArcher" class="aim-archer" style="background-image:url('icon/01.png')">
+        <i class="aim-bow"></i>
+      </div>
+
+      <div id="aimTree" class="aim-tree">
+        <i id="aimWhiteLine" class="aim-white-line"></i>
+      </div>
+
+      <div id="aimArrow" class="aim-arrow">
+        <i></i><b></b>
+      </div>
+
+      <div id="aimMessage" class="aim-message">白線と同じ高さを狙え！</div>
+    </div>
+
+    <div class="aim-controls">
+      <button id="aimUp" type="button">▲</button>
+      <button id="aimFire" class="fire" type="button">FIRE</button>
+      <button id="aimDown" type="button">▼</button>
+    </div>
+  </div>`;
+
+  const stage=document.getElementById('aimStage');
+  const archer=document.getElementById('aimArcher');
+  const tree=document.getElementById('aimTree');
+  const line=document.getElementById('aimWhiteLine');
+  const arrow=document.getElementById('aimArrow');
+  const errorEl=document.getElementById('aimError');
+  const scoreEl=document.getElementById('aimScore');
+  const message=document.getElementById('aimMessage');
+  const up=document.getElementById('aimUp');
+  const down=document.getElementById('aimDown');
+  const fire=document.getElementById('aimFire');
+
+  const w=stage.clientWidth;
+  const h=stage.clientHeight;
+
+  const minY=70;
+  const maxY=h-70;
+  const targetY=rand(
+    minY+26,
+    maxY-26
+  );
+
+  archerY=h*.52;
+
+  line.style.top=`${targetY}px`;
+
+  function bindHold(btn,dir){
+    btn.addEventListener('pointerdown',e=>{
+      e.preventDefault();
+      moveDir=dir;
+      try{btn.setPointerCapture(e.pointerId)}catch(_){}
+    },{passive:false});
+
+    const stop=()=>{
+      if(moveDir===dir)moveDir=0;
+    };
+
+    btn.addEventListener('pointerup',stop);
+    btn.addEventListener('pointercancel',stop);
+    btn.addEventListener('lostpointercapture',stop);
+  }
+
+  bindHold(up,-1);
+  bindHold(down,1);
+
+  async function shoot(){
+    if(shot||!isGameRunValid(runId))return;
+
+    shot=true;
+    moveDir=0;
+
+    up.disabled=true;
+    down.disabled=true;
+    fire.disabled=true;
+
+    const shotY=archerY;
+
+    arrow.style.top=`${shotY}px`;
+    arrow.style.left='72px';
+    arrow.classList.add('flying');
+
+    message.textContent='SHOOT!!';
+    beep(780,55,.018);
+
+    const treeX=w-84;
+    const startX=72;
+    const start=performance.now();
+    const duration=520;
+
+    await new Promise(resolve=>{
+      const frame=now=>{
+        if(!isGameRunValid(runId)){
+          resolve();
+          return;
+        }
+
+        const t=clamp((now-start)/duration,0,1);
+        const e=1-Math.pow(1-t,2);
+
+        const x=startX+(treeX-startX)*e;
+        arrow.style.left=`${x}px`;
+
+        if(t<1){
+          raf=requestAnimationFrame(frame);
+        }else{
+          resolve();
+        }
+      };
+
+      raf=requestAnimationFrame(frame);
+    });
+
+    if(!isGameRunValid(runId))return;
+
+    arrow.classList.remove('flying');
+    arrow.classList.add('stuck');
+
+    const error=Math.abs(
+      shotY-targetY
+    );
+
+    const score=clamp(
+      Math.round(
+        100-error*2.2
+      ),
+      0,100
+    );
+
+    state.records.aimMob[p.id]=score;
+
+    errorEl.textContent=`${error.toFixed(1)}px`;
+    scoreEl.textContent=`${score}pt`;
+
+    message.textContent=
+      score===100
+        ? 'PERFECT!!'
+        : score>=90
+          ? 'BULLSEYE!'
+          : score>=60
+            ? 'NICE!'
+            : 'MISS...';
+
+    stage.classList.add('result-zoom');
+    beep(score>=90?1040:score>=60?760:350,130,.035);
+
+    await wait(700);
+
+    if(isGameRunValid(runId)){
+      recordScreen(
+        59,p,humanIndex,
+        `${score}<small>pt</small>`,
+        `白線との誤差 ${error.toFixed(1)}px`
+      );
+    }
+  }
+
+  fire.addEventListener('pointerdown',e=>{
+    e.preventDefault();
+    shoot();
+  },{passive:false});
+
+  stage.addEventListener('pointerdown',e=>{
     if(
-      swung||
-      finished||
-      !start||
-      !isGameRunValid(runId)
+      e.target.closest('.aim-message')||
+      shot
     )return;
 
     e.preventDefault();
-    swung=true;
-    swing.disabled=true;
-
-    const now=performance.now();
-    const error=Math.abs(now-contactAt);
-
-    batter.classList.add('swinging');
-    finishHit(error);
+    shoot();
   },{passive:false});
 
-  if(!(await countdown('HOME RUN',runId)))return;
+  if(!(await countdown('ARCHERY',runId)))return;
 
-  pitchDuration=rand(690,790);
-  start=performance.now();
-
-  // Contact point is around 18% from the left.
-  contactAt=start+pitchDuration*.965;
-
-  message.textContent='来るぞ！！';
-  beep(460,40,.010);
+  last=performance.now();
 
   function frame(now){
-    if(!isGameRunValid(runId)||swung)return;
+    if(!isGameRunValid(runId)||shot)return;
 
-    const t=clamp((now-start)/pitchDuration,0,1);
-    const x=ballXAt(now);
+    const dt=Math.min(30,now-last)/1000;
+    last=now;
 
-    ball.style.left=`${x}px`;
-    ball.style.top=`${h*.61+Math.sin(t*Math.PI)*4}px`;
+    archerY=clamp(
+      archerY+moveDir*185*dt,
+      minY,
+      maxY
+    );
 
-    if(t>=1){
-      swung=true;
-      swing.disabled=true;
-      finishHit(999);
+    archer.style.top=`${archerY}px`;
+
+    raf=requestAnimationFrame(frame);
+  }
+
+  raf=requestAnimationFrame(frame);
+}
+
+// GAME 61 -------------------------------------------------
+async function startBalanceMob(p,humanIndex,runId){
+  gameFit();
+
+  const MAX_MS=10000;
+  const FALL_ANGLE=34;
+  const NO_CONTROL_ANGLE=29;
+
+  let angle=rand(-2.2,2.2);
+  let angularVelocity=rand(-1.3,1.3);
+
+  let startTime=0;
+  let last=0;
+  let raf=null;
+  let finished=false;
+  let gustPhase=Math.random()*Math.PI*2;
+
+  screen.innerHTML=`<div class="balance-shell">
+    <div class="game-head">
+      <div><span class="kicker">${esc(p.name)}</span><h2>極限バランスモブくん</h2></div>
+      <div class="game-badge">${playBadge(humanIndex)}</div>
+    </div>
+
+    <div class="balance-hud">
+      <div><span>TIME</span><b id="balanceTime">0.00</b></div>
+      <div><span>TILT</span><b id="balanceTilt">0.0°</b></div>
+    </div>
+
+    <div id="balanceStage" class="balance-stage">
+      <div class="balance-limit left">LIMIT</div>
+      <div class="balance-limit right">LIMIT</div>
+
+      <div id="balanceRig" class="balance-rig">
+        <div class="balance-pole"></div>
+        <div class="balance-mob" style="background-image:url('icon/01.png')"></div>
+      </div>
+
+      <div id="balanceMessage" class="balance-message">傾いた逆方向をタップ！</div>
+    </div>
+
+    <div class="balance-controls">
+      <button id="balanceLeft" type="button">← LEFT</button>
+      <button id="balanceRight" type="button">RIGHT →</button>
+    </div>
+  </div>`;
+
+  const stage=document.getElementById('balanceStage');
+  const rig=document.getElementById('balanceRig');
+  const timeEl=document.getElementById('balanceTime');
+  const tiltEl=document.getElementById('balanceTilt');
+  const message=document.getElementById('balanceMessage');
+  const left=document.getElementById('balanceLeft');
+  const right=document.getElementById('balanceRight');
+
+  function correctionStrength(){
+    const a=Math.abs(angle);
+
+    if(a>=NO_CONTROL_ANGLE){
+      return 0;
+    }
+
+    const base=2.0+a*.37;
+
+    if(a<=23){
+      return base;
+    }
+
+    return base*
+      clamp(
+        (NO_CONTROL_ANGLE-a)/
+        (NO_CONTROL_ANGLE-23),
+        0,1
+      );
+  }
+
+  function correct(dir){
+    if(finished||!isGameRunValid(runId))return;
+
+    const power=correctionStrength();
+
+    if(power<=0){
+      message.textContent='限界！ 補正が効かない！';
+      beep(140,55,.016);
+      return;
+    }
+
+    angle+=dir*power;
+    angularVelocity+=dir*(1.2+power*.18);
+
+    stage.classList.remove('balance-tap');
+    void stage.offsetWidth;
+    stage.classList.add('balance-tap');
+
+    beep(460+Math.min(280,power*18),22,.006);
+  }
+
+  left.addEventListener('pointerdown',e=>{
+    e.preventDefault();
+    correct(-1);
+  },{passive:false});
+
+  right.addEventListener('pointerdown',e=>{
+    e.preventDefault();
+    correct(1);
+  },{passive:false});
+
+  function finish(elapsed,fallen){
+    if(finished)return;
+    finished=true;
+
+    const seconds=Math.min(
+      elapsed,
+      MAX_MS
+    )/1000;
+
+    state.records.balanceMob[p.id]=
+      Math.round(seconds*100)/100;
+
+    timeEl.textContent=seconds.toFixed(2);
+
+    if(fallen){
+      rig.classList.add(
+        angle<0
+          ? 'fall-left'
+          : 'fall-right'
+      );
+
+      message.textContent='BALANCE BREAK!';
+      beep(120,180,.04);
+
+    }else{
+      message.textContent='10秒 SURVIVE!!';
+      beep(1080,150,.04);
+    }
+
+    setTimeout(()=>{
+      if(isGameRunValid(runId)){
+        recordScreen(
+          60,p,humanIndex,
+          `${seconds.toFixed(2)}<small>秒</small>`,
+          fallen?'BALANCE BREAK':'PERFECT BALANCE'
+        );
+      }
+    },700);
+  }
+
+  if(!(await countdown('BALANCE',runId)))return;
+
+  startTime=performance.now();
+  last=startTime;
+
+  function frame(now){
+    if(finished||!isGameRunValid(runId))return;
+
+    const dt=Math.min(30,now-last)/1000;
+    last=now;
+
+    const elapsed=now-startTime;
+    const t=elapsed/1000;
+
+    // Inverted-pendulum instability + changing side wind.
+    const gust=
+      Math.sin(t*1.9+gustPhase)*1.15+
+      Math.sin(t*.71+gustPhase*.43)*.72;
+
+    angularVelocity+=
+      (
+        angle*.29+
+        gust
+      )*
+      dt;
+
+    angularVelocity*=Math.pow(.95,dt*60);
+    angle+=angularVelocity*dt*16;
+
+    // Tiny randomness prevents memorizing one rhythm.
+    if(Math.random()<dt*1.6){
+      angularVelocity+=rand(-.55,.55);
+    }
+
+    rig.style.transform=
+      `translateX(-50%) rotate(${angle}deg)`;
+
+    timeEl.textContent=(elapsed/1000).toFixed(2);
+    tiltEl.textContent=`${Math.abs(angle).toFixed(1)}°`;
+
+    if(Math.abs(angle)>=NO_CONTROL_ANGLE){
+      tiltEl.classList.add('danger');
+      message.textContent='限界域！ 補正不能！';
+    }else if(Math.abs(angle)>=22){
+      tiltEl.classList.add('warning');
+      message.textContent='強く傾いてる！ 逆方向！';
+    }else{
+      tiltEl.classList.remove('danger','warning');
+    }
+
+    if(Math.abs(angle)>=FALL_ANGLE){
+      finish(elapsed,true);
+      return;
+    }
+
+    if(elapsed>=MAX_MS){
+      finish(MAX_MS,false);
       return;
     }
 
@@ -15897,7 +16750,7 @@ async function simulateCpuThenResult(gameIndex){
 
 function cpuUltraDraw(gameIndex){
   // Game-specific draw rate. Regular values are already intentionally strong.
-  const chance=[0.12,0.10,0.14,0.16,0.12,0.13,0.14,0.12,0.15,0.12,0.14,0.13,0.13,0.14,0.12,0.12,0.13,0.12,0.13,0.14,0.13,0.14,0.12,0.13,0.12,0.12,0.13,0.13,0.14,0.14,0.13,0.12,0.13,0.13,0.13,0.13,0.13,0.13,0.13,0.13,0.13,0.13,0.13,0.13,0.13,0.13,0.13,0.14,0.13,0.13,0.13,0.14,0.13,0.13,0.14,0.12,0.13,0.14][gameIndex] ?? 0.12;
+  const chance=[0.12,0.10,0.14,0.16,0.12,0.13,0.14,0.12,0.15,0.12,0.14,0.13,0.13,0.14,0.12,0.12,0.13,0.12,0.13,0.14,0.13,0.14,0.12,0.13,0.12,0.12,0.13,0.13,0.14,0.14,0.13,0.12,0.13,0.13,0.13,0.13,0.13,0.13,0.13,0.13,0.13,0.13,0.13,0.13,0.13,0.13,0.13,0.14,0.13,0.13,0.13,0.14,0.13,0.13,0.14,0.12,0.13,0.14,0.13,0.13,0.14][gameIndex] ?? 0.12;
   return Math.random()<chance;
 }
 
@@ -16028,9 +16881,15 @@ function simulateOneCpu(gameIndex,p){
   }else if(gameIndex===55){
     state.records.amidakujiMob[p.id]=[0,15,30,50,75,100][randi(0,5)];
   }else if(gameIndex===56){
-    state.records.katanaSmith[p.id]=ultra?randi(88,100):randi(48,90);
+    state.records.katanaSmith[p.id]=ultra?randi(88,100):randi(55,91);
+  }else if(gameIndex===57){
+    state.records.homeRunMob[p.id]=Math.round((ultra?rand(2500,3000):rand(900,2550))*10)/10;
+  }else if(gameIndex===58){
+    state.records.mobMisfortune[p.id]=Math.round((ultra?rand(10.3,12):rand(5.6,10.8))*100)/100;
+  }else if(gameIndex===59){
+    state.records.aimMob[p.id]=ultra?randi(91,100):randi(38,91);
   }else{
-    state.records.homeRunMob[p.id]=Math.round((ultra?rand(820,1000):rand(280,870))*10)/10;
+    state.records.balanceMob[p.id]=Math.round((ultra?rand(8.8,10):rand(4.8,9.1))*100)/100;
   }
 
   return ultra;
@@ -16130,10 +16989,13 @@ function performancePoints(gameIndex,v){
     if(v>=6500)return 0;
     return clamp(Math.round((6500-v)/5100*100),0,100);
   }
-  if(gameIndex===54)return clamp(Math.round(v),0,100);
+  if(gameIndex===54)return clamp(Math.round(v/10*100),0,100);
   if(gameIndex===55)return clamp(Math.round(v),0,100);
   if(gameIndex===56)return clamp(Math.round(v),0,100);
-  return clamp(Math.round(v/1000*100),0,100);
+  if(gameIndex===57)return clamp(Math.round(v/3000*100),0,100);
+  if(gameIndex===58)return clamp(Math.round(v/12*100),0,100);
+  if(gameIndex===59)return clamp(Math.round(v),0,100);
+  return clamp(Math.round(v/10*100),0,100);
 }
 
 function rankRecords(gameIndex){
@@ -16204,10 +17066,13 @@ function formatRecord(gameIndex,v){
   if(gameIndex===51)return `${(v/1000).toFixed(2)}秒`;
   if(gameIndex===52)return `${Math.round(v)}pt`;
   if(gameIndex===53)return `${(v/1000).toFixed(2)}秒`;
-  if(gameIndex===54)return `${Math.round(v)}%`;
+  if(gameIndex===54)return `${Math.round(v)}体`;
   if(gameIndex===55)return `${Math.round(v)}pt`;
   if(gameIndex===56)return `${Math.round(v)}pt`;
-  return `${Number(v).toFixed(1)}m`;
+  if(gameIndex===57)return `${Number(v).toFixed(1)}m`;
+  if(gameIndex===58)return `${Number(v).toFixed(2)}秒`;
+  if(gameIndex===59)return `${Math.round(v)}pt`;
+  return `${Number(v).toFixed(2)}秒`;
 }
 
 function applyPoints(gameIndex,ranked){
