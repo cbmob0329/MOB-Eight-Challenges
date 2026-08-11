@@ -78,7 +78,8 @@ const GAMES=[
   {no:38,key:"mobTrain",title:"モブくん列車出発進行！",sub:"5秒で線路を描いてゴールへ"},
   {no:39,key:"giantMob",title:"巨大モブくん大進撃",sub:"1.000秒を刻みながらビル破壊"},
   {no:40,key:"wizardMob",title:"魔法使いモブくん",sub:"闇の炎を円で囲んで町を守る"},
-  {no:41,key:"brawlerMob",title:"モブくんは喧嘩番長",sub:"学校で黒モブくんをぶっ飛ばす"}
+  {no:41,key:"brawlerMob",title:"モブくんは喧嘩番長",sub:"学校で黒モブくんをぶっ飛ばす"},
+  {no:42,key:"summonerMob",title:"モブくんは召喚師",sub:"5秒で描いたモンスターが10秒オートバトル"}
 ];
 
 const MODES={
@@ -113,7 +114,7 @@ function freshState(){
     roundIndex:0,
     records:{
       reaction:{},memory:{},puzzle:{},launch:{},stack:{},breakdance:{},
-      crisis:{},factory:{},catcher:{},tidy:{},ski:{},slot:{},rope:{},pk:{},rhythm:{},cut:{},climb:{},errand:{},dontHitMob:{},mobStop:{},overlap:{},shutter:{},cup:{},darts:{},parachute:{},mobCount:{},brake:{},feint:{},bomb:{},overlapMaster:{},jumpingMob:{},heroMaybe:{},popularGame:{},planetEnergy:{},painter:{},bikeJump:{},trampoline:{},mobTrain:{},giantMob:{},wizardMob:{},brawlerMob:{}
+      crisis:{},factory:{},catcher:{},tidy:{},ski:{},slot:{},rope:{},pk:{},rhythm:{},cut:{},climb:{},errand:{},dontHitMob:{},mobStop:{},overlap:{},shutter:{},cup:{},darts:{},parachute:{},mobCount:{},brake:{},feint:{},bomb:{},overlapMaster:{},jumpingMob:{},heroMaybe:{},popularGame:{},planetEnergy:{},painter:{},bikeJump:{},trampoline:{},mobTrain:{},giantMob:{},wizardMob:{},brawlerMob:{},summonerMob:{}
     },
     total:{},
     roundPoints:[],
@@ -195,7 +196,7 @@ function renderHome(){
   state=freshState();
   screen.innerHTML=`
     <section class="hero">
-      <div><span class="kicker">SMARTPHONE PARTY GAME</span><h1>41 MINI<br>GAMES</h1><p>41種のミニゲーム。各モードでNORMALかCUSTOMを選んで遊べます。</p></div>
+      <div><span class="kicker">SMARTPHONE PARTY GAME</span><h1>42 MINI<br>GAMES</h1><p>42種のミニゲーム。各モードでNORMALかCUSTOMを選んで遊べます。</p></div>
       <div class="hero-mark">MOB</div>
     </section>
     <section class="panel">
@@ -318,7 +319,7 @@ function renderPlayStyleSelect(){
       <button id="normalStyle" class="style-select-card normal" type="button">
         <span>NORMAL</span>
         <b>順番に全種目</b>
-        <small>GAME 1 → 41 を順番にプレイ</small>
+        <small>GAME 1 → 42 を順番にプレイ</small>
       </button>
       <button id="customStyle" class="style-select-card custom" type="button">
         <span>CUSTOM</span>
@@ -328,7 +329,7 @@ function renderPlayStyleSelect(){
     </div>
 
     <section class="panel flat">
-      <h3>41 MINI GAMES</h3>
+      <h3>42 MINI GAMES</h3>
       <div class="compact-game-grid">
         ${GAMES.map(g=>`<div><b>${g.no}</b><span>${g.title}</span></div>`).join("")}
       </div>
@@ -539,7 +540,8 @@ function scoreRuleForGame(index){
     "2.80秒以下=100点 / 6.00秒以上または衝突=0点",
     "30棟破壊=100点 / 0棟=0点",
     "闇の炎15個消去=100点 / 0個=0点",
-    "黒モブくん30体撃破=100点 / 0体=0点"
+    "黒モブくん30体撃破=100点 / 0体=0点",
+    "黒スライム40体撃破=100点 / 0体=0点"
   ][index];
 }
 
@@ -628,9 +630,11 @@ function showGameIntro(index){
   }else if(index===38){
     rules=`<li>巨大モブくんが自動で進撃し、高層ビルを次々破壊します。</li><li>エネルギーは100から開始。</li><li>円形エネルギーのストップウォッチを<strong>1.000秒ピッタリ</strong>でタップ。</li><li>1.000秒との誤差×100だけエネルギー減少。例：0.500秒差なら-50。</li><li>エネルギーが0になるまでに破壊したビル数が記録。30棟=100点。</li>`;
   }else if(index===39){
-    rules=`<li>田舎町へ闇の炎が降ってきます。小さなモブくん達は逃げ回っています。</li><li>闇の炎の周りを指で円形に囲むと、魔法のステッキが反応して炎を消します。</li><li>炎を消せなくても、モブくんに当たらなければ継続。</li><li>闇の炎がモブくんに当たった瞬間に終了。</li><li>10秒勝負。後半ほど炎の出現ペースが上がります。</li>`;
+    rules=`<li>田舎町へ闇の炎が高速で降ってきます。小さなモブくん達は逃げ回っています。</li><li>闇の炎の周りを指で円形に囲むと、魔法のステッキが反応して炎を消します。</li><li>大きな闇の炎も出現します。大きいほど囲む円も大きく必要。</li><li>炎を消せなくても、モブくんに当たらなければ継続。接触した瞬間に終了。</li><li>10秒勝負。後半ほど落下速度・数・同時出現数が上がります。</li>`;
+  }else if(index===40){
+    rules=`<li>10秒間の横スクロール爽快アクション。</li><li>← →で移動。左へ行く時はモブくんが左向きになります。</li><li>サイズの違う黒モブくんが大量に左右から迫ってきます。たまに巨大な黒モブくんも出現。</li><li>PUNCHは長めの判定で敵を1発でぶっ飛ばします。</li><li>10体倒すごとに必殺パンチを1回使用可能。必殺は広範囲をまとめて吹き飛ばします。</li>`;
   }else{
-    rules=`<li>10秒間の横スクロール爽快アクション。</li><li>← →で移動。左へ行く時はモブくんが左向きになります。</li><li>PUNCHは長めの判定で、黒モブくんを1発でぶっ飛ばします。</li><li>10体倒すごとに必殺パンチを1回使用可能。</li><li>必殺パンチは広範囲の黒モブくんをまとめて回転させながら吹き飛ばします。</li>`;
+    rules=`<li>最初の5秒で、自分だけのモンスターを自由に描きます。</li><li>描いた形・縦横比・線の複雑さ・まとまり方から強さと攻撃タイプが決定。</li><li>大きく描くだけでは最強になりません。形によってWAVE / PIERCE / BURST / RAPIDへ変化。</li><li>召喚後は10秒間オートバトル。黒スライムモブが大量に押し寄せます。</li><li>自分で描いたモンスターが自動攻撃し、倒した黒スライム数が記録です。</li>`;
   }
   screen.innerHTML=`
     <div class="game-head">
@@ -711,7 +715,8 @@ function humanReady(gameIndex,humanIndex){
     else if(gameIndex===37)startMobTrain(p,humanIndex,runId);
     else if(gameIndex===38)startGiantMob(p,humanIndex,runId);
     else if(gameIndex===39)startWizardMob(p,humanIndex,runId);
-    else startBrawlerMob(p,humanIndex,runId);
+    else if(gameIndex===40)startBrawlerMob(p,humanIndex,runId);
+    else startSummonerMob(p,humanIndex,runId);
   },{once:true});
 }
 
@@ -5900,7 +5905,7 @@ async function startBikeJump(p,humanIndex,runId){
 
   const worldW=11600;
   const speed=610;
-  const rampCenter=3560;
+  const rampCenter=2400;
   const rampWidth=420;
   const rampLeft=rampCenter-rampWidth/2;
   const rampRight=rampCenter+rampWidth/2;
@@ -5961,7 +5966,8 @@ async function startBikeJump(p,humanIndex,runId){
   if(!(await countdown('BIKE JUMP',runId)))return;
 
   started=true;
-  timingEl.textContent='RUN';
+  timingEl.textContent='--';
+  message.textContent='';
 
   stage.addEventListener('pointerdown',e=>{
     if(done||!started||!isGameRunValid(runId))return;
@@ -5970,7 +5976,7 @@ async function startBikeJump(p,humanIndex,runId){
     const visibleThreshold=rampLeft-stage.clientWidth*.96;
 
     if(bikeX<visibleThreshold){
-      message.textContent='まだジャンプ台は先！';
+      message.textContent='';
       beep(210,45,.012);
       return;
     }
@@ -6072,14 +6078,12 @@ async function startBikeJump(p,humanIndex,runId){
 
     if(!rampAnnounced&&timeToRamp<=0){
       rampAnnounced=true;
-      message.textContent='ジャンプ台！ CENTERでTAP！';
+      message.textContent='CENTERでTAP！';
       timingEl.textContent='CENTER!';
       beep(760,70,.022);
     }else if(!rampAnnounced){
-      const runSec=Math.max(0,5-(bikeX-80)/speed);
-      message.textContent=runSec>0.1
-        ? `高速走行… ${runSec.toFixed(1)}`
-        : '前方を見ろ！';
+      message.textContent='';
+      timingEl.textContent='--';
     }
 
     if(bikeX>rampRight+110){
@@ -6417,25 +6421,34 @@ async function startMobTrain(p,humanIndex,runId){
   goalEl.style.left=`${goalPt.x}px`;
   goalEl.style.top=`${goalPt.y}px`;
 
-  const obstacleCandidates=[
-    {x:w*.20,y:h*.34,r:26,type:'rock'},
-    {x:w*.29,y:h*.67,r:28,type:'tree'},
-    {x:w*.39,y:h*.46,r:34,type:'water'},
-    {x:w*.49,y:h*.72,r:27,type:'rock'},
-    {x:w*.58,y:h*.31,r:29,type:'tree'},
-    {x:w*.66,y:h*.58,r:34,type:'water'},
-    {x:w*.72,y:h*.39,r:25,type:'rock'}
-  ];
+  // Randomized every play: many obstacles, but START / GOAL stay safe.
+  const goalSafeRadius=Math.max(112,w*.22);
+  const startSafeRadius=88;
+  const obsData=[];
+  const obstacleTypes=['rock','tree','water'];
+  const desired=randi(12,16);
 
-  // Guaranteed clear approach around both START and GOAL.
-  // This prevents an obstacle from covering the flag and making a run impossible.
-  const goalSafeRadius=Math.max(105,w*.26);
-  const startSafeRadius=82;
+  let attempts=0;
+  while(obsData.length<desired&&attempts<180){
+    attempts++;
 
-  const obsData=obstacleCandidates.filter(o=>
-    Math.hypot(o.x-goalPt.x,o.y-goalPt.y)>goalSafeRadius &&
-    Math.hypot(o.x-startPt.x,o.y-startPt.y)>startSafeRadius
-  );
+    const type=obstacleTypes[randi(0,obstacleTypes.length-1)];
+    const r=type==='water'?rand(31,42):rand(24,34);
+    const o={
+      x:rand(w*.16,w*.80),
+      y:rand(h*.24,h*.79),
+      r,
+      type
+    };
+
+    if(Math.hypot(o.x-goalPt.x,o.y-goalPt.y)<=goalSafeRadius)continue;
+    if(Math.hypot(o.x-startPt.x,o.y-startPt.y)<=startSafeRadius)continue;
+
+    // Keep individual objects separated enough that a route always exists.
+    if(obsData.some(q=>Math.hypot(o.x-q.x,o.y-q.y)<o.r+q.r+24))continue;
+
+    obsData.push(o);
+  }
 
   obstacleLayer.innerHTML=obsData.map((o,i)=>`
     <div class="train-obstacle ${o.type}"
@@ -6825,7 +6838,12 @@ async function startGiantMob(p,humanIndex,runId){
     const now=performance.now();
     const elapsed=now-cycleStart;
     const errorMs=Math.abs(elapsed-1000);
-    const loss=clamp(errorMs/10,0,100);
+
+    // V10.4 difficulty:
+    // before 16th building = old penalty ×2
+    // after 15 buildings       = old penalty ×3
+    const penaltyMultiplier=destroyed>15?3:2;
+    const loss=clamp((errorMs/10)*penaltyMultiplier,0,100);
 
     energy=clamp(energy-loss,0,100);
     energyEl.textContent=energy.toFixed(1);
@@ -6833,7 +6851,7 @@ async function startGiantMob(p,humanIndex,runId){
     timing.textContent=
       errorMs<=15
         ? 'PERFECT 1.000!'
-        : `誤差 ${(errorMs/1000).toFixed(3)}秒 / -${loss.toFixed(1)}`;
+        : `誤差 ${(errorMs/1000).toFixed(3)}秒 / ×${penaltyMultiplier} / -${loss.toFixed(1)}`;
 
     popImpact(errorMs<=15?'PERFECT!':`-${loss.toFixed(1)}`);
 
@@ -7059,7 +7077,7 @@ async function startWizardMob(p,humanIndex,runId){
         el,
         x:55+i*(sw-110)/(count-1),
         y:sh-randi(58,86),
-        speed:rand(18,32)*(i%2?1:-1),
+        speed:rand(24,42)*(i%2?1:-1),
         phase:Math.random()*Math.PI*2
       };
 
@@ -7076,18 +7094,22 @@ async function startWizardMob(p,humanIndex,runId){
     el.className='wizard-dark-flame';
     el.innerHTML='<i></i><b></b>';
 
-    const x=rand(38,sw-38);
-    const size=rand(34,50);
+    const big=Math.random()<(0.15+progress*.12);
+    if(big)el.classList.add('giant');
+
+    const size=big?rand(78,108):rand(40,64);
+    const x=rand(size*.48,sw-size*.48);
 
     const f={
       id:++flameId,
       el,
       x,
-      y:-45,
+      y:-size*.75,
       size,
-      vy:rand(82,112)+progress*88,
-      drift:rand(-18,18),
-      dead:false
+      vy:(big?rand(132,178):rand(160,215))+progress*185,
+      drift:rand(-28,28),
+      dead:false,
+      big
     };
 
     el.style.width=`${size}px`;
@@ -7231,13 +7253,17 @@ async function startWizardMob(p,humanIndex,runId){
 
     timeEl.textContent=(Math.max(0,remaining)/1000).toFixed(1);
 
-    const spawnEvery=900-progress*570;
+    const spawnEvery=620-progress*390;
 
-    if(now-lastSpawn>=spawnEvery&&flames.filter(f=>!f.dead).length<8){
+    if(now-lastSpawn>=spawnEvery&&flames.filter(f=>!f.dead).length<13){
       spawnFlame(now,progress);
 
-      if(progress>.58&&Math.random()<.30){
+      if(progress>.30&&Math.random()<(.30+progress*.28)){
         spawnFlame(now+1,progress);
+      }
+
+      if(progress>.68&&Math.random()<.28){
+        spawnFlame(now+2,progress);
       }
     }
 
@@ -7414,7 +7440,7 @@ async function startBrawlerMob(p,humanIndex,runId){
   }
 
   function spawnEnemy(now,progress,forceSide=null){
-    if(enemies.filter(e=>!e.dead).length>=13)return;
+    if(enemies.filter(e=>!e.dead).length>=30)return;
 
     const side=forceSide??(Math.random()<.5?-1:1);
     const x=clamp(
@@ -7427,15 +7453,28 @@ async function startBrawlerMob(p,humanIndex,runId){
     el.className='brawler-enemy';
     el.style.backgroundImage=`url('icon/${String(randi(1,10)).padStart(2,'0')}.png')`;
 
+    const roll=Math.random();
+    const giant=roll<.10;
+    const small=!giant&&roll<.38;
+
+    const width=giant?rand(98,132):small?rand(42,55):rand(60,82);
+    const height=width*rand(1.04,1.18);
+
+    if(giant)el.classList.add('giant');
+    if(small)el.classList.add('small');
+
     const enemy={
       id:++enemyId,
       el,
       x,
-      y:64+randi(-4,5),
-      speed:rand(34,52)+progress*38,
+      y:64+randi(-5,6),
+      speed:(giant?rand(70,95):small?rand(115,155):rand(90,132))+progress*105,
+      width,
       dead:false
     };
 
+    el.style.width=`${width}px`;
+    el.style.height=`${height}px`;
     el.style.left=`${x}px`;
     el.style.bottom=`${enemy.y}px`;
     el.style.setProperty('--enemy-face',x<playerX?1:-1);
@@ -7483,7 +7522,7 @@ async function startBrawlerMob(p,humanIndex,runId){
         e,
         dx:(e.x-playerX)*facing
       }))
-      .filter(o=>o.dx>=-20&&o.dx<=155)
+      .filter(o=>o.dx>=-28&&o.dx<=185)
       .sort((a,b)=>a.dx-b.dx);
 
     if(candidates.length){
@@ -7512,7 +7551,7 @@ async function startBrawlerMob(p,humanIndex,runId){
     player.classList.add('special-punching');
 
     const victims=enemies
-      .filter(en=>!en.dead&&Math.abs(en.x-playerX)<=330);
+      .filter(en=>!en.dead&&Math.abs(en.x-playerX)<=390);
 
     // If nobody is close, it still consumes the stored special.
     for(const enemy of victims){
@@ -7531,8 +7570,8 @@ async function startBrawlerMob(p,humanIndex,runId){
   last=startTime;
   lastSpawn=startTime-500;
 
-  // Start with a crowd.
-  for(let i=0;i<7;i++){
+  // Start with a real crowd on both sides.
+  for(let i=0;i<16;i++){
     spawnEnemy(startTime,0,i%2?-1:1);
   }
 
@@ -7551,11 +7590,19 @@ async function startBrawlerMob(p,humanIndex,runId){
     playerX=clamp(playerX+moveDir*285*dt,60,worldW-60);
     player.style.left=`${playerX}px`;
 
-    const spawnEvery=430-progress*180;
+    const spawnEvery=215-progress*105;
     if(now-lastSpawn>=spawnEvery){
       lastSpawn=now;
+
       spawnEnemy(now,progress);
-      if(progress>.52&&Math.random()<.42)spawnEnemy(now,progress);
+
+      if(Math.random()<.72){
+        spawnEnemy(now,progress);
+      }
+
+      if(progress>.42&&Math.random()<.48){
+        spawnEnemy(now,progress);
+      }
     }
 
     for(const enemy of enemies){
@@ -7565,7 +7612,7 @@ async function startBrawlerMob(p,humanIndex,runId){
       const dir=Math.sign(dx)||1;
 
       // Crowd moves toward the player, but keeps a small fighting distance.
-      if(Math.abs(dx)>52){
+      if(Math.abs(dx)>38){
         enemy.x+=dir*enemy.speed*dt;
       }
 
@@ -7607,6 +7654,596 @@ async function startBrawlerMob(p,humanIndex,runId){
 
 
 
+// GAME 42 -------------------------------------------------
+function analyzeSummonedMonster(strokes,stageW,stageH){
+  const flat=strokes.flat();
+  if(flat.length<8){
+    return {
+      type:'RAPID',
+      power:.42,
+      speed:.48,
+      range:.48,
+      score:38,
+      width:70,
+      height:70,
+      label:'ちいさな落書き獣'
+    };
+  }
+
+  let minX=Infinity,minY=Infinity,maxX=-Infinity,maxY=-Infinity;
+  for(const pt of flat){
+    minX=Math.min(minX,pt.x);
+    minY=Math.min(minY,pt.y);
+    maxX=Math.max(maxX,pt.x);
+    maxY=Math.max(maxY,pt.y);
+  }
+
+  const bw=Math.max(10,maxX-minX);
+  const bh=Math.max(10,maxY-minY);
+  const aspect=bw/bh;
+  const boxArea=bw*bh;
+  const stageArea=stageW*stageH;
+  const sizeNorm=clamp(Math.sqrt(boxArea/stageArea)/.56,0,1);
+
+  let pathLen=0;
+  let totalTurn=0;
+  let segmentCount=0;
+
+  for(const stroke of strokes){
+    for(let i=1;i<stroke.length;i++){
+      pathLen+=Math.hypot(
+        stroke[i].x-stroke[i-1].x,
+        stroke[i].y-stroke[i-1].y
+      );
+    }
+
+    for(let i=2;i<stroke.length;i++){
+      const a1=Math.atan2(
+        stroke[i-1].y-stroke[i-2].y,
+        stroke[i-1].x-stroke[i-2].x
+      );
+      const a2=Math.atan2(
+        stroke[i].y-stroke[i-1].y,
+        stroke[i].x-stroke[i-1].x
+      );
+
+      let d=Math.abs(a2-a1);
+      while(d>Math.PI)d=Math.abs(d-Math.PI*2);
+
+      totalTurn+=d;
+      segmentCount++;
+    }
+  }
+
+  const complexity=clamp(
+    (pathLen/(2*(bw+bh)+1)-.70)/3.6,
+    0,1
+  );
+
+  const turnDensity=segmentCount
+    ? clamp(totalTurn/segmentCount/.85,0,1)
+    : 0;
+
+  // Medium-size drawings are efficient; huge drawings do NOT automatically win.
+  const sizeBalance=clamp(
+    1-Math.abs(sizeNorm-.56)/.56,
+    0,1
+  );
+
+  const strokeBonus=clamp(strokes.length/5,0,1);
+
+  let type='RAPID';
+  if(aspect>=1.48){
+    type='WAVE';
+  }else if(aspect<=.68){
+    type='PIERCE';
+  }else if(complexity<.36&&turnDensity<.52){
+    type='BURST';
+  }else{
+    type='RAPID';
+  }
+
+  let power=clamp(
+    .43+
+    sizeBalance*.18+
+    complexity*.18+
+    turnDensity*.12+
+    strokeBonus*.09,
+    .38,1
+  );
+
+  let speed=clamp(
+    .45+
+    complexity*.25+
+    turnDensity*.20+
+    (1-sizeNorm)*.10,
+    .38,1
+  );
+
+  let range=clamp(
+    .43+
+    Math.min(1,Math.max(aspect,1/aspect)/2.0)*.24+
+    sizeBalance*.18+
+    complexity*.10,
+    .38,1
+  );
+
+  if(type==='WAVE'){
+    range=clamp(range+.12,0,1);
+    speed=clamp(speed-.05,0,1);
+  }else if(type==='PIERCE'){
+    power=clamp(power+.08,0,1);
+    range=clamp(range+.08,0,1);
+  }else if(type==='BURST'){
+    power=clamp(power+.05,0,1);
+    speed=clamp(speed-.04,0,1);
+  }else{
+    speed=clamp(speed+.12,0,1);
+    power=clamp(power-.03,0,1);
+  }
+
+  const score=Math.round((power*.46+speed*.28+range*.26)*100);
+
+  const labels={
+    WAVE:'横薙ぎウェーブ獣',
+    PIERCE:'貫通ランス獣',
+    BURST:'爆裂サークル獣',
+    RAPID:'連射スピード獣'
+  };
+
+  return {
+    type,
+    power,
+    speed,
+    range,
+    score,
+    width:bw,
+    height:bh,
+    minX,minY,maxX,maxY,
+    label:labels[type]
+  };
+}
+
+async function startSummonerMob(p,humanIndex,runId){
+  gameFit();
+
+  let drawingOpen=false;
+  let drawing=false;
+  let pointerId=null;
+  let currentStroke=null;
+  let drawRAF=null;
+  let battleRAF=null;
+  let finished=false;
+  let kills=0;
+  let lastSpawn=0;
+  let lastAttack=0;
+  let slimeId=0;
+  let startBattle=0;
+
+  const strokes=[];
+  const slimes=[];
+
+  screen.innerHTML=`<div class="summoner-shell">
+    <div class="game-head">
+      <div><span class="kicker">${esc(p.name)}</span><h2>モブくんは召喚師</h2></div>
+      <div class="game-badge">${playBadge(humanIndex)}</div>
+    </div>
+
+    <div class="summoner-hud">
+      <div><span>DRAW</span><b id="summonDrawTime">5.0</b></div>
+      <div><span>TYPE</span><b id="summonType">???</b></div>
+      <div><span>KO</span><b id="summonKills">0</b></div>
+    </div>
+
+    <div id="summonerStage" class="summoner-stage">
+      <div class="summoner-bg">
+        <div class="summoner-moon"></div>
+        <div class="summoner-stone s1"></div>
+        <div class="summoner-stone s2"></div>
+        <div class="summoner-stone s3"></div>
+      </div>
+
+      <div id="summonCircle" class="summon-circle">
+        <i></i><i></i><i></i>
+      </div>
+
+      <svg id="summonDrawSvg" class="summon-draw-svg"></svg>
+
+      <div id="summonMonster" class="summon-monster hidden">
+        <svg id="summonMonsterSvg" viewBox="0 0 300 300"></svg>
+        <i class="summon-eye e1"></i>
+        <i class="summon-eye e2"></i>
+      </div>
+
+      <div id="summonSlimes"></div>
+      <div id="summonAttackFx" class="summon-attack-fx"></div>
+
+      <div class="summoner-caster" style="background-image:url('icon/01.png')"></div>
+      <div id="summonMessage" class="summon-message">5秒でモンスターを自由に描け！</div>
+    </div>
+  </div>`;
+
+  const stage=document.getElementById('summonerStage');
+  const drawSvg=document.getElementById('summonDrawSvg');
+  const circle=document.getElementById('summonCircle');
+  const monster=document.getElementById('summonMonster');
+  const monsterSvg=document.getElementById('summonMonsterSvg');
+  const slimeLayer=document.getElementById('summonSlimes');
+  const attackFx=document.getElementById('summonAttackFx');
+  const drawTimeEl=document.getElementById('summonDrawTime');
+  const typeEl=document.getElementById('summonType');
+  const killsEl=document.getElementById('summonKills');
+  const message=document.getElementById('summonMessage');
+
+  const sw=stage.clientWidth;
+  const sh=stage.clientHeight;
+  drawSvg.setAttribute('viewBox',`0 0 ${sw} ${sh}`);
+
+  function localPoint(e){
+    const r=stage.getBoundingClientRect();
+    return {
+      x:clamp(e.clientX-r.left,4,sw-4),
+      y:clamp(e.clientY-r.top,4,sh-4)
+    };
+  }
+
+  function createStrokeElement(){
+    const el=document.createElementNS('http://www.w3.org/2000/svg','polyline');
+    el.setAttribute('class','summon-user-stroke');
+    drawSvg.appendChild(el);
+    return el;
+  }
+
+  stage.addEventListener('pointerdown',e=>{
+    if(!drawingOpen||finished||drawing||!isGameRunValid(runId))return;
+    e.preventDefault();
+
+    drawing=true;
+    pointerId=e.pointerId;
+    currentStroke={
+      points:[localPoint(e)],
+      el:createStrokeElement()
+    };
+    strokes.push(currentStroke.points);
+
+    try{stage.setPointerCapture(pointerId)}catch(_){}
+  },{passive:false});
+
+  stage.addEventListener('pointermove',e=>{
+    if(!drawingOpen||!drawing||e.pointerId!==pointerId)return;
+    e.preventDefault();
+
+    const pt=localPoint(e);
+    const prev=currentStroke.points[currentStroke.points.length-1];
+
+    if(Math.hypot(pt.x-prev.x,pt.y-prev.y)>=2.4){
+      currentStroke.points.push(pt);
+      currentStroke.el.setAttribute(
+        'points',
+        currentStroke.points
+          .map(q=>`${q.x.toFixed(1)},${q.y.toFixed(1)}`)
+          .join(' ')
+      );
+    }
+  },{passive:false});
+
+  const endDrawStroke=e=>{
+    if(!drawing||e.pointerId!==pointerId)return;
+    e.preventDefault();
+    drawing=false;
+    currentStroke=null;
+  };
+
+  stage.addEventListener('pointerup',endDrawStroke,{passive:false});
+  stage.addEventListener('pointercancel',endDrawStroke,{passive:false});
+
+  if(!(await countdown('SUMMON DRAW',runId)))return;
+
+  drawingOpen=true;
+  message.textContent='自由に描け！ 大きさだけでは強さは決まらない';
+
+  const drawStart=performance.now();
+
+  await new Promise(resolve=>{
+    const timer=now=>{
+      if(!isGameRunValid(runId)){resolve();return;}
+
+      const rem=5000-(now-drawStart);
+      drawTimeEl.textContent=(Math.max(0,rem)/1000).toFixed(1);
+
+      if(rem<=0){
+        drawingOpen=false;
+        drawing=false;
+        resolve();
+        return;
+      }
+
+      drawRAF=requestAnimationFrame(timer);
+    };
+
+    drawRAF=requestAnimationFrame(timer);
+  });
+
+  if(!isGameRunValid(runId))return;
+
+  drawTimeEl.textContent='0.0';
+
+  const analysis=analyzeSummonedMonster(strokes,sw,sh);
+  typeEl.textContent=analysis.type;
+
+  message.textContent=`召喚！ ${analysis.label}`;
+
+  // Rebuild user's drawing as the summoned monster itself.
+  const flat=strokes.flat();
+
+  if(flat.length>=2){
+    let minX=Infinity,minY=Infinity,maxX=-Infinity,maxY=-Infinity;
+
+    for(const pt of flat){
+      minX=Math.min(minX,pt.x);
+      minY=Math.min(minY,pt.y);
+      maxX=Math.max(maxX,pt.x);
+      maxY=Math.max(maxY,pt.y);
+    }
+
+    const bw=Math.max(12,maxX-minX);
+    const bh=Math.max(12,maxY-minY);
+    const pad=18;
+
+    monsterSvg.setAttribute(
+      'viewBox',
+      `${minX-pad} ${minY-pad} ${bw+pad*2} ${bh+pad*2}`
+    );
+
+    monsterSvg.innerHTML=strokes.map(stroke=>`
+      <polyline
+        class="summon-monster-stroke"
+        points="${stroke.map(q=>`${q.x.toFixed(1)},${q.y.toFixed(1)}`).join(' ')}">
+      </polyline>
+    `).join('');
+  }else{
+    monsterSvg.setAttribute('viewBox','0 0 100 100');
+    monsterSvg.innerHTML='<circle class="summon-monster-stroke" cx="50" cy="50" r="28"></circle>';
+  }
+
+  drawSvg.classList.add('fade-out');
+  circle.classList.add('active');
+  monster.classList.remove('hidden');
+  monster.classList.add(`type-${analysis.type.toLowerCase()}`);
+
+  await wait(650);
+
+  if(!isGameRunValid(runId))return;
+
+  circle.classList.remove('active');
+  stage.classList.add('battle');
+  drawSvg.classList.add('hidden');
+  message.textContent='AUTO BATTLE 10 SEC!';
+
+  const mx=sw*.50;
+  const my=sh*.56;
+
+  function spawnSlime(now,progress){
+    if(slimes.filter(s=>!s.dead).length>=20)return;
+
+    const side=Math.random()<.5?-1:1;
+    const big=Math.random()<(.10+progress*.07);
+    const size=big?rand(56,76):rand(34,48);
+
+    const el=document.createElement('div');
+    el.className='summon-slime';
+    if(big)el.classList.add('big');
+
+    el.style.width=`${size}px`;
+    el.style.height=`${size*.72}px`;
+
+    const s={
+      id:++slimeId,
+      el,
+      x:side<0?-size:sw+size,
+      y:rand(sh*.36,sh*.80),
+      speed:(big?rand(26,40):rand(42,66))+progress*30,
+      hp:big?2:1,
+      maxHp:big?2:1,
+      dead:false
+    };
+
+    el.style.left=`${s.x}px`;
+    el.style.top=`${s.y}px`;
+
+    slimeLayer.appendChild(el);
+    slimes.push(s);
+    lastSpawn=now;
+  }
+
+  function defeatSlime(s,strong=false){
+    if(s.dead)return;
+
+    s.dead=true;
+    kills++;
+    killsEl.textContent=kills;
+
+    const dir=s.x<mx?-1:1;
+    s.el.style.setProperty('--slime-fly-x',`${dir*rand(90,180)}px`);
+    s.el.style.setProperty('--slime-spin',`${dir*rand(420,760)}deg`);
+    s.el.classList.add(strong?'blast':'defeated');
+
+    setTimeout(()=>s.el.remove(),430);
+  }
+
+  function hitSlime(s,strong=false){
+    if(s.dead)return;
+
+    s.hp-=strong?2:1;
+
+    if(s.hp<=0){
+      defeatSlime(s,strong);
+    }else{
+      s.el.classList.remove('hurt');
+      void s.el.offsetWidth;
+      s.el.classList.add('hurt');
+    }
+  }
+
+  function popAttackFx(type,dir=1){
+    attackFx.className=`summon-attack-fx ${type.toLowerCase()} dir-${dir<0?'left':'right'} show`;
+    void attackFx.offsetWidth;
+    attackFx.classList.add('show');
+
+    setTimeout(()=>{
+      attackFx.className='summon-attack-fx';
+    },260);
+  }
+
+  function autoAttack(){
+    const alive=slimes.filter(s=>!s.dead);
+    if(!alive.length)return;
+
+    const leftCount=alive.filter(s=>s.x<mx).length;
+    const rightCount=alive.length-leftCount;
+    const dir=rightCount>=leftCount?1:-1;
+
+    if(analysis.type==='WAVE'){
+      const reach=210+analysis.range*210;
+      const maxHits=2+Math.floor(analysis.power*3);
+
+      const victims=alive
+        .map(s=>({s,dx:(s.x-mx)*dir,dy:Math.abs(s.y-my)}))
+        .filter(o=>o.dx>=-25&&o.dx<=reach&&o.dy<=100)
+        .sort((a,b)=>a.dx-b.dx)
+        .slice(0,maxHits);
+
+      for(const o of victims)hitSlime(o.s,analysis.power>.82);
+      popAttackFx('WAVE',dir);
+
+    }else if(analysis.type==='PIERCE'){
+      const reach=235+analysis.range*245;
+
+      const victims=alive
+        .map(s=>({s,dx:(s.x-mx)*dir,dy:Math.abs(s.y-my)}))
+        .filter(o=>o.dx>=-30&&o.dx<=reach&&o.dy<=60)
+        .sort((a,b)=>a.dx-b.dx)
+        .slice(0,3+Math.floor(analysis.power*3));
+
+      for(const o of victims)hitSlime(o.s,true);
+      popAttackFx('PIERCE',dir);
+
+    }else if(analysis.type==='BURST'){
+      const radius=145+analysis.range*125;
+
+      const victims=alive
+        .map(s=>({s,d:Math.hypot(s.x-mx,s.y-my)}))
+        .filter(o=>o.d<=radius)
+        .sort((a,b)=>a.d-b.d)
+        .slice(0,3+Math.floor(analysis.power*4));
+
+      for(const o of victims)hitSlime(o.s,analysis.power>.72);
+      popAttackFx('BURST',1);
+
+    }else{
+      const maxHits=2+Math.floor(analysis.speed*3);
+
+      const victims=alive
+        .map(s=>({s,d:Math.hypot(s.x-mx,s.y-my)}))
+        .sort((a,b)=>a.d-b.d)
+        .slice(0,maxHits);
+
+      for(const o of victims)hitSlime(o.s,analysis.power>.90);
+      popAttackFx('RAPID',dir);
+    }
+
+    beep(
+      analysis.type==='BURST'?520:
+      analysis.type==='PIERCE'?680:
+      analysis.type==='WAVE'?460:760,
+      28,.006
+    );
+  }
+
+  startBattle=performance.now();
+  lastSpawn=startBattle-500;
+  lastAttack=startBattle-500;
+
+  for(let i=0;i<7;i++){
+    spawnSlime(startBattle,0);
+  }
+
+  function battle(now){
+    if(finished||!isGameRunValid(runId))return;
+
+    const elapsed=now-startBattle;
+    const remaining=10000-elapsed;
+    const progress=clamp(elapsed/10000,0,1);
+
+    drawTimeEl.textContent=(Math.max(0,remaining)/1000).toFixed(1);
+
+    const spawnEvery=240-progress*95;
+
+    if(now-lastSpawn>=spawnEvery){
+      spawnSlime(now,progress);
+
+      if(progress>.42&&Math.random()<.42){
+        spawnSlime(now+1,progress);
+      }
+    }
+
+    const attackEvery=clamp(
+      650-analysis.speed*330,
+      260,520
+    );
+
+    if(now-lastAttack>=attackEvery){
+      lastAttack=now;
+      autoAttack();
+
+      monster.classList.remove('attacking');
+      void monster.offsetWidth;
+      monster.classList.add('attacking');
+    }
+
+    for(const s of slimes){
+      if(s.dead)continue;
+
+      const dx=mx-s.x;
+      const dy=my-s.y;
+      const dist=Math.hypot(dx,dy)||1;
+
+      if(dist>72){
+        s.x+=dx/dist*s.speed*.016;
+        s.y+=dy/dist*s.speed*.016;
+      }
+
+      s.el.style.left=`${s.x}px`;
+      s.el.style.top=`${s.y}px`;
+    }
+
+    if(remaining<=0){
+      finished=true;
+      state.records.summonerMob[p.id]=kills;
+
+      message.textContent=`召喚獣が ${kills}体 撃破！`;
+      beep(kills>=40?1050:kills>=28?850:620,140,.035);
+
+      setTimeout(()=>{
+        if(isGameRunValid(runId)){
+          recordScreen(
+            41,p,humanIndex,
+            `${kills}<small>体</small>`,
+            `${analysis.type} / POWER ${analysis.score}`
+          );
+        }
+      },750);
+      return;
+    }
+
+    battleRAF=requestAnimationFrame(battle);
+  }
+
+  battleRAF=requestAnimationFrame(battle);
+}
+
+
+
 function recordScreen(gameIndex,p,humanIndex,main,sub=""){
   clearGameFit();
   gameTop();
@@ -7644,7 +8281,7 @@ async function simulateCpuThenResult(gameIndex){
 
 function cpuUltraDraw(gameIndex){
   // Game-specific draw rate. Regular values are already intentionally strong.
-  const chance=[0.12,0.10,0.14,0.16,0.12,0.13,0.14,0.12,0.15,0.12,0.14,0.13,0.13,0.14,0.12,0.12,0.13,0.12,0.13,0.14,0.13,0.14,0.12,0.13,0.12,0.12,0.13,0.13,0.14,0.14,0.13,0.12,0.13,0.13,0.13,0.13,0.13,0.13,0.13,0.13,0.13][gameIndex] ?? 0.12;
+  const chance=[0.12,0.10,0.14,0.16,0.12,0.13,0.14,0.12,0.15,0.12,0.14,0.13,0.13,0.14,0.12,0.12,0.13,0.12,0.13,0.14,0.13,0.14,0.12,0.13,0.12,0.12,0.13,0.13,0.14,0.14,0.13,0.12,0.13,0.13,0.13,0.13,0.13,0.13,0.13,0.13,0.13,0.13][gameIndex] ?? 0.12;
   return Math.random()<chance;
 }
 
@@ -7735,9 +8372,11 @@ function simulateOneCpu(gameIndex,p){
   }else if(gameIndex===38){
     state.records.giantMob[p.id]=ultra?randi(23,30):randi(10,22);
   }else if(gameIndex===39){
-    state.records.wizardMob[p.id]=ultra?randi(13,18):randi(6,13);
+    state.records.wizardMob[p.id]=ultra?randi(14,20):randi(7,15);
+  }else if(gameIndex===40){
+    state.records.brawlerMob[p.id]=ultra?randi(31,42):randi(20,34);
   }else{
-    state.records.brawlerMob[p.id]=ultra?randi(27,35):randi(14,28);
+    state.records.summonerMob[p.id]=ultra?randi(38,49):randi(22,40);
   }
 
   return ultra;
@@ -7807,7 +8446,8 @@ function performancePoints(gameIndex,v){
   }
   if(gameIndex===38)return clamp(Math.round(v/30*100),0,100);
   if(gameIndex===39)return clamp(Math.round(v/15*100),0,100);
-  return clamp(Math.round(v/30*100),0,100);
+  if(gameIndex===40)return clamp(Math.round(v/30*100),0,100);
+  return clamp(Math.round(v/40*100),0,100);
 }
 
 function rankRecords(gameIndex){
@@ -7864,6 +8504,7 @@ function formatRecord(gameIndex,v){
   if(gameIndex===37)return v>=90000?`CRASH`:`${(v/1000).toFixed(2)}秒`;
   if(gameIndex===38)return `${Math.round(v)}棟`;
   if(gameIndex===39)return `${Math.round(v)}個`;
+  if(gameIndex===40)return `${Math.round(v)}体`;
   return `${Math.round(v)}体`;
 }
 
