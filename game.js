@@ -507,7 +507,7 @@ function renderModeLobby(){
       <div><b>モブくん一閃</b><span>3回合計300pt=100点</span></div>
       <div><b>カラスから逃げろ！</b><span>20秒生存=100点</span></div>
       <div><b>ダンシングモブくん</b><span>描画評価1〜100点</span></div>
-      <div><b>モブくんはガーディアン</b><span>残耐久率1〜100点 / 全壊0点</span></div>
+      <div><b>モブくんはガーディアン</b><span>残耐久50%以上=100点 / 3%=6点 / 全壊0点</span></div>
       <div><b>モブくん50m走</b><span>4.50秒以下=100 / 12.50秒以上=0</span></div>
       <div><b>モブくんはスナイパー</b><span>1発25点 / 4発100点</span></div>
     </div>`;
@@ -594,7 +594,7 @@ function scoreRuleForGame(index){
     "3回合計300pt=100点 / 0pt=0点",
     "20.00秒生存=100点 / 0秒=0点",
     "描いた量・広がり・複雑さから1〜100点",
-    "残った総耐久率が1〜100点 / 全壊してモブくん被弾=0点",
+    "残耐久50%以上=100点 / 50%未満は残耐久率×2 / 全壊0点",
     "4.50秒以下=100点 / 12.50秒以上=0点",
     "1発命中=25点 / 4発命中=100点",
     "予想とゴール順位 完全一致=100 / 3一致=80 / 2一致=50 / 1一致=30",
@@ -703,7 +703,7 @@ function showGameIntro(index){
   }else if(index===45){
     rules=`<li>7秒間、中央のモブくんの周りに盛り上がる絵を好きなだけ描きます。</li><li>時間終了で「レッツ、ダンシング！」。モブくんが跳ねたり走ったり回ったりしてダンス。</li><li>自分が描いた線もそれぞれ跳ねる・回る・揺れるなど別々に動きます。</li><li>線の量だけでなく、画面への広がり・ストローク数・複雑さを評価して1〜100点。</li>`;
   }else if(index===46){
-    rules=`<li>7秒でモブくんを守るお城・タワー・壁などを自由に描きます。</li><li>攻撃は3連続。第一陣=現在くらい / 第二陣=約2倍 / 第三陣=画面を覆う超巨大エネルギー。</li><li>エネルギーは絵を貫通せず、建造物の手前で止まり、しばらく激しくぶつかり合ってから耐久を削ります。</li><li>大きさだけでは高耐久にならず、線量・密度・複数ストローク・複雑さも重要。</li><li>1つだけ描く場合は3連撃を全部耐えれば100点、壊れれば0点。複数なら最後に残った総耐久率で1〜100点。</li>`;
+    rules=`<li>7秒でモブくんを守るお城・タワー・壁などを自由に描きます。</li><li>攻撃は3連続。第一陣=通常 / 第二陣=約2倍 / 第三陣=画面を覆う超巨大エネルギー。</li><li>エネルギーは絵の手前で止まり、押し合い・衝撃波・揺れを挟んでから耐久を削ります。</li><li>離して描いた建造物は別々の防衛施設として判定。大きさだけでなく線量・密度・ストローク数・複雑さも耐久へ反映。</li><li>最終残耐久50%以上=100点。50%未満は残耐久率×2で採点。例:3%なら6点。全壊してモブくん直撃=0点。</li>`;
   }else if(index===47){
     rules=`<li>3・2・1で50m走スタート。</li><li>LEFT FOOT → RIGHT FOOT → LEFT FOOT…と左右の足ボタンを必ず交互に連打。</li><li>正しい足入力ごとに前進。同じ足を連続で押しても進みません。</li><li>目安は最速4.5秒、普通6.5秒、ゆっくり12.5秒。50m到達タイムを競います。</li>`;
   }else if(index===48){
@@ -8030,9 +8030,9 @@ async function startBrawlerMob(p,humanIndex,runId){
 
   const TARGET_KO=30;
   const NORMAL_TOTAL=27;
-  const worldW=1780;
-  const fieldMinX=105;
-  const fieldMaxX=worldW-105;
+  const worldW=900;
+  const fieldMinX=65;
+  const fieldMaxX=worldW-65;
 
   let finished=false;
   let kills=0;
@@ -8070,9 +8070,9 @@ async function startBrawlerMob(p,humanIndex,runId){
     <div id="brawlerStage" class="brawler-stage brawler-stage-v110">
       <div id="brawlerWorld" class="brawler-world" style="width:${worldW}px">
         <div class="school-wall">
-          ${Array.from({length:6},(_,i)=>`
-            <div class="school-window" style="left:${145+i*290}px"></div>
-            <div class="school-door brawler-door-v110" data-door="${i}" style="left:${275+i*290}px">
+          ${Array.from({length:4},(_,i)=>`
+            <div class="school-window" style="left:${55+i*210}px"></div>
+            <div class="school-door brawler-door-v110" data-door="${i}" style="left:${150+i*210}px">
               <span>CLASS</span>
               <i></i>
             </div>
@@ -8095,11 +8095,6 @@ async function startBrawlerMob(p,humanIndex,runId){
 
         <div id="brawlerAllyA" class="brawler-ally ally-a">
           <div class="brawler-ally-figure" style="background-image:url('icon/02.png')"></div>
-          <i class="brawler-ally-fist"></i>
-        </div>
-
-        <div id="brawlerAllyB" class="brawler-ally ally-b">
-          <div class="brawler-ally-figure" style="background-image:url('icon/03.png')"></div>
           <i class="brawler-ally-fist"></i>
         </div>
       </div>
@@ -8128,8 +8123,7 @@ async function startBrawlerMob(p,humanIndex,runId){
   const world=document.getElementById('brawlerWorld');
   const player=document.getElementById('brawlerPlayer');
   const allyEls=[
-    document.getElementById('brawlerAllyA'),
-    document.getElementById('brawlerAllyB')
+    document.getElementById('brawlerAllyA')
   ];
   const enemyLayer=document.getElementById('brawlerEnemies');
   const timeEl=document.getElementById('brawlerTime');
@@ -8152,21 +8146,12 @@ async function startBrawlerMob(p,humanIndex,runId){
   const allies=[
     {
       el:allyEls[0],
-      x:worldW*.31,
-      home:worldW*.31,
-      speed:300,
-      cd:720,
+      x:worldW*.34,
+      home:worldW*.34,
+      speed:290,
+      cd:760,
       lastAttack:0,
       phase:.7
-    },
-    {
-      el:allyEls[1],
-      x:worldW*.69,
-      home:worldW*.69,
-      speed:285,
-      cd:820,
-      lastAttack:0,
-      phase:2.3
     }
   ];
 
@@ -8266,7 +8251,7 @@ async function startBrawlerMob(p,humanIndex,runId){
 
   function openDoorNear(x){
     const idx=clamp(
-      Math.round((x-275)/290),
+      Math.round((x-150)/210),
       0,
       doorEls.length-1
     );
@@ -8290,7 +8275,7 @@ async function startBrawlerMob(p,humanIndex,runId){
     if(x===null){
       if(source==='door'){
         const doorIndex=randi(0,doorEls.length-1);
-        x=275+doorIndex*290+rand(-18,18);
+        x=150+doorIndex*210+rand(-14,14);
         openDoorNear(x);
       }else{
         x=rand(fieldMinX+90,fieldMaxX-90);
@@ -8377,8 +8362,8 @@ async function startBrawlerMob(p,humanIndex,runId){
 
     bossesSpawned=true;
 
-    const bossDoorIndexes=[1,3,4];
-    const bossXs=bossDoorIndexes.map(i=>275+i*290);
+    const bossDoorIndexes=[0,2,3];
+    const bossXs=bossDoorIndexes.map(i=>150+i*210);
 
     bossXs.forEach((x,i)=>{
       setTimeout(()=>{
@@ -8493,6 +8478,17 @@ async function startBrawlerMob(p,humanIndex,runId){
     enemy.el.style.setProperty('--fly-x',`${flyX}px`);
     enemy.el.style.setProperty('--fly-y',`${flyY}px`);
     enemy.el.style.setProperty('--fly-spin',`${spin}deg`);
+
+    // Door-entry animation must be removed before the KO animation.
+    // Otherwise CSS animation priority makes normal mobs simply disappear.
+    enemy.el.classList.remove(
+      'door-in',
+      'enemy-attacking',
+      'boss-hurt',
+      'nonlethal-flight'
+    );
+
+    void enemy.el.offsetWidth;
 
     enemy.el.classList.add(
       ultimate
@@ -11227,7 +11223,7 @@ async function startDancingMob(p,humanIndex,runId){
 }
 
 // GAME 47 -------------------------------------------------
-function guardianClusterStrokes(strokes,threshold=34){
+function guardianClusterStrokes(strokes,threshold=12){
   const valid=strokes
     .map((stroke,index)=>({
       stroke,index,
@@ -11249,10 +11245,39 @@ function guardianClusterStrokes(strokes,threshold=34){
     return Math.hypot(dx,dy);
   }
 
+  function pointDistance(a,b){
+    // Fast reject first.
+    if(bboxGap(a.stat,b.stat)>threshold)return Infinity;
+
+    const sa=a.stroke;
+    const sb=b.stroke;
+
+    const stepA=Math.max(1,Math.floor(sa.length/36));
+    const stepB=Math.max(1,Math.floor(sb.length/36));
+
+    let best=Infinity;
+
+    for(let i=0;i<sa.length;i+=stepA){
+      const pa=sa[i];
+
+      for(let j=0;j<sb.length;j+=stepB){
+        const pb=sb[j];
+        const d=Math.hypot(pa.x-pb.x,pa.y-pb.y);
+
+        if(d<best)best=d;
+        if(best<=threshold)return best;
+      }
+    }
+
+    return best;
+  }
+
   for(const item of valid){
+    // Only strokes that actually touch / nearly touch are one structure.
+    // Large overlapping bounding boxes no longer merge distant buildings.
     let cluster=clusters.find(c=>
       c.items.some(other=>
-        bboxGap(item.stat,other.stat)<=threshold
+        pointDistance(item,other)<=threshold
       )
     );
 
@@ -11287,20 +11312,18 @@ function guardianClusterStrokes(strokes,threshold=34){
     const detail=clamp(c.items.length/8,0,1);
     const complexity=clamp(turn/(Math.PI*24),0,1);
 
-    // Big alone is no longer enough. A huge one-stroke box gets area points,
-    // but multi-stroke detail, line density and structure complexity are required
-    // to survive all three demon-lord waves.
+    // Size matters, but a giant empty outline is not automatically a fortress.
     const durability=clamp(
       Math.round(
-        34+
-        clamp(area/21000,0,1)*118+
-        clamp(len/1500,0,1)*112+
-        clamp(lineDensity/2.9,0,1)*76+
-        detail*88+
-        complexity*62+
-        verticality*28
+        24+
+        clamp(area/23500,0,1)*100+
+        clamp(len/1500,0,1)*118+
+        clamp(lineDensity/2.8,0,1)*82+
+        detail*92+
+        complexity*66+
+        verticality*30
       ),
-      28,520
+      22,540
     );
 
     return {
@@ -11315,7 +11338,6 @@ function guardianClusterStrokes(strokes,threshold=34){
     };
   });
 }
-
 
 async function startGuardianMob(p,humanIndex,runId){
   gameFit();
@@ -11823,6 +11845,7 @@ async function startGuardianMob(p,humanIndex,runId){
   const remainingTotal=currentHp();
 
   let score=0;
+  let remainingPct=0;
 
   if(
     !clusters.length||
@@ -11830,28 +11853,34 @@ async function startGuardianMob(p,humanIndex,runId){
     remainingTotal<=0
   ){
     score=0;
-
-  }else if(clusters.length===1){
-    // One-structure gamble remains, but now it must survive all 3 waves.
-    score=100;
-    message.textContent='一点防御で3連撃を耐えた！ 100 POINT！';
+    remainingPct=0;
 
   }else{
+    remainingPct=clamp(
+      remainingTotal/
+      Math.max(1,initialTotal)*
+      100,
+      0,100
+    );
+
+    // New scoring:
+    // 50% or more remaining = 100 points.
+    // Under 50% = remaining percentage x2.
+    // Example: 3% remaining -> 6 points, not 100.
     score=clamp(
       Math.round(
-        remainingTotal/
-        Math.max(1,initialTotal)*
-        100
+        Math.min(50,remainingPct)*2
       ),
       1,100
     );
 
     message.textContent=
-      `3連撃防衛成功！ 残存耐久 ${score}%`;
+      `3連撃防衛成功！ 残存耐久 ${remainingPct.toFixed(0)}% / ${score} POINT`;
   }
 
   state.records.guardianMob[p.id]=score;
-  defenseEl.textContent=`${score}pt`;
+  defenseEl.textContent=
+    `${remainingPct.toFixed(0)}% / ${score}pt`;
 
   await wait(850);
 
@@ -11861,7 +11890,7 @@ async function startGuardianMob(p,humanIndex,runId){
       `${score}<small>pt</small>`,
       score===0
         ? '3 WAVE BREAK'
-        : `3 WAVE DEFENSE / ${clusters.length} STRUCTURES`
+        : `耐久 ${remainingPct.toFixed(0)}% / ${clusters.length} STRUCTURES`
     );
   }
 }
@@ -12350,14 +12379,14 @@ async function startMobRacePredict(p,humanIndex,runId){
       `).join('')}
     </div>
 
-    <div id="racePredictPanel" class="race-predict-panel hidden">
+    <div id="racePredictPanel" class="race-predict-panel" hidden>
       <h3>ゴールする順番を予想してください！</h3>
       <p>↑ ↓ で1〜4を自由に並び替え</p>
       <div id="raceOrderEditor" class="race-order-editor"></div>
       <button id="raceDecision" class="primary" type="button">決定</button>
     </div>
 
-    <div id="raceResultCompare" class="race-result-compare hidden"></div>
+    <div id="raceResultCompare" class="race-result-compare" hidden></div>
   </div>`;
 
   const stage=document.getElementById('racePredictStage');
@@ -12420,7 +12449,7 @@ async function startMobRacePredict(p,humanIndex,runId){
     ).textContent='？';
   });
 
-  panel.classList.remove('hidden');
+  panel.hidden=false;
 
   function renderOrder(){
     editor.innerHTML=prediction.map((lane,index)=>`
@@ -12472,11 +12501,16 @@ async function startMobRacePredict(p,humanIndex,runId){
 
   if(!isGameRunValid(runId))return;
 
-  panel.classList.add('hidden');
+  panel.hidden=true;
 
   if(!(await countdown('RACE',runId)))return;
 
   raceStarted=true;
+
+  racers.forEach(racer=>{
+    const speech=document.getElementById(`raceSpeech${racer.lane}`);
+    if(speech)speech.textContent='';
+  });
 
   stage.classList.add('racing');
 
@@ -12568,28 +12602,38 @@ async function startMobRacePredict(p,humanIndex,runId){
   state.records.mobRacePredict[p.id]=score;
 
   compare.innerHTML=`
+    <h3>RACE RESULT</h3>
     <div>
       <span>YOUR PREDICTION</span>
       <b>${prediction.join(' → ')}</b>
     </div>
     <div>
-      <span>RACE RESULT</span>
+      <span>ACTUAL ORDER</span>
       <b>${finalOrder.join(' → ')}</b>
     </div>
     <strong>${matchTier}/4 MATCH　${score} POINT</strong>
+    <button id="raceResultContinue" class="primary" type="button">結果を確認</button>
   `;
 
-  compare.classList.remove('hidden');
+  compare.hidden=false;
 
   beep(score===100?1080:score>=80?880:score>=50?660:430,150,.04);
 
-  await wait(1200);
+  await new Promise(resolve=>{
+    const btn=document.getElementById('raceResultContinue');
+
+    btn.addEventListener('pointerdown',e=>{
+      e.preventDefault();
+      btn.disabled=true;
+      resolve();
+    },{once:true,passive:false});
+  });
 
   if(isGameRunValid(runId)){
     recordScreen(
       49,p,humanIndex,
       `${score}<small>pt</small>`,
-      `${matchTier} / 4 MATCH`
+      `予想 ${prediction.join('→')} / 結果 ${finalOrder.join('→')}`
     );
   }
 }
@@ -13061,6 +13105,7 @@ async function startBossDuel(p,humanIndex,runId){
   let punchReady=true;
   let finished=false;
   let nextEnemyAttack=0;
+  let nextSpecialChance=0;
 
   screen.innerHTML=`<div class="duel-shell">
     <div class="game-head">
@@ -13163,12 +13208,12 @@ async function startBossDuel(p,humanIndex,runId){
 
     const dir=enemyX>=playerX?1:-1;
 
-    if(Math.abs(enemyX-playerX)<=112){
+    if(Math.abs(enemyX-playerX)<=128){
       enemyHp--;
 
       enemyAir=true;
-      enemyVX=dir*rand(185,255);
-      enemyVY=rand(255,340);
+      enemyVX=dir*rand(78,118);
+      enemyVY=rand(175,235);
 
       enemy.classList.remove('hurt');
       void enemy.offsetWidth;
@@ -13229,13 +13274,63 @@ async function startBossDuel(p,humanIndex,runId){
     if(
       finished||
       enemyAir||
-      now<nextEnemyAttack||
-      Math.abs(enemyX-playerX)>78
+      now<nextEnemyAttack
     )return;
 
-    nextEnemyAttack=now+rand(850,1450);
+    const distance=Math.abs(enemyX-playerX);
 
-    enemy.classList.remove('attacking');
+    // Rare special: stronger range + much larger player knockback.
+    const special=
+      now>=nextSpecialChance&&
+      Math.random()<.14;
+
+    if(special){
+      if(distance>142)return;
+
+      nextEnemyAttack=now+rand(1050,1500);
+      nextSpecialChance=now+rand(2600,4300);
+
+      enemy.classList.remove('attacking','special-attacking');
+      void enemy.offsetWidth;
+      enemy.classList.add('special-attacking');
+
+      popImpact(
+        '必殺！！',
+        clamp((playerX+enemyX)/2,48,stage.clientWidth-48)
+      );
+
+      beep(420,95,.03);
+
+      setTimeout(()=>{
+        if(
+          finished||
+          !isGameRunValid(runId)||
+          Math.abs(enemyX-playerX)>162
+        )return;
+
+        const dir=playerX<enemyX?-1:1;
+        playerVX=dir*720;
+
+        player.classList.remove('hit','special-hit');
+        void player.offsetWidth;
+        player.classList.add('special-hit');
+
+        popImpact(
+          'BLOW AWAY!!',
+          clamp(playerX,45,stage.clientWidth-45)
+        );
+
+        beep(120,125,.04);
+      },180);
+
+      return;
+    }
+
+    if(distance>86)return;
+
+    nextEnemyAttack=now+rand(520,900);
+
+    enemy.classList.remove('attacking','special-attacking');
     void enemy.offsetWidth;
     enemy.classList.add('attacking');
 
@@ -13243,13 +13338,13 @@ async function startBossDuel(p,humanIndex,runId){
       if(
         finished||
         !isGameRunValid(runId)||
-        Math.abs(enemyX-playerX)>94
+        Math.abs(enemyX-playerX)>102
       )return;
 
       const dir=playerX<enemyX?-1:1;
-      playerVX=dir*380;
+      playerVX=dir*315;
 
-      player.classList.remove('hit');
+      player.classList.remove('hit','special-hit');
       void player.offsetWidth;
       player.classList.add('hit');
 
@@ -13259,14 +13354,15 @@ async function startBossDuel(p,humanIndex,runId){
       );
 
       beep(160,55,.018);
-    },115);
+    },105);
   }
 
   if(!(await countdown('BANCHOU DUEL',runId)))return;
 
   startTime=performance.now();
   last=startTime;
-  nextEnemyAttack=startTime+900;
+  nextEnemyAttack=startTime+520;
+  nextSpecialChance=startTime+rand(1800,3200);
 
   call.classList.add('show');
 
@@ -13291,7 +13387,7 @@ async function startBossDuel(p,humanIndex,runId){
     );
 
     if(enemyAir){
-      enemyVY-=980*dt;
+      enemyVY-=1180*dt;
       enemyX+=enemyVX*dt;
       enemyY+=enemyVY*dt;
       enemyVX*=Math.pow(.18,dt);
@@ -13308,12 +13404,28 @@ async function startBossDuel(p,humanIndex,runId){
       const dx=playerX-enemyX;
       const dir=Math.sign(dx)||1;
 
-      if(Math.abs(dx)>62){
-        enemyX+=dir*118*dt;
+      if(Math.abs(dx)>58){
+        const chaseSpeed=
+          Math.abs(dx)>170
+            ? 215
+            : 178;
+
+        enemyX+=dir*chaseSpeed*dt;
+      }
+
+      // Small forward burst makes the rival actively close distance.
+      if(
+        Math.abs(dx)>115&&
+        Math.abs(dx)<240&&
+        Math.random()<dt*.75
+      ){
+        enemyX+=dir*34;
       }
 
       enemyAttack(now);
     }
+
+    enemyX=clamp(enemyX,fieldMin,fieldMax);
 
     player.style.left=`${playerX}px`;
     enemy.style.left=`${enemyX}px`;
@@ -13346,6 +13458,9 @@ async function startPlushCatcher(p,humanIndex,runId){
   let raf=null;
   let attemptStart=0;
   let currentPlushX=.60;
+  let gaugeStart=0;
+  let gaugePhase=0;
+  let gaugePos=.5;
 
   screen.innerHTML=`<div class="plush-shell">
     <div class="game-head">
@@ -13378,6 +13493,15 @@ async function startPlushCatcher(p,humanIndex,runId){
           </div>
         </div>
 
+        <div id="plushGauge" class="plush-grab-gauge-v113" hidden>
+          <span>GRAB TIMING</span>
+          <div class="plush-gauge-track-v113">
+            <i class="safe"></i>
+            <b id="plushGaugeMarker" class="marker"></b>
+          </div>
+          <em>CENTERでSTOP</em>
+        </div>
+
         <div id="plushMessage" class="plush-message">巨大ぬいぐるみを狙え！</div>
       </div>
     </div>
@@ -13396,6 +13520,8 @@ async function startPlushCatcher(p,humanIndex,runId){
   const head=document.getElementById('plushHead');
   const prize=document.getElementById('plushPrize');
   const message=document.getElementById('plushMessage');
+  const gauge=document.getElementById('plushGauge');
+  const gaugeMarker=document.getElementById('plushGaugeMarker');
   const tryEl=document.getElementById('plushTry');
   const getEl=document.getElementById('plushGet');
   const timeEl=document.getElementById('plushTime');
@@ -13449,6 +13575,10 @@ async function startPlushCatcher(p,humanIndex,runId){
     crane.classList.remove('holding');
     head.classList.remove('closed');
 
+    gauge.hidden=true;
+    gaugePos=.5;
+    gaugeMarker.style.left='50%';
+
     tryEl.textContent=`${attempt} / 3`;
     message.textContent='位置を合わせて降下 → STOP';
     drop.disabled=false;
@@ -13481,10 +13611,14 @@ async function startPlushCatcher(p,humanIndex,runId){
 
     const dx=Math.abs(craneX-currentPlushX);
     const depthError=Math.abs(clawY-.82);
+    const gaugeError=Math.abs(gaugePos-.5);
 
     const success=
-      dx<=.055&&
-      depthError<=.075;
+      dx<=.045&&
+      depthError<=.105&&
+      gaugeError<=.105;
+
+    gauge.hidden=true;
 
     head.classList.add('closed');
 
@@ -13582,6 +13716,10 @@ async function startPlushCatcher(p,humanIndex,runId){
     phase='descending';
     moveDir=0;
 
+    gaugeStart=performance.now();
+    gaugePhase=rand(0,Math.PI*2);
+    gauge.hidden=false;
+
     drop.disabled=true;
     stop.disabled=false;
     left.disabled=true;
@@ -13671,7 +13809,19 @@ async function startPlushCatcher(p,humanIndex,runId){
       renderCrane();
 
     }else if(phase==='descending'){
-      craneY+=175*dt;
+      craneY+=165*dt;
+
+      const gaugeSpeed=1.05+attempt*.15;
+      gaugePos=
+        .5+
+        .5*Math.sin(
+          (now-gaugeStart)/1000*
+          gaugeSpeed*
+          Math.PI*2+
+          gaugePhase
+        );
+
+      gaugeMarker.style.left=`${gaugePos*100}%`;
 
       if(craneY>=stage.clientHeight*.72){
         craneY=stage.clientHeight*.72;
@@ -13848,7 +13998,7 @@ function simulateOneCpu(gameIndex,p){
   }else if(gameIndex===45){
     state.records.dancingMob[p.id]=ultra?randi(91,100):randi(58,92);
   }else if(gameIndex===46){
-    state.records.guardianMob[p.id]=ultra?randi(86,100):randi(42,90);
+    state.records.guardianMob[p.id]=ultra?randi(82,100):randi(24,88);
   }else if(gameIndex===47){
     state.records.mob50m[p.id]=ultra?randi(4550,5300):randi(5350,8900);
   }else if(gameIndex===48){

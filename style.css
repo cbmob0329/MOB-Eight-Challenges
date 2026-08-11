@@ -11305,3 +11305,156 @@ body,
 }
 
 .race-predict-shell{position:relative;}
+
+
+/* =========================================================
+   V10.13 BRAWLER — REAL KO FLY / ONE ALLY / TIGHTER AREA
+   ========================================================= */
+.brawler-v110 .brawler-enemy.hit{
+  animation:brawlerFly .61s cubic-bezier(.12,.72,.18,1) forwards!important;
+}
+.brawler-v110 .brawler-enemy.ultimate-hit{
+  animation:brawlerUltimateFly .86s cubic-bezier(.08,.72,.18,1) forwards!important;
+}
+.brawler-v110 .brawler-enemy.hit{
+  z-index:82!important;
+}
+.brawler-v110 .school-wall{
+  width:900px!important;
+}
+
+/* =========================================================
+   V10.13 GUARDIAN — SEPARATE STRUCTURES / SCORE FEEDBACK
+   ========================================================= */
+.guardian-v112 .guardian-structure{
+  isolation:isolate;
+}
+.guardian-v112 .guardian-structure:not(.destroyed){
+  filter:drop-shadow(0 0 2px rgba(255,255,255,.25));
+}
+
+/* =========================================================
+   V10.13 MOB RACE — BANNERS ONLY IN THEIR PHASE
+   ========================================================= */
+.race-predict-panel[hidden],
+.race-result-compare[hidden]{
+  display:none!important;
+}
+.race-predict-stage.racing .race-speech{
+  opacity:0!important;
+  pointer-events:none!important;
+}
+.race-result-compare h3{
+  margin:0 0 7px;
+  text-align:center;
+  font-size:17px;
+}
+.race-result-compare .primary{
+  width:100%;
+  margin-top:9px;
+}
+
+/* =========================================================
+   V10.13 BANCHOU DUEL — AGGRESSIVE RIVAL / RARE SPECIAL
+   ========================================================= */
+.duel-enemy.special-attacking{
+  animation:duelEnemySpecialV113 .42s ease;
+}
+@keyframes duelEnemySpecialV113{
+  0%{transform:translateX(-50%) scaleX(var(--duel-enemy-face,1))}
+  28%{transform:translateX(-50%) translateY(-12px) scale(1.18)}
+  56%{transform:translateX(-50%) translateY(4px) rotate(-8deg) scale(1.10)}
+  100%{transform:translateX(-50%)}
+}
+.duel-player.special-hit{
+  animation:duelPlayerSpecialHitV113 .46s ease;
+}
+@keyframes duelPlayerSpecialHitV113{
+  0%{transform:translateX(-50%)}
+  38%{transform:translateX(-50%) translateY(-32px) rotate(-24deg) scale(.92)}
+  72%{transform:translateX(-50%) translateY(-12px) rotate(12deg)}
+  100%{transform:translateX(-50%)}
+}
+
+/* =========================================================
+   V10.13 PLUSH CATCHER — BIGGER PRIZE + TIMING GAUGE
+   ========================================================= */
+.plush-shell .giant-plush-v112{
+  width:150px!important;
+  height:160px!important;
+}
+.plush-grab-gauge-v113{
+  position:absolute;
+  z-index:70;
+  left:8%;
+  right:8%;
+  bottom:42px;
+  border:3px solid var(--ink);
+  border-radius:12px;
+  background:#fff;
+  padding:6px;
+  box-shadow:0 4px 0 rgba(17,19,26,.22);
+}
+.plush-grab-gauge-v113[hidden]{
+  display:none!important;
+}
+.plush-grab-gauge-v113>span,
+.plush-grab-gauge-v113>em{
+  display:block;
+  text-align:center;
+  font-size:7px;
+  font-weight:1000;
+}
+.plush-grab-gauge-v113>em{
+  margin-top:3px;
+  color:var(--muted);
+  font-style:normal;
+}
+.plush-gauge-track-v113{
+  position:relative;
+  height:22px;
+  margin-top:4px;
+  border:3px solid var(--ink);
+  border-radius:999px;
+  background:
+    linear-gradient(
+      90deg,
+      #e96d61 0 31%,
+      #f0cf62 31% 39.5%,
+      #76d88d 39.5% 60.5%,
+      #f0cf62 60.5% 69%,
+      #e96d61 69% 100%
+    );
+}
+.plush-gauge-track-v113 .safe{
+  position:absolute;
+  left:50%;
+  top:-5px;
+  bottom:-5px;
+  width:3px;
+  transform:translateX(-50%);
+  background:#fff;
+  box-shadow:0 0 0 2px var(--ink);
+}
+.plush-gauge-track-v113 .marker{
+  position:absolute;
+  left:50%;
+  top:50%;
+  width:16px;
+  height:31px;
+  transform:translate(-50%,-50%);
+  border:3px solid var(--ink);
+  border-radius:7px;
+  background:#56a3ff;
+  box-shadow:0 2px 0 rgba(17,19,26,.24);
+}
+
+@media(max-height:690px){
+  .plush-shell .giant-plush-v112{
+    width:130px!important;
+    height:140px!important;
+  }
+  .plush-grab-gauge-v113{
+    bottom:34px;
+  }
+}
