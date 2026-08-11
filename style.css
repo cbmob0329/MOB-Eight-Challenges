@@ -9277,3 +9277,274 @@ body{touch-action:manipulation}
     top:4px;
   }
 }
+
+
+/* =========================================================
+   V10.9 BRAWLER — MAXIMUM KNOCKBACK / ONE ULTIMATE
+   ========================================================= */
+.brawler-enemy.ultimate-hit{
+  animation:brawlerUltimateFly .88s cubic-bezier(.08,.72,.18,1) forwards!important;
+  z-index:90!important;
+}
+@keyframes brawlerUltimateFly{
+  0%{
+    opacity:1;
+    transform:
+      translateX(-50%)
+      translate(0,0)
+      rotate(0deg)
+      scaleX(var(--enemy-face,1));
+  }
+  18%{
+    opacity:1;
+    transform:
+      translateX(-50%)
+      translate(
+        calc(var(--fly-x) * .15),
+        calc(var(--fly-y) * .12)
+      )
+      rotate(calc(var(--fly-spin) * .18))
+      scale(1.18);
+  }
+  100%{
+    opacity:0;
+    transform:
+      translateX(-50%)
+      translate(var(--fly-x),var(--fly-y))
+      rotate(var(--fly-spin))
+      scale(.28);
+  }
+}
+.brawler-mass-fx{
+  position:absolute;
+  z-index:72;
+  left:50%;
+  top:50%;
+  width:0;
+  height:0;
+  pointer-events:none;
+}
+.brawler-mass-fx .mring{
+  position:absolute;
+  left:0;
+  top:0;
+  width:190px;
+  height:190px;
+  transform:translate(-50%,-50%) scale(.1);
+  border:9px solid #fff3a2;
+  border-radius:50%;
+  opacity:0;
+}
+.brawler-mass-fx .m2{
+  width:290px;
+  height:150px;
+  border-color:#ff9c57;
+}
+.brawler-mass-fx .speed{
+  position:absolute;
+  left:-46vw;
+  width:92vw;
+  height:7px;
+  border-radius:999px;
+  background:#fff7c6;
+  transform:scaleX(.05);
+  opacity:0;
+}
+.brawler-mass-fx .l1{top:-55px}
+.brawler-mass-fx .l2{top:0}
+.brawler-mass-fx .l3{top:55px}
+.brawler-mass-fx b{
+  position:absolute;
+  left:0;
+  top:-105px;
+  transform:translateX(-50%) scale(.5);
+  white-space:nowrap;
+  color:#ffe460;
+  -webkit-text-stroke:3px var(--ink);
+  font-size:30px;
+  font-weight:1000;
+  opacity:0;
+}
+.brawler-mass-fx.show .mring{
+  animation:brawlerMassRing .34s ease-out forwards;
+}
+.brawler-mass-fx.show .m2{
+  animation-delay:.05s;
+}
+.brawler-mass-fx.show .speed{
+  animation:brawlerMassSpeed .28s ease-out forwards;
+}
+.brawler-mass-fx.show b{
+  animation:brawlerMassText .46s ease-out forwards;
+}
+@keyframes brawlerMassRing{
+  0%{opacity:1;transform:translate(-50%,-50%) scale(.08)}
+  100%{opacity:0;transform:translate(-50%,-50%) scale(1.25)}
+}
+@keyframes brawlerMassSpeed{
+  0%{opacity:.9;transform:scaleX(.05)}
+  100%{opacity:0;transform:scaleX(1)}
+}
+@keyframes brawlerMassText{
+  0%{opacity:0;transform:translateX(-50%) scale(.45)}
+  30%{opacity:1;transform:translateX(-50%) scale(1.18)}
+  100%{opacity:0;transform:translate(-50%,-28px) scale(1)}
+}
+.brawler-stage.brawler-mass-shake{
+  animation:brawlerMassShake .24s ease;
+}
+@keyframes brawlerMassShake{
+  20%{transform:translateX(-4px)}
+  40%{transform:translateX(4px)}
+  60%{transform:translateX(-3px)}
+  80%{transform:translateX(2px)}
+  100%{transform:translateX(0)}
+}
+
+.brawler-ultimate-fx{
+  position:absolute;
+  z-index:96;
+  inset:0;
+  overflow:hidden;
+  pointer-events:none;
+  opacity:0;
+}
+.brawler-ultimate-fx.show{
+  opacity:1;
+}
+.brawler-ultimate-fx .ring{
+  position:absolute;
+  left:50%;
+  top:52%;
+  border:12px solid #ffe668;
+  border-radius:50%;
+  transform:translate(-50%,-50%) scale(.06);
+  opacity:0;
+}
+.brawler-ultimate-fx .r1{width:180px;height:180px}
+.brawler-ultimate-fx .r2{width:330px;height:250px;border-color:#ff9d50}
+.brawler-ultimate-fx .r3{width:520px;height:360px;border-color:#fff}
+.brawler-ultimate-fx.show .ring{
+  animation:brawlerUltimateRing .70s ease-out forwards;
+}
+.brawler-ultimate-fx.show .r2{animation-delay:.05s}
+.brawler-ultimate-fx.show .r3{animation-delay:.10s}
+.brawler-ultimate-fx .slash{
+  position:absolute;
+  left:50%;
+  top:52%;
+  width:130%;
+  height:9px;
+  border-radius:999px;
+  background:#fff6ab;
+  box-shadow:0 0 16px rgba(255,214,84,.90);
+  opacity:0;
+}
+.brawler-ultimate-fx .s1{transform:translate(-50%,-50%) rotate(0)}
+.brawler-ultimate-fx .s2{transform:translate(-50%,-50%) rotate(45deg)}
+.brawler-ultimate-fx .s3{transform:translate(-50%,-50%) rotate(90deg)}
+.brawler-ultimate-fx .s4{transform:translate(-50%,-50%) rotate(-45deg)}
+.brawler-ultimate-fx.show .slash{
+  animation:brawlerUltimateSlash .48s .08s ease-out forwards;
+}
+.brawler-ultimate-fx b{
+  position:absolute;
+  left:50%;
+  top:21%;
+  transform:translateX(-50%) scale(.4);
+  white-space:nowrap;
+  color:#ffe55c;
+  -webkit-text-stroke:4px #151515;
+  font-size:36px;
+  font-weight:1000;
+  opacity:0;
+}
+.brawler-ultimate-fx.show b{
+  animation:brawlerUltimateText .82s ease-out forwards;
+}
+@keyframes brawlerUltimateRing{
+  0%{opacity:1;transform:translate(-50%,-50%) scale(.04)}
+  70%{opacity:.9}
+  100%{opacity:0;transform:translate(-50%,-50%) scale(1.35)}
+}
+@keyframes brawlerUltimateSlash{
+  0%{opacity:0;scale:.04 1}
+  24%{opacity:1;scale:1 1}
+  100%{opacity:0;scale:1.1 1}
+}
+@keyframes brawlerUltimateText{
+  0%{opacity:0;transform:translateX(-50%) scale(.35)}
+  25%{opacity:1;transform:translateX(-50%) scale(1.18)}
+  70%{opacity:1;transform:translateX(-50%) scale(1)}
+  100%{opacity:0;transform:translate(-50%,-36px) scale(1)}
+}
+.brawler-stage.brawler-ultimate-shake{
+  animation:brawlerUltimateShake .64s ease;
+}
+@keyframes brawlerUltimateShake{
+  10%{transform:translate(-8px,-2px)}
+  20%{transform:translate(8px,3px)}
+  30%{transform:translate(-7px,2px)}
+  40%{transform:translate(7px,-3px)}
+  55%{transform:translate(-5px,2px)}
+  70%{transform:translate(4px,-1px)}
+  85%{transform:translate(-2px,1px)}
+  100%{transform:translate(0,0)}
+}
+.brawler-controls .special.used,
+.brawler-controls .special:disabled.used{
+  background:#858b94!important;
+  opacity:.55!important;
+  animation:none!important;
+}
+
+/* =========================================================
+   V10.9 SUMMONER — 500 KO MUSOU
+   ========================================================= */
+.summon-hit-pop-v109{
+  position:absolute;
+  z-index:86;
+  left:50%;
+  top:30%;
+  transform:translate(-50%,-50%) scale(.45);
+  white-space:nowrap;
+  color:#fff;
+  -webkit-text-stroke:3px #172033;
+  font-size:27px;
+  font-weight:1000;
+  opacity:0;
+  pointer-events:none;
+}
+.summon-hit-pop-v109.show{
+  animation:summonHitPopV109 .42s ease-out forwards;
+}
+.summon-hit-pop-v109.show.sweep{
+  color:#fff36c;
+  font-size:38px;
+  -webkit-text-stroke:4px #172033;
+  animation:summonSweepPopV109 .58s ease-out forwards;
+}
+@keyframes summonHitPopV109{
+  0%{opacity:0;transform:translate(-50%,-50%) scale(.4)}
+  30%{opacity:1;transform:translate(-50%,-50%) scale(1.15)}
+  100%{opacity:0;transform:translate(-50%,-72%) scale(1)}
+}
+@keyframes summonSweepPopV109{
+  0%{opacity:0;transform:translate(-50%,-50%) scale(.3)}
+  25%{opacity:1;transform:translate(-50%,-50%) scale(1.22)}
+  70%{opacity:1;transform:translate(-50%,-50%) scale(1)}
+  100%{opacity:0;transform:translate(-50%,-80%) scale(1)}
+}
+.summoner-stage.summon-musou-shake-v109{
+  animation:summonMusouShakeV109 .34s ease;
+}
+@keyframes summonMusouShakeV109{
+  18%{transform:translateX(-5px)}
+  36%{transform:translateX(5px)}
+  54%{transform:translateX(-4px)}
+  72%{transform:translateX(3px)}
+  100%{transform:translateX(0)}
+}
+.summoner-v107 .summon-slime-v107.blast{
+  animation-duration:.43s!important;
+}

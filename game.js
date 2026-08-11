@@ -543,8 +543,8 @@ function scoreRuleForGame(index){
     "2.80秒以下=100点 / 6.00秒以上または衝突=0点",
     "30棟破壊=100点 / 0棟=0点",
     "闇の炎20個消去=100点 / 0個=0点",
-    "黒モブくん350体撃破=100点 / 0体=0点",
-    "黒スライム60体撃破=100点 / 0体=0点",
+    "黒モブくん1000体撃破=100点 / 0体=0点",
+    "黒スライム500体撃破=100点 / 0体=0点",
     "21=100点 / 22→1、23→2の循環ルール",
     "3回合計300pt=100点 / 0pt=0点",
     "20.00秒生存=100点 / 0秒=0点"
@@ -638,9 +638,9 @@ function showGameIntro(index){
   }else if(index===39){
     rules=`<li>田舎町へ闇の炎が高速で降ってきます。小さなモブくん達は逃げ回っています。</li><li>闇の炎の周りを指で円形に囲むと、魔法のステッキが反応して炎を消します。</li><li>民も低確率で小さなエネルギー弾を撃ち、闇の炎をほんの少しだけ減速させます。</li><li>大きな闇の炎も出現。大きい炎は遅め。炎を消せなくてもモブくんに当たらなければ継続。</li><li>10秒勝負。20個消去=100点。後半ほど落下速度・数・同時出現数が上がります。</li>`;
   }else if(index===40){
-    rules=`<li>10秒間の横スクロール爽快アクション。</li><li>← →で移動。左へ行く時はモブくんが左向きになります。</li><li>黒モブくんは左右・教室・上空から大量出現。味方2体も別行動で自動的に敵を殴ります。</li><li>通常PUNCHでも前方の複数体をまとめてぶっ飛ばします。</li><li>10体KOごとに必殺パンチを1回だけ使用可能。350体KO=100点。</li>`;
+    rules=`<li>10秒間の超爽快ぶっ飛ばしアクション。</li><li>← →で移動。黒モブくんは左右・教室・上空から大量出現し、味方2体も別行動で乱戦。</li><li>通常PUNCHでも前方の大量の敵をまとめて斜め上へ大きく回転させながらぶっ飛ばします。</li><li>必殺PUNCHは10KOで解禁されますが、このゲーム中に使えるのは1回だけ。</li><li>必殺は画面・フィールド中の敵を左右・上・下・斜め方向へ超巨大回転で一斉吹っ飛ばし。1000体KO=100点。</li>`;
   }else if(index===41){
-    rules=`<li>最初の5秒で、画面の大部分を使ってモンスターを自由に描きます。</li><li>眼も含めて全部自分で描きます。戦闘開始時は元の描画・枠・召喚師表示をすべて消し、描いた召喚獣だけが残ります。</li><li>描いたサイズを統一せず、その大きさのまま中央から戦闘開始。</li><li>部位攻撃・ジャンプ・高速移動・分身に加え、巨大エネルギー、炎ブレス、落雷、レーザー、メテオなど一掃技を使用。</li><li>左右から大量の黒スライムが襲来する10秒オート無双。60体KO=100点。</li>`;
+    rules=`<li>最初の7秒で、画面の大部分を使ってモンスターを自由に描きます。</li><li>眼も含めて全部自分で描きます。戦闘開始時は元の描画・枠・召喚師表示をすべて消し、描いた召喚獣だけが残ります。</li><li>描いたサイズを統一せず、その大きさのまま中央から戦闘開始。</li><li>部位攻撃・ジャンプ・高速移動・分身に加え、巨大エネルギー、炎ブレス、落雷、レーザー、メテオなど超広範囲の一掃技を高頻度で使用。</li><li>左右から大量の黒スライムが襲来する10秒オート無双。500体KO=100点。</li>`;
   }else if(index===42){
     rules=`<li>1〜13のモブくんカード13枚を最初に表向きで確認。</li><li>3・2・1後、5秒間カードがランダムに位置をシャッフル。</li><li>最後の1秒はカードが暗くなって「？」だけになりますが、位置移動は続きます。</li><li>終了後、まず2枚選択。選んだカードはその場で必ず表向きになり、数字とモブくんを確認できます。</li><li>21でなければ「もう1枚」か「FINISH」。22→1、23→2の循環方式。</li>`;
   }else if(index===43){
@@ -7529,7 +7529,7 @@ async function startBrawlerMob(p,humanIndex,runId){
   let finished=false;
   let kills=0;
   let specialCharges=0;
-  let nextSpecialAt=10;
+  let specialUsed=false;
   let playerX=700;
   let moveDir=0;
   let facing=1;
@@ -7588,6 +7588,12 @@ async function startBrawlerMob(p,humanIndex,runId){
         </div>
       </div>
 
+      <div id="brawlerMassFx" class="brawler-mass-fx"></div>
+      <div id="brawlerUltimateFx" class="brawler-ultimate-fx">
+        <i class="ring r1"></i><i class="ring r2"></i><i class="ring r3"></i>
+        <i class="slash s1"></i><i class="slash s2"></i><i class="slash s3"></i><i class="slash s4"></i>
+        <b id="brawlerUltimateText"></b>
+      </div>
       <div id="brawlerImpact" class="brawler-impact"></div>
       <div id="brawlerEntryCall" class="brawler-entry-call"></div>
     </div>
@@ -7612,6 +7618,9 @@ async function startBrawlerMob(p,humanIndex,runId){
   const killsEl=document.getElementById('brawlerKills');
   const specialEl=document.getElementById('brawlerSpecial');
   const specialText=document.getElementById('brawlerSpecialText');
+  const massFx=document.getElementById('brawlerMassFx');
+  const ultimateFx=document.getElementById('brawlerUltimateFx');
+  const ultimateText=document.getElementById('brawlerUltimateText');
   const impact=document.getElementById('brawlerImpact');
   const entryCall=document.getElementById('brawlerEntryCall');
   const left=document.getElementById('brawlerLeft');
@@ -7627,7 +7636,7 @@ async function startBrawlerMob(p,humanIndex,runId){
       x:worldW*.34,
       home:worldW*.34,
       speed:430,
-      cd:285,
+      cd:220,
       lastAttack:0,
       phase:.7
     },
@@ -7636,7 +7645,7 @@ async function startBrawlerMob(p,humanIndex,runId){
       x:worldW*.68,
       home:worldW*.68,
       speed:415,
-      cd:330,
+      cd:250,
       lastAttack:0,
       phase:2.3
     }
@@ -7667,23 +7676,21 @@ async function startBrawlerMob(p,humanIndex,runId){
   bindHold(right,1);
 
   function updateSpecial(){
-    if(kills>=nextSpecialAt){
-      const earned=Math.floor((kills-(nextSpecialAt-10))/10);
-
-      if(earned>0){
-        // One charge maximum. Every 10 KOs only unlocks one use.
-        specialCharges=Math.min(1,specialCharges+earned);
-        nextSpecialAt+=earned*10;
-      }
+    // V10.9: unlock once at 10 KO, then it is permanently consumed for this run.
+    if(!specialUsed&&kills>=10){
+      specialCharges=1;
     }
 
-    specialEl.disabled=specialCharges<=0;
-    specialEl.classList.toggle('ready',specialCharges>0);
+    specialEl.disabled=specialUsed||specialCharges<=0;
+    specialEl.classList.toggle('ready',!specialUsed&&specialCharges>0);
+    specialEl.classList.toggle('used',specialUsed);
 
     specialText.textContent=
-      specialCharges>0
-        ? 'READY'
-        : `${kills%10} / 10`;
+      specialUsed
+        ? 'USED'
+        : specialCharges>0
+          ? 'READY ×1'
+          : `${Math.min(10,kills)} / 10`;
   }
 
   function showEntry(text){
@@ -7701,7 +7708,7 @@ async function startBrawlerMob(p,humanIndex,runId){
   }
 
   function spawnEnemy(now,progress,source='auto',forcedSide=null){
-    if(enemies.filter(e=>!e.dead).length>=78)return;
+    if(enemies.filter(e=>!e.dead).length>=140)return;
 
     if(source==='auto'){
       const r=Math.random();
@@ -7807,45 +7814,90 @@ async function startBrawlerMob(p,humanIndex,runId){
     impact.classList.add('show');
   }
 
-  function defeat(enemy,dir,strong=false,fanIndex=0){
+  function showMassFx(count){
+    massFx.innerHTML=`
+      <i class="mring m1"></i>
+      <i class="mring m2"></i>
+      <i class="speed l1"></i>
+      <i class="speed l2"></i>
+      <i class="speed l3"></i>
+      <b>${count>=10?`MULTI ×${count}!`:`${count} HIT!`}</b>
+    `;
+
+    massFx.classList.remove('show');
+    void massFx.offsetWidth;
+    massFx.classList.add('show');
+
+    stage.classList.remove('brawler-mass-shake');
+    void stage.offsetWidth;
+    stage.classList.add('brawler-mass-shake');
+  }
+
+  function showUltimateFx(count){
+    ultimateText.textContent=`ULTIMATE ${count} HIT!!`;
+
+    ultimateFx.classList.remove('show');
+    void ultimateFx.offsetWidth;
+    ultimateFx.classList.add('show');
+
+    stage.classList.remove('brawler-ultimate-shake');
+    void stage.offsetWidth;
+    stage.classList.add('brawler-ultimate-shake');
+
+    showEntry('一撃必殺・全方位ぶっ飛ばし！！');
+  }
+
+  function defeat(enemy,dir,strong=false,fanIndex=0,ultimate=false){
     if(enemy.dead)return;
 
     enemy.dead=true;
     kills++;
     killsEl.textContent=kills;
 
-    const fly=
-      dir*
-      (
-        strong?rand(300,470):
-        rand(175,305)
-      );
+    const arcRoll=(Math.random()+fanIndex*.117)%1;
 
-    // Wide variety of launch angles: low diagonal / diagonal / very high diagonal.
-    const arcRoll=(Math.random()+fanIndex*.13)%1;
-    const flyY=
-      strong
-        ? (
-            arcRoll<.40?rand(-235,-170):
-            arcRoll<.75?rand(-175,-115):
-            rand(-115,-65)
-          )
-        : (
-            arcRoll<.28?rand(-205,-145):
-            arcRoll<.68?rand(-150,-90):
-            rand(-90,-38)
-          );
+    let flyX;
+    let flyY;
+    let spin;
 
-    enemy.el.style.setProperty('--fly-x',`${fly}px`);
+    if(ultimate){
+      // Full-field finisher: every enemy explodes in a different direction.
+      const xSign=(fanIndex%2===0?-1:1);
+      const ySign=(fanIndex%4<2?-1:1);
+
+      flyX=xSign*rand(520,920);
+      flyY=ySign*rand(260,620);
+      spin=(fanIndex%2===0?-1:1)*rand(1800,3200);
+
+    }else if(strong){
+      flyX=dir*rand(390,650);
+      flyY=arcRoll<.55?rand(-360,-210):rand(-225,-110);
+      spin=dir*rand(1250,2050);
+
+    }else{
+      // Even normal punches launch enemies much farther than before.
+      flyX=dir*rand(260,450);
+      flyY=
+        arcRoll<.38?rand(-285,-185):
+        arcRoll<.76?rand(-205,-115):
+        rand(-125,-55);
+      spin=dir*rand(760,1320);
+    }
+
+    enemy.el.style.setProperty('--fly-x',`${flyX}px`);
     enemy.el.style.setProperty('--fly-y',`${flyY}px`);
-    enemy.el.style.setProperty(
-      '--fly-spin',
-      `${dir*(strong?rand(980,1450):rand(560,980))}deg`
+    enemy.el.style.setProperty('--fly-spin',`${spin}deg`);
+
+    enemy.el.classList.add(
+      ultimate?'ultimate-hit':
+      strong?'super-hit':
+      'hit'
     );
 
-    enemy.el.classList.add(strong?'super-hit':'hit');
-
-    setTimeout(()=>enemy.el.remove(),strong?680:540);
+    setTimeout(
+      ()=>enemy.el.remove(),
+      ultimate?900:strong?720:610
+    );
 
     updateSpecial();
   }
@@ -7882,7 +7934,7 @@ async function startBrawlerMob(p,humanIndex,runId){
         }))
         .filter(o=>o.d<=205)
         .sort((a,b)=>a.d-b.d)
-        .slice(0,index===0?5:4);
+        .slice(0,index===0?9:8);
 
       const faceTarget=victims[0]?.e.x??desired;
       const dir=faceTarget<ally.x?-1:1;
@@ -7927,32 +7979,34 @@ async function startBrawlerMob(p,humanIndex,runId){
         dx:(e.x-playerX)*facing,
         distance:Math.abs(e.x-playerX)
       }))
-      .filter(o=>o.dx>=-34&&o.dx<=215)
+      .filter(o=>o.dx>=-55&&o.dx<=315)
       .sort((a,b)=>a.distance-b.distance);
 
     if(candidates.length){
       // Normal punch is intentionally a crowd-clearing attack too.
-      const victims=candidates.slice(0,6);
+      const victims=candidates.slice(0,14);
 
       victims.forEach((o,i)=>{
         setTimeout(()=>{
           if(!o.e.dead)defeat(o.e,facing,false,i);
-        },i*20);
+        },i*10);
       });
 
+      showMassFx(victims.length);
+
       popImpact(
-        victims.length>=5?`BAM ×${victims.length}!`:
+        victims.length>=10?`BOOM ×${victims.length}!`:
         victims.length>=2?`BAM ×${victims.length}!`:
         'BAM!',
         stage.clientWidth*.54
       );
 
-      beep(235,45,.015);
+      beep(victims.length>=10?360:235,50,.018);
     }else{
       beep(145,28,.006);
     }
 
-    setTimeout(()=>{punchReady=true},155);
+    setTimeout(()=>{punchReady=true},125);
   }
 
   punch.addEventListener('pointerdown',e=>{
@@ -7965,34 +8019,41 @@ async function startBrawlerMob(p,humanIndex,runId){
 
     if(
       finished||
+      specialUsed||
       specialCharges<=0||
       !isGameRunValid(runId)
     )return;
 
+    specialUsed=true;
     specialCharges=0;
+    updateSpecial();
 
     player.classList.remove('special-punching');
     void player.offsetWidth;
     player.classList.add('special-punching');
 
-    const victims=enemies
-      .filter(en=>!en.dead&&Math.abs(en.x-playerX)<=465);
+    // Absolute strongest one-use attack: every currently alive enemy in the entire field.
+    const victims=enemies.filter(en=>!en.dead);
+
+    showUltimateFx(victims.length);
 
     victims.forEach((enemy,i)=>{
       const dir=enemy.x<playerX?-1:1;
-      defeat(enemy,dir,true,i);
+
+      setTimeout(()=>{
+        if(!enemy.dead){
+          defeat(enemy,dir,true,i,true);
+        }
+      },Math.min(220,i*3));
     });
 
     popImpact(
       victims.length
-        ? `必殺 ${victims.length} HIT!`
-        : '必殺 MISS!'
+        ? `最強必殺 ${victims.length} HIT!!`
+        : 'ULTIMATE!'
     );
 
-    showEntry('必殺は次の10KOまで再使用不可');
-
-    beep(680,120,.035);
-    updateSpecial();
+    beep(760,180,.05);
   },{passive:false});
 
   if(!(await countdown('BRAWLER',runId)))return;
@@ -8002,7 +8063,7 @@ async function startBrawlerMob(p,humanIndex,runId){
   lastSpawn=startTime-500;
 
   // Immediate chaos: sides + doors + ceiling.
-  for(let i=0;i<34;i++){
+  for(let i=0;i<52;i++){
     const source=
       i%5===0?'drop':
       i%3===0?'door':
@@ -8041,15 +8102,15 @@ async function startBrawlerMob(p,humanIndex,runId){
     updateAllies(now,dt);
 
     // Much denser than V10.5.
-    const spawnEvery=72-progress*28;
+    const spawnEvery=44-progress*16;
 
     if(now-lastSpawn>=spawnEvery){
       lastSpawn=now;
 
       const count=
         progress>.55
-          ? randi(4,7)
-          : randi(3,6);
+          ? randi(7,11)
+          : randi(5,9);
 
       for(let i=0;i<count;i++){
         spawnEnemy(now,progress,'auto');
@@ -8472,7 +8533,7 @@ async function startSummonerMob(p,humanIndex,runId){
     </div>
 
     <div class="summoner-hud">
-      <div><span>TIME</span><b id="summonTime">5.0</b></div>
+      <div><span>TIME</span><b id="summonTime">7.0</b></div>
       <div><span>TYPE</span><b id="summonType">???</b></div>
       <div><span>KO</span><b id="summonKills">0</b></div>
     </div>
@@ -8493,10 +8554,11 @@ async function startSummonerMob(p,humanIndex,runId){
       <svg id="summonDrawSvg" class="summon-draw-svg-v107"></svg>
 
       <div id="summonAttackFx" class="summon-attack-fx-v107"></div>
+      <div id="summonHitPop" class="summon-hit-pop-v109"></div>
       <div id="summonSkillList" class="summon-skill-list-v107 hidden"></div>
 
       <div id="summonCaster" class="summoner-caster-v107" style="background-image:url('icon/01.png')"></div>
-      <div id="summonMessage" class="summon-message">5秒で自由に描け！</div>
+      <div id="summonMessage" class="summon-message">7秒で自由に描け！</div>
     </div>
   </div>`;
 
@@ -8506,6 +8568,7 @@ async function startSummonerMob(p,humanIndex,runId){
   const monsterSvg=document.getElementById('summonMonsterSvg');
   const slimeLayer=document.getElementById('summonSlimes');
   const attackFx=document.getElementById('summonAttackFx');
+  const hitPop=document.getElementById('summonHitPop');
   const skillList=document.getElementById('summonSkillList');
   const caster=document.getElementById('summonCaster');
   const timeEl=document.getElementById('summonTime');
@@ -8617,7 +8680,7 @@ async function startSummonerMob(p,humanIndex,runId){
     const timer=now=>{
       if(!isGameRunValid(runId)){resolve();return;}
 
-      const rem=5000-(now-drawStart);
+      const rem=7000-(now-drawStart);
       timeEl.textContent=(Math.max(0,rem)/1000).toFixed(1);
 
       if(rem<=0){
@@ -8729,7 +8792,7 @@ async function startSummonerMob(p,humanIndex,runId){
   }
 
   function spawnSlime(now,progress,forcedSide=null){
-    if(slimes.filter(s=>!s.dead).length>=48)return;
+    if(slimes.filter(s=>!s.dead).length>=88)return;
 
     const side=
       forcedSide??
@@ -8788,12 +8851,12 @@ async function startSummonerMob(p,humanIndex,runId){
 
     s.el.style.setProperty(
       '--summon-fly-x',
-      `${dir*(strong?rand(290,460):rand(185,320))*sizeBoost}px`
+      `${dir*(strong?rand(360,590):rand(230,390))*sizeBoost}px`
     );
 
     s.el.style.setProperty(
       '--summon-fly-y',
-      `${strong?rand(-260,-150):rand(-190,-82)}px`
+      `${strong?rand(-330,-185):rand(-235,-100)}px`
     );
 
     s.el.style.setProperty(
@@ -8803,7 +8866,7 @@ async function startSummonerMob(p,humanIndex,runId){
 
     s.el.classList.add(strong?'blast':'defeated');
 
-    setTimeout(()=>s.el.remove(),520);
+    setTimeout(()=>s.el.remove(),430);
   }
 
   function createGhost(offset,delay){
@@ -8820,6 +8883,27 @@ async function startSummonerMob(p,humanIndex,runId){
     stage.appendChild(ghost);
 
     setTimeout(()=>ghost.remove(),360);
+  }
+
+  function showMusouHit(count,isSweep){
+    if(count<=0)return;
+
+    hitPop.textContent=
+      isSweep
+        ? `一掃 ×${count}!!`
+        : `×${count}`;
+
+    hitPop.classList.remove('show','sweep');
+    void hitPop.offsetWidth;
+    hitPop.classList.add('show');
+
+    if(isSweep){
+      hitPop.classList.add('sweep');
+
+      stage.classList.remove('summon-musou-shake-v109');
+      void stage.offsetWidth;
+      stage.classList.add('summon-musou-shake-v109');
+    }
   }
 
   function showAttackFx(atk,dir,targetX){
@@ -8887,11 +8971,19 @@ async function startSummonerMob(p,humanIndex,runId){
       atk.reach*
       (.88+analysis.range*.30);
 
+    const hitScale=
+      atk.role==='sweep'
+        ? 2.45
+        : atk.role==='mobility'
+          ? 1.75
+          : 1.55;
+
     const maxHits=Math.max(
-      2,
+      3,
       Math.round(
         atk.hits*
-        (.78+analysis.power*.50)
+        (.82+analysis.power*.58)*
+        hitScale
       )
     );
 
@@ -8935,6 +9027,8 @@ async function startSummonerMob(p,humanIndex,runId){
       atk.role==='sweep'||
       ['slam','dash','teleport','weapon'].includes(atk.move);
 
+    showMusouHit(victims.length,atk.role==='sweep');
+
     victims.forEach((s,i)=>{
       setTimeout(()=>{
         if(!s.dead){
@@ -8944,7 +9038,7 @@ async function startSummonerMob(p,humanIndex,runId){
             Math.sign(s.x-monsterX)||dir
           );
         }
-      },i*20);
+      },atk.role==='sweep'?i*5:i*10);
     });
 
     animateMonsterAttack(atk,dir);
@@ -8965,7 +9059,7 @@ async function startSummonerMob(p,humanIndex,runId){
   lastSpawn=startBattle-600;
   lastAttack=startBattle-600;
 
-  for(let i=0;i<24;i++){
+  for(let i=0;i<42;i++){
     spawnSlime(
       startBattle,
       0,
@@ -8982,13 +9076,13 @@ async function startSummonerMob(p,humanIndex,runId){
 
     timeEl.textContent=(Math.max(0,remaining)/1000).toFixed(1);
 
-    const spawnEvery=105-progress*38;
+    const spawnEvery=68-progress*24;
 
     if(now-lastSpawn>=spawnEvery){
       const count=
         progress>.58
-          ? randi(4,7)
-          : randi(3,5);
+          ? randi(7,11)
+          : randi(5,9);
 
       for(let i=0;i<count;i++){
         spawnSlime(now,progress);
@@ -9000,8 +9094,8 @@ async function startSummonerMob(p,humanIndex,runId){
       learned.length;
 
     const attackEvery=clamp(
-      avgCd*(.92-analysis.speed*.24),
-      270,690
+      avgCd*(.76-analysis.speed*.18),
+      215,520
     );
 
     if(now-lastAttack>=attackEvery){
@@ -9011,7 +9105,7 @@ async function startSummonerMob(p,humanIndex,runId){
       const sweep=learned.find(a=>a.role==='sweep');
 
       const atk=
-        sweep&&attackNo%2===1
+        sweep&&attackNo%3!==0
           ? sweep
           : learned[attackNo%learned.length];
 
@@ -9041,8 +9135,9 @@ async function startSummonerMob(p,humanIndex,runId){
       message.textContent=`召喚獣が ${kills}体 撃破！`;
 
       beep(
-        kills>=40?1050:
-        kills>=28?850:
+        kills>=500?1120:
+        kills>=350?930:
+        kills>=200?790:
         620,
         140,.035
       );
@@ -10208,9 +10303,9 @@ function simulateOneCpu(gameIndex,p){
   }else if(gameIndex===39){
     state.records.wizardMob[p.id]=ultra?randi(18,23):randi(9,18);
   }else if(gameIndex===40){
-    state.records.brawlerMob[p.id]=ultra?randi(325,385):randi(205,345);
+    state.records.brawlerMob[p.id]=ultra?randi(930,1085):randi(650,985);
   }else if(gameIndex===41){
-    state.records.summonerMob[p.id]=ultra?randi(58,76):randi(34,61);
+    state.records.summonerMob[p.id]=ultra?randi(465,555):randi(290,485);
   }else if(gameIndex===42){
     state.records.blackjackMob[p.id]=ultra?randi(19,21):randi(13,20);
   }else if(gameIndex===43){
@@ -10286,8 +10381,8 @@ function performancePoints(gameIndex,v){
   }
   if(gameIndex===38)return clamp(Math.round(v/30*100),0,100);
   if(gameIndex===39)return clamp(Math.round(v/20*100),0,100);
-  if(gameIndex===40)return clamp(Math.round(v/350*100),0,100);
-  if(gameIndex===41)return clamp(Math.round(v/60*100),0,100);
+  if(gameIndex===40)return clamp(Math.round(v/1000*100),0,100);
+  if(gameIndex===41)return clamp(Math.round(v/500*100),0,100);
   if(gameIndex===42)return clamp(Math.round(v/21*100),0,100);
   if(gameIndex===43)return clamp(Math.round(v/300*100),0,100);
   return clamp(Math.round(v/20*100),0,100);
