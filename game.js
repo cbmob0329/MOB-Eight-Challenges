@@ -25,8 +25,15 @@ const PLAYERS=[
   {id:"p3",no:3,name:"プレイヤー3",cpu:false,img:"play/03.png"},
   {id:"p4",no:4,name:"プレイヤー4",cpu:false,img:"play/04.png"},
 
-  // 1 PLAYER VS CPU7 用の追加CPU。
-  // 専用play画像を増やさなくても動くよう、既存iconをアバターに利用。
+  // 10 VS 10 モード用のPLAYER追加枠。
+  // 専用play画像がなくても遊べるよう既存iconを利用。
+  {id:"p5",no:5,name:"プレイヤー5",cpu:false,img:"icon/05.png"},
+  {id:"p6",no:6,name:"プレイヤー6",cpu:false,img:"icon/06.png"},
+  {id:"p7",no:7,name:"プレイヤー7",cpu:false,img:"icon/07.png"},
+  {id:"p8",no:8,name:"プレイヤー8",cpu:false,img:"icon/08.png"},
+  {id:"p9",no:9,name:"プレイヤー9",cpu:false,img:"icon/09.png"},
+  {id:"p10",no:10,name:"プレイヤー10",cpu:false,img:"icon/10.png"},
+
   {id:"c2",no:2,name:"CPUモブ02",cpu:true,img:"icon/02.png"},
   {id:"c3",no:3,name:"CPUモブ03",cpu:true,img:"icon/03.png"},
   {id:"c4",no:4,name:"CPUモブ04",cpu:true,img:"icon/04.png"},
@@ -34,7 +41,12 @@ const PLAYERS=[
   {id:"c5",no:5,name:"モブイタリアン",cpu:true,img:"play/05.PNG"},
   {id:"c6",no:6,name:"モブ中華店主",cpu:true,img:"play/06.PNG"},
   {id:"c7",no:7,name:"モブティラノ",cpu:true,img:"play/07.PNG"},
-  {id:"c8",no:8,name:"モブスーパーマン",cpu:true,img:"play/08.PNG"}
+  {id:"c8",no:8,name:"モブスーパーマン",cpu:true,img:"play/08.PNG"},
+
+  // 10 VS 10 モード用CPU追加枠。
+  {id:"c9",no:9,name:"CPUモブ09",cpu:true,img:"icon/09.png"},
+  {id:"c10",no:10,name:"CPUモブ10",cpu:true,img:"icon/10.png"},
+  {id:"c11",no:11,name:"CPUモブ11",cpu:true,img:"icon/01.png"}
 ];
 
 const GAMES=[
@@ -103,6 +115,7 @@ const MODES={
   scoreCpu7:{name:"1人 VS CPU7人 100点",short:"PLAYER 1人 + CPU7人 / 各ゲーム0〜100点",participants:["p1","c2","c3","c4","c5","c6","c7","c8"],team:false,points:[],performance:true},
   scoreTag:{name:"100点 タッグバトル",short:"P1・P2 VS P3・P4 / 各ゲーム0〜100点",participants:["p1","p2","p3","p4"],team:true,points:[],performance:true,teams:{A:["p1","p2"],B:["p3","p4"]},teamNames:{A:"P1 + P2",B:"P3 + P4"}},
   customMix:{name:"人数自由バトル",short:"PLAYER / CPUを自由設定",participants:["p1","c2"],team:false,points:[3,0]},
+  matchedVsCpu:{name:"プレイヤー VS CPU",short:"同人数チーム戦 / 1対1〜10対10",participants:["p1","c2"],team:true,points:[3,0],teams:{A:["p1"],B:["c2"]},teamNames:{A:"PLAYER TEAM",B:"CPU TEAM"}},
   free:{name:"1人フリープレイ",short:"好きなゲームだけ遊ぶ",participants:["p1"],team:false,points:[0]}
 };
 
@@ -232,7 +245,7 @@ function renderHome(){
       <div class="hero-mark">MOB</div>
     </section>
     <section class="panel">
-      <div class="panel-head"><h3>MODE SELECT</h3><span class="tag">9 MODES</span></div>
+      <div class="panel-head"><h3>MODE SELECT</h3><span class="tag">10 MODES</span></div>
       <div class="mode-grid">
         <button class="mode-card" data-mode="solo4"><span class="mode-no">MODE 01</span><b>4人 個人戦</b><span>プレイヤー1〜4で個人順位を競う</span></button>
         <button class="mode-card" data-mode="solo8"><span class="mode-no">MODE 02</span><b>8人 個人戦</b><span>プレイヤー4人 + CPU4人</span></button>
@@ -243,6 +256,7 @@ function renderHome(){
         <button class="mode-card score-mode-card" data-mode="scoreTag"><span class="mode-no">MODE 07</span><b>100点 タッグバトル</b><span>P1・P2 VS P3・P4 / 得点合計勝負</span></button>
         <button class="mode-card score-mode-card" data-mode="scoreCpu7"><span class="mode-no">MODE 08</span><b>1人 VS CPU7人 100点</b><span>P1ひとりでCPU7人とスコア勝負</span></button>
         <button class="mode-card mix-mode-card" data-mode="customMix"><span class="mode-no">MODE 09</span><b>人数自由バトル</b><span>PLAYERとCPUを合計8人まで自由設定</span></button>
+        <button class="mode-card team-match-mode-card" data-mode="matchedVsCpu"><span class="mode-no">MODE 10</span><b>プレイヤー VS CPU</b><span>同じ人数で1対1〜最大10対10</span></button>
       </div>
     </section>
     <section class="panel free-play-panel">
@@ -274,9 +288,133 @@ function selectMode(key){
     renderMixSetup();
     return;
   }
+  if(key==="matchedVsCpu"){
+    renderMatchedVsCpuSetup();
+    return;
+  }
   initTotals();
   renderPlayStyleSelect();
 }
+function renderMatchedVsCpuSetup(){
+  clearGameFit();
+
+  let teamSize=1;
+
+  const humanIds=[
+    "p1","p2","p3","p4","p5",
+    "p6","p7","p8","p9","p10"
+  ];
+
+  const cpuIds=[
+    "c2","c3","c4","c5","c6",
+    "c7","c8","c9","c10","c11"
+  ];
+
+  screen.innerHTML=`
+    <div class="game-head">
+      <div>
+        <span class="kicker">MODE 10</span>
+        <h2>プレイヤー VS CPU</h2>
+        <p class="lead">PLAYER TEAMとCPU TEAMは必ず同人数。最大10対10。</p>
+      </div>
+      <div class="game-badge"><span id="matchedTeamSize">1</span> VS <span id="matchedCpuSize">1</span></div>
+    </div>
+
+    <section class="panel matched-team-setup">
+      <div class="matched-team-counter">
+        <span>TEAM SIZE</span>
+        <div>
+          <button id="matchedMinus" type="button">−</button>
+          <b id="matchedCount">1</b>
+          <button id="matchedPlus" type="button">＋</button>
+        </div>
+        <small>1対1〜10対10</small>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head"><h3>PLAYER TEAM</h3><span class="tag" id="matchedPlayerTag">1人</span></div>
+      <div id="matchedPlayers" class="player-grid"></div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-head"><h3>CPU TEAM</h3><span class="tag" id="matchedCpuTag">1人</span></div>
+      <div id="matchedCpus" class="player-grid"></div>
+    </section>
+
+    <button id="matchedDecide" class="primary" type="button">1 VS 1 で決定</button>
+  `;
+
+  const countEl=document.getElementById('matchedCount');
+  const sizeA=document.getElementById('matchedTeamSize');
+  const sizeB=document.getElementById('matchedCpuSize');
+  const playerTag=document.getElementById('matchedPlayerTag');
+  const cpuTag=document.getElementById('matchedCpuTag');
+  const playerPreview=document.getElementById('matchedPlayers');
+  const cpuPreview=document.getElementById('matchedCpus');
+  const minus=document.getElementById('matchedMinus');
+  const plus=document.getElementById('matchedPlus');
+  const decide=document.getElementById('matchedDecide');
+
+  function redraw(){
+    countEl.textContent=teamSize;
+    sizeA.textContent=teamSize;
+    sizeB.textContent=teamSize;
+    playerTag.textContent=`${teamSize}人`;
+    cpuTag.textContent=`${teamSize}人`;
+
+    playerPreview.innerHTML=
+      humanIds.slice(0,teamSize).map(id=>{
+        const member=pById(id);
+        return `<div class="player-card team-a">
+          ${imgTag(member)}
+          <div><b>${esc(member.name)}</b><span>PLAYER TEAM</span></div>
+        </div>`;
+      }).join('');
+
+    cpuPreview.innerHTML=
+      cpuIds.slice(0,teamSize).map(id=>{
+        const member=pById(id);
+        return `<div class="player-card team-b">
+          ${imgTag(member)}
+          <div><b>${esc(member.name)}</b><span>CPU TEAM</span></div>
+        </div>`;
+      }).join('');
+
+    minus.disabled=teamSize<=1;
+    plus.disabled=teamSize>=10;
+    decide.textContent=`${teamSize} VS ${teamSize} で決定`;
+  }
+
+  minus.addEventListener('click',()=>{
+    teamSize=Math.max(1,teamSize-1);
+    redraw();
+  });
+
+  plus.addEventListener('click',()=>{
+    teamSize=Math.min(10,teamSize+1);
+    redraw();
+  });
+
+  decide.addEventListener('click',()=>{
+    const a=humanIds.slice(0,teamSize);
+    const b=cpuIds.slice(0,teamSize);
+    const total=teamSize*2;
+
+    MODES.matchedVsCpu.participants=[...a,...b];
+    MODES.matchedVsCpu.teams={A:a,B:b};
+    MODES.matchedVsCpu.points=pointsForCount(total);
+    MODES.matchedVsCpu.short=`PLAYER ${teamSize}人 VS CPU ${teamSize}人`;
+
+    state.modeKey='matchedVsCpu';
+    initTotals();
+    renderPlayStyleSelect();
+  });
+
+  redraw();
+  gameTop();
+}
+
 function renderMixSetup(){
   clearGameFit();
   let humanCount=1,cpuCount=1;
@@ -409,11 +547,33 @@ function renderCustomPicker(){
     </section>
 
     <button id="customDecide" class="primary" type="button">この内容で決定</button>
+
+    <div id="customConfirmOverlay" class="custom-confirm-overlay-v114" hidden>
+      <div class="custom-confirm-card-v114">
+        <span class="kicker">ADD GAME?</span>
+        <h3 id="customConfirmTitle">追加しますか？</h3>
+        <p id="customConfirmText"></p>
+        <div class="custom-confirm-buttons-v114">
+          <button id="customConfirmNo" class="secondary" type="button">いいえ</button>
+          <button id="customConfirmYes" class="primary" type="button">はい</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="customAddedToast" class="custom-added-toast-v114"></div>
   `;
 
   const order=document.getElementById("customOrder");
   const count=document.getElementById("customCount");
   const decide=document.getElementById("customDecide");
+  const confirmOverlay=document.getElementById("customConfirmOverlay");
+  const confirmTitle=document.getElementById("customConfirmTitle");
+  const confirmText=document.getElementById("customConfirmText");
+  const confirmYes=document.getElementById("customConfirmYes");
+  const confirmNo=document.getElementById("customConfirmNo");
+  const toast=document.getElementById("customAddedToast");
+
+  let pendingGameIndex=null;
 
   const redraw=()=>{
     order.innerHTML=state.playlist.length
@@ -431,12 +591,69 @@ function renderCustomPicker(){
     }));
   };
 
+  function closeConfirm(){
+    confirmOverlay.hidden=true;
+    pendingGameIndex=null;
+
+    screen.querySelectorAll('[data-add-game].pending')
+      .forEach(el=>el.classList.remove('pending'));
+  }
+
+  function showAddedToast(text){
+    toast.textContent=text;
+    toast.classList.remove('show');
+    void toast.offsetWidth;
+    toast.classList.add('show');
+  }
+
   screen.querySelectorAll("[data-add-game]").forEach(b=>b.addEventListener("click",()=>{
-    if(state.playlist.length>=10)return;
-    state.playlist.push(Number(b.dataset.addGame));
-    beep(620,35,.015);
-    redraw();
+    pendingGameIndex=Number(b.dataset.addGame);
+    const game=GAMES[pendingGameIndex];
+
+    screen.querySelectorAll('[data-add-game].pending')
+      .forEach(el=>el.classList.remove('pending'));
+
+    b.classList.add('pending');
+
+    confirmTitle.textContent=`${game.title}を追加しますか？`;
+    confirmText.textContent=
+      state.playlist.length>=10
+        ? `現在10ゲーム選択済みです。追加上限は10ゲームです。`
+        : `第${state.playlist.length+1}ゲームとして追加します。`;
+
+    confirmOverlay.hidden=false;
+    beep(520,30,.008);
   }));
+
+  confirmNo.addEventListener('click',()=>{
+    closeConfirm();
+    beep(260,25,.006);
+  });
+
+  confirmYes.addEventListener('click',()=>{
+    if(pendingGameIndex===null)return;
+
+    const game=GAMES[pendingGameIndex];
+
+    if(state.playlist.length>=10){
+      closeConfirm();
+      showAddedToast('最大10ゲームまでです');
+      beep(180,55,.012);
+      return;
+    }
+
+    state.playlist.push(pendingGameIndex);
+    const position=state.playlist.length;
+
+    closeConfirm();
+    redraw();
+
+    showAddedToast(
+      `第${position}ゲームに「${game.title}」を選んだ！`
+    );
+
+    beep(720,55,.018);
+  });
 
   document.getElementById("undoCustom").addEventListener("click",()=>{
     state.playlist.pop();
@@ -715,7 +932,7 @@ function showGameIntro(index){
   }else if(index===51){
     rules=`<li>学校の屋上で他校の番長と1対1。</li><li>← →で距離を詰め、PUNCHで攻撃。相手も殴り返してきます。</li><li>攻撃を当てるたび相手は大きくぶっ飛び、すぐ立て直して再び向かってきます。</li><li>相手を倒すまでのタイムが正式記録。短いほど上位。</li>`;
   }else{
-    rules=`<li>巨大モブくんぬいぐるみ1個だけのUFOキャッチャー。</li><li>◀ ▶で位置を合わせ、降下後にSTOP。通常のキャッチャーより少し難しめ。</li><li>3回チャレンジ。3回GET=100点。</li><li>2回GETは80点から、1回GETは50点からスタートし、使った合計時間が短いほど追加点。</li>`;
+    rules=`<li>巨大モブくんぬいぐるみ1個だけのUFOキャッチャー。</li><li>まずARM WIDTHゲージをSTOPしてアームの広さを決めます。右側ほど広いアーム。</li><li>その後◀ ▶で横位置を合わせて「降下」。降下中のSTOPは高さだけを決めます。</li><li>アーム幅・横位置・高さが噛み合えばGET。3回チャレンジで3回GET=100点。</li><li>2回GETは80点から、1回GETは50点から。使った合計時間が短いほど追加点。</li>`;
   }
   screen.innerHTML=`
     <div class="game-head">
@@ -12381,8 +12598,8 @@ async function startMobRacePredict(p,humanIndex,runId){
 
     <div id="racePredictPanel" class="race-predict-panel" hidden>
       <h3>ゴールする順番を予想してください！</h3>
-      <p>↑ ↓ で1〜4を自由に並び替え</p>
-      <div id="raceOrderEditor" class="race-order-editor"></div>
+      <p>キャラクターを2体タップして交換 / カードを左右・上下にスワイプして移動</p>
+      <div id="raceOrderEditor" class="race-order-editor race-character-order-v114"></div>
       <button id="raceDecision" class="primary" type="button">決定</button>
     </div>
 
@@ -12451,44 +12668,130 @@ async function startMobRacePredict(p,humanIndex,runId){
 
   panel.hidden=false;
 
+  let selectedIndex=null;
+  let dragState=null;
+
   function renderOrder(){
     editor.innerHTML=prediction.map((lane,index)=>`
-      <div class="race-order-row">
-        <b>${index+1}位</b>
-        <span>LANE ${lane}</span>
-        <button type="button" data-move="up" data-index="${index}" ${index===0?'disabled':''}>↑</button>
-        <button type="button" data-move="down" data-index="${index}" ${index===prediction.length-1?'disabled':''}>↓</button>
-      </div>
+      <button
+        class="race-predict-character-v114 ${selectedIndex===index?'selected':''}"
+        data-race-order-index="${index}"
+        type="button">
+        <span class="race-predict-rank-v114">${index+1}位</span>
+        <img
+          src="icon/${String(lane).padStart(2,'0')}.png"
+          alt="LANE ${lane}"
+          draggable="false">
+        <b>LANE ${lane}</b>
+        <small>${selectedIndex===index?'もう1体をタップ':'TAP / SWIPE'}</small>
+      </button>
     `).join('');
+  }
+
+  function swapPrediction(a,b){
+    if(
+      a<0||
+      b<0||
+      a>=prediction.length||
+      b>=prediction.length||
+      a===b
+    )return;
+
+    [prediction[a],prediction[b]]=
+      [prediction[b],prediction[a]];
+
+    selectedIndex=null;
+    renderOrder();
+    beep(610,35,.010);
   }
 
   renderOrder();
 
   editor.addEventListener('pointerdown',e=>{
-    const btn=e.target.closest('button[data-move]');
-    if(!btn)return;
+    const card=e.target.closest('[data-race-order-index]');
+    if(!card)return;
 
     e.preventDefault();
 
-    const index=Number(btn.dataset.index);
-    const move=btn.dataset.move;
-    const target=
-      move==='up'
-        ? index-1
-        : index+1;
+    dragState={
+      index:Number(card.dataset.raceOrderIndex),
+      x:e.clientX,
+      y:e.clientY,
+      card,
+      pointerId:e.pointerId
+    };
 
-    if(target<0||target>=prediction.length)return;
+    card.classList.add('dragging');
 
-    [
-      prediction[index],
-      prediction[target]
-    ]=[
-      prediction[target],
-      prediction[index]
-    ];
+    try{card.setPointerCapture(e.pointerId)}catch(_){}
+  },{passive:false});
 
-    renderOrder();
-    beep(540,25,.006);
+  editor.addEventListener('pointermove',e=>{
+    if(!dragState||e.pointerId!==dragState.pointerId)return;
+
+    e.preventDefault();
+
+    const dx=e.clientX-dragState.x;
+    const dy=e.clientY-dragState.y;
+
+    dragState.card.style.transform=
+      `translate(${clamp(dx,-55,55)}px,${clamp(dy,-36,36)}px) scale(1.03)`;
+  },{passive:false});
+
+  function finishPredictionPointer(e){
+    if(!dragState||e.pointerId!==dragState.pointerId)return;
+
+    e.preventDefault();
+
+    const {index,x,y,card}=dragState;
+    const dx=e.clientX-x;
+    const dy=e.clientY-y;
+
+    card.style.transform='';
+    card.classList.remove('dragging');
+
+    const absX=Math.abs(dx);
+    const absY=Math.abs(dy);
+
+    if(Math.max(absX,absY)>=30){
+      const direction=
+        absX>=absY
+          ? Math.sign(dx)
+          : Math.sign(dy);
+
+      const target=clamp(
+        index+direction,
+        0,
+        prediction.length-1
+      );
+
+      swapPrediction(index,target);
+
+    }else{
+      if(selectedIndex===null){
+        selectedIndex=index;
+        renderOrder();
+        beep(470,25,.006);
+
+      }else if(selectedIndex===index){
+        selectedIndex=null;
+        renderOrder();
+
+      }else{
+        swapPrediction(selectedIndex,index);
+      }
+    }
+
+    dragState=null;
+  }
+
+  editor.addEventListener('pointerup',finishPredictionPointer,{passive:false});
+  editor.addEventListener('pointercancel',e=>{
+    if(!dragState)return;
+
+    dragState.card.style.transform='';
+    dragState.card.classList.remove('dragging');
+    dragState=null;
   },{passive:false});
 
   await new Promise(resolve=>{
@@ -12601,15 +12904,27 @@ async function startMobRacePredict(p,humanIndex,runId){
 
   state.records.mobRacePredict[p.id]=score;
 
+  function resultCards(order){
+    return `<div class="race-result-order-v114">${
+      order.map((lane,i)=>`
+        <div>
+          <span>${i+1}位</span>
+          <img src="icon/${String(lane).padStart(2,'0')}.png" draggable="false">
+          <b>${lane}</b>
+        </div>
+      `).join('')
+    }</div>`;
+  }
+
   compare.innerHTML=`
     <h3>RACE RESULT</h3>
     <div>
       <span>YOUR PREDICTION</span>
-      <b>${prediction.join(' → ')}</b>
+      ${resultCards(prediction)}
     </div>
     <div>
       <span>ACTUAL ORDER</span>
-      <b>${finalOrder.join(' → ')}</b>
+      ${resultCards(finalOrder)}
     </div>
     <strong>${matchTier}/4 MATCH　${score} POINT</strong>
     <button id="raceResultContinue" class="primary" type="button">結果を確認</button>
@@ -13094,8 +13409,8 @@ async function startBossDuel(p,humanIndex,runId){
   let facing=1;
 
   let enemyHp=30;
+  let enemyHitCount=0;
   let enemyVX=0;
-  let enemyVY=0;
   let enemyY=58;
   let enemyAir=false;
 
@@ -13210,28 +13525,70 @@ async function startBossDuel(p,humanIndex,runId){
 
     if(Math.abs(enemyX-playerX)<=128){
       enemyHp--;
+      enemyHitCount++;
 
-      enemyAir=true;
-      enemyVX=dir*rand(78,118);
-      enemyVY=rand(175,235);
+      const now=performance.now();
+      const stagger=
+        enemyHp>0&&
+        (
+          enemyHitCount%6===0||
+          Math.random()<.14
+        );
 
-      enemy.classList.remove('hurt');
-      void enemy.offsetWidth;
-      enemy.classList.add('hurt');
+      // Super armor is the default: most punches do NOT interrupt the rival.
+      // Repeated mashing therefore leaves him free to counterattack.
+      if(stagger){
+        enemyVX=dir*rand(115,175);
 
-      popImpact(
-        enemyHp<=0?'FINISH!!':'BAM!',
-        clamp((playerX+enemyX)/2,50,stage.clientWidth-50)
-      );
+        enemy.classList.remove('hurt','armor-hit','armor-stagger');
+        void enemy.offsetWidth;
+        enemy.classList.add('armor-stagger');
 
-      beep(enemyHp<=0?760:280,40,.013);
+        popImpact(
+          'BAM!',
+          clamp((playerX+enemyX)/2,50,stage.clientWidth-50)
+        );
+
+        beep(330,45,.016);
+
+      }else{
+        enemy.classList.remove('hurt','armor-hit','armor-stagger');
+        void enemy.offsetWidth;
+        enemy.classList.add('armor-hit');
+
+        popImpact(
+          enemyHp<=0?'FINISH!!':'ARMOR!',
+          clamp((playerX+enemyX)/2,50,stage.clientWidth-50)
+        );
+
+        beep(enemyHp<=0?760:245,32,.010);
+      }
+
+      // When the player keeps punching, the rival's next counter comes sooner.
+      if(enemyHp>0){
+        nextEnemyAttack=Math.min(
+          nextEnemyAttack,
+          now+rand(100,260)
+        );
+      }
 
       if(enemyHp<=0){
         finished=true;
 
-        enemyVX=dir*520;
-        enemyVY=470;
-        enemy.classList.add('defeated');
+        enemy.style.setProperty(
+          '--duel-finish-dir',
+          dir
+        );
+
+        enemy.classList.remove(
+          'attacking',
+          'special-attacking',
+          'armor-hit',
+          'armor-stagger'
+        );
+
+        void enemy.offsetWidth;
+        enemy.classList.add('defeated-horizontal');
 
         const elapsedMs=Math.max(
           1,
@@ -13273,7 +13630,6 @@ async function startBossDuel(p,humanIndex,runId){
   function enemyAttack(now){
     if(
       finished||
-      enemyAir||
       now<nextEnemyAttack
     )return;
 
@@ -13282,7 +13638,7 @@ async function startBossDuel(p,humanIndex,runId){
     // Rare special: stronger range + much larger player knockback.
     const special=
       now>=nextSpecialChance&&
-      Math.random()<.14;
+      Math.random()<.16;
 
     if(special){
       if(distance>142)return;
@@ -13328,7 +13684,7 @@ async function startBossDuel(p,humanIndex,runId){
 
     if(distance>86)return;
 
-    nextEnemyAttack=now+rand(520,900);
+    nextEnemyAttack=now+rand(390,690);
 
     enemy.classList.remove('attacking','special-attacking');
     void enemy.offsetWidth;
@@ -13361,7 +13717,7 @@ async function startBossDuel(p,humanIndex,runId){
 
   startTime=performance.now();
   last=startTime;
-  nextEnemyAttack=startTime+520;
+  nextEnemyAttack=startTime+380;
   nextSpecialChance=startTime+rand(1800,3200);
 
   call.classList.add('show');
@@ -13386,21 +13742,15 @@ async function startBossDuel(p,humanIndex,runId){
       fieldMax
     );
 
-    if(enemyAir){
-      enemyVY-=1180*dt;
-      enemyX+=enemyVX*dt;
-      enemyY+=enemyVY*dt;
-      enemyVX*=Math.pow(.18,dt);
+    enemyX+=enemyVX*dt;
+    enemyVX*=Math.pow(.025,dt);
 
-      if(enemyY<=58&&!finished){
-        enemyY=58;
-        enemyVY=0;
-        enemyVX=0;
-        enemyAir=false;
-        enemy.classList.remove('hurt');
-      }
+    if(Math.abs(enemyVX)<5){
+      enemyVX=0;
+      enemy.classList.remove('armor-stagger');
+    }
 
-    }else if(!finished){
+    if(!finished){
       const dx=playerX-enemyX;
       const dir=Math.sign(dx)||1;
 
@@ -13461,6 +13811,8 @@ async function startPlushCatcher(p,humanIndex,runId){
   let gaugeStart=0;
   let gaugePhase=0;
   let gaugePos=.5;
+  let armCatchWidth=.050;
+  let armAngle=24;
 
   screen.innerHTML=`<div class="plush-shell">
     <div class="game-head">
@@ -13493,13 +13845,13 @@ async function startPlushCatcher(p,humanIndex,runId){
           </div>
         </div>
 
-        <div id="plushGauge" class="plush-grab-gauge-v113" hidden>
-          <span>GRAB TIMING</span>
-          <div class="plush-gauge-track-v113">
-            <i class="safe"></i>
+        <div id="plushGauge" class="plush-grab-gauge-v114" hidden>
+          <span>ARM WIDTH</span>
+          <div class="plush-width-labels-v114"><b>NARROW</b><b>WIDE</b></div>
+          <div class="plush-gauge-track-v114">
             <b id="plushGaugeMarker" class="marker"></b>
           </div>
-          <em>CENTERでSTOP</em>
+          <em>先にアームの広さを決める</em>
         </div>
 
         <div id="plushMessage" class="plush-message">巨大ぬいぐるみを狙え！</div>
@@ -13561,12 +13913,18 @@ async function startPlushCatcher(p,humanIndex,runId){
 
   function resetAttempt(){
     attempt++;
-    phase='position';
+    phase='width';
     craneX=.50;
     craneY=24;
     moveDir=0;
 
-    currentPlushX=rand(.38,.78);
+    gaugeStart=performance.now();
+    gaugePhase=rand(0,Math.PI*2);
+    gaugePos=.5;
+    armCatchWidth=.050;
+    armAngle=24;
+
+    currentPlushX=rand(.34,.80);
 
     prize.style.left=`${currentPlushX*100}%`;
     prize.style.top='82%';
@@ -13575,16 +13933,21 @@ async function startPlushCatcher(p,humanIndex,runId){
     crane.classList.remove('holding');
     head.classList.remove('closed');
 
-    gauge.hidden=true;
-    gaugePos=.5;
+    gauge.hidden=false;
     gaugeMarker.style.left='50%';
+    head.style.setProperty('--plush-arm-angle','24deg');
 
     tryEl.textContent=`${attempt} / 3`;
-    message.textContent='位置を合わせて降下 → STOP';
-    drop.disabled=false;
-    stop.disabled=true;
-    left.disabled=false;
-    right.disabled=false;
+    message.textContent='① 先にアームの広さを決めろ！';
+
+    drop.textContent='降下';
+    drop.disabled=true;
+
+    stop.textContent='幅STOP';
+    stop.disabled=false;
+
+    left.disabled=true;
+    right.disabled=true;
 
     attemptStart=performance.now();
 
@@ -13611,12 +13974,12 @@ async function startPlushCatcher(p,humanIndex,runId){
 
     const dx=Math.abs(craneX-currentPlushX);
     const depthError=Math.abs(clawY-.82);
-    const gaugeError=Math.abs(gaugePos-.5);
 
+    // ARM WIDTH was already chosen before descent.
+    // Descent STOP now judges height only, exactly like the original flow.
     const success=
-      dx<=.045&&
-      depthError<=.105&&
-      gaugeError<=.105;
+      dx<=armCatchWidth&&
+      depthError<=.082;
 
     gauge.hidden=true;
 
@@ -13716,21 +14079,54 @@ async function startPlushCatcher(p,humanIndex,runId){
     phase='descending';
     moveDir=0;
 
-    gaugeStart=performance.now();
-    gaugePhase=rand(0,Math.PI*2);
-    gauge.hidden=false;
-
     drop.disabled=true;
     stop.disabled=false;
+    stop.textContent='高さSTOP';
     left.disabled=true;
     right.disabled=true;
 
-    message.textContent='STOPでつかむ高さを決めろ！';
+    message.textContent='③ STOPでつかむ高さだけを決めろ！';
   },{passive:false});
 
   stop.addEventListener('pointerdown',e=>{
     e.preventDefault();
-    resolveAttempt();
+
+    if(phase==='width'){
+      // Left side = narrow, right side = wide.
+      armCatchWidth=.030+gaugePos*.060;
+      armAngle=12+gaugePos*34;
+
+      head.style.setProperty(
+        '--plush-arm-angle',
+        `${armAngle.toFixed(1)}deg`
+      );
+
+      phase='position';
+      gauge.hidden=true;
+
+      stop.disabled=true;
+      stop.textContent='STOP';
+
+      drop.disabled=false;
+      left.disabled=false;
+      right.disabled=false;
+
+      message.textContent=
+        `② アーム幅 ${Math.round(gaugePos*100)}% / 位置を合わせて降下`;
+
+      beep(
+        gaugePos>=.80?900:
+        gaugePos>=.55?720:
+        520,
+        55,.016
+      );
+
+      return;
+    }
+
+    if(phase==='descending'){
+      resolveAttempt();
+    }
   },{passive:false});
 
   function finishGameResult(){
@@ -13800,18 +14196,9 @@ async function startPlushCatcher(p,humanIndex,runId){
     const dt=Math.min(30,now-last)/1000;
     last=now;
 
-    if(phase==='position'){
-      craneX=clamp(
-        craneX+moveDir*.38*dt,
-        .13,.90
-      );
+    if(phase==='width'){
+      const gaugeSpeed=.90+attempt*.12;
 
-      renderCrane();
-
-    }else if(phase==='descending'){
-      craneY+=165*dt;
-
-      const gaugeSpeed=1.05+attempt*.15;
       gaugePos=
         .5+
         .5*Math.sin(
@@ -13822,6 +14209,24 @@ async function startPlushCatcher(p,humanIndex,runId){
         );
 
       gaugeMarker.style.left=`${gaugePos*100}%`;
+
+      // Preview the actual arm opening while choosing width.
+      const previewAngle=12+gaugePos*34;
+      head.style.setProperty(
+        '--plush-arm-angle',
+        `${previewAngle.toFixed(1)}deg`
+      );
+
+    }else if(phase==='position'){
+      craneX=clamp(
+        craneX+moveDir*.38*dt,
+        .11,.91
+      );
+
+      renderCrane();
+
+    }else if(phase==='descending'){
+      craneY+=165*dt;
 
       if(craneY>=stage.clientHeight*.72){
         craneY=stage.clientHeight*.72;

@@ -11458,3 +11458,332 @@ body,
     bottom:34px;
   }
 }
+
+
+/* =========================================================
+   V10.14 MODE 10 — MATCHED PLAYER VS CPU
+   ========================================================= */
+.team-match-mode-card{
+  background:
+    linear-gradient(135deg,rgba(116,205,255,.30),rgba(255,144,113,.24));
+}
+.matched-team-setup{
+  text-align:center;
+}
+.matched-team-counter{
+  display:grid;
+  justify-items:center;
+  gap:7px;
+}
+.matched-team-counter>span{
+  color:var(--muted);
+  font-size:9px;
+  font-weight:1000;
+}
+.matched-team-counter>div{
+  display:grid;
+  grid-template-columns:54px 82px 54px;
+  gap:8px;
+  align-items:center;
+}
+.matched-team-counter button{
+  min-height:48px;
+  border:3px solid var(--ink);
+  border-radius:12px;
+  background:#fff;
+  box-shadow:0 4px 0 var(--ink);
+  font-size:25px;
+  font-weight:1000;
+}
+.matched-team-counter b{
+  font-size:34px;
+}
+.matched-team-counter small{
+  color:var(--muted);
+  font-weight:800;
+}
+
+/* =========================================================
+   V10.14 CUSTOM PICKER — YES / NO + STRONG TAP FEEDBACK
+   ========================================================= */
+.custom-game-add.pending{
+  transform:translateY(2px) scale(.98);
+  box-shadow:0 2px 0 var(--ink)!important;
+  outline:4px solid rgba(255,213,92,.72);
+}
+.custom-confirm-overlay-v114{
+  position:fixed;
+  z-index:9998;
+  inset:0;
+  display:grid;
+  place-items:center;
+  padding:18px;
+  background:rgba(12,17,28,.62);
+}
+.custom-confirm-overlay-v114[hidden]{
+  display:none!important;
+}
+.custom-confirm-card-v114{
+  width:min(100%,420px);
+  border:5px solid var(--ink);
+  border-radius:20px;
+  background:#fff;
+  padding:14px;
+  box-shadow:0 10px 0 rgba(17,19,26,.32);
+}
+.custom-confirm-card-v114 h3{
+  margin:5px 0 4px;
+  font-size:18px;
+}
+.custom-confirm-card-v114 p{
+  margin:0 0 11px;
+  color:var(--muted);
+  font-size:11px;
+  font-weight:800;
+}
+.custom-confirm-buttons-v114{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+}
+.custom-confirm-buttons-v114 button{
+  min-height:52px;
+}
+.custom-added-toast-v114{
+  position:fixed;
+  z-index:9999;
+  left:50%;
+  bottom:24px;
+  width:min(calc(100% - 28px),430px);
+  transform:translate(-50%,30px) scale(.92);
+  border:4px solid var(--ink);
+  border-radius:999px;
+  background:#ffe56d;
+  padding:10px 14px;
+  text-align:center;
+  font-size:12px;
+  font-weight:1000;
+  opacity:0;
+  pointer-events:none;
+}
+.custom-added-toast-v114.show{
+  animation:customAddedToastV114 1.25s ease forwards;
+}
+@keyframes customAddedToastV114{
+  0%{opacity:0;transform:translate(-50%,30px) scale(.92)}
+  18%{opacity:1;transform:translate(-50%,0) scale(1.04)}
+  72%{opacity:1;transform:translate(-50%,0) scale(1)}
+  100%{opacity:0;transform:translate(-50%,-18px) scale(.98)}
+}
+
+/* =========================================================
+   V10.14 MOB RACE — CHARACTER PREDICTION CARDS
+   ========================================================= */
+.race-character-order-v114{
+  display:grid!important;
+  grid-template-columns:repeat(4,1fr);
+  gap:5px!important;
+}
+.race-predict-character-v114{
+  position:relative;
+  min-width:0;
+  min-height:112px;
+  display:grid;
+  grid-template-rows:auto 1fr auto auto;
+  justify-items:center;
+  gap:2px;
+  border:3px solid var(--ink);
+  border-radius:13px;
+  background:#eef5ff;
+  padding:4px 3px 5px;
+  box-shadow:0 4px 0 rgba(17,19,26,.20);
+  touch-action:none;
+}
+.race-predict-character-v114.selected{
+  background:#fff2a8;
+  outline:4px solid rgba(255,199,59,.55);
+  transform:translateY(-3px);
+}
+.race-predict-character-v114.dragging{
+  z-index:20;
+  opacity:.92;
+  box-shadow:0 8px 0 rgba(17,19,26,.24);
+}
+.race-predict-character-v114 img{
+  width:54px;
+  height:58px;
+  object-fit:contain;
+  pointer-events:none;
+}
+.race-predict-character-v114>b{
+  font-size:8px;
+}
+.race-predict-character-v114>small{
+  color:var(--muted);
+  font-size:5.5px;
+  white-space:nowrap;
+}
+.race-predict-rank-v114{
+  min-width:35px;
+  border:2px solid var(--ink);
+  border-radius:999px;
+  background:#fff;
+  padding:2px 4px;
+  text-align:center;
+  font-size:8px;
+  font-weight:1000;
+}
+.race-result-order-v114{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:4px;
+  margin-top:4px;
+}
+.race-result-order-v114>div{
+  display:grid;
+  justify-items:center;
+  border:2px solid var(--ink);
+  border-radius:8px;
+  background:#f5f8fc;
+  padding:3px;
+}
+.race-result-order-v114 img{
+  width:35px;
+  height:38px;
+  object-fit:contain;
+}
+.race-result-order-v114 span{
+  color:var(--ink)!important;
+  font-size:6px!important;
+  font-weight:1000;
+}
+.race-result-order-v114 b{
+  font-size:8px!important;
+}
+
+/* =========================================================
+   V10.14 BANCHOU DUEL — SUPER ARMOR
+   ========================================================= */
+.duel-enemy.armor-hit{
+  animation:duelArmorHitV114 .13s ease;
+}
+@keyframes duelArmorHitV114{
+  45%{
+    filter:
+      brightness(1.16)
+      drop-shadow(0 0 7px rgba(255,220,75,.72));
+    transform:translateX(-50%) scale(.97);
+  }
+}
+.duel-enemy.armor-stagger{
+  animation:duelArmorStaggerV114 .22s ease;
+}
+@keyframes duelArmorStaggerV114{
+  45%{
+    transform:translateX(-50%) rotate(-7deg);
+    filter:drop-shadow(0 0 9px rgba(255,196,69,.78));
+  }
+}
+.duel-enemy.defeated-horizontal{
+  animation:duelBossFinishV114 .88s cubic-bezier(.12,.72,.18,1) forwards!important;
+}
+@keyframes duelBossFinishV114{
+  0%{
+    opacity:1;
+    transform:translateX(-50%) rotate(0);
+  }
+  100%{
+    opacity:0;
+    transform:
+      translateX(-50%)
+      translateX(calc(var(--duel-finish-dir) * 360px))
+      rotate(calc(var(--duel-finish-dir) * 1080deg))
+      scale(.45);
+  }
+}
+
+/* =========================================================
+   V10.14 PLUSH — ARM WIDTH FIRST / HEIGHT SECOND
+   ========================================================= */
+.plush-grab-gauge-v114{
+  position:absolute;
+  z-index:70;
+  left:7%;
+  right:7%;
+  bottom:42px;
+  border:3px solid var(--ink);
+  border-radius:12px;
+  background:#fff;
+  padding:6px;
+  box-shadow:0 4px 0 rgba(17,19,26,.22);
+}
+.plush-grab-gauge-v114[hidden]{
+  display:none!important;
+}
+.plush-grab-gauge-v114>span,
+.plush-grab-gauge-v114>em{
+  display:block;
+  text-align:center;
+  font-size:7px;
+  font-weight:1000;
+}
+.plush-grab-gauge-v114>em{
+  margin-top:3px;
+  color:var(--muted);
+  font-style:normal;
+}
+.plush-width-labels-v114{
+  display:flex;
+  justify-content:space-between;
+  margin:2px 3px;
+  color:var(--muted);
+  font-size:6px;
+}
+.plush-gauge-track-v114{
+  position:relative;
+  height:23px;
+  border:3px solid var(--ink);
+  border-radius:999px;
+  background:
+    linear-gradient(
+      90deg,
+      #ec7769 0 18%,
+      #efb55e 18% 42%,
+      #efd866 42% 62%,
+      #83d98f 62% 100%
+    );
+}
+.plush-gauge-track-v114 .marker{
+  position:absolute;
+  left:50%;
+  top:50%;
+  width:17px;
+  height:32px;
+  transform:translate(-50%,-50%);
+  border:3px solid var(--ink);
+  border-radius:7px;
+  background:#56a3ff;
+  box-shadow:0 2px 0 rgba(17,19,26,.24);
+}
+.plush-head .arm.left{
+  transform:rotate(var(--plush-arm-angle,24deg))!important;
+}
+.plush-head .arm.right{
+  transform:rotate(calc(var(--plush-arm-angle,24deg) * -1))!important;
+}
+.plush-head.closed .arm.left{
+  transform:rotate(5deg)!important;
+}
+.plush-head.closed .arm.right{
+  transform:rotate(-5deg)!important;
+}
+
+@media(max-width:420px){
+  .race-predict-character-v114{
+    min-height:103px;
+  }
+  .race-predict-character-v114 img{
+    width:46px;
+    height:52px;
+  }
+}
