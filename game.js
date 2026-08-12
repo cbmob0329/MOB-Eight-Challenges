@@ -113,7 +113,24 @@ const GAMES=[
   {no:61,key:"balanceMob",title:"極限バランスモブくん",sub:"細い棒の上で10秒耐える"},
   {no:62,key:"mobDice",title:"モブくんのサイコロ",sub:"5個のサイコロで大きな合計を狙う"},
   {no:63,key:"mobCombo",title:"モブくん20連コンボ",sub:"10秒でモブ球を動かして20連コンボを狙う"},
-  {no:64,key:"electricMaze",title:"こっちだよモブくん！",sub:"タップでピンを立ててビリビリ迷路を突破"}
+  {no:64,key:"electricMaze",title:"こっちだよモブくん！",sub:"タップでピンを立ててビリビリ迷路を突破"},
+  {no:65,key:"cardShop",title:"モブくんカードショップ",sub:"6枚入りパックを開封して合計ポイントを競う"},
+  {no:66,key:"pizzaChef",title:"モブくんピザ職人",sub:"回転ピザへ具材を均等にトッピング"},
+  {no:67,key:"mobHammer",title:"モブくんハンマー！",sub:"MAXパワーを狙って大地を叩く"},
+  {no:68,key:"bungeeMob",title:"モブくんバンジー",sub:"地面ギリギリでSTOPを狙う"},
+  {no:69,key:"waterSlide",title:"モブくんウォータースライダー",sub:"左右操作で10秒の高速コースを攻略"},
+  {no:70,key:"pancakeMob",title:"モブくん巨大パンケーキ",sub:"上スワイプで綺麗にひっくり返す"},
+  {no:71,key:"paperPlane",title:"モブくん紙飛行機研究所",sub:"5秒で翼を描いて飛距離を競う"},
+  {no:72,key:"dominoMob",title:"モブくんドミノ職人",sub:"5秒でドミノの道を作りゴールへ"},
+  {no:73,key:"seesawMob",title:"モブくん巨大シーソー",sub:"落ちる重りを左右へ振り分けて水平維持"},
+  {no:74,key:"curlingMob",title:"モブくん氷上カーリング",sub:"1スワイプでハウス中央を狙う"},
+  {no:75,key:"bubbleMob",title:"モブくん巨大シャボン玉",sub:"長押しで限界ギリギリまで膨らませる"},
+  {no:76,key:"changeMob",title:"モブくん何が変わった？",sub:"部屋の1ヶ所の変化を見抜く"},
+  {no:77,key:"baggageMob",title:"モブくん荷物検査",sub:"禁止マークの荷物だけを素早くタップ"},
+  {no:78,key:"bridgeMob",title:"モブくん橋を作って！",sub:"5秒で橋を描いてモブくんを渡らせる"},
+  {no:79,key:"treasureMob",title:"モブくん宝箱どれだ!?",sub:"100点の宝箱をシャッフルから追いかける"},
+  {no:80,key:"rouletteMob",title:"モブくんルーレットジャンプ",sub:"回転ルーレットを止めて高得点床へ"},
+  {no:81,key:"excavationMob",title:"モブくん地下発掘",sub:"9マスから3ヶ所掘って化石ポイントを獲得"}
 ];
 
 const MODES={
@@ -151,7 +168,10 @@ function freshState(){
     roundIndex:0,
     records:{
       reaction:{},memory:{},puzzle:{},launch:{},stack:{},breakdance:{},
-      crisis:{},factory:{},catcher:{},tidy:{},ski:{},slot:{},rope:{},pk:{},rhythm:{},cut:{},climb:{},errand:{},dontHitMob:{},mobStop:{},overlap:{},shutter:{},cup:{},darts:{},parachute:{},mobCount:{},brake:{},feint:{},bomb:{},overlapMaster:{},jumpingMob:{},heroMaybe:{},popularGame:{},planetEnergy:{},painter:{},bikeJump:{},trampoline:{},mobTrain:{},giantMob:{},wizardMob:{},brawlerMob:{},summonerMob:{},blackjackMob:{},mobIssen:{},crowEscape:{},dancingMob:{},guardianMob:{},mob50m:{},sniperMob:{},mobRacePredict:{},mobRocket:{},bossDuel:{},plushCatcher:{},toyOnOff:{},dodgeballMob:{},amidakujiMob:{},katanaSmith:{},homeRunMob:{},mobMisfortune:{},aimMob:{},balanceMob:{},mobDice:{},mobCombo:{},electricMaze:{}
+      crisis:{},factory:{},catcher:{},tidy:{},ski:{},slot:{},rope:{},pk:{},rhythm:{},cut:{},climb:{},errand:{},dontHitMob:{},mobStop:{},overlap:{},shutter:{},cup:{},darts:{},parachute:{},mobCount:{},brake:{},feint:{},bomb:{},overlapMaster:{},jumpingMob:{},heroMaybe:{},popularGame:{},planetEnergy:{},painter:{},bikeJump:{},trampoline:{},mobTrain:{},giantMob:{},wizardMob:{},brawlerMob:{},summonerMob:{},blackjackMob:{},mobIssen:{},crowEscape:{},dancingMob:{},guardianMob:{},mob50m:{},sniperMob:{},mobRacePredict:{},mobRocket:{},bossDuel:{},plushCatcher:{},toyOnOff:{},dodgeballMob:{},amidakujiMob:{},katanaSmith:{},homeRunMob:{},mobMisfortune:{},aimMob:{},balanceMob:{},mobDice:{},mobCombo:{},electricMaze:{},cardShop:{},
+        pizzaChef:{},mobHammer:{},bungeeMob:{},waterSlide:{},pancakeMob:{},
+        paperPlane:{},dominoMob:{},seesawMob:{},curlingMob:{},bubbleMob:{},
+        changeMob:{},baggageMob:{},bridgeMob:{},treasureMob:{},rouletteMob:{},excavationMob:{}
     },
     total:{},
     roundPoints:[],
@@ -282,7 +302,7 @@ function renderHome(){
     </section>
 
     <section class="panel flat">
-      <div class="panel-head"><h3>64 MINI GAMES</h3><span class="tag">GAME 1 → 64</span></div>
+      <div class="panel-head"><h3>81 MINI GAMES</h3><span class="tag">GAME 1 → 81</span></div>
       <div class="compact-game-grid home-compact-games-v119">
         ${GAMES.map(g=>`<div><b>${g.no}</b><span>${g.title}</span></div>`).join("")}
       </div>
@@ -931,7 +951,7 @@ function renderPlayStyleSelect(){
       <button id="normalStyle" class="style-select-card normal" type="button">
         <span>NORMAL</span>
         <b>順番に全種目</b>
-        <small>GAME 1 → 64 を順番にプレイ</small>
+        <small>GAME 1 → 81 を順番にプレイ</small>
       </button>
       <button id="customStyle" class="style-select-card custom" type="button">
         <span>CUSTOM</span>
@@ -941,7 +961,7 @@ function renderPlayStyleSelect(){
     </div>
 
     <section class="panel flat">
-      <h3>64 MINI GAMES</h3>
+      <h3>81 MINI GAMES</h3>
       <div class="compact-game-grid">
         ${GAMES.map(g=>`<div><b>${g.no}</b><span>${g.title}</span></div>`).join("")}
       </div>
@@ -1256,7 +1276,24 @@ function scoreRuleForGame(index){
     "10.00秒維持=100点 / 倒れるまでの時間",
     "5個合計5=1点 / 合計30=100点",
     "20 COMBO=100点 / 0 COMBO=0点",
-    "10.00秒以内=100点 / 30.00秒以上=0点"
+    "10.00秒以内=100点 / 30.00秒以上=0点",
+    "90ポイント以上=100点 / 30ポイント以下=0点",
+    "具材の狙い円への精度55% + 円周の均等配置45%",
+    "パワーゲージMAX=100点 / 端=0点",
+    "地面から約8pxでSTOP=100点 / 接触=0点",
+    "10秒間のコース追従率と壁接触回数で0〜100点",
+    "上スワイプの速度・角度・着地中央を総合して0〜100点",
+    "翼の左右バランス・広がり・接続から最大100m",
+    "ドミノがゴールまで連鎖すれば高得点 / GOAL到達ボーナス",
+    "10秒間の平均水平度から0〜100点 / 限界傾斜で終了",
+    "ハウス中心0px=100点 / 外へ離れるほど減点",
+    "破裂直前の大きさ=100点 / 破裂=0点",
+    "変化を正解 + 1秒以内=100点 / 遅いほど減点 / 誤答0点",
+    "禁止荷物4個を全て発見=100点 / 誤タップ・見逃しで減点",
+    "両岸接続・滑らかさ・傾斜・長さから0〜100点",
+    "選んだ宝箱のポイントがそのまま記録",
+    "止まった床の0〜100ポイントがそのまま記録",
+    "3ヶ所から掘り出した化石ポイントの合計"
   ][index];
 }
 
@@ -1392,8 +1429,42 @@ function showGameIntro(index){
     rules=`<li>5個の巨大サイコロを1回だけ振る完全な運勝負。</li><li>合計5（全部1）=1点、合計30（全部6）=100点。</li><li>途中の合計は5〜30を1〜100点へ比例換算。</li>`;
   }else if(index===62){
     rules=`<li>6×5のモブ球パズル。10秒間、押したモブ球を指で動かして隣と入れ替えます。</li><li>同じモブ球が横に3体以上並ぶと、揃った組から順番に消えます。</li><li>その盤面で消える組が全部消えてから、上のモブ球が落下・補充されます。落ちた結果たまたま揃えば落ちコン。</li><li>落ちコンは起こりやすめですが確定ではありません。初期盤面も毎回大きく変化します。</li><li>カウントダウン前から盤面を確認できます。20 COMBO=100点。</li>`;
-  }else{
+  }else if(index===63){
     rules=`<li>固定されたビリビリ迷路のGOALを目指します。全員同じコースなので公平です。</li><li>画面をタップするとピンが立ち、モブくんがその場所へ歩きます。</li><li>途中には上下に動き続ける「ビリビリモブくんマシーン」が3台。壁やマシーンへ触れると1秒スタン。</li><li>カウントダウン中からステージと初期配置を確認できます。GOALまでのタイムを競います。</li>`;
+  }else if(index===64){
+    rules=`<li>中央にMOBと描かれたパックを1つ購入して開封します。1パック6枚入り。</li><li>「開封！」を押すと1枚ずつカードが表示され、レア度ごとの演出が入ります。</li><li>最後に6枚のカードが並び、合計ポイントを発表。合計ポイントが高いほど有利です。</li><li>レア度は R=5点 / SR=8点 / SSR=10点 / UR=15点 / MOB=30点。</li>`;
+  }else if(index===65){
+    rules=`<li>回転している巨大ピザへ10個の具材を置きます。</li><li>ピザ中央ではなく黄色いターゲット円付近を狙い、円周へ均等に配置。</li><li>10個置くか8秒で終了。</li><li>狙い円への距離55% + 円周の均等さ45%で採点。</li>`;
+  }else if(index===66){
+    rules=`<li>パワーゲージが高速で往復します。</li><li>MAXの中央へ来た瞬間にSMASHをタップ。</li><li>モブくんが巨大ハンマーで地面を叩き、パワーに応じた衝撃波が走ります。</li><li>MAXぴったり=100点。</li>`;
+  }else if(index===67){
+    rules=`<li>モブくんが高所からバンジーで急降下。</li><li>地面ギリギリだと思った瞬間にSTOP。</li><li>地面から約8pxがPERFECT。早すぎるほど減点。</li><li>地面へ接触すると0点。</li>`;
+  }else if(index===68){
+    rules=`<li>10秒間の高速ウォータースライダー。</li><li>LEFT / RIGHTを押して、動く水色の安全レーンへ入り続けます。</li><li>コースは滑らかに左右へ曲がり、後半ほど速くなります。</li><li>安全レーンから大きく外れると壁へぶつかり減点。</li>`;
+  }else if(index===69){
+    rules=`<li>フライパンのパンケーキを指で下から上へ1回スワイプ。</li><li>上方向への速度、横ブレ、回転量で軌道が変化。</li><li>綺麗に1回転し、フライパン中央へ戻るほど高得点。</li>`;
+  }else if(index===70){
+    rules=`<li>中央の胴体を基準に、5秒で紙飛行機の左右の翼を自由に描きます。</li><li>左右の翼の広がり・長さ・対称性・胴体への接続を評価。</li><li>完成後に飛行し、最大100m。</li>`;
+  }else if(index===71){
+    rules=`<li>STARTからGOALへ5秒で指をなぞり、ドミノを配置。</li><li>黒い障害物へ置いたドミノは使えません。</li><li>終了後、START側から1枚ずつ倒れて連鎖。</li><li>ゴールへ到達すれば大きなボーナス。</li>`;
+  }else if(index===72){
+    rules=`<li>10秒間、次々に重りが出現します。</li><li>LEFT / RIGHTで重りをシーソーの左右どちらへ落とすか決定。</li><li>現在の傾きを見て反対側へ重りを置き、水平を維持。</li><li>限界まで傾くと終了。平均水平度で得点。</li>`;
+  }else if(index===73){
+    rules=`<li>ストーンを上方向へ1回だけスワイプ。</li><li>スワイプ速度で距離、横方向のブレでコースが決まります。</li><li>ハウス中央へ近いほど高得点。</li><li>中心に止まれば100点。</li>`;
+  }else if(index===74){
+    rules=`<li>画面を長押しして巨大シャボン玉を膨らませます。</li><li>指を離した時点の大きさが記録。</li><li>限界近くになるとシャボン玉が大きく震えます。</li><li>破裂直前が100点。限界を越えて破裂すると0点。</li>`;
+  }else if(index===75){
+    rules=`<li>最初に部屋の12個の物を覚えます。</li><li>一度隠れたあと、1ヶ所だけ別の物へ変化。</li><li>変わった物をタップ。</li><li>正解が速いほど高得点。間違えたら0点。</li>`;
+  }else if(index===76){
+    rules=`<li>10個の荷物がベルトコンベアを流れます。</li><li>上に表示された「禁止マーク」の荷物だけをタップ。</li><li>禁止荷物は全部で4個。</li><li>正解+25点、誤タップと見逃しは減点。</li>`;
+  }else if(index===77){
+    rules=`<li>左右の崖をつなぐ橋を5秒で1本描きます。</li><li>両岸の黄色いアンカーへつながることが重要。</li><li>急角度・ガタガタ・遠回りは耐久が下がります。</li><li>終了後モブくんが実際に橋を歩いて渡ります。</li>`;
+  }else if(index===78){
+    rules=`<li>5個の宝箱のうち、最初に100点の宝箱だけ光って開きます。</li><li>箱が閉じたあと高速シャッフル。</li><li>シャッフル終了後、100点だと思う宝箱を1つタップ。</li><li>他の宝箱にも20〜80点が入っています。</li>`;
+  }else if(index===79){
+    rules=`<li>0〜100点の床が並ぶ円形ルーレットが高速回転。</li><li>STOPをタップすると徐々に減速。</li><li>完全停止後、モブくんが矢印位置の床へジャンプ。</li><li>到達した床のポイントが記録。</li>`;
+  }else{
+    rules=`<li>地面の9マスに化石がランダムで埋まっています。</li><li>掘れるのは3ヶ所だけ。</li><li>0 / 10 / 30 / 50 / 75 / 100ポイントの化石があります。</li><li>3回の発掘ポイント合計で競います。</li>`;
   }
   screen.innerHTML=`
     <div class="game-head">
@@ -1497,7 +1568,24 @@ function humanReady(gameIndex,humanIndex){
     else if(gameIndex===60)startBalanceMob(p,humanIndex,runId);
     else if(gameIndex===61)startMobDice(p,humanIndex,runId);
     else if(gameIndex===62)startMobCombo(p,humanIndex,runId);
-    else startElectricMaze(p,humanIndex,runId);
+    else if(gameIndex===63)startElectricMaze(p,humanIndex,runId);
+    else if(gameIndex===64)startCardShop(p,humanIndex,runId);
+    else if(gameIndex===65)startPizzaChef(p,humanIndex,runId);
+    else if(gameIndex===66)startMobHammer(p,humanIndex,runId);
+    else if(gameIndex===67)startBungeeMob(p,humanIndex,runId);
+    else if(gameIndex===68)startWaterSlide(p,humanIndex,runId);
+    else if(gameIndex===69)startPancakeMob(p,humanIndex,runId);
+    else if(gameIndex===70)startPaperPlane(p,humanIndex,runId);
+    else if(gameIndex===71)startDominoMob(p,humanIndex,runId);
+    else if(gameIndex===72)startSeesawMob(p,humanIndex,runId);
+    else if(gameIndex===73)startCurlingMob(p,humanIndex,runId);
+    else if(gameIndex===74)startBubbleMob(p,humanIndex,runId);
+    else if(gameIndex===75)startChangeMob(p,humanIndex,runId);
+    else if(gameIndex===76)startBaggageMob(p,humanIndex,runId);
+    else if(gameIndex===77)startBridgeMob(p,humanIndex,runId);
+    else if(gameIndex===78)startTreasureMob(p,humanIndex,runId);
+    else if(gameIndex===79)startRouletteMob(p,humanIndex,runId);
+    else startExcavationMob(p,humanIndex,runId);
   },{once:true});
 }
 
@@ -18100,6 +18188,1872 @@ async function startMobCombo(p,humanIndex,runId){
   raf=requestAnimationFrame(frame);
 }
 
+
+// GAME 65 -------------------------------------------------
+
+async function startCardShop(p,humanIndex,runId){
+  gameFit();
+
+  const POOLS={
+    R:{rarity:'R',name:'レア',points:5,ids:["01","02","07","10","11","21"],chance:32,color:'#8bd3ff'},
+    SR:{rarity:'SR',name:'スーパーレア',points:8,ids:["04","05","19","20"],chance:24,color:'#79f1ff'},
+    SSR:{rarity:'SSR',name:'スーパースペシャルレア',points:10,ids:["12","15","16","22"],chance:20,color:'#ffe26c'},
+    UR:{rarity:'UR',name:'アルティメットレア',points:15,ids:["03","06","08","09"],chance:14,color:'#cb8dff'},
+    MOB:{rarity:'MOB',name:'モブアーティストレア',points:30,ids:["13","14","17","18"],chance:10,color:'#ff85ce'}
+  };
+
+  const CARD_NAMES={
+    "01":"お昼寝モブくん","02":"走るモブくん","03":"MCモブくん","04":"ハロウィンモブくん",
+    "05":"夏休みモブくん","06":"BBOYモブくん","07":"お勉強モブくん","08":"DJモブくん",
+    "09":"グラフィティモブくん","10":"ジャンプモブくん","11":"トレーニングモブくん","12":"パーティーモブくん",
+    "13":"ゲームモブくん","14":"どら焼き食べるモブくん","15":"音楽モブくん","16":"チルタイムモブくん",
+    "17":"みかんちゃんとモブくん","18":"わたあめ大好きモブくん","19":"クリスマスモブくん","20":"お正月モブくん",
+    "21":"お掃除モブくん","22":"お誕生日モブくん"
+  };
+
+  const order=["R","SR","SSR","UR","MOB"];
+
+  function drawOne(){
+    const roll=Math.random()*100;
+    let acc=0;
+    let chosen="R";
+    for(const rarity of order){
+      acc+=POOLS[rarity].chance;
+      if(roll<acc){
+        chosen=rarity;
+        break;
+      }
+    }
+    const pool=POOLS[chosen];
+    const id=pool.ids[randi(0,pool.ids.length-1)];
+    return {
+      id,
+      rarity:pool.rarity,
+      rarityName:pool.name,
+      points:pool.points,
+      color:pool.color,
+      name:CARD_NAMES[id]
+    };
+  }
+
+  const pulls=Array.from({length:6},()=>drawOne());
+  const totalPreview=pulls.reduce((s,c)=>s+c.points,0);
+  const hasMob=pulls.some(c=>c.rarity==="MOB");
+  const urPlusCount=pulls.filter(c=>c.rarity==="UR"||c.rarity==="MOB").length;
+  const godPull=hasMob || urPlusCount>=2 || totalPreview>=85;
+
+  screen.innerHTML=`<div class="cardshop-shell-v124">
+    <div class="game-head">
+      <div>
+        <span class="kicker">${esc(p.name)}</span>
+        <h2>モブくんカードショップ</h2>
+      </div>
+      <div class="game-badge">${playBadge(humanIndex)}</div>
+    </div>
+
+    <div class="cardshop-top-v124">
+      <div class="cardshop-chip-v124">1パック / 6枚入り</div>
+      <div class="cardshop-chip-v124">ランダム封入</div>
+      <div class="cardshop-chip-v124">${godPull ? '神引きの予感…!?' : '何が出るかな？'}</div>
+    </div>
+
+    <div class="cardshop-stage-v124 ${godPull?'god-pull-v124':''}">
+      <div class="shop-bg-top-v124"></div>
+      <div class="shop-shelf shelf-a-v124"></div>
+      <div class="shop-shelf shelf-b-v124"></div>
+      <div class="shop-shelf shelf-c-v124"></div>
+      <div id="cardShopSparkles" class="shop-sparkles-v124"></div>
+
+      <div id="godBanner" class="god-banner-v124" hidden>神引き！</div>
+
+      <div id="cardPackWrap" class="cardshop-pack-wrap-v124">
+        <div id="cardPack" class="cardshop-pack-v124 ${godPull?'god-aura-v124':''}">
+          <div class="pack-rainbow-v124"></div>
+          <div class="pack-shine-v124"></div>
+          <div class="pack-tear-v124"></div>
+          <div class="pack-mob-text-v124">MOB</div>
+          <div class="pack-title-v124">PARTY GAMES</div>
+          <div class="pack-sub-v124">CARD PACK</div>
+          <div class="pack-mob-mini-v124" style="background-image:url('icon/01.png')"></div>
+          <div class="pack-stars-v124">★ ★ ★</div>
+        </div>
+      </div>
+
+      <div id="cardRevealArea" class="card-reveal-area-v124"></div>
+
+      <div id="cardShopStatus" class="cardshop-status-v124">
+        中央のパックを開封して、6枚の合計ポイントを競え！
+      </div>
+
+      <button id="cardOpenBtn" class="primary bigbtn card-open-btn-v124">開封！</button>
+    </div>
+  </div>`;
+
+  const packWrap=document.getElementById('cardPackWrap');
+  const packEl=document.getElementById('cardPack');
+  const revealArea=document.getElementById('cardRevealArea');
+  const statusEl=document.getElementById('cardShopStatus');
+  const openBtn=document.getElementById('cardOpenBtn');
+  const sparkles=document.getElementById('cardShopSparkles');
+  const godBanner=document.getElementById('godBanner');
+
+  function rarityClass(r){ return `rarity-${r.toLowerCase()}-v124`; }
+
+  function playRaritySound(rarity){
+    const seq={
+      R:[460],
+      SR:[520,640],
+      SSR:[620,840,980],
+      UR:[690,870,1110,920],
+      MOB:[560,760,980,1240,1480,1760]
+    }[rarity]||[440];
+    seq.forEach((tone,i)=>setTimeout(()=>beep(tone,120+(i>1?40:0),0.04),i*90));
+  }
+
+  function spawnParticles(x,y,color,count=16,kind="star"){
+    const rect=revealArea.getBoundingClientRect();
+    for(let i=0;i<count;i++){
+      const p=document.createElement('i');
+      p.className=`card-particle-v124 ${kind==="ring"?'ring-v124':'star-v124'}`;
+      const angle=(Math.PI*2*i)/count + Math.random()*0.22;
+      const dist=48+Math.random()*70;
+      p.style.left=`${x-rect.left}px`;
+      p.style.top=`${y-rect.top}px`;
+      p.style.setProperty('--tx',`${Math.cos(angle)*dist}px`);
+      p.style.setProperty('--ty',`${Math.sin(angle)*dist}px`);
+      p.style.setProperty('--pc',color);
+      p.style.setProperty('--rot',`${randi(-220,220)}deg`);
+      revealArea.appendChild(p);
+      setTimeout(()=>p.remove(),900);
+    }
+  }
+
+  function fillAmbientSparkles(){
+    sparkles.innerHTML='';
+    for(let i=0;i<14;i++){
+      const s=document.createElement('i');
+      s.className='ambient-spark-v124';
+      s.style.left=`${6+Math.random()*88}%`;
+      s.style.top=`${8+Math.random()*66}%`;
+      s.style.animationDelay=`${Math.random()*2.4}s`;
+      s.style.animationDuration=`${2.4+Math.random()*2.2}s`;
+      sparkles.appendChild(s);
+    }
+  }
+  fillAmbientSparkles();
+
+  function makeCard(card,small=false,showBack=false){
+    const el=document.createElement('div');
+    el.className=`mob-card-v124 ${rarityClass(card.rarity)} ${small?'small-v124':''} ${showBack?'show-back-v124':''}`;
+    el.innerHTML=`
+      <div class="mob-card-flip-v124">
+        <div class="mob-card-face-v124 mob-card-front-v124">
+          <div class="mob-card-glow-v124"></div>
+          <div class="mob-card-inner-v124">
+            <div class="mob-card-top-v124">
+              <b>${card.rarity}</b>
+              <span>${card.points}pt</span>
+            </div>
+            <div class="mob-card-art-v124" style="background-image:url('card/${card.id}.png')"></div>
+            <div class="mob-card-name-v124">${esc(card.name)}</div>
+          </div>
+        </div>
+        <div class="mob-card-face-v124 mob-card-back-v124">
+          <div class="mob-card-back-inner-v124">
+            <div class="mob-card-back-logo-v124">MOB</div>
+            <div class="mob-card-back-sub-v124">PARTY CARD</div>
+            <div class="mob-card-back-mini-v124" style="background-image:url('icon/01.png')"></div>
+            <div class="mob-card-back-stars-v124">★ ★ ★</div>
+          </div>
+        </div>
+      </div>
+    `;
+    return el;
+  }
+
+  function showRarityBurst(card){
+    const burst=document.createElement('div');
+    burst.className=`rarity-burst-v124 ${rarityClass(card.rarity)}`;
+    burst.innerHTML=`<b>${card.rarity}</b><span>${card.rarityName}</span>`;
+    revealArea.appendChild(burst);
+    setTimeout(()=>burst.remove(),920);
+  }
+
+  function showGodBanner(){
+    godBanner.hidden=false;
+    godBanner.classList.remove('show-v124');
+    void godBanner.offsetWidth;
+    godBanner.classList.add('show-v124');
+    setTimeout(()=>{ godBanner.hidden=true; godBanner.classList.remove('show-v124'); },1400);
+  }
+
+  async function revealCards(){
+    if(!isGameRunValid(runId))return;
+    openBtn.disabled=true;
+    openBtn.style.display='none';
+
+    statusEl.textContent='パックを手に取った…';
+    packEl.classList.add('opening-v124');
+    beep(260,100,.03);
+    await wait(200); if(!isGameRunValid(runId))return;
+    beep(320,100,.03);
+    await wait(180); if(!isGameRunValid(runId))return;
+    statusEl.textContent=godPull ? '……虹色の輝き！？' : '開封準備中…';
+    beep(godPull?540:420,140,.04);
+    await wait(300); if(!isGameRunValid(runId))return;
+
+    if(godPull){
+      showGodBanner();
+      screenFlash('rgba(255,255,255,.18)',180);
+      screenFlash('rgba(255,120,214,.18)',220);
+    }else{
+      screenFlash('rgba(255,244,183,.22)',160);
+    }
+
+    packWrap.classList.add('burst-v124');
+    statusEl.textContent='パック開封！';
+    const packRect=packEl.getBoundingClientRect();
+    spawnParticles(packRect.left+packRect.width/2,packRect.top+packRect.height/2,hasMob?'#ff73c8':'#ffd76d',20);
+    await wait(420); if(!isGameRunValid(runId))return;
+    packWrap.style.display='none';
+
+    let total=0;
+    const miniTrack=document.createElement('div');
+    miniTrack.className='cardshop-mini-track-v124';
+    revealArea.appendChild(miniTrack);
+
+    for(let i=0;i<pulls.length;i++){
+      if(!isGameRunValid(runId))return;
+      const card=pulls[i];
+      statusEl.textContent=`${i+1}枚目…`;
+      const holder=document.createElement('div');
+      holder.className='card-reveal-one-v124';
+      const bigCard=makeCard(card,false,true);
+      holder.appendChild(bigCard);
+      revealArea.appendChild(holder);
+
+      await wait(240); if(!isGameRunValid(runId))return;
+      statusEl.textContent=`${i+1}枚目… ${card.rarity} ${card.rarityName}！`;
+      bigCard.classList.add('flip-now-v124');
+      playRaritySound(card.rarity);
+      showRarityBurst(card);
+
+      const br=bigCard.getBoundingClientRect();
+      spawnParticles(br.left+br.width/2,br.top+br.height/2,card.color,card.rarity==="MOB"?22:card.rarity==="UR"?18:14);
+
+      if(card.rarity==="SR")screenFlash('rgba(122,212,255,.18)',130);
+      if(card.rarity==="SSR")screenFlash('rgba(255,230,110,.20)',145);
+      if(card.rarity==="UR")screenFlash('rgba(199,132,255,.22)',165);
+      if(card.rarity==="MOB"){
+        screenFlash('rgba(255,128,207,.23)',180);
+        screenFlash('rgba(111,225,255,.16)',220);
+        showGodBanner();
+      }
+
+      total+=card.points;
+      const mini=makeCard(card,true,false);
+      miniTrack.appendChild(mini);
+
+      await wait(card.rarity==="MOB" ? 1050 : card.rarity==="UR" ? 920 : card.rarity==="SSR" ? 820 : 700);
+      if(!isGameRunValid(runId))return;
+
+      holder.classList.add('leaving-v124');
+      await wait(230); if(!isGameRunValid(runId))return;
+      holder.remove();
+    }
+
+    state.records.cardShop[p.id]=total;
+
+    revealArea.innerHTML='';
+    const finalWrap=document.createElement('div');
+    finalWrap.className='cardshop-final-v124';
+    finalWrap.innerHTML=`
+      <div class="cardshop-final-title-v124">${hasMob?'MOB排出！':godPull?'神引き！':'開封結果'}</div>
+      <div class="cardshop-final-grid-v124"></div>
+      <div class="cardshop-total-v124">合計 ${total} ポイント！</div>
+    `;
+    revealArea.appendChild(finalWrap);
+
+    const grid=finalWrap.querySelector('.cardshop-final-grid-v124');
+    pulls.forEach(card=>grid.appendChild(makeCard(card,true,false)));
+
+    statusEl.textContent=hasMob ? 'MOBレア排出！ 合計ポイントを確認！' : `合計${total}ポイント！`;
+
+    if(godPull){
+      showGodBanner();
+      spawnParticles(
+        finalWrap.getBoundingClientRect().left+finalWrap.getBoundingClientRect().width/2,
+        finalWrap.getBoundingClientRect().top+34,
+        hasMob?'#ff73c8':'#ffe17b',
+        24
+      );
+    }
+
+    beep(total>=100 ? 1260 : total>=80 ? 1020 : total>=60 ? 820 : 560,220,.05);
+    await wait(1650);
+    if(!isGameRunValid(runId))return;
+
+    recordScreen(
+      64,p,humanIndex,
+      `${total}<small> POINT</small>`,
+      '1パック6枚の合計ポイント'
+    );
+  }
+
+  openBtn.addEventListener('click',revealCards,{once:true});
+}
+
+
+// =========================================================
+// V10.25 NEW MINI GAMES 66-81
+// =========================================================
+
+// GAME 66 — モブくんピザ職人
+async function startPizzaChef(p,humanIndex,runId){
+  gameFit();
+
+  const toppings=["🍅","🧀","🫑","🍄","🫒","🌽","🧅","🥓","🍅","🧀"];
+  const placed=[];
+  let active=false;
+  let finished=false;
+  let startTime=0;
+  let raf=null;
+
+  screen.innerHTML=`<div class="v125-shell">
+    <div class="game-head"><div><span class="kicker">${esc(p.name)}</span><h2>モブくんピザ職人</h2></div><div class="game-badge">${playBadge(humanIndex)}</div></div>
+    <div class="v125-hud"><div><span>TIME</span><b id="pizzaTime">8.00</b></div><div><span>TOPPING</span><b id="pizzaCount">0 / 10</b></div></div>
+    <div class="pizza-stage-v125">
+      <div id="pizzaSpin" class="pizza-spin-v125">
+        <div id="pizza" class="pizza-v125"><div class="pizza-ring-v125"></div></div>
+      </div>
+      <div id="pizzaNext" class="pizza-next-v125">NEXT ${toppings[0]}</div>
+      <div class="v125-message">黄色い円の近くへ、できるだけ均等に置こう！</div>
+    </div>
+  </div>`;
+
+  const pizza=document.getElementById("pizza");
+  const timeEl=document.getElementById("pizzaTime");
+  const countEl=document.getElementById("pizzaCount");
+  const nextEl=document.getElementById("pizzaNext");
+
+  function scorePizza(){
+    if(!placed.length)return 0;
+    const R=pizza.clientWidth/2;
+    const targetR=R*.52;
+    const center=R;
+
+    const radial=placed.map(q=>
+      100-clamp(
+        Math.abs(
+          Math.hypot(q.x-center,q.y-center)-targetR
+        )/(R*.45)*100,
+        0,100
+      )
+    );
+    const radialScore=radial.reduce((a,b)=>a+b,0)/radial.length;
+
+    const angles=placed.map(q=>{
+      let a=Math.atan2(q.y-center,q.x-center);
+      if(a<0)a+=Math.PI*2;
+      return a;
+    }).sort((a,b)=>a-b);
+
+    let evenScore=0;
+    if(angles.length>=4){
+      const ideal=Math.PI*2/angles.length;
+      const gaps=angles.map((a,i)=>{
+        const b=i===angles.length-1?angles[0]+Math.PI*2:angles[i+1];
+        return b-a;
+      });
+      const avgErr=gaps.reduce((s,g)=>s+Math.abs(g-ideal),0)/gaps.length;
+      evenScore=clamp(100-avgErr/ideal*90,0,100);
+    }else{
+      evenScore=angles.length*12;
+    }
+
+    return clamp(Math.round(radialScore*.55+evenScore*.45),0,100);
+  }
+
+  function finish(){
+    if(finished)return;
+    finished=true;
+    active=false;
+    if(raf)cancelAnimationFrame(raf);
+
+    const score=scorePizza();
+    state.records.pizzaChef[p.id]=score;
+    pizza.classList.add("pizza-finish-v125");
+    nextEl.textContent=`${score} POINT!`;
+    beep(score>=85?980:score>=60?720:480,170,.04);
+
+    setTimeout(()=>{
+      if(isGameRunValid(runId)){
+        recordScreen(65,p,humanIndex,`${score}<small>pt</small>`,"トッピング配置スコア");
+      }
+    },850);
+  }
+
+  pizza.addEventListener("pointerdown",e=>{
+    if(!active||finished||placed.length>=10)return;
+    e.preventDefault();
+
+    const rect=pizza.getBoundingClientRect();
+    const x=e.clientX-rect.left;
+    const y=e.clientY-rect.top;
+    const R=rect.width/2;
+    const d=Math.hypot(x-R,y-R);
+    if(d>R*.91)return;
+
+    const icon=toppings[placed.length];
+    placed.push({x,y});
+
+    const t=document.createElement("span");
+    t.className="pizza-topping-v125";
+    t.textContent=icon;
+    t.style.left=`${x}px`;
+    t.style.top=`${y}px`;
+    pizza.appendChild(t);
+
+    countEl.textContent=`${placed.length} / 10`;
+    nextEl.textContent=placed.length<10?`NEXT ${toppings[placed.length]}`:"DONE!";
+    beep(430+placed.length*24,38,.012);
+
+    if(placed.length>=10)finish();
+  },{passive:false});
+
+  if(!(await countdown("PIZZA",runId,{transparent:true})))return;
+  active=true;
+  startTime=performance.now();
+
+  function frame(now){
+    if(!active||finished||!isGameRunValid(runId))return;
+    const rem=8000-(now-startTime);
+    timeEl.textContent=(Math.max(0,rem)/1000).toFixed(2);
+    if(rem<=0){ finish(); return; }
+    raf=requestAnimationFrame(frame);
+  }
+  raf=requestAnimationFrame(frame);
+}
+
+// GAME 67 — モブくんハンマー！
+async function startMobHammer(p,humanIndex,runId){
+  gameFit();
+
+  let active=false;
+  let finished=false;
+  let start=0;
+  let raf=null;
+  let position=.18;
+
+  screen.innerHTML=`<div class="v125-shell">
+    <div class="game-head"><div><span class="kicker">${esc(p.name)}</span><h2>モブくんハンマー！</h2></div><div class="game-badge">${playBadge(humanIndex)}</div></div>
+    <div class="hammer-stage-v125">
+      <div class="hammer-mob-v125" style="background-image:url('icon/01.png')"><i></i></div>
+      <div id="hammerGround" class="hammer-ground-v125"><span></span></div>
+      <div class="hammer-gauge-v125">
+        <div class="hammer-max-v125">MAX</div>
+        <i id="hammerNeedle"></i>
+      </div>
+      <button id="hammerBtn" class="primary hammer-btn-v125">SMASH!</button>
+      <div id="hammerMsg" class="v125-message">MAX中央で叩け！</div>
+    </div>
+  </div>`;
+
+  const needle=document.getElementById("hammerNeedle");
+  const btn=document.getElementById("hammerBtn");
+  const ground=document.getElementById("hammerGround");
+  const msg=document.getElementById("hammerMsg");
+
+  btn.addEventListener("pointerdown",e=>{
+    if(!active||finished)return;
+    e.preventDefault();
+    finished=true;
+    active=false;
+    if(raf)cancelAnimationFrame(raf);
+
+    const score=clamp(Math.round(100-Math.abs(position-.5)*200),0,100);
+    state.records.mobHammer[p.id]=score;
+
+    document.querySelector(".hammer-mob-v125").classList.add("smash-v125");
+    ground.style.setProperty("--shock",`${18+score*.78}%`);
+    ground.classList.add("shock-v125");
+    msg.textContent=score>=95?"PERFECT SMASH!!":score>=75?"GREAT SMASH!":`${score} POWER`;
+    beep(240+score*7,170,.05);
+
+    setTimeout(()=>{
+      if(isGameRunValid(runId)){
+        recordScreen(66,p,humanIndex,`${score}<small>pt</small>`,"ハンマーパワー");
+      }
+    },1050);
+  },{passive:false});
+
+  if(!(await countdown("HAMMER",runId,{transparent:true})))return;
+  active=true;
+  start=performance.now();
+
+  function frame(now){
+    if(!active||finished||!isGameRunValid(runId))return;
+    const t=(now-start)/1000;
+    position=.5+.5*Math.sin(t*5.7-Math.PI/2);
+    needle.style.left=`${position*100}%`;
+    raf=requestAnimationFrame(frame);
+  }
+  raf=requestAnimationFrame(frame);
+}
+
+// GAME 68 — モブくんバンジー
+async function startBungeeMob(p,humanIndex,runId){
+  gameFit();
+
+  let active=false;
+  let finished=false;
+  let start=0;
+  let raf=null;
+  const groundY=382;
+  const startY=48;
+  let mobY=startY;
+
+  screen.innerHTML=`<div class="v125-shell">
+    <div class="game-head"><div><span class="kicker">${esc(p.name)}</span><h2>モブくんバンジー</h2></div><div class="game-badge">${playBadge(humanIndex)}</div></div>
+    <div id="bungeeStage" class="bungee-stage-v125">
+      <div class="bungee-platform-v125"></div>
+      <div id="bungeeCord" class="bungee-cord-v125"></div>
+      <div id="bungeeMob" class="bungee-mob-v125" style="background-image:url('icon/01.png')"></div>
+      <div class="bungee-ground-v125"></div>
+      <div id="bungeeClear" class="bungee-clear-v125">---</div>
+      <button id="bungeeStop" class="primary bungee-stop-v125">STOP!</button>
+    </div>
+  </div>`;
+
+  const mob=document.getElementById("bungeeMob");
+  const cord=document.getElementById("bungeeCord");
+  const stop=document.getElementById("bungeeStop");
+  const clearEl=document.getElementById("bungeeClear");
+
+  function finish(crash=false){
+    if(finished)return;
+    finished=true;
+    active=false;
+    if(raf)cancelAnimationFrame(raf);
+
+    const clearance=Math.max(0,groundY-(mobY+31));
+    const score=crash?0:clamp(Math.round(100-Math.abs(clearance-8)*1.35),0,100);
+    state.records.bungeeMob[p.id]=score;
+
+    if(crash){
+      mob.classList.add("bungee-crash-v125");
+      clearEl.textContent="GROUND HIT! 0pt";
+      beep(120,190,.05);
+    }else{
+      mob.classList.add("bungee-rebound-v125");
+      clearEl.textContent=`地面まで ${Math.round(clearance)}px / ${score}pt`;
+      beep(score>=90?1000:score>=65?760:480,150,.04);
+    }
+
+    setTimeout(()=>{
+      if(isGameRunValid(runId)){
+        recordScreen(67,p,humanIndex,`${score}<small>pt</small>`,crash?"GROUND HIT":`地面まで約${Math.round(clearance)}px`);
+      }
+    },1000);
+  }
+
+  stop.addEventListener("pointerdown",e=>{
+    e.preventDefault();
+    if(!active||finished)return;
+    finish(false);
+  },{passive:false});
+
+  if(!(await countdown("BUNGEE",runId,{transparent:true})))return;
+  active=true;
+  start=performance.now();
+
+  function frame(now){
+    if(!active||finished||!isGameRunValid(runId))return;
+    const t=(now-start)/1000;
+    const progress=clamp(Math.pow(t/3.65,1.34),0,1);
+    mobY=startY+(groundY-startY)*progress;
+    mob.style.top=`${mobY}px`;
+    cord.style.height=`${mobY+4}px`;
+    const clearance=groundY-(mobY+31);
+    clearEl.textContent=clearance>0?`GROUND ${Math.round(clearance)}px`:"GROUND 0px";
+    if(clearance<=0){finish(true);return;}
+    raf=requestAnimationFrame(frame);
+  }
+  raf=requestAnimationFrame(frame);
+}
+
+// GAME 69 — モブくんウォータースライダー
+async function startWaterSlide(p,humanIndex,runId){
+  gameFit();
+
+  let dir=0;
+  let x=50;
+  let active=false;
+  let finished=false;
+  let start=0;
+  let last=0;
+  let raf=null;
+  let errorSum=0;
+  let samples=0;
+  let hits=0;
+  let hitLock=0;
+
+  screen.innerHTML=`<div class="v125-shell">
+    <div class="game-head"><div><span class="kicker">${esc(p.name)}</span><h2>モブくんウォータースライダー</h2></div><div class="game-badge">${playBadge(humanIndex)}</div></div>
+    <div class="v125-hud"><div><span>TIME</span><b id="slideTime">10.00</b></div><div><span>WALL</span><b id="slideHits">0</b></div></div>
+    <div id="slideStage" class="slide-stage-v125">
+      <div id="slideLane" class="slide-lane-v125"></div>
+      <div id="slideMob" class="slide-mob-v125" style="background-image:url('icon/01.png')"></div>
+      <div class="slide-speed-v125"></div>
+    </div>
+    <div class="slide-controls-v125"><button id="slideLeft">◀ LEFT</button><button id="slideRight">RIGHT ▶</button></div>
+  </div>`;
+
+  const lane=document.getElementById("slideLane");
+  const mob=document.getElementById("slideMob");
+  const timeEl=document.getElementById("slideTime");
+  const hitEl=document.getElementById("slideHits");
+
+  function bind(btn,value){
+    btn.addEventListener("pointerdown",e=>{e.preventDefault();dir=value;},{passive:false});
+    btn.addEventListener("pointerup",e=>{e.preventDefault();if(dir===value)dir=0;},{passive:false});
+    btn.addEventListener("pointercancel",()=>{if(dir===value)dir=0;});
+  }
+  bind(document.getElementById("slideLeft"),-1);
+  bind(document.getElementById("slideRight"),1);
+
+  function finish(){
+    if(finished)return;
+    finished=true;
+    active=false;
+    if(raf)cancelAnimationFrame(raf);
+
+    const avg=samples?errorSum/samples:40;
+    const score=clamp(Math.round(100-avg*1.55-hits*7),0,100);
+    state.records.waterSlide[p.id]=score;
+    mob.classList.add("slide-finish-v125");
+    beep(score>=85?980:score>=60?720:460,180,.04);
+
+    setTimeout(()=>{
+      if(isGameRunValid(runId)){
+        recordScreen(68,p,humanIndex,`${score}<small>pt</small>`,`壁接触 ${hits}回`);
+      }
+    },900);
+  }
+
+  if(!(await countdown("SLIDE",runId,{transparent:true})))return;
+  active=true;
+  start=last=performance.now();
+
+  function frame(now){
+    if(!active||finished||!isGameRunValid(runId))return;
+    const dt=Math.min(.04,(now-last)/1000);
+    last=now;
+    const elapsed=(now-start)/1000;
+    const center=50+Math.sin(elapsed*1.6)*21+Math.sin(elapsed*.63+1.2)*8;
+    const speed=43+elapsed*2.6;
+    x=clamp(x+dir*speed*dt,6,94);
+
+    const error=Math.abs(x-center);
+    errorSum+=error;
+    samples++;
+
+    lane.style.left=`${center}%`;
+    mob.style.left=`${x}%`;
+
+    if(error>18&&now>hitLock){
+      hits++;
+      hitLock=now+520;
+      hitEl.textContent=hits;
+      mob.classList.remove("slide-hit-v125");
+      void mob.offsetWidth;
+      mob.classList.add("slide-hit-v125");
+      beep(160,80,.025);
+    }
+
+    timeEl.textContent=Math.max(0,10-elapsed).toFixed(2);
+    if(elapsed>=10){finish();return;}
+    raf=requestAnimationFrame(frame);
+  }
+  raf=requestAnimationFrame(frame);
+}
+
+// GAME 70 — モブくん巨大パンケーキ
+async function startPancakeMob(p,humanIndex,runId){
+  gameFit();
+
+  let down=null;
+  let active=false;
+  let finished=false;
+
+  screen.innerHTML=`<div class="v125-shell">
+    <div class="game-head"><div><span class="kicker">${esc(p.name)}</span><h2>モブくん巨大パンケーキ</h2></div><div class="game-badge">${playBadge(humanIndex)}</div></div>
+    <div id="pancakeStage" class="pancake-stage-v125">
+      <div class="pancake-mob-v125" style="background-image:url('icon/01.png')"></div>
+      <div id="pancake" class="pancake-v125"><i></i></div>
+      <div id="pan" class="pan-v125"></div>
+      <div id="pancakeMsg" class="v125-message">フライパンから上へ素早くスワイプ！</div>
+    </div>
+  </div>`;
+
+  const stage=document.getElementById("pancakeStage");
+  const cake=document.getElementById("pancake");
+  const msg=document.getElementById("pancakeMsg");
+
+  stage.addEventListener("pointerdown",e=>{
+    if(!active||finished)return;
+    e.preventDefault();
+    down={x:e.clientX,y:e.clientY,t:performance.now(),id:e.pointerId};
+    try{stage.setPointerCapture(e.pointerId)}catch(_){}
+  },{passive:false});
+
+  stage.addEventListener("pointerup",e=>{
+    if(!active||finished||!down||e.pointerId!==down.id)return;
+    e.preventDefault();
+
+    const dt=Math.max(80,performance.now()-down.t);
+    const dx=e.clientX-down.x;
+    const dy=e.clientY-down.y;
+    down=null;
+
+    if(dy>-55){
+      msg.textContent="もっと下から上へ！";
+      beep(180,90,.02);
+      return;
+    }
+
+    finished=true;
+    active=false;
+
+    const speed=(-dy)/dt;
+    const speedScore=clamp(100-Math.abs(speed-1.05)/.85*85,0,100);
+    const straightScore=clamp(100-Math.abs(dx)/1.25,0,100);
+    const landingX=clamp(dx*1.05,-115,115);
+    const landingScore=clamp(100-Math.abs(landingX)/1.15,0,100);
+    const score=clamp(Math.round(speedScore*.45+straightScore*.25+landingScore*.30),0,100);
+
+    cake.style.setProperty("--flip-x",`${landingX}px`);
+    cake.style.setProperty("--flip-h",`${Math.min(250,120+speed*90)}px`);
+    cake.style.setProperty("--flip-r",`${300+speed*115}deg`);
+    cake.classList.add("pancake-flip-v125");
+
+    state.records.pancakeMob[p.id]=score;
+    msg.textContent=score>=90?"PERFECT FLIP!!":score>=70?"NICE FLIP!":`${score} POINT`;
+    beep(score>=90?980:score>=70?760:480,180,.04);
+
+    setTimeout(()=>{
+      if(isGameRunValid(runId)){
+        recordScreen(69,p,humanIndex,`${score}<small>pt</small>`,"パンケーキフリップ");
+      }
+    },1300);
+  },{passive:false});
+
+  if(!(await countdown("PANCAKE",runId,{transparent:true})))return;
+  active=true;
+}
+
+// GAME 71 — モブくん紙飛行機研究所
+async function startPaperPlane(p,humanIndex,runId){
+  gameFit();
+
+  let active=false;
+  let drawing=false;
+  let strokes=[];
+  let current=null;
+  let start=0;
+  let raf=null;
+  let finished=false;
+
+  screen.innerHTML=`<div class="v125-shell">
+    <div class="game-head"><div><span class="kicker">${esc(p.name)}</span><h2>モブくん紙飛行機研究所</h2></div><div class="game-badge">${playBadge(humanIndex)}</div></div>
+    <div class="v125-hud"><div><span>DRAW</span><b id="planeTime">5.00</b></div><div><span>RANGE</span><b>MAX 100m</b></div></div>
+    <div id="planeStage" class="plane-stage-v125">
+      <svg id="planeSvg" viewBox="0 0 360 390" preserveAspectRatio="none">
+        <line x1="180" y1="70" x2="180" y2="320" class="plane-body-v125"/>
+        <circle cx="180" cy="190" r="8" class="plane-joint-v125"/>
+      </svg>
+      <div id="planeFly" class="plane-fly-v125" hidden>✈</div>
+      <div id="planeMsg" class="v125-message">左右の翼を描こう！</div>
+    </div>
+  </div>`;
+
+  const stage=document.getElementById("planeStage");
+  const svg=document.getElementById("planeSvg");
+  const timeEl=document.getElementById("planeTime");
+  const msg=document.getElementById("planeMsg");
+  const fly=document.getElementById("planeFly");
+
+  function local(e){
+    const r=stage.getBoundingClientRect();
+    return {
+      x:clamp((e.clientX-r.left)/r.width*360,0,360),
+      y:clamp((e.clientY-r.top)/r.height*390,0,390)
+    };
+  }
+
+  function addPolyline(stroke){
+    const pl=document.createElementNS("http://www.w3.org/2000/svg","polyline");
+    pl.setAttribute("class","plane-wing-v125");
+    pl.setAttribute("points",stroke.map(q=>`${q.x},${q.y}`).join(" "));
+    svg.appendChild(pl);
+    return pl;
+  }
+
+  stage.addEventListener("pointerdown",e=>{
+    if(!active||finished)return;
+    e.preventDefault();
+    drawing=true;
+    current=[local(e)];
+    strokes.push(current);
+    current._el=addPolyline(current);
+    try{stage.setPointerCapture(e.pointerId)}catch(_){}
+  },{passive:false});
+
+  stage.addEventListener("pointermove",e=>{
+    if(!drawing||!active||finished)return;
+    e.preventDefault();
+    const pt=local(e);
+    const last=current[current.length-1];
+    if(Math.hypot(pt.x-last.x,pt.y-last.y)<4)return;
+    current.push(pt);
+    current._el.setAttribute("points",current.map(q=>`${q.x},${q.y}`).join(" "));
+  },{passive:false});
+
+  const stopDraw=()=>{drawing=false;current=null;};
+  stage.addEventListener("pointerup",stopDraw);
+  stage.addEventListener("pointercancel",stopDraw);
+
+  function scorePlane(){
+    const pts=strokes.flatMap(s=>s.filter(q=>q&&typeof q.x==="number"));
+    if(pts.length<8)return 0;
+    const left=pts.filter(q=>q.x<180);
+    const right=pts.filter(q=>q.x>180);
+    if(!left.length||!right.length)return 12;
+
+    const spreadL=180-Math.min(...left.map(q=>q.x));
+    const spreadR=Math.max(...right.map(q=>q.x))-180;
+    const spread=clamp((spreadL+spreadR)/230*100,0,100);
+    const symmetry=clamp(100-Math.abs(spreadL-spreadR)/120*100,0,100);
+
+    const lenSide=arr=>{
+      let len=0;
+      for(const s of strokes){
+        for(let i=1;i<s.length;i++){
+          const a=s[i-1],b=s[i];
+          if((a.x<180)===(b.x<180) && (arr==="L"?a.x<180:a.x>180)){
+            len+=Math.hypot(b.x-a.x,b.y-a.y);
+          }
+        }
+      }
+      return len;
+    };
+    const ll=lenSide("L"),lr=lenSide("R");
+    const lengthScore=clamp((ll+lr)/650*100,0,100);
+    const lengthBalance=clamp(100-Math.abs(ll-lr)/Math.max(80,ll+lr)*160,0,100);
+    const connect=pts.filter(q=>Math.abs(q.x-180)<24).length;
+    const connectScore=clamp(connect/7*100,0,100);
+
+    return clamp(Math.round(
+      spread*.25+
+      symmetry*.25+
+      lengthScore*.20+
+      lengthBalance*.15+
+      connectScore*.15
+    ),0,100);
+  }
+
+  async function finish(){
+    if(finished)return;
+    finished=true;
+    active=false;
+    drawing=false;
+    if(raf)cancelAnimationFrame(raf);
+
+    const distance=scorePlane();
+    state.records.paperPlane[p.id]=distance;
+    msg.textContent=`発射！ ${distance}m`;
+
+    fly.hidden=false;
+    fly.style.setProperty("--plane-distance",`${distance}`);
+    fly.classList.add("plane-launch-v125");
+    beep(520,80,.025);
+    setTimeout(()=>beep(780+distance*2,130,.035),300);
+
+    await wait(1500);
+    if(isGameRunValid(runId)){
+      recordScreen(70,p,humanIndex,`${distance}<small>m</small>`,"紙飛行機の飛距離");
+    }
+  }
+
+  if(!(await countdown("DRAW WINGS",runId,{transparent:true})))return;
+  active=true;
+  start=performance.now();
+
+  function frame(now){
+    if(!active||finished||!isGameRunValid(runId))return;
+    const rem=5000-(now-start);
+    timeEl.textContent=(Math.max(0,rem)/1000).toFixed(2);
+    if(rem<=0){finish();return;}
+    raf=requestAnimationFrame(frame);
+  }
+  raf=requestAnimationFrame(frame);
+}
+
+// GAME 72 — モブくんドミノ職人
+async function startDominoMob(p,humanIndex,runId){
+  gameFit();
+
+  let active=false;
+  let drawing=false;
+  let points=[];
+  let lastPoint=null;
+  let start=0;
+  let raf=null;
+  let finished=false;
+
+  screen.innerHTML=`<div class="v125-shell">
+    <div class="game-head"><div><span class="kicker">${esc(p.name)}</span><h2>モブくんドミノ職人</h2></div><div class="game-badge">${playBadge(humanIndex)}</div></div>
+    <div class="v125-hud"><div><span>DRAW</span><b id="dominoTime">5.00</b></div><div><span>DOMINO</span><b id="dominoCount">0</b></div></div>
+    <div id="dominoStage" class="domino-stage-v125">
+      <div class="domino-start-v125">START</div>
+      <div class="domino-goal-v125">GOAL</div>
+      <div class="domino-block-v125 b1"></div><div class="domino-block-v125 b2"></div><div class="domino-block-v125 b3"></div>
+      <div id="dominoLayer" class="domino-layer-v125"></div>
+      <div id="dominoMsg" class="v125-message">障害物を避けてGOALへ！</div>
+    </div>
+  </div>`;
+
+  const stage=document.getElementById("dominoStage");
+  const layer=document.getElementById("dominoLayer");
+  const timeEl=document.getElementById("dominoTime");
+  const countEl=document.getElementById("dominoCount");
+  const msg=document.getElementById("dominoMsg");
+
+  function local(e){
+    const r=stage.getBoundingClientRect();
+    return {x:e.clientX-r.left,y:e.clientY-r.top};
+  }
+
+  function blocked(pt){
+    const r=stage.getBoundingClientRect();
+    const blocks=[
+      {x:r.width*.29,y:r.height*.18,w:50,h:105},
+      {x:r.width*.54,y:r.height*.55,w:55,h:110},
+      {x:r.width*.74,y:r.height*.22,w:48,h:105}
+    ];
+    return blocks.some(b=>pt.x>b.x&&pt.x<b.x+b.w&&pt.y>b.y&&pt.y<b.y+b.h);
+  }
+
+  function addDomino(pt){
+    if(points.length>=55||blocked(pt))return;
+    const d=document.createElement("i");
+    d.className="domino-piece-v125";
+    d.style.left=`${pt.x}px`;
+    d.style.top=`${pt.y}px`;
+
+    if(points.length){
+      const a=points[points.length-1];
+      d.style.transform=`translate(-50%,-100%) rotate(${Math.atan2(pt.y-a.y,pt.x-a.x)*180/Math.PI+90}deg)`;
+    }
+    layer.appendChild(d);
+    points.push({...pt,el:d});
+    countEl.textContent=points.length;
+    beep(330+points.length%5*30,10,.002);
+  }
+
+  stage.addEventListener("pointerdown",e=>{
+    if(!active||finished)return;
+    e.preventDefault();
+    drawing=true;
+    const pt=local(e);
+    lastPoint=pt;
+    addDomino(pt);
+    try{stage.setPointerCapture(e.pointerId)}catch(_){}
+  },{passive:false});
+
+  stage.addEventListener("pointermove",e=>{
+    if(!drawing||!active||finished)return;
+    e.preventDefault();
+    const pt=local(e);
+    if(!lastPoint||Math.hypot(pt.x-lastPoint.x,pt.y-lastPoint.y)>=19){
+      addDomino(pt);
+      lastPoint=pt;
+    }
+  },{passive:false});
+
+  const stop=()=>{drawing=false;lastPoint=null;};
+  stage.addEventListener("pointerup",stop);
+  stage.addEventListener("pointercancel",stop);
+
+  async function finish(){
+    if(finished)return;
+    finished=true;
+    active=false;
+    drawing=false;
+    if(raf)cancelAnimationFrame(raf);
+
+    const r=stage.getBoundingClientRect();
+    const startAnchor={x:32,y:r.height*.78};
+    const goal={x:r.width-34,y:r.height*.24};
+
+    let chain=0;
+    if(points.length && Math.hypot(points[0].x-startAnchor.x,points[0].y-startAnchor.y)<68){
+      chain=1;
+      for(let i=1;i<points.length;i++){
+        if(Math.hypot(points[i].x-points[i-1].x,points[i].y-points[i-1].y)>39)break;
+        chain=i+1;
+      }
+    }
+
+    const valid=points.slice(0,chain);
+    const last=valid[valid.length-1];
+    const reach=last?clamp(last.x/(r.width-40),0,1):0;
+    const goalDist=last?Math.hypot(last.x-goal.x,last.y-goal.y):999;
+    const goalBonus=goalDist<58?25:0;
+    const continuity=points.length?chain/points.length:0;
+    const score=clamp(Math.round(reach*60+continuity*15+goalBonus),0,100);
+    state.records.dominoMob[p.id]=score;
+
+    valid.forEach((pt,i)=>{
+      setTimeout(()=>{
+        if(pt.el?.isConnected){
+          pt.el.classList.add("domino-fall-v125");
+          if(i%3===0)beep(350+i*5,18,.003);
+        }
+      },i*48);
+    });
+
+    msg.textContent=goalBonus?`GOAL! ${score}pt`:`連鎖 ${chain}/${points.length} / ${score}pt`;
+    await wait(Math.min(2400,700+chain*48));
+    if(isGameRunValid(runId)){
+      recordScreen(71,p,humanIndex,`${score}<small>pt</small>`,goalBonus?"GOAL到達":"連鎖途中でSTOP");
+    }
+  }
+
+  if(!(await countdown("DOMINO",runId,{transparent:true})))return;
+  active=true;
+  start=performance.now();
+
+  function frame(now){
+    if(!active||finished||!isGameRunValid(runId))return;
+    const rem=5000-(now-start);
+    timeEl.textContent=(Math.max(0,rem)/1000).toFixed(2);
+    if(rem<=0){finish();return;}
+    raf=requestAnimationFrame(frame);
+  }
+  raf=requestAnimationFrame(frame);
+}
+
+// GAME 73 — モブくん巨大シーソー
+async function startSeesawMob(p,humanIndex,runId){
+  gameFit();
+
+  let active=false;
+  let finished=false;
+  let start=0;
+  let raf=null;
+  let torque=rand(-.7,.7);
+  let average=0;
+  let samples=0;
+  let currentWeight=randi(1,3);
+  let nextReady=true;
+  let placed=0;
+
+  screen.innerHTML=`<div class="v125-shell">
+    <div class="game-head"><div><span class="kicker">${esc(p.name)}</span><h2>モブくん巨大シーソー</h2></div><div class="game-badge">${playBadge(humanIndex)}</div></div>
+    <div class="v125-hud"><div><span>TIME</span><b id="seesawTime">10.00</b></div><div><span>NEXT</span><b id="seesawWeight">${currentWeight}kg</b></div></div>
+    <div class="seesaw-stage-v125">
+      <div id="seesawBeam" class="seesaw-beam-v125"><div class="seesaw-mob-v125" style="background-image:url('icon/01.png')"></div></div>
+      <div class="seesaw-base-v125"></div>
+      <div id="seesawFloat" class="seesaw-float-v125">${currentWeight}kg</div>
+      <div id="seesawMsg" class="v125-message">傾いた側と逆へ重りを置け！</div>
+    </div>
+    <div class="seesaw-controls-v125"><button id="seesawLeft">◀ LEFT</button><button id="seesawRight">RIGHT ▶</button></div>
+  </div>`;
+
+  const beam=document.getElementById("seesawBeam");
+  const timeEl=document.getElementById("seesawTime");
+  const weightEl=document.getElementById("seesawWeight");
+  const floatEl=document.getElementById("seesawFloat");
+  const msg=document.getElementById("seesawMsg");
+
+  function choose(side){
+    if(!active||finished||!nextReady)return;
+    nextReady=false;
+    torque+=side*currentWeight*1.10;
+    placed++;
+
+    floatEl.textContent=`${currentWeight}kg`;
+    floatEl.classList.remove("drop-left-v125","drop-right-v125");
+    void floatEl.offsetWidth;
+    floatEl.classList.add(side<0?"drop-left-v125":"drop-right-v125");
+    beep(420+currentWeight*70,55,.018);
+
+    setTimeout(()=>{
+      if(!isGameRunValid(runId)||finished)return;
+      currentWeight=randi(1,3);
+      weightEl.textContent=`${currentWeight}kg`;
+      floatEl.textContent=`${currentWeight}kg`;
+      floatEl.classList.remove("drop-left-v125","drop-right-v125");
+      nextReady=true;
+    },350);
+  }
+
+  document.getElementById("seesawLeft").addEventListener("pointerdown",e=>{e.preventDefault();choose(-1);},{passive:false});
+  document.getElementById("seesawRight").addEventListener("pointerdown",e=>{e.preventDefault();choose(1);},{passive:false});
+
+  function finish(fell=false){
+    if(finished)return;
+    finished=true;
+    active=false;
+    if(raf)cancelAnimationFrame(raf);
+
+    const avg=samples?average/samples:10;
+    const score=fell?clamp(Math.round(45-avg*2),0,45):clamp(Math.round(100-avg*4.2),0,100);
+    state.records.seesawMob[p.id]=score;
+    msg.textContent=fell?`BALANCE BREAK! ${score}pt`:`10秒耐久！ ${score}pt`;
+    beam.classList.add(fell?"seesaw-fall-v125":"seesaw-clear-v125");
+    beep(fell?170:980,170,.045);
+
+    setTimeout(()=>{
+      if(isGameRunValid(runId)){
+        recordScreen(72,p,humanIndex,`${score}<small>pt</small>`,fell?"バランス崩壊":"10秒維持");
+      }
+    },900);
+  }
+
+  if(!(await countdown("BALANCE",runId,{transparent:true})))return;
+  active=true;
+  start=performance.now();
+
+  function frame(now){
+    if(!active||finished||!isGameRunValid(runId))return;
+    const elapsed=(now-start)/1000;
+    torque+=Math.sin(elapsed*1.35)*.005 + (torque>0?.004:-.004);
+    const angle=torque*3.1;
+    average+=Math.abs(angle);
+    samples++;
+    beam.style.transform=`translate(-50%,-50%) rotate(${angle}deg)`;
+
+    timeEl.textContent=Math.max(0,10-elapsed).toFixed(2);
+    if(Math.abs(angle)>=29){finish(true);return;}
+    if(elapsed>=10){finish(false);return;}
+    raf=requestAnimationFrame(frame);
+  }
+  raf=requestAnimationFrame(frame);
+}
+
+// GAME 74 — モブくん氷上カーリング
+async function startCurlingMob(p,humanIndex,runId){
+  gameFit();
+
+  let active=false;
+  let down=null;
+  let finished=false;
+
+  screen.innerHTML=`<div class="v125-shell">
+    <div class="game-head"><div><span class="kicker">${esc(p.name)}</span><h2>モブくん氷上カーリング</h2></div><div class="game-badge">${playBadge(humanIndex)}</div></div>
+    <div id="curlStage" class="curl-stage-v125">
+      <div class="curl-house-v125"><i></i><b></b></div>
+      <div id="curlStone" class="curl-stone-v125"><span style="background-image:url('icon/01.png')"></span></div>
+      <div id="curlMsg" class="v125-message">ストーンを上へ1回スワイプ！</div>
+    </div>
+  </div>`;
+
+  const stage=document.getElementById("curlStage");
+  const stone=document.getElementById("curlStone");
+  const msg=document.getElementById("curlMsg");
+
+  stage.addEventListener("pointerdown",e=>{
+    if(!active||finished)return;
+    e.preventDefault();
+    down={x:e.clientX,y:e.clientY,t:performance.now(),id:e.pointerId};
+    try{stage.setPointerCapture(e.pointerId)}catch(_){}
+  },{passive:false});
+
+  stage.addEventListener("pointerup",e=>{
+    if(!active||finished||!down||e.pointerId!==down.id)return;
+    e.preventDefault();
+
+    const dt=Math.max(90,performance.now()-down.t);
+    const dx=e.clientX-down.x;
+    const dy=e.clientY-down.y;
+    down=null;
+
+    if(dy>-55){
+      msg.textContent="上方向へスワイプ！";
+      beep(180,70,.02);
+      return;
+    }
+
+    finished=true;
+    active=false;
+
+    const speed=(-dy)/dt;
+    const travel=clamp(speed*285,110,410);
+    const xShift=clamp(dx*1.18,-135,135);
+    const targetTravel=300;
+    const dist=Math.hypot(xShift,(travel-targetTravel));
+    const score=clamp(Math.round(100-dist/135*100),0,100);
+
+    stone.style.setProperty("--curl-x",`${xShift}px`);
+    stone.style.setProperty("--curl-y",`${-travel}px`);
+    stone.classList.add("curl-slide-v125");
+
+    state.records.curlingMob[p.id]=score;
+    msg.textContent=score>=95?"BUTTON!!":score>=75?"NICE SHOT!":`${score} POINT`;
+    beep(score>=90?980:score>=65?720:450,170,.04);
+
+    setTimeout(()=>{
+      if(isGameRunValid(runId)){
+        recordScreen(73,p,humanIndex,`${score}<small>pt</small>`,"ハウス中心への精度");
+      }
+    },1500);
+  },{passive:false});
+
+  if(!(await countdown("CURLING",runId,{transparent:true})))return;
+  active=true;
+}
+
+// GAME 75 — モブくん巨大シャボン玉
+async function startBubbleMob(p,humanIndex,runId){
+  gameFit();
+
+  let holding=false;
+  let active=false;
+  let finished=false;
+  let radius=42;
+  let last=0;
+  let raf=null;
+  const limit=rand(122,145);
+
+  screen.innerHTML=`<div class="v125-shell">
+    <div class="game-head"><div><span class="kicker">${esc(p.name)}</span><h2>モブくん巨大シャボン玉</h2></div><div class="game-badge">${playBadge(humanIndex)}</div></div>
+    <div class="bubble-stage-v125">
+      <div class="bubble-mob-v125" style="background-image:url('icon/01.png')"></div>
+      <div id="bubble" class="bubble-v125"></div>
+      <button id="bubbleHold" class="primary bubble-btn-v125">長押し</button>
+      <div id="bubbleMsg" class="v125-message">押している間だけ膨らむ。破裂直前で離せ！</div>
+    </div>
+  </div>`;
+
+  const bubble=document.getElementById("bubble");
+  const btn=document.getElementById("bubbleHold");
+  const msg=document.getElementById("bubbleMsg");
+
+  function release(){
+    if(!active||finished)return;
+    holding=false;
+    finished=true;
+
+    const score=clamp(Math.round(radius/limit*100),0,100);
+    state.records.bubbleMob[p.id]=score;
+    bubble.classList.add("bubble-float-v125");
+    msg.textContent=score>=96?"LIMIT!!":`${score} POINT`;
+    beep(score>=90?1050:score>=70?760:480,170,.04);
+
+    setTimeout(()=>{
+      if(isGameRunValid(runId)){
+        recordScreen(74,p,humanIndex,`${score}<small>pt</small>`,"シャボン玉サイズ");
+      }
+    },1000);
+  }
+
+  function burst(){
+    if(finished)return;
+    finished=true;
+    active=false;
+    holding=false;
+    if(raf)cancelAnimationFrame(raf);
+    state.records.bubbleMob[p.id]=0;
+    bubble.classList.add("bubble-burst-v125");
+    msg.textContent="BURST! 0 POINT";
+    beep(130,180,.05);
+    setTimeout(()=>{
+      if(isGameRunValid(runId)){
+        recordScreen(74,p,humanIndex,"0<small>pt</small>","破裂");
+      }
+    },850);
+  }
+
+  btn.addEventListener("pointerdown",e=>{e.preventDefault();if(active&&!finished)holding=true;},{passive:false});
+  const up=e=>{if(e)e.preventDefault();if(holding&&!finished)release();};
+  btn.addEventListener("pointerup",up,{passive:false});
+  btn.addEventListener("pointercancel",()=>{if(holding&&!finished)release();});
+
+  if(!(await countdown("BUBBLE",runId,{transparent:true})))return;
+  active=true;
+  last=performance.now();
+
+  function frame(now){
+    if(!active||finished||!isGameRunValid(runId))return;
+    const dt=Math.min(.04,(now-last)/1000);
+    last=now;
+    if(holding)radius+=42*dt;
+    bubble.style.width=bubble.style.height=`${radius*2}px`;
+    if(radius>limit*.88)bubble.classList.add("bubble-danger-v125");
+    if(radius>=limit){burst();return;}
+    raf=requestAnimationFrame(frame);
+  }
+  raf=requestAnimationFrame(frame);
+}
+
+// GAME 76 — モブくん何が変わった？
+async function startChangeMob(p,humanIndex,runId){
+  gameFit();
+
+  const objects=["🪑","🪴","📚","🕰️","🧸","🎸","🖼️","🛋️","💡","🧺","☕","📻"];
+  const alternatives=["🪑","🌵","📕","⏰","🐻","🎺","🌄","🛏️","🔦","🧳","🍵","📺"];
+  const changeIndex=randi(0,11);
+  let active=false;
+  let changed=false;
+  let startAnswer=0;
+  let finished=false;
+
+  screen.innerHTML=`<div class="v125-shell">
+    <div class="game-head"><div><span class="kicker">${esc(p.name)}</span><h2>モブくん何が変わった？</h2></div><div class="game-badge">${playBadge(humanIndex)}</div></div>
+    <div class="change-room-v125">
+      <div class="change-mob-v125" style="background-image:url('icon/01.png')"></div>
+      <div id="changeGrid" class="change-grid-v125">
+        ${objects.map((o,i)=>`<button data-i="${i}" type="button">${o}</button>`).join("")}
+      </div>
+      <div id="changeCurtain" class="change-curtain-v125">覚えて！</div>
+      <div id="changeMsg" class="v125-message">部屋をよく見よう</div>
+    </div>
+  </div>`;
+
+  const grid=document.getElementById("changeGrid");
+  const curtain=document.getElementById("changeCurtain");
+  const msg=document.getElementById("changeMsg");
+
+  grid.addEventListener("pointerdown",e=>{
+    if(!active||!changed||finished)return;
+    const btn=e.target.closest("button[data-i]");
+    if(!btn)return;
+    e.preventDefault();
+
+    finished=true;
+    active=false;
+    const chosen=Number(btn.dataset.i);
+    let score=0;
+
+    if(chosen===changeIndex){
+      const elapsed=performance.now()-startAnswer;
+      score=clamp(Math.round(100-Math.max(0,elapsed-700)/45),45,100);
+      btn.classList.add("correct-v125");
+      msg.textContent=`正解！ ${score}pt`;
+      beep(980,150,.04);
+    }else{
+      btn.classList.add("wrong-v125");
+      grid.querySelector(`[data-i="${changeIndex}"]`)?.classList.add("correct-v125");
+      msg.textContent="違う！ 0pt";
+      beep(160,150,.04);
+    }
+
+    state.records.changeMob[p.id]=score;
+    setTimeout(()=>{
+      if(isGameRunValid(runId)){
+        recordScreen(75,p,humanIndex,`${score}<small>pt</small>`,chosen===changeIndex?"CHANGE FOUND":"MISS");
+      }
+    },900);
+  },{passive:false});
+
+  if(!(await countdown("LOOK",runId,{transparent:true})))return;
+  await wait(2300);
+  if(!isGameRunValid(runId))return;
+
+  curtain.textContent="・・・";
+  curtain.classList.add("cover-v125");
+  await wait(520);
+  if(!isGameRunValid(runId))return;
+
+  grid.querySelector(`[data-i="${changeIndex}"]`).textContent=alternatives[changeIndex];
+  changed=true;
+  active=true;
+  curtain.classList.remove("cover-v125");
+  curtain.textContent="";
+  msg.textContent="何が変わった？ タップ！";
+  startAnswer=performance.now();
+}
+
+// GAME 77 — モブくん荷物検査
+async function startBaggageMob(p,humanIndex,runId){
+  gameFit();
+
+  const forbidden=["🔪","💣","🔥","☠️"];
+  const safe=["👕","📚","⚽","🧸","🍎","🎧","📷","👟","🧢","🎮"];
+  const items=shuffle([
+    ...forbidden.map(x=>({icon:x,bad:true})),
+    ...shuffle(safe).slice(0,6).map(x=>({icon:x,bad:false}))
+  ]);
+
+  let active=false;
+  let finished=false;
+  let correct=0;
+  let wrong=0;
+  let missed=0;
+  let spawned=0;
+
+  screen.innerHTML=`<div class="v125-shell">
+    <div class="game-head"><div><span class="kicker">${esc(p.name)}</span><h2>モブくん荷物検査</h2></div><div class="game-badge">${playBadge(humanIndex)}</div></div>
+    <div class="baggage-legend-v125">禁止：${forbidden.join(" ")}</div>
+    <div class="v125-hud"><div><span>CHECK</span><b id="bagCorrect">0 / 4</b></div><div><span>MISTAKE</span><b id="bagWrong">0</b></div></div>
+    <div id="baggageStage" class="baggage-stage-v125">
+      <div class="baggage-belt-v125"></div>
+      <div class="baggage-scanner-v125">MOB<br>SCAN</div>
+      <div id="baggageLayer"></div>
+      <div id="baggageMsg" class="v125-message">禁止荷物だけタップ！</div>
+    </div>
+  </div>`;
+
+  const layer=document.getElementById("baggageLayer");
+  const correctEl=document.getElementById("bagCorrect");
+  const wrongEl=document.getElementById("bagWrong");
+  const msg=document.getElementById("baggageMsg");
+
+  function finish(){
+    if(finished)return;
+    finished=true;
+    active=false;
+
+    missed=4-correct;
+    const score=clamp(100-wrong*18-missed*20,0,100);
+    state.records.baggageMob[p.id]=score;
+    msg.textContent=`${score} POINT / 見逃し ${missed}`;
+    beep(score>=85?980:score>=60?720:430,180,.04);
+
+    setTimeout(()=>{
+      if(isGameRunValid(runId)){
+        recordScreen(76,p,humanIndex,`${score}<small>pt</small>`,`正解 ${correct}/4・誤タップ ${wrong}`);
+      }
+    },950);
+  }
+
+  function spawnItem(item,index){
+    if(!active||finished)return;
+    const el=document.createElement("button");
+    el.type="button";
+    el.className="baggage-item-v125";
+    el.textContent=item.icon;
+    el.dataset.bad=item.bad?"1":"0";
+    el.style.top=`${58+(index%3)*58}px`;
+    layer.appendChild(el);
+
+    let resolved=false;
+    el.addEventListener("pointerdown",e=>{
+      e.preventDefault();
+      if(resolved||finished)return;
+      resolved=true;
+
+      if(item.bad){
+        correct++;
+        el.classList.add("caught-v125");
+        correctEl.textContent=`${correct} / 4`;
+        beep(860,65,.025);
+      }else{
+        wrong++;
+        el.classList.add("mistake-v125");
+        wrongEl.textContent=wrong;
+        beep(180,75,.022);
+      }
+      setTimeout(()=>el.remove(),220);
+    },{passive:false});
+
+    setTimeout(()=>{
+      if(!resolved&&item.bad)missed++;
+      el.remove();
+    },2400);
+  }
+
+  if(!(await countdown("SECURITY",runId,{transparent:true})))return;
+  active=true;
+
+  items.forEach((item,i)=>{
+    setTimeout(()=>{
+      if(!isGameRunValid(runId)||finished)return;
+      spawned++;
+      spawnItem(item,i);
+      if(spawned===items.length){
+        setTimeout(()=>finish(),2550);
+      }
+    },i*620);
+  });
+}
+
+// GAME 78 — モブくん橋を作って！
+async function startBridgeMob(p,humanIndex,runId){
+  gameFit();
+
+  let active=false;
+  let drawing=false;
+  let points=[];
+  let poly=null;
+  let start=0;
+  let raf=null;
+  let finished=false;
+
+  screen.innerHTML=`<div class="v125-shell">
+    <div class="game-head"><div><span class="kicker">${esc(p.name)}</span><h2>モブくん橋を作って！</h2></div><div class="game-badge">${playBadge(humanIndex)}</div></div>
+    <div class="v125-hud"><div><span>DRAW</span><b id="bridgeTime">5.00</b></div><div><span>BRIDGE</span><b>1本勝負</b></div></div>
+    <div id="bridgeStage" class="bridge-stage-v125">
+      <div class="bridge-cliff-v125 left"></div><div class="bridge-cliff-v125 right"></div>
+      <div class="bridge-anchor-v125 left">●</div><div class="bridge-anchor-v125 right">●</div>
+      <svg id="bridgeSvg" viewBox="0 0 360 360" preserveAspectRatio="none"></svg>
+      <div id="bridgeWalker" class="bridge-walker-v125" style="background-image:url('icon/01.png')"></div>
+      <div id="bridgeMsg" class="v125-message">黄色い●から●へ橋を描こう！</div>
+    </div>
+  </div>`;
+
+  const stage=document.getElementById("bridgeStage");
+  const svg=document.getElementById("bridgeSvg");
+  const timeEl=document.getElementById("bridgeTime");
+  const walker=document.getElementById("bridgeWalker");
+  const msg=document.getElementById("bridgeMsg");
+
+  function local(e){
+    const r=stage.getBoundingClientRect();
+    return {
+      x:clamp((e.clientX-r.left)/r.width*360,0,360),
+      y:clamp((e.clientY-r.top)/r.height*360,0,360)
+    };
+  }
+
+  stage.addEventListener("pointerdown",e=>{
+    if(!active||finished||points.length)return;
+    e.preventDefault();
+    drawing=true;
+    points=[local(e)];
+    poly=document.createElementNS("http://www.w3.org/2000/svg","polyline");
+    poly.setAttribute("class","bridge-line-v125");
+    svg.appendChild(poly);
+    try{stage.setPointerCapture(e.pointerId)}catch(_){}
+  },{passive:false});
+
+  stage.addEventListener("pointermove",e=>{
+    if(!drawing||!active||finished)return;
+    e.preventDefault();
+    const pt=local(e);
+    const last=points[points.length-1];
+    if(Math.hypot(pt.x-last.x,pt.y-last.y)<4)return;
+    points.push(pt);
+    poly.setAttribute("points",points.map(q=>`${q.x},${q.y}`).join(" "));
+  },{passive:false});
+  stage.addEventListener("pointerup",()=>drawing=false);
+  stage.addEventListener("pointercancel",()=>drawing=false);
+
+  function scoreBridge(){
+    if(points.length<5)return 0;
+    const A={x:37,y:227},B={x:323,y:227};
+    const startScore=clamp(100-Math.hypot(points[0].x-A.x,points[0].y-A.y)*2,0,100);
+    const end=points[points.length-1];
+    const endScore=clamp(100-Math.hypot(end.x-B.x,end.y-B.y)*2,0,100);
+
+    let len=0;
+    let rough=0;
+    let steep=0;
+    for(let i=1;i<points.length;i++){
+      const dx=points[i].x-points[i-1].x;
+      const dy=points[i].y-points[i-1].y;
+      const seg=Math.hypot(dx,dy);
+      len+=seg;
+      if(Math.abs(dx)>1)steep+=Math.max(0,Math.abs(dy/dx)-.65);
+      if(i>1){
+        const a=Math.atan2(points[i-1].y-points[i-2].y,points[i-1].x-points[i-2].x);
+        const b=Math.atan2(dy,dx);
+        rough+=Math.abs(Math.atan2(Math.sin(b-a),Math.cos(b-a)));
+      }
+    }
+    const efficiency=clamp(100-Math.abs(len-300)/2.6,0,100);
+    const smooth=clamp(100-rough/Math.max(1,points.length-2)*80,0,100);
+    const slope=clamp(100-steep*18,0,100);
+    return clamp(Math.round(startScore*.22+endScore*.22+efficiency*.20+smooth*.20+slope*.16),0,100);
+  }
+
+  async function finish(){
+    if(finished)return;
+    finished=true;
+    active=false;
+    drawing=false;
+    if(raf)cancelAnimationFrame(raf);
+
+    const score=scoreBridge();
+    state.records.bridgeMob[p.id]=score;
+    msg.textContent=score>=78?"橋を渡るぞ！":score>=45?"慎重に渡るぞ…":"危ない橋だ！";
+
+    const usable=points.length>4;
+    const failAt=score<35?Math.max(2,Math.floor(points.length*.48)):points.length-1;
+
+    if(usable){
+      for(let i=0;i<=failAt;i+=Math.max(1,Math.floor(points.length/38))){
+        if(!isGameRunValid(runId))return;
+        const pt=points[Math.min(i,points.length-1)];
+        walker.style.left=`${pt.x/360*100}%`;
+        walker.style.top=`${pt.y/360*100}%`;
+        await wait(38);
+      }
+    }
+
+    if(score<35){
+      walker.classList.add("bridge-fall-v125");
+      msg.textContent=`橋が崩れた！ ${score}pt`;
+      beep(160,160,.04);
+    }else{
+      walker.classList.add("bridge-clear-v125");
+      msg.textContent=`渡れた！ ${score}pt`;
+      beep(score>=80?1000:720,150,.04);
+    }
+
+    await wait(850);
+    if(isGameRunValid(runId)){
+      recordScreen(77,p,humanIndex,`${score}<small>pt</small>`,score<35?"BRIDGE BREAK":"CROSS CLEAR");
+    }
+  }
+
+  if(!(await countdown("DRAW BRIDGE",runId,{transparent:true})))return;
+  active=true;
+  start=performance.now();
+
+  function frame(now){
+    if(!active||finished||!isGameRunValid(runId))return;
+    const rem=5000-(now-start);
+    timeEl.textContent=(Math.max(0,rem)/1000).toFixed(2);
+    if(rem<=0){finish();return;}
+    raf=requestAnimationFrame(frame);
+  }
+  raf=requestAnimationFrame(frame);
+}
+
+// GAME 79 — モブくん宝箱どれだ!?
+async function startTreasureMob(p,humanIndex,runId){
+  gameFit();
+
+  const values=shuffle([20,40,60,80,100]);
+  const chests=values.map((value,i)=>({id:i,value,slot:i}));
+  let active=false;
+  let finished=false;
+
+  screen.innerHTML=`<div class="v125-shell">
+    <div class="game-head"><div><span class="kicker">${esc(p.name)}</span><h2>モブくん宝箱どれだ!?</h2></div><div class="game-badge">${playBadge(humanIndex)}</div></div>
+    <div class="treasure-stage-v125">
+      <div class="treasure-mob-v125" style="background-image:url('icon/01.png')"></div>
+      <div id="treasureTrack" class="treasure-track-v125">
+        ${chests.map(c=>`<button class="treasure-chest-v125" data-id="${c.id}" type="button" style="--slot:${c.slot}"><span>?</span></button>`).join("")}
+      </div>
+      <div id="treasureMsg" class="v125-message">100点の宝箱を覚えろ！</div>
+    </div>
+  </div>`;
+
+  const track=document.getElementById("treasureTrack");
+  const msg=document.getElementById("treasureMsg");
+  const target=chests.find(c=>c.value===100);
+
+  function render(){
+    chests.forEach(c=>{
+      const el=track.querySelector(`[data-id="${c.id}"]`);
+      el.style.setProperty("--slot",c.slot);
+    });
+  }
+
+  function swapSlots(a,b){
+    const ca=chests.find(c=>c.slot===a);
+    const cb=chests.find(c=>c.slot===b);
+    if(!ca||!cb)return;
+    [ca.slot,cb.slot]=[cb.slot,ca.slot];
+    render();
+  }
+
+  track.addEventListener("pointerdown",e=>{
+    if(!active||finished)return;
+    const el=e.target.closest(".treasure-chest-v125");
+    if(!el)return;
+    e.preventDefault();
+    finished=true;
+    active=false;
+
+    const c=chests.find(x=>x.id===Number(el.dataset.id));
+    el.classList.add("open-v125");
+    el.querySelector("span").textContent=c.value;
+    state.records.treasureMob[p.id]=c.value;
+    msg.textContent=c.value===100?"TREASURE 100!!":`${c.value} POINT`;
+    beep(c.value===100?1100:400+c.value*5,160,.04);
+
+    setTimeout(()=>{
+      if(isGameRunValid(runId)){
+        recordScreen(78,p,humanIndex,`${c.value}<small>pt</small>`,c.value===100?"100pt CHEST!":"宝箱ポイント");
+      }
+    },950);
+  },{passive:false});
+
+  if(!(await countdown("WATCH",runId,{transparent:true})))return;
+
+  const targetEl=track.querySelector(`[data-id="${target.id}"]`);
+  targetEl.classList.add("open-v125","target-v125");
+  targetEl.querySelector("span").textContent="100";
+  beep(940,140,.035);
+  await wait(1200);
+  if(!isGameRunValid(runId))return;
+
+  targetEl.classList.remove("open-v125","target-v125");
+  targetEl.querySelector("span").textContent="?";
+  msg.textContent="SHUFFLE!!";
+
+  for(let i=0;i<9;i++){
+    const a=randi(0,4);
+    let b=randi(0,4);
+    while(b===a)b=randi(0,4);
+    swapSlots(a,b);
+    beep(330+i*22,30,.008);
+    await wait(230);
+    if(!isGameRunValid(runId))return;
+  }
+
+  msg.textContent="100点はどれだ!? 1つ選べ！";
+  active=true;
+}
+
+// GAME 80 — モブくんルーレットジャンプ
+async function startRouletteMob(p,humanIndex,runId){
+  gameFit();
+
+  const values=[0,15,30,50,75,100,50,30];
+  let angle=0;
+  let speed=4.8;
+  let stopping=false;
+  let active=false;
+  let finished=false;
+  let last=0;
+  let raf=null;
+
+  screen.innerHTML=`<div class="v125-shell">
+    <div class="game-head"><div><span class="kicker">${esc(p.name)}</span><h2>モブくんルーレットジャンプ</h2></div><div class="game-badge">${playBadge(humanIndex)}</div></div>
+    <div class="roulette-stage-v125">
+      <div class="roulette-pointer-v125">▼</div>
+      <div id="rouletteWheel" class="roulette-wheel-v125">
+        ${values.map((v,i)=>`<span style="--i:${i};--ang:${i*45}deg">${v}</span>`).join("")}
+      </div>
+      <div id="rouletteMob" class="roulette-mob-v125" style="background-image:url('icon/01.png')"></div>
+      <button id="rouletteStop" class="primary roulette-stop-v125">STOP!</button>
+      <div id="rouletteMsg" class="v125-message">100点床を狙え！</div>
+    </div>
+  </div>`;
+
+  const wheel=document.getElementById("rouletteWheel");
+  const btn=document.getElementById("rouletteStop");
+  const mob=document.getElementById("rouletteMob");
+  const msg=document.getElementById("rouletteMsg");
+
+  btn.addEventListener("pointerdown",e=>{
+    e.preventDefault();
+    if(!active||stopping||finished)return;
+    stopping=true;
+    btn.disabled=true;
+    msg.textContent="減速中…";
+    beep(520,70,.025);
+  },{passive:false});
+
+  function finish(){
+    if(finished)return;
+    finished=true;
+    active=false;
+    if(raf)cancelAnimationFrame(raf);
+
+    const normalized=(((-angle*180/Math.PI)%360)+360)%360;
+    const idx=Math.floor((normalized+22.5)/45)%8;
+    const value=values[idx];
+
+    state.records.rouletteMob[p.id]=value;
+    msg.textContent=`${value} POINT!`;
+    mob.classList.add("roulette-jump-v125");
+    wheel.querySelectorAll("span")[idx]?.classList.add("selected-v125");
+    beep(value===100?1120:400+value*5,170,.045);
+
+    setTimeout(()=>{
+      if(isGameRunValid(runId)){
+        recordScreen(79,p,humanIndex,`${value}<small>pt</small>`,"ルーレット床");
+      }
+    },1050);
+  }
+
+  if(!(await countdown("ROULETTE",runId,{transparent:true})))return;
+  active=true;
+  last=performance.now();
+
+  function frame(now){
+    if(!active||finished||!isGameRunValid(runId))return;
+    const dt=Math.min(.04,(now-last)/1000);
+    last=now;
+
+    if(stopping)speed=Math.max(0,speed-2.55*dt);
+    angle+=speed*dt;
+    wheel.style.transform=`rotate(${angle}rad)`;
+
+    if(stopping&&speed<=.03){finish();return;}
+    raf=requestAnimationFrame(frame);
+  }
+  raf=requestAnimationFrame(frame);
+}
+
+// GAME 81 — モブくん地下発掘
+async function startExcavationMob(p,humanIndex,runId){
+  gameFit();
+
+  const values=shuffle([0,0,10,10,30,30,50,75,100]);
+  let digs=0;
+  let total=0;
+  let finished=false;
+
+  screen.innerHTML=`<div class="v125-shell">
+    <div class="game-head"><div><span class="kicker">${esc(p.name)}</span><h2>モブくん地下発掘</h2></div><div class="game-badge">${playBadge(humanIndex)}</div></div>
+    <div class="v125-hud"><div><span>DIG</span><b id="digCount">0 / 3</b></div><div><span>TOTAL</span><b id="digTotal">0pt</b></div></div>
+    <div class="dig-stage-v125">
+      <div class="dig-mob-v125" style="background-image:url('icon/01.png')"></div>
+      <div id="digGrid" class="dig-grid-v125">
+        ${values.map((v,i)=>`<button data-i="${i}" type="button"><i>?</i><span></span></button>`).join("")}
+      </div>
+      <div id="digMsg" class="v125-message">3ヶ所だけ掘れる！</div>
+    </div>
+  </div>`;
+
+  const grid=document.getElementById("digGrid");
+  const countEl=document.getElementById("digCount");
+  const totalEl=document.getElementById("digTotal");
+  const msg=document.getElementById("digMsg");
+
+  grid.addEventListener("pointerdown",e=>{
+    if(finished||digs>=3)return;
+    const btn=e.target.closest("button[data-i]");
+    if(!btn||btn.disabled)return;
+    e.preventDefault();
+
+    btn.disabled=true;
+    const idx=Number(btn.dataset.i);
+    const value=values[idx];
+    digs++;
+    total+=value;
+
+    btn.classList.add("dug-v125",value>=75?"rare-v125":"");
+    btn.querySelector("i").textContent=value===0?"🪨":value>=75?"🦴":"🦷";
+    btn.querySelector("span").textContent=`${value}pt`;
+    countEl.textContent=`${digs} / 3`;
+    totalEl.textContent=`${total}pt`;
+    msg.textContent=value===100?"超レア化石 100pt!!":value===0?"ただの石…":`化石 ${value}pt!`;
+    beep(value===100?1100:value>=50?820:value>0?560:220,120,.035);
+
+    if(digs>=3){
+      finished=true;
+      state.records.excavationMob[p.id]=total;
+      setTimeout(()=>{
+        msg.textContent=`発掘終了！ 合計 ${total}pt`;
+        if(isGameRunValid(runId)){
+          recordScreen(80,p,humanIndex,`${total}<small>pt</small>`,"3ヶ所の発掘合計");
+        }
+      },850);
+    }
+  },{passive:false});
+
+  if(!(await countdown("DIG",runId,{transparent:true})))return;
+}
+
 // GAME 64 -------------------------------------------------
 function buildElectricMazeFixedV121(cols,rows){
   const cells=Array.from(
@@ -18445,7 +20399,7 @@ async function simulateCpuThenResult(gameIndex){
 
 function cpuUltraDraw(gameIndex){
   const luckOnly=new Set([
-    5,11,25,42,49,55,61
+    5,11,25,42,49,55,61,64,78,80
   ]);
 
   if(luckOnly.has(gameIndex)){
@@ -18458,11 +20412,12 @@ function cpuUltraDraw(gameIndex){
 
 function softenCpuResultV121(gameIndex,p,ultra){
   const luckOnly=new Set([
-    5,11,25,42,49,55,61
+    5,11,25,42,49,55,61,64,78,80
   ]);
 
   const specificallyTuned=new Set([
-    50,51,59,62,63
+    50,51,59,62,63,
+    64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80
   ]);
 
   if(
@@ -18656,11 +20611,57 @@ function simulateOneCpu(gameIndex,p){
     state.records.mobDice[p.id]=clamp(Math.round(diceTotal<=5?1:diceTotal>=30?100:1+(diceTotal-5)/25*99),1,100);
   }else if(gameIndex===62){
     state.records.mobCombo[p.id]=ultra?randi(12,17):randi(4,11);
-  }else{
+  }else if(gameIndex===63){
     state.records.electricMaze[p.id]=
       ultra
         ? randi(7800,10800)
         : randi(11200,22500);
+  }else if(gameIndex===64){
+    const cpuCardPoints=()=>{
+      const roll=Math.random()*100;
+      if(roll<32)return 5;
+      if(roll<56)return 8;
+      if(roll<76)return 10;
+      if(roll<90)return 15;
+      return 30;
+    };
+
+    let total=0;
+    for(let i=0;i<6;i++)total+=cpuCardPoints();
+    state.records.cardShop[p.id]=total;
+  }else if(gameIndex===65){
+    state.records.pizzaChef[p.id]=ultra?randi(82,94):randi(44,82);
+  }else if(gameIndex===66){
+    state.records.mobHammer[p.id]=ultra?randi(84,97):randi(38,84);
+  }else if(gameIndex===67){
+    state.records.bungeeMob[p.id]=ultra?randi(82,96):randi(34,81);
+  }else if(gameIndex===68){
+    state.records.waterSlide[p.id]=ultra?randi(84,95):randi(42,84);
+  }else if(gameIndex===69){
+    state.records.pancakeMob[p.id]=ultra?randi(83,96):randi(36,82);
+  }else if(gameIndex===70){
+    state.records.paperPlane[p.id]=ultra?randi(82,95):randi(40,82);
+  }else if(gameIndex===71){
+    state.records.dominoMob[p.id]=ultra?randi(84,96):randi(38,83);
+  }else if(gameIndex===72){
+    state.records.seesawMob[p.id]=ultra?randi(83,95):randi(40,82);
+  }else if(gameIndex===73){
+    state.records.curlingMob[p.id]=ultra?randi(82,96):randi(33,81);
+  }else if(gameIndex===74){
+    state.records.bubbleMob[p.id]=ultra?randi(85,97):randi(42,84);
+  }else if(gameIndex===75){
+    state.records.changeMob[p.id]=ultra?randi(86,99):randi(40,84);
+  }else if(gameIndex===76){
+    state.records.baggageMob[p.id]=ultra?randi(86,98):randi(44,84);
+  }else if(gameIndex===77){
+    state.records.bridgeMob[p.id]=ultra?randi(84,96):randi(38,83);
+  }else if(gameIndex===78){
+    state.records.treasureMob[p.id]=[20,40,60,80,100][randi(0,4)];
+  }else if(gameIndex===79){
+    state.records.rouletteMob[p.id]=ultra?[75,100][randi(0,1)]:[0,15,30,30,50,50,75,100][randi(0,7)];
+  }else{
+    const values=shuffle([0,0,10,10,30,30,50,75,100]);
+    state.records.excavationMob[p.id]=values[0]+values[1]+values[2];
   }
 
   softenCpuResultV121(
@@ -18778,16 +20779,24 @@ function performancePoints(gameIndex,v){
   if(gameIndex===60)return clamp(Math.round(v/10*100),0,100);
   if(gameIndex===61)return clamp(Math.round(v),0,100);
   if(gameIndex===62)return clamp(Math.round(v/20*100),0,100);
-  if(v<=10000)return 100;
-  if(v>=30000)return 0;
-  return clamp(
-    Math.round(
-      (30000-v)/
-      20000*
-      100
-    ),
-    0,100
-  );
+  if(gameIndex===63){
+    if(v<=10000)return 100;
+    if(v>=30000)return 0;
+    return clamp(
+      Math.round(
+        (30000-v)/
+        20000*
+        100
+      ),
+      0,100
+    );
+  }
+  if(gameIndex===64){
+    if(v<=30)return 0;
+    if(v>=90)return 100;
+    return clamp(Math.round((v-30)/60*100),0,100);
+  }
+  return clamp(Math.round(v),0,100);
 }
 
 function rankRecords(gameIndex){
@@ -18867,7 +20876,9 @@ function formatRecord(gameIndex,v){
   if(gameIndex===60)return `${Number(v).toFixed(2)}秒`;
   if(gameIndex===61)return `${Math.round(v)}pt`;
   if(gameIndex===62)return `${Math.round(v)} COMBO`;
-  return `${(v/1000).toFixed(2)}秒`;
+  if(gameIndex===63)return `${(v/1000).toFixed(2)}秒`;
+  if(gameIndex===70)return `${Math.round(v)}m`;
+  return `${Math.round(v)}pt`;
 }
 
 function applyPoints(gameIndex,ranked){
