@@ -15185,3 +15185,499 @@ button{-webkit-touch-callout:none!important;-webkit-user-select:none!important;u
 
 /* Roulette */
 .roulette-stage-v127{position:relative;flex:1;min-height:0;border:4px solid var(--ink);border-radius:20px;background:#e8eef3;overflow:hidden}.roulette-caption-v127{position:absolute;top:6px;left:50%;transform:translateX(-50%);width:90%;text-align:center;font-size:10px;font-weight:1000}.roulette-wheel-v127{position:absolute;left:50%;top:50%;width:min(72vw,290px);height:min(72vw,290px);transform:translate(-50%,-50%);border:7px solid var(--ink);border-radius:50%;background:conic-gradient(from -22.5deg,#ef6b64 0 45deg,#ffd85c 45deg 90deg,#7dd687 90deg 135deg,#71c9ef 135deg 180deg,#b99ae8 180deg 225deg,#f09cc8 225deg 270deg,#f2a65a 270deg 315deg,#86d7cc 315deg);z-index:3}.roulette-wheel-v127>i{position:absolute;left:50%;top:50%;width:54px;height:54px;transform:translate(-50%,-50%);border:5px solid var(--ink);border-radius:50%;background:#fff}.roulette-wheel-v127 span{position:absolute;left:50%;top:50%;width:36px;height:28px;margin:-14px -18px;transform:rotate(var(--a)) translateY(calc(min(36vw,145px)*-.73)) rotate(calc(var(--a)*-1));display:grid;place-items:center;border:2px solid var(--ink);border-radius:999px;background:#fff;font-size:10px;font-weight:1000}.roulette-wheel-v127 span.selected-v127{background:#fff16b;box-shadow:0 0 0 5px rgba(255,241,107,.45)}.roulette-land-v127{position:absolute;z-index:7;left:50%;top:calc(50% - min(36vw,145px) - 28px);transform:translateX(-50%);font-size:13px;font-weight:1000;color:#e84640}.roulette-mob-v127{position:absolute;z-index:9;left:50%;top:calc(50% + min(36vw,145px) + 34px);width:58px;height:66px;transform:translate(-50%,-50%);background-size:contain;background-position:center;background-repeat:no-repeat}.roulette-mob-v127.jump-v127{animation:rouletteJump127 .76s cubic-bezier(.18,.74,.18,1) forwards}@keyframes rouletteJump127{0%{top:calc(50% + min(36vw,145px) + 34px)}50%{top:8%;scale:1.15}100%{top:calc(50% - min(36vw,145px));scale:.92}}.roulette-mob-v127.landed-v127{top:calc(50% - min(36vw,145px));scale:.92}.roulette-result-v127{position:absolute;left:50%;bottom:5px;transform:translateX(-50%);font-size:22px;font-weight:1000;color:#ffe75f;-webkit-text-stroke:3px var(--ink);z-index:12}.roulette-button-v127{min-height:60px!important;font-size:22px!important;margin-top:7px!important}.roulette-stage-v127.jackpot-v127{box-shadow:inset 0 0 0 9px #ffe75f}
+
+
+/* =========================================================
+   V10.28 CARD SHOP — CENTERED REVEAL / REAL RARITY SHOW
+   ========================================================= */
+.cardshop-v128{
+  height:100%;
+  min-height:0;
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+}
+.cardshop-head-v128{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:8px;
+  flex:0 0 auto;
+}
+.cardshop-stage-v128{
+  position:relative;
+  flex:1;
+  min-height:0;
+  overflow:hidden;
+  border:4px solid var(--ink);
+  border-radius:22px;
+  background:#f4d487;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  padding:7px;
+  isolation:isolate;
+}
+.shop-wall-v128{
+  position:absolute;
+  inset:0;
+  z-index:-3;
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.25),rgba(255,255,255,0) 35%),
+    #f4d487;
+}
+.shop-shelf-v128{
+  position:absolute;
+  left:10px;
+  right:10px;
+  z-index:-1;
+  height:9px;
+  border:3px solid var(--ink);
+  border-radius:8px;
+  background:#bb7a42;
+}
+.shop-shelf-v128.s1{top:24%}
+.shop-shelf-v128.s2{top:70%}
+.card-top-v128{
+  position:relative;
+  z-index:30;
+  flex:0 0 auto;
+  min-height:28px;
+  border:3px solid var(--ink);
+  border-radius:999px;
+  background:#fff;
+  padding:4px 11px;
+  font-size:11px;
+  font-weight:1000;
+  letter-spacing:.5px;
+}
+.pack-scene-v128{
+  position:relative;
+  z-index:5;
+  flex:1;
+  min-height:0;
+  width:100%;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:7px;
+}
+.pack-v128{
+  position:relative;
+  width:150px;
+  height:202px;
+  overflow:hidden;
+  border:5px solid var(--ink);
+  border-radius:20px;
+  background:linear-gradient(#fff2a6,#f4b534);
+  box-shadow:0 8px 0 rgba(17,19,26,.15);
+  animation:packFloat128 2s ease-in-out infinite;
+}
+.pack-v128>b{
+  position:absolute;
+  left:0;
+  right:0;
+  top:9px;
+  text-align:center;
+  font-size:25px;
+  letter-spacing:4px;
+}
+.pack-v128>span{
+  position:absolute;
+  left:33px;
+  top:48px;
+  width:84px;
+  height:84px;
+  background-size:contain;
+  background-position:center;
+  background-repeat:no-repeat;
+}
+.pack-v128>em{
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:31px;
+  text-align:center;
+  font-size:12px;
+  font-style:normal;
+  font-weight:1000;
+}
+.pack-v128>i{
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:8px;
+  text-align:center;
+  color:#fff;
+  font-style:normal;
+}
+.pack-shine-v128{
+  position:absolute;
+  inset:-50%;
+  background:linear-gradient(110deg,transparent 38%,rgba(255,255,255,.52) 50%,transparent 62%);
+  animation:packShine128 2.1s ease-in-out infinite;
+}
+@keyframes packFloat128{50%{transform:translateY(-8px)}}
+@keyframes packShine128{0%,25%{transform:translateX(-55%)}70%,100%{transform:translateX(55%)}}
+.pack-v128.tear-v128{animation:packTear128 .52s ease forwards}
+@keyframes packTear128{50%{transform:scale(1.08) rotate(-4deg)}100%{transform:scale(.62) rotate(8deg);opacity:0}}
+.open-v128{
+  min-width:185px;
+  min-height:50px;
+  margin:0!important;
+  font-size:22px;
+}
+.card-status-v128{
+  position:relative;
+  z-index:10;
+  width:96%;
+  flex:0 0 auto;
+  min-height:34px;
+  border:3px solid var(--ink);
+  border-radius:12px;
+  background:#fff;
+  padding:6px 8px;
+  text-align:center;
+  font-size:10px;
+  font-weight:1000;
+}
+.reveal-v128{
+  position:absolute;
+  z-index:20;
+  inset:37px 7px 7px;
+  overflow:hidden;
+}
+.single-card-scene-v128{
+  position:relative;
+  width:100%;
+  height:100%;
+  display:grid;
+  grid-template-rows:minmax(0,1fr) auto auto;
+  align-items:center;
+  justify-items:center;
+  gap:5px;
+}
+.card-counter-v128{
+  position:absolute;
+  z-index:40;
+  right:5px;
+  top:2px;
+  border:3px solid var(--ink);
+  border-radius:999px;
+  background:#fff;
+  padding:3px 8px;
+  font-size:10px;
+  font-weight:1000;
+}
+.single-card-holder-v128{
+  position:relative;
+  z-index:12;
+  align-self:center;
+  justify-self:center;
+  height:min(49vh,300px);
+  max-height:100%;
+  aspect-ratio:.70;
+  filter:drop-shadow(0 8px 0 rgba(17,19,26,.13));
+}
+.single-card-info-v128{
+  position:relative;
+  z-index:31;
+  width:min(94%,350px);
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:2px 8px;
+  border:3px solid var(--ink);
+  border-radius:12px;
+  background:#fff;
+  padding:6px 9px;
+}
+.single-card-info-v128>b{font-size:12px}
+.single-card-info-v128>span{font-size:11px}
+.single-card-info-v128>strong{
+  grid-column:2;
+  grid-row:1/3;
+  align-self:center;
+  font-size:16px;
+}
+.card-next-wrap-v128{
+  position:relative;
+  z-index:40;
+  width:100%;
+  display:flex;
+  justify-content:center;
+}
+.card-next-v128{
+  min-width:190px;
+  min-height:46px;
+  margin:0!important;
+  font-size:15px!important;
+}
+.card-flip-v128{
+  width:100%;
+  height:100%;
+  perspective:1000px;
+}
+.flip-inner-v128{
+  position:relative;
+  width:100%;
+  height:100%;
+  transform-style:preserve-3d;
+  transition:transform .58s cubic-bezier(.2,.76,.2,1);
+}
+.card-flip-v128.open-v128 .flip-inner-v128{transform:rotateY(180deg)}
+.card-back-v128,.flip-front-v128{
+  position:absolute!important;
+  inset:0;
+  backface-visibility:hidden;
+}
+.card-back-v128{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  border:6px solid var(--ink);
+  border-radius:19px;
+  background:linear-gradient(#263878,#17214d);
+  color:#fff;
+}
+.card-back-v128>b{font-size:31px;letter-spacing:4px;color:#ffe583}
+.card-back-v128>span{
+  width:88px;
+  height:88px;
+  background-size:contain;
+  background-position:center;
+  background-repeat:no-repeat;
+}
+.card-back-v128>em{font-style:normal;font-weight:1000}
+.card-back-v128>i{font-style:normal;color:#ffe583;margin-top:7px}
+.flip-front-v128{transform:rotateY(180deg)}
+.card-front-v128{
+  position:relative;
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  border:6px solid var(--ink);
+  border-radius:19px;
+  padding:6px;
+  display:flex;
+  flex-direction:column;
+  background:#fff;
+  box-shadow:0 5px 0 rgba(17,19,26,.14);
+}
+.card-frame-glow-v128{
+  position:absolute;
+  inset:-30%;
+  opacity:.42;
+  pointer-events:none;
+}
+.card-rarity-v128{
+  position:relative;
+  z-index:2;
+  display:flex;
+  justify-content:space-between;
+  font-size:13px;
+  font-weight:1000;
+}
+.card-art-v128{
+  position:relative;
+  z-index:2;
+  flex:1;
+  min-height:0;
+  overflow:hidden;
+  border:3px solid var(--ink);
+  border-radius:11px;
+  background:#fff;
+  display:grid;
+  place-items:center;
+}
+.card-art-v128 img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  display:block;
+}
+.card-name-v128{
+  position:relative;
+  z-index:2;
+  padding-top:5px;
+  text-align:center;
+  font-size:12px;
+  font-weight:1000;
+  line-height:1.1;
+}
+.card-front-v128.r-r-v128{background:#dff1ff;border-color:#19202a}
+.card-front-v128.r-r-v128 .card-frame-glow-v128{background:#69c7ff}
+.card-front-v128.r-sr-v128{background:linear-gradient(#fff,#c9f6ff);border-color:#24526a}
+.card-front-v128.r-sr-v128 .card-frame-glow-v128{background:#64efff}
+.card-front-v128.r-ssr-v128{background:linear-gradient(#fffbdc,#ffe16f);border-color:#735b18}
+.card-front-v128.r-ssr-v128 .card-frame-glow-v128{background:#ffe45c}
+.card-front-v128.r-ur-v128{background:linear-gradient(#f9edff,#d4acff);border-color:#532575}
+.card-front-v128.r-ur-v128 .card-frame-glow-v128{background:#bf79ff}
+.card-front-v128.r-mob-v128{
+  background:linear-gradient(135deg,#ffbad8,#ffe57b,#a9edff,#dfb8ff,#ffbad8);
+  background-size:230% 230%;
+  border-color:#5f2859;
+  animation:mobCardRainbow128 2.2s linear infinite;
+}
+.card-front-v128.r-mob-v128 .card-frame-glow-v128{
+  background:conic-gradient(#ff79be,#ffe275,#7de7ff,#c98aff,#ff79be);
+  animation:fxSpin128 2.2s linear infinite;
+}
+@keyframes mobCardRainbow128{to{background-position:230% 0}}
+
+/* Strong rarity effects, local to the card area — no full-screen flash. */
+.rarity-fx-v128{
+  position:absolute;
+  inset:0;
+  z-index:8;
+  pointer-events:none;
+  overflow:hidden;
+}
+.rarity-rays-v128,.rarity-ring-v128,.rarity-sparks-v128{position:absolute;inset:0}
+.rarity-call-v128{
+  position:absolute;
+  z-index:18;
+  left:50%;
+  top:6%;
+  transform:translateX(-50%) scale(.35);
+  white-space:nowrap;
+  border:4px solid var(--ink);
+  border-radius:999px;
+  padding:6px 12px;
+  background:#fff;
+  font-size:18px;
+  font-weight:1000;
+  opacity:0;
+  animation:rarityCall128 .95s ease forwards;
+}
+@keyframes rarityCall128{
+  0%{opacity:0;transform:translateX(-50%) scale(.35) translateY(8px)}
+  18%{opacity:1;transform:translateX(-50%) scale(1.12) translateY(0)}
+  68%{opacity:1;transform:translateX(-50%) scale(1)}
+  100%{opacity:0;transform:translateX(-50%) scale(1.05) translateY(-7px)}
+}
+.rarity-ring-v128:before,.rarity-ring-v128:after{
+  content:"";
+  position:absolute;
+  left:50%;
+  top:47%;
+  width:72px;
+  height:72px;
+  transform:translate(-50%,-50%) scale(.25);
+  border:7px solid var(--fx,#fff);
+  border-radius:50%;
+  opacity:.85;
+  animation:rarityRing128 .8s ease-out forwards;
+}
+.rarity-ring-v128:after{animation-delay:.13s}
+@keyframes rarityRing128{to{transform:translate(-50%,-50%) scale(4.2);opacity:0}}
+.rarity-rays-v128:before{
+  content:"";
+  position:absolute;
+  left:50%;
+  top:47%;
+  width:420px;
+  height:420px;
+  transform:translate(-50%,-50%) scale(.35);
+  background:repeating-conic-gradient(from 0deg,var(--ray,rgba(255,255,255,.36)) 0 5deg,transparent 5deg 16deg);
+  opacity:0;
+  animation:rarityRays128 .9s ease-out forwards;
+}
+@keyframes rarityRays128{35%{opacity:.85}100%{transform:translate(-50%,-50%) scale(1.15) rotate(11deg);opacity:0}}
+.rarity-sparks-v128 i{
+  position:absolute;
+  left:50%;
+  top:47%;
+  width:10px;
+  height:10px;
+  border-radius:50%;
+  background:var(--fx,#fff);
+  box-shadow:0 0 9px var(--fx,#fff);
+  transform:translate(-50%,-50%) rotate(var(--a)) translateY(-16px) scale(.4);
+  opacity:0;
+  animation:raritySpark128 .88s ease-out var(--delay) forwards;
+}
+@keyframes raritySpark128{
+  20%{opacity:1}
+  100%{transform:translate(-50%,-50%) rotate(var(--a)) translateY(calc(var(--d)*-1)) scale(1.25);opacity:0}
+}
+.fx-r-v128{--fx:#70c9ff;--ray:rgba(112,201,255,.22)}
+.fx-sr-v128{--fx:#6cefff;--ray:rgba(108,239,255,.34)}
+.fx-ssr-v128{--fx:#ffe15f;--ray:rgba(255,225,95,.50)}
+.fx-ur-v128{--fx:#c982ff;--ray:rgba(201,130,255,.52)}
+.fx-mob-v128{--fx:#ff79c7;--ray:rgba(255,121,199,.48)}
+.fx-ssr-v128 .rarity-rays-v128:before,.fx-ur-v128 .rarity-rays-v128:before,.fx-mob-v128 .rarity-rays-v128:before{opacity:.7}
+.fx-ur-v128 .rarity-ring-v128:before,.fx-ur-v128 .rarity-ring-v128:after{border-style:double;border-width:10px}
+.fx-mob-v128:before{
+  content:"";
+  position:absolute;
+  inset:-30%;
+  background:conic-gradient(from 0deg,transparent,#ff73c4,#ffe06c,#76e8ff,#c684ff,#ff73c4,transparent);
+  opacity:.32;
+  animation:fxSpin128 1.4s linear infinite;
+}
+@keyframes fxSpin128{to{transform:rotate(360deg)}}
+.stage-r-v128{box-shadow:inset 0 0 0 5px rgba(112,201,255,.28)}
+.stage-sr-v128{box-shadow:inset 0 0 0 7px rgba(108,239,255,.36)}
+.stage-ssr-v128{box-shadow:inset 0 0 0 8px rgba(255,225,95,.42)}
+.stage-ur-v128{box-shadow:inset 0 0 0 9px rgba(201,130,255,.42)}
+.stage-mob-v128{box-shadow:inset 0 0 0 9px rgba(255,121,199,.42),0 0 18px rgba(118,232,255,.35)}
+
+/* Final 6 cards are always centered and directly rendered face-up. */
+.final-scene-v128{
+  width:100%;
+  height:100%;
+  display:grid;
+  grid-template-rows:auto minmax(0,1fr) auto auto;
+  align-items:center;
+  justify-items:center;
+  gap:5px;
+}
+.final-title-v128{
+  font-size:18px;
+  font-weight:1000;
+}
+.final-grid-v128{
+  width:min(96%,340px);
+  height:min(52vh,286px);
+  min-height:190px;
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  grid-template-rows:repeat(2,minmax(0,1fr));
+  gap:6px;
+  justify-content:center;
+  align-content:center;
+  margin:0 auto;
+}
+.final-grid-v128 .card-front-v128{
+  width:100%;
+  height:100%;
+  min-width:0;
+  min-height:0;
+  border-width:4px;
+  border-radius:13px;
+  padding:4px;
+}
+.final-grid-v128 .card-rarity-v128{font-size:9px}
+.final-grid-v128 .card-art-v128{border-width:2px;border-radius:8px}
+.final-grid-v128 .card-name-v128{font-size:8px;padding-top:3px}
+.final-total-v128{
+  border:4px solid var(--ink);
+  border-radius:999px;
+  background:#fff;
+  padding:7px 15px;
+  font-size:18px;
+  font-weight:1000;
+}
+.final-ok-v128{
+  min-width:180px;
+  min-height:44px;
+  margin:0!important;
+  font-size:15px!important;
+}
+@media (max-height:680px){
+  .single-card-holder-v128{height:min(42vh,255px)}
+  .final-grid-v128{height:min(45vh,238px);min-height:170px}
+  .card-next-v128,.final-ok-v128{min-height:40px}
+}

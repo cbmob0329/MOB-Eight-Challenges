@@ -17805,85 +17805,304 @@ async function startCardShop(p,humanIndex,runId){
   gameFit();
 
   const POOLS={
-    R:{name:'レア',points:5,ids:["01","02","07","10","11","21"],chance:32,color:'#8bd3ff'},
-    SR:{name:'スーパーレア',points:8,ids:["04","05","19","20"],chance:24,color:'#79f1ff'},
-    SSR:{name:'スーパースペシャルレア',points:10,ids:["12","15","16","22"],chance:20,color:'#ffe26c'},
-    UR:{name:'アルティメットレア',points:15,ids:["03","06","08","09"],chance:14,color:'#cb8dff'},
-    MOB:{name:'モブアーティストレア',points:30,ids:["13","14","17","18"],chance:10,color:'#ff85ce'}
+    R:{name:'レア',points:5,ids:["01","02","07","10","11","21"],chance:32,color:'#71c7ff'},
+    SR:{name:'スーパーレア',points:8,ids:["04","05","19","20"],chance:24,color:'#72efff'},
+    SSR:{name:'スーパースペシャルレア',points:10,ids:["12","15","16","22"],chance:20,color:'#ffe165'},
+    UR:{name:'アルティメットレア',points:15,ids:["03","06","08","09"],chance:14,color:'#c687ff'},
+    MOB:{name:'モブアーティストレア',points:30,ids:["13","14","17","18"],chance:10,color:'#ff75ca'}
   };
-  const N={"01":"お昼寝モブくん","02":"走るモブくん","03":"MCモブくん","04":"ハロウィンモブくん","05":"夏休みモブくん","06":"BBOYモブくん","07":"お勉強モブくん","08":"DJモブくん","09":"グラフィティモブくん","10":"ジャンプモブくん","11":"トレーニングモブくん","12":"パーティーモブくん","13":"ゲームモブくん","14":"どら焼き食べるモブくん","15":"音楽モブくん","16":"チルタイムモブくん","17":"みかんちゃんとモブくん","18":"わたあめ大好きモブくん","19":"クリスマスモブくん","20":"お正月モブくん","21":"お掃除モブくん","22":"お誕生日モブくん"};
+
+  const N={
+    "01":"お昼寝モブくん","02":"走るモブくん","03":"MCモブくん","04":"ハロウィンモブくん",
+    "05":"夏休みモブくん","06":"BBOYモブくん","07":"お勉強モブくん","08":"DJモブくん",
+    "09":"グラフィティモブくん","10":"ジャンプモブくん","11":"トレーニングモブくん","12":"パーティーモブくん",
+    "13":"ゲームモブくん","14":"どら焼き食べるモブくん","15":"音楽モブくん","16":"チルタイムモブくん",
+    "17":"みかんちゃんとモブくん","18":"わたあめ大好きモブくん","19":"クリスマスモブくん","20":"お正月モブくん",
+    "21":"お掃除モブくん","22":"お誕生日モブくん"
+  };
+
   const rarities=['R','SR','SSR','UR','MOB'];
 
   function draw(){
-    const roll=Math.random()*100;let acc=0,r='R';
-    for(const k of rarities){acc+=POOLS[k].chance;if(roll<acc){r=k;break;}}
-    const pool=POOLS[r],id=pool.ids[randi(0,pool.ids.length-1)];
-    return{id,rarity:r,rarityName:pool.name,points:pool.points,color:pool.color,name:N[id]};
-  }
-  const pulls=Array.from({length:6},draw);
-  const total=pulls.reduce((s,c)=>s+c.points,0);
-  const god=pulls.some(c=>c.rarity==='MOB')||pulls.filter(c=>c.rarity==='UR').length>=2||total>=85;
+    const roll=Math.random()*100;
+    let acc=0;
+    let rarity='R';
 
-  screen.innerHTML=`<div class="cardshop-v127">
-    <div class="cardshop-head-v127"><div><span class="kicker">${esc(p.name)}</span><h2>モブくんカードショップ</h2></div><div class="game-badge">${playBadge(humanIndex)}</div></div>
-    <div id="cardStage127" class="cardshop-stage-v127 ${god?'god-v127':''}">
-      <div class="shop-shelf-v127 s1"></div><div class="shop-shelf-v127 s2"></div>
-      <div id="cardGod127" class="card-god-v127">${god?'神引きの予感…!?':'1パック 6枚入り'}</div>
-      <div id="packScene127" class="pack-scene-v127">
-        <div id="pack127" class="pack-v127 ${god?'rainbow-v127':''}"><b>MOB</b><span style="background-image:url('icon/01.png')"></span><em>PARTY CARD PACK</em><i>★ ★ ★</i></div>
-        <button id="open127" class="primary open-v127">開封！</button>
+    for(const key of rarities){
+      acc+=POOLS[key].chance;
+      if(roll<acc){
+        rarity=key;
+        break;
+      }
+    }
+
+    const pool=POOLS[rarity];
+    const id=pool.ids[randi(0,pool.ids.length-1)];
+
+    return{
+      id,
+      rarity,
+      rarityName:pool.name,
+      points:pool.points,
+      color:pool.color,
+      name:N[id]
+    };
+  }
+
+  const pulls=Array.from({length:6},draw);
+  const total=pulls.reduce((sum,c)=>sum+c.points,0);
+
+  screen.innerHTML=`<div class="cardshop-v128">
+    <div class="cardshop-head-v128">
+      <div><span class="kicker">${esc(p.name)}</span><h2>モブくんカードショップ</h2></div>
+      <div class="game-badge">${playBadge(humanIndex)}</div>
+    </div>
+
+    <div id="cardStage128" class="cardshop-stage-v128">
+      <div class="shop-wall-v128"></div>
+      <div class="shop-shelf-v128 s1"></div>
+      <div class="shop-shelf-v128 s2"></div>
+      <div id="cardTop128" class="card-top-v128">1パック 6枚入り</div>
+
+      <div id="packScene128" class="pack-scene-v128">
+        <div id="pack128" class="pack-v128">
+          <div class="pack-shine-v128"></div>
+          <b>MOB</b>
+          <span style="background-image:url('icon/01.png')"></span>
+          <em>PARTY CARD PACK</em>
+          <i>★ ★ ★</i>
+        </div>
+        <button id="open128" class="primary open-v128" type="button">開封！</button>
       </div>
-      <div id="reveal127" class="reveal-v127" hidden></div>
-      <div id="cardStatus127" class="card-status-v127">パックのすぐ下の「開封！」を押してください</div>
+
+      <div id="reveal128" class="reveal-v128" hidden></div>
+      <div id="cardStatus128" class="card-status-v128">パックを開封して6枚の合計ポイントを競う！</div>
     </div>
   </div>`;
 
-  const stage=document.getElementById('cardStage127'),packScene=document.getElementById('packScene127'),pack=document.getElementById('pack127'),open=document.getElementById('open127'),reveal=document.getElementById('reveal127'),status=document.getElementById('cardStatus127'),godEl=document.getElementById('cardGod127');
+  const stage=document.getElementById('cardStage128');
+  const packScene=document.getElementById('packScene128');
+  const pack=document.getElementById('pack128');
+  const open=document.getElementById('open128');
+  const reveal=document.getElementById('reveal128');
+  const status=document.getElementById('cardStatus128');
+  const top=document.getElementById('cardTop128');
+
+  function rarityClass(rarity){
+    return `r-${rarity.toLowerCase()}-v128`;
+  }
 
   function frontCard(c,small=false){
     const el=document.createElement('div');
-    el.className=`card-front-v127 r-${c.rarity.toLowerCase()} ${small?'small':''}`;
-    el.innerHTML=`<div class="shine-v127"></div><div class="card-rarity-v127"><b>${c.rarity}</b><span>${c.points}pt</span></div><div class="card-art-v127" style="background-image:url('card/${c.id}.png')"></div><div class="card-name-v127">${esc(c.name)}</div>`;
+    el.className=`card-front-v128 ${rarityClass(c.rarity)} ${small?'small-v128':''}`;
+    el.innerHTML=`
+      <div class="card-frame-glow-v128"></div>
+      <div class="card-rarity-v128"><b>${c.rarity}</b><span>${c.points}pt</span></div>
+      <div class="card-art-v128"><img src="card/${c.id}.png" draggable="false" alt="${esc(c.name)}"></div>
+      <div class="card-name-v128">${esc(c.name)}</div>
+    `;
     return el;
   }
+
   function revealCard(c){
-    const wrap=document.createElement('div');wrap.className=`card-flip-v127 r-${c.rarity.toLowerCase()}`;
-    wrap.innerHTML=`<div class="flip-inner-v127"><div class="card-back-v127"><b>MOB</b><span style="background-image:url('icon/01.png')"></span><em>PARTY CARD</em></div></div>`;
-    const inner=wrap.querySelector('.flip-inner-v127'),front=frontCard(c,false);front.classList.add('flip-front-v127');inner.appendChild(front);return wrap;
+    const wrap=document.createElement('div');
+    wrap.className=`card-flip-v128 ${rarityClass(c.rarity)}`;
+    wrap.innerHTML=`
+      <div class="flip-inner-v128">
+        <div class="card-back-v128">
+          <b>MOB</b>
+          <span style="background-image:url('icon/01.png')"></span>
+          <em>PARTY CARD</em>
+          <i>★ ★ ★</i>
+        </div>
+      </div>
+    `;
+    const front=frontCard(c,false);
+    front.classList.add('flip-front-v128');
+    wrap.querySelector('.flip-inner-v128').appendChild(front);
+    return wrap;
   }
-  function pulse(c){
-    stage.classList.remove('pulse-r-v127','pulse-sr-v127','pulse-ssr-v127','pulse-ur-v127','pulse-mob-v127');
-    void stage.offsetWidth;stage.classList.add(`pulse-${c.rarity.toLowerCase()}-v127`);
-    setTimeout(()=>stage?.classList.remove(`pulse-${c.rarity.toLowerCase()}-v127`),650);
-    const tones={R:[470],SR:[540,680],SSR:[620,820,1010],UR:[690,900,1160,980],MOB:[600,820,1040,1320,1580]}[c.rarity];
-    tones.forEach((t,i)=>setTimeout(()=>beep(t,110,.035),i*100));
+
+  function playRaritySound(rarity){
+    const tones={
+      R:[470],
+      SR:[520,650],
+      SSR:[590,760,980],
+      UR:[620,820,1050,1320],
+      MOB:[520,720,940,1190,1450,1710]
+    }[rarity];
+
+    tones.forEach((tone,i)=>{
+      setTimeout(()=>beep(tone,105+(i>2?25:0),.035),i*90);
+    });
+  }
+
+  function makeRarityFx(c){
+    const fx=document.createElement('div');
+    fx.className=`rarity-fx-v128 fx-${c.rarity.toLowerCase()}-v128`;
+
+    const labels={
+      R:'RARE',
+      SR:'SUPER RARE!',
+      SSR:'SUPER SPECIAL RARE!!',
+      UR:'ULTIMATE RARE!!!',
+      MOB:'MOB ARTIST RARE!!!!'
+    };
+
+    fx.innerHTML=`
+      <div class="rarity-rays-v128"></div>
+      <div class="rarity-ring-v128"></div>
+      <div class="rarity-call-v128">${labels[c.rarity]}</div>
+      <div class="rarity-sparks-v128">
+        ${Array.from({length:c.rarity==='MOB'?22:c.rarity==='UR'?18:c.rarity==='SSR'?15:10},(_,i)=>
+          `<i style="--a:${i*31}deg;--d:${54+(i%5)*14}px;--delay:${(i%4)*.035}s"></i>`
+        ).join('')}
+      </div>
+    `;
+    return fx;
+  }
+
+  function clearRarityStage(){
+    stage.classList.remove(
+      'stage-r-v128','stage-sr-v128','stage-ssr-v128','stage-ur-v128','stage-mob-v128'
+    );
+  }
+
+  function showRarity(c,scene){
+    clearRarityStage();
+    stage.classList.add(`stage-${c.rarity.toLowerCase()}-v128`);
+    scene.appendChild(makeRarityFx(c));
+    playRaritySound(c.rarity);
+  }
+
+  function waitForButton(label){
+    return new Promise(resolve=>{
+      const box=document.createElement('div');
+      box.className='card-next-wrap-v128';
+      const btn=document.createElement('button');
+      btn.type='button';
+      btn.className='primary card-next-v128';
+      btn.textContent=label;
+      box.appendChild(btn);
+      reveal.appendChild(box);
+
+      const done=e=>{
+        e.preventDefault();
+        btn.removeEventListener('pointerdown',done);
+        resolve();
+      };
+      btn.addEventListener('pointerdown',done,{passive:false});
+    });
   }
 
   async function runOpen(){
-    if(open.disabled||!isGameRunValid(runId))return;open.disabled=true;
-    pack.classList.add('tear-v127');status.textContent='パック開封中…';beep(280,90,.03);await wait(520);if(!isGameRunValid(runId))return;
-    if(god){godEl.textContent='神引き！？';godEl.classList.add('pop-v127');}
-    packScene.hidden=true;reveal.hidden=false;
+    if(open.disabled||!isGameRunValid(runId))return;
+    open.disabled=true;
+
+    status.textContent='パック開封中…';
+    pack.classList.add('tear-v128');
+    beep(280,90,.03);
+    await wait(520);
+    if(!isGameRunValid(runId))return;
+
+    packScene.hidden=true;
+    status.hidden=true;
+    reveal.hidden=false;
+    top.textContent='CARD OPEN';
 
     for(let i=0;i<pulls.length;i++){
-      const c=pulls[i];reveal.innerHTML='';
-      const counter=document.createElement('div');counter.className='card-counter-v127';counter.textContent=`${i+1} / 6`;
-      const holder=document.createElement('div');holder.className='single-card-holder-v127';const card=revealCard(c);holder.appendChild(card);
-      const info=document.createElement('div');info.className='single-card-info-v127';info.innerHTML=`<b>${c.rarity} ${c.rarityName}</b><span>${c.name}</span><strong>${c.points} POINT</strong>`;
-      reveal.append(counter,holder,info);status.textContent=`${i+1}枚目を開封…`;
-      await wait(320);if(!isGameRunValid(runId))return;card.classList.add('open-v127');pulse(c);
-      status.textContent=`${c.rarity}！ ${c.name}`;
-      await wait(c.rarity==='MOB'?1450:c.rarity==='UR'?1300:1150);if(!isGameRunValid(runId))return;
+      if(!isGameRunValid(runId))return;
+
+      clearRarityStage();
+      const c=pulls[i];
+      reveal.innerHTML='';
+
+      const scene=document.createElement('div');
+      scene.className='single-card-scene-v128';
+
+      const counter=document.createElement('div');
+      counter.className='card-counter-v128';
+      counter.textContent=`${i+1} / 6`;
+
+      const holder=document.createElement('div');
+      holder.className='single-card-holder-v128';
+      const card=revealCard(c);
+      holder.appendChild(card);
+
+      const info=document.createElement('div');
+      info.className='single-card-info-v128';
+      info.innerHTML=`
+        <b>${c.rarity} ${c.rarityName}</b>
+        <span>${esc(c.name)}</span>
+        <strong>${c.points} POINT</strong>
+      `;
+
+      scene.append(counter,holder,info);
+      reveal.appendChild(scene);
+
+      await wait(330);
+      if(!isGameRunValid(runId))return;
+
+      card.classList.add('open-v128');
+      showRarity(c,scene);
+
+      // Make every pull readable before allowing the next card.
+      const minRead={R:850,SR:1000,SSR:1200,UR:1450,MOB:1800}[c.rarity];
+      await wait(minRead);
+      if(!isGameRunValid(runId))return;
+
+      await waitForButton(i===pulls.length-1?'6枚をまとめて見る':'次のカード');
+      if(!isGameRunValid(runId))return;
     }
 
-    reveal.innerHTML='';const title=document.createElement('div');title.className='final-title-v127';title.textContent=god?'神引き！ 開封結果':'6枚の開封結果';
-    const grid=document.createElement('div');grid.className='final-grid-v127';pulls.forEach(c=>grid.appendChild(frontCard(c,true)));
-    const totalEl=document.createElement('div');totalEl.className='final-total-v127';totalEl.textContent=`合計 ${total} ポイント！`;
-    reveal.append(title,grid,totalEl);status.textContent='6枚すべて表向きで確認できます';
-    state.records.cardShop[p.id]=total;beep(total>=90?1180:total>=70?920:650,190,.05);
-    await wait(1800);if(isGameRunValid(runId))recordScreen(64,p,humanIndex,`${total}<small> POINT</small>`,'1パック6枚の合計ポイント');
+    clearRarityStage();
+    reveal.innerHTML='';
+    top.textContent='OPEN RESULT';
+
+    const finalScene=document.createElement('div');
+    finalScene.className='final-scene-v128';
+
+    const title=document.createElement('div');
+    title.className='final-title-v128';
+    title.textContent='6枚の開封結果';
+
+    const grid=document.createElement('div');
+    grid.className='final-grid-v128';
+    pulls.forEach(c=>grid.appendChild(frontCard(c,true)));
+
+    const totalEl=document.createElement('div');
+    totalEl.className='final-total-v128';
+    totalEl.textContent=`合計 ${total} ポイント！`;
+
+    const finishBtn=document.createElement('button');
+    finishBtn.type='button';
+    finishBtn.className='primary final-ok-v128';
+    finishBtn.textContent='結果OK';
+
+    finalScene.append(title,grid,totalEl,finishBtn);
+    reveal.appendChild(finalScene);
+
+    state.records.cardShop[p.id]=total;
+    beep(total>=90?1180:total>=70?920:650,190,.05);
+
+    // Final cards stay on screen until the player confirms.
+    finishBtn.addEventListener('pointerdown',e=>{
+      e.preventDefault();
+      finishBtn.disabled=true;
+      if(isGameRunValid(runId)){
+        recordScreen(
+          64,p,humanIndex,
+          `${total}<small> POINT</small>`,
+          '1パック6枚の合計ポイント'
+        );
+      }
+    },{passive:false,once:true});
   }
-  open.addEventListener('pointerdown',e=>{e.preventDefault();runOpen();},{passive:false});
+
+  open.addEventListener('pointerdown',e=>{
+    e.preventDefault();
+    runOpen();
+  },{passive:false,once:true});
 }
 
 
