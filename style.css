@@ -14173,3 +14173,67 @@ body,
   box-shadow:0 1px 0 rgba(17,19,26,.28);
   pointer-events:none;
 }
+
+
+/* =========================================================
+   V10.22 AIM MOB — EXACT LINE + SHORT GUIDE
+   ========================================================= */
+.aim-guide-line-v121{
+  left:72px!important;
+  width:56px!important;
+  height:2px!important;
+}
+
+
+/* =========================================================
+   V10.22 ELECTRIC MAZE — PASSABLE MOB MACHINE
+   ========================================================= */
+.electric-machine-v121{
+  width:36px!important;
+  height:36px!important;
+  border-width:3px!important;
+  background:#fff36a!important;
+  box-shadow:
+    0 0 0 4px rgba(100,201,255,.22),
+    0 0 13px rgba(69,177,255,.70)!important;
+}
+.electric-machine-v121>i{
+  inset:5px!important;
+  filter:none!important;
+  background-size:contain!important;
+}
+.electric-machine-v121>b,
+.electric-machine-v121>em{
+  display:none!important;
+}
+.electric-machine-v121:before,
+.electric-machine-v121:after{
+  content:"";
+  position:absolute;
+  inset:-8px;
+  border:2px solid #72d7ff;
+  border-radius:50%;
+  opacity:.72;
+  animation:electricPulseV122 .72s ease-in-out infinite alternate;
+}
+.electric-machine-v121:after{
+  inset:-13px;
+  opacity:.36;
+  animation-delay:.18s;
+}
+.electric-bolt-v122{
+  position:absolute;
+  z-index:5;
+  right:-8px;
+  top:-10px;
+  font-size:17px;
+  line-height:1;
+  transform:rotate(13deg);
+  filter:drop-shadow(0 1px 0 #fff);
+}
+@keyframes electricPulseV122{
+  to{
+    transform:scale(1.13);
+    opacity:.22;
+  }
+}
