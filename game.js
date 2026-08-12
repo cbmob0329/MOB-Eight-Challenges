@@ -50,12 +50,12 @@ const PLAYERS=[
 ];
 
 const GAMES=[
-  {no:1,key:"reaction",title:"反射神経",sub:"モブくんが出た瞬間をタップ"},
-  {no:2,key:"memory",title:"記憶力ゲーム",sub:"10枚の点灯順を記憶"},
-  {no:3,key:"puzzle",title:"ナンバープレート12",sub:"1〜12を順番に消すタイムアタック"},
-  {no:4,key:"launch",title:"フィギュア飛ばし",sub:"感覚で狙う最大2000m"},
+  {no:1,key:"reaction",title:"モブくんの反射神経",sub:"モブくんが出た瞬間をタップ"},
+  {no:2,key:"memory",title:"モブくんを覚えて！",sub:"10枚の点灯順を記憶"},
+  {no:3,key:"puzzle",title:"モブくん12",sub:"1〜12を順番に消すタイムアタック"},
+  {no:4,key:"launch",title:"モブくん人形空を飛ぶ",sub:"感覚で狙う最大2000m"},
   {no:5,key:"stack",title:"グラグラモブくん",sub:"10秒で色々なモブくんを積む"},
-  {no:6,key:"breakdance",title:"1990世界大会",sub:"4択から1990を見抜く"},
+  {no:6,key:"breakdance",title:"モブくん1990にチャレンジ",sub:"4択から1990を見抜く"},
   {no:7,key:"crisis",title:"モブくん危機一髪",sub:"3体で足元エネルギーを連続回避"},
   {no:8,key:"factory",title:"モブくん人形大人気",sub:"10秒で箱詰め・封印を量産"},
   {no:9,key:"catcher",title:"モブくんキャッチャー",sub:"多種モブくんをUFOキャッチ"},
@@ -111,7 +111,9 @@ const GAMES=[
   {no:59,key:"mobMisfortune",title:"モブくんの災難",sub:"大量の落石を左右移動で避ける"},
   {no:60,key:"aimMob",title:"狙ってモブくん！",sub:"弓矢で木の細い白線を狙う"},
   {no:61,key:"balanceMob",title:"極限バランスモブくん",sub:"細い棒の上で10秒耐える"},
-  {no:62,key:"mobDice",title:"モブくんのサイコロ",sub:"5個のサイコロで大きな合計を狙う"}
+  {no:62,key:"mobDice",title:"モブくんのサイコロ",sub:"5個のサイコロで大きな合計を狙う"},
+  {no:63,key:"mobCombo",title:"モブくん10連コンボ",sub:"5秒で同じモブくんを横3体以上そろえる"},
+  {no:64,key:"electricMaze",title:"こっちだよモブくん！",sub:"タップでピンを立ててビリビリ迷路を突破"}
 ];
 
 const MODES={
@@ -125,6 +127,7 @@ const MODES={
   scoreTag:{name:"100点 タッグバトル",short:"P1・P2 VS P3・P4 / 各ゲーム0〜100点",participants:["p1","p2","p3","p4"],team:true,points:[],performance:true,teams:{A:["p1","p2"],B:["p3","p4"]},teamNames:{A:"P1 + P2",B:"P3 + P4"}},
   customMix:{name:"人数自由バトル",short:"PLAYER / CPUを自由設定",participants:["p1","c2"],team:false,points:[3,0]},
   matchedVsCpu:{name:"プレイヤー VS CPU",short:"同人数チーム戦 / 1対1〜10対10",participants:["p1","c2"],team:true,points:[3,0],teams:{A:["p1"],B:["c2"]},teamNames:{A:"PLAYER TEAM",B:"CPU TEAM"}},
+  configured:{name:"対戦",short:"",participants:["p1","c2"],team:false,points:[3,0],performance:false,teams:{},teamNames:{}},
   free:{name:"1人フリープレイ",short:"好きなゲームだけ遊ぶ",participants:["p1"],team:false,points:[0]}
 };
 
@@ -148,11 +151,12 @@ function freshState(){
     roundIndex:0,
     records:{
       reaction:{},memory:{},puzzle:{},launch:{},stack:{},breakdance:{},
-      crisis:{},factory:{},catcher:{},tidy:{},ski:{},slot:{},rope:{},pk:{},rhythm:{},cut:{},climb:{},errand:{},dontHitMob:{},mobStop:{},overlap:{},shutter:{},cup:{},darts:{},parachute:{},mobCount:{},brake:{},feint:{},bomb:{},overlapMaster:{},jumpingMob:{},heroMaybe:{},popularGame:{},planetEnergy:{},painter:{},bikeJump:{},trampoline:{},mobTrain:{},giantMob:{},wizardMob:{},brawlerMob:{},summonerMob:{},blackjackMob:{},mobIssen:{},crowEscape:{},dancingMob:{},guardianMob:{},mob50m:{},sniperMob:{},mobRacePredict:{},mobRocket:{},bossDuel:{},plushCatcher:{},toyOnOff:{},dodgeballMob:{},amidakujiMob:{},katanaSmith:{},homeRunMob:{},mobMisfortune:{},aimMob:{},balanceMob:{},mobDice:{}
+      crisis:{},factory:{},catcher:{},tidy:{},ski:{},slot:{},rope:{},pk:{},rhythm:{},cut:{},climb:{},errand:{},dontHitMob:{},mobStop:{},overlap:{},shutter:{},cup:{},darts:{},parachute:{},mobCount:{},brake:{},feint:{},bomb:{},overlapMaster:{},jumpingMob:{},heroMaybe:{},popularGame:{},planetEnergy:{},painter:{},bikeJump:{},trampoline:{},mobTrain:{},giantMob:{},wizardMob:{},brawlerMob:{},summonerMob:{},blackjackMob:{},mobIssen:{},crowEscape:{},dancingMob:{},guardianMob:{},mob50m:{},sniperMob:{},mobRacePredict:{},mobRocket:{},bossDuel:{},plushCatcher:{},toyOnOff:{},dodgeballMob:{},amidakujiMob:{},katanaSmith:{},homeRunMob:{},mobMisfortune:{},aimMob:{},balanceMob:{},mobDice:{},mobCombo:{},electricMaze:{}
     },
     total:{},
     roundPoints:[],
-    cpuTier:{}
+    cpuTier:{},
+    setup:null
   };
 }
 function pById(id){return PLAYERS.find(p=>p.id===id)}
@@ -248,47 +252,453 @@ function renderHome(){
   cancelActiveAnimation();
   invalidateGameRun();
   state=freshState();
+
   screen.innerHTML=`
-    <section class="hero">
-      <div><span class="kicker">SMARTPHONE PARTY GAME</span><h1>62 MINI<br>GAMES</h1><p>62種のミニゲーム。各モードでNORMALかCUSTOMを選んで遊べます。</p></div>
+    <section class="hero hero-v119">
+      <div>
+        <span class="kicker">SMARTPHONE PARTY GAME</span>
+        <h1>64 MINI<br>GAMES</h1>
+        <p>対戦モードは「チーム戦」「個人戦」の2種類。人数・ルール・ゲーム数を自由に設定できます。</p>
+      </div>
       <div class="hero-mark">MOB</div>
     </section>
-    <section class="panel">
-      <div class="panel-head"><h3>MODE SELECT</h3><span class="tag">10 MODES</span></div>
-      <div class="mode-grid">
-        <button class="mode-card" data-mode="solo4"><span class="mode-no">MODE 01</span><b>4人 個人戦</b><span>プレイヤー1〜4で個人順位を競う</span></button>
-        <button class="mode-card" data-mode="solo8"><span class="mode-no">MODE 02</span><b>8人 個人戦</b><span>プレイヤー4人 + CPU4人</span></button>
-        <button class="mode-card" data-mode="tag"><span class="mode-no">MODE 03</span><b>2対2 タッグ</b><span>P1・P2 VS P3・P4</span></button>
-        <button class="mode-card" data-mode="humansVsCpu"><span class="mode-no">MODE 04</span><b>4人 VS CPU4人</b><span>PLAYER TEAM VS CPU TEAM</span></button>
-        <button class="mode-card score-mode-card" data-mode="score4"><span class="mode-no">MODE 05</span><b>100点 スコアバトル</b><span>各ゲーム0〜100点 / 選択ゲーム数で最大点が変化</span></button>
-        <button class="mode-card" data-mode="soloCpu7"><span class="mode-no">MODE 06</span><b>1人 VS CPU7人</b><span>P1ひとりでCPU7人に挑戦</span></button>
-        <button class="mode-card score-mode-card" data-mode="scoreTag"><span class="mode-no">MODE 07</span><b>100点 タッグバトル</b><span>P1・P2 VS P3・P4 / 得点合計勝負</span></button>
-        <button class="mode-card score-mode-card" data-mode="scoreCpu7"><span class="mode-no">MODE 08</span><b>1人 VS CPU7人 100点</b><span>P1ひとりでCPU7人とスコア勝負</span></button>
-        <button class="mode-card mix-mode-card" data-mode="customMix"><span class="mode-no">MODE 09</span><b>人数自由バトル</b><span>PLAYERとCPUを合計8人まで自由設定</span></button>
-        <button class="mode-card team-match-mode-card" data-mode="matchedVsCpu"><span class="mode-no">MODE 10</span><b>プレイヤー VS CPU</b><span>同じ人数で1対1〜最大10対10</span></button>
+
+    <section class="home-action-grid-v119">
+      <button id="openModeSelect" class="home-main-action-v119" type="button">
+        <span>MODE SELECT</span>
+        <b>モードセレクト</b>
+        <small>チーム戦 / 個人戦</small>
+      </button>
+
+      <button id="openFreePlay" class="home-sub-action-v119" type="button">
+        <span>FREE PLAY</span>
+        <b>1人で遊ぶ</b>
+      </button>
+
+      <button id="openGameGuide" class="home-sub-action-v119" type="button">
+        <span>GUIDE</span>
+        <b>各ゲームの説明</b>
+      </button>
+    </section>
+
+    <section class="panel flat">
+      <div class="panel-head"><h3>64 MINI GAMES</h3><span class="tag">GAME 1 → 64</span></div>
+      <div class="compact-game-grid home-compact-games-v119">
+        ${GAMES.map(g=>`<div><b>${g.no}</b><span>${g.title}</span></div>`).join("")}
       </div>
     </section>
-    <section class="panel free-play-panel">
-      <div class="panel-head"><div><span class="kicker mini">1 PLAYER</span><h3>好きなゲームを1人で遊ぶ</h3></div><span class="tag">FREE PLAY</span></div>
-      <p class="note">順位・ポイントなし。プレイヤー1で好きなゲームだけ遊べます。</p>
-      <div class="free-game-grid">
-        ${GAMES.map((g,i)=>`<button class="free-game-card" data-free-game="${i}"><span>GAME ${g.no}</span><b>${g.title}</b><small>${g.sub}</small></button>`).join("")}
-      </div>
-    </section>
-    <section class="panel flat"><h3>MINI GAMES</h3><div class="game-list">${GAMES.map(g=>`<div class="game-row"><div class="game-no">${g.no}</div><div><b>${g.title}</b><br><span>${g.sub}</span></div><span>GAME ${g.no}</span></div>`).join("")}</div></section>`;
-  screen.querySelectorAll("[data-mode]").forEach(b=>b.addEventListener("click",()=>selectMode(b.dataset.mode)));
-  screen.querySelectorAll("[data-free-game]").forEach(b=>b.addEventListener("click",()=>startFreeGame(Number(b.dataset.freeGame))));
+  `;
+
+  document.getElementById('openModeSelect').addEventListener('click',renderBattleTypeSelect);
+  document.getElementById('openFreePlay').addEventListener('click',renderFreePlaySelect);
+  document.getElementById('openGameGuide').addEventListener('click',renderGameGuide);
+  gameTop();
 }
 
-function startFreeGame(gameIndex){
-  state=freshState();
-  state.modeKey="free";
-  state.freePlay=true;
-  state.freeGameIndex=gameIndex;
-  state.gameIndex=gameIndex;
-  initTotals();
-  showGameIntro(gameIndex);
+function renderFreePlaySelect(){
+  clearGameFit();
+  invalidateGameRun();
+
+  screen.innerHTML=`
+    <div class="game-head">
+      <div><span class="kicker">FREE PLAY</span><h2>1人で遊ぶ</h2><p class="lead">好きなゲームを1つ選んでプレイ。</p></div>
+      <div class="game-badge">64</div>
+    </div>
+
+    <button id="freeBack" class="secondary wizard-back-v119" type="button">← メインへ戻る</button>
+
+    <section class="panel">
+      <div class="free-game-grid">
+        ${GAMES.map((g,i)=>`<button class="free-game-card" data-free-game="${i}" type="button"><span>GAME ${g.no}</span><b>${g.title}</b><small>${g.sub}</small></button>`).join("")}
+      </div>
+    </section>
+  `;
+
+  document.getElementById('freeBack').addEventListener('click',renderHome);
+  screen.querySelectorAll('[data-free-game]').forEach(btn=>btn.addEventListener('click',()=>startFreeGame(Number(btn.dataset.freeGame))));
+  gameTop();
 }
+
+function renderGameGuide(){
+  clearGameFit();
+  invalidateGameRun();
+
+  screen.innerHTML=`
+    <div class="game-head">
+      <div><span class="kicker">GAME GUIDE</span><h2>各ゲームの説明</h2><p class="lead">内容と100点換算の目安を一覧で確認できます。</p></div>
+      <div class="game-badge">64</div>
+    </div>
+
+    <button id="guideBack" class="secondary wizard-back-v119" type="button">← メインへ戻る</button>
+
+    <div class="game-guide-list-v119">
+      ${GAMES.map((g,i)=>`
+        <section class="game-guide-card-v119">
+          <div class="game-guide-no-v119">${g.no}</div>
+          <div>
+            <h3>${g.title}</h3>
+            <p>${g.sub}</p>
+            <small>${scoreRuleForGame(i)||'ゲーム内記録で順位を決定'}</small>
+          </div>
+        </section>
+      `).join('')}
+    </div>
+  `;
+
+  document.getElementById('guideBack').addEventListener('click',renderHome);
+  gameTop();
+}
+
+function renderBattleTypeSelect(){
+  clearGameFit();
+  cancelActiveAnimation();
+  invalidateGameRun();
+  state=freshState();
+
+  screen.innerHTML=`
+    <div class="game-head">
+      <div><span class="kicker">MODE SELECT</span><h2>対戦形式を選択</h2><p class="lead">対戦モードはこの2つだけです。</p></div>
+      <div class="game-badge">2 MODES</div>
+    </div>
+
+    <div class="battle-type-grid-v119">
+      <button id="battleTeam" class="battle-type-card-v119 team" type="button">
+        <span>TEAM BATTLE</span><b>チーム戦</b><small>最大4チーム / PLAYER・CPUを各チームへ割り当て</small>
+      </button>
+      <button id="battleSolo" class="battle-type-card-v119 solo" type="button">
+        <span>INDIVIDUAL</span><b>個人戦</b><small>PLAYER人数 + CPU人数で全員対戦</small>
+      </button>
+    </div>
+
+    <button id="battleTypeBack" class="secondary wizard-back-v119" type="button">← メインへ戻る</button>
+    <button id="battleGuide" class="secondary" type="button">各ゲームの説明</button>
+  `;
+
+  document.getElementById('battleTeam').addEventListener('click',()=>{
+    const config={type:'team',teamCount:2,teamSize:2,assignments:[],rule:null,length:null};
+    state.setup=config;
+    renderTeamBasics(config);
+  });
+
+  document.getElementById('battleSolo').addEventListener('click',()=>{
+    const config={type:'individual',humanCount:1,cpuCount:1,rule:null,length:null};
+    state.setup=config;
+    renderIndividualSetup(config);
+  });
+
+  document.getElementById('battleTypeBack').addEventListener('click',renderHome);
+  document.getElementById('battleGuide').addEventListener('click',renderGameGuide);
+  gameTop();
+}
+
+function renderTeamBasics(config){
+  clearGameFit();
+  state.setup=config;
+
+  function maxTeamSize(){
+    return Math.min(10,Math.floor(20/config.teamCount));
+  }
+
+  config.teamSize=clamp(config.teamSize,1,maxTeamSize());
+
+  screen.innerHTML=`
+    <div class="game-head">
+      <div><span class="kicker">TEAM BATTLE / 1</span><h2>チーム数と人数</h2><p class="lead">全チーム同じ人数。最大4チーム。</p></div>
+      <div class="game-badge" id="teamBasicTotal">${config.teamCount*config.teamSize}人</div>
+    </div>
+
+    <section class="panel wizard-counter-panel-v119">
+      <div class="wizard-counter-v119">
+        <span>TEAM COUNT</span>
+        <div><button data-basic="team-" type="button">−</button><b id="teamCountValue">${config.teamCount}</b><button data-basic="team+" type="button">＋</button></div>
+        <small>2〜4チーム</small>
+      </div>
+      <div class="wizard-counter-v119">
+        <span>MEMBERS / TEAM</span>
+        <div><button data-basic="size-" type="button">−</button><b id="teamSizeValue">${config.teamSize}</b><button data-basic="size+" type="button">＋</button></div>
+        <small id="teamSizeMaxText">1〜${maxTeamSize()}人</small>
+      </div>
+    </section>
+
+    <button id="teamBasicNext" class="primary" type="button">チーム割り当てへ</button>
+    <button id="teamBasicBack" class="secondary wizard-back-v119" type="button">← チーム戦 / 個人戦へ戻る</button>
+  `;
+
+  const countEl=document.getElementById('teamCountValue');
+  const sizeEl=document.getElementById('teamSizeValue');
+  const totalEl=document.getElementById('teamBasicTotal');
+  const maxText=document.getElementById('teamSizeMaxText');
+
+  const redraw=()=>{
+    config.teamSize=clamp(config.teamSize,1,maxTeamSize());
+    countEl.textContent=config.teamCount;
+    sizeEl.textContent=config.teamSize;
+    totalEl.textContent=`${config.teamCount*config.teamSize}人`;
+    maxText.textContent=`1〜${maxTeamSize()}人`;
+  };
+
+  screen.querySelectorAll('[data-basic]').forEach(btn=>btn.addEventListener('click',()=>{
+    const k=btn.dataset.basic;
+    if(k==='team-')config.teamCount=Math.max(2,config.teamCount-1);
+    if(k==='team+')config.teamCount=Math.min(4,config.teamCount+1);
+    if(k==='size-')config.teamSize=Math.max(1,config.teamSize-1);
+    if(k==='size+')config.teamSize=Math.min(maxTeamSize(),config.teamSize+1);
+    config.assignments=[];
+    redraw();
+  }));
+
+  document.getElementById('teamBasicNext').addEventListener('click',()=>renderTeamAssignment(config));
+  document.getElementById('teamBasicBack').addEventListener('click',renderBattleTypeSelect);
+  redraw();
+  gameTop();
+}
+
+function defaultTeamAssignments(teamCount,teamSize){
+  const total=teamCount*teamSize;
+  const targetHumans=Math.min(10,Math.ceil(total/2));
+  const a=Array.from({length:teamCount},()=>({players:0,cpus:0}));
+  let left=targetHumans;
+
+  while(left>0){
+    let progressed=false;
+    for(let i=0;i<teamCount&&left>0;i++){
+      if(a[i].players<teamSize){a[i].players++;left--;progressed=true;}
+    }
+    if(!progressed)break;
+  }
+
+  a.forEach(x=>x.cpus=teamSize-x.players);
+  return a;
+}
+
+function renderTeamAssignment(config){
+  clearGameFit();
+  state.setup=config;
+
+  if(!config.assignments||config.assignments.length!==config.teamCount){
+    config.assignments=defaultTeamAssignments(config.teamCount,config.teamSize);
+  }
+
+  const teamLetters=['A','B','C','D'];
+
+  screen.innerHTML=`
+    <div class="game-head">
+      <div><span class="kicker">TEAM BATTLE / 2</span><h2>チーム割り当て</h2><p class="lead">各チームのPLAYER人数とCPU人数を決めます。CPU 0人でもOK。</p></div>
+      <div class="game-badge">${config.teamCount} TEAMS</div>
+    </div>
+
+    <div id="teamAssignList" class="team-assign-list-v119"></div>
+    <div id="teamAssignStatus" class="wizard-status-v119"></div>
+
+    <button id="teamAssignNext" class="primary" type="button">ルール選択へ</button>
+    <button id="teamAssignBack" class="secondary wizard-back-v119" type="button">← チーム数へ戻る</button>
+  `;
+
+  const list=document.getElementById('teamAssignList');
+  const status=document.getElementById('teamAssignStatus');
+  const next=document.getElementById('teamAssignNext');
+
+  function totals(){
+    return config.assignments.reduce((o,x)=>({players:o.players+x.players,cpus:o.cpus+x.cpus}),{players:0,cpus:0});
+  }
+
+  function redraw(){
+    list.innerHTML=config.assignments.map((x,i)=>`
+      <section class="team-assign-card-v119 team-${teamLetters[i].toLowerCase()}">
+        <div class="panel-head"><h3>TEAM ${teamLetters[i]}</h3><span class="tag">${config.teamSize}人</span></div>
+        <div class="team-split-counter-v119">
+          <div><span>PLAYER</span><button data-adjust="${i}:p-" type="button">−</button><b>${x.players}</b><button data-adjust="${i}:p+" type="button">＋</button></div>
+          <div><span>CPU</span><button data-adjust="${i}:c-" type="button">−</button><b>${x.cpus}</b><button data-adjust="${i}:c+" type="button">＋</button></div>
+        </div>
+        <p>${x.players} PLAYER + ${x.cpus} CPU = ${config.teamSize}人</p>
+      </section>
+    `).join('');
+
+    const t=totals();
+    const valid=t.players<=10&&t.cpus<=10&&config.assignments.every(x=>x.players+x.cpus===config.teamSize);
+    status.innerHTML=`PLAYER 合計 <b>${t.players}/10</b>　CPU 合計 <b>${t.cpus}/10</b>${valid?'':'<strong>人数上限を超えています</strong>'}`;
+    next.disabled=!valid;
+
+    list.querySelectorAll('[data-adjust]').forEach(btn=>btn.addEventListener('click',()=>{
+      const [idxRaw,op]=btn.dataset.adjust.split(':');
+      const idx=Number(idxRaw); const x=config.assignments[idx];
+      if(op==='p+'&&x.cpus>0){x.players++;x.cpus--;}
+      if(op==='p-'&&x.players>0){x.players--;x.cpus++;}
+      if(op==='c+'&&x.players>0){x.cpus++;x.players--;}
+      if(op==='c-'&&x.cpus>0){x.cpus--;x.players++;}
+      redraw();
+    }));
+  }
+
+  next.addEventListener('click',()=>renderRuleSelect(config));
+  document.getElementById('teamAssignBack').addEventListener('click',()=>renderTeamBasics(config));
+  redraw();
+  gameTop();
+}
+
+function renderIndividualSetup(config){
+  clearGameFit();
+  state.setup=config;
+
+  screen.innerHTML=`
+    <div class="game-head">
+      <div><span class="kicker">INDIVIDUAL / 1</span><h2>参加人数</h2><p class="lead">PLAYER 1〜10人 / CPU 0〜10人。CPU無しでもOK。</p></div>
+      <div class="game-badge"><span id="individualTotal">${config.humanCount+config.cpuCount}</span>人</div>
+    </div>
+
+    <section class="panel wizard-counter-panel-v119">
+      <div class="wizard-counter-v119">
+        <span>PLAYER</span>
+        <div><button data-ind="p-" type="button">−</button><b id="individualP">${config.humanCount}</b><button data-ind="p+" type="button">＋</button></div>
+        <small>1〜10人</small>
+      </div>
+      <div class="wizard-counter-v119">
+        <span>CPU</span>
+        <div><button data-ind="c-" type="button">−</button><b id="individualC">${config.cpuCount}</b><button data-ind="c+" type="button">＋</button></div>
+        <small>0〜10人</small>
+      </div>
+    </section>
+
+    <button id="individualNext" class="primary" type="button">ルール選択へ</button>
+    <button id="individualBack" class="secondary wizard-back-v119" type="button">← チーム戦 / 個人戦へ戻る</button>
+  `;
+
+  const pEl=document.getElementById('individualP');
+  const cEl=document.getElementById('individualC');
+  const totalEl=document.getElementById('individualTotal');
+
+  const redraw=()=>{
+    pEl.textContent=config.humanCount;
+    cEl.textContent=config.cpuCount;
+    totalEl.textContent=config.humanCount+config.cpuCount;
+  };
+
+  screen.querySelectorAll('[data-ind]').forEach(btn=>btn.addEventListener('click',()=>{
+    const k=btn.dataset.ind;
+    if(k==='p-')config.humanCount=Math.max(1,config.humanCount-1);
+    if(k==='p+')config.humanCount=Math.min(10,config.humanCount+1);
+    if(k==='c-')config.cpuCount=Math.max(0,config.cpuCount-1);
+    if(k==='c+')config.cpuCount=Math.min(10,config.cpuCount+1);
+    redraw();
+  }));
+
+  document.getElementById('individualNext').addEventListener('click',()=>renderRuleSelect(config));
+  document.getElementById('individualBack').addEventListener('click',renderBattleTypeSelect);
+  redraw();
+  gameTop();
+}
+
+function renderRuleSelect(config){
+  clearGameFit();
+  state.setup=config;
+
+  screen.innerHTML=`
+    <div class="game-head">
+      <div><span class="kicker">RULE SELECT</span><h2>ルールを選択</h2><p class="lead">各ゲームの順位をポイント化するか、0〜100点をそのまま合計するか。</p></div>
+      <div class="game-badge">2 RULES</div>
+    </div>
+
+    <div class="battle-type-grid-v119">
+      <button id="ruleRank" class="battle-type-card-v119 rank" type="button"><span>RANKING</span><b>順位制</b><small>ゲームごとの順位ポイントを合計</small></button>
+      <button id="ruleScore" class="battle-type-card-v119 score" type="button"><span>SCORE</span><b>スコア制</b><small>各ゲーム0〜100点をそのまま合計</small></button>
+    </div>
+
+    <button id="ruleBack" class="secondary wizard-back-v119" type="button">← 人数設定へ戻る</button>
+  `;
+
+  document.getElementById('ruleRank').addEventListener('click',()=>{config.rule='ranking';renderGameLengthSelect(config);});
+  document.getElementById('ruleScore').addEventListener('click',()=>{config.rule='score';renderGameLengthSelect(config);});
+  document.getElementById('ruleBack').addEventListener('click',()=>config.type==='team'?renderTeamAssignment(config):renderIndividualSetup(config));
+  gameTop();
+}
+
+function applyConfiguredBattle(config){
+  const humanIds=['p1','p2','p3','p4','p5','p6','p7','p8','p9','p10'];
+  const cpuIds=['c2','c3','c4','c5','c6','c7','c8','c9','c10','c11'];
+  const m=MODES.configured;
+
+  m.team=config.type==='team';
+  m.performance=config.rule==='score';
+  m.teams={};
+  m.teamNames={};
+
+  if(config.type==='team'){
+    let hp=0,cp=0;
+    const letters=['A','B','C','D'].slice(0,config.teamCount);
+    const all=[];
+
+    letters.forEach((letter,i)=>{
+      const a=config.assignments[i];
+      const ids=[
+        ...humanIds.slice(hp,hp+a.players),
+        ...cpuIds.slice(cp,cp+a.cpus)
+      ];
+      hp+=a.players; cp+=a.cpus;
+      m.teams[letter]=ids;
+      m.teamNames[letter]=`TEAM ${letter}`;
+      all.push(...ids);
+    });
+
+    m.participants=all;
+    m.name='チーム戦';
+    m.short=`${config.teamCount}チーム × ${config.teamSize}人 / ${config.rule==='score'?'スコア制':'順位制'}`;
+  }else{
+    m.participants=[...humanIds.slice(0,config.humanCount),...cpuIds.slice(0,config.cpuCount)];
+    m.name='個人戦';
+    m.short=`PLAYER ${config.humanCount}人 + CPU ${config.cpuCount}人 / ${config.rule==='score'?'スコア制':'順位制'}`;
+  }
+
+  m.points=m.performance?[]:pointsForCount(m.participants.length);
+  state.modeKey='configured';
+  state.setup=config;
+  initTotals();
+}
+
+function renderGameLengthSelect(config){
+  clearGameFit();
+  state.setup=config;
+
+  screen.innerHTML=`
+    <div class="game-head">
+      <div><span class="kicker">GAME MODE</span><h2>プレイするゲーム数</h2><p class="lead">CUSTOM以外は64ゲームからランダムで選択。</p></div>
+      <div class="game-badge">${config.rule==='score'?'SCORE':'RANK'}</div>
+    </div>
+
+    <div class="game-length-grid-v119">
+      <button data-length="5" type="button"><span>QUICK</span><b>サクッと5ゲーム</b><small>ランダム5種</small></button>
+      <button data-length="15" type="button"><span>FUN</span><b>楽しく15ゲーム</b><small>ランダム15種</small></button>
+      <button data-length="30" type="button"><span>LONG</span><b>じっくり30ゲーム</b><small>ランダム30種</small></button>
+      <button data-length="all" type="button"><span>ALL</span><b>ガッツリ全ゲーム</b><small>全64種をランダム順</small></button>
+      <button data-length="custom" class="custom" type="button"><span>CUSTOM</span><b>カスタム</b><small>自由選択 / 最大50ゲーム</small></button>
+    </div>
+
+    <button id="lengthBack" class="secondary wizard-back-v119" type="button">← ルール選択へ戻る</button>
+  `;
+
+  screen.querySelectorAll('[data-length]').forEach(btn=>btn.addEventListener('click',()=>{
+    const kind=btn.dataset.length;
+    config.length=kind;
+    applyConfiguredBattle(config);
+    state.roundIndex=0;
+
+    if(kind==='custom'){
+      state.playStyle='custom';
+      state.playlist=[];
+      renderCustomPicker();
+      return;
+    }
+
+    const all=shuffle(GAMES.map((_,i)=>i));
+    const count=kind==='all'?GAMES.length:Number(kind);
+    state.playStyle=kind;
+    state.playlist=all.slice(0,count);
+    renderModeLobby();
+  }));
+
+  document.getElementById('lengthBack').addEventListener('click',()=>renderRuleSelect(config));
+  gameTop();
+}
+
 
 function selectMode(key){
   state=freshState();
@@ -465,13 +875,22 @@ function renderMixSetup(){
   redraw();gameTop();
 }
 function initTotals(){participants().forEach(p=>state.total[p.id]=0)}
+function teamKeys(){
+  if(!mode()?.team)return [];
+  return Object.keys(mode().teams||{});
+}
 function teamOf(id){
-  if(!mode().team)return "";
-  return mode().teams.A.includes(id)?"A":"B";
+  if(!mode()?.team)return "";
+  return teamKeys().find(key=>(mode().teams[key]||[]).includes(id))||"";
 }
 function teamName(id){
-  if(!mode().team)return pById(id).cpu?"CPU":"PLAYER";
-  return mode().teamNames[teamOf(id)];
+  if(!mode()?.team)return pById(id).cpu?"CPU":"PLAYER";
+  const key=teamOf(id);
+  return mode().teamNames?.[key]||`TEAM ${key}`;
+}
+function teamClass(id){
+  const key=teamOf(id);
+  return key?`team-${key.toLowerCase()}`:"";
 }
 function pointsText(){return mode().points.map((p,i)=>`${i+1}位 ${p}`).join(" / ")}
 function roundGameIndex(){return state.playlist[state.roundIndex] ?? state.gameIndex}
@@ -498,7 +917,7 @@ function renderPlayStyleSelect(){
       <button id="normalStyle" class="style-select-card normal" type="button">
         <span>NORMAL</span>
         <b>順番に全種目</b>
-        <small>GAME 1 → 62 を順番にプレイ</small>
+        <small>GAME 1 → 64 を順番にプレイ</small>
       </button>
       <button id="customStyle" class="style-select-card custom" type="button">
         <span>CUSTOM</span>
@@ -508,7 +927,7 @@ function renderPlayStyleSelect(){
     </div>
 
     <section class="panel flat">
-      <h3>62 MINI GAMES</h3>
+      <h3>64 MINI GAMES</h3>
       <div class="compact-game-grid">
         ${GAMES.map(g=>`<div><b>${g.no}</b><span>${g.title}</span></div>`).join("")}
       </div>
@@ -533,14 +952,18 @@ function renderPlayStyleSelect(){
 
 function renderCustomPicker(){
   clearGameFit();
+  const MAX_CUSTOM=50;
+
   screen.innerHTML=`
     <div class="game-head">
-      <div><span class="kicker">CUSTOM</span><h2>ゲームを選択</h2><p class="lead">同じゲームを何回選んでもOK。3〜10個まで。</p></div>
-      <div class="game-badge"><span id="customCount">${state.playlist.length}</span>/10</div>
+      <div><span class="kicker">CUSTOM</span><h2>ゲームを選択</h2><p class="lead">1〜50ゲームまで自由に選択。同じゲームの重複もOK。</p></div>
+      <div class="game-badge"><span id="customCount">${state.playlist.length}</span>/50</div>
     </div>
 
+    <button id="customBack" class="secondary wizard-back-v119" type="button">← ゲームモードへ戻る</button>
+
     <section class="panel custom-order-panel">
-      <div class="panel-head"><h3>PLAY ORDER</h3><span class="tag">3〜10</span></div>
+      <div class="panel-head"><h3>PLAY ORDER</h3><span class="tag">MAX 50</span></div>
       <div id="customOrder" class="custom-order"></div>
       <div class="custom-actions">
         <button id="undoCustom" class="secondary small-btn" type="button">1つ戻す</button>
@@ -551,7 +974,7 @@ function renderCustomPicker(){
     <section class="panel">
       <h3>追加するゲーム</h3>
       <div class="custom-game-grid">
-        ${GAMES.map((g,i)=>`<button class="custom-game-add" data-add-game="${i}" type="button"><span>GAME ${g.no}</span><b>${g.title}</b><small>タップで追加</small></button>`).join("")}
+        ${GAMES.map((g,i)=>`<button class="custom-game-add" data-add-game="${i}" type="button"><span>GAME ${g.no}</span><b>${g.title}</b><small>${g.sub}</small></button>`).join("")}
       </div>
     </section>
 
@@ -572,30 +995,28 @@ function renderCustomPicker(){
     <div id="customAddedToast" class="custom-added-toast-v114"></div>
   `;
 
-  const order=document.getElementById("customOrder");
-  const count=document.getElementById("customCount");
-  const decide=document.getElementById("customDecide");
-  const confirmOverlay=document.getElementById("customConfirmOverlay");
-  const confirmTitle=document.getElementById("customConfirmTitle");
-  const confirmText=document.getElementById("customConfirmText");
-  const confirmYes=document.getElementById("customConfirmYes");
-  const confirmNo=document.getElementById("customConfirmNo");
-  const toast=document.getElementById("customAddedToast");
-
+  const order=document.getElementById('customOrder');
+  const count=document.getElementById('customCount');
+  const decide=document.getElementById('customDecide');
+  const confirmOverlay=document.getElementById('customConfirmOverlay');
+  const confirmTitle=document.getElementById('customConfirmTitle');
+  const confirmText=document.getElementById('customConfirmText');
+  const confirmYes=document.getElementById('customConfirmYes');
+  const confirmNo=document.getElementById('customConfirmNo');
+  const toast=document.getElementById('customAddedToast');
   let pendingGameIndex=null;
 
   const redraw=()=>{
     order.innerHTML=state.playlist.length
-      ? state.playlist.map((idx,pos)=>`<button class="custom-order-chip" data-remove-pos="${pos}" type="button"><span>${pos+1}</span>${GAMES[idx].title}<small>×</small></button>`).join("")
+      ? state.playlist.map((idx,pos)=>`<button class="custom-order-chip" data-remove-pos="${pos}" type="button"><span>${pos+1}</span>${GAMES[idx].title}<small>×</small></button>`).join('')
       : `<p class="note">まだ選択されていません。</p>`;
-    count.textContent=state.playlist.length;
-    decide.disabled=state.playlist.length<3||state.playlist.length>10;
-    decide.textContent=state.playlist.length<3
-      ? `あと${3-state.playlist.length}個選択`
-      : `この${state.playlist.length}ゲームで決定`;
 
-    order.querySelectorAll("[data-remove-pos]").forEach(b=>b.addEventListener("click",()=>{
-      state.playlist.splice(Number(b.dataset.removePos),1);
+    count.textContent=state.playlist.length;
+    decide.disabled=state.playlist.length<1||state.playlist.length>MAX_CUSTOM;
+    decide.textContent=state.playlist.length<1?'1ゲーム以上選択':`この${state.playlist.length}ゲームで決定`;
+
+    order.querySelectorAll('[data-remove-pos]').forEach(btn=>btn.addEventListener('click',()=>{
+      state.playlist.splice(Number(btn.dataset.removePos),1);
       redraw();
     }));
   };
@@ -603,9 +1024,7 @@ function renderCustomPicker(){
   function closeConfirm(){
     confirmOverlay.hidden=true;
     pendingGameIndex=null;
-
-    screen.querySelectorAll('[data-add-game].pending')
-      .forEach(el=>el.classList.remove('pending'));
+    screen.querySelectorAll('[data-add-game].pending').forEach(el=>el.classList.remove('pending'));
   }
 
   function showAddedToast(text){
@@ -615,65 +1034,35 @@ function renderCustomPicker(){
     toast.classList.add('show');
   }
 
-  screen.querySelectorAll("[data-add-game]").forEach(b=>b.addEventListener("click",()=>{
-    pendingGameIndex=Number(b.dataset.addGame);
+  screen.querySelectorAll('[data-add-game]').forEach(btn=>btn.addEventListener('click',()=>{
+    pendingGameIndex=Number(btn.dataset.addGame);
     const game=GAMES[pendingGameIndex];
-
-    screen.querySelectorAll('[data-add-game].pending')
-      .forEach(el=>el.classList.remove('pending'));
-
-    b.classList.add('pending');
-
+    screen.querySelectorAll('[data-add-game].pending').forEach(el=>el.classList.remove('pending'));
+    btn.classList.add('pending');
     confirmTitle.textContent=`${game.title}を追加しますか？`;
-    confirmText.textContent=
-      state.playlist.length>=10
-        ? `現在10ゲーム選択済みです。追加上限は10ゲームです。`
-        : `第${state.playlist.length+1}ゲームとして追加します。`;
-
+    confirmText.textContent=state.playlist.length>=MAX_CUSTOM?`現在50ゲーム選択済みです。追加上限は50ゲームです。`:`第${state.playlist.length+1}ゲームとして追加します。`;
     confirmOverlay.hidden=false;
     beep(520,30,.008);
   }));
 
-  confirmNo.addEventListener('click',()=>{
-    closeConfirm();
-    beep(260,25,.006);
-  });
-
+  confirmNo.addEventListener('click',()=>{closeConfirm();beep(260,25,.006);});
   confirmYes.addEventListener('click',()=>{
     if(pendingGameIndex===null)return;
-
     const game=GAMES[pendingGameIndex];
-
-    if(state.playlist.length>=10){
-      closeConfirm();
-      showAddedToast('最大10ゲームまでです');
-      beep(180,55,.012);
-      return;
-    }
-
+    if(state.playlist.length>=MAX_CUSTOM){closeConfirm();showAddedToast('最大50ゲームまでです');beep(180,55,.012);return;}
     state.playlist.push(pendingGameIndex);
-    const position=state.playlist.length;
-
+    const pos=state.playlist.length;
     closeConfirm();
     redraw();
-
-    showAddedToast(
-      `第${position}ゲームに「${game.title}」を選んだ！`
-    );
-
+    showAddedToast(`第${pos}ゲームに「${game.title}」を選んだ！`);
     beep(720,55,.018);
   });
 
-  document.getElementById("undoCustom").addEventListener("click",()=>{
-    state.playlist.pop();
-    redraw();
-  });
-  document.getElementById("clearCustom").addEventListener("click",()=>{
-    state.playlist=[];
-    redraw();
-  });
-  decide.addEventListener("click",()=>{
-    if(state.playlist.length<3||state.playlist.length>10)return;
+  document.getElementById('undoCustom').addEventListener('click',()=>{state.playlist.pop();redraw();});
+  document.getElementById('clearCustom').addEventListener('click',()=>{state.playlist=[];redraw();});
+  document.getElementById('customBack').addEventListener('click',()=>state.setup?renderGameLengthSelect(state.setup):renderBattleTypeSelect());
+  decide.addEventListener('click',()=>{
+    if(state.playlist.length<1||state.playlist.length>MAX_CUSTOM)return;
     state.roundIndex=0;
     renderModeLobby();
   });
@@ -682,17 +1071,18 @@ function renderCustomPicker(){
   gameTop();
 }
 
+
 function renderModeLobby(){
   clearGameFit();
   const m=mode();
   const scoreRules=`
     <div class="score-rule-grid">
-      <div><b>反射神経</b><span>0.150秒以下=100 / 0.300秒=50 / 0.500秒以上=0</span></div>
-      <div><b>記憶力</b><span>正解数 × 10点</span></div>
-      <div><b>ナンバープレート12</b><span>2.50秒=100 / 6.00秒以上=0</span></div>
-      <div><b>フィギュア飛ばし</b><span>2000m=100 / 0m=0</span></div>
+      <div><b>モブくんの反射神経</b><span>0.150秒以下=100 / 0.300秒=50 / 0.500秒以上=0</span></div>
+      <div><b>モブくんを覚えて！</b><span>正解数 × 10点</span></div>
+      <div><b>モブくん12</b><span>2.50秒=100 / 6.00秒以上=0</span></div>
+      <div><b>モブくん人形空を飛ぶ</b><span>2000m=100 / 0m=0</span></div>
       <div><b>グラグラモブくん</b><span>30体以上=100 / 0体=0</span></div>
-      <div><b>1990世界大会</b><span>世界1位=100 / 40位=0</span></div>
+      <div><b>モブくん1990にチャレンジ</b><span>世界1位=100 / 40位=0</span></div>
       <div><b>モブくん危機一髪</b><span>20回以上=100 / 0回=0</span></div>
       <div><b>モブくん人形大人気</b><span>25箱以上=100 / 0箱=0</span></div>
       <div><b>モブくんキャッチャー</b><span>1体=10 / 10体以上=100</span></div>
@@ -749,18 +1139,20 @@ function renderModeLobby(){
       <div><b>狙ってモブくん！</b><span>白線との誤差0px=100点</span></div>
       <div><b>極限バランスモブくん</b><span>10秒維持=100点</span></div>
       <div><b>モブくんのサイコロ</b><span>合計5=1点 / 合計30=100点</span></div>
+      <div><b>モブくん10連コンボ</b><span>10 COMBO=100点</span></div>
+      <div><b>こっちだよモブくん！</b><span>8秒以内=100点 / 30秒以上=0点</span></div>
     </div>`;
 
   screen.innerHTML=`
     <div class="game-head">
-      <div><span class="kicker">${state.playStyle==="custom"?"CUSTOM":"NORMAL"}</span><h2>${m.name}</h2><p class="lead">${m.short}</p></div>
+      <div><span class="kicker">${state.playStyle==="custom"?"CUSTOM":state.playStyle==="all"?"ALL GAMES":`${state.playlist.length} GAMES`}</span><h2>${m.name}</h2><p class="lead">${m.short}</p></div>
       <div class="game-badge">${state.playlist.length}戦</div>
     </div>
 
     <section class="panel">
       <div class="panel-head"><h3>ENTRY</h3><span class="tag">${m.performance?"SCORE BATTLE":m.team?"TEAM BATTLE":"INDIVIDUAL"}</span></div>
       <div class="player-grid">
-        ${participants().map(p=>`<div class="player-card ${m.team?(teamOf(p.id)==="A"?"team-a":"team-b"):(p.cpu?"team-cpu":"team-human")}">${imgTag(p)}<div><b>${esc(p.name)}</b><span>${p.cpu?"CPU":`PLAYER ${p.no}`}${m.team?` / ${teamName(p.id)}`:""}</span></div></div>`).join("")}
+        ${participants().map(p=>`<div class="player-card ${m.team?teamClass(p.id):(p.cpu?"team-cpu":"team-human")}">${imgTag(p)}<div><b>${esc(p.name)}</b><span>${p.cpu?"CPU":`PLAYER ${p.no}`}${m.team?` / ${teamName(p.id)}`:""}</span></div></div>`).join("")}
       </div>
     </section>
 
@@ -848,7 +1240,9 @@ function scoreRuleForGame(index){
     "12.00秒生存=100点 / 岩直撃までの時間",
     "白線との誤差0px=100点 / 約45px以上=0点",
     "10.00秒維持=100点 / 倒れるまでの時間",
-    "5個合計5=1点 / 合計30=100点"
+    "5個合計5=1点 / 合計30=100点",
+    "10 COMBO=100点 / 0 COMBO=0点",
+    "8.00秒以内=100点 / 30.00秒以上=0点"
   ][index];
 }
 
@@ -961,7 +1355,7 @@ function showGameIntro(index){
   }else if(index===50){
     rules=`<li>モブくんが乗ったコクピットは完成済み。7秒でその周りにロケットを自由に描きます。</li><li>描き終えたら3・2・1で発射。カメラが上空〜宇宙まで追従。</li><li>大きさだけではなく、左右バランス・縦長形状・線量・複雑さ・コクピットとの接続を評価。</li><li>描いたロケットによって飛行距離が変化。最大100km。</li>`;
   }else if(index===51){
-    rules=`<li>学校の屋上で他校の番長とタイマン。相手の耐久値は表示されません。</li><li>相手は基本スーパーアーマー。同時に攻撃がぶつかるとCLASHになり、お互い横へ弾け飛びます。</li><li>超密着でPUNCHを連打すると、番長が時々ジャンプして背後へ回り込みます。</li><li>通常PUNCHを3回受けるごとに番長は高速バックステップ。追いかける必要があります。</li><li>プレイヤーは1回だけSPECIALを使用可能。命中すると5ダメージ。</li><li>相手も積極的に攻め、まれに強い必殺攻撃。倒すまでの時間を競います。</li>`;
+    rules=`<li>学校の屋上で他校の番長とタイマン。相手の耐久値は表示されません。</li><li>通常PUNCHでも相手は短く怯みます。同時に攻撃がぶつかるとCLASHになり、お互い横へ弾け飛びます。</li><li>超密着でPUNCHを連打すると、番長が時々ジャンプして背後へ回り込みます。</li><li>通常PUNCHを3回受けるごとに番長は高速バックステップ。追いかける必要があります。</li><li>プレイヤーは1回だけ派手な突進SPECIALを使用可能。命中すると5ダメージ。</li><li>相手の攻撃頻度は少し控えめ。ただし壁際へ追い込むと強烈な反撃があります。</li>`;
   }else if(index===52){
     rules=`<li>巨大モブくんぬいぐるみ1個だけのUFOキャッチャー。</li><li>まずARM WIDTHゲージをSTOPしてアームの広さを決定。狭すぎても広すぎても掴みにくく、適度な幅が重要。</li><li>その後◀ ▶で横位置を合わせて「降下」。降下中のSTOPは高さだけ。</li><li>アーム幅・横位置・高さでまず掴みます。ただし掴み方が浅いと持ち上げ中に滑り落ちることがあります。</li><li>3回とも景品口まで運べたら100点。</li><li>2回GETは80点から、1回GETは50点から。使った合計時間が短いほど追加点。</li>`;
   }else if(index===53){
@@ -979,9 +1373,13 @@ function showGameIntro(index){
   }else if(index===59){
     rules=`<li>右側の巨大な木に、矢と同じくらい細い白線があります。</li><li>左のモブくんを▲ ▼で上下移動。</li><li>FIREまたは画面タップで矢を1発だけ真っすぐ発射。</li><li>矢が刺さった高さと白線の誤差から0〜100点。</li>`;
   }else if(index===60){
-    rules=`<li>細い棒の上にモブくん。10秒間倒れないように維持。</li><li>右へ傾いたらLEFT、左へ傾いたらRIGHTをタップして補正。</li><li>後半ほど風と傾き加速が強くなります。</li><li>約26°から補正不能、32°で転倒。</li>`;
+    rules=`<li>細い棒の上にモブくん。10秒間倒れないように維持。</li><li>右へ傾いたらLEFT、左へ傾いたらRIGHTをタップして補正。</li><li>風と傾き加速はかなり強め。後半ほど不安定になります。</li><li>約26°から補正不能、32°で転倒。</li>`;
+  }else if(index===61){
+    rules=`<li>5個の巨大サイコロを1回だけ振る完全な運勝負。</li><li>合計5（全部1）=1点、合計30（全部6）=100点。</li><li>途中の合計は5〜30を1〜100点へ比例換算。</li>`;
+  }else if(index===62){
+    rules=`<li>6×5のモブくんパズル。5秒間、押したモブくんを指で動かして隣と入れ替えます。</li><li>同じモブくんが横に3体以上並ぶと消えて1コンボ。</li><li>盤面はランダム風に崩してありますが、必ず10連コンボへ戻せる配置から生成。</li><li>10 COMBO=100点。連鎖が続けば10以上も可能。</li>`;
   }else{
-    rules=`<li>5個のサイコロを1回だけ振る完全な運勝負。</li><li>全部1なら1点、全部6なら100点。</li><li>途中の合計は5〜30を1〜100点へ比例換算。</li>`;
+    rules=`<li>ビリビリ電気壁に触れないよう迷路のGOALを目指します。</li><li>画面をタップするとピンが立ち、モブくんがその場所へ歩きます。</li><li>壁へ触れると派手にビリビリして1秒スタン。その場で止まり、次のピンを選び直します。</li><li>毎回ランダム生成される迷路。GOALまでのタイムを競います。</li>`;
   }
   screen.innerHTML=`
     <div class="game-head">
@@ -1083,7 +1481,9 @@ function humanReady(gameIndex,humanIndex){
     else if(gameIndex===58)startMobMisfortune(p,humanIndex,runId);
     else if(gameIndex===59)startAimMob(p,humanIndex,runId);
     else if(gameIndex===60)startBalanceMob(p,humanIndex,runId);
-    else startMobDice(p,humanIndex,runId);
+    else if(gameIndex===61)startMobDice(p,humanIndex,runId);
+    else if(gameIndex===62)startMobCombo(p,humanIndex,runId);
+    else startElectricMaze(p,humanIndex,runId);
   },{once:true});
 }
 
@@ -1143,7 +1543,7 @@ function playBadge(humanIndex){
 // GAME 1 -------------------------------------------------
 async function startReaction(p,humanIndex,runId){
   gameFit();
-  screen.innerHTML=`<section class="reaction-stage"><div><span class="kicker">${esc(p.name)}</span><h2>反射神経</h2></div><div id="reactionZone" class="reaction-zone"><div class="wait-dots">•••</div></div><p class="hint">モブくんが出た瞬間にタップ。0.0001秒単位で表示します。</p></section>`;
+  screen.innerHTML=`<section class="reaction-stage"><div><span class="kicker">${esc(p.name)}</span><h2>モブくんの反射神経</h2></div><div id="reactionZone" class="reaction-zone"><div class="wait-dots">•••</div></div><p class="hint">モブくんが出た瞬間にタップ。0.0001秒単位で表示します。</p></section>`;
   if(!(await countdown("COUNTDOWN",runId)))return;
   const zone=document.getElementById("reactionZone");
   if(!zone)return;
@@ -1171,7 +1571,7 @@ async function startReaction(p,humanIndex,runId){
 async function startMemory(p,humanIndex,runId){
   gameFit();
   const ids=shuffle(Array.from({length:10},(_,i)=>i+1));const seq=shuffle([...ids]);let input=0,active=false;
-  screen.innerHTML=`<div class="game-head"><div><span class="kicker">${esc(p.name)}</span><h2>記憶力ゲーム</h2></div><div class="game-badge">${playBadge(humanIndex)}</div></div><div class="memory-status"><div class="stat-box"><span>PHASE</span><b id="memPhase">WATCH</b></div><div class="stat-box"><span>CORRECT</span><b id="memCount">0 / 10</b></div></div><div id="memoryBoard" class="memory-board">${ids.map(id=>`<button type="button" class="memory-tile" data-id="${id}"><img src="icon/${String(id).padStart(2,"0")}.png" alt="icon ${id}" onerror="this.style.visibility='hidden'"></button>`).join("")}</div><p id="memHint" class="hint">3・2・1のあと、光る順番を覚えてください。</p>`;
+  screen.innerHTML=`<div class="game-head"><div><span class="kicker">${esc(p.name)}</span><h2>モブくんを覚えて！</h2></div><div class="game-badge">${playBadge(humanIndex)}</div></div><div class="memory-status"><div class="stat-box"><span>PHASE</span><b id="memPhase">WATCH</b></div><div class="stat-box"><span>CORRECT</span><b id="memCount">0 / 10</b></div></div><div id="memoryBoard" class="memory-board">${ids.map(id=>`<button type="button" class="memory-tile" data-id="${id}"><img src="icon/${String(id).padStart(2,"0")}.png" alt="icon ${id}" onerror="this.style.visibility='hidden'"></button>`).join("")}</div><p id="memHint" class="hint">3・2・1のあと、光る順番を覚えてください。</p>`;
   const board=document.getElementById("memoryBoard"),phase=document.getElementById("memPhase"),count=document.getElementById("memCount"),hint=document.getElementById("memHint");const tile=id=>board.querySelector(`[data-id="${id}"]`);
   if(!(await countdown("WATCH",runId)))return;
   for(const id of seq){if(!document.body.contains(board))return;tile(id).classList.add("showing");beep(400+id*18,55,.018);await wait(390);tile(id).classList.remove("showing");await wait(125)}
@@ -1189,7 +1589,7 @@ async function startPuzzle(p,humanIndex,runId){
 
   screen.innerHTML=`<div class="number-game-shell">
     <div class="number-game-top">
-      <div><span class="kicker">${esc(p.name)}</span><h2>ナンバー12</h2></div>
+      <div><span class="kicker">${esc(p.name)}</span><h2>モブくん12</h2></div>
       <div class="game-badge">${playBadge(humanIndex)}</div>
     </div>
     <div class="number-puzzle-wrap">
@@ -1201,7 +1601,7 @@ async function startPuzzle(p,humanIndex,runId){
         ${slots.map((num,slot)=>{
           const col=slot%4,row=Math.floor(slot/4);
           const x=(col/3)*100,y=(row/2)*100;
-          return `<button type="button" class="number-tile locked" data-num="${num}" aria-label="${num}" style="--px:${x}%;--py:${y}%"><span>${num}</span></button>`;
+          return `<button type="button" class="number-tile locked" data-num="${num}" aria-label="${num}" style="--px:${x}%;--py:${y}%"><img class="number-mob-mini-v119" src="icon/${String(((num-1)%10)+1).padStart(2,'0')}.png" draggable="false" alt=""><span>${num}</span></button>`;
         }).join("")}
       </div>
       <p id="numHint" class="hint number-hint">3・2・1のあと 1 から順番にタップ。</p>
@@ -1276,7 +1676,7 @@ async function startLaunch(p,humanIndex,runId){
   let linear=0,circle=0,phase="linear",start=performance.now();
   const linearPeriod=rand(350,430);
 
-  screen.innerHTML=`<div class="game-head"><div><span class="kicker">${esc(p.name)}</span><h2>フィギュア飛ばし</h2></div><div class="game-badge">${playBadge(humanIndex)}</div></div>
+  screen.innerHTML=`<div class="game-head"><div><span class="kicker">${esc(p.name)}</span><h2>モブくん人形空を飛ぶ</h2></div><div class="game-badge">${playBadge(humanIndex)}</div></div>
   <div class="gauge-wrap">
     <section id="linearCard" class="gauge-card">
       <div class="gauge-title">1. 高速 横長ゲージ <span id="linearScore">タップでSTOP</span></div>
@@ -1736,7 +2136,7 @@ async function startGanbareMob(p,humanIndex,runId){
 
   screen.innerHTML=`<div class="ganbare-shell n1990-shell">
     <div class="ganbare-head">
-      <div><span class="kicker">${esc(p.name)}</span><h2>1990世界大会</h2></div>
+      <div><span class="kicker">${esc(p.name)}</span><h2>モブくん1990にチャレンジ</h2></div>
       <div class="game-badge">${playBadge(humanIndex)}</div>
     </div>
 
@@ -1747,7 +2147,7 @@ async function startGanbareMob(p,humanIndex,runId){
     </div>
 
     <div id="n1990Grid" class="n1990-grid">
-      ${[0,1,2,3].map(i=>`<button class="n1990-choice4" data-choice="${i}" type="button"><b>1990</b></button>`).join("")}
+      ${[0,1,2,3].map(i=>`<button class="n1990-choice4" data-choice="${i}" type="button"><img class="n1990-mini-mob-v119" src="icon/${String(i+1).padStart(2,'0')}.png" draggable="false" alt=""><b>1990</b></button>`).join("")}
     </div>
 
     <div class="ganbare-message">
@@ -13822,18 +14222,23 @@ async function startBossDuel(p,humanIndex,runId){
       beep(390,60,.018);
 
     }else{
-      enemy.classList.remove('armor-hit');
-      void enemy.offsetWidth;
-      enemy.classList.add('armor-hit');
+      const dir=enemyX>=playerX?1:-1;
+      enemyVX=dir*72;
+      enemyBackstepUntil=performance.now()+90;
 
-      popImpact('ARMOR!',(playerX+enemyX)/2);
-      beep(245,30,.010);
+      enemy.classList.remove('armor-hit','normal-stagger-v119');
+      void enemy.offsetWidth;
+      enemy.classList.add('normal-stagger-v119');
+
+      popImpact('HIT!',(playerX+enemyX)/2);
+      beep(300,34,.011);
     }
 
-    // Mashing punches makes the opponent's counter arrive sooner.
-    nextEnemyAttack=Math.min(
+    // V10.19: normal hits no longer make the rival attack faster.
+    // Keep a small breathing window so the fight is less oppressive.
+    nextEnemyAttack=Math.max(
       nextEnemyAttack,
-      performance.now()+rand(120,260)
+      performance.now()+500
     );
   }
 
@@ -13968,23 +14373,61 @@ async function startBossDuel(p,humanIndex,runId){
     special.disabled=true;
     special.classList.add('used');
     specialState.textContent='USED';
+    moveDir=0;
 
-    playerAttackUntil=now+280;
-    player.classList.remove('special-punch-v115');
+    const dir=enemyX>=playerX?1:-1;
+    facing=dir;
+    setTimeout(()=>{},0);
+
+    player.classList.remove('special-punch-v115','rush-charge-v119','rush-dash-v119');
     void player.offsetWidth;
-    player.classList.add('special-punch-v115');
+    player.classList.add('rush-charge-v119');
 
-    const distance=Math.abs(enemyX-playerX);
+    popImpact('SPECIAL CHARGE!!',playerX);
+    stage.classList.add('rush-screen-v119');
+    beep(360,85,.025);
 
-    if(distance<=155){
-      clearEnemyAttack();
-      applyEnemyDamage(5,{specialHit:true});
-      popImpact('SPECIAL!!',(playerX+enemyX)/2);
-      beep(920,130,.04);
-    }else{
-      popImpact('MISS!',playerX);
-      beep(170,80,.016);
-    }
+    setTimeout(()=>{
+      if(finished||!isGameRunValid(runId))return;
+
+      player.classList.remove('rush-charge-v119');
+      player.classList.add('rush-dash-v119');
+      playerAttackUntil=performance.now()+330;
+      playerVX=dir*1180;
+
+      const rushTrail=document.createElement('div');
+      rushTrail.className='duel-rush-trail-v119';
+      rushTrail.style.left=`${playerX}px`;
+      rushTrail.style.setProperty('--rush-dir',dir);
+      stage.appendChild(rushTrail);
+      setTimeout(()=>rushTrail.remove(),480);
+
+      beep(980,95,.04);
+
+      setTimeout(()=>{
+        if(finished||!isGameRunValid(runId))return;
+
+        if(Math.abs(enemyX-playerX)<=190){
+          clearEnemyAttack();
+          applyEnemyDamage(5,{specialHit:true});
+
+          enemyVX=dir*520;
+          enemyBackstepUntil=performance.now()+300;
+          enemy.classList.add('rush-smashed-v119');
+
+          popImpact('RUSH SMASH!!',(playerX+enemyX)/2);
+          stage.classList.remove('rush-screen-v119');
+          stage.classList.add('rush-impact-v119');
+          beep(1180,145,.05);
+
+          setTimeout(()=>stage.classList.remove('rush-impact-v119'),360);
+        }else{
+          popImpact('MISS!',playerX);
+          stage.classList.remove('rush-screen-v119');
+          beep(170,80,.016);
+        }
+      },145);
+    },230);
   },{passive:false});
 
   function enemyNormalAttack(now){
@@ -14031,7 +14474,7 @@ async function startBossDuel(p,humanIndex,runId){
       enemy.classList.remove('attacking');
     },130);
 
-    nextEnemyAttack=now+rand(430,720);
+    nextEnemyAttack=now+rand(650,980);
   }
 
   function enemySpecialAttack(now){
@@ -14081,7 +14524,7 @@ async function startBossDuel(p,humanIndex,runId){
       enemy.classList.remove('special-attacking');
     },220);
 
-    nextEnemyAttack=now+rand(900,1250);
+    nextEnemyAttack=now+rand(1150,1650);
     nextEnemySpecial=now+rand(2500,4100);
   }
 
@@ -14177,9 +14620,9 @@ async function startBossDuel(p,humanIndex,runId){
 
   startTime=performance.now();
   last=startTime;
-  nextEnemyAttack=startTime+420;
+  nextEnemyAttack=startTime+620;
   nextEnemySpecial=startTime+rand(1700,3000);
-  nextEnemyLeap=startTime+rand(900,1500);
+  nextEnemyLeap=startTime+rand(1250,1900);
   call.classList.add('show');
 
   function frame(now){
@@ -14963,6 +15406,7 @@ async function startDodgeballMob(p,humanIndex,runId){
   let last=0;
   let raf=null;
   let finished=false;
+  let gameStarted=false;
 
   const enemies=[];
   const balls=[];
@@ -15061,6 +15505,7 @@ async function startDodgeballMob(p,humanIndex,runId){
 
     if(
       finished||
+      !gameStarted||
       now<reloadingUntil||
       !isGameRunValid(runId)
     )return;
@@ -15123,6 +15568,10 @@ async function startDodgeballMob(p,humanIndex,runId){
 
   if(!(await countdown('DODGEBALL',runId)))return;
 
+  // Prevent the pointer that closed a previous screen / countdown from becoming a throw.
+  await wait(240);
+  if(!isGameRunValid(runId))return;
+  gameStarted=true;
   startTime=performance.now();
   last=startTime;
   spawnWave();
@@ -15887,10 +16336,16 @@ async function startPowerHitter(p,humanIndex,runId){
 
     impact.classList.add('show');
     ball.classList.add('launched');
-    stage.classList.add('ball-camera-v118');
-    document.querySelector('.power-gauges')?.classList.add('flight-hide-v118');
+    stage.classList.add('ball-camera-v119');
+
+    // From impact onward only the ball and scenery remain.
+    golfer.style.display='none';
+    message.style.display='none';
+
+    const gaugePanel=document.querySelector('.power-gauges');
+    if(gaugePanel)gaugePanel.style.display='none';
+
     beep(940,100,.035);
-    setTimeout(()=>{if(golfer&&golfer.isConnected)golfer.classList.add('camera-left-behind-v118');},120);
 
     const angleRad=angleDeg*Math.PI/180;
     const angleFactor=clamp(
@@ -16721,25 +17176,44 @@ async function startMobDice(p,humanIndex,runId){
   let rolled=false;
   let finished=false;
 
-  screen.innerHTML=`<div class="dice-shell">
+  screen.innerHTML=`<div class="dice-shell dice-shell-v119">
     <div class="game-head"><div><span class="kicker">${esc(p.name)}</span><h2>モブくんのサイコロ</h2></div><div class="game-badge">${playBadge(humanIndex)}</div></div>
     <div class="dice-hud"><div><span>TOTAL</span><b id="diceTotal">---</b></div><div><span>SCORE</span><b id="diceScore">---</b></div></div>
-    <div class="dice-stage">
-      <div class="dice-table"></div>
-      <div id="diceTray" class="dice-tray">${Array.from({length:5},(_,i)=>`<div class="mob-die" data-die="${i}"><div class="die-face">?</div></div>`).join('')}</div>
-      <div class="dice-mob" style="background-image:url('icon/01.png')"></div>
-      <div id="diceMessage" class="dice-message">運だけで勝負！</div>
+
+    <div id="diceStage" class="dice-stage dice-stage-v119">
+      <div class="dice-table-v119"></div>
+      <div class="dice-mob-v119" style="background-image:url('icon/01.png')"><span>ROLL!</span></div>
+      <div id="diceTray" class="dice-tray-v119">
+        ${Array.from({length:5},(_,i)=>`<div class="mob-die-v119" data-die="${i}"><div class="die-face-v119"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div>`).join('')}
+      </div>
+      <div id="diceMessage" class="dice-message dice-message-v119">巨大サイコロ5個！</div>
       <div id="diceJackpot" class="dice-jackpot">ALL 6!!</div>
     </div>
+
     <button id="diceRoll" class="dice-roll" type="button">5 DICE ROLL!</button>
   </div>`;
 
-  const dice=[...screen.querySelectorAll('.mob-die')];
+  const dice=[...screen.querySelectorAll('.mob-die-v119')];
   const totalEl=document.getElementById('diceTotal');
   const scoreEl=document.getElementById('diceScore');
   const message=document.getElementById('diceMessage');
   const jackpot=document.getElementById('diceJackpot');
   const rollBtn=document.getElementById('diceRoll');
+
+  const pipMap={
+    1:[4],
+    2:[0,8],
+    3:[0,4,8],
+    4:[0,2,6,8],
+    5:[0,2,4,6,8],
+    6:[0,2,3,5,6,8]
+  };
+
+  function setDie(die,value){
+    die.dataset.value=value;
+    const on=new Set(pipMap[value]||[]);
+    [...die.querySelectorAll('.die-face-v119 i')].forEach((pip,i)=>pip.classList.toggle('on',on.has(i)));
+  }
 
   function scoreFromTotal(total){
     if(total<=5)return 1;
@@ -16754,31 +17228,32 @@ async function startMobDice(p,humanIndex,runId){
     message.textContent='ROLL!!';
 
     dice.forEach((die,i)=>{
-      die.style.setProperty('--dice-x',`${rand(-36,36).toFixed(0)}px`);
-      die.style.setProperty('--dice-y',`${rand(-72,-35).toFixed(0)}px`);
-      die.style.setProperty('--dice-r',`${randi(-480,480)}deg`);
-      die.style.setProperty('--dice-delay',`${i*.045}s`);
+      die.style.setProperty('--dice-x',`${rand(-42,42).toFixed(0)}px`);
+      die.style.setProperty('--dice-y',`${rand(-96,-56).toFixed(0)}px`);
+      die.style.setProperty('--dice-r',`${randi(-620,620)}deg`);
+      die.style.setProperty('--dice-delay',`${i*.05}s`);
       die.classList.remove('rolling','settled');
       void die.offsetWidth;
       die.classList.add('rolling');
     });
+
     beep(520,80,.015);
 
-    for(let step=0;step<9;step++){
+    for(let step=0;step<10;step++){
       if(!isGameRunValid(runId))return;
-      dice.forEach(d=>d.querySelector('.die-face').textContent=randi(1,6));
-      await wait(65);
+      dice.forEach(d=>setDie(d,randi(1,6)));
+      await wait(70);
     }
 
     const values=[];
     dice.forEach((die,i)=>{
       const value=randi(1,6);
       values.push(value);
-      die.querySelector('.die-face').textContent=value;
-      setTimeout(()=>{if(die.isConnected)die.classList.add('settled')},i*70);
+      setDie(die,value);
+      setTimeout(()=>{if(die.isConnected)die.classList.add('settled')},i*75);
     });
 
-    await wait(470);
+    await wait(520);
     if(!isGameRunValid(runId))return;
 
     const total=values.reduce((a,b)=>a+b,0);
@@ -16800,13 +17275,352 @@ async function startMobDice(p,humanIndex,runId){
     }
 
     finished=true;
-    await wait(850);
+    await wait(900);
     if(isGameRunValid(runId))recordScreen(61,p,humanIndex,`${score}<small>pt</small>`,`${values.join(' + ')} = ${total}`);
   }
 
+  dice.forEach(d=>setDie(d,1));
   rollBtn.addEventListener('pointerdown',e=>{e.preventDefault();rollDice()},{passive:false});
   if(!(await countdown('DICE',runId)))return;
   message.textContent='5個まとめて振れ！';
+}
+
+
+// GAME 63 -------------------------------------------------
+function makeTenComboBoardV119(){
+  const rows=5,cols=6;
+  const target=[];
+
+  for(let r=0;r<rows;r++){
+    const a=(r%6)+1;
+    let b=((r+2)%6)+1;
+    if(b===a)b=(b%6)+1;
+    target.push(a,a,a,b,b,b);
+  }
+
+  const board=[...target];
+  let cell=randi(0,rows*cols-1);
+  const path=[cell];
+  let prev=-1;
+  const steps=randi(9,13);
+
+  for(let s=0;s<steps;s++){
+    const r=Math.floor(cell/cols),c=cell%cols;
+    const opts=[];
+    if(r>0)opts.push(cell-cols);
+    if(r<rows-1)opts.push(cell+cols);
+    if(c>0)opts.push(cell-1);
+    if(c<cols-1)opts.push(cell+1);
+    const filtered=opts.filter(x=>x!==prev);
+    const next=(filtered.length?filtered:opts)[randi(0,(filtered.length?filtered:opts).length-1)];
+    [board[cell],board[next]]=[board[next],board[cell]];
+    prev=cell;
+    cell=next;
+    path.push(cell);
+  }
+
+  return {board,target,reversePath:[...path].reverse()};
+}
+
+async function startMobCombo(p,humanIndex,runId){
+  gameFit();
+  const ROWS=5,COLS=6,GAME_MS=5000;
+  const generated=makeTenComboBoardV119();
+  let board=[...generated.board];
+  let dragging=false;
+  let currentIndex=-1;
+  let pointerId=null;
+  let startTime=0;
+  let last=0;
+  let raf=null;
+  let resolving=false;
+  let finished=false;
+
+  screen.innerHTML=`<div class="combo-shell-v119">
+    <div class="game-head"><div><span class="kicker">${esc(p.name)}</span><h2>モブくん10連コンボ</h2></div><div class="game-badge">${playBadge(humanIndex)}</div></div>
+    <div class="combo-hud-v119"><div><span>TIME</span><b id="comboTime">5.00</b></div><div><span>COMBO</span><b id="comboLive">0</b></div></div>
+    <div id="comboBoard" class="combo-board-v119"></div>
+    <div id="comboCall" class="combo-call-v119">同じモブくんを横3体以上！</div>
+  </div>`;
+
+  const boardEl=document.getElementById('comboBoard');
+  const timeEl=document.getElementById('comboTime');
+  const comboEl=document.getElementById('comboLive');
+  const call=document.getElementById('comboCall');
+
+  function render(matched=new Set()){
+    boardEl.innerHTML=board.map((v,i)=>`<div class="combo-tile-v119 ${matched.has(i)?'matched':''} ${i===currentIndex&&dragging?'dragging':''}" data-combo-index="${i}"><img src="icon/${String(v).padStart(2,'0')}.png" draggable="false" alt="MOB ${v}"></div>`).join('');
+  }
+
+  function indexFromPoint(x,y){
+    const rect=boardEl.getBoundingClientRect();
+    if(x<rect.left||x>rect.right||y<rect.top||y>rect.bottom)return -1;
+    const c=clamp(Math.floor((x-rect.left)/(rect.width/COLS)),0,COLS-1);
+    const r=clamp(Math.floor((y-rect.top)/(rect.height/ROWS)),0,ROWS-1);
+    return r*COLS+c;
+  }
+
+  function adjacent(a,b){
+    if(a<0||b<0)return false;
+    const ar=Math.floor(a/COLS),ac=a%COLS,br=Math.floor(b/COLS),bc=b%COLS;
+    return Math.abs(ar-br)+Math.abs(ac-bc)===1;
+  }
+
+  function findHorizontalMatches(){
+    const matched=new Set();
+    let groups=0;
+    for(let r=0;r<ROWS;r++){
+      let c=0;
+      while(c<COLS){
+        const v=board[r*COLS+c];
+        let end=c+1;
+        while(end<COLS&&board[r*COLS+end]===v)end++;
+        if(v!=null&&end-c>=3){
+          groups++;
+          for(let k=c;k<end;k++)matched.add(r*COLS+k);
+        }
+        c=end;
+      }
+    }
+    return {matched,groups};
+  }
+
+  function collapseAndFill(){
+    for(let c=0;c<COLS;c++){
+      const vals=[];
+      for(let r=ROWS-1;r>=0;r--){
+        const v=board[r*COLS+c];
+        if(v!=null)vals.push(v);
+      }
+      let vi=0;
+      for(let r=ROWS-1;r>=0;r--){
+        board[r*COLS+c]=vi<vals.length?vals[vi++]:randi(1,6);
+      }
+    }
+  }
+
+  async function resolveBoard(){
+    if(resolving||finished)return;
+    resolving=true;
+    dragging=false;
+    currentIndex=-1;
+    boardEl.classList.add('resolving');
+    let combos=0;
+
+    for(let cascade=0;cascade<8;cascade++){
+      const found=findHorizontalMatches();
+      if(!found.groups)break;
+      combos+=found.groups;
+      comboEl.textContent=combos;
+      call.textContent=`${combos} COMBO!!`;
+      render(found.matched);
+      beep(520+Math.min(430,combos*38),65,.018);
+      await wait(260);
+      if(!isGameRunValid(runId))return;
+      found.matched.forEach(i=>board[i]=null);
+      collapseAndFill();
+      render();
+      await wait(170);
+      if(!isGameRunValid(runId))return;
+    }
+
+    finished=true;
+    state.records.mobCombo[p.id]=combos;
+    call.textContent=combos>=10?`${combos} COMBO！ 10連達成！`:`${combos} COMBO`;
+    beep(combos>=10?1120:combos>=6?860:560,150,.04);
+    await wait(700);
+    if(isGameRunValid(runId))recordScreen(62,p,humanIndex,`${combos}<small> COMBO</small>`,combos>=10?'10 COMBO CLEAR!':'横3体以上を狙おう');
+  }
+
+  boardEl.addEventListener('pointerdown',e=>{
+    if(resolving||finished||!startTime)return;
+    e.preventDefault();
+    const idx=indexFromPoint(e.clientX,e.clientY);
+    if(idx<0)return;
+    dragging=true;currentIndex=idx;pointerId=e.pointerId;
+    render();
+    try{boardEl.setPointerCapture(pointerId)}catch(_){}
+  },{passive:false});
+
+  boardEl.addEventListener('pointermove',e=>{
+    if(!dragging||e.pointerId!==pointerId||resolving)return;
+    e.preventDefault();
+    const idx=indexFromPoint(e.clientX,e.clientY);
+    if(idx>=0&&idx!==currentIndex&&adjacent(currentIndex,idx)){
+      [board[currentIndex],board[idx]]=[board[idx],board[currentIndex]];
+      currentIndex=idx;
+      render();
+      beep(360,14,.004);
+    }
+  },{passive:false});
+
+  const end=e=>{
+    if(e.pointerId!==pointerId)return;
+    dragging=false;currentIndex=-1;render();
+  };
+  boardEl.addEventListener('pointerup',end,{passive:false});
+  boardEl.addEventListener('pointercancel',end,{passive:false});
+
+  if(!(await countdown('10 COMBO',runId)))return;
+  startTime=performance.now();last=startTime;render();
+
+  function frame(now){
+    if(finished||resolving||!isGameRunValid(runId))return;
+    const rem=GAME_MS-(now-startTime);
+    timeEl.textContent=(Math.max(0,rem)/1000).toFixed(2);
+    if(rem<=0){timeEl.textContent='0.00';resolveBoard();return;}
+    raf=requestAnimationFrame(frame);
+  }
+  raf=requestAnimationFrame(frame);
+}
+
+// GAME 64 -------------------------------------------------
+function buildElectricMazeV119(cols,rows){
+  const cells=Array.from({length:cols*rows},()=>({top:true,right:true,bottom:true,left:true,seen:false}));
+  const stack=[];
+  let current=(rows-1)*cols;
+  cells[current].seen=true;
+
+  const neighbors=i=>{
+    const r=Math.floor(i/cols),c=i%cols,o=[];
+    if(r>0)o.push([i-cols,'top','bottom']);
+    if(c<cols-1)o.push([i+1,'right','left']);
+    if(r<rows-1)o.push([i+cols,'bottom','top']);
+    if(c>0)o.push([i-1,'left','right']);
+    return o.filter(([n])=>!cells[n].seen);
+  };
+
+  while(true){
+    const opts=neighbors(current);
+    if(opts.length){
+      const [next,wall,opp]=opts[randi(0,opts.length-1)];
+      cells[current][wall]=false;cells[next][opp]=false;
+      stack.push(current);current=next;cells[current].seen=true;
+    }else if(stack.length){current=stack.pop();}
+    else break;
+  }
+
+  return cells;
+}
+
+async function startElectricMaze(p,humanIndex,runId){
+  gameFit();
+  const COLS=6,ROWS=9,MAX_MS=45000;
+  let x=0,y=0,target=null;
+  let startTime=0,last=0,raf=null,finished=false,stunUntil=0;
+
+  screen.innerHTML=`<div class="electric-shell-v119">
+    <div class="game-head"><div><span class="kicker">${esc(p.name)}</span><h2>こっちだよモブくん！</h2></div><div class="game-badge">${playBadge(humanIndex)}</div></div>
+    <div class="electric-hud-v119"><div><span>TIME</span><b id="electricTime">0.00</b></div><div><span>STATUS</span><b id="electricStatus">READY</b></div></div>
+    <div id="electricStage" class="electric-stage-v119">
+      <div id="electricWalls" class="electric-walls-v119"></div>
+      <div id="electricGoal" class="electric-goal-v119">GOAL</div>
+      <div id="electricPin" class="electric-pin-v119" hidden><i></i></div>
+      <div id="electricMob" class="electric-mob-v119" style="background-image:url('icon/01.png')"></div>
+      <div id="electricShock" class="electric-shock-v119"></div>
+      <div id="electricMessage" class="electric-message-v119">行きたい場所をタップ！</div>
+    </div>
+  </div>`;
+
+  const stage=document.getElementById('electricStage');
+  const wallsEl=document.getElementById('electricWalls');
+  const goalEl=document.getElementById('electricGoal');
+  const pin=document.getElementById('electricPin');
+  const mob=document.getElementById('electricMob');
+  const shock=document.getElementById('electricShock');
+  const timeEl=document.getElementById('electricTime');
+  const statusEl=document.getElementById('electricStatus');
+  const message=document.getElementById('electricMessage');
+
+  const w=stage.clientWidth,h=stage.clientHeight;
+  const pad=12,cw=(w-pad*2)/COLS,ch=(h-pad*2)/ROWS;
+  const cells=buildElectricMazeV119(COLS,ROWS);
+  const segments=[];
+
+  function addSeg(x1,y1,x2,y2){segments.push({x1,y1,x2,y2});}
+  let html='';
+  for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){
+    const cell=cells[r*COLS+c];
+    const x0=pad+c*cw,y0=pad+r*ch,x1=x0+cw,y1=y0+ch;
+    if(r===0&&cell.top){html+=`<i class="maze-wall-v119 h" style="left:${x0}px;top:${y0}px;width:${cw}px"></i>`;addSeg(x0,y0,x1,y0);}
+    if(c===0&&cell.left){html+=`<i class="maze-wall-v119 v" style="left:${x0}px;top:${y0}px;height:${ch}px"></i>`;addSeg(x0,y0,x0,y1);}
+    if(cell.right){html+=`<i class="maze-wall-v119 v" style="left:${x1}px;top:${y0}px;height:${ch}px"></i>`;addSeg(x1,y0,x1,y1);}
+    if(cell.bottom){html+=`<i class="maze-wall-v119 h" style="left:${x0}px;top:${y1}px;width:${cw}px"></i>`;addSeg(x0,y1,x1,y1);}
+  }
+  wallsEl.innerHTML=html;
+
+  x=pad+cw*.5;y=pad+(ROWS-.5)*ch;
+  const goalX=pad+(COLS-.5)*cw,goalY=pad+ch*.5;
+  goalEl.style.left=`${goalX}px`;goalEl.style.top=`${goalY}px`;
+  mob.style.left=`${x}px`;mob.style.top=`${y}px`;
+
+  function pointSegDist(px,py,s){
+    const vx=s.x2-s.x1,vy=s.y2-s.y1,wx=px-s.x1,wy=py-s.y1;
+    const len=vx*vx+vy*vy;
+    const t=len?clamp((wx*vx+wy*vy)/len,0,1):0;
+    const sx=s.x1+vx*t,sy=s.y1+vy*t;
+    return Math.hypot(px-sx,py-sy);
+  }
+
+  function collision(nx,ny){return segments.some(s=>pointSegDist(nx,ny,s)<13);}
+
+  function zap(now){
+    stunUntil=now+1000;target=null;pin.hidden=true;
+    statusEl.textContent='STUN 1.0';message.textContent='ビリビリ！！ 1秒スタン';
+    mob.classList.remove('shocked');void mob.offsetWidth;mob.classList.add('shocked');
+    shock.style.left=`${x}px`;shock.style.top=`${y}px`;shock.classList.remove('show');void shock.offsetWidth;shock.classList.add('show');
+    beep(125,160,.045);
+  }
+
+  stage.addEventListener('pointerdown',e=>{
+    if(finished||!startTime)return;
+    e.preventDefault();
+    const rect=stage.getBoundingClientRect();
+    target={x:clamp(e.clientX-rect.left,pad,w-pad),y:clamp(e.clientY-rect.top,pad,h-pad)};
+    pin.hidden=false;pin.style.left=`${target.x}px`;pin.style.top=`${target.y}px`;
+    message.textContent='こっちだよ！';
+    beep(620,24,.007);
+  },{passive:false});
+
+  function finish(ms){
+    if(finished)return;finished=true;
+    const value=Math.round(ms);
+    state.records.electricMaze[p.id]=value;
+    statusEl.textContent='GOAL!';message.textContent='GOAL!!';pin.hidden=true;mob.classList.add('goal-pop');
+    beep(1080,170,.045);
+    setTimeout(()=>{if(isGameRunValid(runId))recordScreen(63,p,humanIndex,`${(value/1000).toFixed(2)}<small>秒</small>`,`STUNしてもルートを修正！`)},700);
+  }
+
+  if(!(await countdown('ELECTRIC MAZE',runId)))return;
+  startTime=performance.now();last=startTime;statusEl.textContent='GO!';
+
+  function frame(now){
+    if(finished||!isGameRunValid(runId))return;
+    const dt=Math.min(30,now-last)/1000;last=now;
+    const elapsed=now-startTime;timeEl.textContent=(elapsed/1000).toFixed(2);
+
+    if(elapsed>=MAX_MS){finish(MAX_MS);return;}
+
+    if(now<stunUntil){
+      statusEl.textContent=`STUN ${((stunUntil-now)/1000).toFixed(1)}`;
+    }else{
+      if(statusEl.textContent.startsWith('STUN'))statusEl.textContent='GO!';
+      if(target){
+        const dx=target.x-x,dy=target.y-y,dist=Math.hypot(dx,dy);
+        if(dist<5){target=null;pin.hidden=true;}
+        else{
+          const step=Math.min(dist,118*dt),nx=x+dx/dist*step,ny=y+dy/dist*step;
+          if(collision(nx,ny)){zap(now);}
+          else{x=nx;y=ny;mob.style.transform=`translate(-50%,-50%) scaleX(${dx<0?-1:1})`;}
+        }
+      }
+    }
+
+    mob.style.left=`${x}px`;mob.style.top=`${y}px`;
+    if(Math.hypot(x-goalX,y-goalY)<Math.min(cw,ch)*.28){finish(elapsed);return;}
+    raf=requestAnimationFrame(frame);
+  }
+  raf=requestAnimationFrame(frame);
 }
 
 
@@ -16856,7 +17670,7 @@ async function simulateCpuThenResult(gameIndex){
 
 function cpuUltraDraw(gameIndex){
   // Game-specific draw rate. Regular values are already intentionally strong.
-  const chance=[0.12,0.10,0.14,0.16,0.12,0.13,0.14,0.12,0.15,0.12,0.14,0.13,0.13,0.14,0.12,0.12,0.13,0.12,0.13,0.14,0.13,0.14,0.12,0.13,0.12,0.12,0.13,0.13,0.14,0.14,0.13,0.12,0.13,0.13,0.13,0.13,0.13,0.13,0.13,0.13,0.13,0.13,0.13,0.13,0.13,0.13,0.13,0.14,0.13,0.13,0.13,0.14,0.13,0.13,0.14,0.12,0.13,0.14,0.13,0.13,0.14,0.12][gameIndex] ?? 0.12;
+  const chance=[0.12,0.10,0.14,0.16,0.12,0.13,0.14,0.12,0.15,0.12,0.14,0.13,0.13,0.14,0.12,0.12,0.13,0.12,0.13,0.14,0.13,0.14,0.12,0.13,0.12,0.12,0.13,0.13,0.14,0.14,0.13,0.12,0.13,0.13,0.13,0.13,0.13,0.13,0.13,0.13,0.13,0.13,0.13,0.13,0.13,0.13,0.13,0.14,0.13,0.13,0.13,0.14,0.13,0.13,0.14,0.12,0.13,0.14,0.13,0.13,0.14,0.12,0.13,0.12][gameIndex] ?? 0.12;
   return Math.random()<chance;
 }
 
@@ -16996,9 +17810,13 @@ function simulateOneCpu(gameIndex,p){
     state.records.aimMob[p.id]=ultra?randi(91,100):randi(38,91);
   }else if(gameIndex===60){
     state.records.balanceMob[p.id]=Math.round((ultra?rand(7.9,10):rand(3.6,8.3))*100)/100;
-  }else{
+  }else if(gameIndex===61){
     const diceTotal=ultra?randi(21,30):randi(10,25);
     state.records.mobDice[p.id]=clamp(Math.round(diceTotal<=5?1:diceTotal>=30?100:1+(diceTotal-5)/25*99),1,100);
+  }else if(gameIndex===62){
+    state.records.mobCombo[p.id]=ultra?randi(9,14):randi(3,10);
+  }else{
+    state.records.electricMaze[p.id]=ultra?randi(6800,10500):randi(10500,26000);
   }
 
   return ultra;
@@ -17105,11 +17923,15 @@ function performancePoints(gameIndex,v){
   if(gameIndex===58)return clamp(Math.round(v/12*100),0,100);
   if(gameIndex===59)return clamp(Math.round(v),0,100);
   if(gameIndex===60)return clamp(Math.round(v/10*100),0,100);
-  return clamp(Math.round(v),0,100);
+  if(gameIndex===61)return clamp(Math.round(v),0,100);
+  if(gameIndex===62)return clamp(Math.round(v/10*100),0,100);
+  if(v<=8000)return 100;
+  if(v>=30000)return 0;
+  return clamp(Math.round((30000-v)/22000*100),0,100);
 }
 
 function rankRecords(gameIndex){
-  const key=GAMES[gameIndex].key,records=state.records[key],ascRaw=(gameIndex===0||gameIndex===2||gameIndex===5||gameIndex===14||gameIndex===21||gameIndex===23||gameIndex===24||gameIndex===25||gameIndex===26||gameIndex===27||gameIndex===37||gameIndex===40||gameIndex===47||gameIndex===51||gameIndex===53);
+  const key=GAMES[gameIndex].key,records=state.records[key],ascRaw=(gameIndex===0||gameIndex===2||gameIndex===5||gameIndex===14||gameIndex===21||gameIndex===23||gameIndex===24||gameIndex===25||gameIndex===26||gameIndex===27||gameIndex===37||gameIndex===40||gameIndex===47||gameIndex===51||gameIndex===53||gameIndex===63);
   const arr=participants().map(p=>({p,value:records[p.id]}));
   if(mode().performance){
     arr.forEach(e=>e.points=performancePoints(gameIndex,e.value));
@@ -17183,7 +18005,9 @@ function formatRecord(gameIndex,v){
   if(gameIndex===58)return `${Number(v).toFixed(2)}秒`;
   if(gameIndex===59)return `${Math.round(v)}pt`;
   if(gameIndex===60)return `${Number(v).toFixed(2)}秒`;
-  return `${Math.round(v)}pt`;
+  if(gameIndex===61)return `${Math.round(v)}pt`;
+  if(gameIndex===62)return `${Math.round(v)} COMBO`;
+  return `${(v/1000).toFixed(2)}秒`;
 }
 
 function applyPoints(gameIndex,ranked){
@@ -17195,7 +18019,14 @@ function applyPoints(gameIndex,ranked){
   state.roundPoints[state.roundIndex]=gp;
 }
 function competitionRankTotals(){const arr=participants().map(p=>({p,points:state.total[p.id]||0})).sort((a,b)=>b.points-a.points);let last=null,lastRank=0;arr.forEach((e,i)=>{e.rank=i>0&&e.points===last?lastRank:i+1;last=e.points;lastRank=e.rank});return arr}
-function teamTotals(){if(!mode().team)return null;const sum=t=>mode().teams[t].reduce((s,id)=>s+(state.total[id]||0),0);return {A:sum("A"),B:sum("B")}}
+function teamTotals(){
+  if(!mode().team)return null;
+  const out={};
+  teamKeys().forEach(key=>{
+    out[key]=(mode().teams[key]||[]).reduce((sum,id)=>sum+(state.total[id]||0),0);
+  });
+  return out;
+}
 function finishGame(gameIndex){const ranked=rankRecords(gameIndex);applyPoints(gameIndex,ranked);renderGameResult(gameIndex,ranked)}
 function renderGameResult(gameIndex,ranked){
   clearGameFit();
@@ -17222,7 +18053,7 @@ function renderGameResult(gameIndex,ranked){
       </div>
     </section>
 
-    ${tt?`<section class="panel"><h3>TEAM TOTAL</h3><div class="team-total"><div class="team-box a"><span>${mode().teamNames.A}</span><b>${tt.A}pt</b></div><div class="team-box b"><span>${mode().teamNames.B}</span><b>${tt.B}pt</b></div></div></section>`:""}
+    ${tt?`<section class="panel"><h3>TEAM TOTAL</h3><div class="team-total multi-team-v119">${teamKeys().map((key,i)=>`<div class="team-box ${key.toLowerCase()}"><span>${mode().teamNames[key]}</span><b>${tt[key]}pt</b></div>`).join('')}</div></section>`:""}
 
     <button id="resultNext" class="primary">${hasNext?`NEXT / ${GAMES[state.playlist[state.roundIndex+1]].title}`:"FINAL RESULT"}</button>
   `;
@@ -17243,62 +18074,72 @@ function rankRow(p,rank,record,badge){const tier=p.cpu&&!state.freePlay?state.cp
 
 function renderFinal(){
   clearGameFit();
-  const totals=competitionRankTotals(),tt=teamTotals();
-  let winner="";
+  const totals=competitionRankTotals();
+  const tt=teamTotals();
+  let winner='';
+  let teamSummary='';
 
-  if(tt)winner=tt.A===tt.B?"DRAW":tt.A>tt.B?`${mode().teamNames.A} WIN!`:`${mode().teamNames.B} WIN!`;
-  else winner=`${totals[0].p.name} WIN!`;
+  if(tt){
+    const teamRank=teamKeys().map(key=>({key,points:tt[key]})).sort((a,b)=>b.points-a.points);
+    const top=teamRank[0]?.points??0;
+    const winners=teamRank.filter(x=>x.points===top);
+    winner=winners.length>1?'DRAW':`${mode().teamNames[winners[0].key]} WIN!`;
+    teamSummary=teamRank.map(x=>`${mode().teamNames[x.key]} ${x.points}pt`).join(' / ');
+  }else{
+    winner=`${totals[0].p.name} WIN!`;
+  }
 
   screen.innerHTML=`
     <div class="champion">
       <small>FINAL RESULT</small>
       <strong>${esc(winner)}</strong>
       ${tt
-        ? `<span>${mode().teamNames.A} ${tt.A}pt　–　${tt.B}pt ${mode().teamNames.B}</span>`
+        ? `<span>${teamSummary}</span>`
         : `<span>${mode().performance?`${state.playlist.length}ゲーム合計 / MAX ${maxScoreTotal()}pt`:`${state.playlist.length}ゲーム 総合順位`}</span>`}
     </div>
 
     <section class="panel">
       <h3>FINAL RANKING</h3>
       <div class="rank-list">
-        ${totals.map(e=>rankRow(e.p,e.rank,`${e.points}pt`,mode().team?teamName(e.p.id):(e.p.cpu?"CPU":"PLAYER"))).join("")}
+        ${totals.map(e=>rankRow(e.p,e.rank,`${e.points}pt`,mode().team?teamName(e.p.id):(e.p.cpu?'CPU':'PLAYER'))).join('')}
       </div>
     </section>
+
+    ${tt?`<section class="panel"><h3>FINAL TEAM RANKING</h3><div class="team-final-grid-v119">${teamKeys().map(key=>({key,points:tt[key]})).sort((a,b)=>b.points-a.points).map((x,i)=>`<div class="team-box ${x.key.toLowerCase()}"><span>${i+1}位 ${mode().teamNames[x.key]}</span><b>${x.points}pt</b></div>`).join('')}</div></section>`:''}
 
     <section class="panel">
       <h3>GAME SCORE</h3>
       <div class="game-list">
-        ${state.playlist.map((gameIdx,round)=>`<div class="game-row">
-          <div class="game-no">${round+1}</div>
-          <div><b>${GAMES[gameIdx].title}</b><br><span>${participants().map(p=>`${p.cpu?p.name:`P${p.no}`}:${state.roundPoints[round]?.[p.id]??0}`).join(" / ")}</span></div>
-          <span>pt</span>
-        </div>`).join("")}
+        ${state.playlist.map((gameIdx,round)=>`<div class="game-row"><div class="game-no">${round+1}</div><div><b>${GAMES[gameIdx].title}</b><br><span>${participants().map(p=>`${p.cpu?p.name:`P${p.no}`}:${state.roundPoints[round]?.[p.id]??0}`).join(' / ')}</span></div><span>pt</span></div>`).join('')}
       </div>
     </section>
 
     <button id="replay" class="primary">同じ内容でもう一度</button>
     <div style="height:8px"></div>
-    <button id="modeChange" class="secondary">モード選択へ</button>
+    <button id="modeChange" class="secondary">モードセレクトへ</button>
   `;
 
   gameTop();
 
-  document.getElementById("replay").addEventListener("click",()=>{
+  document.getElementById('replay').addEventListener('click',()=>{
     const k=state.modeKey;
     const style=state.playStyle;
     const list=[...state.playlist];
+    const setup=state.setup;
 
     state=freshState();
     state.modeKey=k;
     state.playStyle=style;
     state.playlist=list;
+    state.setup=setup;
     state.roundIndex=0;
     initTotals();
     renderModeLobby();
   });
 
-  document.getElementById("modeChange").addEventListener("click",renderHome);
+  document.getElementById('modeChange').addEventListener('click',renderBattleTypeSelect);
 }
+
 
 renderHome();
 })();

@@ -13659,3 +13659,105 @@ body,
 .dice-jackpot{position:absolute;z-index:70;left:50%;top:47%;transform:translate(-50%,-50%) scale(.4);color:#ffe45c;-webkit-text-stroke:4px var(--ink);font-size:38px;font-weight:1000;opacity:0}.dice-jackpot.show{animation:diceJackpotV118 .85s ease forwards}
 @keyframes diceJackpotV118{24%{opacity:1;transform:translate(-50%,-50%) scale(1.22)}100%{opacity:1;transform:translate(-50%,-50%) scale(1)}}
 .dice-roll{min-height:62px;margin-top:6px;border:4px solid var(--ink);border-radius:15px;background:#ffd05f;box-shadow:0 5px 0 var(--ink);font-size:20px;font-weight:1000;touch-action:none}
+
+
+/* =========================================================
+   V10.19 HOME / MODE WIZARD
+   ========================================================= */
+.home-action-grid-v119{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:12px}.home-main-action-v119{grid-column:1/-1;min-height:112px;border:5px solid var(--ink);border-radius:20px;background:#ffd862;box-shadow:0 7px 0 var(--ink);padding:14px;text-align:left}.home-main-action-v119 span,.home-sub-action-v119 span,.battle-type-card-v119 span,.game-length-grid-v119 span{display:block;font-size:8px;font-weight:1000;color:var(--muted)}.home-main-action-v119 b{display:block;font-size:27px;margin:3px 0}.home-main-action-v119 small{font-weight:900}.home-sub-action-v119{min-height:76px;border:4px solid var(--ink);border-radius:16px;background:#fff;box-shadow:0 5px 0 var(--ink);padding:10px;text-align:left}.home-sub-action-v119 b{font-size:16px}.wizard-back-v119{margin:0 0 9px}.battle-type-grid-v119{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:10px 0 13px}.battle-type-card-v119{min-height:150px;border:5px solid var(--ink);border-radius:20px;box-shadow:0 7px 0 var(--ink);padding:13px;text-align:left}.battle-type-card-v119.team{background:#c9edff}.battle-type-card-v119.solo{background:#ffe0ae}.battle-type-card-v119.rank{background:#e6ddff}.battle-type-card-v119.score{background:#d4f0c9}.battle-type-card-v119 b{display:block;font-size:23px;margin:5px 0}.battle-type-card-v119 small{font-size:9px;font-weight:850;line-height:1.35}.wizard-counter-panel-v119{display:grid;grid-template-columns:1fr 1fr;gap:10px}.wizard-counter-v119{text-align:center}.wizard-counter-v119>span{font-size:8px;font-weight:1000;color:var(--muted)}.wizard-counter-v119>div{display:grid;grid-template-columns:46px 1fr 46px;gap:6px;align-items:center;margin:6px 0}.wizard-counter-v119 button,.team-split-counter-v119 button{min-height:44px;border:3px solid var(--ink);border-radius:11px;background:#fff;font-size:20px;font-weight:1000}.wizard-counter-v119 b{font-size:28px}.wizard-counter-v119 small{font-weight:850;color:var(--muted)}.team-assign-list-v119{display:grid;gap:8px}.team-assign-card-v119{border:4px solid var(--ink);border-radius:17px;background:#fff;padding:10px}.team-assign-card-v119.team-a{background:#dff2ff}.team-assign-card-v119.team-b{background:#ffe5d9}.team-assign-card-v119.team-c{background:#e6f7dd}.team-assign-card-v119.team-d{background:#f1e4ff}.team-split-counter-v119{display:grid;grid-template-columns:1fr 1fr;gap:8px}.team-split-counter-v119>div{display:grid;grid-template-columns:1fr 40px 38px 40px;gap:4px;align-items:center;border:2px solid var(--ink);border-radius:11px;padding:4px;background:rgba(255,255,255,.78)}.team-split-counter-v119 span{font-size:7px;font-weight:1000}.team-split-counter-v119 b{text-align:center;font-size:18px}.team-assign-card-v119 p{margin:7px 0 0;text-align:center;font-size:8px;font-weight:900}.wizard-status-v119{margin:8px 0;border:3px solid var(--ink);border-radius:12px;background:#fff;padding:8px;text-align:center;font-size:10px;font-weight:900}.wizard-status-v119 strong{display:block;color:#d23d38}.game-length-grid-v119{display:grid;gap:8px;margin:10px 0}.game-length-grid-v119 button{min-height:78px;border:4px solid var(--ink);border-radius:16px;background:#fff;box-shadow:0 5px 0 var(--ink);padding:9px 11px;text-align:left}.game-length-grid-v119 button.custom{background:#ffe07b}.game-length-grid-v119 b{display:block;font-size:18px}.game-length-grid-v119 small{font-size:8px;font-weight:850;color:var(--muted)}.game-guide-list-v119{display:grid;gap:7px}.game-guide-card-v119{display:grid;grid-template-columns:44px 1fr;gap:8px;border:3px solid var(--ink);border-radius:14px;background:#fff;padding:8px}.game-guide-no-v119{width:40px;height:40px;display:grid;place-items:center;border:3px solid var(--ink);border-radius:11px;background:#ffd966;font-size:16px;font-weight:1000}.game-guide-card-v119 h3{margin:0;font-size:13px}.game-guide-card-v119 p{margin:2px 0;font-size:9px}.game-guide-card-v119 small{color:var(--muted);font-size:7px;font-weight:850}.player-card.team-c{background:#e4f6d9!important}.player-card.team-d{background:#f0e1ff!important}.multi-team-v119,.team-final-grid-v119{display:grid!important;grid-template-columns:repeat(2,1fr)!important;gap:7px!important}.team-box.c{background:#dff5d3}.team-box.d{background:#edddff}
+.number-mob-mini-v119{position:absolute;left:5px;bottom:4px;width:27px;height:29px;object-fit:contain;opacity:.72;pointer-events:none}.number-tile{position:relative}.number-tile span{position:relative;z-index:3}.n1990-mini-mob-v119{width:43px;height:45px;object-fit:contain;display:block;margin:0 auto 2px;pointer-events:none}
+
+/* =========================================================
+   V10.19 DUEL
+   ========================================================= */
+.duel-enemy.normal-stagger-v119{animation:duelNormalStaggerV119 .15s ease}@keyframes duelNormalStaggerV119{50%{transform:translateX(-50%) rotate(-5deg) scale(.96)}}.duel-stage.rush-screen-v119:after{content:"";position:absolute;z-index:75;inset:0;background:repeating-linear-gradient(100deg,transparent 0 20px,rgba(255,244,141,.18) 21px 27px);animation:duelRushLinesV119 .18s linear infinite;pointer-events:none}@keyframes duelRushLinesV119{to{background-position:90px 0}}.duel-player.rush-charge-v119{animation:duelRushChargeV119 .23s ease}@keyframes duelRushChargeV119{50%{transform:translateX(-50%) scale(.82);filter:drop-shadow(0 0 16px #ffe66f)}}.duel-player.rush-dash-v119{animation:duelRushDashBodyV119 .3s ease}@keyframes duelRushDashBodyV119{40%{transform:translateX(-50%) scaleX(1.25) scaleY(.78)}}.duel-rush-trail-v119{position:absolute;z-index:68;top:54%;width:240px;height:44px;transform:translate(-50%,-50%) scaleX(var(--rush-dir));background:linear-gradient(90deg,transparent,#fff067,#fff,transparent);clip-path:polygon(0 42%,88% 0,100% 50%,88% 100%,0 58%);animation:duelRushTrailV119 .45s ease forwards;pointer-events:none}@keyframes duelRushTrailV119{0%{opacity:0;width:40px}35%{opacity:1;width:260px}100%{opacity:0;width:330px}}.duel-stage.rush-impact-v119{animation:duelRushImpactV119 .32s ease}@keyframes duelRushImpactV119{30%{transform:translateX(-5px)}55%{transform:translateX(5px)}80%{transform:translateX(-2px)}}.duel-enemy.rush-smashed-v119{animation:duelRushSmashedV119 .38s ease}@keyframes duelRushSmashedV119{55%{transform:translateX(-50%) rotate(-18deg) scale(.82)}}
+
+/* =========================================================
+   V10.19 POWER HITTER — LOWER TO UPPER + BALL-ONLY CAMERA
+   ========================================================= */
+.power-club{left:43px!important;top:37px!important;transform:rotate(68deg)!important;transform-origin:4px 50%!important}.power-golfer.golf-swing .power-club{animation:powerGolfUpperV119 .56s cubic-bezier(.2,.72,.18,1) forwards!important}@keyframes powerGolfUpperV119{0%{transform:rotate(68deg)}18%{transform:rotate(92deg)}48%{transform:rotate(14deg)}64%{transform:rotate(-22deg)}100%{transform:rotate(-104deg)}}.power-golfer.golf-swing{animation:powerBodyUpperV119 .56s ease forwards!important}@keyframes powerBodyUpperV119{0%{transform:translateY(2px) rotate(4deg)}50%{transform:translateY(1px) rotate(-5deg)}100%{transform:translateY(-3px) rotate(10deg)}}.power-stage.ball-camera-v119 .power-golfer{display:none!important}.power-stage.ball-camera-v119 .power-impact{pointer-events:none}.power-stage.ball-camera-v119 .power-ball{z-index:90!important}
+
+/* =========================================================
+   V10.19 GIANT DICE
+   ========================================================= */
+.dice-shell-v119{min-height:0}.dice-stage-v119{flex:1!important;min-height:330px!important;background:linear-gradient(#bce1ee 0 35%,#8eb373 35% 100%)!important}.dice-table-v119{position:absolute;left:3%;right:3%;bottom:4%;height:62%;border:5px solid #3a2b25;border-radius:44% 44% 18px 18px;background:#78a66a;box-shadow:inset 0 -18px 0 rgba(45,67,42,.13)}.dice-mob-v119{position:absolute;z-index:24;left:13%;top:5%;width:94px;height:108px;background-size:contain;background-position:center;background-repeat:no-repeat}.dice-mob-v119 span{position:absolute;left:80%;top:5px;border:3px solid var(--ink);border-radius:999px;background:#fff;padding:4px 7px;font-size:9px;font-weight:1000}.dice-tray-v119{position:absolute;z-index:35;left:50%;bottom:10%;width:min(92%,360px);transform:translateX(-50%);display:grid;grid-template-columns:repeat(3,1fr);gap:8px;justify-items:center}.mob-die-v119{--dice-x:0px;--dice-y:-70px;--dice-r:0deg;--dice-delay:0s;width:min(25vw,102px);aspect-ratio:1;border:5px solid #181a1e;border-radius:18px;background:#fff;box-shadow:inset -9px -11px 0 rgba(182,188,194,.24),0 7px 0 rgba(17,19,26,.25);display:grid;place-items:center}.mob-die-v119:nth-child(4){grid-column:1/2;margin-left:55%}.mob-die-v119:nth-child(5){grid-column:3/4;margin-right:55%}.die-face-v119{width:72%;height:72%;display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);gap:4px}.die-face-v119 i{width:100%;height:100%;border-radius:50%;background:transparent;transform:scale(.62)}.die-face-v119 i.on{background:#191b20;box-shadow:inset 0 -2px 0 rgba(255,255,255,.18)}.mob-die-v119.rolling{animation:diceRollV119 .72s cubic-bezier(.2,.72,.2,1) var(--dice-delay)}@keyframes diceRollV119{0%{transform:translate(0,0) rotate(0) scale(1)}45%{transform:translate(var(--dice-x),var(--dice-y)) rotate(var(--dice-r)) scale(1.18)}100%{transform:translate(0,0) rotate(0) scale(1)}}.mob-die-v119.settled{animation:diceSettleV119 .28s ease}@keyframes diceSettleV119{45%{transform:scale(1.13)}}.dice-message-v119{top:27%!important}
+
+/* =========================================================
+   V10.19 GAME 63 — MOB 10 COMBO
+   ========================================================= */
+.combo-shell-v119{width:min(100%,650px);height:100%;margin:0 auto;display:flex;flex-direction:column}.combo-hud-v119{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:6px}.combo-hud-v119>div{border:3px solid var(--ink);border-radius:10px;background:#fff;padding:4px;text-align:center}.combo-hud-v119 span{display:block;font-size:7px;color:var(--muted);font-weight:1000}.combo-hud-v119 b{font-size:15px}.combo-board-v119{flex:1;min-height:300px;display:grid;grid-template-columns:repeat(6,1fr);grid-template-rows:repeat(5,1fr);gap:4px;border:5px solid var(--ink);border-radius:18px;background:#323745;padding:6px;touch-action:none;overflow:hidden}.combo-tile-v119{position:relative;display:grid;place-items:center;border:3px solid #17191d;border-radius:13px;background:#eef2f6;box-shadow:inset 0 -5px 0 rgba(17,19,26,.10);transition:transform .05s ease,opacity .14s ease}.combo-tile-v119 img{width:82%;height:82%;object-fit:contain;pointer-events:none}.combo-tile-v119.dragging{transform:scale(1.12);z-index:8;outline:4px solid #ffe167}.combo-tile-v119.matched{animation:comboPopV119 .25s ease forwards}@keyframes comboPopV119{50%{transform:scale(1.25);filter:brightness(1.35)}100%{transform:scale(.15);opacity:0}}.combo-board-v119.resolving{pointer-events:none}.combo-call-v119{min-height:37px;margin-top:6px;border:3px solid var(--ink);border-radius:999px;background:#fff;padding:7px;text-align:center;font-size:12px;font-weight:1000}
+
+/* =========================================================
+   V10.19 GAME 64 — ELECTRIC MAZE
+   ========================================================= */
+.electric-shell-v119{width:min(100%,650px);height:100%;margin:0 auto;display:flex;flex-direction:column}.electric-hud-v119{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:5px}.electric-hud-v119>div{border:3px solid var(--ink);border-radius:10px;background:#fff;padding:4px;text-align:center}.electric-hud-v119 span{display:block;font-size:7px;color:var(--muted);font-weight:1000}.electric-hud-v119 b{font-size:14px}.electric-stage-v119{flex:1;min-height:340px;position:relative;overflow:hidden;border:5px solid var(--ink);border-radius:20px;background:radial-gradient(circle at 50% 50%,#263046,#161b29);touch-action:none}.electric-walls-v119{position:absolute;inset:0}.maze-wall-v119{position:absolute;z-index:20;background:#b8faff;box-shadow:0 0 4px #6af7ff,0 0 10px #5ea7ff,0 0 16px rgba(125,79,255,.8);animation:electricWallPulseV119 .44s steps(2) infinite alternate;pointer-events:none}.maze-wall-v119.h{height:4px}.maze-wall-v119.v{width:4px}@keyframes electricWallPulseV119{to{filter:brightness(1.65);box-shadow:0 0 6px #fff,0 0 14px #57efff,0 0 24px #7755ff}}.electric-goal-v119{position:absolute;z-index:15;transform:translate(-50%,-50%);width:45px;height:45px;display:grid;place-items:center;border:4px solid var(--ink);border-radius:50%;background:#ffe05e;font-size:8px;font-weight:1000;box-shadow:0 0 0 6px rgba(255,224,94,.22)}.electric-mob-v119{position:absolute;z-index:42;width:34px;height:40px;transform:translate(-50%,-50%);background-size:contain;background-position:center;background-repeat:no-repeat;transition:filter .08s}.electric-mob-v119.shocked{animation:electricMobShockV119 .34s steps(2) 3}@keyframes electricMobShockV119{50%{filter:brightness(2) drop-shadow(0 0 12px #79f7ff);transform:translate(-50%,-50%) rotate(7deg) scale(1.08)}}.electric-mob-v119.goal-pop{animation:electricGoalPopV119 .6s ease}@keyframes electricGoalPopV119{40%{transform:translate(-50%,-50%) scale(1.35) rotate(12deg)}}.electric-pin-v119{position:absolute;z-index:50;width:22px;height:30px;transform:translate(-50%,-100%);pointer-events:none}.electric-pin-v119 i{position:absolute;left:50%;top:0;width:16px;height:16px;transform:translateX(-50%);border:3px solid var(--ink);border-radius:50%;background:#ff6b5f}.electric-pin-v119:after{content:"";position:absolute;left:50%;top:14px;width:4px;height:16px;transform:translateX(-50%);background:#ff6b5f;border:1px solid var(--ink)}.electric-shock-v119{position:absolute;z-index:62;width:110px;height:110px;transform:translate(-50%,-50%) scale(.2);opacity:0;pointer-events:none;background:conic-gradient(from 20deg,transparent 0 10%,#fff 11% 15%,#6df3ff 16% 20%,transparent 21% 34%,#fff 35% 39%,#8c6dff 40% 45%,transparent 46% 100%);clip-path:polygon(50% 0,58% 34%,82% 14%,67% 43%,100% 45%,68% 55%,89% 84%,58% 65%,50% 100%,42% 65%,17% 86%,32% 55%,0 45%,34% 43%,16% 14%,42% 34%)}.electric-shock-v119.show{animation:electricShockV119 .55s ease}@keyframes electricShockV119{20%{opacity:1;transform:translate(-50%,-50%) scale(1.1)}100%{opacity:0;transform:translate(-50%,-50%) scale(1.65) rotate(30deg)}}.electric-message-v119{position:absolute;z-index:70;left:50%;bottom:7px;transform:translateX(-50%);min-width:190px;border:3px solid var(--ink);border-radius:999px;background:#fff;padding:5px 9px;text-align:center;font-size:9px;font-weight:1000;pointer-events:none}
+
+
+/* =========================================================
+   V10.19 FINAL — DUEL SPECIAL / POWER BALL-ONLY CAMERA
+   ========================================================= */
+.duel-stage.rush-impact-v119:before{
+  content:"";
+  position:absolute;
+  z-index:91;
+  left:50%;
+  top:53%;
+  width:40px;
+  height:40px;
+  transform:translate(-50%,-50%);
+  border:8px solid #fff36a;
+  border-radius:50%;
+  box-shadow:
+    0 0 0 10px rgba(255,255,255,.72),
+    0 0 0 22px rgba(255,221,73,.34);
+  animation:duelRushRingV119 .38s ease-out forwards;
+  pointer-events:none;
+}
+.duel-stage.rush-impact-v119:after{
+  content:"";
+  position:absolute;
+  z-index:90;
+  inset:-20%;
+  background:
+    conic-gradient(
+      from 8deg,
+      transparent 0 8deg,
+      rgba(255,245,143,.92) 9deg 13deg,
+      transparent 14deg 25deg
+    );
+  animation:duelRushBurstV119 .34s ease-out forwards;
+  pointer-events:none;
+}
+@keyframes duelRushRingV119{
+  0%{opacity:1;transform:translate(-50%,-50%) scale(.2)}
+  100%{opacity:0;transform:translate(-50%,-50%) scale(4.4)}
+}
+@keyframes duelRushBurstV119{
+  0%{opacity:1;transform:scale(.38) rotate(0deg)}
+  100%{opacity:0;transform:scale(1.15) rotate(13deg)}
+}
+
+.power-stage.ball-camera-v119 .power-golfer,
+.power-stage.ball-camera-v119 .power-message{
+  display:none!important;
+}
+.power-stage.ball-camera-v119 .power-ball{
+  z-index:95!important;
+}
+
+/* Club starts visibly low and passes upward through the ball. */
+.power-club{
+  left:42px!important;
+  top:40px!important;
+  transform:rotate(78deg)!important;
+}
+.power-golfer.golf-swing .power-club{
+  animation:powerGolfUpperFinalV119 .56s cubic-bezier(.18,.76,.18,1) forwards!important;
+}
+@keyframes powerGolfUpperFinalV119{
+  0%{transform:rotate(78deg)}
+  17%{transform:rotate(98deg)}
+  48%{transform:rotate(18deg)}
+  64%{transform:rotate(-25deg)}
+  100%{transform:rotate(-108deg)}
+}
