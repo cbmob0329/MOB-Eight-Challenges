@@ -14067,3 +14067,109 @@ body,
       scale(.92);
   }
 }
+
+/* V10.21 preview countdown */
+.countdown-layer.stage-visible-v121{
+  background:rgba(242,242,237,.34)!important;
+}
+.countdown-layer.stage-visible-v121 .count-number{
+  text-shadow:
+    0 5px 0 #fff,
+    4px 0 0 #fff,
+    -4px 0 0 #fff,
+    0 -4px 0 #fff;
+}
+.countdown-layer.stage-visible-v121 .count-label{
+  border:3px solid var(--ink);
+  border-radius:999px;
+  background:rgba(255,255,255,.92);
+  padding:5px 10px;
+}
+
+/* V10.21 20 combo white board */
+.combo-v121,
+.combo-v121 .game-head,
+.combo-v121 .combo-hud-v120{
+  background:#fff!important;
+}
+.combo-board-v121{
+  background:#fff!important;
+  border-color:var(--ink)!important;
+  box-shadow:inset 0 0 0 3px #eef0f3!important;
+}
+.combo-board-v121 .combo-slot-v120{
+  background:#f4f5f6;
+  border:1px solid #e1e3e6;
+}
+.combo-orb-v120.vanish-one-v121{
+  z-index:30;
+}
+
+/* V10.21 moving electric mob machines */
+.electric-machines-v121{
+  position:absolute;
+  inset:0;
+  z-index:34;
+  pointer-events:none;
+}
+.electric-machine-v121{
+  position:absolute;
+  width:50px;
+  height:50px;
+  transform:translate(-50%,-50%);
+  border:4px solid var(--ink);
+  border-radius:50%;
+  background:#fff15f;
+  box-shadow:
+    0 0 0 5px rgba(114,195,255,.25),
+    0 0 18px rgba(76,169,255,.62);
+}
+.electric-machine-v121>i{
+  position:absolute;
+  inset:7px;
+  border-radius:50%;
+  background-size:contain;
+  background-position:center;
+  background-repeat:no-repeat;
+  filter:brightness(.28);
+}
+.electric-machine-v121>b,
+.electric-machine-v121>em{
+  position:absolute;
+  left:50%;
+  top:50%;
+  width:68px;
+  height:5px;
+  border:2px solid var(--ink);
+  border-radius:999px;
+  background:#61b9ff;
+  animation:electricMachineSpinV121 .48s linear infinite;
+}
+.electric-machine-v121>b{
+  transform:translate(-50%,-50%) rotate(45deg);
+}
+.electric-machine-v121>em{
+  transform:translate(-50%,-50%) rotate(-45deg);
+  animation-direction:reverse;
+}
+@keyframes electricMachineSpinV121{
+  to{rotate:360deg}
+}
+
+/* V10.21 short aim guide */
+.aim-guide-line-v121{
+  position:absolute;
+  z-index:33;
+  left:70px;
+  width:31%;
+  height:2px;
+  transform:translateY(-50%);
+  background:
+    repeating-linear-gradient(
+      90deg,
+      rgba(255,255,255,.94) 0 9px,
+      rgba(255,255,255,.18) 9px 15px
+    );
+  box-shadow:0 1px 0 rgba(17,19,26,.28);
+  pointer-events:none;
+}

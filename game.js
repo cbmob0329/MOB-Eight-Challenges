@@ -112,7 +112,7 @@ const GAMES=[
   {no:60,key:"aimMob",title:"狙ってモブくん！",sub:"弓矢で木の細い白線を狙う"},
   {no:61,key:"balanceMob",title:"極限バランスモブくん",sub:"細い棒の上で10秒耐える"},
   {no:62,key:"mobDice",title:"モブくんのサイコロ",sub:"5個のサイコロで大きな合計を狙う"},
-  {no:63,key:"mobCombo",title:"モブくん10連コンボ",sub:"5秒で同じモブくんを横3体以上そろえる"},
+  {no:63,key:"mobCombo",title:"モブくん20連コンボ",sub:"10秒でモブ球を動かして20連コンボを狙う"},
   {no:64,key:"electricMaze",title:"こっちだよモブくん！",sub:"タップでピンを立ててビリビリ迷路を突破"}
 ];
 
@@ -1252,11 +1252,11 @@ function scoreRuleForGame(index){
     "縦向き刀身の長さ・接続・細さ・滑らかさを1〜100点",
     "ゴルフショット3000m=100点 / 0m=0点",
     "12.00秒生存=100点 / 岩直撃までの時間",
-    "白線との誤差0px=100点 / 約45px以上=0点",
+    "白線との誤差0px=100点 / 約71px以上=0点",
     "10.00秒維持=100点 / 倒れるまでの時間",
     "5個合計5=1点 / 合計30=100点",
-    "10 COMBO=100点 / 0 COMBO=0点",
-    "8.00秒以内=100点 / 30.00秒以上=0点"
+    "20 COMBO=100点 / 0 COMBO=0点",
+    "10.00秒以内=100点 / 30.00秒以上=0点"
   ][index];
 }
 
@@ -1385,15 +1385,15 @@ function showGameIntro(index){
   }else if(index===58){
     rules=`<li>上から大量の岩が落下。← →でモブくんを動かして避けます。</li><li>岩に1回でも当たったら即終了。</li><li>7秒までは徐々に難しくなり、7秒以降は落石数・速度が一気に上がるROCK STORM。</li><li>最大12秒生存。</li>`;
   }else if(index===59){
-    rules=`<li>右側の巨大な木に、矢と同じくらい細い白線があります。</li><li>左のモブくんを▲ ▼で上下移動。</li><li>FIREまたは画面タップで矢を1発だけ真っすぐ発射。</li><li>矢が刺さった高さと白線の誤差から0〜100点。</li>`;
+    rules=`<li>右側の巨大な木に、矢と同じくらい細い白線があります。</li><li>左のモブくんを▲ ▼で上下移動。</li><li>モブくんの弓から短い照準線が出るので、矢が出る高さを確認できます。</li><li>FIREまたは画面タップで矢を1発だけ真っすぐ発射。判定は以前より少し広めです。</li><li>矢が刺さった高さと白線の誤差から0〜100点。</li>`;
   }else if(index===60){
     rules=`<li>細い棒の上にモブくん。10秒間倒れないように維持。</li><li>右へ傾いたらLEFT、左へ傾いたらRIGHTをタップして補正。</li><li>風と傾き加速はかなり強め。後半ほど不安定になります。</li><li>約26°から補正不能、32°で転倒。</li>`;
   }else if(index===61){
     rules=`<li>5個の巨大サイコロを1回だけ振る完全な運勝負。</li><li>合計5（全部1）=1点、合計30（全部6）=100点。</li><li>途中の合計は5〜30を1〜100点へ比例換算。</li>`;
   }else if(index===62){
-    rules=`<li>6×5のモブくんパズル。5秒間、押したモブくんを指で動かして隣と入れ替えます。</li><li>同じモブくんが横に3体以上並ぶと消えて1コンボ。</li><li>盤面はランダム風に崩してありますが、必ず10連コンボへ戻せる配置から生成。</li><li>10 COMBO=100点。連鎖が続けば10以上も可能。</li>`;
+    rules=`<li>6×5のモブ球パズル。10秒間、押したモブ球を指で動かして隣と入れ替えます。</li><li>同じモブ球が横に3体以上並ぶと、揃った組から順番に消えます。</li><li>その盤面で消える組が全部消えてから、上のモブ球が落下・補充されます。さらに揃えば落ちコン。</li><li>カウントダウン前から盤面を確認できます。20 COMBO=100点。</li>`;
   }else{
-    rules=`<li>ビリビリ電気壁に触れないよう迷路のGOALを目指します。</li><li>画面をタップするとピンが立ち、モブくんがその場所へ歩きます。</li><li>壁へ触れると派手にビリビリして1秒スタン。その場で止まり、次のピンを選び直します。</li><li>毎回ランダム生成される迷路。GOALまでのタイムを競います。</li>`;
+    rules=`<li>固定されたビリビリ迷路のGOALを目指します。全員同じコースなので公平です。</li><li>画面をタップするとピンが立ち、モブくんがその場所へ歩きます。</li><li>途中には上下に動き続ける「ビリビリモブくんマシーン」が3台。壁やマシーンへ触れると1秒スタン。</li><li>カウントダウン中からステージと初期配置を確認できます。GOALまでのタイムを競います。</li>`;
   }
   screen.innerHTML=`
     <div class="game-head">
@@ -1501,7 +1501,11 @@ function humanReady(gameIndex,humanIndex){
   },{once:true});
 }
 
-async function countdown(label="COUNTDOWN",runId=activeGameRunId){
+async function countdown(
+  label="COUNTDOWN",
+  runId=activeGameRunId,
+  options={}
+){
   if(!isGameRunValid(runId))return false;
 
   cancelCountdown();
@@ -1510,7 +1514,9 @@ async function countdown(label="COUNTDOWN",runId=activeGameRunId){
   if(!isGameRunValid(runId))return false;
 
   const layer=document.createElement("div");
-  layer.className="countdown-layer";
+  layer.className=
+    "countdown-layer"+
+    (options.transparent?" stage-visible-v121":"");
   layer.innerHTML=`<div class="count-label">${label}</div><div class="count-number">3</div>`;
   document.body.appendChild(layer);
   activeCountdownLayer=layer;
@@ -13616,7 +13622,16 @@ function scoreRocketDrawing(strokes,w,h,cockpit){
 
   return {
     distance:Math.round(
-      clamp(5+quality*95,0,100)*10
+      clamp(
+        5+
+        Math.pow(
+          clamp(quality,0,1),
+          .74
+        )*
+        95,
+        0,100
+      )*
+      10
     )/10,
     bbox:{minX,maxX,minY,maxY}
   };
@@ -16846,6 +16861,8 @@ async function startAimMob(p,humanIndex,runId){
         <i id="aimWhiteLine" class="aim-white-line"></i>
       </div>
 
+      <div id="aimGuideLine" class="aim-guide-line-v121"></div>
+
       <div id="aimArrow" class="aim-arrow">
         <i></i><b></b>
       </div>
@@ -16865,6 +16882,7 @@ async function startAimMob(p,humanIndex,runId){
   const tree=document.getElementById('aimTree');
   const line=document.getElementById('aimWhiteLine');
   const arrow=document.getElementById('aimArrow');
+  const guideLine=document.getElementById('aimGuideLine');
   const errorEl=document.getElementById('aimError');
   const scoreEl=document.getElementById('aimScore');
   const message=document.getElementById('aimMessage');
@@ -16885,6 +16903,7 @@ async function startAimMob(p,humanIndex,runId){
   archerY=h*.52;
 
   line.style.top=`${targetY}px`;
+  guideLine.style.top=`${archerY}px`;
 
   function bindHold(btn,dir){
     btn.addEventListener('pointerdown',e=>{
@@ -16963,7 +16982,7 @@ async function startAimMob(p,humanIndex,runId){
 
     const score=clamp(
       Math.round(
-        100-error*2.2
+        100-error*1.40
       ),
       0,100
     );
@@ -17028,6 +17047,7 @@ async function startAimMob(p,humanIndex,runId){
     );
 
     archer.style.top=`${archerY}px`;
+    guideLine.style.top=`${archerY}px`;
 
     raf=requestAnimationFrame(frame);
   }
@@ -17346,31 +17366,34 @@ async function startMobDice(p,humanIndex,runId){
 
 
 // GAME 63 -------------------------------------------------
-function makeTenComboBoardV120(){
-  const rows=5,cols=6;
-  const target=[];
+function makePerfectComboBoardV121(){
+  const board=[];
 
-  // Exactly 10 horizontal groups exist in the solved board:
-  // 2 groups per row × 5 rows.
-  for(let r=0;r<rows;r++){
+  for(let r=0;r<5;r++){
     const a=(r%6)+1;
     let b=((r+3)%6)+1;
-    if(b===a)b=(b%6)+1;
+    if(a===b)b=(b%6)+1;
 
-    if(Math.random()<.5){
-      target.push(a,a,a,b,b,b);
+    if((r+randi(0,1))%2===0){
+      board.push(a,a,a,b,b,b);
     }else{
-      target.push(b,b,b,a,a,a);
+      board.push(b,b,b,a,a,a);
     }
   }
 
-  const board=[...target];
-  let cell=randi(0,rows*cols-1);
-  const path=[cell];
-  let prev=-1;
-  const steps=randi(10,14);
+  return board;
+}
 
-  for(let s=0;s<steps;s++){
+function makeTwentyComboBoardV121(){
+  const rows=5,cols=6;
+  const target=makePerfectComboBoardV121();
+  const board=[...target];
+
+  let cell=randi(0,rows*cols-1);
+  let prev=-1;
+  const path=[cell];
+
+  for(let s=0;s<randi(12,17);s++){
     const r=Math.floor(cell/cols);
     const c=cell%cols;
     const opts=[];
@@ -17404,39 +17427,39 @@ async function startMobCombo(p,humanIndex,runId){
 
   const ROWS=5;
   const COLS=6;
-  const GAME_MS=5000;
+  const GAME_MS=10000;
 
-  const generated=makeTenComboBoardV120();
+  const generated=makeTwentyComboBoardV121();
   let board=[...generated.board];
 
   let dragging=false;
   let currentIndex=-1;
   let pointerId=null;
   let ghost=null;
-
   let startTime=0;
   let raf=null;
   let resolving=false;
   let finished=false;
+  let scriptedSecondWaveUsed=false;
 
-  screen.innerHTML=`<div class="combo-shell-v120">
+  screen.innerHTML=`<div class="combo-shell-v120 combo-v121">
     <div class="game-head">
       <div>
         <span class="kicker">${esc(p.name)}</span>
-        <h2>モブくん10連コンボ</h2>
+        <h2>モブくん20連コンボ</h2>
       </div>
       <div class="game-badge">${playBadge(humanIndex)}</div>
     </div>
 
     <div class="combo-hud-v120">
-      <div><span>TIME</span><b id="comboTime">5.00</b></div>
+      <div><span>TIME</span><b id="comboTime">10.00</b></div>
       <div><span>COMBO</span><b id="comboLive">0</b></div>
     </div>
 
-    <div id="comboBoard" class="combo-board-v120"></div>
+    <div id="comboBoard" class="combo-board-v120 combo-board-v121"></div>
 
     <div id="comboCall" class="combo-call-v120">
-      モブ球を押したまま動かして横3つ！
+      盤面を確認！ カウントダウン後に動かせます
     </div>
 
     <div id="comboBurst" class="combo-burst-v120"></div>
@@ -17495,18 +17518,12 @@ async function startMobCombo(p,humanIndex,runId){
     )return -1;
 
     const c=clamp(
-      Math.floor(
-        (x-rect.left)/
-        (rect.width/COLS)
-      ),
+      Math.floor((x-rect.left)/(rect.width/COLS)),
       0,COLS-1
     );
 
     const r=clamp(
-      Math.floor(
-        (y-rect.top)/
-        (rect.height/ROWS)
-      ),
+      Math.floor((y-rect.top)/(rect.height/ROWS)),
       0,ROWS-1
     );
 
@@ -17537,8 +17554,7 @@ async function startMobCombo(p,humanIndex,runId){
     ghost.innerHTML=`
       <img
         src="icon/${String(value).padStart(2,'0')}.png"
-        draggable="false"
-        alt="MOB ${value}">
+        draggable="false">
     `;
 
     document.body.appendChild(ghost);
@@ -17547,7 +17563,6 @@ async function startMobCombo(p,humanIndex,runId){
 
   function moveGhost(e){
     if(!ghost)return;
-
     ghost.style.left=`${e.clientX}px`;
     ghost.style.top=`${e.clientY}px`;
   }
@@ -17616,8 +17631,7 @@ async function startMobCombo(p,humanIndex,runId){
   }
 
   function findHorizontalMatches(){
-    const matched=new Set();
-    let groups=0;
+    const groups=[];
 
     for(let r=0;r<ROWS;r++){
       let c=0;
@@ -17633,27 +17647,41 @@ async function startMobCombo(p,humanIndex,runId){
           end++;
         }
 
-        if(
-          v!=null&&
-          end-c>=3
-        ){
-          groups++;
+        if(v!=null&&end-c>=3){
+          const indices=[];
 
           for(let k=c;k<end;k++){
-            matched.add(r*COLS+k);
+            indices.push(r*COLS+k);
           }
+
+          groups.push({value:v,indices});
         }
 
         c=end;
       }
     }
 
-    return {matched,groups};
+    return groups;
   }
 
-  function collapseAndFillAnimated(){
+  function collapseAndFillAnimated({
+    forcePerfect=false
+  }={}){
     const nextBoard=Array(ROWS*COLS).fill(null);
     const dropMap=new Map();
+
+    if(forcePerfect){
+      const perfect=makePerfectComboBoardV121();
+
+      for(let i=0;i<perfect.length;i++){
+        nextBoard[i]=perfect[i];
+        const r=Math.floor(i/COLS);
+        dropMap.set(i,r+ROWS+2);
+      }
+
+      board=nextBoard;
+      return dropMap;
+    }
 
     for(let c=0;c<COLS;c++){
       const survivors=[];
@@ -17706,18 +17734,57 @@ async function startMobCombo(p,humanIndex,runId){
     return dropMap;
   }
 
-  function showComboBurst(combos,groups){
-    burst.textContent=
-      `${combos} COMBO!`;
+  function showComboBurst(comboNo){
+    burst.textContent=`${comboNo} COMBO!`;
 
     burst.classList.remove('show');
     void burst.offsetWidth;
     burst.classList.add('show');
 
-    call.textContent=
-      groups>1
-        ? `${groups}組同時消し！ ${combos} COMBO`
-        : `${combos} COMBO!!`;
+    call.textContent=`${comboNo} COMBO!!`;
+  }
+
+  async function vanishGroupSequentially(
+    group,
+    comboNo
+  ){
+    showComboBurst(comboNo);
+    renderBoard();
+
+    // One orb at a time.
+    for(const idx of group.indices){
+      const orb=
+        boardEl.querySelector(
+          `[data-combo-index="${idx}"] .combo-orb-v120`
+        );
+
+      if(orb){
+        orb.classList.add(
+          'vanish-v120',
+          'vanish-one-v121'
+        );
+      }
+
+      beep(
+        490+
+        Math.min(500,comboNo*24),
+        36,.012
+      );
+
+      await wait(92);
+      if(!isGameRunValid(runId))return false;
+    }
+
+    // Finish this group before starting the next matched group.
+    await wait(185);
+    if(!isGameRunValid(runId))return false;
+
+    group.indices.forEach(i=>{
+      board[i]=null;
+    });
+
+    renderBoard();
+    return true;
   }
 
   async function resolveBoard(){
@@ -17732,61 +17799,58 @@ async function startMobCombo(p,humanIndex,runId){
 
     let combos=0;
 
-    for(let cascade=0;cascade<12;cascade++){
-      const found=findHorizontalMatches();
+    for(let cascade=0;cascade<20;cascade++){
+      const groups=findHorizontalMatches();
+      if(!groups.length)break;
 
-      if(!found.groups)break;
+      const perfectFirst=
+        cascade===0&&
+        groups.length===10&&
+        groups.reduce(
+          (sum,g)=>sum+g.indices.length,
+          0
+        )===30;
 
-      combos+=found.groups;
-      comboEl.textContent=combos;
-      showComboBurst(combos,found.groups);
+      // All groups disappear first.
+      for(const group of groups){
+        combos++;
+        comboEl.textContent=combos;
 
-      // Real disappear animation.
-      renderBoard();
-
-      for(const idx of found.matched){
-        const cell=
-          boardEl.querySelector(
-            `[data-combo-index="${idx}"] .combo-orb-v120`
-          );
-
-        if(cell){
-          cell.classList.add('vanish-v120');
-        }
+        if(!(
+          await vanishGroupSequentially(
+            group,
+            combos
+          )
+        ))return;
       }
 
-      beep(
-        520+
-        Math.min(470,combos*34),
-        70,.018
-      );
-
-      await wait(320);
+      // Only after every matched group is fully gone can the next drop start.
+      await wait(95);
       if(!isGameRunValid(runId))return;
 
-      found.matched.forEach(i=>{
-        board[i]=null;
-      });
+      const forcePerfect=
+        perfectFirst&&
+        !scriptedSecondWaveUsed;
 
-      renderBoard();
+      if(forcePerfect){
+        scriptedSecondWaveUsed=true;
+        call.textContent='落ちコン！ 次の10組が降ってくる！';
+      }
 
-      await wait(70);
-      if(!isGameRunValid(runId))return;
-
-      // Actual falling / new-orb drop animation.
       const dropMap=
-        collapseAndFillAnimated();
+        collapseAndFillAnimated({
+          forcePerfect
+        });
 
       renderBoard({dropMap});
       boardEl.classList.add('drop-shake-v120');
 
-      await wait(340);
+      await wait(390);
       if(!isGameRunValid(runId))return;
 
       boardEl.classList.remove('drop-shake-v120');
 
-      // Small pause makes each cascade legible.
-      await wait(90);
+      await wait(120);
       if(!isGameRunValid(runId))return;
     }
 
@@ -17795,13 +17859,13 @@ async function startMobCombo(p,humanIndex,runId){
     state.records.mobCombo[p.id]=combos;
 
     call.textContent=
-      combos>=10
-        ? `${combos} COMBO！ 10連コンボ達成！`
+      combos>=20
+        ? `${combos} COMBO！ 20連コンボ達成！`
         : `${combos} COMBO！`;
 
     burst.textContent=
-      combos>=10
-        ? '10 COMBO CLEAR!!'
+      combos>=20
+        ? '20 COMBO CLEAR!!'
         : `${combos} COMBO`;
 
     burst.classList.remove('show');
@@ -17809,23 +17873,23 @@ async function startMobCombo(p,humanIndex,runId){
     burst.classList.add('show');
 
     beep(
-      combos>=10
-        ? 1160
-        : combos>=6
-          ? 870
-          : 570,
-      165,.045
+      combos>=20
+        ? 1180
+        : combos>=12
+          ? 900
+          : 590,
+      180,.045
     );
 
-    await wait(800);
+    await wait(850);
 
     if(isGameRunValid(runId)){
       recordScreen(
         62,p,humanIndex,
         `${combos}<small> COMBO</small>`,
-        combos>=10
-          ? '10 COMBO CLEAR!'
-          : '横3体以上を作ろう'
+        combos>=20
+          ? '20 COMBO CLEAR!'
+          : '20 COMBOで100点'
       );
     }
   }
@@ -17887,8 +17951,6 @@ async function startMobCombo(p,humanIndex,runId){
 
     if(target<0)return;
 
-    // Pointer events can jump multiple cells on fast swipes.
-    // Walk the selected orb through every intervening neighbor.
     let guard=0;
 
     while(
@@ -17929,13 +17991,23 @@ async function startMobCombo(p,humanIndex,runId){
     {passive:false}
   );
 
-  if(!(await countdown('10 COMBO',runId)))return;
+  // The board exists before countdown and remains visible through 3-2-1.
+  renderBoard();
+  call.textContent=
+    '盤面を確認！ カウントダウン後に10秒スタート';
+
+  if(!(
+    await countdown(
+      '20 COMBO',
+      runId,
+      {transparent:true}
+    )
+  ))return;
 
   startTime=performance.now();
-  renderBoard();
 
   call.textContent=
-    '5秒！ モブ球を押したまま自由に動かせ！';
+    '10秒！ モブ球を押したまま自由に動かせ！';
 
   function frame(now){
     if(
@@ -17972,29 +18044,65 @@ async function startMobCombo(p,humanIndex,runId){
 }
 
 // GAME 64 -------------------------------------------------
-function buildElectricMazeV119(cols,rows){
-  const cells=Array.from({length:cols*rows},()=>({top:true,right:true,bottom:true,left:true,seen:false}));
-  const stack=[];
-  let current=(rows-1)*cols;
-  cells[current].seen=true;
+function buildElectricMazeFixedV121(cols,rows){
+  const cells=Array.from(
+    {length:cols*rows},
+    ()=>({
+      top:true,
+      right:true,
+      bottom:true,
+      left:true
+    })
+  );
 
-  const neighbors=i=>{
-    const r=Math.floor(i/cols),c=i%cols,o=[];
-    if(r>0)o.push([i-cols,'top','bottom']);
-    if(c<cols-1)o.push([i+1,'right','left']);
-    if(r<rows-1)o.push([i+cols,'bottom','top']);
-    if(c>0)o.push([i-1,'left','right']);
-    return o.filter(([n])=>!cells[n].seen);
-  };
+  const idx=(r,c)=>r*cols+c;
 
-  while(true){
-    const opts=neighbors(current);
-    if(opts.length){
-      const [next,wall,opp]=opts[randi(0,opts.length-1)];
-      cells[current][wall]=false;cells[next][opp]=false;
-      stack.push(current);current=next;cells[current].seen=true;
-    }else if(stack.length){current=stack.pop();}
-    else break;
+  function carve(r1,c1,r2,c2){
+    const a=idx(r1,c1);
+    const b=idx(r2,c2);
+
+    if(r2===r1-1){
+      cells[a].top=false;
+      cells[b].bottom=false;
+    }else if(r2===r1+1){
+      cells[a].bottom=false;
+      cells[b].top=false;
+    }else if(c2===c1-1){
+      cells[a].left=false;
+      cells[b].right=false;
+    }else if(c2===c1+1){
+      cells[a].right=false;
+      cells[b].left=false;
+    }
+  }
+
+  const mainPath=[
+    [6,0],[6,1],[5,1],[4,1],
+    [4,2],[4,3],[3,3],[2,3],
+    [2,2],[1,2],[1,3],[1,4],[0,4]
+  ];
+
+  for(let i=1;i<mainPath.length;i++){
+    const a=mainPath[i-1];
+    const b=mainPath[i];
+    carve(a[0],a[1],b[0],b[1]);
+  }
+
+  const branches=[
+    [[6,1],[5,0]],
+    [[4,1],[3,1]],
+    [[3,1],[3,0]],
+    [[4,2],[5,2]],
+    [[4,3],[4,4]],
+    [[3,3],[3,4]],
+    [[2,2],[2,1]],
+    [[2,1],[1,1]],
+    [[1,2],[0,2]],
+    [[1,4],[2,4]]
+  ];
+
+  for(const [a,b] of branches){
+    carve(a[0],a[1],b[0],b[1]);
   }
 
   return cells;
@@ -18011,6 +18119,7 @@ async function startElectricMaze(p,humanIndex,runId){
     <div class="electric-hud-v119"><div><span>TIME</span><b id="electricTime">0.00</b></div><div><span>STATUS</span><b id="electricStatus">READY</b></div></div>
     <div id="electricStage" class="electric-stage-v119">
       <div id="electricWalls" class="electric-walls-v119"></div>
+      <div id="electricMachines" class="electric-machines-v121"></div>
       <div id="electricGoal" class="electric-goal-v119">GOAL</div>
       <div id="electricPin" class="electric-pin-v119" hidden><i></i></div>
       <div id="electricMob" class="electric-mob-v119" style="background-image:url('icon/01.png')"></div>
@@ -18021,6 +18130,7 @@ async function startElectricMaze(p,humanIndex,runId){
 
   const stage=document.getElementById('electricStage');
   const wallsEl=document.getElementById('electricWalls');
+  const machinesEl=document.getElementById('electricMachines');
   const goalEl=document.getElementById('electricGoal');
   const pin=document.getElementById('electricPin');
   const mob=document.getElementById('electricMob');
@@ -18031,8 +18141,9 @@ async function startElectricMaze(p,humanIndex,runId){
 
   const w=stage.clientWidth,h=stage.clientHeight;
   const pad=12,cw=(w-pad*2)/COLS,ch=(h-pad*2)/ROWS;
-  const cells=buildElectricMazeV119(COLS,ROWS);
+  const cells=buildElectricMazeFixedV121(COLS,ROWS);
   const segments=[];
+  const machines=[];
 
   function addSeg(x1,y1,x2,y2){segments.push({x1,y1,x2,y2});}
   let html='';
@@ -18051,6 +18162,33 @@ async function startElectricMaze(p,humanIndex,runId){
   goalEl.style.left=`${goalX}px`;goalEl.style.top=`${goalY}px`;
   mob.style.left=`${x}px`;mob.style.top=`${y}px`;
 
+  const machineSpecs=[
+    {c:1,baseR:4.25,amp:.48,speed:1.05,phase:.20},
+    {c:3,baseR:2.75,amp:.44,speed:1.25,phase:2.00},
+    {c:4,baseR:1.55,amp:.38,speed:.92,phase:4.10}
+  ];
+
+  machineSpecs.forEach(spec=>{
+    const el=document.createElement('div');
+    el.className='electric-machine-v121';
+    el.innerHTML=`
+      <i style="background-image:url('icon/01.png')"></i>
+      <b></b><em></em>
+    `;
+
+    machinesEl.appendChild(el);
+
+    machines.push({
+      el,
+      x:pad+(spec.c+.5)*cw,
+      baseY:pad+spec.baseR*ch,
+      amp:spec.amp*ch,
+      speed:spec.speed,
+      phase:spec.phase,
+      y:pad+spec.baseR*ch
+    });
+  });
+
   function pointSegDist(px,py,s){
     const vx=s.x2-s.x1,vy=s.y2-s.y1,wx=px-s.x1,wy=py-s.y1;
     const len=vx*vx+vy*vy;
@@ -18059,7 +18197,20 @@ async function startElectricMaze(p,humanIndex,runId){
     return Math.hypot(px-sx,py-sy);
   }
 
-  function collision(nx,ny){return segments.some(s=>pointSegDist(nx,ny,s)<13);}
+  function collision(nx,ny){
+    return segments.some(
+      s=>pointSegDist(nx,ny,s)<13
+    );
+  }
+
+  function machineCollision(nx,ny){
+    return machines.some(m=>
+      Math.hypot(
+        nx-m.x,
+        ny-m.y
+      )<28
+    );
+  }
 
   function zap(now){
     stunUntil=now+1000;target=null;pin.hidden=true;
@@ -18088,8 +18239,20 @@ async function startElectricMaze(p,humanIndex,runId){
     setTimeout(()=>{if(isGameRunValid(runId))recordScreen(63,p,humanIndex,`${(value/1000).toFixed(2)}<small>秒</small>`,`STUNしてもルートを修正！`)},700);
   }
 
-  if(!(await countdown('ELECTRIC MAZE',runId)))return;
-  startTime=performance.now();last=startTime;statusEl.textContent='GO!';
+  message.textContent=
+    '固定コース！ ビリビリマシーンの初期位置も確認！';
+
+  if(!(
+    await countdown(
+      'ELECTRIC MAZE',
+      runId,
+      {transparent:true}
+    )
+  ))return;
+
+  startTime=performance.now();
+  last=startTime;
+  statusEl.textContent='GO!';
 
   function frame(now){
     if(finished||!isGameRunValid(runId))return;
@@ -18098,22 +18261,65 @@ async function startElectricMaze(p,humanIndex,runId){
 
     if(elapsed>=MAX_MS){finish(MAX_MS);return;}
 
+    const machineT=elapsed/1000;
+
+    for(const machine of machines){
+      machine.y=
+        machine.baseY+
+        Math.sin(
+          machineT*
+          machine.speed*
+          Math.PI*2+
+          machine.phase
+        )*
+        machine.amp;
+
+      machine.el.style.left=`${machine.x}px`;
+      machine.el.style.top=`${machine.y}px`;
+    }
+
     if(now<stunUntil){
-      statusEl.textContent=`STUN ${((stunUntil-now)/1000).toFixed(1)}`;
+      statusEl.textContent=
+        `STUN ${((stunUntil-now)/1000).toFixed(1)}`;
     }else{
-      if(statusEl.textContent.startsWith('STUN'))statusEl.textContent='GO!';
-      if(target){
-        const dx=target.x-x,dy=target.y-y,dist=Math.hypot(dx,dy);
-        if(dist<5){target=null;pin.hidden=true;}
-        else{
-          const step=Math.min(dist,132*dt),nx=x+dx/dist*step,ny=y+dy/dist*step;
-          if(collision(nx,ny)){zap(now);}
-          else{x=nx;y=ny;mob.style.transform=`translate(-50%,-50%) scaleX(${dx<0?-1:1})`;}
+      if(statusEl.textContent.startsWith('STUN')){
+        statusEl.textContent='GO!';
+      }
+
+      if(machineCollision(x,y)){
+        zap(now);
+
+      }else if(target){
+        const dx=target.x-x;
+        const dy=target.y-y;
+        const dist=Math.hypot(dx,dy);
+
+        if(dist<5){
+          target=null;
+          pin.hidden=true;
+
+        }else{
+          const step=Math.min(dist,132*dt);
+          const nx=x+dx/dist*step;
+          const ny=y+dy/dist*step;
+
+          if(
+            collision(nx,ny)||
+            machineCollision(nx,ny)
+          ){
+            zap(now);
+          }else{
+            x=nx;
+            y=ny;
+            mob.style.transform=
+              `translate(-50%,-50%) scaleX(${dx<0?-1:1})`;
+          }
         }
       }
     }
 
-    mob.style.left=`${x}px`;mob.style.top=`${y}px`;
+    mob.style.left=`${x}px`;
+    mob.style.top=`${y}px`;
     if(Math.hypot(x-goalX,y-goalY)<Math.min(cw,ch)*.28){finish(elapsed);return;}
     raf=requestAnimationFrame(frame);
   }
@@ -18149,7 +18355,7 @@ async function simulateCpuThenResult(gameIndex){
   clearGameFit();
   gameTop();
   const list=cpus();
-  screen.innerHTML=`<div class="cpu-sim"><div class="cpu-sim-box"><span class="kicker">CPU QUICK PROCESS</span><h2>CPU RESULT</h2><p class="lead">CPUは強め。ゲームごとにまれに「超強いCPU」が抽選されます。</p><div id="cpuRows">${list.map(p=>`<div class="cpu-row" data-cpu="${p.id}">${imgTag(p)}<div><b>${esc(p.name)}</b><span>CPU</span></div><div class="cpu-dot">•••</div></div>`).join("")}</div></div></div>`;
+  screen.innerHTML=`<div class="cpu-sim"><div class="cpu-sim-box"><span class="kicker">CPU QUICK PROCESS</span><h2>CPU RESULT</h2><p class="lead">CPUは人間らしいばらつきに再調整。SUPER CPUはかなり低確率です。</p><div id="cpuRows">${list.map(p=>`<div class="cpu-row" data-cpu="${p.id}">${imgTag(p)}<div><b>${esc(p.name)}</b><span>CPU</span></div><div class="cpu-dot">•••</div></div>`).join("")}</div></div></div>`;
 
   for(const p of list){
     await wait(145);
@@ -18166,9 +18372,65 @@ async function simulateCpuThenResult(gameIndex){
 }
 
 function cpuUltraDraw(gameIndex){
-  // Game-specific draw rate. Regular values are already intentionally strong.
-  const chance=[0.12,0.10,0.14,0.16,0.12,0.13,0.14,0.12,0.15,0.12,0.14,0.13,0.13,0.14,0.12,0.12,0.13,0.12,0.13,0.14,0.13,0.14,0.12,0.13,0.12,0.12,0.13,0.13,0.14,0.14,0.13,0.12,0.13,0.13,0.13,0.13,0.13,0.13,0.13,0.13,0.13,0.13,0.13,0.13,0.13,0.13,0.13,0.14,0.13,0.13,0.13,0.14,0.13,0.13,0.14,0.12,0.13,0.14,0.13,0.13,0.14,0.12,0.13,0.12][gameIndex] ?? 0.12;
-  return Math.random()<chance;
+  const luckOnly=new Set([
+    5,11,25,42,49,55,61
+  ]);
+
+  if(luckOnly.has(gameIndex)){
+    return false;
+  }
+
+  return Math.random()<.05;
+}
+
+
+function softenCpuResultV121(gameIndex,p,ultra){
+  const luckOnly=new Set([
+    5,11,25,42,49,55,61
+  ]);
+
+  const specificallyTuned=new Set([
+    50,51,59,62,63
+  ]);
+
+  if(
+    luckOnly.has(gameIndex)||
+    specificallyTuned.has(gameIndex)
+  )return;
+
+  const key=GAMES[gameIndex]?.key;
+  const records=state.records[key];
+  if(!records)return;
+
+  const value=records[p.id];
+
+  if(
+    typeof value!=='number'||
+    !Number.isFinite(value)
+  )return;
+
+  const lowerIsBetter=new Set([
+    0,2,5,14,21,23,24,25,
+    26,27,37,40,47,51,53,63
+  ]);
+
+  if(lowerIsBetter.has(gameIndex)){
+    records[p.id]=
+      value*
+      (
+        ultra
+          ? 1.035
+          : 1.105
+      );
+  }else{
+    records[p.id]=
+      value*
+      (
+        ultra
+          ? .965
+          : .895
+      );
+  }
 }
 
 function simulateOneCpu(gameIndex,p){
@@ -18281,7 +18543,14 @@ function simulateOneCpu(gameIndex,p){
   }else if(gameIndex===49){
     state.records.mobRacePredict[p.id]=ultra?(Math.random()<.55?100:80):[30,50,50,80][randi(0,3)];
   }else if(gameIndex===50){
-    state.records.mobRocket[p.id]=Math.round((ultra?rand(88,100):rand(52,91))*10)/10;
+    state.records.mobRocket[p.id]=Math.round(
+      (
+        ultra
+          ? rand(72,86)
+          : rand(40,74)
+      )*
+      10
+    )/10;
   }else if(gameIndex===51){
     state.records.bossDuel[p.id]=ultra?randi(13500,17500):randi(17500,30000);
   }else if(gameIndex===52){
@@ -18304,17 +18573,29 @@ function simulateOneCpu(gameIndex,p){
   }else if(gameIndex===58){
     state.records.mobMisfortune[p.id]=Math.round((ultra?rand(10.3,12):rand(5.6,10.8))*100)/100;
   }else if(gameIndex===59){
-    state.records.aimMob[p.id]=ultra?randi(91,100):randi(38,91);
+    state.records.aimMob[p.id]=
+      ultra
+        ? randi(58,76)
+        : randi(24,58);
   }else if(gameIndex===60){
     state.records.balanceMob[p.id]=Math.round((ultra?rand(7.9,10):rand(3.6,8.3))*100)/100;
   }else if(gameIndex===61){
     const diceTotal=ultra?randi(21,30):randi(10,25);
     state.records.mobDice[p.id]=clamp(Math.round(diceTotal<=5?1:diceTotal>=30?100:1+(diceTotal-5)/25*99),1,100);
   }else if(gameIndex===62){
-    state.records.mobCombo[p.id]=ultra?randi(9,14):randi(3,10);
+    state.records.mobCombo[p.id]=ultra?randi(12,17):randi(4,11);
   }else{
-    state.records.electricMaze[p.id]=ultra?randi(5600,9000):randi(9000,20500);
+    state.records.electricMaze[p.id]=
+      ultra
+        ? randi(7800,10800)
+        : randi(11200,22500);
   }
+
+  softenCpuResultV121(
+    gameIndex,
+    p,
+    ultra
+  );
 
   return ultra;
 }
@@ -18424,10 +18705,17 @@ function performancePoints(gameIndex,v){
   if(gameIndex===59)return clamp(Math.round(v),0,100);
   if(gameIndex===60)return clamp(Math.round(v/10*100),0,100);
   if(gameIndex===61)return clamp(Math.round(v),0,100);
-  if(gameIndex===62)return clamp(Math.round(v/10*100),0,100);
-  if(v<=8000)return 100;
+  if(gameIndex===62)return clamp(Math.round(v/20*100),0,100);
+  if(v<=10000)return 100;
   if(v>=30000)return 0;
-  return clamp(Math.round((30000-v)/22000*100),0,100);
+  return clamp(
+    Math.round(
+      (30000-v)/
+      20000*
+      100
+    ),
+    0,100
+  );
 }
 
 function rankRecords(gameIndex){
