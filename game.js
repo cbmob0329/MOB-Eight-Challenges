@@ -319,6 +319,20 @@ function renderFreePlaySelect(){
   gameTop();
 }
 
+function startFreeGame(gameIndex){
+  cancelActiveAnimation();
+  invalidateGameRun();
+
+  state=freshState();
+  state.modeKey="free";
+  state.freePlay=true;
+  state.freeGameIndex=gameIndex;
+  state.gameIndex=gameIndex;
+
+  initTotals();
+  showGameIntro(gameIndex);
+}
+
 function renderGameGuide(){
   clearGameFit();
   invalidateGameRun();
@@ -960,6 +974,7 @@ function renderCustomPicker(){
       <div class="game-badge"><span id="customCount">${state.playlist.length}</span>/50</div>
     </div>
 
+    <button id="customDecide" class="primary top-action-v120" type="button">1ゲーム以上選択</button>
     <button id="customBack" class="secondary wizard-back-v119" type="button">← ゲームモードへ戻る</button>
 
     <section class="panel custom-order-panel">
@@ -977,8 +992,6 @@ function renderCustomPicker(){
         ${GAMES.map((g,i)=>`<button class="custom-game-add" data-add-game="${i}" type="button"><span>GAME ${g.no}</span><b>${g.title}</b><small>${g.sub}</small></button>`).join("")}
       </div>
     </section>
-
-    <button id="customDecide" class="primary" type="button">この内容で決定</button>
 
     <div id="customConfirmOverlay" class="custom-confirm-overlay-v114" hidden>
       <div class="custom-confirm-card-v114">
@@ -1128,7 +1141,7 @@ function renderModeLobby(){
       <div><b>モブくんはスナイパー</b><span>1発25点 / 4発100点</span></div>
       <div><b>モブくんレースだれが勝つ!?</b><span>完全一致100 / 3一致80 / 2一致50 / 1一致30</span></div>
       <div><b>モブくんロケット</b><span>100km=100点</span></div>
-      <div><b>モブくん番長決戦</b><span>5秒以内=100 / 15秒以上=0</span></div>
+      <div><b>モブくん番長決戦</b><span>12秒以内=100 / 32秒以上=0</span></div>
       <div><b>モブくんはぬいぐるみが好き</b><span>3回GET=100 / 2回・1回は時間加点</span></div>
       <div><b>モブくんおもちゃON or OFF</b><span>1.40秒以下=100 / 6.50秒以上=0</span></div>
       <div><b>モブくんドッジボール</b><span>10秒 / 10体KO=100点</span></div>
@@ -1149,6 +1162,8 @@ function renderModeLobby(){
       <div class="game-badge">${state.playlist.length}戦</div>
     </div>
 
+    <button id="modeStart" class="primary top-action-v120">START</button>
+
     <section class="panel">
       <div class="panel-head"><h3>ENTRY</h3><span class="tag">${m.performance?"SCORE BATTLE":m.team?"TEAM BATTLE":"INDIVIDUAL"}</span></div>
       <div class="player-grid">
@@ -1168,7 +1183,6 @@ function renderModeLobby(){
       : `<section class="panel"><h3>POINT RULE</h3><div class="point-strip">${m.points.map((p,i)=>`<span class="point-pill">${i+1}位 ${p}pt</span>`).join("")}</div><p class="note" style="margin-top:9px">同記録は同着。同着時は同順位ポイント。</p></section>`}
 
     <section class="panel flat"><h3>PLAY ORDER</h3><p class="lead">${humans().map(p=>esc(p.name)).join(" → ")}${cpus().length?" → CPUは高速処理":""}</p></section>
-    <button id="modeStart" class="primary">START</button>
   `;
   gameTop();
   document.getElementById("modeStart").addEventListener("click",()=>{
@@ -1355,7 +1369,7 @@ function showGameIntro(index){
   }else if(index===50){
     rules=`<li>モブくんが乗ったコクピットは完成済み。7秒でその周りにロケットを自由に描きます。</li><li>描き終えたら3・2・1で発射。カメラが上空〜宇宙まで追従。</li><li>大きさだけではなく、左右バランス・縦長形状・線量・複雑さ・コクピットとの接続を評価。</li><li>描いたロケットによって飛行距離が変化。最大100km。</li>`;
   }else if(index===51){
-    rules=`<li>学校の屋上で他校の番長とタイマン。相手の耐久値は表示されません。</li><li>通常PUNCHでも相手は短く怯みます。同時に攻撃がぶつかるとCLASHになり、お互い横へ弾け飛びます。</li><li>超密着でPUNCHを連打すると、番長が時々ジャンプして背後へ回り込みます。</li><li>通常PUNCHを3回受けるごとに番長は高速バックステップ。追いかける必要があります。</li><li>プレイヤーは1回だけ派手な突進SPECIALを使用可能。命中すると5ダメージ。</li><li>相手の攻撃頻度は少し控えめ。ただし壁際へ追い込むと強烈な反撃があります。</li>`;
+    rules=`<li>学校の屋上で他校の番長とタイマン。相手の耐久値は表示されません。</li><li>通常PUNCHでも相手は短く怯みます。同時に攻撃がぶつかるとCLASHになり、お互い横へ弾け飛びます。</li><li>超密着でPUNCHを連打すると、番長が時々ジャンプして背後へ回り込みます。</li><li>通常PUNCHを3回受けるごとに番長は高速バックステップ。追いかける必要があります。</li><li>プレイヤーは派手な突進SPECIALを2回まで使用可能。1回命中で5ダメージ。</li><li>相手の攻撃頻度は少し控えめ。ただし壁際へ追い込むと強烈な反撃があります。</li>`;
   }else if(index===52){
     rules=`<li>巨大モブくんぬいぐるみ1個だけのUFOキャッチャー。</li><li>まずARM WIDTHゲージをSTOPしてアームの広さを決定。狭すぎても広すぎても掴みにくく、適度な幅が重要。</li><li>その後◀ ▶で横位置を合わせて「降下」。降下中のSTOPは高さだけ。</li><li>アーム幅・横位置・高さでまず掴みます。ただし掴み方が浅いと持ち上げ中に滑り落ちることがあります。</li><li>3回とも景品口まで運べたら100点。</li><li>2回GETは80点から、1回GETは50点から。使った合計時間が短いほど追加点。</li>`;
   }else if(index===53){
@@ -13953,9 +13967,10 @@ async function startBossDuel(p,humanIndex,runId){
   let moveDir=0;
   let facing=1;
 
-  let enemyHp=30;
+  let enemyHp=20;
   let normalHitCount=0;
-  let specialUsed=false;
+  let specialCharges=2;
+  let specialBusy=false;
 
   let startTime=0;
   let last=0;
@@ -13991,7 +14006,7 @@ async function startBossDuel(p,humanIndex,runId){
 
     <div class="duel-hud">
       <div><span>TIME</span><b id="duelTime">0.00</b></div>
-      <div><span>SPECIAL</span><b id="duelSpecialState">READY ×1</b></div>
+      <div><span>SPECIAL</span><b id="duelSpecialState">READY ×2</b></div>
     </div>
 
     <div id="duelStage" class="duel-stage">
@@ -14022,7 +14037,7 @@ async function startBossDuel(p,humanIndex,runId){
     <div class="duel-controls duel-controls-v115">
       <button id="duelLeft" type="button">←</button>
       <button id="duelPunch" class="punch" type="button">PUNCH</button>
-      <button id="duelSpecial" class="special" type="button">必殺 ×1</button>
+      <button id="duelSpecial" class="special" type="button">必殺 ×2</button>
       <button id="duelRight" type="button">→</button>
     </div>
   </div>`;
@@ -14357,35 +14372,73 @@ async function startBossDuel(p,humanIndex,runId){
     normalPunch();
   },{passive:false});
 
+  function updateDuelSpecialUI(){
+    if(finished)return;
+
+    special.disabled=
+      specialBusy||
+      specialCharges<=0;
+
+    special.classList.toggle(
+      'used',
+      specialCharges<=0
+    );
+
+    specialState.textContent=
+      specialBusy
+        ? 'RUSHING...'
+        : specialCharges>0
+          ? `READY ×${specialCharges}`
+          : 'USED';
+
+    special.textContent=
+      specialCharges>0
+        ? `必殺 ×${specialCharges}`
+        : 'USED';
+  }
+
   special.addEventListener('pointerdown',e=>{
     e.preventDefault();
 
     const now=performance.now();
 
     if(
-      specialUsed||
+      specialCharges<=0||
+      specialBusy||
       finished||
       now<playerStunUntil||
       !isGameRunValid(runId)
     )return;
 
-    specialUsed=true;
-    special.disabled=true;
-    special.classList.add('used');
-    specialState.textContent='USED';
+    specialCharges--;
+    specialBusy=true;
+    updateDuelSpecialUI();
     moveDir=0;
 
     const dir=enemyX>=playerX?1:-1;
     facing=dir;
-    setTimeout(()=>{},0);
 
-    player.classList.remove('special-punch-v115','rush-charge-v119','rush-dash-v119');
+    player.classList.remove(
+      'special-punch-v115',
+      'rush-charge-v119',
+      'rush-dash-v119'
+    );
+
     void player.offsetWidth;
     player.classList.add('rush-charge-v119');
 
     popImpact('SPECIAL CHARGE!!',playerX);
     stage.classList.add('rush-screen-v119');
     beep(360,85,.025);
+
+    const releaseSpecial=()=>{
+      setTimeout(()=>{
+        if(!isGameRunValid(runId)||finished)return;
+
+        specialBusy=false;
+        updateDuelSpecialUI();
+      },360);
+    };
 
     setTimeout(()=>{
       if(finished||!isGameRunValid(runId))return;
@@ -14420,12 +14473,18 @@ async function startBossDuel(p,humanIndex,runId){
           stage.classList.add('rush-impact-v119');
           beep(1180,145,.05);
 
-          setTimeout(()=>stage.classList.remove('rush-impact-v119'),360);
+          setTimeout(
+            ()=>stage.classList.remove('rush-impact-v119'),
+            360
+          );
+
         }else{
           popImpact('MISS!',playerX);
           stage.classList.remove('rush-screen-v119');
           beep(170,80,.016);
         }
+
+        releaseSpecial();
       },145);
     },230);
   },{passive:false});
@@ -17287,190 +17346,628 @@ async function startMobDice(p,humanIndex,runId){
 
 
 // GAME 63 -------------------------------------------------
-function makeTenComboBoardV119(){
+function makeTenComboBoardV120(){
   const rows=5,cols=6;
   const target=[];
 
+  // Exactly 10 horizontal groups exist in the solved board:
+  // 2 groups per row × 5 rows.
   for(let r=0;r<rows;r++){
     const a=(r%6)+1;
-    let b=((r+2)%6)+1;
+    let b=((r+3)%6)+1;
     if(b===a)b=(b%6)+1;
-    target.push(a,a,a,b,b,b);
+
+    if(Math.random()<.5){
+      target.push(a,a,a,b,b,b);
+    }else{
+      target.push(b,b,b,a,a,a);
+    }
   }
 
   const board=[...target];
   let cell=randi(0,rows*cols-1);
   const path=[cell];
   let prev=-1;
-  const steps=randi(9,13);
+  const steps=randi(10,14);
 
   for(let s=0;s<steps;s++){
-    const r=Math.floor(cell/cols),c=cell%cols;
+    const r=Math.floor(cell/cols);
+    const c=cell%cols;
     const opts=[];
+
     if(r>0)opts.push(cell-cols);
     if(r<rows-1)opts.push(cell+cols);
     if(c>0)opts.push(cell-1);
     if(c<cols-1)opts.push(cell+1);
-    const filtered=opts.filter(x=>x!==prev);
-    const next=(filtered.length?filtered:opts)[randi(0,(filtered.length?filtered:opts).length-1)];
-    [board[cell],board[next]]=[board[next],board[cell]];
+
+    const safe=opts.filter(x=>x!==prev);
+    const pool=safe.length?safe:opts;
+    const next=pool[randi(0,pool.length-1)];
+
+    [board[cell],board[next]]=
+      [board[next],board[cell]];
+
     prev=cell;
     cell=next;
     path.push(cell);
   }
 
-  return {board,target,reversePath:[...path].reverse()};
+  return {
+    board,
+    target,
+    reversePath:[...path].reverse()
+  };
 }
 
 async function startMobCombo(p,humanIndex,runId){
   gameFit();
-  const ROWS=5,COLS=6,GAME_MS=5000;
-  const generated=makeTenComboBoardV119();
+
+  const ROWS=5;
+  const COLS=6;
+  const GAME_MS=5000;
+
+  const generated=makeTenComboBoardV120();
   let board=[...generated.board];
+
   let dragging=false;
   let currentIndex=-1;
   let pointerId=null;
+  let ghost=null;
+
   let startTime=0;
-  let last=0;
   let raf=null;
   let resolving=false;
   let finished=false;
 
-  screen.innerHTML=`<div class="combo-shell-v119">
-    <div class="game-head"><div><span class="kicker">${esc(p.name)}</span><h2>モブくん10連コンボ</h2></div><div class="game-badge">${playBadge(humanIndex)}</div></div>
-    <div class="combo-hud-v119"><div><span>TIME</span><b id="comboTime">5.00</b></div><div><span>COMBO</span><b id="comboLive">0</b></div></div>
-    <div id="comboBoard" class="combo-board-v119"></div>
-    <div id="comboCall" class="combo-call-v119">同じモブくんを横3体以上！</div>
+  screen.innerHTML=`<div class="combo-shell-v120">
+    <div class="game-head">
+      <div>
+        <span class="kicker">${esc(p.name)}</span>
+        <h2>モブくん10連コンボ</h2>
+      </div>
+      <div class="game-badge">${playBadge(humanIndex)}</div>
+    </div>
+
+    <div class="combo-hud-v120">
+      <div><span>TIME</span><b id="comboTime">5.00</b></div>
+      <div><span>COMBO</span><b id="comboLive">0</b></div>
+    </div>
+
+    <div id="comboBoard" class="combo-board-v120"></div>
+
+    <div id="comboCall" class="combo-call-v120">
+      モブ球を押したまま動かして横3つ！
+    </div>
+
+    <div id="comboBurst" class="combo-burst-v120"></div>
   </div>`;
 
   const boardEl=document.getElementById('comboBoard');
   const timeEl=document.getElementById('comboTime');
   const comboEl=document.getElementById('comboLive');
   const call=document.getElementById('comboCall');
+  const burst=document.getElementById('comboBurst');
 
-  function render(matched=new Set()){
-    boardEl.innerHTML=board.map((v,i)=>`<div class="combo-tile-v119 ${matched.has(i)?'matched':''} ${i===currentIndex&&dragging?'dragging':''}" data-combo-index="${i}"><img src="icon/${String(v).padStart(2,'0')}.png" draggable="false" alt="MOB ${v}"></div>`).join('');
+  function orbColor(v){
+    return `orb-${((v-1)%6)+1}`;
+  }
+
+  function renderBoard({
+    hideIndex=-1,
+    dropMap=null,
+    shift=null
+  }={}){
+    boardEl.innerHTML=board.map((v,i)=>{
+      const hidden=i===hideIndex;
+      const dropRows=dropMap?.get(i)||0;
+      const isShift=shift&&shift.index===i;
+
+      return `<div
+        class="combo-slot-v120 ${hidden?'drag-source-v120':''}"
+        data-combo-index="${i}">
+        ${v==null
+          ? ''
+          : `<div
+              class="combo-orb-v120 ${orbColor(v)} ${dropRows>0?'drop-in-v120':''} ${isShift?'shift-in-v120':''}"
+              style="
+                --drop-y:${dropRows*72}px;
+                --shift-x:${isShift?shift.dx:0}px;
+                --shift-y:${isShift?shift.dy:0}px;
+              ">
+              <img
+                src="icon/${String(v).padStart(2,'0')}.png"
+                draggable="false"
+                alt="MOB ${v}">
+            </div>`
+        }
+      </div>`;
+    }).join('');
   }
 
   function indexFromPoint(x,y){
     const rect=boardEl.getBoundingClientRect();
-    if(x<rect.left||x>rect.right||y<rect.top||y>rect.bottom)return -1;
-    const c=clamp(Math.floor((x-rect.left)/(rect.width/COLS)),0,COLS-1);
-    const r=clamp(Math.floor((y-rect.top)/(rect.height/ROWS)),0,ROWS-1);
+
+    if(
+      x<rect.left||
+      x>rect.right||
+      y<rect.top||
+      y>rect.bottom
+    )return -1;
+
+    const c=clamp(
+      Math.floor(
+        (x-rect.left)/
+        (rect.width/COLS)
+      ),
+      0,COLS-1
+    );
+
+    const r=clamp(
+      Math.floor(
+        (y-rect.top)/
+        (rect.height/ROWS)
+      ),
+      0,ROWS-1
+    );
+
     return r*COLS+c;
   }
 
   function adjacent(a,b){
     if(a<0||b<0)return false;
-    const ar=Math.floor(a/COLS),ac=a%COLS,br=Math.floor(b/COLS),bc=b%COLS;
-    return Math.abs(ar-br)+Math.abs(ac-bc)===1;
+
+    const ar=Math.floor(a/COLS);
+    const ac=a%COLS;
+    const br=Math.floor(b/COLS);
+    const bc=b%COLS;
+
+    return (
+      Math.abs(ar-br)+
+      Math.abs(ac-bc)
+    )===1;
+  }
+
+  function createGhost(value,e){
+    removeGhost();
+
+    ghost=document.createElement('div');
+    ghost.className=
+      `combo-drag-ghost-v120 combo-orb-v120 ${orbColor(value)}`;
+
+    ghost.innerHTML=`
+      <img
+        src="icon/${String(value).padStart(2,'0')}.png"
+        draggable="false"
+        alt="MOB ${value}">
+    `;
+
+    document.body.appendChild(ghost);
+    moveGhost(e);
+  }
+
+  function moveGhost(e){
+    if(!ghost)return;
+
+    ghost.style.left=`${e.clientX}px`;
+    ghost.style.top=`${e.clientY}px`;
+  }
+
+  function removeGhost(){
+    if(ghost){
+      ghost.remove();
+      ghost=null;
+    }
+  }
+
+  function stepToward(targetIndex){
+    if(
+      currentIndex<0||
+      targetIndex<0||
+      targetIndex===currentIndex
+    )return false;
+
+    const cr=Math.floor(currentIndex/COLS);
+    const cc=currentIndex%COLS;
+    const tr=Math.floor(targetIndex/COLS);
+    const tc=targetIndex%COLS;
+
+    let next=currentIndex;
+
+    if(Math.abs(tc-cc)>=Math.abs(tr-cr)){
+      if(tc>cc)next=currentIndex+1;
+      else if(tc<cc)next=currentIndex-1;
+      else if(tr>cr)next=currentIndex+COLS;
+      else if(tr<cr)next=currentIndex-COLS;
+    }else{
+      if(tr>cr)next=currentIndex+COLS;
+      else if(tr<cr)next=currentIndex-COLS;
+      else if(tc>cc)next=currentIndex+1;
+      else if(tc<cc)next=currentIndex-1;
+    }
+
+    if(!adjacent(currentIndex,next))return false;
+
+    const old=currentIndex;
+    const oldR=Math.floor(old/COLS);
+    const oldC=old%COLS;
+    const nextR=Math.floor(next/COLS);
+    const nextC=next%COLS;
+
+    [board[old],board[next]]=
+      [board[next],board[old]];
+
+    currentIndex=next;
+
+    const rect=boardEl.getBoundingClientRect();
+    const cellW=rect.width/COLS;
+    const cellH=rect.height/ROWS;
+
+    renderBoard({
+      hideIndex:currentIndex,
+      shift:{
+        index:old,
+        dx:(nextC-oldC)*cellW,
+        dy:(nextR-oldR)*cellH
+      }
+    });
+
+    beep(355,12,.0035);
+    return true;
   }
 
   function findHorizontalMatches(){
     const matched=new Set();
     let groups=0;
+
     for(let r=0;r<ROWS;r++){
       let c=0;
+
       while(c<COLS){
         const v=board[r*COLS+c];
         let end=c+1;
-        while(end<COLS&&board[r*COLS+end]===v)end++;
-        if(v!=null&&end-c>=3){
-          groups++;
-          for(let k=c;k<end;k++)matched.add(r*COLS+k);
+
+        while(
+          end<COLS&&
+          board[r*COLS+end]===v
+        ){
+          end++;
         }
+
+        if(
+          v!=null&&
+          end-c>=3
+        ){
+          groups++;
+
+          for(let k=c;k<end;k++){
+            matched.add(r*COLS+k);
+          }
+        }
+
         c=end;
       }
     }
+
     return {matched,groups};
   }
 
-  function collapseAndFill(){
+  function collapseAndFillAnimated(){
+    const nextBoard=Array(ROWS*COLS).fill(null);
+    const dropMap=new Map();
+
     for(let c=0;c<COLS;c++){
-      const vals=[];
+      const survivors=[];
+
       for(let r=ROWS-1;r>=0;r--){
-        const v=board[r*COLS+c];
-        if(v!=null)vals.push(v);
+        const idx=r*COLS+c;
+        const v=board[idx];
+
+        if(v!=null){
+          survivors.push({
+            value:v,
+            fromRow:r
+          });
+        }
       }
-      let vi=0;
-      for(let r=ROWS-1;r>=0;r--){
-        board[r*COLS+c]=vi<vals.length?vals[vi++]:randi(1,6);
+
+      let writeRow=ROWS-1;
+
+      for(const item of survivors){
+        const idx=writeRow*COLS+c;
+        nextBoard[idx]=item.value;
+
+        const dropRows=
+          writeRow-item.fromRow;
+
+        if(dropRows>0){
+          dropMap.set(idx,dropRows);
+        }
+
+        writeRow--;
+      }
+
+      let spawnDepth=1;
+
+      while(writeRow>=0){
+        const idx=writeRow*COLS+c;
+
+        nextBoard[idx]=randi(1,6);
+        dropMap.set(
+          idx,
+          writeRow+spawnDepth+2
+        );
+
+        writeRow--;
+        spawnDepth++;
       }
     }
+
+    board=nextBoard;
+    return dropMap;
+  }
+
+  function showComboBurst(combos,groups){
+    burst.textContent=
+      `${combos} COMBO!`;
+
+    burst.classList.remove('show');
+    void burst.offsetWidth;
+    burst.classList.add('show');
+
+    call.textContent=
+      groups>1
+        ? `${groups}組同時消し！ ${combos} COMBO`
+        : `${combos} COMBO!!`;
   }
 
   async function resolveBoard(){
     if(resolving||finished)return;
+
     resolving=true;
     dragging=false;
     currentIndex=-1;
-    boardEl.classList.add('resolving');
+    removeGhost();
+
+    boardEl.classList.add('resolving-v120');
+
     let combos=0;
 
-    for(let cascade=0;cascade<8;cascade++){
+    for(let cascade=0;cascade<12;cascade++){
       const found=findHorizontalMatches();
+
       if(!found.groups)break;
+
       combos+=found.groups;
       comboEl.textContent=combos;
-      call.textContent=`${combos} COMBO!!`;
-      render(found.matched);
-      beep(520+Math.min(430,combos*38),65,.018);
-      await wait(260);
+      showComboBurst(combos,found.groups);
+
+      // Real disappear animation.
+      renderBoard();
+
+      for(const idx of found.matched){
+        const cell=
+          boardEl.querySelector(
+            `[data-combo-index="${idx}"] .combo-orb-v120`
+          );
+
+        if(cell){
+          cell.classList.add('vanish-v120');
+        }
+      }
+
+      beep(
+        520+
+        Math.min(470,combos*34),
+        70,.018
+      );
+
+      await wait(320);
       if(!isGameRunValid(runId))return;
-      found.matched.forEach(i=>board[i]=null);
-      collapseAndFill();
-      render();
-      await wait(170);
+
+      found.matched.forEach(i=>{
+        board[i]=null;
+      });
+
+      renderBoard();
+
+      await wait(70);
+      if(!isGameRunValid(runId))return;
+
+      // Actual falling / new-orb drop animation.
+      const dropMap=
+        collapseAndFillAnimated();
+
+      renderBoard({dropMap});
+      boardEl.classList.add('drop-shake-v120');
+
+      await wait(340);
+      if(!isGameRunValid(runId))return;
+
+      boardEl.classList.remove('drop-shake-v120');
+
+      // Small pause makes each cascade legible.
+      await wait(90);
       if(!isGameRunValid(runId))return;
     }
 
     finished=true;
+
     state.records.mobCombo[p.id]=combos;
-    call.textContent=combos>=10?`${combos} COMBO！ 10連達成！`:`${combos} COMBO`;
-    beep(combos>=10?1120:combos>=6?860:560,150,.04);
-    await wait(700);
-    if(isGameRunValid(runId))recordScreen(62,p,humanIndex,`${combos}<small> COMBO</small>`,combos>=10?'10 COMBO CLEAR!':'横3体以上を狙おう');
+
+    call.textContent=
+      combos>=10
+        ? `${combos} COMBO！ 10連コンボ達成！`
+        : `${combos} COMBO！`;
+
+    burst.textContent=
+      combos>=10
+        ? '10 COMBO CLEAR!!'
+        : `${combos} COMBO`;
+
+    burst.classList.remove('show');
+    void burst.offsetWidth;
+    burst.classList.add('show');
+
+    beep(
+      combos>=10
+        ? 1160
+        : combos>=6
+          ? 870
+          : 570,
+      165,.045
+    );
+
+    await wait(800);
+
+    if(isGameRunValid(runId)){
+      recordScreen(
+        62,p,humanIndex,
+        `${combos}<small> COMBO</small>`,
+        combos>=10
+          ? '10 COMBO CLEAR!'
+          : '横3体以上を作ろう'
+      );
+    }
   }
 
   boardEl.addEventListener('pointerdown',e=>{
-    if(resolving||finished||!startTime)return;
+    if(
+      resolving||
+      finished||
+      !startTime
+    )return;
+
     e.preventDefault();
-    const idx=indexFromPoint(e.clientX,e.clientY);
+
+    const idx=
+      indexFromPoint(
+        e.clientX,
+        e.clientY
+      );
+
     if(idx<0)return;
-    dragging=true;currentIndex=idx;pointerId=e.pointerId;
-    render();
-    try{boardEl.setPointerCapture(pointerId)}catch(_){}
+
+    dragging=true;
+    currentIndex=idx;
+    pointerId=e.pointerId;
+
+    createGhost(
+      board[currentIndex],
+      e
+    );
+
+    renderBoard({
+      hideIndex:currentIndex
+    });
+
+    boardEl.classList.add('drag-active-v120');
+
+    try{
+      boardEl.setPointerCapture(pointerId);
+    }catch(_){}
+
+    beep(430,20,.006);
   },{passive:false});
 
   boardEl.addEventListener('pointermove',e=>{
-    if(!dragging||e.pointerId!==pointerId||resolving)return;
+    if(
+      !dragging||
+      e.pointerId!==pointerId||
+      resolving
+    )return;
+
     e.preventDefault();
-    const idx=indexFromPoint(e.clientX,e.clientY);
-    if(idx>=0&&idx!==currentIndex&&adjacent(currentIndex,idx)){
-      [board[currentIndex],board[idx]]=[board[idx],board[currentIndex]];
-      currentIndex=idx;
-      render();
-      beep(360,14,.004);
+    moveGhost(e);
+
+    const target=
+      indexFromPoint(
+        e.clientX,
+        e.clientY
+      );
+
+    if(target<0)return;
+
+    // Pointer events can jump multiple cells on fast swipes.
+    // Walk the selected orb through every intervening neighbor.
+    let guard=0;
+
+    while(
+      currentIndex!==target&&
+      guard<8
+    ){
+      if(!stepToward(target))break;
+      guard++;
     }
   },{passive:false});
 
-  const end=e=>{
-    if(e.pointerId!==pointerId)return;
-    dragging=false;currentIndex=-1;render();
+  const endDrag=e=>{
+    if(
+      !dragging||
+      e.pointerId!==pointerId
+    )return;
+
+    e.preventDefault();
+
+    dragging=false;
+    currentIndex=-1;
+    removeGhost();
+    renderBoard();
+
+    boardEl.classList.remove('drag-active-v120');
+    beep(470,22,.006);
   };
-  boardEl.addEventListener('pointerup',end,{passive:false});
-  boardEl.addEventListener('pointercancel',end,{passive:false});
+
+  boardEl.addEventListener(
+    'pointerup',
+    endDrag,
+    {passive:false}
+  );
+
+  boardEl.addEventListener(
+    'pointercancel',
+    endDrag,
+    {passive:false}
+  );
 
   if(!(await countdown('10 COMBO',runId)))return;
-  startTime=performance.now();last=startTime;render();
+
+  startTime=performance.now();
+  renderBoard();
+
+  call.textContent=
+    '5秒！ モブ球を押したまま自由に動かせ！';
 
   function frame(now){
-    if(finished||resolving||!isGameRunValid(runId))return;
-    const rem=GAME_MS-(now-startTime);
-    timeEl.textContent=(Math.max(0,rem)/1000).toFixed(2);
-    if(rem<=0){timeEl.textContent='0.00';resolveBoard();return;}
+    if(
+      finished||
+      resolving||
+      !isGameRunValid(runId)
+    )return;
+
+    const rem=
+      GAME_MS-
+      (now-startTime);
+
+    timeEl.textContent=
+      (Math.max(0,rem)/1000).toFixed(2);
+
+    if(rem<=0){
+      timeEl.textContent='0.00';
+
+      if(dragging){
+        dragging=false;
+        currentIndex=-1;
+        removeGhost();
+        renderBoard();
+      }
+
+      resolveBoard();
+      return;
+    }
+
     raf=requestAnimationFrame(frame);
   }
+
   raf=requestAnimationFrame(frame);
 }
 
@@ -17505,7 +18002,7 @@ function buildElectricMazeV119(cols,rows){
 
 async function startElectricMaze(p,humanIndex,runId){
   gameFit();
-  const COLS=6,ROWS=9,MAX_MS=45000;
+  const COLS=5,ROWS=7,MAX_MS=35000;
   let x=0,y=0,target=null;
   let startTime=0,last=0,raf=null,finished=false,stunUntil=0;
 
@@ -17609,7 +18106,7 @@ async function startElectricMaze(p,humanIndex,runId){
         const dx=target.x-x,dy=target.y-y,dist=Math.hypot(dx,dy);
         if(dist<5){target=null;pin.hidden=true;}
         else{
-          const step=Math.min(dist,118*dt),nx=x+dx/dist*step,ny=y+dy/dist*step;
+          const step=Math.min(dist,132*dt),nx=x+dx/dist*step,ny=y+dy/dist*step;
           if(collision(nx,ny)){zap(now);}
           else{x=nx;y=ny;mob.style.transform=`translate(-50%,-50%) scaleX(${dx<0?-1:1})`;}
         }
@@ -17786,7 +18283,7 @@ function simulateOneCpu(gameIndex,p){
   }else if(gameIndex===50){
     state.records.mobRocket[p.id]=Math.round((ultra?rand(88,100):rand(52,91))*10)/10;
   }else if(gameIndex===51){
-    state.records.bossDuel[p.id]=ultra?randi(6500,8500):randi(8500,14500);
+    state.records.bossDuel[p.id]=ultra?randi(13500,17500):randi(17500,30000);
   }else if(gameIndex===52){
     const catches=ultra?randi(2,3):randi(0,2);
     state.records.plushCatcher[p.id]=
@@ -17816,7 +18313,7 @@ function simulateOneCpu(gameIndex,p){
   }else if(gameIndex===62){
     state.records.mobCombo[p.id]=ultra?randi(9,14):randi(3,10);
   }else{
-    state.records.electricMaze[p.id]=ultra?randi(6800,10500):randi(10500,26000);
+    state.records.electricMaze[p.id]=ultra?randi(5600,9000):randi(9000,20500);
   }
 
   return ultra;
@@ -17906,9 +18403,12 @@ function performancePoints(gameIndex,v){
   if(gameIndex===49)return clamp(Math.round(v),0,100);
   if(gameIndex===50)return clamp(Math.round(v),0,100);
   if(gameIndex===51){
-    if(v<=5000)return 100;
-    if(v>=15000)return 0;
-    return clamp(Math.round((15000-v)/10000*100),0,100);
+    if(v<=12000)return 100;
+    if(v>=32000)return 0;
+    return clamp(
+      Math.round((32000-v)/20000*100),
+      0,100
+    );
   }
   if(gameIndex===52)return clamp(Math.round(v),0,100);
   if(gameIndex===53){
