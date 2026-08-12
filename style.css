@@ -18475,3 +18475,71 @@ button{-webkit-touch-callout:none!important;-webkit-user-select:none!important;u
 .roulette-stage-v131.high-land-v131{
   box-shadow:inset 0 0 0 8px rgba(191,139,235,.48);
 }
+
+
+/* V10.32 — TANK */
+.tank-shell-v132{height:100%;min-height:0;display:flex;flex-direction:column}
+.tank-help-v132{flex:0 0 auto;margin-bottom:6px;border:3px solid var(--ink);border-radius:999px;background:#fff;padding:5px 8px;text-align:center;font-size:10px;font-weight:1000}
+.tank-stage-v132{position:relative;flex:1;min-height:0;overflow:hidden;border:4px solid var(--ink);border-radius:20px;background:#8ab16e;touch-action:none!important}
+.tank-grid-v132{position:absolute;inset:0;background:linear-gradient(rgba(255,255,255,.12) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.12) 1px,transparent 1px);background-size:32px 32px}
+.tank-v132{position:absolute;z-index:20;left:50%;top:50%;width:96px;height:96px;transform:translate(-50%,-50%)}
+.tank-body-v132{position:absolute;left:50%;top:50%;width:74px;height:68px;transform:translate(-50%,-50%);border:6px solid var(--ink);border-radius:17px;background:#516f43;box-shadow:-12px 0 0 #374a32,12px 0 0 #374a32}
+.tank-turret-v132{position:absolute;z-index:5;left:50%;top:50%;width:54px;height:54px;transform:translate(-50%,-50%);transform-origin:50% 50%;transition:transform .08s ease;border:5px solid var(--ink);border-radius:50%;background:#6f9259}
+.tank-turret-v132 i{position:absolute;left:50%;top:-44px;width:15px;height:54px;transform:translateX(-50%);border:4px solid var(--ink);border-radius:7px;background:#425a38}
+.tank-mob-v132{position:absolute;z-index:8;left:50%;top:50%;width:44px;height:44px;transform:translate(-50%,-50%);background-size:contain;background-position:center;background-repeat:no-repeat}
+.tank-v132.recoil-v132{animation:tankRecoil132 .16s ease}
+@keyframes tankRecoil132{50%{scale:.94}}
+.tank-v132.hit-v132{animation:tankHit132 .28s ease}
+@keyframes tankHit132{25%{translate:-6px 3px}55%{translate:7px -2px}}
+.tank-enemy-layer-v132,.tank-bullet-layer-v132,.tank-burst-layer-v132{position:absolute;inset:0;pointer-events:none}
+.tank-slime-v132{position:absolute;z-index:10;width:42px;height:34px;transform:translate(-50%,-50%);border:4px solid var(--ink);border-radius:52% 52% 42% 42%;background:#8bd66f}
+.tank-slime-v132.s1{background:#72cbe8}.tank-slime-v132.s2{background:#dc86d5}.tank-slime-v132.s3{background:#e9cf61}
+.tank-slime-v132 i,.tank-slime-v132 b{position:absolute;top:10px;width:6px;height:8px;border-radius:50%;background:#222}.tank-slime-v132 i{left:11px}.tank-slime-v132 b{right:11px}
+.tank-shell-shot-v132{position:absolute;z-index:15;width:15px;height:15px;transform:translate(-50%,-50%);border:3px solid var(--ink);border-radius:50%;background:#ffd84f;box-shadow:0 0 0 5px rgba(255,216,79,.18)}
+.tank-burst-v132{position:absolute;z-index:18;width:28px;height:28px;transform:translate(-50%,-50%);border:6px solid #fff16a;border-radius:50%;animation:tankBurst132 .42s ease-out forwards}.tank-burst-v132.strong-v132{border-color:#ef725e}
+@keyframes tankBurst132{to{scale:3.4;opacity:0}}
+.tank-stage-v132.clear-v132{box-shadow:inset 0 0 0 8px rgba(255,239,89,.35)}
+
+/* V10.32 — OLD MAID */
+.maid-shell-v132{height:100%;min-height:0;display:flex;flex-direction:column}
+.maid-stage-v132{position:relative;flex:1;min-height:0;overflow:hidden;border:4px solid var(--ink);border-radius:20px;background:linear-gradient(#e8d8c2,#bb8f62)}
+.fake-mob-v132{position:absolute;left:50%;top:7px;width:72px;height:82px;transform:translateX(-50%);background-size:contain;background-position:center;background-repeat:no-repeat;filter:hue-rotate(145deg) saturate(1.35)}
+.fake-mob-v132 span{position:absolute;left:50%;bottom:-10px;transform:translateX(-50%);white-space:nowrap;border:2px solid var(--ink);border-radius:999px;background:#fff;padding:2px 6px;font-size:7px;font-weight:1000}
+.maid-label-v132{position:absolute;left:50%;top:99px;transform:translateX(-50%);font-size:9px;font-weight:1000}
+.maid-opponent-v132{position:absolute;left:50%;top:122px;width:210px;height:140px;transform:translateX(-50%);display:flex;justify-content:center;gap:18px}
+.maid-opponent-v132.shuffle-v132{animation:maidShuffle132 .5s ease}
+@keyframes maidShuffle132{25%{transform:translateX(-50%) translateX(-28px)}50%{transform:translateX(-50%) translateX(28px)}75%{transform:translateX(-50%) translateX(-12px)}}
+.maid-card-v132{position:relative;width:82px;height:124px;border:5px solid var(--ink);border-radius:14px;background:#fff;box-shadow:0 6px 0 rgba(17,19,26,.16)}
+.maid-card-v132.back-v132{background:repeating-linear-gradient(45deg,#244d77 0 8px,#3b6b98 8px 16px);color:#fff}
+.maid-card-v132.back-v132 i{position:absolute;inset:9px;display:grid;place-items:center;border:3px solid rgba(255,255,255,.66);border-radius:9px;font-style:normal;font-size:12px;font-weight:1000}
+.maid-card-v132.selected-v132{translate:0 -10px;box-shadow:0 0 0 6px #ffe665,0 8px 0 rgba(17,19,26,.16)}
+.maid-card-v132.draw-v132{animation:maidDraw132 .28s ease forwards}@keyframes maidDraw132{to{translate:0 28px;opacity:.25}}
+.maid-reveal-v132{position:absolute;z-index:12;left:50%;top:155px;transform:translateX(-50%);opacity:0;pointer-events:none}.maid-reveal-v132.show-v132{animation:maidReveal132 .3s ease forwards}@keyframes maidReveal132{from{opacity:0;scale:.55}to{opacity:1;scale:1}}
+.maid-card-v132.ace-spade-v132,.maid-card-v132.ace-diamond-v132{padding:7px}.maid-card-v132.ace-diamond-v132{color:#d93636}
+.maid-card-v132 b{display:block;font-size:25px;line-height:1}.maid-card-v132.ace-spade-v132 i,.maid-card-v132.ace-diamond-v132 i{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);font-style:normal;font-size:44px}
+.maid-card-v132.joker-v132{background:#24242d;color:#fff16a;display:grid;place-items:center;text-align:center}.maid-card-v132.joker-v132 b{font-size:13px}.maid-card-v132.joker-v132 i{font-size:43px;font-style:normal}
+.maid-player-v132{position:absolute;left:50%;bottom:9px;transform:translateX(-50%)}.maid-player-v132.pair-v132{animation:maidPair132 .55s ease}@keyframes maidPair132{50%{scale:1.14;translate:-18px 0}}
+.maid-reveal-v132.pair-v132{animation:maidPairReveal132 .55s ease forwards}@keyframes maidPairReveal132{50%{transform:translateX(-20%) translateY(86px) rotate(-7deg)}}
+.maid-confirm-v132{flex:0 0 auto;margin-top:7px;border:4px solid var(--ink);border-radius:16px;background:#fff;padding:7px;text-align:center}.maid-confirm-v132>b{display:block;margin-bottom:6px;font-size:12px}.maid-confirm-v132>div{display:grid;grid-template-columns:1fr 1fr;gap:7px}.maid-confirm-v132 button{min-height:48px;border:4px solid var(--ink);border-radius:13px;font-size:16px;font-weight:1000;touch-action:none!important}
+.maid-status-v132{flex:0 0 auto;min-height:38px;margin-top:6px;border:3px solid var(--ink);border-radius:999px;background:#fff;display:grid;place-items:center;padding:5px 8px;font-size:10px;font-weight:1000;text-align:center}
+
+/* V10.32 — ROBOT MARCH */
+.robot-shell-v132{height:100%;min-height:0;display:flex;flex-direction:column}
+.robot-help-v132{flex:0 0 auto;margin-bottom:6px;border:3px solid var(--ink);border-radius:999px;background:#fff;padding:5px 7px;text-align:center;font-size:9px;font-weight:1000}
+.robot-stage-v132{--road-speed:.62s;position:relative;flex:1;min-height:0;overflow:hidden;border:4px solid var(--ink);border-radius:20px;background:#98cdea}
+.robot-road-v132{position:absolute;left:23%;right:23%;top:0;bottom:0;border-left:5px solid var(--ink);border-right:5px solid var(--ink);background:#555d63;overflow:hidden}
+.robot-road-v132:before{content:"";position:absolute;left:50%;top:-100%;width:8px;height:200%;transform:translateX(-50%);background:repeating-linear-gradient(180deg,#fff 0 28px,transparent 28px 62px);animation:robotRoad132 var(--road-speed) linear infinite}
+@keyframes robotRoad132{to{translate:0 62px}}
+.robot-buildings-v132{position:absolute;top:-30%;bottom:-30%;width:19%;display:flex;flex-direction:column;justify-content:space-around;animation:robotBuildings132 .92s linear infinite}.robot-buildings-v132.left{left:2%}.robot-buildings-v132.right{right:2%}
+.robot-buildings-v132 i{height:22%;border:4px solid var(--ink);border-radius:8px;background:repeating-linear-gradient(180deg,#7ca4b6 0 12px,#d6f3ff 12px 18px)}@keyframes robotBuildings132{to{translate:0 36%}}
+.giant-robot-v132{position:absolute;z-index:12;left:50%;top:48%;width:150px;height:205px;transform:translate(-50%,-50%);animation:robotWalk132 .46s ease-in-out infinite alternate}@keyframes robotWalk132{to{translate:0 -5px;rotate:.8deg}}
+.robot-head-v132{position:absolute;z-index:4;left:50%;top:0;width:72px;height:65px;transform:translateX(-50%);border:6px solid var(--ink);border-radius:16px;background:#dce6eb}.robot-head-v132 span{position:absolute;inset:7px;background-size:contain;background-position:center;background-repeat:no-repeat}
+.robot-chest-v132{position:absolute;left:50%;top:55px;width:96px;height:92px;transform:translateX(-50%);border:7px solid var(--ink);border-radius:18px;background:#657d8a}.robot-chest-v132 i{position:absolute;left:50%;top:50%;width:35px;height:35px;transform:translate(-50%,-50%);border:5px solid var(--ink);border-radius:50%;background:#72d9ff;box-shadow:0 0 12px #72d9ff}
+.robot-arm-v132{position:absolute;top:67px;width:32px;height:93px;border:6px solid var(--ink);border-radius:14px;background:#536874;transform-origin:50% 10%}.robot-arm-v132.left{left:0;animation:robotArmL132 .46s ease-in-out infinite alternate}.robot-arm-v132.right{right:0;animation:robotArmR132 .46s ease-in-out infinite alternate}@keyframes robotArmL132{to{rotate:12deg}}@keyframes robotArmR132{to{rotate:-12deg}}
+.robot-leg-v132{position:absolute;top:137px;width:38px;height:70px;border:6px solid var(--ink);border-radius:13px;background:#445761;transform-origin:50% 0}.robot-leg-v132.left{left:38px;animation:robotLegL132 .46s ease-in-out infinite alternate}.robot-leg-v132.right{right:38px;animation:robotLegR132 .46s ease-in-out infinite alternate}@keyframes robotLegL132{to{rotate:-8deg;translate:0 -3px}}@keyframes robotLegR132{to{rotate:8deg;translate:0 3px}}
+.giant-robot-v132.charged-v132 .robot-chest-v132 i{animation:robotCharge132 .48s ease}@keyframes robotCharge132{50%{scale:1.55;box-shadow:0 0 26px #fff16a;background:#fff16a}}
+.giant-robot-v132.low-energy-v132{filter:saturate(.65);animation-duration:.72s}.giant-robot-v132.stop-v132{animation:none!important;translate:0 13px;filter:grayscale(.55)}
+.robot-energybar-v132{position:absolute;z-index:18;left:7px;top:7px;width:130px;height:24px;border:4px solid var(--ink);border-radius:999px;background:#333;overflow:hidden}.robot-energybar-v132 i{display:block;width:100%;height:100%;background:linear-gradient(90deg,#ef574d,#ffe05b,#70d176);transition:width .08s linear}
+.battery-pad-v132{position:absolute;z-index:25;right:8px;bottom:8px;width:126px;height:132px;border:5px solid var(--ink);border-radius:17px;background:rgba(255,255,255,.94);overflow:hidden;touch-action:none!important}.battery-pad-v132>b{position:absolute;z-index:3;left:7px;top:5px;font-size:8px}.battery-pad-v132 svg{position:absolute;left:6px;top:21px;width:114px;height:100px}.battery-drawing-v132{fill:none;stroke:#2d3338;stroke-width:7;stroke-linecap:round;stroke-linejoin:round}.battery-pad-v132>span{position:absolute;z-index:4;left:50%;bottom:3px;transform:translateX(-50%);white-space:nowrap;font-size:7px;font-weight:1000}.battery-pad-v132.ready-v132{box-shadow:inset 0 0 0 5px rgba(255,229,83,.33)}.battery-pad-v132.sending-v132{pointer-events:none}
+.battery-fly-v132{position:absolute;z-index:35;width:90px;height:90px;transform:translate(-50%,-50%);pointer-events:none;opacity:0}.battery-fly-v132 svg{width:100%;height:100%}
+.robot-stage-v132.power-down-v132{filter:saturate(.68)}
