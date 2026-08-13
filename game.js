@@ -22167,9 +22167,8 @@ async function startWaveMaster(p,humanIndex,runId){
     const coverage=traceHits.size/circleSamples.length;
     circleProgress.textContent=`${Math.round(coverage*100)}%`;
 
-    if(coverage>=.92&&traceMoves>=34&&traceLength>=390){
-      finishTraceRound();
-    }
+    // 描いている途中では終了させない。
+    // 指を離した時だけ1周分を判定する。
   }
 
   function resetCircleRound(){
@@ -22239,8 +22238,29 @@ async function startWaveMaster(p,humanIndex,runId){
     if(!tracePointer)return;
     if(e&&e.pointerId!==tracePointer.id)return;
     if(e)e.preventDefault();
+
+    const coverage=traceHits.size/circleSamples.length;
+    const enough=
+      coverage>=.94 &&
+      traceMoves>=48 &&
+      traceLength>=485;
+
     tracePointer=null;
-    circleUser.setAttribute('points','');
+
+    if(enough){
+      finishTraceRound();
+      return;
+    }
+
+    circleProgress.textContent='もう少し1周なぞる！';
+    circlePanel.classList.add('retry-v139');
+    beep(190,70,.014);
+
+    setTimeout(()=>{
+      if(!isGameRunValid(runId)||phase!=='circle')return;
+      circlePanel.classList.remove('retry-v139');
+      resetCircleRound();
+    },420);
   };
   circleSvg.addEventListener('pointerup',endCircle,{passive:false});
   circleSvg.addEventListener('pointercancel',endCircle,{passive:false});
@@ -22292,12 +22312,8 @@ async function startWaveMaster(p,humanIndex,runId){
       <div class="wave-duel-ground-v138"></div>
       <div id="wavePlayer138" class="wave-duel-mob-v138 player-v138" style="background-image:url('icon/01.png')"></div>
       <div id="waveEnemy138" class="wave-duel-mob-v138 enemy-v138" style="background-image:url('icon/10.png')"></div>
-
-      <div id="wavePlayerCharge138" class="wave-charge-aura-v138 player-v138"></div>
-      <div id="waveEnemyCharge138" class="wave-charge-aura-v138 enemy-v138"></div>
-
-      <div id="wavePlayerOrb138" class="wave-duel-orb-v138 player-v138" style="--core:${playerCore}px"></div>
-      <div id="waveEnemyOrb138" class="wave-duel-orb-v138 enemy-v138" style="--core:${enemyCore}px"></div>
+      <div id="wavePlayerOrb138" class="wave-duel-orb-v138 player-v138" style="--core:${playerCore}px"><i></i><b></b></div>
+      <div id="waveEnemyOrb138" class="wave-duel-orb-v138 enemy-v138" style="--core:${enemyCore}px"><i></i><b></b></div>
 
       <div id="wavePlayerBeam138" class="wave-duel-beam-v138 player-v138"></div>
       <div id="waveEnemyBeam138" class="wave-duel-beam-v138 enemy-v138"></div>
@@ -22326,8 +22342,6 @@ async function startWaveMaster(p,humanIndex,runId){
     const enemy=document.getElementById('waveEnemy138');
     const pOrb=document.getElementById('wavePlayerOrb138');
     const eOrb=document.getElementById('waveEnemyOrb138');
-    const pAura=document.getElementById('wavePlayerCharge138');
-    const eAura=document.getElementById('waveEnemyCharge138');
     const pBeam=document.getElementById('wavePlayerBeam138');
     const eBeam=document.getElementById('waveEnemyBeam138');
     const clash=document.getElementById('waveClash138');
@@ -22337,8 +22351,6 @@ async function startWaveMaster(p,humanIndex,runId){
     btn.disabled=true;
     cine.textContent='さらにエネルギーを凝縮…！';
     cine.classList.add('show-v138');
-    pAura.classList.add('charge-v138');
-    eAura.classList.add('charge-v138');
     pOrb.classList.add('deep-charge-v138');
     eOrb.classList.add('deep-charge-v138');
     player.classList.add('charging-v138');
@@ -22353,8 +22365,6 @@ async function startWaveMaster(p,humanIndex,runId){
 
     stage.classList.remove('charge-rumble-v138');
     cine.textContent='波動激突！！';
-    pAura.classList.remove('charge-v138');
-    eAura.classList.remove('charge-v138');
     player.classList.remove('charging-v138');
     enemy.classList.remove('charging-v138');
 
@@ -22451,7 +22461,7 @@ async function startBattleRoyaleMob(p,humanIndex,runId){
   gameFit();
 
   let active=false,finished=false,raf=null,last=0,start=0;
-  let ammo=8,reloading=false,reloadUntil=0,grenadeReadyAt=0,healReadyAt=0;
+  let grenadeReadyAt=0,healReadyAt=0;
   let allyPortal=null,allyPortalUntil=0,allyPortalDone=false;
   let enemyPortal=null,enemyPortalUntil=0,enemyPortalReadyAt=0;
   const input={left:false,right:false},actors=[],bullets=[],grenades=[],stunGrenades=[];
@@ -22460,7 +22470,7 @@ async function startBattleRoyaleMob(p,humanIndex,runId){
     <div class="game-head"><div><span class="kicker">${esc(p.name)}</span><h2>モブくんFPSアリーナに挑戦</h2></div><div class="game-badge">${playBadge(humanIndex)}</div></div>
     <div class="br-hud-v138">
       <div><span>TIME</span><b id="brTime138">0.00</b></div>
-      <div><span>AMMO</span><b id="brAmmo138">8 / 8</b></div>
+      <div><span>AMMO</span><b id="brAmmo138">∞</b></div>
       <div><span>ALLY</span><b id="brAlly138">60 HP</b></div>
       <div><span>ENEMY</span><b id="brEnemy138">60 HP</b></div>
     </div>
@@ -22476,10 +22486,13 @@ async function startBattleRoyaleMob(p,humanIndex,runId){
       <div id="brFx138" class="br-fx-v138"></div>
       <div id="brMessage138" class="br-message-v138"></div>
     </div>
-    <div class="br-move-controls-v138"><button id="brLeft138">←</button><button id="brJump138">JUMP</button><button id="brRight138">→</button></div>
-    <div class="br-action-controls-v138">
-      <button id="brShoot138" class="shoot">射撃 <b>8</b></button>
-      <button id="brReload138">RELOAD <b>READY</b></button>
+    <div class="br-main-controls-v139">
+      <button id="brLeft138">←</button>
+      <button id="brJump138">JUMP</button>
+      <button id="brShoot138" class="shoot">射撃</button>
+      <button id="brRight138">→</button>
+    </div>
+    <div class="br-skill-controls-v139">
       <button id="brGrenade138">GRENADE <b>READY</b></button>
       <button id="brHeal138">TEAM HEAL <b>READY</b></button>
     </div>
@@ -22487,7 +22500,7 @@ async function startBattleRoyaleMob(p,humanIndex,runId){
 
   const stage=document.getElementById('brStage138'),actorLayer=document.getElementById('brActorLayer138'),bulletLayer=document.getElementById('brBulletLayer138'),grenadeLayer=document.getElementById('brGrenadeLayer138'),abilityLayer=document.getElementById('brAbilityLayer138'),fx=document.getElementById('brFx138'),msg=document.getElementById('brMessage138');
   const timeEl=document.getElementById('brTime138'),ammoEl=document.getElementById('brAmmo138'),allyEl=document.getElementById('brAlly138'),enemyEl=document.getElementById('brEnemy138');
-  const leftBtn=document.getElementById('brLeft138'),rightBtn=document.getElementById('brRight138'),jumpBtn=document.getElementById('brJump138'),shootBtn=document.getElementById('brShoot138'),reloadBtn=document.getElementById('brReload138'),grenadeBtn=document.getElementById('brGrenade138'),healBtn=document.getElementById('brHeal138');
+  const leftBtn=document.getElementById('brLeft138'),rightBtn=document.getElementById('brRight138'),jumpBtn=document.getElementById('brJump138'),shootBtn=document.getElementById('brShoot138'),grenadeBtn=document.getElementById('brGrenade138'),healBtn=document.getElementById('brHeal138');
 
   const W=Math.max(300,stage.clientWidth||340),H=Math.max(300,stage.clientHeight||360),centerX=W/2,groundY=H-48;
   const allyPlatforms=[{x:W*.07,y:groundY-76,w:W*.20},{x:W*.27,y:groundY-134,w:W*.17}];
@@ -22515,11 +22528,11 @@ async function startBattleRoyaleMob(p,humanIndex,runId){
 
   function updateHp(a){a.hpEl.style.width=`${clamp(a.hp/a.maxHp*100,0,100)}%`}
   function updateHud(now=performance.now()){
-    ammoEl.textContent=`${ammo} / 8`;allyEl.textContent=`${teamHp('ally')} HP`;enemyEl.textContent=`${teamHp('enemy')} HP`;
-    reloadBtn.querySelector('b').textContent=reloading?`${(Math.max(0,reloadUntil-now)/1000).toFixed(1)}`:'READY';
+    ammoEl.textContent='∞';
+    allyEl.textContent=`${teamHp('ally')} HP`;
+    enemyEl.textContent=`${teamHp('enemy')} HP`;
     grenadeBtn.querySelector('b').textContent=now<grenadeReadyAt?`${((grenadeReadyAt-now)/1000).toFixed(1)}`:'READY';
     healBtn.querySelector('b').textContent=now<healReadyAt?`${((healReadyAt-now)/1000).toFixed(1)}`:'READY';
-    shootBtn.querySelector('b').textContent=ammo;
   }
   function pop(x,y,text,cls=''){const e=document.createElement('div');e.className=`br-hit-fx-v138 ${cls}`;e.style.left=`${x}px`;e.style.top=`${y}px`;e.textContent=text;fx.appendChild(e);setTimeout(()=>e.remove(),550)}
   function eliminate(a){if(!a.alive)return;a.alive=false;a.hp=0;updateHp(a);a.el.classList.add('down-v138');pop(a.x+a.w/2,a.y,'DOWN');beep(a.team==='enemy'?680:120,90,.025);if(enemies().length===0)finishWin();else if(allies().length===0)finishLose()}
@@ -22527,22 +22540,21 @@ async function startBattleRoyaleMob(p,humanIndex,runId){
   function nearestTarget(a){const pool=a.team==='ally'?enemies():allies();return pool.slice().sort((x,y)=>Math.hypot(x.x-a.x,x.y-a.y)-Math.hypot(y.x-a.x,y.y-a.y))[0]||null}
 
   function fireBullet(a,manual=false){
-    const now=performance.now();if(!a.alive||now<a.stunUntil)return;if(manual&&(reloading||ammo<=0))return;
-    const target=nearestTarget(a);if(!target)return;if(manual)ammo--;
+    const now=performance.now();if(!a.alive||now<a.stunUntil)return;
+    const target=nearestTarget(a);if(!target)return;
     const dir=a.team==='ally'?1:-1,dy=clamp((target.y+17)-(a.y+17),-70,70),dx=Math.max(60,Math.abs(target.x-a.x)),speed=manual?440:390;
     const el=document.createElement('i');el.className=`br-bullet-v138 ${a.team}`;bulletLayer.appendChild(el);
     bullets.push({team:a.team,x:a.x+a.w/2+dir*17,y:a.y+17,vx:dir*speed,vy:dy/dx*speed,damage:1,dead:false,el});
     a.el.classList.remove('shoot-v138');void a.el.offsetWidth;a.el.classList.add('shoot-v138');beep(manual?520:330,28,.008);updateHud(now);
   }
 
-  function reload(){const now=performance.now();if(!active||finished||reloading||ammo===8)return;reloading=true;reloadUntil=now+1000;reloadBtn.disabled=true;msg.textContent='RELOAD';beep(280,45,.012)}
   function spawnGrenade(owner,type='damage'){
     const dir=owner.team==='ally'?1:-1,el=document.createElement('div');el.className=`br-grenade-v138 ${type==='stun'?'stun-v138':''}`;grenadeLayer.appendChild(el);
     (type==='stun'?stunGrenades:grenades).push({owner,team:owner.team,type,x:owner.x+owner.w/2,y:owner.y+4,vx:dir*220,vy:-245,fuse:performance.now()+1050,dead:false,el});
   }
   function playerGrenade(){const now=performance.now();if(!active||finished||now<grenadeReadyAt||!player.alive)return;grenadeReadyAt=now+5000;spawnGrenade(player);updateHud(now)}
   function teamHeal(){const now=performance.now();if(!active||finished||now<healReadyAt||!player.alive)return;healReadyAt=now+3000;for(const a of allies()){a.hp=clamp(a.hp+4,0,20);updateHp(a);a.el.classList.add('heal-v138');setTimeout(()=>a.el.classList.remove('heal-v138'),300)}msg.textContent='TEAM HEAL +4';beep(870,100,.025);updateHud(now)}
-  function jump(a){const now=performance.now();if(!a.alive||!a.onGround||now<a.stunUntil)return;a.vy=-255;a.onGround=false;a.el.classList.add('jump-v138');setTimeout(()=>a.el.classList.remove('jump-v138'),160)}
+  function jump(a){const now=performance.now();if(!a.alive||!a.onGround||now<a.stunUntil)return;a.vy=-335;a.onGround=false;a.el.classList.add('jump-v138');setTimeout(()=>a.el.classList.remove('jump-v138'),160)}
   function activateVoid(a,now){if(a.role!=='void'||now<a.voidReadyAt||!a.alive)return;a.voidUntil=now+2000;a.voidReadyAt=now+3000;a.el.classList.add('void-v138');pop(a.x,a.y,'VOID');setTimeout(()=>a.el.classList.remove('void-v138'),2000)}
 
   function renderPortals(pair,team){pair.forEach(q=>{const el=document.createElement('div');el.className=`br-portal-v138 ${team}`;el.dataset.portalTeam=team;el.style.left=`${q.x}px`;el.style.top=`${q.y}px`;abilityLayer.appendChild(el)})}
@@ -22562,8 +22574,7 @@ async function startBattleRoyaleMob(p,humanIndex,runId){
   function bindHold(btn,key){const on=e=>{e.preventDefault();if(active&&!finished)input[key]=true;try{btn.setPointerCapture(e.pointerId)}catch(_){}},off=e=>{if(e)e.preventDefault();input[key]=false};btn.addEventListener('pointerdown',on,{passive:false});btn.addEventListener('pointerup',off,{passive:false});btn.addEventListener('pointercancel',off,{passive:false});btn.addEventListener('lostpointercapture',off,{passive:false})}
   bindHold(leftBtn,'left');bindHold(rightBtn,'right');
   jumpBtn.addEventListener('pointerdown',e=>{e.preventDefault();if(active&&!finished)jump(player)},{passive:false});
-  shootBtn.addEventListener('pointerdown',e=>{e.preventDefault();if(!active||finished||!player.alive)return;if(ammo<=0)reload();else fireBullet(player,true)},{passive:false});
-  reloadBtn.addEventListener('pointerdown',e=>{e.preventDefault();reload()},{passive:false});
+  shootBtn.addEventListener('pointerdown',e=>{e.preventDefault();if(!active||finished||!player.alive)return;fireBullet(player,true)},{passive:false});
   grenadeBtn.addEventListener('pointerdown',e=>{e.preventDefault();playerGrenade()},{passive:false});
   healBtn.addEventListener('pointerdown',e=>{e.preventDefault();teamHeal()},{passive:false});
 
@@ -22587,7 +22598,7 @@ async function startBattleRoyaleMob(p,humanIndex,runId){
       else{const min=a.team==='ally'?8:centerX+12,max=a.team==='ally'?centerX-a.w-12:W-a.w-8;a.targetX=rand(min,max);a.targetY=groundY-a.h}
     }
     const dx=a.targetX-a.x;a.vx=Math.abs(dx)>7?Math.sign(dx)*rand(84,118):0;
-    if(a.onGround&&now>=a.nextJump&&(Math.abs(a.targetY-a.y)>26||Math.random()<.045)){jump(a);a.nextJump=now+rand(560,1050)}
+    if(a.onGround&&now>=a.nextJump&&(Math.abs(a.targetY-a.y)>26||Math.random()<.045)){jump(a);a.nextJump=now+rand(430,850)}
     if(now>=a.nextShot){fireBullet(a,false);a.nextShot=now+rand(a.team==='enemy'?390:450,a.team==='enemy'?700:800)}
   }
 
@@ -22612,7 +22623,6 @@ async function startBattleRoyaleMob(p,humanIndex,runId){
 
   function frame(now){
     if(!active||finished||!isGameRunValid(runId))return;const dt=Math.min(.035,(now-last)/1000);last=now;timeEl.textContent=((now-start)/1000).toFixed(2);
-    if(reloading&&now>=reloadUntil){reloading=false;ammo=8;reloadBtn.disabled=false;msg.textContent='RELOAD COMPLETE'}
     if(!allyPortalDone&&now-start>=5000)activateAllyPortal(now);
     if(allyPortal&&now>=allyPortalUntil)clearPortals('ally');
     if(enemyPortal&&now>=enemyPortalUntil)clearPortals('enemy');
@@ -22659,13 +22669,16 @@ async function startLittleMobShot(p,humanIndex,runId){
     <div class="game-head"><div><span class="kicker">${esc(p.name)}</span><h2>Little MOB SHOT</h2></div><div class="game-badge">${playBadge(humanIndex)}</div></div>
     <div class="v125-hud"><div><span>TIME</span><b id="lsTime138">10.00</b></div><div><span>KO</span><b id="lsKills138">0</b></div><div><span>WIDE</span><b id="lsWide138">1</b></div></div>
     <div id="lsStage138" class="ls-stage-v138">
-      <div class="ls-space-lines-v138"></div><div id="lsEnemyLayer138" class="ls-layer-v138"></div><div id="lsBulletLayer138" class="ls-layer-v138"></div><div id="lsFx138" class="ls-layer-v138"></div><div id="lsLaser138" class="ls-laser-v138"></div>
+      <div class="ls-stars-v139"><i></i><i></i><i></i><i></i><i></i><i></i></div><div id="lsEnemyLayer138" class="ls-layer-v138"></div><div id="lsBulletLayer138" class="ls-layer-v138"></div><div id="lsFx138" class="ls-layer-v138"></div><div id="lsLaser138" class="ls-laser-v138"></div>
       <div id="lsPlayer138" class="ls-player-v138"><div class="ls-record-v138"></div><div class="ls-mob-v138" style="background-image:url('icon/01.png')"></div></div>
+      <div id="lsPet139" class="ls-pet-v139"><i></i><b></b><span></span></div>
     </div>
     <div class="ls-controls-v138"><button id="lsLeft138">←</button><button id="lsBomb138" class="bomb">BOMB<b>READY</b></button><button id="lsWave138" class="wave">波動<b>READY</b></button><button id="lsRight138">→</button></div>
   </div>`;
 
   const stage=document.getElementById('lsStage138'),player=document.getElementById('lsPlayer138'),enemyLayer=document.getElementById('lsEnemyLayer138'),bulletLayer=document.getElementById('lsBulletLayer138'),fx=document.getElementById('lsFx138'),laser=document.getElementById('lsLaser138');
+  const pet=document.getElementById('lsPet139');
+  let petX=0,petY=0,nextPetShot=0;
   const timeEl=document.getElementById('lsTime138'),killsEl=document.getElementById('lsKills138'),wideEl=document.getElementById('lsWide138'),left=document.getElementById('lsLeft138'),right=document.getElementById('lsRight138'),bomb=document.getElementById('lsBomb138'),wave=document.getElementById('lsWave138');
   const W=Math.max(300,stage.clientWidth||340),H=Math.max(300,stage.clientHeight||420);x=W/2;
 
@@ -22694,19 +22707,58 @@ async function startLittleMobShot(p,humanIndex,runId){
   function bind(btn,d){btn.addEventListener('pointerdown',e=>{e.preventDefault();dir=d;try{btn.setPointerCapture(e.pointerId)}catch(_){}},{passive:false});const off=e=>{if(e)e.preventDefault();if(dir===d)dir=0};btn.addEventListener('pointerup',off,{passive:false});btn.addEventListener('pointercancel',off,{passive:false});btn.addEventListener('lostpointercapture',off,{passive:false})}
   bind(left,-1);bind(right,1);bomb.addEventListener('pointerdown',e=>{e.preventDefault();useBomb()},{passive:false});wave.addEventListener('pointerdown',e=>{e.preventDefault();useWave()},{passive:false});
 
+  function petFire(now){
+    const target=enemies
+      .filter(e=>!e.dead)
+      .sort((a,b)=>Math.hypot(a.x-petX,a.y-petY)-Math.hypot(b.x-petX,b.y-petY))[0];
+    if(!target)return;
+
+    const dx=target.x-petX;
+    const dy=target.y-petY;
+    const d=Math.max(1,Math.hypot(dx,dy));
+    const el=document.createElement('i');
+    el.className='ls-bullet-v138 pet-v139';
+    bulletLayer.appendChild(el);
+    bullets.push({
+      x:petX,y:petY,vx:dx/d*340,vy:dy/d*340,
+      dead:false,el,pet:true
+    });
+  }
+
   async function finish(){if(finished)return;finished=true;active=false;if(raf)cancelAnimationFrame(raf);state.records.littleMobShot[p.id]=kills;beep(kills>=60?1100:kills>=35?780:500,190,.045);await wait(850);if(isGameRunValid(runId))recordScreen(87,p,humanIndex,`${kills}<small> KO</small>`,`10秒 / WIDE ${1+Math.floor(kills/10)}`)}
   if(!(await countdown('LITTLE MOB SHOT',runId,{transparent:true})))return;
-  active=true;start=last=performance.now();nextSpawn=start+100;nextAutoShot=start+80;
+  active=true;start=last=performance.now();nextSpawn=start+35;nextAutoShot=start+70;nextPetShot=start+100;
+  for(let i=0;i<7;i++)spawnEnemy(0);
+
 
   function frame(now){
     if(!active||finished||!isGameRunValid(runId))return;const dt=Math.min(.035,(now-last)/1000);last=now;const elapsed=(now-start)/1000;
     x=clamp(x+dir*190*dt,34,W-34);player.style.left=`${x}px`;
     if(now>=nextAutoShot){autoFire();nextAutoShot=now+145}
-    const gap=clamp(310-elapsed*16,120,310);if(now>=nextSpawn){spawnEnemy(elapsed);if(elapsed>4&&Math.random()<.35)spawnEnemy(elapsed);nextSpawn=now+gap}
+    const gap=clamp(118-elapsed*6,54,118);
+    if(now>=nextSpawn){
+      spawnEnemy(elapsed);
+      if(Math.random()<.72)spawnEnemy(elapsed);
+      if(elapsed>3&&Math.random()<.40)spawnEnemy(elapsed);
+      nextSpawn=now+gap;
+    }
+    petX=clamp(
+      x+Math.sin(elapsed*2.5)*72,
+      24,W-24
+    );
+    petY=H-112+Math.sin(elapsed*4.2)*10;
+    pet.style.left=`${petX}px`;
+    pet.style.top=`${petY}px`;
+
+    if(now>=nextPetShot){
+      petFire(now);
+      nextPetShot=now+230;
+    }
+
     for(const b of bullets){
       if(b.dead)continue;b.x+=b.vx*dt;b.y+=b.vy*dt;b.el.style.left=`${b.x}px`;b.el.style.top=`${b.y}px`;
       if(b.y<-15){b.dead=true;b.el.remove();continue}
-      for(const e of enemies){if(e.dead)continue;if(Math.hypot(b.x-e.x,b.y-e.y)<e.size*.44+7){b.dead=true;b.el.remove();e.hp--;if(e.hp<=0)destroyEnemy(e);break}}
+      for(const e of enemies){if(e.dead)continue;if(Math.hypot(b.x-e.x,b.y-e.y)<e.size*.44+7){b.dead=true;b.el.remove();e.hp-=b.pet?1.5:1;if(e.hp<=0)destroyEnemy(e);break}}
     }
     const waveActive=now<waveUntil;laser.classList.toggle('active-v138',waveActive);laser.style.left=`${x}px`;
     for(const e of enemies){
@@ -22741,7 +22793,18 @@ async function startMonsterBoxMob(p,humanIndex,runId){
   const W=Math.max(300,stage.clientWidth||340),H=Math.max(300,stage.clientHeight||390),groundY=H-50,mobX=54;y=groundY-44;
   const boxHeight=()=>82+(level-15)*12;
 
-  function resetCycle(){boardX=W+70;boxX=boardX+115;passedBoard=false;launched=false;board.style.left=`${boardX}px`;box.style.left=`${boxX}px`;box.style.height=`${boxHeight()}px`;box.style.top=`${groundY-boxHeight()}px`;board.classList.remove('hit-v138')}
+  function resetCycle(){
+    boardX=W+70;
+    boxX=boardX+115;
+    passedBoard=false;
+    launched=false;
+    board.style.left=`${boardX}px`;
+    board.style.top=`${groundY-13}px`;
+    box.style.left=`${boxX}px`;
+    box.style.height=`${boxHeight()}px`;
+    box.style.top=`${groundY-boxHeight()}px`;
+    board.classList.remove('hit-v138');
+  }
   function pop(text,xp,yp,cls=''){const e=document.createElement('div');e.className=`mb-pop-v138 ${cls}`;e.textContent=text;e.style.left=`${xp}px`;e.style.top=`${yp}px`;fx.appendChild(e);setTimeout(()=>e.remove(),650)}
   function jump(){if(!active||finished||jumping||launched)return;jumping=true;vy=-205;beep(500,45,.012)}
   jumpBtn.addEventListener('pointerdown',e=>{e.preventDefault();jump()},{passive:false});
@@ -22749,11 +22812,15 @@ async function startMonsterBoxMob(p,humanIndex,runId){
   async function fail(reason){if(finished)return;finished=true;active=false;if(raf)cancelAnimationFrame(raf);state.records.monsterBoxMob[p.id]=score;mob.classList.add('fail-v138');pop(reason,mobX+30,y,'fail-v138');beep(120,180,.04);await wait(850);if(isGameRunValid(runId))recordScreen(88,p,humanIndex,`${score}<small>pt</small>`,`${level}段で終了`)}
   async function clearAll(){if(finished)return;finished=true;active=false;if(raf)cancelAnimationFrame(raf);score=100;state.records.monsterBoxMob[p.id]=100;stage.classList.add('clear-v138');pop('20段 CLEAR!!',W/2,H*.34,'clear-v138');beep(1120,220,.055);await wait(1050);if(isGameRunValid(runId))recordScreen(88,p,humanIndex,`100<small>pt</small>`,'20段 CLEAR')}
 
+  mob.style.top=`${y}px`;
+  resetCycle();
+
   if(!(await countdown('MONSTER BOX',runId,{transparent:true})))return;
-  active=true;last=performance.now();resetCycle();
+  active=true;
+  last=performance.now();
 
   function frame(now){
-    if(!active||finished||!isGameRunValid(runId))return;const dt=Math.min(.035,(now-last)/1000);last=now;const speed=175+(level-15)*8;
+    if(!active||finished||!isGameRunValid(runId))return;const dt=Math.min(.035,(now-last)/1000);last=now;const speed=205+(level-15)*9;
     boardX-=speed*dt;boxX-=speed*dt;board.style.left=`${boardX}px`;box.style.left=`${boxX}px`;
 
     if(jumping||launched){vy+=470*dt;y+=vy*dt;if(!launched&&y>=groundY-44){y=groundY-44;vy=0;jumping=false}}

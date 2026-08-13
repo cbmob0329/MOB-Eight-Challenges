@@ -20444,3 +20444,173 @@ img,svg,canvas,button{
 .mb-board-v138{position:absolute;z-index:10;width:70px;height:13px;transform:translateX(-50%) rotate(-9deg);border:4px solid var(--ink);border-radius:7px;background:#f2d34f}.mb-board-v138.hit-v138{animation:mbBoardHit138 .25s ease}@keyframes mbBoardHit138{50%{rotate:8deg;translate:0 7px}}
 .mb-box-v138{position:absolute;z-index:11;width:82px;transform:translateX(-50%);border:5px solid var(--ink);border-radius:8px 8px 4px 4px;background:repeating-linear-gradient(180deg,#aa7455 0 14px,#c99368 14px 28px);transition:height .2s ease,top .2s ease}
 .mb-fx-v138{position:absolute;inset:0;pointer-events:none}.mb-pop-v138{position:absolute;z-index:30;transform:translate(-50%,-50%);color:#fff16a;-webkit-text-stroke:2px var(--ink);font-size:16px;font-weight:1000;animation:mbPop138 .62s ease forwards}.mb-pop-v138.good-v138,.mb-pop-v138.clear-v138{color:#fff}.mb-pop-v138.fail-v138{color:#ff8177}@keyframes mbPop138{to{translate:0 -30px;opacity:0}}.mb-stage-v138.clear-v138{box-shadow:inset 0 0 0 10px rgba(255,232,74,.38)}.mb-jump-v138{margin-top:7px!important;min-height:68px!important;font-size:22px!important;touch-action:none!important}
+
+
+/* =========================================================
+   V10.39 — Wave Master corrections
+   ========================================================= */
+.wave-circle-panel-v138.retry-v139{
+  box-shadow:inset 0 0 0 10px rgba(255,112,98,.22);
+}
+.wave-duel-orb-v138:before,
+.wave-duel-orb-v138:after,
+.wave-charge-aura-v138{
+  display:none!important;
+}
+.wave-duel-orb-v138>i,
+.wave-duel-orb-v138>b{
+  position:absolute;
+  left:50%;
+  top:50%;
+  width:5px;
+  height:42px;
+  transform-origin:50% 0;
+  border-radius:999px;
+  background:#dffbff;
+  box-shadow:0 0 7px currentColor;
+  animation:waveBolt139 .18s ease-out infinite alternate;
+}
+.wave-duel-orb-v138>i{
+  transform:translate(-50%,-50%) rotate(38deg) translateY(calc(var(--core) * -.72));
+}
+.wave-duel-orb-v138>b{
+  transform:translate(-50%,-50%) rotate(-54deg) translateY(calc(var(--core) * -.78));
+  animation-delay:.08s;
+}
+.wave-duel-orb-v138.enemy-v138>i,
+.wave-duel-orb-v138.enemy-v138>b{
+  background:#ffd5e7;
+}
+@keyframes waveBolt139{
+  to{height:24px;opacity:.35}
+}
+
+/* =========================================================
+   V10.39 — FPS Arena controls / infinite ammo
+   ========================================================= */
+.br-main-controls-v139{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:4px;
+  margin-top:5px;
+}
+.br-main-controls-v139 button{
+  min-width:0;
+  min-height:52px;
+  border:4px solid var(--ink);
+  border-radius:12px;
+  background:#fff;
+  font-weight:1000;
+  font-size:16px;
+  touch-action:none!important;
+}
+.br-main-controls-v139 .shoot{
+  background:#ffd959;
+}
+.br-skill-controls-v139{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:4px;
+  margin-top:4px;
+}
+.br-skill-controls-v139 button{
+  min-height:42px;
+  border:4px solid var(--ink);
+  border-radius:11px;
+  background:#fff;
+  font-size:8px;
+  font-weight:1000;
+  touch-action:none!important;
+}
+.br-skill-controls-v139 button b{
+  display:block;
+  font-size:8px;
+}
+
+/* =========================================================
+   V10.39 — Little MOB SHOT simpler space + pet
+   ========================================================= */
+.ls-stage-v138{
+  background:#101a2d!important;
+}
+.ls-space-lines-v138{
+  display:none!important;
+}
+.ls-stars-v139{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+}
+.ls-stars-v139 i{
+  position:absolute;
+  width:3px;
+  height:3px;
+  border-radius:50%;
+  background:#fff;
+  opacity:.55;
+}
+.ls-stars-v139 i:nth-child(1){left:12%;top:12%}
+.ls-stars-v139 i:nth-child(2){left:31%;top:28%}
+.ls-stars-v139 i:nth-child(3){left:74%;top:17%}
+.ls-stars-v139 i:nth-child(4){left:87%;top:42%}
+.ls-stars-v139 i:nth-child(5){left:45%;top:55%}
+.ls-stars-v139 i:nth-child(6){left:18%;top:66%}
+.ls-pet-v139{
+  position:absolute;
+  z-index:21;
+  width:38px;
+  height:32px;
+  transform:translate(-50%,-50%);
+  border:4px solid var(--ink);
+  border-radius:48% 48% 42% 42%;
+  background:#f0c477;
+  pointer-events:none;
+}
+.ls-pet-v139:before,
+.ls-pet-v139:after{
+  content:"";
+  position:absolute;
+  top:-10px;
+  width:14px;
+  height:15px;
+  border:4px solid var(--ink);
+  background:#f0c477;
+  transform:rotate(45deg);
+  z-index:-1;
+}
+.ls-pet-v139:before{left:1px}
+.ls-pet-v139:after{right:1px}
+.ls-pet-v139 i,
+.ls-pet-v139 b{
+  position:absolute;
+  top:10px;
+  width:5px;
+  height:7px;
+  border-radius:50%;
+  background:#222;
+}
+.ls-pet-v139 i{left:9px}
+.ls-pet-v139 b{right:9px}
+.ls-pet-v139 span{
+  position:absolute;
+  right:-12px;
+  bottom:2px;
+  width:15px;
+  height:8px;
+  border:4px solid var(--ink);
+  border-left:0;
+  border-radius:0 999px 999px 0;
+}
+.ls-bullet-v138.pet-v139{
+  width:6px;
+  height:12px;
+  background:#8ff0ff;
+  box-shadow:0 0 8px #8ff0ff;
+}
+
+/* =========================================================
+   V10.39 — Monster Box ground placement
+   ========================================================= */
+.mb-board-v138{
+  top:auto;
+}
