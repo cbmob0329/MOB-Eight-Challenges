@@ -133,7 +133,9 @@ const GAMES=[
   {no:81,key:"oldMaidDuel",title:"モブくんのババ抜き決闘",sub:"偽モブくんの2枚から引いて何回目で勝てるか"},
   {no:82,key:"robotMarch",title:"モブくんロボット大発進",sub:"何本でも自由に電池を描いて補給し巨大ロボを前進させる"},
   {no:83,key:"monsterMaster",title:"モブくんはモンスターマスター",sub:"3秒で自作ボールを描き、10秒間何個でも投げて10体を捕獲"},
-  {no:84,key:"scoutMan",title:"モブくんはスカウトマン！",sub:"30000円で9ポジションを1秒判断でスカウト"}
+  {no:84,key:"scoutMan",title:"モブくんはスカウトマン！",sub:"30000円で9ポジションを1秒判断でスカウト"},
+  {no:85,key:"atafutaSurvival",title:"モブくんあたふたサバイバル",sub:"崩れる浮遊岩で9人の偽モブくんと最後の1人を目指す"},
+  {no:86,key:"waveMaster",title:"モブくん波動を極める",sub:"魂ゲージと宝玉ゲージを極めて超巨大岩を波動で破壊"}
 ];
 
 const MODES={
@@ -175,7 +177,8 @@ function freshState(){
         pizzaChef:{},mobHammer:{},bungeeMob:{},waterSlide:{},pancakeMob:{},
         paperPlane:{},tankMob:{},curlingMob:{},bubbleMob:{},
         changeMob:{},baggageMob:{},bridgeMob:{},treasureMob:{},rouletteMob:{},excavationMob:{},
-        oldMaidDuel:{},robotMarch:{},monsterMaster:{},scoutMan:{}
+        oldMaidDuel:{},robotMarch:{},monsterMaster:{},scoutMan:{},
+        atafutaSurvival:{},waveMaster:{}
     },
     total:{},
     roundPoints:[],
@@ -281,7 +284,7 @@ function renderHome(){
     <section class="hero hero-v119">
       <div>
         <span class="kicker">SMARTPHONE PARTY GAME</span>
-        <h1>64 MINI<br>GAMES</h1>
+        <h1>86 MINI<br>GAMES</h1>
         <p>対戦モードは「チーム戦」「個人戦」の2種類。人数・ルール・ゲーム数を自由に設定できます。</p>
       </div>
       <div class="hero-mark">MOB</div>
@@ -306,7 +309,7 @@ function renderHome(){
     </section>
 
     <section class="panel flat">
-      <div class="panel-head"><h3>84 MINI GAMES</h3><span class="tag">GAME 1 → 84</span></div>
+      <div class="panel-head"><h3>86 MINI GAMES</h3><span class="tag">GAME 1 → 86</span></div>
       <div class="compact-game-grid home-compact-games-v119">
         ${GAMES.map(g=>`<div><b>${g.no}</b><span>${g.title}</span></div>`).join("")}
       </div>
@@ -326,7 +329,7 @@ function renderFreePlaySelect(){
   screen.innerHTML=`
     <div class="game-head">
       <div><span class="kicker">FREE PLAY</span><h2>1人で遊ぶ</h2><p class="lead">好きなゲームを1つ選んでプレイ。</p></div>
-      <div class="game-badge">64</div>
+      <div class="game-badge">86</div>
     </div>
 
     <button id="freeBack" class="secondary wizard-back-v119" type="button">← メインへ戻る</button>
@@ -364,7 +367,7 @@ function renderGameGuide(){
   screen.innerHTML=`
     <div class="game-head">
       <div><span class="kicker">GAME GUIDE</span><h2>各ゲームの説明</h2><p class="lead">内容と100点換算の目安を一覧で確認できます。</p></div>
-      <div class="game-badge">64</div>
+      <div class="game-badge">86</div>
     </div>
 
     <button id="guideBack" class="secondary wizard-back-v119" type="button">← メインへ戻る</button>
@@ -698,7 +701,7 @@ function renderGameLengthSelect(config){
 
   screen.innerHTML=`
     <div class="game-head">
-      <div><span class="kicker">GAME MODE</span><h2>プレイするゲーム数</h2><p class="lead">CUSTOM以外は64ゲームからランダムで選択。</p></div>
+      <div><span class="kicker">GAME MODE</span><h2>プレイするゲーム数</h2><p class="lead">CUSTOM以外は86ゲームからランダムで選択。</p></div>
       <div class="game-badge">${config.rule==='score'?'SCORE':'RANK'}</div>
     </div>
 
@@ -706,7 +709,7 @@ function renderGameLengthSelect(config){
       <button data-length="5" type="button"><span>QUICK</span><b>サクッと5ゲーム</b><small>ランダム5種</small></button>
       <button data-length="15" type="button"><span>FUN</span><b>楽しく15ゲーム</b><small>ランダム15種</small></button>
       <button data-length="30" type="button"><span>LONG</span><b>じっくり30ゲーム</b><small>ランダム30種</small></button>
-      <button data-length="all" type="button"><span>ALL</span><b>ガッツリ全ゲーム</b><small>全64種をランダム順</small></button>
+      <button data-length="all" type="button"><span>ALL</span><b>ガッツリ全ゲーム</b><small>全86種をランダム順</small></button>
       <button data-length="custom" class="custom" type="button"><span>CUSTOM</span><b>カスタム</b><small>自由選択 / 最大50ゲーム</small></button>
     </div>
 
@@ -955,7 +958,7 @@ function renderPlayStyleSelect(){
       <button id="normalStyle" class="style-select-card normal" type="button">
         <span>NORMAL</span>
         <b>順番に全種目</b>
-        <small>GAME 1 → 84 を順番にプレイ</small>
+        <small>GAME 1 → 86 を順番にプレイ</small>
       </button>
       <button id="customStyle" class="style-select-card custom" type="button">
         <span>CUSTOM</span>
@@ -965,7 +968,7 @@ function renderPlayStyleSelect(){
     </div>
 
     <section class="panel flat">
-      <h3>84 MINI GAMES</h3>
+      <h3>86 MINI GAMES</h3>
       <div class="compact-game-grid">
         ${GAMES.map(g=>`<div><b>${g.no}</b><span>${g.title}</span></div>`).join("")}
       </div>
@@ -1300,7 +1303,9 @@ function scoreRuleForGame(index){
     "1回目で勝利=100点 / 2回目=90点 / 10回目=10点",
     "前進距離1000m=100点 / エネルギー切れまでの距離",
     "3秒デザイン→10秒捕獲 / 捕獲したモンスター数×10点 / 10体GET=100点",
-    "甲子園47校中の最終順位 / 1位=100点・47位=0点換算"
+    "甲子園47校中の最終順位 / 1位=100点・47位=0点換算",
+    "10人中の生存順位で0〜100点 / 最初に落下=0点 / 最後の1人=100点",
+    "魂ゲージ55% + 宝玉3回のなぞり45%で波動威力0〜100点"
   ][index];
 }
 
@@ -1476,8 +1481,12 @@ function showGameIntro(index){
     rules=`<li>モブくんが乗った巨大ロボは自動で前進し続け、前進中はENERGYが減り続けます。</li><li>右下のBATTERY枠へ好きな形を何本でも自由に描きます。描き終わったあと、絵を短くタップすると電池としてロボへ飛びます。</li><li>一筆だけでも送れますが補給量は少なめ。複数の線で大きく描くほど補給量が伸びます。</li><li>ENERGYが0になった瞬間に終了し、それまでの前進距離が記録です。</li>`;
   }else if(index===82){
     rules=`<li>中央〜上部では10体のモンスターがそれぞれ違う速度で左右に歩いています。</li><li>下の正方形BALL DESIGN枠で円と中のデザインを何本でも自由に描けます。</li><li>描いたボールを上方向へフリックすると、その方向と速さのままモンスターへ飛びます。命中すると吸い込み→揺れ→捕獲判定。</li><li>モンスターごとに捕まりやすさが異なります。10体すべてGETで100点です。</li>`;
-  }else{
+  }else if(index===83){
     rules=`<li>所持金30000円で、P / C / 1B / 2B / 3B / SS / RF / LF / CFの9人をスカウトします。</li><li>各ポジションごとに5人が横一列へ表示され、選べる時間は1秒。選んだ選手を即購入します。</li><li>R=500円 / SR=1000円 / SSR=3000円 / UR=5000円 / MOB=10000円。時間切れまたは資金不足ならRが自動加入。</li><li>9人決定後にチーム一覧を確認し、「結果を観る」で47校中の甲子園順位を発表します。</li>`;
+  }else if(index===84){
+    rules=`<li>プレイヤーと9人の偽モブくんが、宙に浮く岩の足場からスタートします。</li><li>左右の矢印で移動、JUMPで最大2段ジャンプ。モブくん同士はぶつかるので、前をふさがれたらジャンプして越えます。</li><li>岩の足場は部分ごとにヒビが入り、時間とともにどんどん崩落します。落下したらその時点で終了です。</li><li>最初に落ちると0点。最後の1人まで生き残ればCLEARで100点です。</li>`;
+  }else{
+    rules=`<li>最初は円形の魂ゲージ。ゲージがMAXに近い瞬間を狙ってタップします。</li><li>次に宝玉型ゲージへ進みます。宝玉の輪郭を指でなぞり、これを3回成功させます。</li><li>2つのゲージが終わると「モブくん波動パワー！」が出現。タップすると巨大波動を右へ放ちます。</li><li>超巨大な岩を破壊したあと、2つのゲージ精度から波動威力を0〜100点で記録します。</li>`;
   }
   screen.innerHTML=`
     <div class="game-head">
@@ -1601,7 +1610,9 @@ function humanReady(gameIndex,humanIndex){
     else if(gameIndex===80)startOldMaidDuel(p,humanIndex,runId);
     else if(gameIndex===81)startRobotMarch(p,humanIndex,runId);
     else if(gameIndex===82)startMonsterMaster(p,humanIndex,runId);
-    else startScoutMan(p,humanIndex,runId);
+    else if(gameIndex===83)startScoutMan(p,humanIndex,runId);
+    else if(gameIndex===84)startAtafutaSurvival(p,humanIndex,runId);
+    else startWaveMaster(p,humanIndex,runId);
   },{once:true});
 }
 
@@ -21462,6 +21473,993 @@ async function startScoutMan(p,humanIndex,runId){
   startRound();
 }
 
+
+// =========================================================
+// V10.36 GAME 85 — モブくんあたふたサバイバル
+// =========================================================
+async function startAtafutaSurvival(p,humanIndex,runId){
+  gameFit();
+
+  let active=false;
+  let finished=false;
+  let raf=null;
+  let last=0;
+  let start=0;
+  let nextCollapseAt=0;
+  let collapseCount=0;
+
+  const input={left:false,right:false};
+  const actors=[];
+  const tiles=[];
+
+  screen.innerHTML=`<div class="survival-shell-v136">
+    <div class="game-head">
+      <div><span class="kicker">${esc(p.name)}</span><h2>モブくんあたふたサバイバル</h2></div>
+      <div class="game-badge">${playBadge(humanIndex)}</div>
+    </div>
+
+    <div class="v125-hud">
+      <div><span>SURVIVOR</span><b id="surviveCount136">10</b></div>
+      <div><span>JUMP</span><b id="surviveJump136">2</b></div>
+    </div>
+
+    <div class="survival-help-v136">
+      ← → で移動 / JUMPは2段まで / 崩れる岩から落ちるな！
+    </div>
+
+    <div id="survivalStage136" class="survival-stage-v136">
+      <div class="survival-sky-v136">
+        <i class="cloud c1"></i><i class="cloud c2"></i>
+      </div>
+      <div id="survivalRockLayer136" class="survival-rock-layer-v136"></div>
+      <div id="survivalActorLayer136" class="survival-actor-layer-v136"></div>
+      <div id="survivalFx136" class="survival-fx-v136"></div>
+      <div id="survivalMessage136" class="survival-message-v136"></div>
+    </div>
+
+    <div class="survival-controls-v136">
+      <button id="surviveLeft136" type="button">←</button>
+      <button id="surviveJumpBtn136" class="jump" type="button">JUMP</button>
+      <button id="surviveRight136" type="button">→</button>
+    </div>
+  </div>`;
+
+  const stage=document.getElementById('survivalStage136');
+  const rockLayer=document.getElementById('survivalRockLayer136');
+  const actorLayer=document.getElementById('survivalActorLayer136');
+  const fx=document.getElementById('survivalFx136');
+  const countEl=document.getElementById('surviveCount136');
+  const jumpEl=document.getElementById('surviveJump136');
+  const msg=document.getElementById('survivalMessage136');
+  const leftBtn=document.getElementById('surviveLeft136');
+  const rightBtn=document.getElementById('surviveRight136');
+  const jumpBtn=document.getElementById('surviveJumpBtn136');
+
+  const W=Math.max(300,stage.clientWidth||340);
+  const H=Math.max(300,stage.clientHeight||360);
+  const tileCount=12;
+  const gap=3;
+  const side=7;
+  const tileW=(W-side*2-gap*(tileCount-1))/tileCount;
+  const baseY=Math.round(H*.69);
+
+  for(let i=0;i<tileCount;i++){
+    const el=document.createElement('div');
+    el.className='survival-rock-v136';
+    el.style.left=`${side+i*(tileW+gap)}px`;
+    el.style.width=`${tileW}px`;
+    el.style.top=`${baseY}px`;
+    el.innerHTML='<i></i><b></b>';
+    rockLayer.appendChild(el);
+
+    tiles.push({
+      i,
+      x:side+i*(tileW+gap),
+      y:baseY,
+      w:tileW,
+      active:true,
+      cracking:false,
+      el
+    });
+  }
+
+  function makeActor(i,isPlayer=false){
+    const el=document.createElement('div');
+    el.className=`survival-actor-v136 ${isPlayer?'player-v136':'fake-v136'}`;
+    el.style.backgroundImage=`url('${isPlayer?'icon/01.png':`icon/${String((i%9)+2).padStart(2,'0')}.png`}')`;
+    actorLayer.appendChild(el);
+
+    const x=side+tileW*.5+(i%10)*(W-side*2-tileW)/9-14;
+
+    const a={
+      id:i,
+      player:isPlayer,
+      x:clamp(x,3,W-31),
+      y:baseY-38,
+      vx:0,
+      vy:0,
+      w:28,
+      h:36,
+      onGround:true,
+      jumps:0,
+      alive:true,
+      aiDir:Math.random()<.5?-1:1,
+      aiChange:performance.now()+rand(450,1200),
+      el
+    };
+
+    actors.push(a);
+    return a;
+  }
+
+  const player=makeActor(0,true);
+  for(let i=1;i<10;i++)makeActor(i,false);
+
+  function aliveActors(){
+    return actors.filter(a=>a.alive);
+  }
+
+  function platformAt(x,footY,margin=0){
+    return tiles.find(t=>
+      t.active &&
+      x>=t.x-margin &&
+      x<=t.x+t.w+margin &&
+      Math.abs(footY-t.y)<18
+    );
+  }
+
+  function tileAhead(a,dir){
+    const px=a.x+a.w/2+dir*(a.w*.72+10);
+    return tiles.some(t=>
+      t.active &&
+      px>=t.x &&
+      px<=t.x+t.w
+    );
+  }
+
+  function actorBlocked(a,nextX){
+    const ay1=a.y+5;
+    const ay2=a.y+a.h-4;
+
+    return actors.some(b=>{
+      if(!b.alive||b===a)return false;
+
+      const by1=b.y+5;
+      const by2=b.y+b.h-4;
+      const vertical=ay2>by1&&ay1<by2;
+      if(!vertical)return false;
+
+      return (
+        nextX < b.x+b.w-3 &&
+        nextX+a.w > b.x+3
+      );
+    });
+  }
+
+  function tryJump(a){
+    if(!a.alive)return;
+    if(a.jumps>=2)return;
+
+    a.vy=
+      a.jumps===0
+        ? -245
+        : -220;
+
+    a.jumps++;
+    a.onGround=false;
+
+    if(a.player){
+      jumpEl.textContent=Math.max(0,2-a.jumps);
+    }
+
+    a.el.classList.remove('jump-v136');
+    void a.el.offsetWidth;
+    a.el.classList.add('jump-v136');
+
+    beep(
+      a.player
+        ? 540+a.jumps*80
+        : 310,
+      42,.012
+    );
+  }
+
+  function collapseOne(now){
+    const candidates=tiles.filter(t=>t.active&&!t.cracking);
+    if(!candidates.length)return;
+
+    // As the game gets late, prefer tiles near remaining actors so the pace never stalls.
+    let tile;
+    if(collapseCount>=7){
+      const alive=aliveActors();
+      const weighted=candidates.map(t=>{
+        const cx=t.x+t.w/2;
+        const d=Math.min(...alive.map(a=>Math.abs((a.x+a.w/2)-cx)));
+        return {t,d};
+      }).sort((a,b)=>a.d-b.d);
+      tile=weighted[randi(0,Math.min(2,weighted.length-1))].t;
+    }else{
+      tile=candidates[randi(0,candidates.length-1)];
+    }
+
+    tile.cracking=true;
+    tile.el.classList.add('crack-v136');
+
+    const marker=document.createElement('div');
+    marker.className='survival-warning-v136';
+    marker.style.left=`${tile.x+tile.w/2}px`;
+    marker.style.top=`${tile.y-25}px`;
+    marker.textContent='!';
+    fx.appendChild(marker);
+
+    beep(190,60,.016);
+
+    setTimeout(()=>{
+      marker.remove();
+      if(finished||!isGameRunValid(runId))return;
+
+      tile.active=false;
+      tile.el.classList.remove('crack-v136');
+      tile.el.classList.add('fall-v136');
+
+      setTimeout(()=>tile.el.remove(),760);
+    },520);
+
+    collapseCount++;
+  }
+
+  function playerScore(place){
+    return clamp(
+      Math.round((10-place)/9*100),
+      0,100
+    );
+  }
+
+  async function endPlayer(place,clear){
+    if(finished)return;
+
+    finished=true;
+    active=false;
+    if(raf)cancelAnimationFrame(raf);
+
+    const score=playerScore(place);
+    state.records.atafutaSurvival[p.id]=score;
+
+    msg.textContent=
+      clear
+        ? 'LAST MOB!! CLEAR!'
+        : `${place}位`;
+
+    msg.classList.add(
+      clear
+        ? 'clear-v136'
+        : 'lose-v136'
+    );
+
+    beep(
+      clear?1120:
+      score>=78?810:
+      score>=44?560:
+      160,
+      clear?220:150,
+      .045
+    );
+
+    await wait(clear?1250:850);
+
+    if(isGameRunValid(runId)){
+      recordScreen(
+        84,p,humanIndex,
+        `${score}<small>pt</small>`,
+        clear
+          ? '最後の1人まで生存 / CLEAR'
+          : `10人中 ${place}位`
+      );
+    }
+  }
+
+  function eliminate(a){
+    if(!a.alive)return;
+
+    const place=aliveActors().length;
+    a.alive=false;
+    a.el.classList.add('drop-v136');
+
+    countEl.textContent=aliveActors().length;
+
+    if(a.player){
+      endPlayer(place,false);
+      return;
+    }
+
+    beep(120,50,.01);
+
+    if(
+      player.alive &&
+      aliveActors().length===1
+    ){
+      endPlayer(1,true);
+    }
+  }
+
+  function bindHold(btn,key){
+    const on=e=>{
+      e.preventDefault();
+      if(active&&!finished)input[key]=true;
+      try{btn.setPointerCapture(e.pointerId)}catch(_){}
+    };
+
+    const off=e=>{
+      if(e)e.preventDefault();
+      input[key]=false;
+    };
+
+    btn.addEventListener('pointerdown',on,{passive:false});
+    btn.addEventListener('pointerup',off,{passive:false});
+    btn.addEventListener('pointercancel',off,{passive:false});
+    btn.addEventListener('lostpointercapture',off,{passive:false});
+  }
+
+  bindHold(leftBtn,'left');
+  bindHold(rightBtn,'right');
+
+  jumpBtn.addEventListener('pointerdown',e=>{
+    e.preventDefault();
+    if(active&&!finished)tryJump(player);
+  },{passive:false});
+
+  async function finishTimeout(){
+    if(finished)return;
+
+    // In the unlikely event that several remain, the player is awarded
+    // the current survival placement after the final platform collapse.
+    const alive=aliveActors();
+    const place=Math.max(1,alive.length);
+
+    if(player.alive){
+      if(place===1)endPlayer(1,true);
+      else endPlayer(place,false);
+    }
+  }
+
+  if(!(await countdown('SURVIVAL',runId,{transparent:true})))return;
+
+  active=true;
+  start=last=performance.now();
+  nextCollapseAt=start+1500;
+
+  function frame(now){
+    if(!active||finished||!isGameRunValid(runId))return;
+
+    const dt=Math.min(.035,(now-last)/1000);
+    last=now;
+    const elapsed=(now-start)/1000;
+
+    if(now>=nextCollapseAt){
+      collapseOne(now);
+
+      const gapMs=clamp(
+        920-collapseCount*34,
+        470,920
+      );
+
+      nextCollapseAt=now+gapMs;
+    }
+
+    if(elapsed>17&&tiles.some(t=>t.active&&!t.cracking)){
+      nextCollapseAt=Math.min(nextCollapseAt,now+120);
+    }
+
+    for(const a of actors){
+      if(!a.alive)continue;
+
+      let desired=0;
+
+      if(a.player){
+        desired=
+          input.left&&!input.right
+            ? -1
+            : input.right&&!input.left
+              ? 1
+              : 0;
+      }else{
+        if(now>=a.aiChange){
+          a.aiDir=Math.random()<.5?-1:1;
+          a.aiChange=now+rand(420,1050);
+
+          if(Math.random()<.34)tryJump(a);
+        }
+
+        desired=a.aiDir;
+
+        const blocked=actorBlocked(
+          a,
+          a.x+desired*4
+        );
+
+        if(
+          blocked ||
+          !tileAhead(a,desired)
+        ){
+          if(a.jumps<2&&Math.random()<.78){
+            tryJump(a);
+          }else if(Math.random()<.55){
+            a.aiDir*=-1;
+            desired=a.aiDir;
+          }
+        }
+      }
+
+      const speed=a.player?112:rand(63,86);
+      const wantedVx=desired*speed;
+
+      if(desired===0){
+        a.vx*=Math.pow(.06,dt);
+      }else{
+        a.vx=wantedVx;
+      }
+
+      let nextX=a.x+a.vx*dt;
+
+      if(actorBlocked(a,nextX)){
+        nextX=a.x;
+        a.vx=0;
+
+        if(!a.player&&a.jumps<2&&Math.random()<.08){
+          tryJump(a);
+        }
+      }
+
+      a.x=nextX;
+
+      const prevBottom=a.y+a.h;
+      a.vy+=470*dt;
+      a.y+=a.vy*dt;
+      const newBottom=a.y+a.h;
+
+      a.onGround=false;
+
+      if(a.vy>=0){
+        for(const t of tiles){
+          if(!t.active)continue;
+
+          const horiz=
+            a.x+a.w-5>t.x &&
+            a.x+5<t.x+t.w;
+
+          const crossing=
+            prevBottom<=t.y+5 &&
+            newBottom>=t.y;
+
+          if(horiz&&crossing){
+            a.y=t.y-a.h;
+            a.vy=0;
+            a.onGround=true;
+            a.jumps=0;
+
+            if(a.player){
+              jumpEl.textContent='2';
+            }
+            break;
+          }
+        }
+      }
+
+      if(
+        a.x+a.w<-18 ||
+        a.x>W+18 ||
+        a.y>H+75
+      ){
+        eliminate(a);
+        continue;
+      }
+
+      a.el.style.left=`${a.x}px`;
+      a.el.style.top=`${a.y}px`;
+    }
+
+    if(
+      player.alive &&
+      aliveActors().length===1
+    ){
+      endPlayer(1,true);
+      return;
+    }
+
+    if(elapsed>=22){
+      finishTimeout();
+      return;
+    }
+
+    raf=requestAnimationFrame(frame);
+  }
+
+  raf=requestAnimationFrame(frame);
+}
+
+// =========================================================
+// V10.36 GAME 86 — モブくん波動を極める
+// =========================================================
+async function startWaveMaster(p,humanIndex,runId){
+  gameFit();
+
+  let phase='soul';
+  let finished=false;
+  let raf=null;
+  let phaseStart=0;
+  let soulPct=0;
+  let soulScore=0;
+
+  let traceRound=0;
+  let traceScores=[];
+  let tracePointer=null;
+  let traceHits=new Set();
+  let traceMoves=0;
+  let traceMisses=0;
+  let gemSamples=[];
+
+  screen.innerHTML=`<div class="wave-shell-v136">
+    <div class="game-head">
+      <div><span class="kicker">${esc(p.name)}</span><h2>モブくん波動を極める</h2></div>
+      <div class="game-badge">${playBadge(humanIndex)}</div>
+    </div>
+
+    <div class="v125-hud">
+      <div><span>STEP</span><b id="waveStep136">1 / 2</b></div>
+      <div><span>POWER</span><b id="wavePower136">---</b></div>
+    </div>
+
+    <div id="waveHelp136" class="wave-help-v136">
+      魂ゲージがMAXに近い瞬間を狙え
+    </div>
+
+    <div id="waveStage136" class="wave-stage-v136">
+      <div id="waveSoulPanel136" class="wave-soul-panel-v136">
+        <div id="soulGauge136" class="soul-gauge-v136">
+          <div id="soulCore136" class="soul-core-v136"></div>
+          <div class="soul-ring-v136 r1"></div>
+          <div class="soul-ring-v136 r2"></div>
+          <span>MAX</span>
+        </div>
+      </div>
+
+      <div id="waveGemPanel136" class="wave-gem-panel-v136" hidden>
+        <div class="gem-round-v136">TRACE <b id="gemRound136">1 / 3</b></div>
+        <svg id="gemSvg136" class="gem-svg-v136" viewBox="0 0 240 240">
+          <path id="gemTarget136" class="gem-target-v136"
+            d="M120 20 L194 72 L172 177 L120 218 L68 177 L46 72 Z"/>
+          <polyline id="gemUser136" class="gem-user-v136" points=""/>
+        </svg>
+        <div id="gemProgress136" class="gem-progress-v136">0%</div>
+      </div>
+
+      <div id="waveCinema136" class="wave-cinema-v136" hidden></div>
+    </div>
+
+    <div id="waveControl136" class="wave-control-v136">
+      <button id="soulTap136" type="button" class="primary">魂を込める！</button>
+    </div>
+  </div>`;
+
+  const stage=document.getElementById('waveStage136');
+  const help=document.getElementById('waveHelp136');
+  const stepEl=document.getElementById('waveStep136');
+  const powerEl=document.getElementById('wavePower136');
+  const soulPanel=document.getElementById('waveSoulPanel136');
+  const soulGauge=document.getElementById('soulGauge136');
+  const soulCore=document.getElementById('soulCore136');
+  const soulBtn=document.getElementById('soulTap136');
+  const gemPanel=document.getElementById('waveGemPanel136');
+  const gemSvg=document.getElementById('gemSvg136');
+  const gemTarget=document.getElementById('gemTarget136');
+  const gemUser=document.getElementById('gemUser136');
+  const gemRoundEl=document.getElementById('gemRound136');
+  const gemProgress=document.getElementById('gemProgress136');
+  const cinema=document.getElementById('waveCinema136');
+  const control=document.getElementById('waveControl136');
+
+  function soulFrame(now){
+    if(
+      finished||
+      phase!=='soul'||
+      !isGameRunValid(runId)
+    )return;
+
+    const cyc=((now-phaseStart)%1550)/1550;
+    soulPct=cyc*100;
+
+    soulGauge.style.background=
+      `conic-gradient(#ffe65b ${soulPct*3.6}deg,#314250 0deg)`;
+
+    soulCore.style.transform=
+      `translate(-50%,-50%) scale(${.62+soulPct/260})`;
+
+    raf=requestAnimationFrame(soulFrame);
+  }
+
+  function buildGemSamples(){
+    const total=gemTarget.getTotalLength();
+    gemSamples=[];
+
+    for(let i=0;i<42;i++){
+      const p=gemTarget.getPointAtLength(
+        total*i/42
+      );
+
+      gemSamples.push({x:p.x,y:p.y});
+    }
+  }
+
+  function localGem(e){
+    const r=gemSvg.getBoundingClientRect();
+
+    return{
+      x:clamp((e.clientX-r.left)/r.width*240,0,240),
+      y:clamp((e.clientY-r.top)/r.height*240,0,240)
+    };
+  }
+
+  function addTracePoint(q){
+    traceMoves++;
+
+    let nearest=-1;
+    let nearestDist=999;
+
+    for(let i=0;i<gemSamples.length;i++){
+      const p=gemSamples[i];
+      const d=Math.hypot(q.x-p.x,q.y-p.y);
+
+      if(d<nearestDist){
+        nearestDist=d;
+        nearest=i;
+      }
+    }
+
+    if(nearestDist<=19){
+      traceHits.add(nearest);
+      traceHits.add((nearest+1)%gemSamples.length);
+      traceHits.add((nearest+gemSamples.length-1)%gemSamples.length);
+    }else{
+      traceMisses++;
+    }
+
+    const coverage=
+      traceHits.size/gemSamples.length;
+
+    gemProgress.textContent=
+      `${Math.round(coverage*100)}%`;
+
+    if(coverage>=.86){
+      finishTraceRound();
+    }
+  }
+
+  function resetGemRound(){
+    traceHits=new Set();
+    traceMoves=0;
+    traceMisses=0;
+    tracePointer=null;
+    gemUser.setAttribute('points','');
+    gemProgress.textContent='0%';
+    gemRoundEl.textContent=`${traceRound+1} / 3`;
+  }
+
+  async function finishTraceRound(){
+    if(phase!=='gem')return;
+
+    phase='gem-lock';
+
+    const accuracy=
+      traceMoves
+        ? clamp(100-traceMisses/traceMoves*90,0,100)
+        : 0;
+
+    const coverage=
+      traceHits.size/gemSamples.length*100;
+
+    const score=clamp(
+      Math.round(
+        accuracy*.62+
+        coverage*.38
+      ),
+      0,100
+    );
+
+    traceScores.push(score);
+
+    gemPanel.classList.add('success-v136');
+    gemProgress.textContent=`${score} POINT`;
+
+    beep(
+      score>=90?980:
+      score>=75?790:
+      610,
+      100,.025
+    );
+
+    await wait(450);
+    if(!isGameRunValid(runId))return;
+
+    gemPanel.classList.remove('success-v136');
+    traceRound++;
+
+    if(traceRound>=3){
+      prepareWave();
+      return;
+    }
+
+    phase='gem';
+    resetGemRound();
+  }
+
+  gemSvg.addEventListener('pointerdown',e=>{
+    if(phase!=='gem'||finished)return;
+
+    e.preventDefault();
+
+    tracePointer={
+      id:e.pointerId,
+      points:[localGem(e)]
+    };
+
+    addTracePoint(tracePointer.points[0]);
+
+    try{
+      gemSvg.setPointerCapture(e.pointerId);
+    }catch(_){}
+  },{passive:false});
+
+  gemSvg.addEventListener('pointermove',e=>{
+    if(
+      phase!=='gem'||
+      !tracePointer||
+      e.pointerId!==tracePointer.id
+    )return;
+
+    e.preventDefault();
+
+    const q=localGem(e);
+    const prev=
+      tracePointer.points[
+        tracePointer.points.length-1
+      ];
+
+    if(Math.hypot(q.x-prev.x,q.y-prev.y)<2)return;
+
+    tracePointer.points.push(q);
+    addTracePoint(q);
+
+    gemUser.setAttribute(
+      'points',
+      tracePointer.points
+        .map(p=>`${p.x.toFixed(1)},${p.y.toFixed(1)}`)
+        .join(' ')
+    );
+  },{passive:false});
+
+  const endGem=e=>{
+    if(!tracePointer)return;
+    if(e&&e.pointerId!==tracePointer.id)return;
+
+    if(e)e.preventDefault();
+
+    tracePointer=null;
+    gemUser.setAttribute('points','');
+  };
+
+  gemSvg.addEventListener('pointerup',endGem,{passive:false});
+  gemSvg.addEventListener('pointercancel',endGem,{passive:false});
+
+  soulBtn.addEventListener('pointerdown',e=>{
+    if(phase!=='soul'||finished)return;
+
+    e.preventDefault();
+
+    phase='soul-lock';
+    if(raf)cancelAnimationFrame(raf);
+
+    soulScore=clamp(
+      Math.round(
+        100-Math.abs(100-soulPct)*1.08
+      ),
+      0,100
+    );
+
+    powerEl.textContent=`${soulScore}%`;
+    soulBtn.disabled=true;
+
+    soulGauge.classList.add('locked-v136');
+
+    beep(
+      soulScore>=95?1080:
+      soulScore>=80?850:
+      570,
+      120,.035
+    );
+
+    setTimeout(()=>{
+      if(!isGameRunValid(runId)||finished)return;
+
+      soulPanel.hidden=true;
+      gemPanel.hidden=false;
+
+      stepEl.textContent='2 / 2';
+      help.textContent='宝玉の輪郭を3回なぞれ';
+      control.innerHTML='';
+
+      buildGemSamples();
+      traceRound=0;
+      phase='gem';
+      resetGemRound();
+    },420);
+  },{passive:false});
+
+  function prepareWave(){
+    phase='ready';
+
+    const traceAvg=
+      traceScores.length
+        ? traceScores.reduce((a,b)=>a+b,0)/traceScores.length
+        : 0;
+
+    const finalPower=clamp(
+      Math.round(
+        soulScore*.55+
+        traceAvg*.45
+      ),
+      0,100
+    );
+
+    powerEl.textContent=`${finalPower}%`;
+    help.textContent='波動を放て！';
+
+    gemPanel.hidden=true;
+    cinema.hidden=false;
+
+    cinema.innerHTML=`
+      <div class="wave-ground-v136"></div>
+
+      <div class="wave-mob-v136" style="background-image:url('icon/01.png')"></div>
+
+      <div id="waveOrb136" class="wave-orb-v136">
+        <i></i><b></b><span></span>
+      </div>
+
+      <div id="waveRock136" class="wave-rock-v136">
+        ${Array.from({length:12},(_,i)=>`<i style="--i:${i}"></i>`).join('')}
+      </div>
+
+      <div id="waveBeam136" class="wave-beam-v136"></div>
+      <div id="waveShock136" class="wave-shock-v136"></div>
+      <div id="waveDebris136" class="wave-debris-v136"></div>
+      <div id="waveCineText136" class="wave-cine-text-v136"></div>
+    `;
+
+    const orb=document.getElementById('waveOrb136');
+
+    const maxD=Math.min(
+      stage.clientWidth*1.22,
+      stage.clientHeight*.94
+    );
+
+    const d=
+      64+
+      (maxD-64)*
+      Math.pow(finalPower/100,1.35);
+
+    orb.style.width=`${d}px`;
+    orb.style.height=`${d}px`;
+
+    if(finalPower>=85){
+      cinema.classList.add('huge-v136');
+    }
+
+    if(finalPower>=96){
+      cinema.classList.add('max-v136');
+    }
+
+    control.innerHTML=`
+      <button id="waveFire136" class="primary wave-fire-btn-v136" type="button">
+        モブくん波動パワー！
+      </button>
+    `;
+
+    document.getElementById('waveFire136')
+      .addEventListener('pointerdown',e=>{
+        e.preventDefault();
+        fireWave(finalPower);
+      },{passive:false});
+  }
+
+  async function fireWave(finalPower){
+    if(phase!=='ready'||finished)return;
+
+    phase='fire';
+
+    const btn=document.getElementById('waveFire136');
+    btn.disabled=true;
+
+    const orb=document.getElementById('waveOrb136');
+    const rock=document.getElementById('waveRock136');
+    const beam=document.getElementById('waveBeam136');
+    const shock=document.getElementById('waveShock136');
+    const debris=document.getElementById('waveDebris136');
+    const cine=document.getElementById('waveCineText136');
+
+    cine.textContent='波動パワー!!';
+    cine.classList.add('show-v136');
+
+    orb.classList.add('release-v136');
+
+    beep(
+      250+finalPower*5,
+      190,.055
+    );
+
+    await wait(420);
+    if(!isGameRunValid(runId))return;
+
+    beam.classList.add('fire-v136');
+    shock.classList.add('fire-v136');
+    stage.classList.add('wave-shake-v136');
+
+    await wait(300);
+    if(!isGameRunValid(runId))return;
+
+    rock.classList.add('destroy-v136');
+
+    debris.innerHTML='';
+
+    const debrisCount=
+      18+
+      Math.round(finalPower*.36);
+
+    for(let i=0;i<debrisCount;i++){
+      const d=document.createElement('i');
+
+      d.style.setProperty('--dx',`${rand(-190,220)}px`);
+      d.style.setProperty('--dy',`${rand(-190,150)}px`);
+      d.style.setProperty('--dr',`${randi(-540,540)}deg`);
+      d.style.animationDelay=`${i*7}ms`;
+
+      debris.appendChild(d);
+    }
+
+    if(finalPower>=88){
+      cinema.classList.add('massive-v136');
+    }
+
+    beep(95,260,.065);
+
+    await wait(1100);
+    if(!isGameRunValid(runId))return;
+
+    finished=true;
+    state.records.waveMaster[p.id]=finalPower;
+
+    cine.textContent=`WAVE POWER ${finalPower}`;
+    cine.classList.add('result-v136');
+
+    await wait(900);
+
+    if(isGameRunValid(runId)){
+      recordScreen(
+        85,p,humanIndex,
+        `${finalPower}<small>pt</small>`,
+        `魂 ${soulScore} / 宝玉 ${Math.round(
+          traceScores.reduce((a,b)=>a+b,0)/traceScores.length
+        )}`
+      );
+    }
+  }
+
+  if(!(await countdown('SOUL GAUGE',runId,{transparent:true})))return;
+
+  phase='soul';
+  phaseStart=performance.now();
+  raf=requestAnimationFrame(soulFrame);
+}
+
 // GAME 64 -------------------------------------------------
 function buildElectricMazeFixedV121(cols,rows){
   const cells=Array.from(
@@ -21825,7 +22823,7 @@ function softenCpuResultV121(gameIndex,p,ultra){
 
   const specificallyTuned=new Set([
     50,51,59,62,63,
-    64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83
+    64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85
   ]);
 
   if(
@@ -22076,8 +23074,15 @@ function simulateOneCpu(gameIndex,p){
     state.records.robotMarch[p.id]=Math.round(ultra?rand(720,980):rand(280,760));
   }else if(gameIndex===82){
     state.records.monsterMaster[p.id]=ultra?randi(8,10):randi(3,8);
-  }else{
+  }else if(gameIndex===83){
     state.records.scoutMan[p.id]=ultra?randi(1,10):randi(5,34);
+  }else if(gameIndex===84){
+    const survivalScores=[0,11,22,33,44,56,67,78,89,100];
+    state.records.atafutaSurvival[p.id]=ultra
+      ? survivalScores[randi(7,9)]
+      : survivalScores[randi(2,8)];
+  }else{
+    state.records.waveMaster[p.id]=ultra?randi(84,98):randi(38,83);
   }
 
   softenCpuResultV121(
@@ -22217,6 +23222,8 @@ function performancePoints(gameIndex,v){
   if(gameIndex===81)return clamp(Math.round(v/1000*100),0,100);
   if(gameIndex===82)return clamp(Math.round(v/10*100),0,100);
   if(gameIndex===83)return clamp(Math.round((47-v)/46*100),0,100);
+  if(gameIndex===84)return clamp(Math.round(v),0,100);
+  if(gameIndex===85)return clamp(Math.round(v),0,100);
   return clamp(Math.round(v),0,100);
 }
 
@@ -22304,6 +23311,8 @@ function formatRecord(gameIndex,v){
   if(gameIndex===81)return `${Math.round(v)}m`;
   if(gameIndex===82)return `${Math.round(v)}体`;
   if(gameIndex===83)return `47校中 ${Math.round(v)}位`;
+  if(gameIndex===84)return `${Math.round(v)}pt`;
+  if(gameIndex===85)return `${Math.round(v)}pt`;
   return `${Math.round(v)}pt`;
 }
 
