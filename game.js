@@ -86,6 +86,17 @@ document.addEventListener("pointerdown",e=>{
 },{capture:true,passive:true});
 document.addEventListener("pointerup",stopGameplaySelectionGuard,{capture:true,passive:true});
 document.addEventListener("pointercancel",stopGameplaySelectionGuard,{capture:true,passive:true});
+// V10.47: gameplay中の長押し・ドラッグ選択対策をさらに強化。
+document.addEventListener("pointermove",e=>{
+  if(e.target&&e.target.closest&&e.target.closest(".gameplay-fit"))clearGameplaySelection();
+},{capture:true,passive:true});
+document.addEventListener("mousemove",e=>{
+  if(e.target&&e.target.closest&&e.target.closest(".gameplay-fit"))clearGameplaySelection();
+},{capture:true,passive:true});
+document.addEventListener("touchmove",e=>{
+  if(e.target&&e.target.closest&&e.target.closest(".gameplay-fit"))clearGameplaySelection();
+},{capture:true,passive:true});
+window.addEventListener("blur",clearGameplaySelection,{passive:true});
 
 const PLAYERS=[
   {id:"p1",no:1,name:"プレイヤー1",cpu:false,img:"play/01.png"},
@@ -208,7 +219,9 @@ const GAMES=[
   {no:88,key:"littleMobShot",title:"Little MOB SHOT",sub:"レコードに乗って10秒間スライムを撃ちまくる縦シューティング"},
   {no:89,key:"monsterBoxMob",title:"モブくんモンスターボックスに挑む",sub:"ロイター板を踏んで15段から20段の跳び箱を越える"},
   {no:90,key:"alienBattleMob",title:"モブくんエイリアンと戦う",sub:"小型ロボ2機で地上の巨大エイリアンHP100を撃破する"},
-  {no:91,key:"mobMusou",title:"モブくん無双",sub:"7秒で巨大武器を描き、10秒オートで大量スライムを無双する"}
+  {no:91,key:"mobMusou",title:"モブくん無双",sub:"7秒で巨大武器を描き、10秒オートで大量スライムを無双する"},
+  {no:92,key:"iaidoMaster",title:"モブくんは居合切りの達人",sub:"夜の草原でCPUと居合勝負。勝負！の瞬間を見抜く"},
+  {no:93,key:"killLeaderMob",title:"モブくんはキルリーダー",sub:"1対1のFPS勝ち抜き戦。10人抜きで完全制覇を目指せ"}
 ];
 
 const MODES={
@@ -251,7 +264,7 @@ function freshState(){
         paperPlane:{},tankMob:{},curlingMob:{},bubbleMob:{},
         changeMob:{},baggageMob:{},bridgeMob:{},treasureMob:{},rouletteMob:{},excavationMob:{},
         oldMaidDuel:{},robotMarch:{},monsterMaster:{},scoutMan:{},
-        atafutaSurvival:{},waveMaster:{},battleRoyaleMob:{},littleMobShot:{},monsterBoxMob:{},alienBattleMob:{},mobMusou:{}
+        atafutaSurvival:{},waveMaster:{},battleRoyaleMob:{},littleMobShot:{},monsterBoxMob:{},alienBattleMob:{},mobMusou:{},iaidoMaster:{},killLeaderMob:{}
     },
     total:{},
     roundPoints:[],
@@ -785,7 +798,7 @@ function renderGameLengthSelect(config){
       <button data-length="5" type="button"><span>QUICK</span><b>サクッと5ゲーム</b><small>ランダム5種</small></button>
       <button data-length="15" type="button"><span>FUN</span><b>楽しく15ゲーム</b><small>ランダム15種</small></button>
       <button data-length="30" type="button"><span>LONG</span><b>じっくり30ゲーム</b><small>ランダム30種</small></button>
-      <button data-length="all" type="button"><span>ALL</span><b>ガッツリ全ゲーム</b><small>全91種をランダム順</small></button>
+      <button data-length="all" type="button"><span>ALL</span><b>ガッツリ全ゲーム</b><small>全93種をランダム順</small></button>
       <button data-length="custom" class="custom" type="button"><span>CUSTOM</span><b>カスタム</b><small>自由選択 / 最大50ゲーム</small></button>
     </div>
 
@@ -1575,9 +1588,13 @@ function showGameIntro(index){
   }else if(index===88){
     rules=`<li>自動で走り、JUMPでロイター板を踏みます。</li><li>15段から20段までの跳び箱を順番に越えます。</li>`;
   }else if(index===89){
-    rules=`<li>← / JUMP / 砲撃 / →で画面いっぱいの巨大エイリアンHP100と戦います。</li><li>5秒後に超巨大化。5秒間だけ砲撃が手動パンチに変わります。</li>`;
-  }else{
+    rules=`<li>← / JUMP / 射撃 / 砲撃 / →で画面いっぱいの巨大エイリアンHP100と戦います。</li><li>5秒後に超巨大化。3秒間だけ砲撃が手動パンチに変わり無敵になります。</li>`;
+  }else if(index===90){
     rules=`<li>7秒で巨大な武器を自由に描きます。</li><li>力が宿ったら10秒間オートで大量スライムを無双します。</li>`;
+  }else if(index===91){
+    rules=`<li>「勝負！」が出た瞬間にタップします。</li><li>3人の刺客を居合で迎え撃ち、反応タイムで高得点を狙います。</li>`;
+  }else{
+    rules=`<li>1対1のFPS勝ち抜き戦です。</li><li>10秒から開始し、1人倒すごとに5秒延長。10人撃破で100点です。</li>`;
   }
   const conciseRules=(rules.match(/<li>[\s\S]*?<\/li>/g)||[]).slice(0,2).join("");
   rules=conciseRules||`<li>${esc(g.sub)}</li>`;
@@ -1710,7 +1727,9 @@ function humanReady(gameIndex,humanIndex){
     else if(gameIndex===87)startLittleMobShot(p,humanIndex,runId);
     else if(gameIndex===88)startMonsterBoxMob(p,humanIndex,runId);
     else if(gameIndex===89)startAlienBattleMob(p,humanIndex,runId);
-    else startMobMusou(p,humanIndex,runId);
+    else if(gameIndex===90)startMobMusou(p,humanIndex,runId);
+    else if(gameIndex===91)startIaidoMaster(p,humanIndex,runId);
+    else startKillLeaderMob(p,humanIndex,runId);
   },{once:true});
 }
 
@@ -22347,7 +22366,7 @@ async function startWaveMaster(p,humanIndex,runId){
     const q=localZ(e);
 
     if(Math.hypot(q.x-48,q.y-48)>31){
-      zHint.textContent='左上のSTARTから始める！';
+      zHint.textContent='STARTから光るZをなぞれ！';
       zPanel.classList.add('retry-v140');
       beep(170,60,.014);
       return;
@@ -22396,16 +22415,16 @@ async function startWaveMaster(p,humanIndex,runId){
       Math.hypot(last.x-272,last.y-192)<=34;
 
     const enough=
-      traceProgress>=.94 &&
-      traceMoves>=55 &&
-      traceLength>=500 &&
+      traceProgress>=.78 &&
+      traceMoves>=18 &&
+      traceLength>=260 &&
       endOk;
 
     tracePointer=null;
 
     if(!enough){
       zPanel.classList.add('retry-v140');
-      zHint.textContent='Zを最後まで一筆でなぞる！';
+      zHint.textContent='光るZラインを最後まで一筆でなぞる！';
       beep(180,75,.015);
 
       setTimeout(()=>{
@@ -22500,7 +22519,7 @@ async function startWaveMaster(p,humanIndex,runId){
       zPanel.hidden=false;
 
       stepEl.textContent='2 / 2';
-      help.textContent='Z型ゲージを1回なぞれ';
+      help.textContent='光るZ型ラインを1回なぞれ';
       control.innerHTML='';
 
       buildZSamples();
@@ -23782,7 +23801,7 @@ async function startAlienBattleMob(p,humanIndex,runId){
     }
 
     giantUsed=true;
-    giantUntil=now+5000;
+    giantUntil=now+3000;
     giantPunchReadyAt=now;
     giantBtn.disabled=true;
     giantBtn.classList.remove('ready-v145');
@@ -26398,6 +26417,163 @@ function renderFinal(){
 
   document.getElementById('modeChange').addEventListener('click',renderBattleTypeSelect);
 }
+
+
+// =========================================================
+// V10.47 GAME 92 — モブくんは居合切りの達人
+// =========================================================
+async function startIaidoMaster(p,humanIndex,runId){
+  gameFit();
+  let totalScore=0,bestMs=9999;
+  const limits=[300,250,225];
+  screen.innerHTML=`
+    <div class="iaido-shell-v147 gameplay-fit">
+      <div class="game-head">
+        <div><span class="kicker">${esc(p.name)}</span><h2>モブくんは居合切りの達人</h2><p class="lead">「勝負！」の瞬間に一閃</p></div>
+        <div class="game-badge">${playBadge(humanIndex)}</div>
+      </div>
+      <div class="iaido-hud-v147">
+        <div><span>刺客</span><b id="iaidoN147">1 / 3</b></div>
+        <div><span>基準</span><b id="iaidoL147">0.300</b></div>
+        <div><span>BEST</span><b id="iaidoB147">---</b></div>
+      </div>
+      <div class="iaido-stage-v147">
+        <div class="iaido-night-v147"></div><div class="iaido-moon-v147"></div><div class="iaido-grass-v147"></div>
+        <div id="iaidoText147" class="iaido-text-v147">いざ！尋常に・・</div>
+        <div id="iaidoSlash147" class="iaido-slash-v147" hidden></div>
+        <div id="iaidoP147" class="iaido-fighter-v147 player"><img draggable="false" src="${p.img}" alt=""><div class="iaido-katana-v147"></div></div>
+        <div id="iaidoE147" class="iaido-fighter-v147 enemy"><img draggable="false" src="play/01.png" alt=""><div class="iaido-katana-v147"></div></div>
+      </div>
+      <div class="iaido-help-v147">画面タップで居合い</div>
+    </div>`;
+  const nEl=document.getElementById("iaidoN147"), lEl=document.getElementById("iaidoL147"), bEl=document.getElementById("iaidoB147");
+  const tEl=document.getElementById("iaidoText147"), sEl=document.getElementById("iaidoSlash147");
+  const pEl=document.getElementById("iaidoP147"), eEl=document.getElementById("iaidoE147");
+  if(!(await countdown("COUNTDOWN",runId)))return;
+  const scoreFor=(stage,ms,win)=>win?(ms<=190?100:clamp(Math.round(100-(ms-190)*0.15),80,100)):(ms>=9999?0:[30,60,75][stage]);
+  async function duel(stage){
+    nEl.textContent=`${stage+1} / 3`; lEl.textContent=(limits[stage]/1000).toFixed(3); tEl.textContent="いざ！尋常に・・"; tEl.className="iaido-text-v147";
+    sEl.hidden=true; pEl.classList.remove("fallen-v147"); eEl.classList.remove("fallen-v147"); pEl.style.left="18%"; eEl.style.left="68%";
+    await wait(700);
+    let go=false, goAt=0;
+    const readyAt=performance.now()+rand(600,1000);
+    const result=await new Promise(resolve=>{
+      let raf=0, done=false;
+      const tap=e=>{
+        e.preventDefault();
+        if(done)return;
+        done=true;
+        screen.removeEventListener("pointerdown",tap,true);
+        cancelAnimationFrame(raf);
+        if(!go)resolve({win:false,ms:9999});
+        else{
+          const ms=Math.max(1,performance.now()-goAt);
+          resolve({win:ms<=limits[stage],ms});
+        }
+      };
+      const tick=()=>{
+        if(performance.now()>=readyAt && !go){
+          go=true; goAt=performance.now(); tEl.textContent="勝負！"; tEl.className="iaido-text-v147 go-v147";
+        }
+        if(!done)raf=requestAnimationFrame(tick);
+      };
+      screen.addEventListener("pointerdown",tap,true);
+      raf=requestAnimationFrame(tick);
+    });
+    bestMs=Math.min(bestMs,result.ms); if(bestMs<9999)bEl.textContent=(bestMs/1000).toFixed(3);
+    sEl.hidden=false; sEl.classList.add("flash-v147"); pEl.style.left="56%"; eEl.style.left="30%"; beep(result.win?950:240,120,.03); await wait(220);
+    if(result.win){tEl.textContent=`一閃成功 ${(result.ms/1000).toFixed(3)}s`; eEl.classList.add("fallen-v147");}
+    else{tEl.textContent=result.ms===9999?"早すぎた…":"敗北…"; pEl.classList.add("fallen-v147");}
+    totalScore=Math.max(totalScore,scoreFor(stage,result.ms,result.win));
+    await wait(1800);
+    return result.win;
+  }
+  for(let i=0;i<3;i++){ const win=await duel(i); if(!win)break; if(i<2){tEl.textContent="次の刺客！"; await wait(700);} }
+  state.records.iaidoMaster[p.id]=totalScore;
+  recordScreen(91,p,humanIndex,`${totalScore}<small>PT</small>`,bestMs<9999?`BEST ${(bestMs/1000).toFixed(3)}秒`:"反応失敗");
+}
+
+// =========================================================
+// V10.47 GAME 93 — モブくんはキルリーダー
+// =========================================================
+async function startKillLeaderMob(p,humanIndex,runId){
+  gameFit();
+  const W=360, groundY=420;
+  let timeLeft=10,kills=0,wave=1,last=performance.now(),raf=0,finished=false;
+  let leftHeld=false,rightHeld=false,enemy=null,portals=[];
+  let bullets=[],enemyBullets=[];
+  const player={x:50,y:groundY,w:30,h:38,vx:0,vy:0,onGround:true,hp:50,maxHp:50,face:1,shotAt:0,airAt:0};
+  screen.innerHTML=`
+    <div class="kill-shell-v147 gameplay-fit">
+      <div class="game-head">
+        <div><span class="kicker">${esc(p.name)}</span><h2>モブくんはキルリーダー</h2><p class="lead">1対1で10人抜き</p></div>
+        <div class="game-badge">${playBadge(humanIndex)}</div>
+      </div>
+      <div class="kill-hud-v147">
+        <div><span>KILL</span><b id="killK147">0 / 10</b></div>
+        <div><span>TIME</span><b id="killT147">10.0</b></div>
+        <div><span>YOU</span><b id="killHP147">50</b></div>
+        <div><span>ENEMY</span><b id="killE147">5</b></div>
+      </div>
+      <div class="kill-stage-v147">
+        <div class="kill-bg-v147"></div><div class="kill-ground-v147"></div>
+        <div id="killActor147" class="kill-actor-layer-v147"></div><div id="killBul147" class="kill-bullet-layer-v147"></div><div id="killFx147" class="kill-fx-v147"></div>
+        <div id="killText147" class="kill-text-v147">READY</div>
+      </div>
+      <div class="kill-controls-v147">
+        <button id="killLeft147">←</button><button id="killJump147">JUMP</button><button id="killShot147">射撃</button><button id="killAir147">戦闘機<b>READY</b></button><button id="killRight147">→</button>
+      </div>
+    </div>`;
+  const actor=document.getElementById("killActor147"), bul=document.getElementById("killBul147"), fx=document.getElementById("killFx147");
+  const kEl=document.getElementById("killK147"), tEl=document.getElementById("killT147"), hpEl=document.getElementById("killHP147"), eEl=document.getElementById("killE147"), msg=document.getElementById("killText147");
+  const airBtn=document.getElementById("killAir147"), airCd=airBtn.querySelector("b");
+  const makeActor=(img,isEnemy=false)=>{const el=document.createElement("div");el.className=`kill-actor-v147 ${isEnemy?"enemy":""}`;el.innerHTML=`<img draggable="false" src="${img}" alt=""><i class="gun-v147"></i><b class="hpbar-v147"><i></i></b>`;actor.appendChild(el);return el;};
+  const pEl=makeActor(p.img,false);
+  function spawnEnemy(){
+    if(enemy&&enemy.el&&enemy.el.isConnected)enemy.el.remove();
+    const hp=(wave>=9?20:5);
+    enemy={idx:wave,x:W-90,y:groundY,w:30,h:38,vx:0,vy:0,onGround:true,hp,maxHp:hp,face:-1,shotAt:0,voidAt:performance.now()+1500,voidUntil:0,portalAt:performance.now()+1400,airAt:performance.now()+1800,grenAt:performance.now()+1500,el:makeActor(`play/01.png`,true)};
+    msg.textContent=`ENEMY ${wave}`;
+  }
+  const updateActor=a=>{a.el.style.left=`${a.x}px`;a.el.style.top=`${a.y-a.h}px`;a.el.style.transform=a.face<0?"scaleX(-1)":"scaleX(1)";a.el.querySelector(".hpbar-v147 i").style.width=`${clamp(a.hp/a.maxHp,0,1)*100}%`;};
+  const pop=(x,y,txt,cls="")=>{const el=document.createElement("div");el.className=`kill-pop-v147 ${cls}`;el.textContent=txt;el.style.left=`${x}px`;el.style.top=`${y}px`;fx.appendChild(el);setTimeout(()=>el.remove(),700);};
+  const shoot=(owner,ally=true)=>{const now=performance.now();if(now<owner.shotAt)return;owner.shotAt=now+240;const el=document.createElement("i");el.className=`kill-bullet-v147 ${ally?"ally":"enemy"}`;bul.appendChild(el);(ally?bullets:enemyBullets).push({x:ally?owner.x+owner.w:owner.x,y:owner.y-owner.h+18,vx:(ally?1:-1)*430,el});};
+  const airStrike=(targetEnemy=true)=>{const now=performance.now();if(now<player.airAt)return;player.airAt=now+3000;msg.textContent="AIR STRIKE!";for(let i=0;i<3;i++)setTimeout(()=>{if(targetEnemy&&enemy){enemy.hp=Math.max(0,enemy.hp-3);pop(enemy.x+10,enemy.y-40,"-3","hit")}else{player.hp=Math.max(0,player.hp-3);pop(player.x+10,player.y-40,"-3","enemy")}},i*180);};
+  function finish(){if(finished)return;finished=true;cancelAnimationFrame(raf);const score=clamp(kills*10,0,100);state.records.killLeaderMob[p.id]=score;setTimeout(()=>recordScreen(92,p,humanIndex,`${score}<small>PT</small>`,`${kills}人撃破`),900);}
+  if(!(await countdown("COUNTDOWN",runId)))return;
+  spawnEnemy();
+  const hold=(id,set)=>{const el=document.getElementById(id);el.addEventListener("pointerdown",e=>{e.preventDefault();set(true)},{passive:false});el.addEventListener("pointerup",e=>{e.preventDefault();set(false)},{passive:false});el.addEventListener("pointercancel",e=>{e.preventDefault();set(false)},{passive:false});};
+  hold("killLeft147",v=>leftHeld=v); hold("killRight147",v=>rightHeld=v);
+  document.getElementById("killJump147").addEventListener("pointerdown",e=>{e.preventDefault();if(player.onGround){player.vy=-530;player.onGround=false;}},{passive:false});
+  document.getElementById("killShot147").addEventListener("pointerdown",e=>{e.preventDefault();shoot(player,true)},{passive:false});
+  airBtn.addEventListener("pointerdown",e=>{e.preventDefault();airStrike(true)},{passive:false});
+  const loop=now=>{
+    if(finished||!isGameRunValid(runId))return;
+    const dt=Math.min(.033,(now-last)/1000);last=now;timeLeft=Math.max(0,timeLeft-dt);
+    player.vx=(leftHeld?-175:0)+(rightHeld?175:0);if(player.vx<0)player.face=-1;if(player.vx>0)player.face=1;player.x=clamp(player.x+player.vx*dt,10,W-50);
+    if(!player.onGround){player.vy+=980*dt;player.y+=player.vy*dt;if(player.y>=groundY){player.y=groundY;player.vy=0;player.onGround=true;}} updateActor(player);
+    if(enemy){
+      const dx=player.x-enemy.x;enemy.face=dx>0?1:-1;enemy.x=clamp(enemy.x+Math.sign(dx)*130*dt,10,W-50);
+      if(!enemy.onGround){enemy.vy+=980*dt;enemy.y+=enemy.vy*dt;if(enemy.y>=groundY){enemy.y=groundY;enemy.vy=0;enemy.onGround=true;}}
+      if(Math.random()<0.018&&enemy.onGround){enemy.vy=-500;enemy.onGround=false;}
+      if(enemy.idx===7&&enemy.voidUntil<now&&now>=enemy.voidAt){enemy.voidUntil=now+2000;enemy.el.classList.add("void-v147");msg.textContent="VOID!";}
+      if(enemy.idx===8&&now>=enemy.grenAt){player.hp=Math.max(0,player.hp-4);pop(player.x+10,player.y-40,"STUN","enemy");enemy.grenAt=1e12;}
+      if(enemy.idx===9&&now>=enemy.portalAt){enemy.x=120;msg.textContent="PORTAL!";enemy.portalAt=1e12;if(enemy.voidUntil<now){enemy.voidUntil=now+2000;enemy.el.classList.add("void-v147");}}
+      if(enemy.idx===10&&now>=enemy.airAt){player.hp=Math.max(0,player.hp-6);pop(player.x+10,player.y-40,"AIR","enemy");enemy.airAt=1e12;if(enemy.voidUntil<now){enemy.voidUntil=now+2000;enemy.el.classList.add("void-v147");}}
+      if(enemy.voidUntil<now)enemy.el.classList.remove("void-v147");
+      if(enemy.voidUntil<now)shoot(enemy,false);
+      updateActor(enemy);
+    }
+    bullets=bullets.filter(b=>{b.x+=b.vx*dt;b.el.style.left=`${b.x}px`;b.el.style.top=`${b.y}px`;if(enemy&&enemy.voidUntil<now&&b.x>enemy.x&&b.x<enemy.x+enemy.w+8&&b.y>enemy.y-enemy.h&&b.y<enemy.y+4){enemy.hp=Math.max(0,enemy.hp-1);pop(enemy.x+10,enemy.y-38,"HIT","hit");b.el.remove();return false}if(b.x>W+20){b.el.remove();return false}return true;});
+    enemyBullets=enemyBullets.filter(b=>{b.x+=b.vx*dt;b.el.style.left=`${b.x}px`;b.el.style.top=`${b.y}px`;if(b.x>player.x&&b.x<player.x+player.w+8&&b.y>player.y-player.h&&b.y<player.y+4){player.hp=Math.max(0,player.hp-1);pop(player.x+8,player.y-38,"-1","enemy");b.el.remove();return false}if(b.x<-20){b.el.remove();return false}return true;});
+    if(enemy&&enemy.hp<=0){kills++;timeLeft+=5;player.hp=Math.min(player.maxHp,player.hp+10);pop(enemy.x+10,enemy.y-52,`KILL ${kills}!`,"kill");enemy.el.classList.add("dead-v147");setTimeout(()=>enemy&&enemy.el&&enemy.el.remove(),260);enemy=null;if(kills>=10){msg.textContent="CLEAR!!";finish();return}wave++;setTimeout(()=>{if(!finished&&isGameRunValid(runId))spawnEnemy()},600);}
+    kEl.textContent=`${kills} / 10`;tEl.textContent=timeLeft.toFixed(1);hpEl.textContent=Math.round(player.hp);eEl.textContent=enemy?Math.round(enemy.hp):"--";airCd.textContent=performance.now()<player.airAt?((player.airAt-performance.now())/1000).toFixed(1):"READY";
+    if(player.hp<=0||timeLeft<=0){msg.textContent=player.hp<=0?"YOU DOWN...":"TIME UP";finish();return}
+    raf=requestAnimationFrame(loop);
+  };
+  raf=requestAnimationFrame(loop);
+}
+
 
 
 renderHome();
