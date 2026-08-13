@@ -19,6 +19,27 @@ document.addEventListener("selectstart",e=>e.preventDefault(),{passive:false});
 document.addEventListener("copy",e=>e.preventDefault(),{passive:false});
 document.addEventListener("cut",e=>e.preventDefault(),{passive:false});
 
+// V10.40: gameplay中の長押し選択を即解除。
+// pointerdown自体はキャンセルしないので、既存click系ゲームも維持。
+function clearGameplaySelection(){
+  try{
+    const sel=window.getSelection&&window.getSelection();
+    if(sel&&sel.rangeCount)sel.removeAllRanges();
+  }catch(_){}
+}
+document.addEventListener("selectionchange",()=>{
+  if(screen&&screen.classList.contains("gameplay-fit"))clearGameplaySelection();
+});
+document.addEventListener("pointerdown",e=>{
+  if(e.target&&e.target.closest&&e.target.closest(".gameplay-fit"))clearGameplaySelection();
+},{passive:true});
+document.addEventListener("touchstart",e=>{
+  if(e.target&&e.target.closest&&e.target.closest(".gameplay-fit"))clearGameplaySelection();
+},{passive:true});
+document.addEventListener("touchend",e=>{
+  if(e.target&&e.target.closest&&e.target.closest(".gameplay-fit"))clearGameplaySelection();
+},{passive:true});
+
 const PLAYERS=[
   {id:"p1",no:1,name:"プレイヤー1",cpu:false,img:"play/01.png"},
   {id:"p2",no:2,name:"プレイヤー2",cpu:false,img:"play/02.png"},
@@ -138,7 +159,8 @@ const GAMES=[
   {no:86,key:"waveMaster",title:"モブくん波動を極める",sub:"魂ゲージと円型ゲージを極めて偽モブくんと波動を撃ち合う"},
   {no:87,key:"battleRoyaleMob",title:"モブくんFPSアリーナに挑戦",sub:"3対3のアリーナでスキルを使い敵チームを全滅させる"},
   {no:88,key:"littleMobShot",title:"Little MOB SHOT",sub:"レコードに乗って10秒間スライムを撃ちまくる縦シューティング"},
-  {no:89,key:"monsterBoxMob",title:"モブくんモンスターボックスに挑む",sub:"ロイター板を踏んで15段から20段の跳び箱を越える"}
+  {no:89,key:"monsterBoxMob",title:"モブくんモンスターボックスに挑む",sub:"ロイター板を踏んで15段から20段の跳び箱を越える"},
+  {no:90,key:"alienBattleMob",title:"モブくんエイリアンと戦う",sub:"小型ロボ3機で巨大エイリアンHP50を撃破する"}
 ];
 
 const MODES={
@@ -181,7 +203,7 @@ function freshState(){
         paperPlane:{},tankMob:{},curlingMob:{},bubbleMob:{},
         changeMob:{},baggageMob:{},bridgeMob:{},treasureMob:{},rouletteMob:{},excavationMob:{},
         oldMaidDuel:{},robotMarch:{},monsterMaster:{},scoutMan:{},
-        atafutaSurvival:{},waveMaster:{},battleRoyaleMob:{},littleMobShot:{},monsterBoxMob:{}
+        atafutaSurvival:{},waveMaster:{},battleRoyaleMob:{},littleMobShot:{},monsterBoxMob:{},alienBattleMob:{}
     },
     total:{},
     roundPoints:[],
@@ -224,6 +246,9 @@ function cancelCountdown(){
   countdownSerial++;
   if(activeCountdownLayer&&activeCountdownLayer.isConnected)activeCountdownLayer.remove();
   activeCountdownLayer=null;
+  document.body.classList.remove("countdown-active-v140");
+  if(screen)screen.removeAttribute("inert");
+  clearGameplaySelection();
 }
 function invalidateGameRun(){
   gameSessionActive=false;
@@ -287,7 +312,7 @@ function renderHome(){
     <section class="hero hero-v119">
       <div>
         <span class="kicker">SMARTPHONE PARTY GAME</span>
-        <h1>89 MINI<br>GAMES</h1>
+        <h1>90 MINI<br>GAMES</h1>
         <p>対戦モードは「チーム戦」「個人戦」の2種類。人数・ルール・ゲーム数を自由に設定できます。</p>
       </div>
       <div class="hero-mark">MOB</div>
@@ -312,7 +337,7 @@ function renderHome(){
     </section>
 
     <section class="panel flat">
-      <div class="panel-head"><h3>89 MINI GAMES</h3><span class="tag">GAME 1 → 89</span></div>
+      <div class="panel-head"><h3>90 MINI GAMES</h3><span class="tag">GAME 1 → 90</span></div>
       <div class="compact-game-grid home-compact-games-v119">
         ${GAMES.map(g=>`<div><b>${g.no}</b><span>${g.title}</span></div>`).join("")}
       </div>
@@ -332,7 +357,7 @@ function renderFreePlaySelect(){
   screen.innerHTML=`
     <div class="game-head">
       <div><span class="kicker">FREE PLAY</span><h2>1人で遊ぶ</h2><p class="lead">好きなゲームを1つ選んでプレイ。</p></div>
-      <div class="game-badge">89</div>
+      <div class="game-badge">90</div>
     </div>
 
     <button id="freeBack" class="secondary wizard-back-v119" type="button">← メインへ戻る</button>
@@ -370,7 +395,7 @@ function renderGameGuide(){
   screen.innerHTML=`
     <div class="game-head">
       <div><span class="kicker">GAME GUIDE</span><h2>各ゲームの説明</h2><p class="lead">内容と100点換算の目安を一覧で確認できます。</p></div>
-      <div class="game-badge">89</div>
+      <div class="game-badge">90</div>
     </div>
 
     <button id="guideBack" class="secondary wizard-back-v119" type="button">← メインへ戻る</button>
@@ -704,7 +729,7 @@ function renderGameLengthSelect(config){
 
   screen.innerHTML=`
     <div class="game-head">
-      <div><span class="kicker">GAME MODE</span><h2>プレイするゲーム数</h2><p class="lead">CUSTOM以外は89ゲームからランダムで選択。</p></div>
+      <div><span class="kicker">GAME MODE</span><h2>プレイするゲーム数</h2><p class="lead">CUSTOM以外は90ゲームからランダムで選択。</p></div>
       <div class="game-badge">${config.rule==='score'?'SCORE':'RANK'}</div>
     </div>
 
@@ -712,7 +737,7 @@ function renderGameLengthSelect(config){
       <button data-length="5" type="button"><span>QUICK</span><b>サクッと5ゲーム</b><small>ランダム5種</small></button>
       <button data-length="15" type="button"><span>FUN</span><b>楽しく15ゲーム</b><small>ランダム15種</small></button>
       <button data-length="30" type="button"><span>LONG</span><b>じっくり30ゲーム</b><small>ランダム30種</small></button>
-      <button data-length="all" type="button"><span>ALL</span><b>ガッツリ全ゲーム</b><small>全89種をランダム順</small></button>
+      <button data-length="all" type="button"><span>ALL</span><b>ガッツリ全ゲーム</b><small>全90種をランダム順</small></button>
       <button data-length="custom" class="custom" type="button"><span>CUSTOM</span><b>カスタム</b><small>自由選択 / 最大50ゲーム</small></button>
     </div>
 
@@ -961,7 +986,7 @@ function renderPlayStyleSelect(){
       <button id="normalStyle" class="style-select-card normal" type="button">
         <span>NORMAL</span>
         <b>順番に全種目</b>
-        <small>GAME 1 → 89 を順番にプレイ</small>
+        <small>GAME 1 → 90 を順番にプレイ</small>
       </button>
       <button id="customStyle" class="style-select-card custom" type="button">
         <span>CUSTOM</span>
@@ -971,7 +996,7 @@ function renderPlayStyleSelect(){
     </div>
 
     <section class="panel flat">
-      <h3>89 MINI GAMES</h3>
+      <h3>90 MINI GAMES</h3>
       <div class="compact-game-grid">
         ${GAMES.map(g=>`<div><b>${g.no}</b><span>${g.title}</span></div>`).join("")}
       </div>
@@ -1311,7 +1336,8 @@ function scoreRuleForGame(index){
     "魂ゲージ55% + 円型ゲージ3回のなぞり45%で波動威力0〜100点",
     "3対3を全滅させるまでの時間 / 速いほど高評価",
     "10秒間のスライムKO数 / 多いほど高得点",
-    "15段→20段を順番に突破 / 20段クリア=100点"
+    "15段→20段を順番に突破 / 20段クリア=100点",
+    "巨大エイリアンHP50を倒すまでの時間 / 速いほど高評価"
   ][index];
 }
 
@@ -1497,8 +1523,10 @@ function showGameIntro(index){
     rules=`<li>3対3。中央ラインを越えず、敵3人を全滅させます。</li><li>移動・ジャンプ・射撃・リロード・グレネード・回復を使います。</li>`;
   }else if(index===87){
     rules=`<li>10秒間の縦シューティング。弾は自動発射です。</li><li>左右移動・ボム・3秒レーザーでスライムを倒します。</li>`;
-  }else{
+  }else if(index===88){
     rules=`<li>自動で走り、JUMPでロイター板を踏みます。</li><li>15段から20段までの跳び箱を順番に越えます。</li>`;
+  }else{
+    rules=`<li>← / JUMP / 砲撃 / →で巨大エイリアンHP50と戦います。</li><li>砲撃は最大3秒チャージ。1秒=3、2秒=6、3秒=10ダメージです。</li>`;
   }
   const conciseRules=(rules.match(/<li>[\s\S]*?<\/li>/g)||[]).slice(0,2).join("");
   rules=conciseRules||`<li>${esc(g.sub)}</li>`;
@@ -1629,7 +1657,8 @@ function humanReady(gameIndex,humanIndex){
     else if(gameIndex===85)startWaveMaster(p,humanIndex,runId);
     else if(gameIndex===86)startBattleRoyaleMob(p,humanIndex,runId);
     else if(gameIndex===87)startLittleMobShot(p,humanIndex,runId);
-    else startMonsterBoxMob(p,humanIndex,runId);
+    else if(gameIndex===88)startMonsterBoxMob(p,humanIndex,runId);
+    else startAlienBattleMob(p,humanIndex,runId);
   },{once:true});
 }
 
@@ -1645,6 +1674,12 @@ async function countdown(
 
   if(!isGameRunValid(runId))return false;
 
+  // ここへ来る前のDOM/初期座標を確定。
+  try{void screen.offsetHeight}catch(_){}
+
+  document.body.classList.add("countdown-active-v140");
+  if(screen)screen.setAttribute("inert","");
+
   const layer=document.createElement("div");
   layer.className=
     "countdown-layer"+
@@ -1655,37 +1690,48 @@ async function countdown(
 
   const n=layer.querySelector(".count-number");
 
-  for(const v of [3,2,1]){
+  try{
+    for(const v of [3,2,1]){
+      if(
+        serial!==countdownSerial||
+        !layer.isConnected||
+        !isGameRunValid(runId)
+      )return false;
+
+      n.textContent=v;
+      beep(310+(3-v)*85,80);
+      await wait(620);
+    }
+
     if(
       serial!==countdownSerial||
       !layer.isConnected||
       !isGameRunValid(runId)
     )return false;
 
-    n.textContent=v;
-    beep(310+(3-v)*85,80);
-    await wait(620);
+    n.textContent="GO!";
+    beep(710,100);
+    await wait(300);
+
+    if(
+      serial!==countdownSerial||
+      !layer.isConnected||
+      !isGameRunValid(runId)
+    )return false;
+
+    return true;
+  }finally{
+    // 別カウントダウン開始済みなら新しいinertを触らない。
+    if(activeCountdownLayer===layer){
+      if(layer.isConnected)layer.remove();
+      activeCountdownLayer=null;
+      document.body.classList.remove("countdown-active-v140");
+      if(screen)screen.removeAttribute("inert");
+      clearGameplaySelection();
+    }else if(layer.isConnected){
+      layer.remove();
+    }
   }
-
-  if(
-    serial!==countdownSerial||
-    !layer.isConnected||
-    !isGameRunValid(runId)
-  )return false;
-
-  n.textContent="GO!";
-  beep(710,100);
-  await wait(300);
-
-  if(
-    serial!==countdownSerial||
-    !layer.isConnected||
-    !isGameRunValid(runId)
-  )return false;
-
-  layer.remove();
-  if(activeCountdownLayer===layer)activeCountdownLayer=null;
-  return true;
 }
 
 function playBadge(humanIndex){
@@ -22051,410 +22097,692 @@ async function startWaveMaster(p,humanIndex,runId){
   let soulPct=0;
   let soulScore=0;
 
-  let traceRound=0;
-  let traceScores=[];
   let tracePointer=null;
-  let traceHits=new Set();
+  let tracePoints=[];
+  let traceSamples=[];
+  let traceProgress=0;
   let traceMoves=0;
   let traceMisses=0;
   let traceLength=0;
-  let circleSamples=[];
+  let traceScore=0;
 
-  screen.innerHTML=`<div class="wave-shell-v138">
+  screen.innerHTML=`<div class="wave-shell-v140">
     <div class="game-head">
       <div><span class="kicker">${esc(p.name)}</span><h2>モブくん波動を極める</h2></div>
       <div class="game-badge">${playBadge(humanIndex)}</div>
     </div>
 
     <div class="v125-hud">
-      <div><span>STEP</span><b id="waveStep138">1 / 2</b></div>
-      <div><span>POWER</span><b id="wavePower138">---</b></div>
+      <div><span>STEP</span><b id="waveStep140">1 / 2</b></div>
+      <div><span>POWER</span><b id="wavePower140">---</b></div>
     </div>
 
-    <div id="waveHelp138" class="wave-help-v138">魂ゲージがMAXに近い瞬間を狙え</div>
+    <div id="waveHelp140" class="wave-help-v140">魂ゲージがMAXに近い瞬間を狙え</div>
 
-    <div id="waveStage138" class="wave-stage-v138">
-      <div id="waveSoulPanel138" class="wave-soul-panel-v138">
-        <div id="soulGauge138" class="soul-gauge-v138">
-          <div id="soulCore138" class="soul-core-v138"></div>
+    <div id="waveStage140" class="wave-stage-v140">
+      <div id="waveSoulPanel140" class="wave-soul-panel-v140">
+        <div id="soulGauge140" class="soul-gauge-v140">
+          <div id="soulCore140" class="soul-core-v140"></div>
           <span>MAX</span>
         </div>
       </div>
 
-      <div id="waveCirclePanel138" class="wave-circle-panel-v138" hidden>
-        <div class="circle-round-v138">TRACE <b id="circleRound138">1 / 3</b></div>
-        <svg id="circleSvg138" class="circle-svg-v138" viewBox="0 0 240 240">
-          <circle class="circle-guide-outer-v138" cx="120" cy="120" r="93"/>
-          <circle id="circleTarget138" class="circle-target-v138" cx="120" cy="120" r="84"/>
-          <circle class="circle-guide-inner-v138" cx="120" cy="120" r="75"/>
-          <polyline id="circleUser138" class="circle-user-v138" points=""/>
+      <div id="waveZPanel140" class="wave-z-panel-v140" hidden>
+        <div class="z-title-v140">TRACE Z</div>
+        <svg id="waveZSvg140" class="wave-z-svg-v140" viewBox="0 0 320 240">
+          <polyline class="wave-z-back-v140" points="48,48 272,48 48,192 272,192"/>
+          <polyline id="waveZTarget140" class="wave-z-target-v140" points="48,48 272,48 48,192 272,192"/>
+          <circle class="wave-z-start-v140" cx="48" cy="48" r="15"/>
+          <circle class="wave-z-goal-v140" cx="272" cy="192" r="15"/>
+          <polyline id="waveZUser140" class="wave-z-user-v140" points=""/>
         </svg>
-        <div class="circle-trace-label-v138">太いリングを1周なぞる</div>
-        <div id="circleProgress138" class="circle-progress-v138">0%</div>
+        <div id="waveZHint140" class="wave-z-hint-v140">STARTからZを一筆でなぞる</div>
+        <div id="waveZProgress140" class="wave-z-progress-v140">0%</div>
       </div>
 
-      <div id="waveCinema138" class="wave-cinema-v138" hidden></div>
+      <div id="waveCinema140" class="wave-cinema-v140" hidden></div>
     </div>
 
-    <div id="waveControl138" class="wave-control-v138">
-      <button id="soulTap138" type="button" class="primary" disabled>魂を込める！</button>
+    <div id="waveControl140" class="wave-control-v140">
+      <button id="soulTap140" type="button" class="primary" disabled>魂を込める！</button>
     </div>
   </div>`;
 
-  const stage=document.getElementById('waveStage138');
-  const help=document.getElementById('waveHelp138');
-  const stepEl=document.getElementById('waveStep138');
-  const powerEl=document.getElementById('wavePower138');
-  const soulPanel=document.getElementById('waveSoulPanel138');
-  const soulGauge=document.getElementById('soulGauge138');
-  const soulCore=document.getElementById('soulCore138');
-  const soulBtn=document.getElementById('soulTap138');
-  const circlePanel=document.getElementById('waveCirclePanel138');
-  const circleSvg=document.getElementById('circleSvg138');
-  const circleUser=document.getElementById('circleUser138');
-  const circleRoundEl=document.getElementById('circleRound138');
-  const circleProgress=document.getElementById('circleProgress138');
-  const cinema=document.getElementById('waveCinema138');
-  const control=document.getElementById('waveControl138');
+  const stage=document.getElementById('waveStage140');
+  const help=document.getElementById('waveHelp140');
+  const stepEl=document.getElementById('waveStep140');
+  const powerEl=document.getElementById('wavePower140');
+  const soulPanel=document.getElementById('waveSoulPanel140');
+  const soulGauge=document.getElementById('soulGauge140');
+  const soulCore=document.getElementById('soulCore140');
+  const soulBtn=document.getElementById('soulTap140');
+  const zPanel=document.getElementById('waveZPanel140');
+  const zSvg=document.getElementById('waveZSvg140');
+  const zUser=document.getElementById('waveZUser140');
+  const zHint=document.getElementById('waveZHint140');
+  const zProgress=document.getElementById('waveZProgress140');
+  const cinema=document.getElementById('waveCinema140');
+  const control=document.getElementById('waveControl140');
 
   function soulFrame(now){
     if(finished||phase!=='soul'||!isGameRunValid(runId))return;
+
     const cyc=((now-phaseStart)%1550)/1550;
     soulPct=cyc*100;
-    soulGauge.style.background=`conic-gradient(#ffe65b ${soulPct*3.6}deg,#314250 0deg)`;
-    soulCore.style.transform=`translate(-50%,-50%) scale(${1.04-soulPct/330})`;
+
+    soulGauge.style.background=
+      `conic-gradient(#ffe65b ${soulPct*3.6}deg,#314250 0deg)`;
+
+    soulCore.style.transform=
+      `translate(-50%,-50%) scale(${1.05-soulPct/345})`;
+
     raf=requestAnimationFrame(soulFrame);
   }
 
-  function buildCircleSamples(){
-    circleSamples=[];
-    for(let i=0;i<72;i++){
-      const a=Math.PI*2*i/72;
-      circleSamples.push({x:120+Math.cos(a)*84,y:120+Math.sin(a)*84});
+  function buildZSamples(){
+    const vertices=[
+      {x:48,y:48},
+      {x:272,y:48},
+      {x:48,y:192},
+      {x:272,y:192}
+    ];
+
+    traceSamples=[];
+
+    for(let seg=0;seg<3;seg++){
+      const a=vertices[seg];
+      const b=vertices[seg+1];
+      const count=seg===1?52:40;
+
+      for(let i=0;i<count;i++){
+        const t=i/count;
+        traceSamples.push({
+          x:a.x+(b.x-a.x)*t,
+          y:a.y+(b.y-a.y)*t
+        });
+      }
     }
+
+    traceSamples.push(vertices[3]);
   }
 
-  function localCircle(e){
-    const r=circleSvg.getBoundingClientRect();
+  function localZ(e){
+    const r=zSvg.getBoundingClientRect();
+
     return{
-      x:clamp((e.clientX-r.left)/r.width*240,0,240),
+      x:clamp((e.clientX-r.left)/r.width*320,0,320),
       y:clamp((e.clientY-r.top)/r.height*240,0,240)
     };
   }
 
-  function addTracePoint(q){
+  function resetZ(message='STARTからZを一筆でなぞる'){
+    tracePointer=null;
+    tracePoints=[];
+    traceProgress=0;
+    traceMoves=0;
+    traceMisses=0;
+    traceLength=0;
+    zUser.setAttribute('points','');
+    zProgress.textContent='0%';
+    zHint.textContent=message;
+    zPanel.classList.remove('retry-v140');
+  }
+
+  function nearestSample(q){
+    let best=-1;
+    let bestD=999;
+
+    for(let i=0;i<traceSamples.length;i++){
+      const s=traceSamples[i];
+      const d=Math.hypot(q.x-s.x,q.y-s.y);
+
+      if(d<bestD){
+        bestD=d;
+        best=i;
+      }
+    }
+
+    return {index:best,distance:bestD};
+  }
+
+  function traceMove(q){
     traceMoves++;
-    if(tracePointer&&tracePointer.points.length>1){
-      const prev=tracePointer.points[tracePointer.points.length-2];
+
+    const prev=tracePoints[tracePoints.length-1];
+    if(prev){
       traceLength+=Math.hypot(q.x-prev.x,q.y-prev.y);
     }
 
-    let nearest=-1,nearestDist=999;
-    for(let i=0;i<circleSamples.length;i++){
-      const sp=circleSamples[i];
-      const d=Math.hypot(q.x-sp.x,q.y-sp.y);
-      if(d<nearestDist){nearestDist=d;nearest=i;}
-    }
+    tracePoints.push(q);
 
-    if(nearestDist<=16){
-      traceHits.add(nearest);
-      traceHits.add((nearest+1)%circleSamples.length);
-      traceHits.add((nearest+71)%circleSamples.length);
+    const near=nearestSample(q);
+    const currentIndex=Math.floor(
+      traceProgress*(traceSamples.length-1)
+    );
+
+    if(
+      near.distance<=19 &&
+      near.index>=Math.max(0,currentIndex-5) &&
+      near.index<=Math.min(
+        traceSamples.length-1,
+        currentIndex+18
+      )
+    ){
+      traceProgress=Math.max(
+        traceProgress,
+        near.index/(traceSamples.length-1)
+      );
     }else{
       traceMisses++;
     }
 
-    const coverage=traceHits.size/circleSamples.length;
-    circleProgress.textContent=`${Math.round(coverage*100)}%`;
+    zProgress.textContent=
+      `${Math.round(traceProgress*100)}%`;
 
-    // 描いている途中では終了させない。
-    // 指を離した時だけ1周分を判定する。
+    zUser.setAttribute(
+      'points',
+      tracePoints
+        .map(pt=>`${pt.x.toFixed(1)},${pt.y.toFixed(1)}`)
+        .join(' ')
+    );
   }
 
-  function resetCircleRound(){
-    traceHits=new Set();
-    traceMoves=0;
-    traceMisses=0;
-    traceLength=0;
-    tracePointer=null;
-    circleUser.setAttribute('points','');
-    circleProgress.textContent='0%';
-    circleRoundEl.textContent=`${traceRound+1} / 3`;
-  }
+  zSvg.addEventListener('pointerdown',e=>{
+    if(phase!=='z'||finished)return;
 
-  async function finishTraceRound(){
-    if(phase!=='circle')return;
-    phase='circle-lock';
+    e.preventDefault();
 
-    const accuracy=traceMoves?clamp(100-traceMisses/traceMoves*95,0,100):0;
-    const coverage=traceHits.size/circleSamples.length*100;
-    const smooth=clamp(100-Math.abs(traceLength-528)*.12,55,100);
-    const score=clamp(Math.round(accuracy*.50+coverage*.35+smooth*.15),0,100);
+    const q=localZ(e);
 
-    traceScores.push(score);
-    circlePanel.classList.add('success-v138');
-    circleProgress.textContent=`${score} POINT`;
-    beep(score>=90?980:score>=75?790:610,100,.025);
-
-    await wait(480);
-    if(!isGameRunValid(runId))return;
-
-    circlePanel.classList.remove('success-v138');
-    traceRound++;
-
-    if(traceRound>=3){
-      prepareWave();
+    if(Math.hypot(q.x-48,q.y-48)>31){
+      zHint.textContent='左上のSTARTから始める！';
+      zPanel.classList.add('retry-v140');
+      beep(170,60,.014);
       return;
     }
 
-    phase='circle';
-    resetCircleRound();
-  }
+    resetZ('そのままZを一筆でなぞる');
+    tracePointer={id:e.pointerId};
+    traceMove(q);
 
-  circleSvg.addEventListener('pointerdown',e=>{
-    if(phase!=='circle'||finished)return;
-    e.preventDefault();
-
-    tracePointer={id:e.pointerId,points:[localCircle(e)]};
-    addTracePoint(tracePointer.points[0]);
-
-    try{circleSvg.setPointerCapture(e.pointerId)}catch(_){}
+    try{
+      zSvg.setPointerCapture(e.pointerId);
+    }catch(_){}
   },{passive:false});
 
-  circleSvg.addEventListener('pointermove',e=>{
-    if(phase!=='circle'||!tracePointer||e.pointerId!==tracePointer.id)return;
+  zSvg.addEventListener('pointermove',e=>{
+    if(
+      phase!=='z'||
+      !tracePointer||
+      e.pointerId!==tracePointer.id
+    )return;
+
     e.preventDefault();
 
-    const q=localCircle(e);
-    const prev=tracePointer.points[tracePointer.points.length-1];
-    if(Math.hypot(q.x-prev.x,q.y-prev.y)<2)return;
+    const q=localZ(e);
+    const prev=tracePoints[tracePoints.length-1];
 
-    tracePointer.points.push(q);
-    addTracePoint(q);
-    circleUser.setAttribute('points',tracePointer.points.map(pt=>`${pt.x.toFixed(1)},${pt.y.toFixed(1)}`).join(' '));
+    if(
+      prev &&
+      Math.hypot(q.x-prev.x,q.y-prev.y)<2
+    )return;
+
+    traceMove(q);
   },{passive:false});
 
-  const endCircle=e=>{
+  const finishZ=e=>{
     if(!tracePointer)return;
     if(e&&e.pointerId!==tracePointer.id)return;
+
     if(e)e.preventDefault();
 
-    const coverage=traceHits.size/circleSamples.length;
+    const last=
+      tracePoints[tracePoints.length-1]||
+      {x:0,y:0};
+
+    const endOk=
+      Math.hypot(last.x-272,last.y-192)<=34;
+
     const enough=
-      coverage>=.94 &&
-      traceMoves>=48 &&
-      traceLength>=485;
+      traceProgress>=.94 &&
+      traceMoves>=55 &&
+      traceLength>=500 &&
+      endOk;
 
     tracePointer=null;
 
-    if(enough){
-      finishTraceRound();
+    if(!enough){
+      zPanel.classList.add('retry-v140');
+      zHint.textContent='Zを最後まで一筆でなぞる！';
+      beep(180,75,.015);
+
+      setTimeout(()=>{
+        if(!isGameRunValid(runId)||phase!=='z')return;
+        resetZ();
+      },450);
+
       return;
     }
 
-    circleProgress.textContent='もう少し1周なぞる！';
-    circlePanel.classList.add('retry-v139');
-    beep(190,70,.014);
+    const accuracy=
+      traceMoves
+        ? clamp(
+            100-traceMisses/traceMoves*88,
+            0,100
+          )
+        : 0;
 
-    setTimeout(()=>{
-      if(!isGameRunValid(runId)||phase!=='circle')return;
-      circlePanel.classList.remove('retry-v139');
-      resetCircleRound();
-    },420);
-  };
-  circleSvg.addEventListener('pointerup',endCircle,{passive:false});
-  circleSvg.addEventListener('pointercancel',endCircle,{passive:false});
+    const lengthScore=
+      clamp(
+        100-Math.abs(traceLength-632)*.10,
+        60,100
+      );
 
-  soulBtn.addEventListener('pointerdown',e=>{
-    if(phase!=='soul'||finished)return;
-    e.preventDefault();
+    traceScore=clamp(
+      Math.round(
+        accuracy*.72+
+        lengthScore*.18+
+        traceProgress*100*.10
+      ),
+      0,100
+    );
 
-    phase='soul-lock';
-    if(raf)cancelAnimationFrame(raf);
+    phase='z-lock';
+    zProgress.textContent=`${traceScore} POINT`;
+    zHint.textContent='Z TRACE COMPLETE!';
+    zPanel.classList.add('success-v140');
 
-    soulScore=clamp(Math.round(100-Math.abs(100-soulPct)*1.08),0,100);
-    powerEl.textContent=`${soulScore}%`;
-    soulBtn.disabled=true;
-    soulGauge.classList.add('locked-v138');
-
-    beep(soulScore>=95?1080:soulScore>=80?850:570,120,.035);
+    beep(
+      traceScore>=90?1030:780,
+      120,.03
+    );
 
     setTimeout(()=>{
       if(!isGameRunValid(runId)||finished)return;
+      prepareWave();
+    },550);
+  };
+
+  zSvg.addEventListener(
+    'pointerup',
+    finishZ,
+    {passive:false}
+  );
+
+  zSvg.addEventListener(
+    'pointercancel',
+    finishZ,
+    {passive:false}
+  );
+
+  soulBtn.addEventListener('pointerdown',e=>{
+    if(phase!=='soul'||finished)return;
+
+    e.preventDefault();
+
+    phase='soul-lock';
+
+    if(raf)cancelAnimationFrame(raf);
+
+    soulScore=clamp(
+      Math.round(
+        100-Math.abs(100-soulPct)*1.08
+      ),
+      0,100
+    );
+
+    powerEl.textContent=`${soulScore}%`;
+    soulBtn.disabled=true;
+    soulGauge.classList.add('locked-v140');
+
+    beep(
+      soulScore>=95?1080:
+      soulScore>=80?850:570,
+      120,.035
+    );
+
+    setTimeout(()=>{
+      if(!isGameRunValid(runId)||finished)return;
+
       soulPanel.hidden=true;
-      circlePanel.hidden=false;
+      zPanel.hidden=false;
+
       stepEl.textContent='2 / 2';
-      help.textContent='太い円型ゲージを3回なぞれ';
+      help.textContent='Z型ゲージを1回なぞれ';
       control.innerHTML='';
-      buildCircleSamples();
-      traceRound=0;
-      phase='circle';
-      resetCircleRound();
+
+      buildZSamples();
+      phase='z';
+      resetZ();
     },430);
   },{passive:false});
 
   function prepareWave(){
     phase='ready';
-    const traceAvg=traceScores.reduce((a,b)=>a+b,0)/Math.max(1,traceScores.length);
-    const finalPower=clamp(Math.round(soulScore*.55+traceAvg*.45),0,100);
+
+    const finalPower=clamp(
+      Math.round(
+        soulScore*.55+
+        traceScore*.45
+      ),
+      0,100
+    );
+
     powerEl.textContent=`${finalPower}%`;
     help.textContent='波動を放て！';
 
-    circlePanel.hidden=true;
+    zPanel.hidden=true;
     cinema.hidden=false;
 
-    const playerCore=Math.round(58-finalPower*.20);
     const enemyPower=randi(48,66);
-    const enemyCore=Math.round(57-enemyPower*.16);
+    const pCore=Math.round(58-finalPower*.16);
+    const eCore=Math.round(57-enemyPower*.12);
+
+    const pBeamH=
+      Math.round(34+finalPower*.38);
+
+    const eBeamH=
+      Math.round(38+enemyPower*.34);
 
     cinema.innerHTML=`
-      <div class="wave-duel-bg-v138"></div>
-      <div class="wave-duel-ground-v138"></div>
-      <div id="wavePlayer138" class="wave-duel-mob-v138 player-v138" style="background-image:url('icon/01.png')"></div>
-      <div id="waveEnemy138" class="wave-duel-mob-v138 enemy-v138" style="background-image:url('icon/10.png')"></div>
-      <div id="wavePlayerOrb138" class="wave-duel-orb-v138 player-v138" style="--core:${playerCore}px"><i></i><b></b></div>
-      <div id="waveEnemyOrb138" class="wave-duel-orb-v138 enemy-v138" style="--core:${enemyCore}px"><i></i><b></b></div>
+      <div class="wave-duel-bg-v140"></div>
+      <div class="wave-duel-ground-v140"></div>
 
-      <div id="wavePlayerBeam138" class="wave-duel-beam-v138 player-v138"></div>
-      <div id="waveEnemyBeam138" class="wave-duel-beam-v138 enemy-v138"></div>
-      <div id="waveClash138" class="wave-duel-clash-v138"></div>
-      <div id="waveDuelFx138" class="wave-duel-fx-v138"></div>
-      <div id="waveCineText138" class="wave-cine-text-v138"></div>
+      <div id="wavePlayer140" class="wave-duel-mob-v140 player-v140" style="background-image:url('icon/01.png')"></div>
+      <div id="waveEnemy140" class="wave-duel-mob-v140 enemy-v140" style="background-image:url('icon/10.png')"></div>
+
+      <div id="wavePlayerSource140" class="wave-source-v140 player-v140">
+        <div id="wavePlayerOrb140" class="wave-orb-v140 player-v140" style="--core:${pCore}px;--energy:${finalPower}">
+          <i></i><b></b><span></span>
+        </div>
+      </div>
+
+      <div id="waveEnemySource140" class="wave-source-v140 enemy-v140">
+        <div id="waveEnemyOrb140" class="wave-orb-v140 enemy-v140" style="--core:${eCore}px;--energy:${enemyPower}">
+          <i></i><b></b><span></span>
+        </div>
+      </div>
+
+      <div id="wavePlayerBeam140" class="wave-beam-v140 player-v140" style="--beamH:${pBeamH}px"></div>
+      <div id="waveEnemyBeam140" class="wave-beam-v140 enemy-v140" style="--beamH:${eBeamH}px"></div>
+      <div id="waveClash140" class="wave-clash-v140"></div>
+      <div id="waveFx140" class="wave-fx-v140"></div>
+      <div id="waveText140" class="wave-text-v140"></div>
     `;
 
-    if(finalPower>=78)document.getElementById('wavePlayerOrb138').classList.add('strong-v138');
-    if(finalPower>=94)document.getElementById('wavePlayerOrb138').classList.add('max-v138');
-    document.getElementById('waveEnemyOrb138').classList.add('enemy-strong-v138');
+    const pOrb=
+      document.getElementById('wavePlayerOrb140');
 
-    control.innerHTML=`<button id="waveFire138" class="primary wave-fire-btn-v138" type="button">モブくん波動パワー！</button>`;
-    document.getElementById('waveFire138').addEventListener('pointerdown',e=>{
-      e.preventDefault();
-      fireWaveDuel(finalPower,enemyPower);
-    },{passive:false});
-  }
-
-  async function fireWaveDuel(finalPower,enemyPower){
-    if(phase!=='ready'||finished)return;
-    phase='duel-charge';
-
-    const btn=document.getElementById('waveFire138');
-    const player=document.getElementById('wavePlayer138');
-    const enemy=document.getElementById('waveEnemy138');
-    const pOrb=document.getElementById('wavePlayerOrb138');
-    const eOrb=document.getElementById('waveEnemyOrb138');
-    const pBeam=document.getElementById('wavePlayerBeam138');
-    const eBeam=document.getElementById('waveEnemyBeam138');
-    const clash=document.getElementById('waveClash138');
-    const fx=document.getElementById('waveDuelFx138');
-    const cine=document.getElementById('waveCineText138');
-
-    btn.disabled=true;
-    cine.textContent='さらにエネルギーを凝縮…！';
-    cine.classList.add('show-v138');
-    pOrb.classList.add('deep-charge-v138');
-    eOrb.classList.add('deep-charge-v138');
-    player.classList.add('charging-v138');
-    enemy.classList.add('charging-v138');
-
-    for(let i=0;i<6;i++){
-      if(!isGameRunValid(runId))return;
-      stage.classList.toggle('charge-rumble-v138',i%2===0);
-      beep((i%2?320:250)+finalPower*2,70,.02);
-      await wait(220);
+    if(finalPower>=78){
+      pOrb.classList.add('strong-v140');
     }
 
-    stage.classList.remove('charge-rumble-v138');
-    cine.textContent='波動激突！！';
-    player.classList.remove('charging-v138');
-    enemy.classList.remove('charging-v138');
+    if(finalPower>=94){
+      pOrb.classList.add('max-v140');
+    }
 
-    pBeam.classList.add('fire-v138');
-    eBeam.classList.add('fire-v138');
-    clash.classList.add('active-v138');
-    phase='duel';
+    control.innerHTML=`
+      <button id="waveFire140" class="primary wave-fire-btn-v140" type="button">
+        モブくん波動パワー！
+      </button>
+    `;
 
-    const weakLose=finalPower<24;
-    const clashDuration=randi(3300,4900);
-    const clashStart=performance.now();
+    document
+      .getElementById('waveFire140')
+      .addEventListener('pointerdown',e=>{
+        e.preventDefault();
+        fireWave(finalPower,enemyPower);
+      },{passive:false});
+  }
 
-    while(performance.now()-clashStart<clashDuration){
+  async function fireWave(finalPower,enemyPower){
+    if(phase!=='ready'||finished)return;
+
+    phase='charge';
+
+    const btn=
+      document.getElementById('waveFire140');
+
+    const player=
+      document.getElementById('wavePlayer140');
+
+    const enemy=
+      document.getElementById('waveEnemy140');
+
+    const pSource=
+      document.getElementById('wavePlayerSource140');
+
+    const eSource=
+      document.getElementById('waveEnemySource140');
+
+    const pOrb=
+      document.getElementById('wavePlayerOrb140');
+
+    const eOrb=
+      document.getElementById('waveEnemyOrb140');
+
+    const pBeam=
+      document.getElementById('wavePlayerBeam140');
+
+    const eBeam=
+      document.getElementById('waveEnemyBeam140');
+
+    const clash=
+      document.getElementById('waveClash140');
+
+    const fx=
+      document.getElementById('waveFx140');
+
+    const text=
+      document.getElementById('waveText140');
+
+    btn.disabled=true;
+
+    text.textContent='エネルギー凝縮…！';
+    text.classList.add('show-v140');
+
+    player.classList.add('charge-v140');
+    enemy.classList.add('charge-v140');
+    pSource.classList.add('charge-v140');
+    eSource.classList.add('charge-v140');
+    pOrb.classList.add('charge-v140');
+    eOrb.classList.add('charge-v140');
+
+    for(let i=0;i<7;i++){
       if(!isGameRunValid(runId))return;
 
-      const t=(performance.now()-clashStart)/clashDuration;
-      const oscillation=Math.sin(t*Math.PI*7)*5+Math.sin(t*Math.PI*13)*2.5;
-      const trend=weakLose?-23*t:Math.min(28,(finalPower-enemyPower)*.16+19*t);
-      const balance=clamp(50+trend+oscillation,25,75);
+      stage.classList.toggle(
+        'charge-shake-v140',
+        i%2===0
+      );
+
+      beep(
+        (i%2?300:245)+finalPower*2,
+        65,.018
+      );
+
+      await wait(210);
+    }
+
+    stage.classList.remove('charge-shake-v140');
+
+    player.classList.remove('charge-v140');
+    enemy.classList.remove('charge-v140');
+    pSource.classList.remove('charge-v140');
+    eSource.classList.remove('charge-v140');
+
+    text.textContent='波動激突！！';
+
+    pBeam.classList.add('fire-v140');
+    eBeam.classList.add('fire-v140');
+    clash.classList.add('active-v140');
+
+    const weakLose=finalPower<24;
+    const duration=randi(3350,4850);
+    const t0=performance.now();
+
+    while(performance.now()-t0<duration){
+      if(!isGameRunValid(runId))return;
+
+      const t=
+        (performance.now()-t0)/duration;
+
+      const wobble=
+        Math.sin(t*Math.PI*8)*5+
+        Math.sin(t*Math.PI*15)*2;
+
+      const trend=
+        weakLose
+          ? -24*t
+          : Math.min(
+              27,
+              (finalPower-enemyPower)*.15+
+              20*t
+            );
+
+      const balance=
+        clamp(
+          50+trend+wobble,
+          26,74
+        );
 
       clash.style.left=`${balance}%`;
 
-      const pShift=clamp((balance-50)*1.15,-26,31);
-      const eShift=clamp((balance-50)*1.05,-31,26);
-      player.style.translate=`${pShift}px 0`;
-      enemy.style.translate=`${eShift}px 0`;
+      const pShift=
+        clamp((balance-50)*1.25,-27,32);
 
-      pBeam.style.translate=`0 ${rand(-4,4)}px`;
-      eBeam.style.translate=`0 ${rand(-4,4)}px`;
-      pOrb.style.translate=`${rand(-2,2)}px ${rand(-3,3)}px`;
-      eOrb.style.translate=`${rand(-3,3)}px ${rand(-3,3)}px`;
+      const eShift=
+        clamp((balance-50)*1.15,-32,27);
+
+      player.style.translate=
+        `${pShift}px ${Math.sin(t*Math.PI*12)*2}px`;
+
+      enemy.style.translate=
+        `${eShift}px ${Math.cos(t*Math.PI*11)*2}px`;
+
+      pSource.style.translate=
+        `${pShift+rand(-2,2)}px ${rand(-3,3)}px`;
+
+      eSource.style.translate=
+        `${eShift+rand(-2,2)}px ${rand(-3,3)}px`;
+
+      pBeam.style.width=
+        `${Math.max(4,balance-29)}%`;
+
+      eBeam.style.width=
+        `${Math.max(4,71-balance)}%`;
+
+      pBeam.style.translate=
+        `0 ${rand(-4,4)}px`;
+
+      eBeam.style.translate=
+        `0 ${rand(-4,4)}px`;
 
       fx.innerHTML='';
-      const sparkCount=finalPower>=90?10:finalPower>=70?7:5;
-      for(let i=0;i<sparkCount;i++){
+
+      const sparks=
+        finalPower>=90?11:
+        finalPower>=70?8:
+        6;
+
+      for(let i=0;i<sparks;i++){
         const sp=document.createElement('i');
-        sp.style.setProperty('--sx',`${rand(-70,70)}px`);
-        sp.style.setProperty('--sy',`${rand(-58,58)}px`);
-        sp.style.setProperty('--r',`${randi(0,180)}deg`);
+
+        sp.style.setProperty(
+          '--sx',
+          `${rand(-72,72)}px`
+        );
+
+        sp.style.setProperty(
+          '--sy',
+          `${rand(-62,62)}px`
+        );
+
+        sp.style.setProperty(
+          '--rot',
+          `${randi(-80,80)}deg`
+        );
+
         fx.appendChild(sp);
       }
 
-      stage.classList.toggle('power-shake-v138',finalPower>=70||Math.random()<.5);
-      beep(145+randi(0,80),22,.004);
-      await wait(150);
+      stage.classList.toggle(
+        'fight-shake-v140',
+        Math.random()<.72
+      );
+
+      beep(
+        145+randi(0,85),
+        20,.0035
+      );
+
+      await wait(145);
     }
 
-    stage.classList.remove('power-shake-v138');
-    player.style.translate='';
-    enemy.style.translate='';
-    pBeam.style.translate='';
-    eBeam.style.translate='';
-    pOrb.style.translate='';
-    eOrb.style.translate='';
+    stage.classList.remove('fight-shake-v140');
 
     if(weakLose){
-      pBeam.classList.add('burst-v138');
-      pOrb.classList.add('burst-v138');
-      player.classList.add('blown-v138');
-      cine.textContent='押し負けた！！';
-      cine.classList.add('lose-v138');
+      pBeam.classList.add('burst-v140');
+      pOrb.classList.add('burst-v140');
+      player.classList.add('blown-v140');
+
+      text.textContent='押し負けた！！';
+      text.classList.add('lose-v140');
+
       beep(105,280,.065);
     }else{
-      eBeam.classList.add('burst-v138');
-      eOrb.classList.add('burst-v138');
-      enemy.classList.add('blown-v138');
-      cine.textContent=finalPower>=90?'圧倒的波動！！':'波動勝負に勝利！！';
-      cine.classList.add('win-v138');
-      stage.classList.add('finish-impact-v138');
-      beep(finalPower>=90?1180:940,270,.065);
+      eBeam.classList.add('burst-v140');
+      eOrb.classList.add('burst-v140');
+      enemy.classList.add('blown-v140');
+
+      text.textContent=
+        finalPower>=90
+          ? '圧倒的波動！！'
+          : '波動勝負に勝利！！';
+
+      text.classList.add('win-v140');
+      stage.classList.add('finish-impact-v140');
+
+      beep(
+        finalPower>=90?1180:940,
+        275,.065
+      );
     }
 
     await wait(1400);
+
     if(!isGameRunValid(runId))return;
 
     finished=true;
     state.records.waveMaster[p.id]=finalPower;
-    recordScreen(85,p,humanIndex,`${finalPower}<small>pt</small>`,weakLose?'波動勝負 敗北':'波動勝負 勝利');
+
+    recordScreen(
+      85,p,humanIndex,
+      `${finalPower}<small>pt</small>`,
+      weakLose
+        ? '波動勝負 敗北'
+        : '波動勝負 勝利'
+    );
   }
 
   soulBtn.disabled=true;
-  if(!(await countdown('SOUL GAUGE',runId,{transparent:true})))return;
+
+  if(
+    !(await countdown(
+      'SOUL GAUGE',
+      runId,
+      {transparent:true}
+    ))
+  )return;
 
   if(!isGameRunValid(runId))return;
+
   phase='soul';
   soulBtn.disabled=false;
   phaseStart=performance.now();
+
   raf=requestAnimationFrame(soulFrame);
 }
-
 
 
 async function startBattleRoyaleMob(p,humanIndex,runId){
@@ -22471,8 +22799,8 @@ async function startBattleRoyaleMob(p,humanIndex,runId){
     <div class="br-hud-v138">
       <div><span>TIME</span><b id="brTime138">0.00</b></div>
       <div><span>AMMO</span><b id="brAmmo138">∞</b></div>
-      <div><span>ALLY</span><b id="brAlly138">60 HP</b></div>
-      <div><span>ENEMY</span><b id="brEnemy138">60 HP</b></div>
+      <div><span>ALLY</span><b id="brAlly138">75 HP</b></div>
+      <div><span>ENEMY</span><b id="brEnemy138">45 HP</b></div>
     </div>
     <div class="br-help-v138">中央ライン越境禁止 / 敵3人を全滅させろ</div>
     <div id="brStage138" class="br-stage-v138">
@@ -22512,7 +22840,8 @@ async function startBattleRoyaleMob(p,humanIndex,runId){
     el.style.backgroundImage=`url('${o.img}')`;
     el.innerHTML=`<span>${o.label}</span><div class="br-hpbar-v138"><i></i></div>`;
     actorLayer.appendChild(el);
-    const a={...o,y:groundY-38,vx:0,vy:0,w:30,h:38,hp:20,maxHp:20,alive:true,onGround:true,nextShot:0,nextJump:0,nextDecision:0,targetX:o.x,targetY:groundY-38,portalLock:0,voidUntil:0,voidReadyAt:0,stunUntil:0,stunReadyAt:0,el,hpEl:el.querySelector('i')};
+    const maxHp=o.team==='ally'?25:15;
+    const a={...o,y:groundY-38,vx:0,vy:0,w:30,h:38,hp:maxHp,maxHp,alive:true,onGround:true,nextShot:0,nextJump:0,nextDecision:0,targetX:o.x,targetY:groundY-38,portalLock:0,voidUntil:0,voidReadyAt:0,voidUses:0,stunUntil:0,stunReadyAt:0,el,hpEl:el.querySelector('i')};
     el.style.left=`${a.x}px`;el.style.top=`${a.y}px`;actors.push(a);return a;
   }
 
@@ -22536,7 +22865,7 @@ async function startBattleRoyaleMob(p,humanIndex,runId){
   }
   function pop(x,y,text,cls=''){const e=document.createElement('div');e.className=`br-hit-fx-v138 ${cls}`;e.style.left=`${x}px`;e.style.top=`${y}px`;e.textContent=text;fx.appendChild(e);setTimeout(()=>e.remove(),550)}
   function eliminate(a){if(!a.alive)return;a.alive=false;a.hp=0;updateHp(a);a.el.classList.add('down-v138');pop(a.x+a.w/2,a.y,'DOWN');beep(a.team==='enemy'?680:120,90,.025);if(enemies().length===0)finishWin();else if(allies().length===0)finishLose()}
-  function damage(a,n){if(!a.alive||performance.now()<a.voidUntil)return;a.hp=clamp(a.hp-n,0,20);updateHp(a);a.el.classList.remove('hit-v138');void a.el.offsetWidth;a.el.classList.add('hit-v138');pop(a.x+a.w/2,a.y+8,`-${n}`);if(a.hp<=0)eliminate(a)}
+  function damage(a,n){if(!a.alive||performance.now()<a.voidUntil)return;a.hp=clamp(a.hp-n,0,a.maxHp);updateHp(a);a.el.classList.remove('hit-v138');void a.el.offsetWidth;a.el.classList.add('hit-v138');pop(a.x+a.w/2,a.y+8,`-${n}`);if(a.hp<=0)eliminate(a)}
   function nearestTarget(a){const pool=a.team==='ally'?enemies():allies();return pool.slice().sort((x,y)=>Math.hypot(x.x-a.x,x.y-a.y)-Math.hypot(y.x-a.x,y.y-a.y))[0]||null}
 
   function fireBullet(a,manual=false){
@@ -22553,9 +22882,17 @@ async function startBattleRoyaleMob(p,humanIndex,runId){
     (type==='stun'?stunGrenades:grenades).push({owner,team:owner.team,type,x:owner.x+owner.w/2,y:owner.y+4,vx:dir*220,vy:-245,fuse:performance.now()+1050,dead:false,el});
   }
   function playerGrenade(){const now=performance.now();if(!active||finished||now<grenadeReadyAt||!player.alive)return;grenadeReadyAt=now+5000;spawnGrenade(player);updateHud(now)}
-  function teamHeal(){const now=performance.now();if(!active||finished||now<healReadyAt||!player.alive)return;healReadyAt=now+3000;for(const a of allies()){a.hp=clamp(a.hp+4,0,20);updateHp(a);a.el.classList.add('heal-v138');setTimeout(()=>a.el.classList.remove('heal-v138'),300)}msg.textContent='TEAM HEAL +4';beep(870,100,.025);updateHud(now)}
-  function jump(a){const now=performance.now();if(!a.alive||!a.onGround||now<a.stunUntil)return;a.vy=-335;a.onGround=false;a.el.classList.add('jump-v138');setTimeout(()=>a.el.classList.remove('jump-v138'),160)}
-  function activateVoid(a,now){if(a.role!=='void'||now<a.voidReadyAt||!a.alive)return;a.voidUntil=now+2000;a.voidReadyAt=now+3000;a.el.classList.add('void-v138');pop(a.x,a.y,'VOID');setTimeout(()=>a.el.classList.remove('void-v138'),2000)}
+  function teamHeal(){const now=performance.now();if(!active||finished||now<healReadyAt||!player.alive)return;healReadyAt=now+3000;for(const a of allies()){a.hp=clamp(a.hp+4,0,a.maxHp);updateHp(a);a.el.classList.add('heal-v138');setTimeout(()=>a.el.classList.remove('heal-v138'),300)}msg.textContent='TEAM HEAL +4';beep(870,100,.025);updateHud(now)}
+  function jump(a){const now=performance.now();if(!a.alive||!a.onGround||now<a.stunUntil)return;a.vy=-395;a.onGround=false;a.el.classList.add('jump-v138');setTimeout(()=>a.el.classList.remove('jump-v138'),160)}
+  function activateVoid(a,now){
+    if(a.role!=='void'||now<a.voidReadyAt||!a.alive||a.voidUses>=2)return;
+    a.voidUses++;
+    a.voidUntil=now+2000;
+    a.voidReadyAt=now+3000;
+    a.el.classList.add('void-v138');
+    pop(a.x,a.y,`VOID ${a.voidUses}/2`);
+    setTimeout(()=>a.el.classList.remove('void-v138'),2000);
+  }
 
   function renderPortals(pair,team){pair.forEach(q=>{const el=document.createElement('div');el.className=`br-portal-v138 ${team}`;el.dataset.portalTeam=team;el.style.left=`${q.x}px`;el.style.top=`${q.y}px`;abilityLayer.appendChild(el)})}
   function activateAllyPortal(now){if(allyPortalDone||!allyA.alive)return;allyPortalDone=true;const pf=allyPlatforms[randi(0,1)];allyPortal=[{x:centerX-30,y:groundY-26},{x:pf.x+pf.w/2,y:pf.y-27}];allyPortalUntil=now+3000;renderPortals(allyPortal,'ally');pop(allyA.x,allyA.y,'PORTAL')}
@@ -22589,17 +22926,17 @@ async function startBattleRoyaleMob(p,humanIndex,runId){
 
   function aiActor(a,now){
     if(!a.alive||a.player||now<a.stunUntil)return;const target=nearestTarget(a);if(!target)return;
-    if(a.role==='void'&&now>=a.voidReadyAt&&(a.hp<=14||Math.random()<.016))activateVoid(a,now);
+    if(a.role==='void'&&a.voidUses<2&&now>=a.voidReadyAt&&(a.hp<=11||Math.random()<.018))activateVoid(a,now);
     if(a.role==='portal'&&a.team==='enemy'&&!enemyPortal&&now>=enemyPortalReadyAt&&(Math.abs(target.x-a.x)>W*.20||a.hp<=13||Math.random()<.018))activateEnemyPortal(now);
     if(a.role==='stun'&&now>=a.stunReadyAt&&Math.abs(target.x-a.x)<W*.62){a.stunReadyAt=now+4300;spawnGrenade(a,'stun')}
     if(now>=a.nextDecision){
-      a.nextDecision=now+rand(180,420);const ps=a.team==='ally'?allyPlatforms:enemyPlatforms;
+      a.nextDecision=now+rand(140,330);const ps=a.team==='ally'?allyPlatforms:enemyPlatforms;
       if(Math.random()<.50){const pf=ps[randi(0,1)];a.targetX=pf.x+pf.w/2-a.w/2;a.targetY=pf.y-a.h}
       else{const min=a.team==='ally'?8:centerX+12,max=a.team==='ally'?centerX-a.w-12:W-a.w-8;a.targetX=rand(min,max);a.targetY=groundY-a.h}
     }
-    const dx=a.targetX-a.x;a.vx=Math.abs(dx)>7?Math.sign(dx)*rand(84,118):0;
-    if(a.onGround&&now>=a.nextJump&&(Math.abs(a.targetY-a.y)>26||Math.random()<.045)){jump(a);a.nextJump=now+rand(430,850)}
-    if(now>=a.nextShot){fireBullet(a,false);a.nextShot=now+rand(a.team==='enemy'?390:450,a.team==='enemy'?700:800)}
+    const dx=a.targetX-a.x;a.vx=Math.abs(dx)>7?Math.sign(dx)*rand(96,132):0;
+    if(a.onGround&&now>=a.nextJump&&(Math.abs(a.targetY-a.y)>26||Math.random()<.045)){jump(a);a.nextJump=now+rand(330,680)}
+    if(now>=a.nextShot){fireBullet(a,false);a.nextShot=now+rand(a.team==='enemy'?330:400,a.team==='enemy'?610:720)}
   }
 
   function explodeGrenade(g){
@@ -22848,6 +23185,1098 @@ async function startMonsterBoxMob(p,humanIndex,runId){
     mob.style.top=`${y}px`;mob.classList.toggle('air-v138',jumping||launched);
     raf=requestAnimationFrame(frame);
   }
+  raf=requestAnimationFrame(frame);
+}
+
+
+
+// =========================================================
+// V10.40 GAME 90 — モブくんエイリアンと戦う
+// =========================================================
+async function startAlienBattleMob(p,humanIndex,runId){
+  gameFit();
+
+  let active=false;
+  let finished=false;
+  let raf=null;
+  let last=0;
+  let start=0;
+  let nextBossAttack=0;
+  let bossAttackLock=false;
+  let chargeStart=0;
+  let charging=false;
+
+  const input={left:false,right:false};
+  const shots=[];
+  const fireballs=[];
+  const kids=[];
+  const team=[];
+
+  screen.innerHTML=`<div class="alien-shell-v140">
+    <div class="game-head">
+      <div><span class="kicker">${esc(p.name)}</span><h2>モブくんエイリアンと戦う</h2></div>
+      <div class="game-badge">${playBadge(humanIndex)}</div>
+    </div>
+
+    <div class="alien-hud-v140">
+      <div><span>ALIEN HP</span><b id="alienHp140">50 / 50</b></div>
+      <div><span>YOU HP</span><b id="alienYouHp140">20 / 20</b></div>
+      <div><span>CHARGE</span><b id="alienCharge140">0.0s</b></div>
+    </div>
+
+    <div id="alienStage140" class="alien-stage-v140">
+      <div class="alien-sky-v140"><i></i><i></i><i></i></div>
+      <div class="alien-ground-v140"></div>
+
+      <div id="alienTeamLayer140" class="alien-layer-v140"></div>
+      <div id="alienShotLayer140" class="alien-layer-v140"></div>
+      <div id="alienEnemyLayer140" class="alien-layer-v140"></div>
+      <div id="alienFx140" class="alien-layer-v140"></div>
+
+      <div id="alienBoss140" class="alien-boss-v140">
+        <div class="alien-head-v140">
+          <i class="eye e1"></i><i class="eye e2"></i>
+          <b class="mouth"></b>
+        </div>
+        <div class="alien-body-v140"></div>
+        <div id="alienArm140" class="alien-arm-v140"></div>
+        <div class="alien-boss-hp-v140"><i id="alienBossHpBar140"></i></div>
+      </div>
+
+      <div id="alienWave140" class="alien-full-wave-v140"></div>
+      <div id="alienMessage140" class="alien-message-v140"></div>
+    </div>
+
+    <div class="alien-controls-v140">
+      <button id="alienLeft140">←</button>
+      <button id="alienJump140">JUMP</button>
+      <button id="alienShoot140" class="shoot">砲撃</button>
+      <button id="alienRight140">→</button>
+    </div>
+  </div>`;
+
+  const stage=document.getElementById('alienStage140');
+  const teamLayer=document.getElementById('alienTeamLayer140');
+  const shotLayer=document.getElementById('alienShotLayer140');
+  const enemyLayer=document.getElementById('alienEnemyLayer140');
+  const fx=document.getElementById('alienFx140');
+  const bossEl=document.getElementById('alienBoss140');
+  const armEl=document.getElementById('alienArm140');
+  const bossBar=document.getElementById('alienBossHpBar140');
+  const waveEl=document.getElementById('alienWave140');
+  const msg=document.getElementById('alienMessage140');
+  const bossHpEl=document.getElementById('alienHp140');
+  const youHpEl=document.getElementById('alienYouHp140');
+  const chargeEl=document.getElementById('alienCharge140');
+  const leftBtn=document.getElementById('alienLeft140');
+  const rightBtn=document.getElementById('alienRight140');
+  const jumpBtn=document.getElementById('alienJump140');
+  const shootBtn=document.getElementById('alienShoot140');
+
+  const W=Math.max(300,stage.clientWidth||340);
+  const H=Math.max(300,stage.clientHeight||370);
+  const groundY=H-48;
+
+  const boss={
+    hp:50,
+    maxHp:50,
+    x:W-118,
+    y:groundY-176,
+    w:112,
+    h:176,
+    alive:true
+  };
+
+  bossEl.style.left=`${boss.x}px`;
+  bossEl.style.top=`${boss.y}px`;
+
+  function makeRobot(id,x,img,player=false){
+    const el=document.createElement('div');
+    el.className=`alien-robot-v140 ${player?'player-v140':'ally-v140'}`;
+    el.innerHTML=`
+      <div class="alien-robot-pilot-v140" style="background-image:url('${img}')"></div>
+      <div class="alien-robot-body-v140"><i></i><b></b></div>
+      <div class="alien-robot-hp-v140"><span></span></div>
+    `;
+    teamLayer.appendChild(el);
+
+    const r={
+      id,
+      x,
+      y:groundY-52,
+      vx:0,
+      vy:0,
+      w:50,
+      h:52,
+      hp:20,
+      maxHp:20,
+      alive:true,
+      player,
+      onGround:true,
+      stunUntil:0,
+      nextShot:0,
+      nextJump:0,
+      el,
+      hpEl:el.querySelector('.alien-robot-hp-v140 span')
+    };
+
+    el.style.left=`${r.x}px`;
+    el.style.top=`${r.y}px`;
+
+    team.push(r);
+    return r;
+  }
+
+  const player=makeRobot('you',W*.08,'icon/01.png',true);
+  const allyA=makeRobot('allyA',W*.23,'icon/02.png');
+  const allyB=makeRobot('allyB',W*.36,'icon/03.png');
+
+  function updateRobotHp(r){
+    r.hpEl.style.width=`${clamp(r.hp/r.maxHp*100,0,100)}%`;
+
+    if(r.player){
+      youHpEl.textContent=`${Math.max(0,r.hp)} / 20`;
+    }
+  }
+
+  team.forEach(updateRobotHp);
+
+  function pop(x,y,text,cls=''){
+    const e=document.createElement('div');
+    e.className=`alien-pop-v140 ${cls}`;
+    e.style.left=`${x}px`;
+    e.style.top=`${y}px`;
+    e.textContent=text;
+    fx.appendChild(e);
+    setTimeout(()=>e.remove(),650);
+  }
+
+  function damageRobot(r,n,{stun=0,knock=0,up=0}={}){
+    if(!r.alive)return;
+
+    r.hp=clamp(r.hp-n,0,r.maxHp);
+    updateRobotHp(r);
+
+    if(stun>0){
+      r.stunUntil=Math.max(
+        r.stunUntil,
+        performance.now()+stun
+      );
+
+      r.el.classList.add('stunned-v140');
+
+      setTimeout(()=>{
+        r.el.classList.remove('stunned-v140');
+      },stun);
+    }
+
+    if(knock){
+      r.vx=-Math.abs(knock);
+      r.vy=-Math.abs(up||110);
+      r.onGround=false;
+    }
+
+    r.el.classList.remove('hit-v140');
+    void r.el.offsetWidth;
+    r.el.classList.add('hit-v140');
+
+    pop(r.x+r.w/2,r.y,`-${n}`);
+
+    if(r.hp<=0){
+      r.alive=false;
+      r.el.classList.add('down-v140');
+
+      if(r.player){
+        finishLose();
+      }
+    }
+  }
+
+  function bossDamage(n){
+    if(!boss.alive||finished)return;
+
+    boss.hp=clamp(
+      boss.hp-n,
+      0,boss.maxHp
+    );
+
+    bossHpEl.textContent=`${boss.hp} / 50`;
+    bossBar.style.width=
+      `${boss.hp/boss.maxHp*100}%`;
+
+    bossEl.classList.remove('hit-v140');
+    void bossEl.offsetWidth;
+    bossEl.classList.add('hit-v140');
+
+    pop(
+      boss.x+25,
+      boss.y+35,
+      `-${n}`,
+      'boss-hit-v140'
+    );
+
+    beep(520+n*35,50,.013);
+
+    if(boss.hp<=0){
+      boss.alive=false;
+      finishWin();
+    }
+  }
+
+  function nearestKid(x,y){
+    return kids
+      .filter(k=>k.alive)
+      .sort(
+        (a,b)=>
+          Math.hypot(a.x-x,a.y-y)-
+          Math.hypot(b.x-x,b.y-y)
+      )[0]||null;
+  }
+
+  function fireShot(owner,chargeMs=0,ally=false){
+    if(!owner.alive||finished)return;
+
+    const capped=clamp(
+      chargeMs,
+      0,3000
+    );
+
+    const damage=
+      capped>=2850?10:
+      capped>=1850?6:
+      capped>=850?3:
+      ally?1:1;
+
+    const ratio=
+      clamp(capped/3000,0,1);
+
+    const size=
+      ally
+        ? 20
+        : 24+ratio*72;
+
+    const speed=
+      ally
+        ? 300
+        : 250+ratio*70;
+
+    const kidTarget=
+      nearestKid(owner.x,owner.y);
+
+    let tx=boss.x+20;
+    let ty=boss.y+68;
+
+    if(kidTarget){
+      tx=kidTarget.x;
+      ty=kidTarget.y+15;
+    }
+
+    const sx=owner.x+owner.w-4;
+    const sy=owner.y+24;
+    const dx=tx-sx;
+    const dy=ty-sy;
+    const d=Math.max(
+      1,
+      Math.hypot(dx,dy)
+    );
+
+    const el=document.createElement('div');
+    el.className=
+      `alien-shot-v140 ${ally?'ally-v140':''}`;
+
+    el.style.width=`${size}px`;
+    el.style.height=`${size}px`;
+
+    shotLayer.appendChild(el);
+
+    shots.push({
+      owner,
+      x:sx,
+      y:sy,
+      vx:dx/d*speed,
+      vy:dy/d*speed,
+      size,
+      damage,
+      alive:true,
+      el
+    });
+
+    owner.el.classList.remove('fire-v140');
+    void owner.el.offsetWidth;
+    owner.el.classList.add('fire-v140');
+
+    beep(
+      ally?430:600+damage*35,
+      45,.014
+    );
+  }
+
+  function startCharge(){
+    if(
+      !active||
+      finished||
+      charging||
+      !player.alive||
+      performance.now()<player.stunUntil
+    )return;
+
+    charging=true;
+    chargeStart=performance.now();
+
+    player.el.classList.add('charging-v140');
+    shootBtn.classList.add('charging-v140');
+  }
+
+  function releaseCharge(){
+    if(!charging)return;
+
+    const now=performance.now();
+
+    const ms=
+      clamp(
+        now-chargeStart,
+        0,3000
+      );
+
+    charging=false;
+
+    player.el.classList.remove('charging-v140');
+    shootBtn.classList.remove('charging-v140');
+
+    fireShot(
+      player,
+      ms,
+      false
+    );
+
+    chargeEl.textContent='0.0s';
+  }
+
+  function jump(r){
+    if(
+      !r.alive||
+      !r.onGround||
+      performance.now()<r.stunUntil
+    )return;
+
+    r.vy=-315;
+    r.onGround=false;
+
+    r.el.classList.add('jump-v140');
+
+    setTimeout(()=>{
+      r.el.classList.remove('jump-v140');
+    },180);
+  }
+
+  function bindHold(btn,key){
+    const on=e=>{
+      e.preventDefault();
+
+      if(active&&!finished){
+        input[key]=true;
+      }
+
+      try{
+        btn.setPointerCapture(e.pointerId);
+      }catch(_){}
+    };
+
+    const off=e=>{
+      if(e)e.preventDefault();
+      input[key]=false;
+    };
+
+    btn.addEventListener(
+      'pointerdown',
+      on,
+      {passive:false}
+    );
+
+    btn.addEventListener(
+      'pointerup',
+      off,
+      {passive:false}
+    );
+
+    btn.addEventListener(
+      'pointercancel',
+      off,
+      {passive:false}
+    );
+
+    btn.addEventListener(
+      'lostpointercapture',
+      off,
+      {passive:false}
+    );
+  }
+
+  bindHold(leftBtn,'left');
+  bindHold(rightBtn,'right');
+
+  jumpBtn.addEventListener('pointerdown',e=>{
+    e.preventDefault();
+
+    if(active&&!finished){
+      jump(player);
+    }
+  },{passive:false});
+
+  shootBtn.addEventListener('pointerdown',e=>{
+    e.preventDefault();
+
+    startCharge();
+
+    try{
+      shootBtn.setPointerCapture(e.pointerId);
+    }catch(_){}
+  },{passive:false});
+
+  shootBtn.addEventListener('pointerup',e=>{
+    e.preventDefault();
+    releaseCharge();
+  },{passive:false});
+
+  shootBtn.addEventListener('pointercancel',e=>{
+    e.preventDefault();
+    releaseCharge();
+  },{passive:false});
+
+  function spawnFireball(){
+    const targets=
+      team.filter(r=>r.alive);
+
+    if(!targets.length)return;
+
+    const target=
+      targets[
+        randi(0,targets.length-1)
+      ];
+
+    bossEl.classList.add('attack-mouth-v140');
+
+    setTimeout(()=>{
+      bossEl.classList.remove('attack-mouth-v140');
+    },480);
+
+    const sx=boss.x+14;
+    const sy=boss.y+52;
+    const tx=target.x+25;
+    const ty=target.y+20;
+    const dx=tx-sx;
+    const dy=ty-sy;
+    const d=Math.max(
+      1,
+      Math.hypot(dx,dy)
+    );
+
+    const el=document.createElement('div');
+    el.className='alien-fireball-v140';
+    enemyLayer.appendChild(el);
+
+    fireballs.push({
+      x:sx,
+      y:sy,
+      vx:dx/d*255,
+      vy:dy/d*255,
+      alive:true,
+      el
+    });
+
+    pop(
+      boss.x,
+      boss.y+45,
+      'FIRE BALL'
+    );
+
+    beep(170,110,.03);
+  }
+
+  async function longPunch(){
+    if(finished||!boss.alive)return;
+
+    bossAttackLock=true;
+    msg.textContent='LONG PUNCH!';
+
+    armEl.classList.add('warning-v140');
+
+    await wait(430);
+
+    if(
+      !isGameRunValid(runId)||
+      finished
+    )return;
+
+    armEl.classList.remove('warning-v140');
+    armEl.classList.add('punch-v140');
+    bossEl.classList.add('punch-v140');
+
+    const reachLeft=W*.16;
+
+    for(const r of team){
+      if(!r.alive)continue;
+
+      const lowEnough=
+        r.y>groundY-125;
+
+      if(
+        lowEnough&&
+        r.x+r.w>reachLeft
+      ){
+        damageRobot(
+          r,
+          3,
+          {
+            knock:330,
+            up:190
+          }
+        );
+      }
+    }
+
+    beep(95,160,.05);
+
+    await wait(440);
+
+    armEl.classList.remove('punch-v140');
+    bossEl.classList.remove('punch-v140');
+
+    bossAttackLock=false;
+  }
+
+  function summonKids(){
+    msg.textContent='ALIEN CHILD ×4';
+
+    bossEl.classList.add('summon-v140');
+
+    setTimeout(()=>{
+      bossEl.classList.remove('summon-v140');
+    },520);
+
+    for(let i=0;i<4;i++){
+      const el=document.createElement('div');
+
+      el.className='alien-kid-v140';
+      el.innerHTML='<i></i><b></b>';
+
+      enemyLayer.appendChild(el);
+
+      const k={
+        x:boss.x-5+i*10,
+        y:groundY-31,
+        vx:-rand(55,85),
+        hp:2,
+        alive:true,
+        nextPunch:0,
+        el
+      };
+
+      el.style.left=`${k.x}px`;
+      el.style.top=`${k.y}px`;
+
+      kids.push(k);
+    }
+
+    beep(260,120,.03);
+  }
+
+  async function fullPowerWave(){
+    if(finished||!boss.alive)return;
+
+    bossAttackLock=true;
+    msg.textContent='FULL POWER ENERGY!!';
+
+    bossEl.classList.add('full-charge-v140');
+    waveEl.classList.add('charging-v140');
+
+    await wait(800);
+
+    if(
+      !isGameRunValid(runId)||
+      finished
+    )return;
+
+    waveEl.classList.remove('charging-v140');
+    waveEl.classList.add('fire-v140');
+    bossEl.classList.remove('full-charge-v140');
+
+    for(const r of team){
+      if(!r.alive)continue;
+
+      if(r.y>groundY-185){
+        damageRobot(
+          r,
+          5,
+          {
+            stun:1500,
+            knock:360,
+            up:210
+          }
+        );
+      }
+    }
+
+    stage.classList.add('alien-shake-v140');
+    beep(80,280,.07);
+
+    await wait(650);
+
+    waveEl.classList.remove('fire-v140');
+    stage.classList.remove('alien-shake-v140');
+
+    bossAttackLock=false;
+  }
+
+  async function bossAttack(){
+    if(
+      bossAttackLock||
+      finished||
+      !boss.alive
+    )return;
+
+    const roll=randi(1,4);
+
+    if(roll===1){
+      spawnFireball();
+    }else if(roll===2){
+      await longPunch();
+    }else if(roll===3){
+      summonKids();
+    }else{
+      await fullPowerWave();
+    }
+  }
+
+  function aiUpdate(r,now){
+    if(
+      !r.alive||
+      r.player||
+      now<r.stunUntil
+    )return;
+
+    if(
+      now>=r.nextJump&&
+      Math.random()<.025
+    ){
+      jump(r);
+
+      r.nextJump=
+        now+rand(900,1600);
+    }
+
+    if(now>=r.nextShot){
+      fireShot(r,0,true);
+
+      r.nextShot=
+        now+rand(850,1300);
+    }
+
+    const kidsAlive=
+      kids.some(k=>k.alive);
+
+    const targetX=
+      kidsAlive
+        ? W*.40
+        : W*.46;
+
+    const wiggle=
+      Math.sin(
+        now/520+
+        r.id.length
+      )*30;
+
+    const wanted=
+      clamp(
+        targetX+wiggle,
+        40,
+        W*.58
+      );
+
+    r.vx=
+      Math.sign(wanted-r.x)*
+      rand(28,50);
+
+    if(
+      Math.abs(wanted-r.x)<8
+    ){
+      r.vx=0;
+    }
+  }
+
+  async function finishWin(){
+    if(finished)return;
+
+    finished=true;
+    active=false;
+    charging=false;
+
+    if(raf)cancelAnimationFrame(raf);
+
+    const elapsed=
+      Math.max(
+        1,
+        Math.round(
+          performance.now()-start
+        )
+      );
+
+    state.records.alienBattleMob[p.id]=elapsed;
+
+    bossEl.classList.add('defeat-v140');
+
+    msg.textContent='GIANT ALIEN DOWN!';
+    msg.classList.add('win-v140');
+
+    stage.classList.add('victory-v140');
+
+    beep(1160,260,.065);
+
+    await wait(1250);
+
+    if(isGameRunValid(runId)){
+      recordScreen(
+        89,
+        p,
+        humanIndex,
+        `${(elapsed/1000).toFixed(2)}<small>秒</small>`,
+        '巨大エイリアン撃破'
+      );
+    }
+  }
+
+  async function finishLose(){
+    if(finished)return;
+
+    finished=true;
+    active=false;
+    charging=false;
+
+    if(raf)cancelAnimationFrame(raf);
+
+    state.records.alienBattleMob[p.id]=60000;
+
+    msg.textContent='ROBOT DOWN';
+    msg.classList.add('lose-v140');
+
+    beep(100,230,.05);
+
+    await wait(900);
+
+    if(isGameRunValid(runId)){
+      recordScreen(
+        89,
+        p,
+        humanIndex,
+        `60.00<small>秒</small>`,
+        '敗北'
+      );
+    }
+  }
+
+  // カウントダウン前に全初期配置を完了。
+  bossBar.style.width='100%';
+
+  team.forEach(r=>{
+    r.el.style.left=`${r.x}px`;
+    r.el.style.top=`${r.y}px`;
+  });
+
+  if(
+    !(await countdown(
+      'GIANT ALIEN',
+      runId,
+      {transparent:true}
+    ))
+  )return;
+
+  if(!isGameRunValid(runId))return;
+
+  active=true;
+  start=last=performance.now();
+  nextBossAttack=start+2100;
+
+  allyA.nextShot=start+650;
+  allyB.nextShot=start+900;
+  allyA.nextJump=start+900;
+  allyB.nextJump=start+1200;
+
+  function frame(now){
+    if(
+      !active||
+      finished||
+      !isGameRunValid(runId)
+    )return;
+
+    const dt=
+      Math.min(
+        .035,
+        (now-last)/1000
+      );
+
+    last=now;
+
+    if(charging){
+      const ms=
+        clamp(
+          now-chargeStart,
+          0,3000
+        );
+
+      const ratio=ms/3000;
+
+      chargeEl.textContent=
+        `${(ms/1000).toFixed(1)}s`;
+
+      shootBtn.style.setProperty(
+        '--charge',
+        ratio.toFixed(3)
+      );
+
+      if(ms>=3000){
+        chargeEl.textContent='3.0s MAX';
+      }
+    }else{
+      shootBtn.style.setProperty(
+        '--charge',
+        '0'
+      );
+    }
+
+    if(
+      now>=nextBossAttack&&
+      !bossAttackLock
+    ){
+      bossAttack();
+
+      nextBossAttack=
+        now+rand(2700,3900);
+    }
+
+    for(const r of team){
+      if(!r.alive)continue;
+
+      if(r.player){
+        const stunned=
+          now<r.stunUntil;
+
+        const d=
+          stunned
+            ? 0
+            : input.left&&!input.right
+              ? -1
+              : input.right&&!input.left
+                ? 1
+                : 0;
+
+        r.vx=d*120;
+      }else{
+        aiUpdate(r,now);
+      }
+
+      r.x+=r.vx*dt;
+
+      r.x=
+        clamp(
+          r.x,
+          8,
+          W*.62-r.w
+        );
+
+      const prevBottom=
+        r.y+r.h;
+
+      r.vy+=470*dt;
+      r.y+=r.vy*dt;
+
+      if(
+        prevBottom<=groundY+4&&
+        r.y+r.h>=groundY
+      ){
+        r.y=groundY-r.h;
+        r.vy=0;
+        r.onGround=true;
+      }else{
+        r.onGround=false;
+      }
+
+      r.el.style.left=`${r.x}px`;
+      r.el.style.top=`${r.y}px`;
+    }
+
+    for(const sh of shots){
+      if(!sh.alive)continue;
+
+      sh.x+=sh.vx*dt;
+      sh.y+=sh.vy*dt;
+
+      sh.el.style.left=`${sh.x}px`;
+      sh.el.style.top=`${sh.y}px`;
+
+      let hitKid=null;
+
+      for(const k of kids){
+        if(!k.alive)continue;
+
+        if(
+          Math.hypot(
+            sh.x-k.x,
+            sh.y-(k.y+15)
+          )<
+          sh.size*.45+14
+        ){
+          hitKid=k;
+          break;
+        }
+      }
+
+      if(hitKid){
+        hitKid.hp-=sh.damage;
+
+        sh.alive=false;
+        sh.el.remove();
+
+        if(hitKid.hp<=0){
+          hitKid.alive=false;
+          hitKid.el.classList.add('dead-v140');
+
+          setTimeout(()=>{
+            hitKid.el.remove();
+          },350);
+
+          pop(
+            hitKid.x,
+            hitKid.y,
+            'KID DOWN'
+          );
+        }
+
+        continue;
+      }
+
+      if(
+        sh.x+sh.size/2>=boss.x&&
+        sh.x-sh.size/2<=boss.x+boss.w&&
+        sh.y>=boss.y&&
+        sh.y<=boss.y+boss.h
+      ){
+        sh.alive=false;
+        sh.el.remove();
+
+        bossDamage(sh.damage);
+
+        continue;
+      }
+
+      if(
+        sh.x>W+100||
+        sh.y<-50||
+        sh.y>H+50
+      ){
+        sh.alive=false;
+        sh.el.remove();
+      }
+    }
+
+    for(const f of fireballs){
+      if(!f.alive)continue;
+
+      f.x+=f.vx*dt;
+      f.y+=f.vy*dt;
+
+      f.el.style.left=`${f.x}px`;
+      f.el.style.top=`${f.y}px`;
+
+      for(const r of team){
+        if(!r.alive)continue;
+
+        if(
+          Math.hypot(
+            f.x-(r.x+r.w/2),
+            f.y-(r.y+r.h/2)
+          )<25
+        ){
+          f.alive=false;
+          f.el.remove();
+
+          damageRobot(
+            r,
+            2,
+            {
+              stun:1200,
+              knock:80,
+              up:80
+            }
+          );
+
+          pop(r.x,r.y,'STUN');
+
+          break;
+        }
+      }
+
+      if(
+        f.x<-50||
+        f.y>H+50
+      ){
+        f.alive=false;
+        f.el.remove();
+      }
+    }
+
+    for(const k of kids){
+      if(!k.alive)continue;
+
+      const targets=
+        team.filter(r=>r.alive);
+
+      if(!targets.length)continue;
+
+      const target=
+        targets
+          .slice()
+          .sort(
+            (a,b)=>
+              Math.abs(a.x-k.x)-
+              Math.abs(b.x-k.x)
+          )[0];
+
+      k.vx=
+        Math.sign(target.x-k.x)*
+        rand(48,72);
+
+      k.x+=k.vx*dt;
+
+      if(
+        Math.abs(
+          (target.x+target.w/2)-k.x
+        )<24&&
+        now>=k.nextPunch
+      ){
+        k.nextPunch=now+900;
+
+        damageRobot(
+          target,
+          1,
+          {
+            knock:90,
+            up:70
+          }
+        );
+
+        k.el.classList.add('punch-v140');
+
+        setTimeout(()=>{
+          k.el.classList.remove('punch-v140');
+        },180);
+      }
+
+      k.el.style.left=`${k.x}px`;
+    }
+
+    raf=requestAnimationFrame(frame);
+  }
+
   raf=requestAnimationFrame(frame);
 }
 
@@ -23215,7 +24644,7 @@ function softenCpuResultV121(gameIndex,p,ultra){
 
   const specificallyTuned=new Set([
     50,51,59,62,63,
-    64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88
+    64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89
   ]);
 
   if(
@@ -23481,8 +24910,12 @@ function simulateOneCpu(gameIndex,p){
       : randi(12000,28000);
   }else if(gameIndex===87){
     state.records.littleMobShot[p.id]=ultra?randi(58,82):randi(24,58);
-  }else{
+  }else if(gameIndex===88){
     state.records.monsterBoxMob[p.id]=ultra?randi(86,100):randi(34,86);
+  }else{
+    state.records.alienBattleMob[p.id]=ultra
+      ? randi(12500,19000)
+      : randi(17500,36000);
   }
 
   softenCpuResultV121(
@@ -23631,11 +25064,16 @@ function performancePoints(gameIndex,v){
   }
   if(gameIndex===87)return clamp(Math.round(v/70*100),0,100);
   if(gameIndex===88)return clamp(Math.round(v),0,100);
+  if(gameIndex===89){
+    if(v<=12000)return 100;
+    if(v>=45000)return 0;
+    return clamp(Math.round((45000-v)/33000*100),0,100);
+  }
   return clamp(Math.round(v),0,100);
 }
 
 function rankRecords(gameIndex){
-  const key=GAMES[gameIndex].key,records=state.records[key],ascRaw=(gameIndex===0||gameIndex===2||gameIndex===5||gameIndex===14||gameIndex===21||gameIndex===23||gameIndex===24||gameIndex===25||gameIndex===26||gameIndex===27||gameIndex===37||gameIndex===40||gameIndex===47||gameIndex===51||gameIndex===53||gameIndex===63||gameIndex===80||gameIndex===83||gameIndex===86);
+  const key=GAMES[gameIndex].key,records=state.records[key],ascRaw=(gameIndex===0||gameIndex===2||gameIndex===5||gameIndex===14||gameIndex===21||gameIndex===23||gameIndex===24||gameIndex===25||gameIndex===26||gameIndex===27||gameIndex===37||gameIndex===40||gameIndex===47||gameIndex===51||gameIndex===53||gameIndex===63||gameIndex===80||gameIndex===83||gameIndex===86||gameIndex===89);
   const arr=participants().map(p=>({p,value:records[p.id]}));
   if(mode().performance){
     arr.forEach(e=>e.points=performancePoints(gameIndex,e.value));
@@ -23723,6 +25161,7 @@ function formatRecord(gameIndex,v){
   if(gameIndex===86)return `${(v/1000).toFixed(2)}秒`;
   if(gameIndex===87)return `${Math.round(v)} KO`;
   if(gameIndex===88)return `${Math.round(v)}pt`;
+  if(gameIndex===89)return `${(v/1000).toFixed(2)}秒`;
   return `${Math.round(v)}pt`;
 }
 

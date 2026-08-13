@@ -20614,3 +20614,171 @@ img,svg,canvas,button{
 .mb-board-v138{
   top:auto;
 }
+
+
+/* V10.40 GLOBAL GAMEPLAY LOCK */
+.gameplay-fit,
+.gameplay-fit *,
+.gameplay-fit *::before,
+.gameplay-fit *::after{
+  -webkit-user-select:none!important;
+  user-select:none!important;
+  -webkit-touch-callout:none!important;
+  -webkit-user-drag:none!important;
+  touch-action:none!important;
+}
+body.countdown-active-v140 .gameplay-fit{
+  pointer-events:none!important;
+}
+.countdown-layer{
+  pointer-events:auto!important;
+  touch-action:none!important;
+  -webkit-user-select:none!important;
+  user-select:none!important;
+  -webkit-touch-callout:none!important;
+}
+
+
+/* =========================================================
+   V10.40 WAVE MASTER — Z TRACE + CHARACTER-SOURCE WAVE
+   ========================================================= */
+.wave-shell-v140{height:100%;min-height:0;display:flex;flex-direction:column}
+.wave-help-v140{margin-bottom:6px;border:3px solid var(--ink);border-radius:999px;background:#fff;padding:5px 8px;text-align:center;font-size:9px;font-weight:1000}
+.wave-stage-v140{position:relative;flex:1;min-height:0;overflow:hidden;border:4px solid var(--ink);border-radius:20px;background:#172231}
+.wave-control-v140{margin-top:7px}.wave-control-v140 button{min-height:62px!important;font-size:18px!important;touch-action:none!important}
+.wave-soul-panel-v140,.wave-z-panel-v140,.wave-cinema-v140{position:absolute;inset:0}
+.wave-soul-panel-v140{display:grid;place-items:center;background:radial-gradient(circle at 50% 48%,rgba(77,129,181,.25),transparent 38%),#172231}
+.soul-gauge-v140{position:relative;width:min(70vw,260px);height:min(70vw,260px);border:7px solid var(--ink);border-radius:50%;background:conic-gradient(#ffe65b 0deg,#314250 0deg);box-shadow:0 0 0 8px rgba(103,171,225,.15),0 0 28px rgba(85,166,230,.35)}
+.soul-gauge-v140:after{content:"";position:absolute;inset:18px;border:5px solid #24313b;border-radius:50%;background:#0d1821}
+.soul-core-v140{position:absolute;z-index:4;left:50%;top:50%;width:82px;height:82px;transform:translate(-50%,-50%);border:5px solid var(--ink);border-radius:50%;background:#7ecfff;box-shadow:0 0 30px #7ecfff}
+.soul-gauge-v140>span{position:absolute;z-index:6;left:50%;bottom:30px;transform:translateX(-50%);color:#fff05e;font-size:12px;font-weight:1000}
+.soul-gauge-v140.locked-v140{animation:soulLock140 .4s ease}@keyframes soulLock140{50%{scale:1.1;box-shadow:0 0 50px #fff05d}}
+
+.wave-z-panel-v140{background:radial-gradient(circle at 50% 48%,rgba(89,205,255,.17),transparent 48%),#172231;touch-action:none!important}
+.z-title-v140{position:absolute;left:50%;top:10px;transform:translateX(-50%);border:3px solid var(--ink);border-radius:999px;background:#fff;padding:4px 12px;font-size:11px;font-weight:1000}
+.wave-z-svg-v140{position:absolute;left:50%;top:50%;width:min(92vw,350px);height:min(70vw,270px);transform:translate(-50%,-50%);touch-action:none!important}
+.wave-z-back-v140{fill:none;stroke:#152d3b;stroke-width:30;stroke-linecap:round;stroke-linejoin:round}
+.wave-z-target-v140{fill:none;stroke:#66e2ff;stroke-width:18;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 10px #62e4ff);animation:zGlow140 .6s ease-in-out infinite alternate}
+@keyframes zGlow140{to{stroke:#eafcff;filter:drop-shadow(0 0 18px #7ceaff)}}
+.wave-z-user-v140{fill:none;stroke:#fff05d;stroke-width:9;stroke-linecap:round;stroke-linejoin:round;filter:drop-shadow(0 0 6px #fff05d)}
+.wave-z-start-v140{fill:#77e788;stroke:#14222b;stroke-width:5}.wave-z-goal-v140{fill:#ffdc58;stroke:#14222b;stroke-width:5}
+.wave-z-hint-v140{position:absolute;left:50%;bottom:45px;transform:translateX(-50%);white-space:nowrap;color:#c9f6ff;font-size:10px;font-weight:1000}
+.wave-z-progress-v140{position:absolute;left:50%;bottom:17px;transform:translateX(-50%);color:#fff;font-size:21px;font-weight:1000}
+.wave-z-panel-v140.retry-v140{box-shadow:inset 0 0 0 9px rgba(255,112,96,.20)}
+.wave-z-panel-v140.success-v140{box-shadow:inset 0 0 0 10px rgba(255,233,74,.28)}
+
+.wave-cinema-v140{background:linear-gradient(#1c3047 0 70%,#615349 70%)}
+.wave-duel-bg-v140{position:absolute;inset:0;background:radial-gradient(circle at 50% 46%,rgba(84,141,211,.26),transparent 40%),repeating-linear-gradient(0deg,transparent 0 34px,rgba(255,255,255,.025) 35px 36px)}
+.wave-duel-ground-v140{position:absolute;left:0;right:0;bottom:0;height:30%;border-top:5px solid var(--ink);background:#62564b}
+.wave-duel-mob-v140{position:absolute;z-index:12;bottom:15%;width:94px;height:112px;background-size:contain;background-position:center;background-repeat:no-repeat;will-change:translate}
+.wave-duel-mob-v140.player-v140{left:3%}.wave-duel-mob-v140.enemy-v140{right:3%;transform:scaleX(-1)}
+.wave-duel-mob-v140.charge-v140{animation:mobCharge140 .18s ease-in-out infinite alternate}@keyframes mobCharge140{to{translate:6px -3px;filter:drop-shadow(0 0 8px #fff)}}
+.wave-duel-mob-v140.enemy-v140.charge-v140{animation-name:mobChargeEnemy140}@keyframes mobChargeEnemy140{to{translate:-6px -3px;filter:drop-shadow(0 0 8px #fff)}}
+.wave-source-v140{position:absolute;z-index:20;top:54%;width:1px;height:1px;will-change:translate}
+.wave-source-v140.player-v140{left:29%}.wave-source-v140.enemy-v140{left:71%}
+.wave-source-v140:before{content:"";position:absolute;left:0;top:0;width:24px;height:24px;transform:translate(-50%,-50%) rotate(45deg);background:#d9fbff;clip-path:polygon(50% 0,62% 37%,100% 50%,62% 63%,50% 100%,38% 63%,0 50%,38% 37%);opacity:.7;filter:drop-shadow(0 0 8px #82eaff)}
+.wave-source-v140.enemy-v140:before{background:#ffd5e7;filter:drop-shadow(0 0 8px #ff78b1)}
+.wave-source-v140.charge-v140:before{animation:sourceCharge140 .16s ease-in-out infinite alternate}@keyframes sourceCharge140{to{scale:1.8;opacity:1}}
+.wave-orb-v140{position:absolute;left:0;top:0;width:var(--core);height:var(--core);transform:translate(-50%,-50%);border:5px solid var(--ink);border-radius:50%;background:radial-gradient(circle,#fff 0 18%,#89ebff 19% 52%,#456bff 53%);box-shadow:0 0 18px #6be6ff,0 0 38px rgba(91,98,255,.70)}
+.wave-orb-v140.enemy-v140{background:radial-gradient(circle,#fff 0 15%,#ffb4d4 16% 46%,#f34b98 47% 72%,#7f1e67 73%);box-shadow:0 0 22px #ff7ab5,0 0 48px #a83181}
+.wave-orb-v140>i,.wave-orb-v140>b,.wave-orb-v140>span{position:absolute;left:50%;top:50%;width:5px;height:38px;border-radius:999px;background:#dffbff;transform-origin:50% 0;animation:orbBolt140 .16s ease-out infinite alternate}
+.wave-orb-v140>i{transform:translate(-50%,-50%) rotate(32deg) translateY(-34px)}
+.wave-orb-v140>b{transform:translate(-50%,-50%) rotate(-51deg) translateY(-37px);animation-delay:.06s}
+.wave-orb-v140>span{transform:translate(-50%,-50%) rotate(102deg) translateY(-32px);animation-delay:.11s}
+.wave-orb-v140.enemy-v140>i,.wave-orb-v140.enemy-v140>b,.wave-orb-v140.enemy-v140>span{background:#ffd5e7}
+@keyframes orbBolt140{to{height:19px;opacity:.3}}
+.wave-orb-v140.charge-v140{animation:orbCharge140 .15s ease-in-out infinite alternate}@keyframes orbCharge140{to{scale:.82;filter:brightness(1.5)}}
+.wave-orb-v140.strong-v140{box-shadow:0 0 22px #fff,0 0 44px #66e6ff,0 0 68px #6b5cff}.wave-orb-v140.max-v140{filter:brightness(1.3);box-shadow:0 0 28px #fff,0 0 58px #68edff,0 0 92px #7b61ff}
+.wave-beam-v140{position:absolute;z-index:16;top:54%;height:var(--beamH);transform:translateY(-50%);opacity:0;will-change:width,translate}
+.wave-beam-v140.player-v140{left:29%;width:21%;background:linear-gradient(90deg,#fff,#9ef4ff,#5bbfff);clip-path:polygon(0 28%,100% 0,100% 100%,0 72%);box-shadow:0 0 24px #62dcff}
+.wave-beam-v140.enemy-v140{right:29%;width:21%;background:linear-gradient(270deg,#fff,#ff9bc7,#f34b98);clip-path:polygon(0 0,100% 28%,100% 72%,0 100%);box-shadow:0 0 28px #ff62a8}
+.wave-beam-v140.fire-v140{opacity:1;animation:beamPulse140 .12s ease-in-out infinite alternate}@keyframes beamPulse140{to{filter:brightness(1.35);scale:1 1.12}}
+.wave-beam-v140.burst-v140{animation:beamBurst140 .45s ease forwards}@keyframes beamBurst140{to{height:150px;opacity:0;scale:1.4}}
+.wave-clash-v140{position:absolute;z-index:28;left:50%;top:54%;width:58px;height:58px;transform:translate(-50%,-50%);border-radius:50%;opacity:0;background:#fff;box-shadow:0 0 24px #fff,0 0 52px #ffe86d,0 0 82px #7de8ff}
+.wave-clash-v140.active-v140{opacity:1;animation:clashPulse140 .11s ease-in-out infinite alternate}@keyframes clashPulse140{to{scale:1.35;rotate:12deg}}
+.wave-fx-v140{position:absolute;z-index:31;left:50%;top:54%}.wave-fx-v140 i{position:absolute;width:7px;height:30px;border-radius:999px;background:#fff16a;transform:translate(-50%,-50%) rotate(var(--rot));animation:waveSpark140 .15s ease-out forwards}@keyframes waveSpark140{to{translate:var(--sx) var(--sy);opacity:0}}
+.wave-text-v140{position:absolute;z-index:38;left:50%;top:7%;width:94%;transform:translateX(-50%);text-align:center;font-size:23px;font-weight:1000;color:#fff16a;-webkit-text-stroke:3px var(--ink);opacity:0}.wave-text-v140.show-v140{opacity:1}.wave-text-v140.win-v140{color:#fff16a}.wave-text-v140.lose-v140{color:#ff887c}
+.wave-duel-mob-v140.blown-v140{animation:waveBlow140 .9s cubic-bezier(.18,.72,.18,1) forwards}.wave-duel-mob-v140.player-v140.blown-v140{--bx:-250px;--br:-70deg}.wave-duel-mob-v140.enemy-v140.blown-v140{--bx:250px;--br:70deg}@keyframes waveBlow140{to{translate:var(--bx) -115px;rotate:var(--br);scale:.42;opacity:.12}}
+.wave-stage-v140.charge-shake-v140{animation:chargeShake140 .11s linear 2}@keyframes chargeShake140{50%{translate:2px -2px}}
+.wave-stage-v140.fight-shake-v140{animation:fightShake140 .10s linear infinite}@keyframes fightShake140{25%{translate:-3px 2px}50%{translate:3px -2px}75%{translate:-2px 1px}}
+.wave-stage-v140.finish-impact-v140{animation:finishImpact140 .72s ease}@keyframes finishImpact140{12%{translate:-9px 5px}25%{translate:10px -4px}42%{translate:-7px 3px}60%{translate:6px -2px}}
+.wave-fire-btn-v140{background:#ffe45d!important;color:#17191d!important}
+
+/* FPS main row is always four equal controls. */
+.br-main-controls-v139{
+  grid-template-columns:repeat(4,minmax(0,1fr))!important;
+}
+.br-main-controls-v139 button,
+.br-skill-controls-v139 button{
+  -webkit-user-select:none!important;
+  user-select:none!important;
+  -webkit-touch-callout:none!important;
+  touch-action:none!important;
+}
+
+
+/* =========================================================
+   V10.40 ALIEN BATTLE
+   ========================================================= */
+.alien-shell-v140{height:100%;min-height:0;display:flex;flex-direction:column}
+.alien-hud-v140{display:grid;grid-template-columns:1.25fr 1fr 1fr;gap:4px;margin-bottom:5px}
+.alien-hud-v140>div{border:3px solid var(--ink);border-radius:10px;background:#fff;padding:3px;text-align:center;min-width:0}
+.alien-hud-v140 span,.alien-hud-v140 b{display:block}.alien-hud-v140 span{font-size:6px;color:var(--muted);font-weight:1000}.alien-hud-v140 b{font-size:10px;white-space:nowrap}
+.alien-stage-v140{position:relative;flex:1;min-height:290px;overflow:hidden;border:4px solid var(--ink);border-radius:20px;background:#17243b;touch-action:none!important}
+.alien-sky-v140{position:absolute;inset:0 0 26%;background:linear-gradient(#17243b,#40506c)}
+.alien-sky-v140 i{position:absolute;width:4px;height:4px;border-radius:50%;background:#fff;opacity:.45}.alien-sky-v140 i:nth-child(1){left:18%;top:18%}.alien-sky-v140 i:nth-child(2){left:48%;top:30%}.alien-sky-v140 i:nth-child(3){left:72%;top:12%}
+.alien-ground-v140{position:absolute;left:0;right:0;bottom:0;height:48px;border-top:5px solid var(--ink);background:#4e4a50}
+.alien-layer-v140{position:absolute;inset:0;pointer-events:none}
+
+.alien-boss-v140{position:absolute;z-index:10;width:112px;height:176px;will-change:translate}
+.alien-head-v140{position:absolute;left:10px;top:0;width:92px;height:76px;border:6px solid var(--ink);border-radius:48% 48% 42% 42%;background:#83d26a}
+.alien-head-v140 .eye{position:absolute;top:22px;width:12px;height:16px;border-radius:50%;background:#151719}.alien-head-v140 .e1{left:22px}.alien-head-v140 .e2{right:22px}
+.alien-head-v140 .mouth{position:absolute;left:50%;bottom:11px;width:30px;height:12px;transform:translateX(-50%);border:4px solid var(--ink);border-radius:0 0 999px 999px;background:#321f28}
+.alien-body-v140{position:absolute;left:16px;top:64px;width:80px;height:102px;border:6px solid var(--ink);border-radius:38% 38% 25% 25%;background:#6cb75d}
+.alien-arm-v140{position:absolute;z-index:-1;left:-2px;top:82px;width:58px;height:26px;border:6px solid var(--ink);border-radius:999px;background:#73c360;transform-origin:100% 50%}
+.alien-arm-v140.warning-v140{animation:alienArmWarn140 .15s ease-in-out infinite alternate}@keyframes alienArmWarn140{to{filter:brightness(1.4);translate:-6px 0}}
+.alien-arm-v140.punch-v140{animation:alienLongPunch140 .42s ease-out}@keyframes alienLongPunch140{50%,70%{width:300px;translate:-245px 0}}
+.alien-boss-hp-v140{position:absolute;left:8px;right:8px;bottom:-10px;height:8px;border:2px solid var(--ink);background:#2d3034}.alien-boss-hp-v140 i{display:block;width:100%;height:100%;background:#ff6b67}
+.alien-boss-v140.hit-v140{animation:alienBossHit140 .15s ease}@keyframes alienBossHit140{50%{translate:8px 0;filter:brightness(1.6)}}
+.alien-boss-v140.attack-mouth-v140 .mouth{box-shadow:0 0 18px #ff7a39;background:#ff8a3e}
+.alien-boss-v140.summon-v140{animation:alienSummon140 .18s ease-in-out 3 alternate}@keyframes alienSummon140{to{translate:0 -8px}}
+.alien-boss-v140.full-charge-v140{filter:drop-shadow(0 0 22px #dc70ff);animation:alienBossCharge140 .15s ease-in-out infinite alternate}@keyframes alienBossCharge140{to{scale:1.04}}
+.alien-boss-v140.defeat-v140{animation:alienBossDown140 1s ease forwards}@keyframes alienBossDown140{to{translate:80px 40px;rotate:65deg;opacity:.15}}
+
+.alien-robot-v140{position:absolute;z-index:16;width:50px;height:52px;will-change:left,top}
+.alien-robot-pilot-v140{position:absolute;left:50%;top:-10px;width:32px;height:32px;transform:translateX(-50%);background-size:contain;background-position:center;background-repeat:no-repeat;z-index:3}
+.alien-robot-body-v140{position:absolute;left:5px;bottom:0;width:40px;height:36px;border:5px solid var(--ink);border-radius:12px;background:#8aa8c7}
+.alien-robot-body-v140:before,.alien-robot-body-v140:after{content:"";position:absolute;bottom:-7px;width:12px;height:12px;border:4px solid var(--ink);border-radius:4px;background:#667b91}.alien-robot-body-v140:before{left:2px}.alien-robot-body-v140:after{right:2px}
+.alien-robot-body-v140 i,.alien-robot-body-v140 b{position:absolute;top:10px;width:7px;height:7px;border-radius:50%;background:#ffe45d}.alien-robot-body-v140 i{left:7px}.alien-robot-body-v140 b{right:7px}
+.alien-robot-hp-v140{position:absolute;left:2px;right:2px;bottom:-8px;height:5px;border:1px solid var(--ink);background:#2b2d31}.alien-robot-hp-v140 span{display:block;width:100%;height:100%;background:#70dc78}
+.alien-robot-v140.player-v140{filter:drop-shadow(0 0 5px #fff05d)}
+.alien-robot-v140.charging-v140{filter:drop-shadow(0 0 12px #72e9ff);animation:robotCharge140 .14s ease-in-out infinite alternate}@keyframes robotCharge140{to{translate:2px -2px}}
+.alien-robot-v140.fire-v140{animation:robotFire140 .16s ease}@keyframes robotFire140{50%{translate:-5px 0}}
+.alien-robot-v140.hit-v140{animation:robotHit140 .16s ease}@keyframes robotHit140{50%{filter:brightness(1.8);scale:.9}}
+.alien-robot-v140.stunned-v140{filter:drop-shadow(0 0 10px #ffe45d);animation:robotStun140 .12s linear infinite}@keyframes robotStun140{50%{translate:3px 0}}
+.alien-robot-v140.down-v140{animation:robotDown140 .55s ease forwards}@keyframes robotDown140{to{translate:0 22px;rotate:80deg;opacity:.18}}
+
+.alien-shot-v140{position:absolute;z-index:24;transform:translate(-50%,-50%);border:5px solid var(--ink);border-radius:50%;background:radial-gradient(circle,#fff 0 18%,#8deaff 19% 50%,#4975ff 51%);box-shadow:0 0 16px #74e5ff,0 0 32px #586dff}
+.alien-shot-v140.ally-v140{border-width:3px;background:radial-gradient(circle,#fff 0 20%,#8ff0ff 21% 60%,#4f9dff 61%);box-shadow:0 0 10px #8beeff}
+.alien-fireball-v140{position:absolute;z-index:23;width:34px;height:34px;transform:translate(-50%,-50%);border:4px solid var(--ink);border-radius:50%;background:radial-gradient(circle,#fff067 0 18%,#ff8b38 19% 62%,#e94335 63%);box-shadow:0 0 18px #ff6f36}
+.alien-kid-v140{position:absolute;z-index:18;width:34px;height:31px;transform:translate(-50%,0);border:4px solid var(--ink);border-radius:48% 48% 38% 38%;background:#84cb69}
+.alien-kid-v140 i,.alien-kid-v140 b{position:absolute;top:9px;width:5px;height:7px;border-radius:50%;background:#1d2021}.alien-kid-v140 i{left:8px}.alien-kid-v140 b{right:8px}
+.alien-kid-v140.punch-v140{animation:kidPunch140 .16s ease}@keyframes kidPunch140{50%{translate:-8px 0}}
+.alien-kid-v140.dead-v140{animation:kidDead140 .34s ease forwards}@keyframes kidDead140{to{scale:.2;opacity:0}}
+
+.alien-full-wave-v140{position:absolute;z-index:27;right:91px;top:47%;width:0;height:105px;transform:translateY(-50%);background:linear-gradient(270deg,#fff,#d983ff,#8048e8);clip-path:polygon(0 8%,100% 0,100% 100%,0 92%);opacity:0;box-shadow:0 0 35px #b969ff}
+.alien-full-wave-v140.charging-v140{width:70px;opacity:.5;animation:alienWaveCharge140 .15s ease-in-out infinite alternate}@keyframes alienWaveCharge140{to{height:135px;filter:brightness(1.5)}}
+.alien-full-wave-v140.fire-v140{opacity:.95;animation:alienWaveFire140 .62s ease-out forwards}@keyframes alienWaveFire140{from{width:70px}to{width:calc(100% - 90px);translate:calc(-100% + 90px) 0}}
+
+.alien-message-v140{position:absolute;z-index:40;left:50%;top:7%;width:94%;transform:translateX(-50%);text-align:center;color:#fff16a;-webkit-text-stroke:3px var(--ink);font-size:20px;font-weight:1000;pointer-events:none}
+.alien-message-v140.win-v140{font-size:27px}.alien-message-v140.lose-v140{color:#ff887c}
+.alien-pop-v140{position:absolute;z-index:42;transform:translate(-50%,-50%);color:#fff16a;-webkit-text-stroke:2px var(--ink);font-size:12px;font-weight:1000;animation:alienPop140 .6s ease forwards}@keyframes alienPop140{to{translate:0 -32px;opacity:0}}
+.alien-pop-v140.boss-hit-v140{color:#8df4ff;font-size:16px}
+.alien-stage-v140.alien-shake-v140{animation:alienShake140 .10s linear infinite}@keyframes alienShake140{25%{translate:-4px 2px}50%{translate:4px -2px}75%{translate:-3px 1px}}
+.alien-stage-v140.victory-v140{box-shadow:inset 0 0 0 9px rgba(255,231,76,.32)}
+
+.alien-controls-v140{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;margin-top:6px}
+.alien-controls-v140 button{min-width:0;min-height:58px;border:4px solid var(--ink);border-radius:12px;background:#fff;font-size:15px;font-weight:1000;touch-action:none!important;-webkit-user-select:none!important;user-select:none!important;-webkit-touch-callout:none!important}
+.alien-controls-v140 .shoot{position:relative;background:linear-gradient(90deg,#8fe8ff calc(var(--charge,0)*100%),#fff calc(var(--charge,0)*100%));overflow:hidden}
+.alien-controls-v140 .shoot:after{content:"MAX 3s";position:absolute;left:50%;bottom:3px;transform:translateX(-50%);font-size:6px}
+.alien-controls-v140 .shoot.charging-v140{box-shadow:inset 0 0 0 4px #ffe65d}
