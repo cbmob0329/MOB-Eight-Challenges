@@ -221,7 +221,7 @@ const GAMES=[
   {no:90,key:"alienBattleMob",title:"モブくんエイリアンと戦う",sub:"小型ロボ2機で地上の巨大エイリアンHP100を撃破する"},
   {no:91,key:"mobMusou",title:"モブくん無双",sub:"7秒で巨大武器を描き、10秒オートで大量スライムを無双する"},
   {no:92,key:"iaidoMaster",title:"モブくんは居合切りの達人",sub:"夜の草原でCPUと居合勝負。勝負！の瞬間を見抜く"},
-  {no:93,key:"killLeaderMob",title:"モブくんはキルリーダー",sub:"1対1のFPS勝ち抜き戦。10人抜きで完全制覇を目指せ"}
+  {no:93,key:"killLeaderMob",title:"モブくんの長い夜",sub:"夜の砂漠を進みながらゾンビ30体を倒し、最後に巨大ゾンビを撃破する横スクロールFPSアクション"}
 ];
 
 const MODES={
@@ -1401,7 +1401,7 @@ function scoreRuleForGame(index){
     "巨大エイリアンHP100を倒すまでの時間 / 速いほど高評価",
     "10秒オート無双 / 150体KO=100点 / 巨大スライム・ロボも出現",
     "1人目敗北0〜30 / 2人目敗北31〜60 / 3人目敗北61〜75 / 3人撃破80〜100",
-    "10人抜き=100点 / 1人撃破ごとに10点"
+    "ゾンビ30体＋巨大ゾンビ撃破までのクリアタイム / 速いほど高得点"
   ][index];
 }
 
@@ -1596,7 +1596,7 @@ function showGameIntro(index){
   }else if(index===91){
     rules=`<li>「勝負！」が出た瞬間にタップします。</li><li>3人の刺客を居合で迎え撃ち、反応タイムで高得点を狙います。</li>`;
   }else{
-    rules=`<li>1対1のFPS勝ち抜き戦です。</li><li>10秒から開始し、1人倒すごとに5秒延長。10人撃破で100点です。</li>`;
+    rules=`<li>夜の砂漠を横スクロールで進み、ゾンビ30体を倒します。</li><li>30体撃破後に巨大ゾンビが出現。撃破までのクリアタイムを競います。</li>`;
   }
   const conciseRules=(rules.match(/<li>[\s\S]*?<\/li>/g)||[]).slice(0,2).join("");
   rules=conciseRules||`<li>${esc(g.sub)}</li>`;
@@ -26044,8 +26044,8 @@ function simulateOneCpu(gameIndex,p){
       : randi(24,86);
   }else{
     state.records.killLeaderMob[p.id]=ultra
-      ? [80,90,100][randi(0,2)]
-      : randi(3,9)*10;
+      ? randi(28000,39000)
+      : randi(39000,69000);
   }
 
   softenCpuResultV121(
@@ -26201,11 +26201,17 @@ function performancePoints(gameIndex,v){
     return clamp(Math.round((45000-v)/33000*100),0,100);
   }
   if(gameIndex===90)return clamp(Math.round(v/150*100),0,100);
+  if(gameIndex===92){
+    if(v>=99999)return 0;
+    if(v<=30000)return 100;
+    if(v>=75000)return 0;
+    return clamp(Math.round((75000-v)/45000*100),0,100);
+  }
   return clamp(Math.round(v),0,100);
 }
 
 function rankRecords(gameIndex){
-  const key=GAMES[gameIndex].key,records=state.records[key],ascRaw=(gameIndex===0||gameIndex===2||gameIndex===5||gameIndex===14||gameIndex===21||gameIndex===23||gameIndex===24||gameIndex===25||gameIndex===26||gameIndex===27||gameIndex===37||gameIndex===40||gameIndex===47||gameIndex===51||gameIndex===53||gameIndex===63||gameIndex===80||gameIndex===83||gameIndex===86||gameIndex===89);
+  const key=GAMES[gameIndex].key,records=state.records[key],ascRaw=(gameIndex===0||gameIndex===2||gameIndex===5||gameIndex===14||gameIndex===21||gameIndex===23||gameIndex===24||gameIndex===25||gameIndex===26||gameIndex===27||gameIndex===37||gameIndex===40||gameIndex===47||gameIndex===51||gameIndex===53||gameIndex===63||gameIndex===80||gameIndex===83||gameIndex===86||gameIndex===89||gameIndex===92);
   const arr=participants().map(p=>({p,value:records[p.id]}));
   if(mode().performance){
     arr.forEach(e=>e.points=performancePoints(gameIndex,e.value));
@@ -26295,6 +26301,7 @@ function formatRecord(gameIndex,v){
   if(gameIndex===88)return `${Math.round(v)}pt`;
   if(gameIndex===89)return `${(v/1000).toFixed(2)}秒`;
   if(gameIndex===90)return `${Math.round(v)} KO`;
+  if(gameIndex===92)return v>=99999?`FAILED`:`${(v/1000).toFixed(2)}秒`;
   return `${Math.round(v)}pt`;
 }
 
@@ -26640,357 +26647,631 @@ async function startIaidoMaster(p,humanIndex,runId){
 // =========================================================
 // V10.48 GAME 93 — モブくんはキルリーダー
 // =========================================================
+
 async function startKillLeaderMob(p,humanIndex,runId){
   gameFit();
 
-  const groundY=318;
-  let W=360;
-  let timeLeft=10;
-  let kills=0;
-  let wave=1;
-  let last=performance.now();
-  let raf=0;
-  let finished=false;
-  let leftHeld=false,rightHeld=false;
-  let enemy=null;
-  let bullets=[],enemyBullets=[];
+  const WORLD_END=5480;
+  const NORMAL_TARGET=30;
+  const PLAYER_MAX_HP=50;
+  const BOSS_HP=60;
 
-  const player={x:38,y:groundY,w:38,h:48,vx:0,vy:0,onGround:true,hp:50,maxHp:50,face:1,shotAt:0,airAt:0};
+  let active=false;
+  let finished=false;
+  let raf=0;
+  let last=0;
+  let startedAt=0;
+  let cameraX=0;
+  let kills=0;
+  let bossSpawned=false;
+  let bossDefeated=false;
+  let nextZombieId=1;
+
+  const input={left:false,right:false,shoot:false};
+  const zombies=[];
+  const bullets=[];
+  const bombs=[];
+  const explosions=[];
+
+  const player={
+    x:68,
+    y:0,
+    w:38,
+    h:50,
+    vx:0,
+    vy:0,
+    speed:190,
+    jump:525,
+    onGround:true,
+    face:1,
+    hp:PLAYER_MAX_HP,
+    maxHp:PLAYER_MAX_HP,
+    shotAt:0,
+    hurtUntil:0,
+    airAt:0
+  };
 
   screen.innerHTML=`
-    <div class="kill-shell-v148 gameplay-fit">
+    <div class="longnight-shell-v149 gameplay-fit">
       <div class="game-head">
-        <div><span class="kicker">${esc(p.name)}</span><h2>モブくんはキルリーダー</h2><p class="lead">HP50で1対1・10人抜き</p></div>
+        <div>
+          <span class="kicker">${esc(p.name)}</span>
+          <h2>モブくんの長い夜</h2>
+          <p class="lead">夜の砂漠を突破せよ</p>
+        </div>
         <div class="game-badge">${playBadge(humanIndex)}</div>
       </div>
 
-      <div class="kill-hud-v148">
-        <div><span>KILL</span><b id="killK148">0 / 10</b></div>
-        <div><span>TIME</span><b id="killT148">10.0</b></div>
-        <div><span>YOU</span><b id="killHP148">50</b></div>
-        <div><span>ENEMY</span><b id="killE148">5</b></div>
+      <div class="longnight-hud-v149">
+        <div><span>TIME</span><b id="lnTime149">0.00</b></div>
+        <div><span>ZOMBIE</span><b id="lnKill149">0 / 30</b></div>
+        <div><span>HP</span><b id="lnHp149">50</b></div>
+        <div><span>BOSS</span><b id="lnBoss149">---</b></div>
       </div>
 
-      <div id="killStage148" class="kill-stage-v148">
-        <div class="kill-sky-v148"></div><div class="kill-city-v148"></div><div class="kill-ground-v148"></div>
-        <div id="killActor148" class="kill-actor-layer-v148"></div>
-        <div id="killBul148" class="kill-bullet-layer-v148"></div>
-        <div id="killFx148" class="kill-fx-v148"></div>
-        <div id="killMsg148" class="kill-msg-v148">READY</div>
-        <div id="killBig148" class="kill-big-v148" hidden></div>
+      <div id="lnStage149" class="longnight-stage-v149">
+        <div id="lnStars149" class="longnight-stars-v149"></div>
+        <div id="lnMoon149" class="longnight-moon-v149"></div>
+        <div id="lnDunesFar149" class="longnight-dunes-far-v149"></div>
+        <div id="lnDunesNear149" class="longnight-dunes-near-v149"></div>
+        <div class="longnight-ground-v149"></div>
+
+        <div id="lnZombieLayer149" class="longnight-layer-v149"></div>
+        <div id="lnBulletLayer149" class="longnight-layer-v149"></div>
+        <div id="lnFx149" class="longnight-layer-v149"></div>
+
+        <div id="lnPlayer149" class="longnight-player-v149">
+          <img src="icon/01.png" draggable="false" alt="モブくん">
+          <i class="longnight-gun-v149"></i>
+          <b class="longnight-player-hp-v149"><i></i></b>
+        </div>
+
+        <div id="lnMessage149" class="longnight-message-v149">夜を生き残れ</div>
       </div>
 
-      <div class="kill-controls-v148">
-        <button id="killLeft148">←</button>
-        <button id="killJump148">JUMP</button>
-        <button id="killShot148" class="shot-v148">射撃</button>
-        <button id="killAir148" class="air-v148">戦闘機<b>READY</b></button>
-        <button id="killRight148">→</button>
+      <div class="longnight-controls-v149">
+        <button id="lnLeft149">←</button>
+        <button id="lnJump149">JUMP</button>
+        <button id="lnShoot149">射撃</button>
+        <button id="lnAir149" class="air-v149">戦闘機<b>READY</b></button>
+        <button id="lnRight149">→</button>
       </div>
     </div>`;
 
-  const stage=document.getElementById('killStage148');
-  const actorLayer=document.getElementById('killActor148');
-  const bulletLayer=document.getElementById('killBul148');
-  const fx=document.getElementById('killFx148');
-  const msg=document.getElementById('killMsg148');
-  const big=document.getElementById('killBig148');
-  const kEl=document.getElementById('killK148');
-  const tEl=document.getElementById('killT148');
-  const hpEl=document.getElementById('killHP148');
-  const eEl=document.getElementById('killE148');
-  const airBtn=document.getElementById('killAir148');
+  const stage=document.getElementById('lnStage149');
+  const zombieLayer=document.getElementById('lnZombieLayer149');
+  const bulletLayer=document.getElementById('lnBulletLayer149');
+  const fxLayer=document.getElementById('lnFx149');
+  const playerEl=document.getElementById('lnPlayer149');
+  const msg=document.getElementById('lnMessage149');
+  const timeEl=document.getElementById('lnTime149');
+  const killEl=document.getElementById('lnKill149');
+  const hpEl=document.getElementById('lnHp149');
+  const bossElHud=document.getElementById('lnBoss149');
+  const airBtn=document.getElementById('lnAir149');
   const airCd=airBtn.querySelector('b');
-  W=Math.max(300,stage.clientWidth||360);
+  const stars=document.getElementById('lnStars149');
+  const dunesFar=document.getElementById('lnDunesFar149');
+  const dunesNear=document.getElementById('lnDunesNear149');
 
-  function makeActor(img,isEnemy=false){
-    const el=document.createElement('div');
-    el.className=`kill-actor-v148 ${isEnemy?'enemy-v148':'player-v148'}`;
-    el.innerHTML=`<img draggable="false" src="${img}" alt=""><i class="gun-v148"></i><b class="hpbar-v148"><i></i></b>`;
-    actorLayer.appendChild(el);
-    return el;
-  }
-  const playerEl=makeActor('icon/01.png',false);
+  const W=Math.max(300,stage.clientWidth||360);
+  const H=Math.max(330,stage.clientHeight||400);
+  const GROUND_Y=H-48;
+  player.y=GROUND_Y-player.h;
 
-  function updateActor(a){
-    if(!a||!a.el)return;
-    a.el.style.left=`${a.x}px`;
-    a.el.style.top=`${a.y-a.h}px`;
-    a.el.style.transform=`scaleX(${a.face<0?-1:1})`;
-    a.el.querySelector('.hpbar-v148 i').style.width=`${clamp(a.hp/a.maxHp,0,1)*100}%`;
+  function showMessage(text,kind=''){
+    msg.textContent=text;
+    msg.className=`longnight-message-v149 ${kind}`;
+    msg.classList.add('show-v149');
+    clearTimeout(showMessage._timer);
+    showMessage._timer=setTimeout(()=>{
+      msg.classList.remove('show-v149');
+    },900);
   }
-  function showBig(text,kind='kill',ms=700){
-    big.hidden=false;
-    big.textContent=text;
-    big.className=`kill-big-v148 ${kind}-v148 show-v148`;
-    setTimeout(()=>{
-      if(big.textContent===text){big.hidden=true;big.className='kill-big-v148';}
-    },ms);
-  }
-  function pop(x,y,text,kind=''){
+
+  function pop(worldX,y,text,kind=''){
     const el=document.createElement('div');
-    el.className=`kill-pop-v148 ${kind}`;
+    el.className=`longnight-pop-v149 ${kind}`;
     el.textContent=text;
-    el.style.left=`${x}px`;el.style.top=`${y}px`;
-    fx.appendChild(el);
-    setTimeout(()=>el.remove(),720);
+    fxLayer.appendChild(el);
+    const obj={el,worldX,y,life:720};
+    explosions.push(obj);
+    positionWorldEl(el,worldX,y);
   }
-  function burst(x,y,kind='hit'){
+
+  function burst(worldX,y,kind='hit-v149',size=58){
     const el=document.createElement('div');
-    el.className=`kill-burst-v148 ${kind}`;
-    el.style.left=`${x}px`;el.style.top=`${y}px`;
-    fx.appendChild(el);
-    setTimeout(()=>el.remove(),520);
+    el.className=`longnight-burst-v149 ${kind}`;
+    el.style.width=`${size}px`;
+    el.style.height=`${size}px`;
+    fxLayer.appendChild(el);
+    const obj={el,worldX,y,life:520};
+    explosions.push(obj);
+    positionWorldEl(el,worldX,y);
   }
 
-  function spawnEnemy(initial=false){
-    const hp=wave>=9?20:5;
-    const icon=Math.min(10,wave+1);
-    enemy={
-      idx:wave,x:W-82,y:groundY,w:38,h:48,vx:0,vy:0,onGround:true,
-      hp,maxHp:hp,face:-1,shotAt:performance.now()+700,voidAt:performance.now()+1500,voidUntil:0,
-      grenadeAt:performance.now()+1500,portalAt:performance.now()+1100,airAt:performance.now()+1700,
-      voidUsed:false,grenadeUsed:false,portalUsed:false,airUsed:false,
-      el:makeActor(`icon/${String(icon).padStart(2,'0')}.png`,true)
-    };
-    updateActor(enemy);
-    if(!initial){
-      enemy.el.classList.add('drop-v148');
-      setTimeout(()=>enemy&&enemy.el&&enemy.el.classList.remove('drop-v148'),450);
-    }
-    msg.textContent=`ENEMY ${wave} / HP ${hp}`;
+  function positionWorldEl(el,worldX,y){
+    el.style.left=`${worldX-cameraX}px`;
+    el.style.top=`${y}px`;
   }
 
-  function shoot(owner,ally=true){
-    const now=performance.now();
-    if(now<owner.shotAt)return;
-    owner.shotAt=now+(ally?170:320);
-    const el=document.createElement('i');
-    el.className=`kill-bullet-v148 ${ally?'ally-v148':'enemy-v148'}`;
-    bulletLayer.appendChild(el);
-    (ally?bullets:enemyBullets).push({
-      x:ally?owner.x+owner.w:owner.x,
-      y:owner.y-owner.h+23,
-      vx:(ally?1:-1)*480,
+  function makeZombie(worldX,type='normal'){
+    const giant=type==='boss';
+    const big=type==='brute';
+    const w=giant?116:(big?55:38);
+    const h=giant?154:(big?70:51);
+    const hp=giant?BOSS_HP:(big?4:2);
+
+    const el=document.createElement('div');
+    el.className=`longnight-zombie-v149 ${type}-v149`;
+    el.innerHTML=`
+      <i class="z-head-v149"><b></b><b></b></i>
+      <i class="z-body-v149"></i>
+      <i class="z-arm-v149 a1"></i>
+      <i class="z-arm-v149 a2"></i>
+      <i class="z-leg-v149 l1"></i>
+      <i class="z-leg-v149 l2"></i>
+      <span class="z-hp-v149"><i></i></span>`;
+    zombieLayer.appendChild(el);
+
+    const z={
+      id:nextZombieId++,
+      type,
+      x:worldX,
+      y:GROUND_Y-h,
+      w,h,
+      hp,maxHp:hp,
+      speed:giant?48:(big?58:rand(62,82)),
+      alive:true,
+      face:-1,
+      attackAt:0,
+      specialAt:performance.now()+2200,
       el
-    });
-    beep(ally?660:310,34,.008);
+    };
+    zombies.push(z);
+    updateZombieVisual(z);
+    return z;
   }
 
-  function playerAirStrike(){
-    const now=performance.now();
-    if(now<player.airAt)return;
-    player.airAt=now+3000;
-    msg.textContent='FIGHTER!';
-    for(let i=0;i<4;i++){
-      setTimeout(()=>{
-        if(!enemy||finished||!isGameRunValid(runId))return;
-        const x=enemy.x+enemy.w/2+rand(-10,10);
-        const missile=document.createElement('i');
-        missile.className='kill-missile-v148 ally-v148';
-        missile.style.left=`${x}px`;missile.style.top='-28px';
-        fx.appendChild(missile);
-        setTimeout(()=>{
-          if(missile.isConnected)missile.remove();
-          if(!enemy)return;
-          enemy.hp=Math.max(0,enemy.hp-2);
-          burst(x,enemy.y-18,'air-v148');
-          pop(x,enemy.y-48,'-2','hit-v148');
-        },360);
-      },i*120);
+  function seedZombies(){
+    for(let i=0;i<NORMAL_TARGET;i++){
+      const base=330+i*158;
+      const jitter=rand(-38,38);
+      const type=(i%8===7||i%11===9)?'brute':'normal';
+      makeZombie(base+jitter,type);
     }
   }
 
-  function enemyAirStrike(){
-    msg.textContent='ENEMY FIGHTER!';
-    showBig('AIR RAID','danger',650);
-    for(let i=0;i<3;i++){
+  function spawnBoss(){
+    if(bossSpawned)return;
+    bossSpawned=true;
+    const x=Math.max(player.x+430,WORLD_END-260);
+    const boss=makeZombie(x,'boss');
+    boss.specialAt=performance.now()+1800;
+    bossElHud.textContent=`${BOSS_HP}`;
+    showMessage('巨大ゾンビ出現！','boss-v149');
+    stage.classList.add('boss-phase-v149');
+    beep(120,180,.045);
+  }
+
+  function updateZombieVisual(z){
+    const sx=z.x-cameraX;
+    z.el.style.left=`${sx}px`;
+    z.el.style.top=`${z.y}px`;
+    z.el.style.transform=`scaleX(${z.face})`;
+    z.el.style.display=(sx<-170||sx>W+180)?'none':'block';
+    const hpbar=z.el.querySelector('.z-hp-v149 i');
+    if(hpbar)hpbar.style.width=`${clamp(z.hp/z.maxHp,0,1)*100}%`;
+  }
+
+  function hurtZombie(z,damage,source='shot'){
+    if(!z.alive||finished)return;
+    z.hp=Math.max(0,z.hp-damage);
+    pop(z.x+z.w*.5,z.y-5,`-${damage}`,source==='air'?'air-hit-v149':'hit-v149');
+    burst(z.x+z.w*.55,z.y+z.h*.45,source==='air'?'air-v149':'hit-v149',source==='air'?76:46);
+
+    if(z.type==='boss')bossElHud.textContent=`${Math.ceil(z.hp)}`;
+
+    if(z.hp<=0){
+      z.alive=false;
+      z.el.classList.add('dead-v149');
+      beep(z.type==='boss'?85:220,z.type==='boss'?220:70,z.type==='boss'?.05:.016);
+
+      if(z.type==='boss'){
+        bossDefeated=true;
+        showMessage('巨大ゾンビ撃破！','clear-v149');
+        stage.classList.add('clear-shake-v149');
+        setTimeout(()=>finish(true),850);
+      }else{
+        kills++;
+        killEl.textContent=`${kills} / ${NORMAL_TARGET}`;
+        if(kills===NORMAL_TARGET){
+          showMessage('30体撃破！ 最後の敵だ！','boss-v149');
+          setTimeout(()=>{
+            if(!finished&&isGameRunValid(runId))spawnBoss();
+          },550);
+        }else if(kills%5===0){
+          showMessage(`${kills}体撃破`,'kill-v149');
+        }
+      }
+
       setTimeout(()=>{
-        if(finished)return;
-        const x=player.x+player.w/2+rand(-14,14);
-        const missile=document.createElement('i');
-        missile.className='kill-missile-v148 enemy-v148';
-        missile.style.left=`${x}px`;missile.style.top='-28px';
-        fx.appendChild(missile);
-        setTimeout(()=>{
-          if(missile.isConnected)missile.remove();
-          player.hp=Math.max(0,player.hp-2);
-          burst(x,player.y-18,'enemy-v148');
-          pop(x,player.y-50,'-2','enemy-v148');
-        },380);
+        if(z.el.isConnected)z.el.remove();
+      },450);
+    }
+  }
+
+  function playerShot(){
+    const now=performance.now();
+    if(!active||finished||now<player.shotAt)return;
+    player.shotAt=now+235;
+
+    const el=document.createElement('i');
+    el.className='longnight-bullet-v149';
+    bulletLayer.appendChild(el);
+
+    const bullet={
+      x:player.x+(player.face>0?player.w:0),
+      y:player.y+24,
+      vx:player.face*520,
+      alive:true,
+      el
+    };
+    bullets.push(bullet);
+    playerEl.classList.remove('recoil-v149');
+    void playerEl.offsetWidth;
+    playerEl.classList.add('recoil-v149');
+    setTimeout(()=>playerEl.classList.remove('recoil-v149'),120);
+    beep(620,30,.008);
+  }
+
+  function callFighter(){
+    const now=performance.now();
+    if(!active||finished||now<player.airAt)return;
+
+    player.airAt=now+3000;
+    showMessage('戦闘機 爆撃開始！','air-v149');
+
+    const fighter=document.createElement('div');
+    fighter.className='longnight-fighter-v149';
+    fighter.innerHTML='<i></i><b></b>';
+    fxLayer.appendChild(fighter);
+
+    const flyMs=1400;
+    const born=performance.now();
+    const startX=-90;
+
+    const fighterLoop=()=>{
+      if(!fighter.isConnected)return;
+      const t=clamp((performance.now()-born)/flyMs,0,1);
+      fighter.style.left=`${startX+(W+180)*t}px`;
+      fighter.style.top=`${34+Math.sin(t*Math.PI)*-7}px`;
+      if(t<1)requestAnimationFrame(fighterLoop);
+      else fighter.remove();
+    };
+    requestAnimationFrame(fighterLoop);
+
+    // 6連発の爆弾。プレイヤー前方へ順番に落とす。
+    for(let i=0;i<6;i++){
+      setTimeout(()=>{
+        if(finished||!isGameRunValid(runId))return;
+        const worldX=
+          clamp(
+            player.x+90+i*74,
+            cameraX+45,
+            cameraX+W-25
+          );
+        const el=document.createElement('div');
+        el.className='longnight-bomb-v149';
+        fxLayer.appendChild(el);
+
+        const b={
+          x:worldX,
+          y:50,
+          vy:235+rand(0,35),
+          alive:true,
+          el
+        };
+        bombs.push(b);
+        positionWorldEl(el,b.x,b.y);
       },i*150);
     }
+    beep(360,80,.025);
   }
 
-  function useVoid(){
-    if(!enemy||enemy.voidUsed)return;
-    enemy.voidUsed=true;
-    enemy.voidUntil=performance.now()+1500;
-    enemy.el.classList.add('void-v148');
-    msg.textContent='VOID!';
-    showBig('VOID','void',520);
+  function explodeBomb(b){
+    if(!b.alive)return;
+    b.alive=false;
+    if(b.el.isConnected)b.el.remove();
+
+    burst(b.x,GROUND_Y-12,'bomb-v149',104);
+    stage.classList.remove('bomb-shake-v149');
+    void stage.offsetWidth;
+    stage.classList.add('bomb-shake-v149');
+
+    for(const z of zombies){
+      if(!z.alive)continue;
+      const d=Math.abs((z.x+z.w*.5)-b.x);
+      if(d<=92){
+        hurtZombie(z,3,'air');
+      }
+    }
+    beep(95,90,.025);
   }
-  function useGrenade(){
-    if(!enemy||enemy.grenadeUsed)return;
-    enemy.grenadeUsed=true;
-    msg.textContent='GRENADE!';
-    const g=document.createElement('i');
-    g.className='kill-grenade-v148';
-    g.style.left=`${enemy.x}px`;g.style.top=`${enemy.y-44}px`;
-    fx.appendChild(g);
+
+  function damagePlayer(amount,knock=0){
+    const now=performance.now();
+    if(now<player.hurtUntil||finished)return;
+    player.hurtUntil=now+550;
+    player.hp=Math.max(0,player.hp-amount);
+    hpEl.textContent=Math.ceil(player.hp);
+    player.vx+=knock;
+    playerEl.classList.add('hurt-v149');
+    setTimeout(()=>playerEl.classList.remove('hurt-v149'),220);
+    pop(player.x+player.w*.5,player.y-8,`-${amount}`,'enemy-v149');
+    beep(135,90,.02);
+
+    if(player.hp<=0){
+      showMessage('モブくんが倒れた…','defeat-v149');
+      setTimeout(()=>finish(false),700);
+    }
+  }
+
+  function bossSlam(z){
+    if(!z.alive)return;
+    z.el.classList.add('slam-v149');
+    showMessage('巨大ゾンビの地面叩き！','boss-v149');
     setTimeout(()=>{
-      if(g.isConnected)g.remove();
-      player.hp=Math.max(0,player.hp-5);
-      burst(player.x+18,player.y-18,'grenade-v148');
-      pop(player.x+18,player.y-52,'STUN -5','enemy-v148');
+      if(!z.alive||finished)return;
+      z.el.classList.remove('slam-v149');
+      const shock=document.createElement('div');
+      shock.className='longnight-shockwave-v149';
+      fxLayer.appendChild(shock);
+      const shockX=z.x-105;
+      const obj={el:shock,worldX:shockX,y:GROUND_Y-23,life:520};
+      explosions.push(obj);
+      positionWorldEl(shock,shockX,GROUND_Y-23);
+
+      if(Math.abs(player.x-z.x)<205&&player.onGround){
+        damagePlayer(6,player.x<z.x?-135:135);
+      }
     },430);
   }
-  function usePortal(){
-    if(!enemy||enemy.portalUsed)return;
-    enemy.portalUsed=true;
-    const from=enemy.x,to=clamp(player.x+rand(85,145),160,W-70);
-    const p1=document.createElement('i'),p2=document.createElement('i');
-    p1.className='kill-portal-v148';p2.className='kill-portal-v148';
-    p1.style.left=`${from}px`;p2.style.left=`${to}px`;
-    p1.style.top=p2.style.top=`${groundY-25}px`;
-    fx.append(p1,p2);
-    msg.textContent='PORTAL!';
-    setTimeout(()=>{
-      if(enemy)enemy.x=to;
-      p1.remove();p2.remove();
-    },330);
-  }
 
-  function finishGameNow(kind){
+  function finish(clear){
     if(finished)return;
     finished=true;
-    cancelAnimationFrame(raf);
-    const score=clamp(kills*10,0,100);
-    state.records.killLeaderMob[p.id]=score;
-    if(kind==='clear'){
-      stage.classList.add('clear-v148');
-      showBig('KILL LEADER!!','clear',1400);
-      beep(1120,210,.05);
+    active=false;
+    input.left=input.right=input.shoot=false;
+    if(raf)cancelAnimationFrame(raf);
+
+    const elapsed=Math.max(1,Math.round(performance.now()-startedAt));
+    const record=clear?elapsed:99999;
+    state.records.killLeaderMob[p.id]=record;
+
+    document.body.classList.remove('countdown-active-v140');
+    screen.removeAttribute('inert');
+    clearGameplaySelection();
+
+    if(clear){
+      showMessage(`CLEAR ${(elapsed/1000).toFixed(2)}s`,'clear-v149');
+      stage.classList.add('clear-v149');
     }else{
-      stage.classList.add('defeat-v148');
-      showBig('DEFEAT','defeat',1300);
-      beep(150,260,.05);
+      stage.classList.add('defeat-v149');
     }
-    setTimeout(()=>recordScreen(92,p,humanIndex,`${score}<small>PT</small>`,`${kills}人撃破`),1500);
+
+    setTimeout(()=>{
+      if(!isGameRunValid(runId))return;
+      recordScreen(
+        92,
+        p,
+        humanIndex,
+        clear?`${(elapsed/1000).toFixed(2)}<small>秒</small>`:`FAILED`,
+        clear?`ゾンビ30体 + 巨大ゾンビ撃破`:`${kills}体撃破`
+      );
+    },900);
   }
 
-  // カウントダウン前にプレイヤーと1人目を配置。
-  updateActor({...player,el:playerEl});
-  player.el=playerEl;
-  spawnEnemy(true);
-  updateActor(player);
-  updateActor(enemy);
-  msg.textContent='READY / 1 VS 1';
-
-  if(!(await countdown('COUNTDOWN',runId,{transparent:true})))return;
-  last=performance.now();
-  msg.textContent='FIGHT!';
-
-  const hold=(id,setter)=>{
+  function bindHold(id,key){
     const el=document.getElementById(id);
-    el.addEventListener('pointerdown',e=>{e.preventDefault();setter(true);try{el.setPointerCapture(e.pointerId)}catch(_){}} ,{passive:false});
-    const off=e=>{if(e)e.preventDefault();setter(false)};
-    el.addEventListener('pointerup',off,{passive:false});
-    el.addEventListener('pointercancel',off,{passive:false});
-    el.addEventListener('lostpointercapture',()=>setter(false),{passive:true});
-  };
-  hold('killLeft148',v=>leftHeld=v);
-  hold('killRight148',v=>rightHeld=v);
-  document.getElementById('killJump148').addEventListener('pointerdown',e=>{
+    const down=e=>{
+      e.preventDefault();
+      input[key]=true;
+      try{el.setPointerCapture(e.pointerId)}catch(_){}
+    };
+    const up=e=>{
+      if(e)e.preventDefault();
+      input[key]=false;
+    };
+    el.addEventListener('pointerdown',down,{passive:false});
+    el.addEventListener('pointerup',up,{passive:false});
+    el.addEventListener('pointercancel',up,{passive:false});
+    el.addEventListener('lostpointercapture',up,{passive:false});
+  }
+
+  bindHold('lnLeft149','left');
+  bindHold('lnRight149','right');
+  bindHold('lnShoot149','shoot');
+
+  document.getElementById('lnJump149').addEventListener('pointerdown',e=>{
     e.preventDefault();
-    if(player.onGround){player.vy=-545;player.onGround=false;beep(460,38,.01);}
+    if(active&&!finished&&player.onGround){
+      player.vy=-player.jump;
+      player.onGround=false;
+      beep(470,30,.01);
+    }
   },{passive:false});
-  document.getElementById('killShot148').addEventListener('pointerdown',e=>{e.preventDefault();shoot(player,true)}, {passive:false});
-  airBtn.addEventListener('pointerdown',e=>{e.preventDefault();playerAirStrike()}, {passive:false});
 
-  const loop=now=>{
-    if(finished||!isGameRunValid(runId))return;
-    const dt=Math.min(.033,(now-last)/1000);last=now;
-    timeLeft=Math.max(0,timeLeft-dt);
+  airBtn.addEventListener('pointerdown',e=>{
+    e.preventDefault();
+    callFighter();
+  },{passive:false});
 
-    player.vx=(leftHeld?-180:0)+(rightHeld?180:0);
-    if(player.vx<0)player.face=-1;if(player.vx>0)player.face=1;
-    player.x=clamp(player.x+player.vx*dt,8,W-player.w-8);
-    if(!player.onGround){
-      player.vy+=980*dt;player.y+=player.vy*dt;
-      if(player.y>=groundY){player.y=groundY;player.vy=0;player.onGround=true;}
-    }
-    updateActor(player);
+  // カウントダウン前にプレイヤーと最初のゾンビをすべて正しい位置へ配置。
+  seedZombies();
+  cameraX=0;
+  playerEl.style.left=`${player.x}px`;
+  playerEl.style.top=`${player.y}px`;
+  zombies.forEach(updateZombieVisual);
+  void stage.offsetHeight;
 
-    if(enemy){
-      const dx=player.x-enemy.x;
-      enemy.face=dx>0?1:-1;
-      if(Math.abs(dx)>115)enemy.x=clamp(enemy.x+Math.sign(dx)*78*dt,12,W-enemy.w-12);
-      if(Math.random()<0.007&&enemy.onGround){enemy.vy=-470;enemy.onGround=false;}
-      if(!enemy.onGround){
-        enemy.vy+=980*dt;enemy.y+=enemy.vy*dt;
-        if(enemy.y>=groundY){enemy.y=groundY;enemy.vy=0;enemy.onGround=true;}
-      }
+  if(!(await countdown('LONG NIGHT',runId,{transparent:true})))return;
+  if(!isGameRunValid(runId))return;
 
-      if(enemy.idx===7 && now>=enemy.voidAt)useVoid();
-      if(enemy.idx===8 && now>=enemy.grenadeAt)useGrenade();
-      if(enemy.idx===9){
-        if(now>=enemy.portalAt)usePortal();
-        if(now>=enemy.voidAt)useVoid();
-      }
-      if(enemy.idx===10){
-        if(now>=enemy.voidAt)useVoid();
-        if(now>=enemy.airAt&&!enemy.airUsed){enemy.airUsed=true;enemyAirStrike();}
-      }
+  active=true;
+  startedAt=last=performance.now();
+  showMessage('進め！','start-v149');
 
-      if(enemy.voidUntil<=now)enemy.el.classList.remove('void-v148');
-      if(now>=enemy.shotAt && enemy.voidUntil<=now)shoot(enemy,false);
-      updateActor(enemy);
-    }
+  function frame(now){
+    if(!active||finished||!isGameRunValid(runId))return;
 
-    bullets=bullets.filter(b=>{
-      b.x+=b.vx*dt;b.el.style.left=`${b.x}px`;b.el.style.top=`${b.y}px`;
-      if(enemy&&enemy.voidUntil<=now&&b.x>=enemy.x&&b.x<=enemy.x+enemy.w&&b.y>=enemy.y-enemy.h&&b.y<=enemy.y){
-        enemy.hp=Math.max(0,enemy.hp-1);burst(enemy.x+enemy.w/2,b.y,'hit-v148');pop(enemy.x+enemy.w/2,enemy.y-52,'HIT','hit-v148');b.el.remove();return false;
-      }
-      if(b.x>W+24){b.el.remove();return false;}return true;
-    });
+    const dt=Math.min(.034,(now-last)/1000);
+    last=now;
+    const elapsed=now-startedAt;
 
-    enemyBullets=enemyBullets.filter(b=>{
-      b.x+=b.vx*dt;b.el.style.left=`${b.x}px`;b.el.style.top=`${b.y}px`;
-      if(b.x>=player.x&&b.x<=player.x+player.w&&b.y>=player.y-player.h&&b.y<=player.y){
-        player.hp=Math.max(0,player.hp-1);burst(player.x+player.w/2,b.y,'enemy-v148');pop(player.x+player.w/2,player.y-52,'-1','enemy-v148');b.el.remove();return false;
-      }
-      if(b.x<-24){b.el.remove();return false;}return true;
-    });
+    // Player movement in world coordinates.
+    let dir=0;
+    if(input.left&&!input.right)dir=-1;
+    else if(input.right&&!input.left)dir=1;
 
-    if(enemy&&enemy.hp<=0){
-      const dead=enemy;
-      kills++;
-      timeLeft+=5;
-      player.hp=Math.min(player.maxHp,player.hp+10);
-      stage.classList.remove('kill-shake-v148');void stage.offsetWidth;stage.classList.add('kill-shake-v148');
-      showBig(`KILL ${kills}!`,'kill',720);
-      pop(dead.x+dead.w/2,dead.y-65,'+5 SEC / +10 HP','heal-v148');
-      dead.el.classList.add('dead-v148');
-      enemy=null;
-      if(kills>=10){finishGameNow('clear');return;}
-      wave++;
-      setTimeout(()=>{
-        if(!finished&&isGameRunValid(runId))spawnEnemy(false);
-      },350);
+    const desiredVx=dir*player.speed;
+    player.vx+=(desiredVx-player.vx)*Math.min(1,dt*13);
+
+    if(Math.abs(player.vx)<2&&dir===0)player.vx=0;
+    if(player.vx<-5)player.face=-1;
+    else if(player.vx>5)player.face=1;
+
+    player.x=clamp(player.x+player.vx*dt,12,WORLD_END+440);
+
+    player.vy+=1040*dt;
+    player.y+=player.vy*dt;
+    if(player.y>=GROUND_Y-player.h){
+      player.y=GROUND_Y-player.h;
+      player.vy=0;
+      player.onGround=true;
+    }else{
+      player.onGround=false;
     }
 
-    kEl.textContent=`${kills} / 10`;
-    tEl.textContent=timeLeft.toFixed(1);
-    hpEl.textContent=Math.round(player.hp);
-    eEl.textContent=enemy?Math.round(enemy.hp):'--';
-    airCd.textContent=performance.now()<player.airAt?`${((player.airAt-performance.now())/1000).toFixed(1)}s`:'READY';
+    cameraX=clamp(player.x-95,0,WORLD_END+280-W);
+    const playerScreenX=player.x-cameraX;
+    playerEl.style.left=`${playerScreenX}px`;
+    playerEl.style.top=`${player.y}px`;
+    playerEl.style.transform=`scaleX(${player.face})`;
 
-    if(player.hp<=0||timeLeft<=0){finishGameNow('defeat');return;}
-    raf=requestAnimationFrame(loop);
-  };
-  raf=requestAnimationFrame(loop);
+    // Simple parallax night desert.
+    stars.style.backgroundPositionX=`${-cameraX*.10}px`;
+    dunesFar.style.backgroundPositionX=`${-cameraX*.20}px`;
+    dunesNear.style.backgroundPositionX=`${-cameraX*.38}px`;
+
+    if(input.shoot&&now>=player.shotAt)playerShot();
+
+    // Zombies.
+    for(const z of zombies){
+      if(!z.alive)continue;
+      const dist=player.x-z.x;
+      const ad=Math.abs(dist);
+
+      if(ad<360){
+        z.face=dist>0?1:-1;
+        const stop=z.type==='boss'?82:34;
+        if(ad>stop){
+          z.x+=Math.sign(dist)*z.speed*dt;
+        }
+
+        if(ad<=stop+10&&now>=z.attackAt){
+          z.attackAt=now+(z.type==='boss'?850:1050);
+          z.el.classList.remove('attack-v149');
+          void z.el.offsetWidth;
+          z.el.classList.add('attack-v149');
+          setTimeout(()=>z.el.classList.remove('attack-v149'),260);
+          damagePlayer(z.type==='boss'?5:2,dist>0?70:-70);
+        }
+
+        if(z.type==='boss'&&now>=z.specialAt){
+          z.specialAt=now+rand(2400,3300);
+          bossSlam(z);
+        }
+      }else if(z.type!=='boss'){
+        // Distant zombies still shamble a little so the stage feels alive.
+        z.x+=Math.sin((elapsed*.001)+z.id)*8*dt;
+      }
+
+      updateZombieVisual(z);
+    }
+
+    // Bullets in world coordinates.
+    for(const b of bullets){
+      if(!b.alive)continue;
+      b.x+=b.vx*dt;
+      positionWorldEl(b.el,b.x,b.y);
+
+      let hit=null;
+      for(const z of zombies){
+        if(!z.alive)continue;
+        if(
+          b.x>=z.x-5&&
+          b.x<=z.x+z.w+5&&
+          b.y>=z.y&&
+          b.y<=z.y+z.h
+        ){
+          hit=z;
+          break;
+        }
+      }
+
+      if(hit){
+        b.alive=false;
+        b.el.remove();
+        hurtZombie(hit,1,'shot');
+      }else if(
+        b.x<cameraX-80||
+        b.x>cameraX+W+160
+      ){
+        b.alive=false;
+        b.el.remove();
+      }
+    }
+
+    // Bombs.
+    for(const b of bombs){
+      if(!b.alive)continue;
+      b.y+=b.vy*dt;
+      b.vy+=310*dt;
+      positionWorldEl(b.el,b.x,b.y);
+
+      if(b.y>=GROUND_Y-18){
+        explodeBomb(b);
+      }
+    }
+
+    // Short-lived FX follows camera.
+    for(const ex of explosions){
+      if(!ex.el||!ex.el.isConnected)continue;
+      ex.life-=dt*1000;
+      positionWorldEl(ex.el,ex.worldX,ex.y);
+      if(ex.life<=0)ex.el.remove();
+    }
+
+    // Boss phase is triggered only after all 30 normal zombies are dead.
+    if(kills>=NORMAL_TARGET&&!bossSpawned){
+      spawnBoss();
+    }
+
+    timeEl.textContent=(elapsed/1000).toFixed(2);
+    hpEl.textContent=Math.ceil(player.hp);
+    killEl.textContent=`${kills} / ${NORMAL_TARGET}`;
+    airCd.textContent=now<player.airAt?`${((player.airAt-now)/1000).toFixed(1)}s`:'READY';
+
+    if(bossSpawned&&!bossDefeated){
+      const boss=zombies.find(z=>z.type==='boss'&&z.alive);
+      bossElHud.textContent=boss?`${Math.ceil(boss.hp)}`:'0';
+    }
+
+    raf=requestAnimationFrame(frame);
+  }
+
+  raf=requestAnimationFrame(frame);
 }
 
 
