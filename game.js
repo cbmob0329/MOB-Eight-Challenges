@@ -132,7 +132,7 @@ const GAMES=[
   {no:80,key:"excavationMob",title:"モブくん地下発掘",sub:"9マスから3ヶ所掘って化石ポイントを獲得"},
   {no:81,key:"oldMaidDuel",title:"モブくんのババ抜き決闘",sub:"偽モブくんの2枚から引いて何回目で勝てるか"},
   {no:82,key:"robotMarch",title:"モブくんロボット大発進",sub:"何本でも自由に電池を描いて補給し巨大ロボを前進させる"},
-  {no:83,key:"monsterMaster",title:"モブくんはモンスターマスター",sub:"自作ボールをフリックして10体のモンスターを捕獲"},
+  {no:83,key:"monsterMaster",title:"モブくんはモンスターマスター",sub:"3秒で自作ボールを描き、10秒間何個でも投げて10体を捕獲"},
   {no:84,key:"scoutMan",title:"モブくんはスカウトマン！",sub:"30000円で9ポジションを1秒判断でスカウト"}
 ];
 
@@ -1299,7 +1299,7 @@ function scoreRuleForGame(index){
     "3ヶ所から掘り出した化石ポイントの合計",
     "1回目で勝利=100点 / 2回目=90点 / 10回目=10点",
     "前進距離1000m=100点 / エネルギー切れまでの距離",
-    "捕獲したモンスター数×10点 / 10体GET=100点",
+    "3秒デザイン→10秒捕獲 / 捕獲したモンスター数×10点 / 10体GET=100点",
     "甲子園47校中の最終順位 / 1位=100点・47位=0点換算"
   ][index];
 }
@@ -12003,7 +12003,7 @@ async function startDancingMob(p,humanIndex,runId){
 
   mob.classList.add('dancing');
 
-  await wait(3000);
+  await wait(5000);
   if(!isGameRunValid(runId))return;
 
   scorePop.textContent=`${score} POINT!`;
@@ -20780,173 +20780,610 @@ async function startRobotMarch(p,humanIndex,runId){
 async function startMonsterMaster(p,humanIndex,runId){
   gameFit();
 
-  let active=false,finished=false,locked=false,drawing=false,pointer=null;
-  let strokes=[],activeStroke=null,designReady=false,shots=10,caught=0;
-  let projectile=null,last=0,raf=null;
+  let phase='draw';
+  let finished=false;
+  let drawing=false;
+  let pointer=null;
+  let activeStroke=null;
+  let strokes=[];
+  let designReady=false;
 
-  screen.innerHTML=`<div class="master-shell-v134">
+  let last=0;
+  let phaseStart=0;
+  let raf=null;
+  let caught=0;
+  let thrown=0;
+  let capturesInProgress=0;
+  let catchTimeOver=false;
+
+  const projectiles=[];
+  const monsters=[];
+
+  screen.innerHTML=`<div class="master-shell-v135">
     <div class="game-head">
       <div><span class="kicker">${esc(p.name)}</span><h2>モブくんはモンスターマスター</h2></div>
       <div class="game-badge">${playBadge(humanIndex)}</div>
     </div>
+
     <div class="v125-hud">
-      <div><span>GET</span><b id="masterGet134">0 / 10</b></div>
-      <div><span>BALL</span><b id="masterBalls134">10</b></div>
+      <div><span id="masterPhaseLabel135">DRAW</span><b id="masterTimer135">3.00</b></div>
+      <div><span>GET</span><b id="masterGet135">0 / 10</b></div>
     </div>
-    <div class="master-help-v134">最初にボールを自由デザイン → 短くタップで完成 → 上へフリックして投げる</div>
-    <div id="masterStage134" class="master-stage-v134">
-      <div class="master-zone-label-v134">MONSTER ZONE</div>
-      <div id="monsterLayer134" class="monster-layer-v134"></div>
-      <div id="masterFx134" class="master-fx-v134"></div>
-      <div id="masterProjectile134" class="master-projectile-v134"></div>
-      <div id="ballPad134" class="ball-pad-v134">
+
+    <div id="masterHelp135" class="master-help-v135">
+      3秒で円とデザインを自由に描こう
+    </div>
+
+    <div id="masterStage135" class="master-stage-v135">
+      <div class="master-zone-label-v135">MONSTER ZONE</div>
+      <div id="monsterLayer135" class="monster-layer-v135"></div>
+      <div id="masterProjectileLayer135" class="master-projectile-layer-v135"></div>
+      <div id="masterCaptureLayer135" class="master-capture-layer-v135"></div>
+      <div id="masterFx135" class="master-fx-v135"></div>
+
+      <div id="ballPad135" class="ball-pad-v135">
         <b>BALL DESIGN</b>
-        <svg id="ballSvg134" viewBox="0 0 140 140" preserveAspectRatio="none"></svg>
-        <span id="ballState134">DRAW</span>
+        <svg id="ballSvg135" viewBox="0 0 140 140" preserveAspectRatio="none"></svg>
+        <span id="ballState135">DRAW</span>
       </div>
     </div>
   </div>`;
 
-  const stage=document.getElementById('masterStage134');
-  const layer=document.getElementById('monsterLayer134');
-  const fx=document.getElementById('masterFx134');
-  const projectileEl=document.getElementById('masterProjectile134');
-  const pad=document.getElementById('ballPad134');
-  const svg=document.getElementById('ballSvg134');
-  const stateEl=document.getElementById('ballState134');
-  const getEl=document.getElementById('masterGet134');
-  const ballsEl=document.getElementById('masterBalls134');
+  const stage=document.getElementById('masterStage135');
+  const monsterLayer=document.getElementById('monsterLayer135');
+  const projectileLayer=document.getElementById('masterProjectileLayer135');
+  const captureLayer=document.getElementById('masterCaptureLayer135');
+  const fx=document.getElementById('masterFx135');
+  const pad=document.getElementById('ballPad135');
+  const svg=document.getElementById('ballSvg135');
+  const stateEl=document.getElementById('ballState135');
+  const helpEl=document.getElementById('masterHelp135');
+  const timerEl=document.getElementById('masterTimer135');
+  const phaseLabel=document.getElementById('masterPhaseLabel135');
+  const getEl=document.getElementById('masterGet135');
 
   const defs=Array.from({length:10},(_,i)=>({
-    speed:rand(18,42), dir:Math.random()<.5?-1:1,
+    speed:rand(18,42),
+    dir:Math.random()<.5?-1:1,
     y:42+(i%5)*43+(i>=5?12:0),
     catchRate:i===9?.34:i>=7?.48:.69,
     color:['#7bd26f','#74c8e7','#dc88d8','#efca61','#ed7e6c'][i%5]
   }));
 
-  const monsters=defs.map((d,i)=>{
+  defs.forEach((d,i)=>{
     const el=document.createElement('div');
-    el.className='master-monster-v134';
+    el.className='master-monster-v135';
     el.style.setProperty('--mc',d.color);
     el.innerHTML='<i></i><b></b><span></span>';
-    layer.appendChild(el);
-    return {...d,id:i,x:rand(40,stage.clientWidth-40),el,caught:false,busy:false};
+    monsterLayer.appendChild(el);
+
+    monsters.push({
+      ...d,
+      id:i,
+      x:rand(40,stage.clientWidth-40),
+      el,
+      caught:false,
+      busy:false
+    });
   });
 
   function localPad(e){
     const r=pad.getBoundingClientRect();
-    return{x:clamp((e.clientX-r.left)/r.width*140,0,140),y:clamp((e.clientY-r.top)/r.height*140,0,140)};
+
+    return{
+      x:clamp((e.clientX-r.left)/r.width*140,0,140),
+      y:clamp((e.clientY-r.top)/r.height*140,0,140)
+    };
   }
+
   function renderDesign(){
     svg.innerHTML='';
-    strokes.forEach(s=>{
-      if(s.length<2)return;
-      const pl=document.createElementNS('http://www.w3.org/2000/svg','polyline');
-      pl.setAttribute('points',s.map(q=>`${q.x},${q.y}`).join(' '));
-      pl.setAttribute('class','ball-drawing-v134'); svg.appendChild(pl);
-    });
+
+    for(const stroke of strokes){
+      if(stroke.length<2)continue;
+
+      const pl=document.createElementNS(
+        'http://www.w3.org/2000/svg',
+        'polyline'
+      );
+
+      pl.setAttribute(
+        'points',
+        stroke.map(q=>`${q.x},${q.y}`).join(' ')
+      );
+      pl.setAttribute('class','ball-drawing-v135');
+
+      svg.appendChild(pl);
+    }
   }
-  function power(){
-    const usable=strokes.filter(s=>s.length>=2); if(!usable.length)return .72;
-    let len=0; const all=[];
-    usable.forEach(s=>{ all.push(...s); for(let i=1;i<s.length;i++)len+=Math.hypot(s[i].x-s[i-1].x,s[i].y-s[i-1].y); });
-    const xs=all.map(q=>q.x),ys=all.map(q=>q.y);
-    const area=(Math.max(...xs)-Math.min(...xs))*(Math.max(...ys)-Math.min(...ys));
-    const close=Math.min(...usable.map(s=>Math.hypot(s[0].x-s.at(-1).x,s[0].y-s.at(-1).y)));
-    return clamp(.72+clamp(1-close/80,0,1)*.10+clamp(area/11000,0,1)*.08+clamp((len-180)/650,0,1)*.10,.72,1);
+
+  function ensureDefaultBall(){
+    if(strokes.some(s=>s.length>=3))return;
+
+    const circle=[];
+    const cx=70,cy=70,r=48;
+
+    for(let i=0;i<=32;i++){
+      const a=Math.PI*2*i/32;
+      circle.push({
+        x:cx+Math.cos(a)*r,
+        y:cy+Math.sin(a)*r
+      });
+    }
+
+    strokes=[circle];
+    renderDesign();
   }
-  function ballHtml(){ return `<div class="drawn-ball-v134">${svg.outerHTML}</div>`; }
+
+  function ballPower(){
+    const usable=strokes.filter(s=>s.length>=2);
+
+    if(!usable.length)return .72;
+
+    let len=0;
+    const all=[];
+
+    for(const s of usable){
+      all.push(...s);
+
+      for(let i=1;i<s.length;i++){
+        len+=Math.hypot(
+          s[i].x-s[i-1].x,
+          s[i].y-s[i-1].y
+        );
+      }
+    }
+
+    const xs=all.map(q=>q.x);
+    const ys=all.map(q=>q.y);
+    const area=
+      (Math.max(...xs)-Math.min(...xs))*
+      (Math.max(...ys)-Math.min(...ys));
+
+    const close=Math.min(
+      ...usable.map(s=>
+        Math.hypot(
+          s[0].x-s[s.length-1].x,
+          s[0].y-s[s.length-1].y
+        )
+      )
+    );
+
+    return clamp(
+      .72+
+      clamp(1-close/80,0,1)*.10+
+      clamp(area/11000,0,1)*.08+
+      clamp((len-180)/650,0,1)*.10,
+      .72,1
+    );
+  }
+
+  function ballHtml(){
+    return `<div class="drawn-ball-v135">${svg.outerHTML}</div>`;
+  }
+
   function burst(x,y,text=''){
-    const b=document.createElement('div'); b.className='master-burst-v134'; b.style.left=`${x}px`; b.style.top=`${y}px`;
-    b.innerHTML=`<i></i>${text?`<b>${text}</b>`:''}`; fx.appendChild(b); setTimeout(()=>b.remove(),760);
+    const b=document.createElement('div');
+    b.className='master-burst-v135';
+    b.style.left=`${x}px`;
+    b.style.top=`${y}px`;
+    b.innerHTML=`<i></i>${text?`<b>${text}</b>`:''}`;
+    fx.appendChild(b);
+    setTimeout(()=>b.remove(),820);
   }
-  function resetProjectile(){ projectile=null; projectileEl.innerHTML=''; projectileEl.className='master-projectile-v134'; locked=false; }
 
-  async function resolveHit(m,x,y){
-    locked=true; m.busy=true; m.el.classList.add('sucked-v134'); burst(x,y);
-    await wait(360); if(!isGameRunValid(runId))return;
-    m.el.style.opacity='0'; projectileEl.classList.add('capture-ball-v134');
-    await wait(250); if(!isGameRunValid(runId))return;
+  function createProjectile(dx,dy){
+    if(phase!=='catch'||finished||catchTimeOver||!designReady)return;
 
-    const chance=clamp(m.catchRate*power(),.20,.84);
-    const shakes=chance>.62?2:chance>.44?3:4;
+    const dist=Math.hypot(dx,dy);
+    if(dist<26||dy>=-8)return;
+
+    const sr=stage.getBoundingClientRect();
+    const pr=pad.getBoundingClientRect();
+
+    const x=pr.left-sr.left+pr.width/2;
+    const y=pr.top-sr.top+18;
+
+    const speed=clamp(dist*4.6,350,760);
+    const ux=dx/dist;
+    const uy=dy/dist;
+
+    const el=document.createElement('div');
+    el.className='master-projectile-v135 flying-v135';
+    el.innerHTML=ballHtml();
+    el.style.left=`${x}px`;
+    el.style.top=`${y}px`;
+    projectileLayer.appendChild(el);
+
+    projectiles.push({
+      x,y,
+      vx:ux*speed,
+      vy:uy*speed,
+      dead:false,
+      el
+    });
+
+    thrown++;
+    beep(540,48,.015);
+  }
+
+  async function resolveCapture(monster,x,y,ballMarkup){
+    capturesInProgress++;
+    monster.busy=true;
+
+    const capture=document.createElement('div');
+    capture.className='master-capture-ball-v135';
+    capture.style.left=`${x}px`;
+    capture.style.top=`${y}px`;
+    capture.innerHTML=ballMarkup;
+    captureLayer.appendChild(capture);
+
+    monster.el.classList.add('sucked-v135');
+    burst(x,y);
+
+    await wait(300);
+    if(!isGameRunValid(runId))return;
+
+    monster.el.style.opacity='0';
+    capture.classList.add('closed-v135');
+
+    await wait(230);
+    if(!isGameRunValid(runId))return;
+
+    const chance=clamp(
+      monster.catchRate*ballPower(),
+      .20,.84
+    );
+
+    const shakes=
+      chance>.62?2:
+      chance>.44?3:4;
+
     for(let i=0;i<shakes;i++){
-      projectileEl.classList.remove('shake-v134'); void projectileEl.offsetWidth; projectileEl.classList.add('shake-v134');
-      beep(410+i*45,55,.015); await wait(275); if(!isGameRunValid(runId))return;
+      capture.classList.remove('shake-v135');
+      void capture.offsetWidth;
+      capture.classList.add('shake-v135');
+
+      beep(410+i*45,50,.014);
+
+      await wait(260);
+      if(!isGameRunValid(runId))return;
     }
 
-    if(Math.random()<chance){
-      m.caught=true; caught++; getEl.textContent=`${caught} / 10`; projectileEl.classList.add('get-v134'); burst(x,y,'GET!!'); beep(1060,170,.05);
-      await wait(520);
+    const success=Math.random()<chance;
+
+    if(success){
+      monster.caught=true;
+      caught++;
+
+      getEl.textContent=`${caught} / 10`;
+      capture.classList.add('get-v135');
+      burst(x,y,'GET!!');
+
+      beep(1060,160,.048);
+
+      await wait(480);
     }else{
-      m.el.style.opacity='1'; m.el.classList.remove('sucked-v134'); m.busy=false; projectileEl.classList.add('break-v134'); burst(x,y,'ESCAPE!'); beep(145,120,.035);
-      await wait(420);
+      monster.el.style.opacity='1';
+      monster.el.classList.remove('sucked-v135');
+      monster.busy=false;
+
+      capture.classList.add('break-v135');
+      burst(x,y,'ESCAPE!');
+
+      beep(145,110,.03);
+
+      await wait(390);
     }
-    resetProjectile();
-    if(shots<=0 || caught>=10)finish();
+
+    capture.remove();
+    capturesInProgress--;
+
+    if(caught>=10){
+      catchTimeOver=true;
+      phase='ending';
+      tryFinishCatch();
+      return;
+    }
+
+    if(catchTimeOver){
+      tryFinishCatch();
+    }
   }
 
-  function throwBall(dx,dy){
-    if(!active||finished||locked||!designReady||shots<=0)return;
-    const dist=Math.hypot(dx,dy); if(dist<28||dy>=-10)return;
-    const sr=stage.getBoundingClientRect(),pr=pad.getBoundingClientRect();
-    const x=pr.left-sr.left+pr.width/2,y=pr.top-sr.top+20;
-    const speed=clamp(dist*4.5,350,720),ux=dx/dist,uy=dy/dist;
-    projectileEl.innerHTML=ballHtml(); projectileEl.style.left=`${x}px`; projectileEl.style.top=`${y}px`; projectileEl.classList.add('flying-v134');
-    projectile={x,y,vx:ux*speed,vy:uy*speed,dead:false}; shots--; ballsEl.textContent=shots; locked=true; beep(540,55,.018);
+  function tryFinishCatch(){
+    if(finished)return;
+
+    const airborne=projectiles.some(q=>!q.dead);
+
+    if(catchTimeOver && !airborne && capturesInProgress===0){
+      finish();
+    }
   }
 
   pad.addEventListener('pointerdown',e=>{
-    if(!active||finished||locked)return; e.preventDefault();
-    pointer={id:e.pointerId,sx:e.clientX,sy:e.clientY,started:false};
+    if(finished)return;
+
+    e.preventDefault();
+
+    pointer={
+      id:e.pointerId,
+      sx:e.clientX,
+      sy:e.clientY,
+      started:false
+    };
+
     try{pad.setPointerCapture(e.pointerId)}catch(_){}
   },{passive:false});
+
   pad.addEventListener('pointermove',e=>{
-    if(!pointer||e.pointerId!==pointer.id||!active||finished||locked)return; e.preventDefault();
-    const moved=Math.hypot(e.clientX-pointer.sx,e.clientY-pointer.sy);
-    if(designReady)return;
-    if(!pointer.started&&moved>=6){pointer.started=true; drawing=true; activeStroke=[localPad(e)]; strokes.push(activeStroke); stateEl.textContent=`DRAW ${strokes.length}`;}
-    if(pointer.started){const q=localPad(e),prev=activeStroke.at(-1); if(Math.hypot(q.x-prev.x,q.y-prev.y)>=2){activeStroke.push(q);renderDesign();}}
+    if(!pointer||e.pointerId!==pointer.id||finished)return;
+
+    e.preventDefault();
+
+    const moved=Math.hypot(
+      e.clientX-pointer.sx,
+      e.clientY-pointer.sy
+    );
+
+    if(phase==='draw'){
+      if(!pointer.started&&moved>=5){
+        pointer.started=true;
+        drawing=true;
+
+        activeStroke=[localPad(e)];
+        strokes.push(activeStroke);
+
+        stateEl.textContent=`DRAW ${strokes.length}`;
+      }
+
+      if(pointer.started){
+        const q=localPad(e);
+        const prev=activeStroke[activeStroke.length-1];
+
+        if(Math.hypot(q.x-prev.x,q.y-prev.y)>=2){
+          activeStroke.push(q);
+          renderDesign();
+        }
+      }
+
+      return;
+    }
+
+    if(phase==='catch'){
+      // Only the final swipe vector matters during capture phase.
+      pointer.started=moved>=8;
+    }
   },{passive:false});
+
   pad.addEventListener('pointerup',e=>{
-    if(!pointer||e.pointerId!==pointer.id||!active||finished||locked)return; e.preventDefault();
-    const dx=e.clientX-pointer.sx,dy=e.clientY-pointer.sy,dist=Math.hypot(dx,dy),wasStroke=pointer.started;
-    pointer=null; drawing=false; activeStroke=null;
-    if(designReady){throwBall(dx,dy);return;}
-    if(!wasStroke&&dist<7&&strokes.some(s=>s.length>=3)){designReady=true;pad.classList.add('ready-v134');stateEl.textContent='FLICK TO THROW';beep(760,70,.02);}
+    if(!pointer||e.pointerId!==pointer.id||finished)return;
+
+    e.preventDefault();
+
+    const dx=e.clientX-pointer.sx;
+    const dy=e.clientY-pointer.sy;
+    const dist=Math.hypot(dx,dy);
+
+    if(phase==='draw'){
+      drawing=false;
+      activeStroke=null;
+      pointer=null;
+      return;
+    }
+
+    if(phase==='catch'&&!catchTimeOver){
+      pointer=null;
+      createProjectile(dx,dy);
+      return;
+    }
+
+    pointer=null;
   },{passive:false});
-  pad.addEventListener('pointercancel',()=>{pointer=null;drawing=false;activeStroke=null;});
+
+  pad.addEventListener('pointercancel',()=>{
+    pointer=null;
+    drawing=false;
+    activeStroke=null;
+  });
+
+  async function showCaughtCollection(){
+    const caughtList=monsters.filter(m=>m.caught);
+
+    screen.innerHTML=`<div class="master-result-shell-v135">
+      <div class="game-head">
+        <div>
+          <span class="kicker">${esc(p.name)}</span>
+          <h2>モブくんはモンスターマスター</h2>
+        </div>
+        <div class="game-badge">${playBadge(humanIndex)}</div>
+      </div>
+
+      <div class="master-result-title-v135">
+        <b>MONSTER GET!</b>
+        <strong>${caughtList.length} / 10</strong>
+      </div>
+
+      <div class="master-collection-v135">
+        ${caughtList.length
+          ? caughtList.map(m=>`
+            <div class="master-caught-card-v135">
+              <div class="master-caught-monster-v135" style="--mc:${m.color}">
+                <i></i><b></b>
+              </div>
+              <span>GET</span>
+            </div>
+          `).join('')
+          : `<div class="master-no-catch-v135">NO MONSTER</div>`
+        }
+      </div>
+
+      <div class="master-result-note-v135">
+        ${thrown} BALL THROW
+      </div>
+    </div>`;
+
+    beep(
+      caught>=8?1080:
+      caught>=5?760:
+      480,
+      190,.045
+    );
+
+    await wait(2200);
+  }
 
   async function finish(){
-    if(finished)return; finished=true; active=false; if(raf)cancelAnimationFrame(raf);
-    state.records.monsterMaster[p.id]=caught; stage.classList.add('finish-v134'); beep(caught>=8?1080:caught>=5?760:480,190,.045);
-    await wait(900); if(isGameRunValid(runId))recordScreen(82,p,humanIndex,`${caught}<small>体</small>`,`10球で ${caught}体GET`);
+    if(finished)return;
+
+    finished=true;
+    phase='done';
+
+    if(raf)cancelAnimationFrame(raf);
+
+    state.records.monsterMaster[p.id]=caught;
+
+    await showCaughtCollection();
+
+    if(
+      isGameRunValid(runId)
+    ){
+      recordScreen(
+        82,p,humanIndex,
+        `${caught}<small>体</small>`,
+        `10秒で ${caught}体GET`
+      );
+    }
   }
 
-  if(!(await countdown('MONSTER MASTER',runId,{transparent:true})))return;
-  active=true; last=performance.now();
+  if(!(await countdown('BALL DESIGN',runId,{transparent:true})))return;
+
+  phase='draw';
+  phaseStart=last=performance.now();
+
+  function beginCatchPhase(now){
+    ensureDefaultBall();
+    designReady=true;
+    phase='catch';
+    phaseStart=now;
+
+    phaseLabel.textContent='CATCH';
+    helpEl.textContent='10秒！ 同じボールを何個でもフリックできる！';
+    stateEl.textContent='FLICK TO THROW';
+    pad.classList.add('ready-v135');
+  }
+
   function frame(now){
-    if(!active||finished||!isGameRunValid(runId))return;
-    const dt=Math.min(.04,(now-last)/1000); last=now;
-    monsters.forEach(m=>{
-      if(m.caught||m.busy)return; m.x+=m.dir*m.speed*dt;
-      if(m.x<28){m.x=28;m.dir=1;m.el.classList.remove('left-v134');}
-      if(m.x>stage.clientWidth-28){m.x=stage.clientWidth-28;m.dir=-1;m.el.classList.add('left-v134');}
-      m.el.style.left=`${m.x}px`;m.el.style.top=`${m.y}px`;
-    });
-    if(projectile&&!projectile.dead){
-      projectile.x+=projectile.vx*dt; projectile.y+=projectile.vy*dt; projectile.vy+=190*dt;
-      projectileEl.style.left=`${projectile.x}px`; projectileEl.style.top=`${projectile.y}px`;
-      const hit=monsters.find(m=>!m.caught&&!m.busy&&Math.hypot(projectile.x-m.x,projectile.y-m.y)<31);
-      if(hit){projectile.dead=true;resolveHit(hit,projectile.x,projectile.y);}
-      else if(projectile.x<-45||projectile.x>stage.clientWidth+45||projectile.y<-70||projectile.y>stage.clientHeight+60){
-        projectile.dead=true;resetProjectile();if(shots<=0)finish();
+    if(finished||!isGameRunValid(runId))return;
+
+    const dt=Math.min(.04,(now-last)/1000);
+    last=now;
+
+    if(phase==='draw'){
+      const elapsed=now-phaseStart;
+      const rem=3000-elapsed;
+
+      timerEl.textContent=(Math.max(0,rem)/1000).toFixed(2);
+
+      if(rem<=0){
+        drawing=false;
+        activeStroke=null;
+        pointer=null;
+        beginCatchPhase(now);
+      }
+    }else if(phase==='catch'){
+      const elapsed=now-phaseStart;
+      const rem=10000-elapsed;
+
+      timerEl.textContent=(Math.max(0,rem)/1000).toFixed(2);
+
+      if(rem<=0&&!catchTimeOver){
+        catchTimeOver=true;
+        phase='ending';
+        helpEl.textContent='TIME UP！ 投げたボールの結果を待っています';
+        stateEl.textContent='TIME UP';
+        pad.classList.add('disabled-v135');
+      }
+    }else if(phase==='ending'){
+      timerEl.textContent='0.00';
+    }
+
+    for(const m of monsters){
+      if(m.caught||m.busy)continue;
+
+      m.x+=m.dir*m.speed*dt;
+
+      if(m.x<28){
+        m.x=28;
+        m.dir=1;
+        m.el.classList.remove('left-v135');
+      }
+
+      if(m.x>stage.clientWidth-28){
+        m.x=stage.clientWidth-28;
+        m.dir=-1;
+        m.el.classList.add('left-v135');
+      }
+
+      m.el.style.left=`${m.x}px`;
+      m.el.style.top=`${m.y}px`;
+    }
+
+    for(const q of projectiles){
+      if(q.dead)continue;
+
+      q.x+=q.vx*dt;
+      q.y+=q.vy*dt;
+      q.vy+=190*dt;
+
+      q.el.style.left=`${q.x}px`;
+      q.el.style.top=`${q.y}px`;
+
+      let hit=null;
+
+      for(const m of monsters){
+        if(m.caught||m.busy)continue;
+
+        if(Math.hypot(q.x-m.x,q.y-m.y)<31){
+          hit=m;
+          break;
+        }
+      }
+
+      if(hit){
+        q.dead=true;
+
+        const markup=q.el.innerHTML;
+        q.el.remove();
+
+        resolveCapture(
+          hit,q.x,q.y,markup
+        );
+
+        continue;
+      }
+
+      if(
+        q.x<-45||
+        q.x>stage.clientWidth+45||
+        q.y<-70||
+        q.y>stage.clientHeight+60
+      ){
+        q.dead=true;
+        q.el.remove();
       }
     }
+
+    if(catchTimeOver){
+      tryFinishCatch();
+    }
+
     raf=requestAnimationFrame(frame);
   }
+
   raf=requestAnimationFrame(frame);
 }
+
 
 // =========================================================
 // V10.34 GAME 84 — モブくんはスカウトマン！
@@ -20978,7 +21415,7 @@ async function startScoutMan(p,humanIndex,runId){
   }
   function card(r,i){
     const x=info[r],img=String((posIndex*5+i)%10+1).padStart(2,'0');
-    return `<button type="button" class="scout-card-v134 rarity-${r.toLowerCase()}-v134" data-rarity="${r}" data-price="${x.price}"><span class="scout-rarity-v134">${r}</span><div class="scout-player-art-v134" style="background-image:url('icon/${img}.png')"></div><b>モブくん</b><em>¥${x.price.toLocaleString()}</em></button>`;
+    return `<button type="button" class="scout-card-v134 rarity-${r.toLowerCase()}-v134" data-rarity="${r}" data-price="${x.price}"><span class="scout-rarity-v134">${r}</span><div class="scout-player-art-v134" style="background-image:url('icon/${img}.png')"></div><em>¥${x.price.toLocaleString()}</em></button>`;
   }
   function addR(reason){
     const cost=Math.min(500,money); money-=cost;
