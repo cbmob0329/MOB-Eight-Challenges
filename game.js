@@ -131,7 +131,9 @@ const GAMES=[
   {no:79,key:"rouletteMob",title:"モブくんルーレットジャンプ",sub:"ジャンプして着地した床のポイントを獲得"},
   {no:80,key:"excavationMob",title:"モブくん地下発掘",sub:"9マスから3ヶ所掘って化石ポイントを獲得"},
   {no:81,key:"oldMaidDuel",title:"モブくんのババ抜き決闘",sub:"偽モブくんの2枚から引いて何回目で勝てるか"},
-  {no:82,key:"robotMarch",title:"モブくんロボット大発進",sub:"電池を描いて補給し巨大ロボの前進距離を伸ばす"}
+  {no:82,key:"robotMarch",title:"モブくんロボット大発進",sub:"何本でも自由に電池を描いて補給し巨大ロボを前進させる"},
+  {no:83,key:"monsterMaster",title:"モブくんはモンスターマスター",sub:"自作ボールをフリックして10体のモンスターを捕獲"},
+  {no:84,key:"scoutMan",title:"モブくんはスカウトマン！",sub:"30000円で9ポジションを1秒判断でスカウト"}
 ];
 
 const MODES={
@@ -173,7 +175,7 @@ function freshState(){
         pizzaChef:{},mobHammer:{},bungeeMob:{},waterSlide:{},pancakeMob:{},
         paperPlane:{},tankMob:{},curlingMob:{},bubbleMob:{},
         changeMob:{},baggageMob:{},bridgeMob:{},treasureMob:{},rouletteMob:{},excavationMob:{},
-        oldMaidDuel:{},robotMarch:{}
+        oldMaidDuel:{},robotMarch:{},monsterMaster:{},scoutMan:{}
     },
     total:{},
     roundPoints:[],
@@ -304,7 +306,7 @@ function renderHome(){
     </section>
 
     <section class="panel flat">
-      <div class="panel-head"><h3>82 MINI GAMES</h3><span class="tag">GAME 1 → 82</span></div>
+      <div class="panel-head"><h3>84 MINI GAMES</h3><span class="tag">GAME 1 → 84</span></div>
       <div class="compact-game-grid home-compact-games-v119">
         ${GAMES.map(g=>`<div><b>${g.no}</b><span>${g.title}</span></div>`).join("")}
       </div>
@@ -953,7 +955,7 @@ function renderPlayStyleSelect(){
       <button id="normalStyle" class="style-select-card normal" type="button">
         <span>NORMAL</span>
         <b>順番に全種目</b>
-        <small>GAME 1 → 82 を順番にプレイ</small>
+        <small>GAME 1 → 84 を順番にプレイ</small>
       </button>
       <button id="customStyle" class="style-select-card custom" type="button">
         <span>CUSTOM</span>
@@ -963,7 +965,7 @@ function renderPlayStyleSelect(){
     </div>
 
     <section class="panel flat">
-      <h3>82 MINI GAMES</h3>
+      <h3>84 MINI GAMES</h3>
       <div class="compact-game-grid">
         ${GAMES.map(g=>`<div><b>${g.no}</b><span>${g.title}</span></div>`).join("")}
       </div>
@@ -1296,7 +1298,9 @@ function scoreRuleForGame(index){
     "32分割 / 100点床1マス・90点床1マス / ジャンプ着地時の床ポイント",
     "3ヶ所から掘り出した化石ポイントの合計",
     "1回目で勝利=100点 / 2回目=90点 / 10回目=10点",
-    "前進距離1000m=100点 / エネルギー切れまでの距離"
+    "前進距離1000m=100点 / エネルギー切れまでの距離",
+    "捕獲したモンスター数×10点 / 10体GET=100点",
+    "甲子園47校中の最終順位 / 1位=100点・47位=0点換算"
   ][index];
 }
 
@@ -1468,8 +1472,12 @@ function showGameIntro(index){
     rules=`<li>地面の9マスから3ヶ所を選んで発掘します。</li><li>1ヶ所掘るたびに土が飛び、化石や石が出現。演出終了後に次を掘れます。</li><li>0 / 10 / 30 / 50 / 75 / 100ポイント。</li><li>3回の合計ポイントで競います。</li>`;
   }else if(index===80){
     rules=`<li>偽モブくんはジョーカーとスペードのA、こちらはダイヤのAを持って開始。</li><li>相手の2枚から1枚を選ぶたび「このカードを引きますか？」と確認が出ます。「はい」で確定、「いいえ」で選び直せます。</li><li>スペードのAを引けばAのペアが完成して勝利。ジョーカーなら相手へ戻り、2枚をシャッフルして次の挑戦。</li><li>何回目の「はい」で勝てたかを競います。1回目勝利が最高記録。</li>`;
+  }else if(index===81){
+    rules=`<li>モブくんが乗った巨大ロボは自動で前進し続け、前進中はENERGYが減り続けます。</li><li>右下のBATTERY枠へ好きな形を何本でも自由に描きます。描き終わったあと、絵を短くタップすると電池としてロボへ飛びます。</li><li>一筆だけでも送れますが補給量は少なめ。複数の線で大きく描くほど補給量が伸びます。</li><li>ENERGYが0になった瞬間に終了し、それまでの前進距離が記録です。</li>`;
+  }else if(index===82){
+    rules=`<li>中央〜上部では10体のモンスターがそれぞれ違う速度で左右に歩いています。</li><li>下の正方形BALL DESIGN枠で円と中のデザインを何本でも自由に描けます。</li><li>描いたボールを上方向へフリックすると、その方向と速さのままモンスターへ飛びます。命中すると吸い込み→揺れ→捕獲判定。</li><li>モンスターごとに捕まりやすさが異なります。10体すべてGETで100点です。</li>`;
   }else{
-    rules=`<li>モブくんが乗った巨大ロボは自動で前進し続け、前進中はENERGYが減り続けます。</li><li>右下のBATTERY枠へ好きな形を指で描きます。描き終わったあと、その絵を短くタップすると電池としてロボへ飛びます。</li><li>描いた大きさ・線の量・まとまり方で補給量が変化。電池が届くとENERGY回復。</li><li>ENERGYが0になった瞬間に終了し、それまでの前進距離が記録です。</li>`;
+    rules=`<li>所持金30000円で、P / C / 1B / 2B / 3B / SS / RF / LF / CFの9人をスカウトします。</li><li>各ポジションごとに5人が横一列へ表示され、選べる時間は1秒。選んだ選手を即購入します。</li><li>R=500円 / SR=1000円 / SSR=3000円 / UR=5000円 / MOB=10000円。時間切れまたは資金不足ならRが自動加入。</li><li>9人決定後にチーム一覧を確認し、「結果を観る」で47校中の甲子園順位を発表します。</li>`;
   }
   screen.innerHTML=`
     <div class="game-head">
@@ -1591,7 +1599,9 @@ function humanReady(gameIndex,humanIndex){
     else if(gameIndex===78)startRouletteMob(p,humanIndex,runId);
     else if(gameIndex===79)startExcavationMob(p,humanIndex,runId);
     else if(gameIndex===80)startOldMaidDuel(p,humanIndex,runId);
-    else startRobotMarch(p,humanIndex,runId);
+    else if(gameIndex===81)startRobotMarch(p,humanIndex,runId);
+    else if(gameIndex===82)startMonsterMaster(p,humanIndex,runId);
+    else startScoutMan(p,humanIndex,runId);
   },{once:true});
 }
 
@@ -20186,67 +20196,74 @@ async function startOldMaidDuel(p,humanIndex,runId){
   let cards=['joker','spade'];
   let finished=false;
 
-  screen.innerHTML=`<div class="maid-shell-v132">
+  screen.innerHTML=`<div class="maid-shell-v133">
     <div class="game-head">
       <div><span class="kicker">${esc(p.name)}</span><h2>モブくんのババ抜き決闘</h2></div>
       <div class="game-badge">${playBadge(humanIndex)}</div>
     </div>
 
     <div class="v125-hud">
-      <div><span>TRY</span><b id="maidTry132">0</b></div>
+      <div><span>TRY</span><b id="maidTry133">0</b></div>
       <div><span>YOUR CARD</span><b>A♦</b></div>
     </div>
 
-    <div class="maid-stage-v132">
-      <div class="fake-mob-v132" style="background-image:url('icon/02.png')"><span>FAKE MOB</span></div>
-      <div class="maid-label-v132">相手のカード</div>
+    <div class="maid-stage-v133">
+      <div class="fake-mob-v133" style="background-image:url('icon/02.png')"><span>FAKE MOB</span></div>
+      <div class="maid-label-v133">相手のカード</div>
 
-      <div id="maidOpponent132" class="maid-opponent-v132">
-        <button type="button" data-pos="0" class="maid-card-v132 back-v132"><i>MOB</i></button>
-        <button type="button" data-pos="1" class="maid-card-v132 back-v132"><i>MOB</i></button>
+      <div id="maidOpponent133" class="maid-opponent-v133">
+        <button type="button" data-pos="0" class="maid-card-v133 back-v133"><span class="maid-card-back-v133">MOB</span></button>
+        <button type="button" data-pos="1" class="maid-card-v133 back-v133"><span class="maid-card-back-v133">MOB</span></button>
       </div>
 
-      <div id="maidReveal132" class="maid-reveal-v132"></div>
-
-      <div class="maid-player-v132">
-        <div class="maid-card-v132 ace-diamond-v132"><b>A</b><i>♦</i></div>
+      <div class="maid-player-v133">
+        <div class="maid-card-v133 ace-diamond-v133"><b>A</b><i>♦</i></div>
       </div>
     </div>
 
-    <div id="maidConfirm132" class="maid-confirm-v132" hidden>
+    <div id="maidConfirm133" class="maid-confirm-v133" hidden>
       <b>このカードを引きますか？</b>
       <div>
-        <button id="maidYes132" type="button" class="primary">はい</button>
-        <button id="maidNo132" type="button">いいえ</button>
+        <button id="maidYes133" type="button" class="primary">はい</button>
+        <button id="maidNo133" type="button">いいえ</button>
       </div>
     </div>
 
-    <div id="maidStatus132" class="maid-status-v132">相手の2枚から1枚選んでください</div>
+    <div id="maidStatus133" class="maid-status-v133">相手の2枚から1枚選んでください</div>
   </div>`;
 
-  const opponent=document.getElementById('maidOpponent132');
-  const reveal=document.getElementById('maidReveal132');
-  const confirm=document.getElementById('maidConfirm132');
-  const yes=document.getElementById('maidYes132');
-  const no=document.getElementById('maidNo132');
-  const tryEl=document.getElementById('maidTry132');
-  const status=document.getElementById('maidStatus132');
+  const opponent=document.getElementById('maidOpponent133');
+  const confirm=document.getElementById('maidConfirm133');
+  const yes=document.getElementById('maidYes133');
+  const no=document.getElementById('maidNo133');
+  const tryEl=document.getElementById('maidTry133');
+  const status=document.getElementById('maidStatus133');
 
   const buttons=()=>[...opponent.querySelectorAll('button[data-pos]')];
 
+  function faceHtml(kind){
+    return kind==='spade'
+      ? `<span class="maid-face-v133 ace-spade-v133"><b>A</b><i>♠</i></span>`
+      : `<span class="maid-face-v133 joker-v133"><b>JOKER</b><i>★</i></span>`;
+  }
+
+  function setBack(btn){
+    btn.className='maid-card-v133 back-v133';
+    btn.innerHTML='<span class="maid-card-back-v133">MOB</span>';
+  }
+
   function clearSelect(){
     selected=-1;
-    buttons().forEach(b=>b.classList.remove('selected-v132'));
+    buttons().forEach(b=>b.classList.remove('selected-v133'));
     confirm.hidden=true;
   }
 
   function shuffleCards(){
-    if(forcedWin)return;
-    if(Math.random()<.5)cards.reverse();
+    if(!forcedWin && Math.random()<.5)cards.reverse();
 
-    opponent.classList.remove('shuffle-v132');
+    opponent.classList.remove('shuffle-v133');
     void opponent.offsetWidth;
-    opponent.classList.add('shuffle-v132');
+    opponent.classList.add('shuffle-v133');
   }
 
   opponent.addEventListener('pointerdown',e=>{
@@ -20257,9 +20274,13 @@ async function startOldMaidDuel(p,humanIndex,runId){
     e.preventDefault();
 
     selected=Number(card.dataset.pos);
-    buttons().forEach(b=>b.classList.toggle('selected-v132',b===card));
+
+    buttons().forEach(b=>{
+      b.classList.toggle('selected-v133',b===card);
+    });
+
     confirm.hidden=false;
-    status.textContent='確認してから引きます';
+    status.textContent='このカードでよければ「はい」';
   },{passive:false});
 
   no.addEventListener('pointerdown',e=>{
@@ -20277,71 +20298,90 @@ async function startOldMaidDuel(p,humanIndex,runId){
 
     busy=true;
     confirm.hidden=true;
+
     tries++;
     tryEl.textContent=tries;
 
     const chosen=forcedWin?'spade':cards[selected];
     const selectedBtn=buttons()[selected];
 
-    selectedBtn.classList.add('draw-v132');
+    selectedBtn.classList.remove('selected-v133');
+    selectedBtn.classList.add('flip-v133');
 
-    await wait(260);
+    status.textContent='カードをめくります…';
+    beep(410,50,.012);
+
+    await wait(230);
     if(!isGameRunValid(runId))return;
 
-    reveal.innerHTML=
-      chosen==='spade'
-        ? `<div class="maid-card-v132 ace-spade-v132"><b>A</b><i>♠</i></div>`
-        : `<div class="maid-card-v132 joker-v132"><b>JOKER</b><i>★</i></div>`;
+    selectedBtn.classList.remove('back-v133');
+    selectedBtn.classList.add(
+      'face-v133',
+      chosen==='spade'?'spade-v133':'joker-card-v133'
+    );
+    selectedBtn.innerHTML=faceHtml(chosen);
 
-    reveal.classList.remove('show-v132');
-    void reveal.offsetWidth;
-    reveal.classList.add('show-v132');
+    selectedBtn.classList.remove('flip-v133');
+    selectedBtn.classList.add('flip-open-v133');
 
-    beep(chosen==='spade'?920:410,95,.024);
+    beep(chosen==='spade'?930:430,95,.025);
+
+    // Keep the drawn card face-up long enough to understand exactly what was pulled.
+    await wait(1050);
+    if(!isGameRunValid(runId))return;
 
     if(chosen==='spade'){
       finished=true;
+
       status.textContent='A♦ + A♠！ ペア完成！';
+      document.querySelector('.maid-player-v133')?.classList.add('pair-v133');
+      selectedBtn.classList.add('pair-v133');
 
-      document.querySelector('.maid-player-v132')?.classList.add('pair-v132');
-      reveal.classList.add('pair-v132');
-
-      await wait(800);
+      await wait(900);
       if(!isGameRunValid(runId))return;
 
       state.records.oldMaidDuel[p.id]=tries;
       status.textContent=`${tries}回目で勝利！`;
+
       beep(1120,190,.05);
 
-      await wait(800);
+      await wait(900);
 
       if(isGameRunValid(runId)){
-        recordScreen(80,p,humanIndex,`${tries}<small>回目</small>`,'ババ抜き勝利');
+        recordScreen(
+          80,p,humanIndex,
+          `${tries}<small>回目</small>`,
+          'A♠を引いてペア完成'
+        );
       }
       return;
     }
 
-    status.textContent='JOKER！ 相手へ戻る…';
+    status.textContent='JOKER。相手へ戻ります';
 
-    await wait(680);
+    await wait(650);
     if(!isGameRunValid(runId))return;
 
-    reveal.innerHTML='';
-    selectedBtn.classList.remove('draw-v132');
+    setBack(selectedBtn);
     clearSelect();
 
-    if(tries>=9)forcedWin=true;
-    else shuffleCards();
+    if(tries>=9){
+      forcedWin=true;
+    }else{
+      shuffleCards();
+    }
 
     status.textContent='もう一度、相手の2枚から選ぶ';
 
-    await wait(260);
+    await wait(300);
     busy=false;
   },{passive:false});
 
   if(!(await countdown('OLD MAID',runId,{transparent:true})))return;
+
   shuffleCards();
 }
+
 
 // =========================================================
 // V10.32 GAME 82 — モブくんロボット大発進
@@ -20356,61 +20396,63 @@ async function startRobotMarch(p,humanIndex,runId){
   let last=0;
   let raf=null;
 
-  let drawing=false;
-  let currentStroke=[];
-  let drawingReady=false;
-  let downInfo=null;
+  let strokes=[];
+  let activeStroke=null;
+  let pointer=null;
+  let ready=false;
   let sendLock=false;
 
-  screen.innerHTML=`<div class="robot-shell-v132">
+  screen.innerHTML=`<div class="robot-shell-v133">
     <div class="game-head">
       <div><span class="kicker">${esc(p.name)}</span><h2>モブくんロボット大発進</h2></div>
       <div class="game-badge">${playBadge(humanIndex)}</div>
     </div>
 
     <div class="v125-hud">
-      <div><span>DISTANCE</span><b id="robotDist132">0m</b></div>
-      <div><span>ENERGY</span><b id="robotEnergy132">100%</b></div>
+      <div><span>DISTANCE</span><b id="robotDist133">0m</b></div>
+      <div><span>ENERGY</span><b id="robotEnergy133">100%</b></div>
     </div>
 
-    <div class="robot-help-v132">右下に電池を描く → 描いた電池を短くタップして送る</div>
+    <div class="robot-help-v133">
+      右下へ自由に何本でも描く。描き終えたら短くタップして送る
+    </div>
 
-    <div id="robotStage132" class="robot-stage-v132">
-      <div class="robot-road-v132"></div>
+    <div id="robotStage133" class="robot-stage-v133">
+      <div class="robot-road-v133"></div>
 
-      <div class="robot-buildings-v132 left"><i></i><i></i><i></i></div>
-      <div class="robot-buildings-v132 right"><i></i><i></i><i></i></div>
+      <div class="robot-buildings-v133 left"><i></i><i></i><i></i></div>
+      <div class="robot-buildings-v133 right"><i></i><i></i><i></i></div>
 
-      <div id="robot132" class="giant-robot-v132">
-        <div class="robot-head-v132"><span style="background-image:url('icon/01.png')"></span></div>
-        <div class="robot-chest-v132"><i></i></div>
-        <div class="robot-arm-v132 left"></div>
-        <div class="robot-arm-v132 right"></div>
-        <div class="robot-leg-v132 left"></div>
-        <div class="robot-leg-v132 right"></div>
+      <div id="robot133" class="giant-robot-v133">
+        <div class="robot-head-v133"><span style="background-image:url('icon/01.png')"></span></div>
+        <div class="robot-chest-v133"><i></i></div>
+        <div class="robot-arm-v133 left"></div>
+        <div class="robot-arm-v133 right"></div>
+        <div class="robot-leg-v133 left"></div>
+        <div class="robot-leg-v133 right"></div>
       </div>
 
-      <div class="robot-energybar-v132"><i id="robotEnergyBar132"></i></div>
+      <div class="robot-energybar-v133"><i id="robotEnergyBar133"></i></div>
 
-      <div id="batteryPad132" class="battery-pad-v132">
+      <div id="batteryPad133" class="battery-pad-v133">
         <b>BATTERY</b>
-        <svg id="batterySvg132" viewBox="0 0 120 120" preserveAspectRatio="none"></svg>
-        <span id="batteryTap132">DRAW</span>
+        <svg id="batterySvg133" viewBox="0 0 120 120" preserveAspectRatio="none"></svg>
+        <span id="batteryTap133">DRAW</span>
       </div>
 
-      <div id="batteryFly132" class="battery-fly-v132"></div>
+      <div id="batteryFly133" class="battery-fly-v133"></div>
     </div>
   </div>`;
 
-  const stage=document.getElementById('robotStage132');
-  const robot=document.getElementById('robot132');
-  const pad=document.getElementById('batteryPad132');
-  const svg=document.getElementById('batterySvg132');
-  const padText=document.getElementById('batteryTap132');
-  const fly=document.getElementById('batteryFly132');
-  const energyEl=document.getElementById('robotEnergy132');
-  const energyBar=document.getElementById('robotEnergyBar132');
-  const distEl=document.getElementById('robotDist132');
+  const stage=document.getElementById('robotStage133');
+  const robot=document.getElementById('robot133');
+  const pad=document.getElementById('batteryPad133');
+  const svg=document.getElementById('batterySvg133');
+  const padText=document.getElementById('batteryTap133');
+  const fly=document.getElementById('batteryFly133');
+  const energyEl=document.getElementById('robotEnergy133');
+  const energyBar=document.getElementById('robotEnergyBar133');
+  const distEl=document.getElementById('robotDist133');
 
   function localPad(e){
     const r=pad.getBoundingClientRect();
@@ -20420,58 +20462,93 @@ async function startRobotMarch(p,humanIndex,runId){
     };
   }
 
-  function renderStroke(){
+  function renderStrokes(){
     svg.innerHTML='';
-    if(currentStroke.length<2)return;
 
-    const pl=document.createElementNS('http://www.w3.org/2000/svg','polyline');
-    pl.setAttribute('points',currentStroke.map(q=>`${q.x},${q.y}`).join(' '));
-    pl.setAttribute('class','battery-drawing-v132');
-    svg.appendChild(pl);
+    strokes.forEach((stroke,i)=>{
+      if(stroke.length<2)return;
+
+      const pl=document.createElementNS(
+        'http://www.w3.org/2000/svg',
+        'polyline'
+      );
+
+      pl.setAttribute(
+        'points',
+        stroke.map(q=>`${q.x},${q.y}`).join(' ')
+      );
+      pl.setAttribute('class','battery-drawing-v133');
+      pl.style.setProperty('--stroke-i',i);
+
+      svg.appendChild(pl);
+    });
   }
 
-  function strokeStats(){
-    if(currentStroke.length<3)return{charge:0};
+  function stats(){
+    const usable=strokes.filter(s=>s.length>=2);
 
-    let len=0;
-    for(let i=1;i<currentStroke.length;i++){
-      len+=Math.hypot(
-        currentStroke[i].x-currentStroke[i-1].x,
-        currentStroke[i].y-currentStroke[i-1].y
-      );
+    if(!usable.length){
+      return{charge:0,strokeCount:0};
     }
 
-    const xs=currentStroke.map(q=>q.x);
-    const ys=currentStroke.map(q=>q.y);
+    let totalLen=0;
+    const all=[];
+
+    for(const stroke of usable){
+      all.push(...stroke);
+
+      for(let i=1;i<stroke.length;i++){
+        totalLen+=Math.hypot(
+          stroke[i].x-stroke[i-1].x,
+          stroke[i].y-stroke[i-1].y
+        );
+      }
+    }
+
+    const xs=all.map(q=>q.x);
+    const ys=all.map(q=>q.y);
     const w=Math.max(...xs)-Math.min(...xs);
     const h=Math.max(...ys)-Math.min(...ys);
     const area=w*h;
 
-    const close=Math.hypot(
-      currentStroke[0].x-currentStroke[currentStroke.length-1].x,
-      currentStroke[0].y-currentStroke[currentStroke.length-1].y
+    const sizeScore=clamp(area/7600,0,1);
+    const lineScore=clamp(totalLen/620,0,1);
+    const strokeCount=usable.length;
+
+    // One-stroke "quick toss" is valid but intentionally weaker.
+    const multiBonus=
+      strokeCount===1
+        ? 0
+        : clamp((strokeCount-1)*5,5,18);
+
+    const oneStrokeCap=strokeCount===1?24:52;
+
+    const charge=clamp(
+      Math.round(
+        8+
+        sizeScore*14+
+        lineScore*14+
+        multiBonus
+      ),
+      8,
+      oneStrokeCap
     );
 
-    const sizeScore=clamp(area/7600,0,1);
-    const lengthScore=clamp(len/430,0,1);
-    const closeScore=clamp(1-close/90,0,1);
-
     return{
-      charge:clamp(
-        Math.round(12+sizeScore*16+lengthScore*12+closeScore*7),
-        12,47
-      )
+      charge,
+      strokeCount
     };
   }
 
   async function sendBattery(){
-    if(!active||finished||!drawingReady||sendLock)return;
+    if(!active||finished||!ready||sendLock)return;
 
     sendLock=true;
-    drawingReady=false;
-    pad.classList.add('sending-v132');
+    ready=false;
+    pad.classList.add('sending-v133');
 
-    const charge=strokeStats().charge;
+    const result=stats();
+    const charge=result.charge;
 
     const pr=pad.getBoundingClientRect();
     const sr=stage.getBoundingClientRect();
@@ -20482,38 +20559,57 @@ async function startRobotMarch(p,humanIndex,runId){
     fly.style.top=`${pr.top-sr.top+pr.height/2}px`;
     fly.style.opacity='1';
 
-    const tx=rr.left-sr.left+rr.width/2-(pr.left-sr.left+pr.width/2);
-    const ty=rr.top-sr.top+rr.height*.45-(pr.top-sr.top+pr.height/2);
+    const tx=
+      rr.left-sr.left+rr.width/2-
+      (pr.left-sr.left+pr.width/2);
+
+    const ty=
+      rr.top-sr.top+rr.height*.45-
+      (pr.top-sr.top+pr.height/2);
 
     const anim=fly.animate(
       [
-        {transform:'translate(-50%,-50%) translate(0,0) scale(.75) rotate(0deg)'},
-        {transform:`translate(-50%,-50%) translate(${tx*.55}px,${ty*.48-55}px) scale(.58) rotate(180deg)`},
+        {transform:'translate(-50%,-50%) translate(0,0) scale(.78) rotate(0deg)'},
+        {transform:`translate(-50%,-50%) translate(${tx*.54}px,${ty*.48-58}px) scale(.60) rotate(180deg)`},
         {transform:`translate(-50%,-50%) translate(${tx}px,${ty}px) scale(.30) rotate(360deg)`}
       ],
-      {duration:520,easing:'cubic-bezier(.18,.72,.18,1)',fill:'forwards'}
+      {
+        duration:520,
+        easing:'cubic-bezier(.18,.72,.18,1)',
+        fill:'forwards'
+      }
     );
 
     beep(560,70,.02);
+
     await anim.finished.catch(()=>{});
     if(!isGameRunValid(runId))return;
 
     energy=clamp(energy+charge,0,100);
+
     energyEl.textContent=`${Math.round(energy)}%`;
     energyBar.style.width=`${energy}%`;
 
-    robot.classList.remove('charged-v132');
+    robot.classList.remove('charged-v133');
     void robot.offsetWidth;
-    robot.classList.add('charged-v132');
+    robot.classList.add('charged-v133');
 
+    padText.textContent=`+${charge}`;
     beep(820+charge*4,110,.03);
+
+    await wait(180);
 
     fly.innerHTML='';
     fly.style.opacity='0';
     svg.innerHTML='';
-    currentStroke=[];
+
+    strokes=[];
+    activeStroke=null;
+    pointer=null;
+
     padText.textContent='DRAW';
-    pad.classList.remove('sending-v132','ready-v132');
+    pad.classList.remove('sending-v133','ready-v133');
+
     sendLock=false;
   }
 
@@ -20521,62 +20617,87 @@ async function startRobotMarch(p,humanIndex,runId){
     if(!active||finished||sendLock)return;
     e.preventDefault();
 
-    downInfo={x:e.clientX,y:e.clientY,id:e.pointerId};
-
-    if(drawingReady){
-      drawing=false;
-      return;
-    }
-
-    drawing=true;
-    currentStroke=[localPad(e)];
-    padText.textContent='DRAWING';
+    pointer={
+      id:e.pointerId,
+      startX:e.clientX,
+      startY:e.clientY,
+      moved:false,
+      startedStroke:false
+    };
 
     try{pad.setPointerCapture(e.pointerId)}catch(_){}
   },{passive:false});
 
   pad.addEventListener('pointermove',e=>{
-    if(!drawing||!active||finished||!downInfo||e.pointerId!==downInfo.id)return;
+    if(!active||finished||sendLock||!pointer||e.pointerId!==pointer.id)return;
     e.preventDefault();
 
-    const q=localPad(e);
-    const lastPt=currentStroke[currentStroke.length-1];
-    if(Math.hypot(q.x-lastPt.x,q.y-lastPt.y)<2)return;
+    const moved=Math.hypot(
+      e.clientX-pointer.startX,
+      e.clientY-pointer.startY
+    );
 
-    currentStroke.push(q);
-    renderStroke();
+    if(!pointer.startedStroke && moved>=7){
+      pointer.moved=true;
+      pointer.startedStroke=true;
+
+      activeStroke=[localPad(e)];
+      strokes.push(activeStroke);
+
+      ready=true;
+      pad.classList.add('ready-v133');
+      padText.textContent=`DRAW ${strokes.length}`;
+    }
+
+    if(pointer.startedStroke){
+      const q=localPad(e);
+      const prev=activeStroke[activeStroke.length-1];
+
+      if(Math.hypot(q.x-prev.x,q.y-prev.y)>=2){
+        activeStroke.push(q);
+        renderStrokes();
+      }
+    }
   },{passive:false});
 
   pad.addEventListener('pointerup',e=>{
-    if(!active||finished||!downInfo||e.pointerId!==downInfo.id)return;
+    if(!active||finished||sendLock||!pointer||e.pointerId!==pointer.id)return;
     e.preventDefault();
 
-    const moved=Math.hypot(e.clientX-downInfo.x,e.clientY-downInfo.y);
-    downInfo=null;
+    const wasStroke=pointer.startedStroke;
+    const moved=Math.hypot(
+      e.clientX-pointer.startX,
+      e.clientY-pointer.startY
+    );
 
-    if(drawingReady&&moved<12){
+    pointer=null;
+    activeStroke=null;
+
+    if(!wasStroke && moved<7 && ready){
       sendBattery();
       return;
     }
 
-    if(drawing){
-      drawing=false;
+    if(wasStroke){
+      const usable=strokes.filter(s=>s.length>=2);
 
-      if(currentStroke.length>=4){
-        drawingReady=true;
-        padText.textContent='TAP TO SEND';
-        pad.classList.add('ready-v132');
-      }else{
-        currentStroke=[];
+      if(!usable.length){
+        strokes=[];
         svg.innerHTML='';
+        ready=false;
+        pad.classList.remove('ready-v133');
         padText.textContent='DRAW';
+      }else{
+        ready=true;
+        pad.classList.add('ready-v133');
+        padText.textContent=`${usable.length} STROKE / TAP SEND`;
       }
     }
   },{passive:false});
 
   pad.addEventListener('pointercancel',()=>{
-    drawing=false;
-    downInfo=null;
+    pointer=null;
+    activeStroke=null;
   });
 
   async function finish(){
@@ -20584,11 +20705,10 @@ async function startRobotMarch(p,humanIndex,runId){
 
     finished=true;
     active=false;
-    drawing=false;
     if(raf)cancelAnimationFrame(raf);
 
-    robot.classList.add('stop-v132');
-    stage.classList.add('power-down-v132');
+    robot.classList.add('stop-v133');
+    stage.classList.add('power-down-v133');
 
     state.records.robotMarch[p.id]=Math.round(distance);
 
@@ -20597,6 +20717,7 @@ async function startRobotMarch(p,humanIndex,runId){
     energyBar.style.width='0%';
 
     beep(105,220,.045);
+
     await wait(900);
 
     if(isGameRunValid(runId)){
@@ -20621,15 +20742,25 @@ async function startRobotMarch(p,humanIndex,runId){
 
     distance+=44*dt;
 
-    const drain=14.8+Math.min(24,distance/55);
+    const drain=
+      14.8+
+      Math.min(24,distance/55);
+
     energy-=drain*dt;
 
     distEl.textContent=`${Math.round(distance)}m`;
     energyEl.textContent=`${Math.max(0,Math.round(energy))}%`;
     energyBar.style.width=`${clamp(energy,0,100)}%`;
 
-    stage.style.setProperty('--road-speed',`${clamp(.62-distance/2200,.26,.62)}s`);
-    robot.classList.toggle('low-energy-v132',energy<28);
+    stage.style.setProperty(
+      '--road-speed',
+      `${clamp(.62-distance/2200,.26,.62)}s`
+    );
+
+    robot.classList.toggle(
+      'low-energy-v133',
+      energy<28
+    );
 
     if(energy<=0){
       finish();
@@ -20640,6 +20771,258 @@ async function startRobotMarch(p,humanIndex,runId){
   }
 
   raf=requestAnimationFrame(frame);
+}
+
+
+// =========================================================
+// V10.34 GAME 83 — モブくんはモンスターマスター
+// =========================================================
+async function startMonsterMaster(p,humanIndex,runId){
+  gameFit();
+
+  let active=false,finished=false,locked=false,drawing=false,pointer=null;
+  let strokes=[],activeStroke=null,designReady=false,shots=10,caught=0;
+  let projectile=null,last=0,raf=null;
+
+  screen.innerHTML=`<div class="master-shell-v134">
+    <div class="game-head">
+      <div><span class="kicker">${esc(p.name)}</span><h2>モブくんはモンスターマスター</h2></div>
+      <div class="game-badge">${playBadge(humanIndex)}</div>
+    </div>
+    <div class="v125-hud">
+      <div><span>GET</span><b id="masterGet134">0 / 10</b></div>
+      <div><span>BALL</span><b id="masterBalls134">10</b></div>
+    </div>
+    <div class="master-help-v134">最初にボールを自由デザイン → 短くタップで完成 → 上へフリックして投げる</div>
+    <div id="masterStage134" class="master-stage-v134">
+      <div class="master-zone-label-v134">MONSTER ZONE</div>
+      <div id="monsterLayer134" class="monster-layer-v134"></div>
+      <div id="masterFx134" class="master-fx-v134"></div>
+      <div id="masterProjectile134" class="master-projectile-v134"></div>
+      <div id="ballPad134" class="ball-pad-v134">
+        <b>BALL DESIGN</b>
+        <svg id="ballSvg134" viewBox="0 0 140 140" preserveAspectRatio="none"></svg>
+        <span id="ballState134">DRAW</span>
+      </div>
+    </div>
+  </div>`;
+
+  const stage=document.getElementById('masterStage134');
+  const layer=document.getElementById('monsterLayer134');
+  const fx=document.getElementById('masterFx134');
+  const projectileEl=document.getElementById('masterProjectile134');
+  const pad=document.getElementById('ballPad134');
+  const svg=document.getElementById('ballSvg134');
+  const stateEl=document.getElementById('ballState134');
+  const getEl=document.getElementById('masterGet134');
+  const ballsEl=document.getElementById('masterBalls134');
+
+  const defs=Array.from({length:10},(_,i)=>({
+    speed:rand(18,42), dir:Math.random()<.5?-1:1,
+    y:42+(i%5)*43+(i>=5?12:0),
+    catchRate:i===9?.34:i>=7?.48:.69,
+    color:['#7bd26f','#74c8e7','#dc88d8','#efca61','#ed7e6c'][i%5]
+  }));
+
+  const monsters=defs.map((d,i)=>{
+    const el=document.createElement('div');
+    el.className='master-monster-v134';
+    el.style.setProperty('--mc',d.color);
+    el.innerHTML='<i></i><b></b><span></span>';
+    layer.appendChild(el);
+    return {...d,id:i,x:rand(40,stage.clientWidth-40),el,caught:false,busy:false};
+  });
+
+  function localPad(e){
+    const r=pad.getBoundingClientRect();
+    return{x:clamp((e.clientX-r.left)/r.width*140,0,140),y:clamp((e.clientY-r.top)/r.height*140,0,140)};
+  }
+  function renderDesign(){
+    svg.innerHTML='';
+    strokes.forEach(s=>{
+      if(s.length<2)return;
+      const pl=document.createElementNS('http://www.w3.org/2000/svg','polyline');
+      pl.setAttribute('points',s.map(q=>`${q.x},${q.y}`).join(' '));
+      pl.setAttribute('class','ball-drawing-v134'); svg.appendChild(pl);
+    });
+  }
+  function power(){
+    const usable=strokes.filter(s=>s.length>=2); if(!usable.length)return .72;
+    let len=0; const all=[];
+    usable.forEach(s=>{ all.push(...s); for(let i=1;i<s.length;i++)len+=Math.hypot(s[i].x-s[i-1].x,s[i].y-s[i-1].y); });
+    const xs=all.map(q=>q.x),ys=all.map(q=>q.y);
+    const area=(Math.max(...xs)-Math.min(...xs))*(Math.max(...ys)-Math.min(...ys));
+    const close=Math.min(...usable.map(s=>Math.hypot(s[0].x-s.at(-1).x,s[0].y-s.at(-1).y)));
+    return clamp(.72+clamp(1-close/80,0,1)*.10+clamp(area/11000,0,1)*.08+clamp((len-180)/650,0,1)*.10,.72,1);
+  }
+  function ballHtml(){ return `<div class="drawn-ball-v134">${svg.outerHTML}</div>`; }
+  function burst(x,y,text=''){
+    const b=document.createElement('div'); b.className='master-burst-v134'; b.style.left=`${x}px`; b.style.top=`${y}px`;
+    b.innerHTML=`<i></i>${text?`<b>${text}</b>`:''}`; fx.appendChild(b); setTimeout(()=>b.remove(),760);
+  }
+  function resetProjectile(){ projectile=null; projectileEl.innerHTML=''; projectileEl.className='master-projectile-v134'; locked=false; }
+
+  async function resolveHit(m,x,y){
+    locked=true; m.busy=true; m.el.classList.add('sucked-v134'); burst(x,y);
+    await wait(360); if(!isGameRunValid(runId))return;
+    m.el.style.opacity='0'; projectileEl.classList.add('capture-ball-v134');
+    await wait(250); if(!isGameRunValid(runId))return;
+
+    const chance=clamp(m.catchRate*power(),.20,.84);
+    const shakes=chance>.62?2:chance>.44?3:4;
+    for(let i=0;i<shakes;i++){
+      projectileEl.classList.remove('shake-v134'); void projectileEl.offsetWidth; projectileEl.classList.add('shake-v134');
+      beep(410+i*45,55,.015); await wait(275); if(!isGameRunValid(runId))return;
+    }
+
+    if(Math.random()<chance){
+      m.caught=true; caught++; getEl.textContent=`${caught} / 10`; projectileEl.classList.add('get-v134'); burst(x,y,'GET!!'); beep(1060,170,.05);
+      await wait(520);
+    }else{
+      m.el.style.opacity='1'; m.el.classList.remove('sucked-v134'); m.busy=false; projectileEl.classList.add('break-v134'); burst(x,y,'ESCAPE!'); beep(145,120,.035);
+      await wait(420);
+    }
+    resetProjectile();
+    if(shots<=0 || caught>=10)finish();
+  }
+
+  function throwBall(dx,dy){
+    if(!active||finished||locked||!designReady||shots<=0)return;
+    const dist=Math.hypot(dx,dy); if(dist<28||dy>=-10)return;
+    const sr=stage.getBoundingClientRect(),pr=pad.getBoundingClientRect();
+    const x=pr.left-sr.left+pr.width/2,y=pr.top-sr.top+20;
+    const speed=clamp(dist*4.5,350,720),ux=dx/dist,uy=dy/dist;
+    projectileEl.innerHTML=ballHtml(); projectileEl.style.left=`${x}px`; projectileEl.style.top=`${y}px`; projectileEl.classList.add('flying-v134');
+    projectile={x,y,vx:ux*speed,vy:uy*speed,dead:false}; shots--; ballsEl.textContent=shots; locked=true; beep(540,55,.018);
+  }
+
+  pad.addEventListener('pointerdown',e=>{
+    if(!active||finished||locked)return; e.preventDefault();
+    pointer={id:e.pointerId,sx:e.clientX,sy:e.clientY,started:false};
+    try{pad.setPointerCapture(e.pointerId)}catch(_){}
+  },{passive:false});
+  pad.addEventListener('pointermove',e=>{
+    if(!pointer||e.pointerId!==pointer.id||!active||finished||locked)return; e.preventDefault();
+    const moved=Math.hypot(e.clientX-pointer.sx,e.clientY-pointer.sy);
+    if(designReady)return;
+    if(!pointer.started&&moved>=6){pointer.started=true; drawing=true; activeStroke=[localPad(e)]; strokes.push(activeStroke); stateEl.textContent=`DRAW ${strokes.length}`;}
+    if(pointer.started){const q=localPad(e),prev=activeStroke.at(-1); if(Math.hypot(q.x-prev.x,q.y-prev.y)>=2){activeStroke.push(q);renderDesign();}}
+  },{passive:false});
+  pad.addEventListener('pointerup',e=>{
+    if(!pointer||e.pointerId!==pointer.id||!active||finished||locked)return; e.preventDefault();
+    const dx=e.clientX-pointer.sx,dy=e.clientY-pointer.sy,dist=Math.hypot(dx,dy),wasStroke=pointer.started;
+    pointer=null; drawing=false; activeStroke=null;
+    if(designReady){throwBall(dx,dy);return;}
+    if(!wasStroke&&dist<7&&strokes.some(s=>s.length>=3)){designReady=true;pad.classList.add('ready-v134');stateEl.textContent='FLICK TO THROW';beep(760,70,.02);}
+  },{passive:false});
+  pad.addEventListener('pointercancel',()=>{pointer=null;drawing=false;activeStroke=null;});
+
+  async function finish(){
+    if(finished)return; finished=true; active=false; if(raf)cancelAnimationFrame(raf);
+    state.records.monsterMaster[p.id]=caught; stage.classList.add('finish-v134'); beep(caught>=8?1080:caught>=5?760:480,190,.045);
+    await wait(900); if(isGameRunValid(runId))recordScreen(82,p,humanIndex,`${caught}<small>体</small>`,`10球で ${caught}体GET`);
+  }
+
+  if(!(await countdown('MONSTER MASTER',runId,{transparent:true})))return;
+  active=true; last=performance.now();
+  function frame(now){
+    if(!active||finished||!isGameRunValid(runId))return;
+    const dt=Math.min(.04,(now-last)/1000); last=now;
+    monsters.forEach(m=>{
+      if(m.caught||m.busy)return; m.x+=m.dir*m.speed*dt;
+      if(m.x<28){m.x=28;m.dir=1;m.el.classList.remove('left-v134');}
+      if(m.x>stage.clientWidth-28){m.x=stage.clientWidth-28;m.dir=-1;m.el.classList.add('left-v134');}
+      m.el.style.left=`${m.x}px`;m.el.style.top=`${m.y}px`;
+    });
+    if(projectile&&!projectile.dead){
+      projectile.x+=projectile.vx*dt; projectile.y+=projectile.vy*dt; projectile.vy+=190*dt;
+      projectileEl.style.left=`${projectile.x}px`; projectileEl.style.top=`${projectile.y}px`;
+      const hit=monsters.find(m=>!m.caught&&!m.busy&&Math.hypot(projectile.x-m.x,projectile.y-m.y)<31);
+      if(hit){projectile.dead=true;resolveHit(hit,projectile.x,projectile.y);}
+      else if(projectile.x<-45||projectile.x>stage.clientWidth+45||projectile.y<-70||projectile.y>stage.clientHeight+60){
+        projectile.dead=true;resetProjectile();if(shots<=0)finish();
+      }
+    }
+    raf=requestAnimationFrame(frame);
+  }
+  raf=requestAnimationFrame(frame);
+}
+
+// =========================================================
+// V10.34 GAME 84 — モブくんはスカウトマン！
+// =========================================================
+async function startScoutMan(p,humanIndex,runId){
+  gameFit();
+  const positions=[['P','ピッチャー'],['C','キャッチャー'],['1B','ファースト'],['2B','セカンド'],['3B','サード'],['SS','ショート'],['RF','ライト'],['LF','レフト'],['CF','センター']];
+  const info={R:{price:500,power:8},SR:{price:1000,power:14},SSR:{price:3000,power:23},UR:{price:5000,power:34},MOB:{price:10000,power:50}};
+  let money=30000,posIndex=0,active=false,chosen=false,timer=null,team=[],finished=false;
+
+  screen.innerHTML=`<div class="scout-shell-v134">
+    <div class="game-head"><div><span class="kicker">${esc(p.name)}</span><h2>モブくんはスカウトマン！</h2></div><div class="game-badge">${playBadge(humanIndex)}</div></div>
+    <div class="v125-hud"><div><span>BUDGET</span><b id="scoutMoney134">¥30,000</b></div><div><span>POSITION</span><b id="scoutPos134">P</b></div></div>
+    <div id="scoutStage134" class="scout-stage-v134">
+      <div class="scout-title-v134"><b id="scoutPosName134">ピッチャー</b><span id="scoutClock134">1.0</span></div>
+      <div id="scoutCards134" class="scout-cards-v134"></div>
+      <div id="scoutNotice134" class="scout-notice-v134"></div>
+    </div>
+    <div id="scoutFooter134" class="scout-footer-v134">1秒以内に1人タップして購入</div>
+  </div>`;
+
+  const stage=document.getElementById('scoutStage134'),cardsEl=document.getElementById('scoutCards134'),moneyEl=document.getElementById('scoutMoney134');
+  const posEl=document.getElementById('scoutPos134'),posNameEl=document.getElementById('scoutPosName134'),clockEl=document.getElementById('scoutClock134');
+  const notice=document.getElementById('scoutNotice134'),footer=document.getElementById('scoutFooter134');
+
+  function candidates(){
+    const pick=()=>{const r=Math.random()*100;return r<38?'R':r<64?'SR':r<82?'SSR':r<95?'UR':'MOB';};
+    const a=Array.from({length:5},pick); if(!a.includes('R'))a[randi(0,4)]='R'; return shuffle(a);
+  }
+  function card(r,i){
+    const x=info[r],img=String((posIndex*5+i)%10+1).padStart(2,'0');
+    return `<button type="button" class="scout-card-v134 rarity-${r.toLowerCase()}-v134" data-rarity="${r}" data-price="${x.price}"><span class="scout-rarity-v134">${r}</span><div class="scout-player-art-v134" style="background-image:url('icon/${img}.png')"></div><b>モブくん</b><em>¥${x.price.toLocaleString()}</em></button>`;
+  }
+  function addR(reason){
+    const cost=Math.min(500,money); money-=cost;
+    team.push({pos:positions[posIndex][0],rarity:'R',price:cost,power:8,auto:true}); moneyEl.textContent=`¥${money.toLocaleString()}`;
+    notice.textContent=reason||'Rモブくん加入'; notice.className='scout-notice-v134 auto-v134'; beep(360,70,.018);
+  }
+  async function choose(r){
+    if(chosen||finished)return; chosen=true;active=false;if(timer){clearInterval(timer);timer=null;}
+    const remainAfter=positions.length-posIndex-1,requiredReserve=remainAfter*500,x=info[r];
+    if(x.price+requiredReserve>money){notice.textContent='資金不足！ Rモブくん加入';notice.className='scout-notice-v134 fail-v134';addR();}
+    else{money-=x.price;team.push({pos:positions[posIndex][0],rarity:r,price:x.price,power:x.power,auto:false});moneyEl.textContent=`¥${money.toLocaleString()}`;notice.textContent=`${r}モブくん SCOUT！`;notice.className=`scout-notice-v134 scout-${r.toLowerCase()}-v134`;beep(r==='MOB'?1120:r==='UR'?930:r==='SSR'?760:r==='SR'?580:430,120,.03);}
+    await wait(390);if(!isGameRunValid(runId))return;posIndex++;if(posIndex>=positions.length)showTeam();else startRound();
+  }
+  cardsEl.addEventListener('pointerdown',e=>{const c=e.target.closest('button[data-rarity]');if(!c||!active||chosen||finished)return;e.preventDefault();choose(c.dataset.rarity);},{passive:false});
+  async function timeout(){
+    if(chosen||finished)return;chosen=true;active=false;if(timer){clearInterval(timer);timer=null;}addR('TIME UP！ Rモブくん加入');
+    await wait(390);if(!isGameRunValid(runId))return;posIndex++;if(posIndex>=positions.length)showTeam();else startRound();
+  }
+  function startRound(){
+    chosen=false;active=true;notice.textContent='';notice.className='scout-notice-v134';
+    const [pos,name]=positions[posIndex];posEl.textContent=pos;posNameEl.textContent=name;cardsEl.innerHTML=candidates().map(card).join('');
+    const begin=performance.now();clockEl.textContent='1.0';if(timer)clearInterval(timer);
+    timer=setInterval(()=>{const rem=Math.max(0,1000-(performance.now()-begin));clockEl.textContent=(rem/1000).toFixed(1);if(rem<=0){clearInterval(timer);timer=null;timeout();}},25);
+  }
+  function rank(power){
+    const avg=power/9,luck=rand(-11,11),strength=avg*2.25+luck;
+    return clamp(Math.round(48-strength/2.55),1,47);
+  }
+  function showTeam(){
+    finished=true;active=false;if(timer){clearInterval(timer);timer=null;}
+    const total=team.reduce((s,m)=>s+m.power,0);
+    stage.innerHTML=`<div class="scout-team-v134"><h3>MOB TEAM</h3><div class="scout-lineup-v134">${team.map(m=>`<div><b>${m.pos}</b><span class="rarity-text-${m.rarity.toLowerCase()}-v134">${m.rarity}</span><em>¥${m.price.toLocaleString()}</em></div>`).join('')}</div><div class="scout-team-info-v134"><b>TEAM POWER ${total}</b><span>残金 ¥${money.toLocaleString()}</span></div><div class="scout-koshien-v134">モブくんチーム、いざ甲子園へ！</div><button id="scoutResultBtn134" type="button" class="primary scout-result-btn-v134">結果を観る</button><div id="scoutTournament134" class="scout-tournament-v134"></div></div>`;
+    footer.textContent='9人のスカウト完了';
+    const btn=document.getElementById('scoutResultBtn134'),t=document.getElementById('scoutTournament134');
+    btn.addEventListener('pointerdown',async e=>{
+      e.preventDefault();btn.disabled=true;const labels=['47校','BEST 32','BEST 16','BEST 8','BEST 4','FINAL'];
+      for(let i=0;i<labels.length;i++){t.textContent=labels[i];t.classList.remove('pulse-v134');void t.offsetWidth;t.classList.add('pulse-v134');beep(420+i*70,45,.012);await wait(210);if(!isGameRunValid(runId))return;}
+      const r=rank(total);state.records.scoutMan[p.id]=r;t.innerHTML=`<b>47校中</b><strong>${r}位</strong>`;if(r<=3)t.classList.add('top-v134');beep(r===1?1180:r<=8?940:650,190,.05);
+      await wait(1150);if(isGameRunValid(runId))recordScreen(83,p,humanIndex,`47校中 <strong>${r}位</strong>`,`残金 ¥${money.toLocaleString()}`);
+    },{passive:false});
+  }
+
+  if(!(await countdown('SCOUT START',runId,{transparent:true})))return;
+  startRound();
 }
 
 // GAME 64 -------------------------------------------------
@@ -21005,7 +21388,7 @@ function softenCpuResultV121(gameIndex,p,ultra){
 
   const specificallyTuned=new Set([
     50,51,59,62,63,
-    64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81
+    64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83
   ]);
 
   if(
@@ -21252,8 +21635,12 @@ function simulateOneCpu(gameIndex,p){
     let tries=1;
     while(tries<10&&Math.random()>.5)tries++;
     state.records.oldMaidDuel[p.id]=tries;
-  }else{
+  }else if(gameIndex===81){
     state.records.robotMarch[p.id]=Math.round(ultra?rand(720,980):rand(280,760));
+  }else if(gameIndex===82){
+    state.records.monsterMaster[p.id]=ultra?randi(8,10):randi(3,8);
+  }else{
+    state.records.scoutMan[p.id]=ultra?randi(1,10):randi(5,34);
   }
 
   softenCpuResultV121(
@@ -21391,11 +21778,13 @@ function performancePoints(gameIndex,v){
   if(gameIndex===71)return clamp(Math.round(v/35*100),0,100);
   if(gameIndex===80)return clamp(110-Math.round(v)*10,0,100);
   if(gameIndex===81)return clamp(Math.round(v/1000*100),0,100);
+  if(gameIndex===82)return clamp(Math.round(v/10*100),0,100);
+  if(gameIndex===83)return clamp(Math.round((47-v)/46*100),0,100);
   return clamp(Math.round(v),0,100);
 }
 
 function rankRecords(gameIndex){
-  const key=GAMES[gameIndex].key,records=state.records[key],ascRaw=(gameIndex===0||gameIndex===2||gameIndex===5||gameIndex===14||gameIndex===21||gameIndex===23||gameIndex===24||gameIndex===25||gameIndex===26||gameIndex===27||gameIndex===37||gameIndex===40||gameIndex===47||gameIndex===51||gameIndex===53||gameIndex===63||gameIndex===80);
+  const key=GAMES[gameIndex].key,records=state.records[key],ascRaw=(gameIndex===0||gameIndex===2||gameIndex===5||gameIndex===14||gameIndex===21||gameIndex===23||gameIndex===24||gameIndex===25||gameIndex===26||gameIndex===27||gameIndex===37||gameIndex===40||gameIndex===47||gameIndex===51||gameIndex===53||gameIndex===63||gameIndex===80||gameIndex===83);
   const arr=participants().map(p=>({p,value:records[p.id]}));
   if(mode().performance){
     arr.forEach(e=>e.points=performancePoints(gameIndex,e.value));
@@ -21476,6 +21865,8 @@ function formatRecord(gameIndex,v){
   if(gameIndex===71)return `${Math.round(v)}体`;
   if(gameIndex===80)return `${Math.round(v)}回目`;
   if(gameIndex===81)return `${Math.round(v)}m`;
+  if(gameIndex===82)return `${Math.round(v)}体`;
+  if(gameIndex===83)return `47校中 ${Math.round(v)}位`;
   return `${Math.round(v)}pt`;
 }
 
