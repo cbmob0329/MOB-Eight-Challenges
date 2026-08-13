@@ -23328,6 +23328,9 @@ async function startAlienBattleMob(p,humanIndex,runId){
   let giantUntil=0;
   let giantPunchReadyAt=0;
   let airMinisSpawned=false;
+  let rapidHeld=false;
+  let nextRapidShotAt=0;
+  let artilleryReadyAt=0;
   const weakAllies=[];
   const weakShots=[];
   const airMinis=[];
@@ -23387,7 +23390,8 @@ async function startAlienBattleMob(p,humanIndex,runId){
     <div class="alien-controls-v140">
       <button id="alienLeft140">←</button>
       <button id="alienJump140">JUMP</button>
-      <button id="alienShoot140" class="shoot">砲撃</button>
+      <button id="alienRapid146">射撃</button>
+      <button id="alienShoot140" class="shoot"><span id="alienHeavyLabel146">砲撃</span><b id="alienHeavyCd146">READY</b></button>
       <button id="alienRight140">→</button>
     </div>
     <div class="alien-special-row-v145">
@@ -23412,6 +23416,9 @@ async function startAlienBattleMob(p,humanIndex,runId){
   const rightBtn=document.getElementById('alienRight140');
   const jumpBtn=document.getElementById('alienJump140');
   const shootBtn=document.getElementById('alienShoot140');
+  const rapidBtn=document.getElementById('alienRapid146');
+  const heavyLabel=document.getElementById('alienHeavyLabel146');
+  const heavyCd=document.getElementById('alienHeavyCd146');
   const giantBtn=document.getElementById('alienGiant145');
 
   const W=Math.max(300,stage.clientWidth||340);
@@ -23421,12 +23428,13 @@ async function startAlienBattleMob(p,humanIndex,runId){
   const boss={
     hp:100,
     maxHp:100,
-    x:Math.max(W*.42,W-228),
+    x:clamp(W-224-10,W*.30,W*.42),
     y:0,
     w:224,
     h:groundY,
     alive:true
   };
+  const bossBaseX=boss.x;
 
   bossEl.style.left=`${boss.x}px`;
   bossEl.style.top=`${boss.y}px`;
@@ -23780,7 +23788,9 @@ async function startAlienBattleMob(p,humanIndex,runId){
     giantBtn.classList.remove('ready-v145');
     giantBtn.classList.add('used-v145');
     giantBtn.querySelector('b').textContent='発動中';
-    shootBtn.textContent='パンチ';
+    heavyLabel.textContent='パンチ';
+    heavyCd.textContent='5.0s';
+    rapidBtn.disabled=true;
     player.el.classList.add('super-giant-v145');
     msg.textContent='超巨大化！！';
     beep(760,120,.035);
@@ -23813,6 +23823,86 @@ async function startAlienBattleMob(p,humanIndex,runId){
       airMinis.push(m);
     }
     beep(250,100,.025);
+  }
+
+
+  function fireRapidShot(){
+    const now=performance.now();
+    if(
+      !active||
+      finished||
+      !player.alive||
+      now<player.stunUntil||
+      now<nextRapidShotAt||
+      now<giantUntil
+    )return;
+
+    nextRapidShotAt=now+620;
+
+    const sx=player.x+player.w+2;
+    const sy=player.y+24;
+
+    const target=
+      airMinis.filter(m=>m.alive)
+        .sort((a,b)=>Math.abs(a.x-sx)-Math.abs(b.x-sx))[0]||
+      kids.filter(k=>k.alive)
+        .sort((a,b)=>Math.abs(a.x-sx)-Math.abs(b.x-sx))[0]||
+      null;
+
+    const tx=target?target.x:boss.x+18;
+    const ty=target?(target.y+target.h/2):(boss.y+boss.h*.47);
+    const dx=tx-sx;
+    const dy=ty-sy;
+    const d=Math.max(1,Math.hypot(dx,dy));
+
+    const el=document.createElement('div');
+    el.className='alien-rapid-shot-v146';
+    shotLayer.appendChild(el);
+
+    shots.push({
+      owner:player,
+      x:sx,
+      y:sy,
+      vx:dx/d*390,
+      vy:dy/d*390,
+      size:16,
+      damage:2,
+      alive:true,
+      el
+    });
+
+    player.el.classList.remove('rapid-fire-v146');
+    void player.el.offsetWidth;
+    player.el.classList.add('rapid-fire-v146');
+    setTimeout(()=>player.el.classList.remove('rapid-fire-v146'),140);
+    beep(420,28,.007);
+  }
+
+  function fireArtillery(){
+    const now=performance.now();
+
+    if(
+      !active||
+      finished||
+      !player.alive||
+      now<player.stunUntil||
+      now<artilleryReadyAt||
+      now<giantUntil
+    )return;
+
+    artilleryReadyAt=now+5000;
+
+    // 以前の3秒MAXチャージ弾を、溜め無しで即発射。
+    fireShot(
+      player,
+      3000,
+      false,
+      null
+    );
+
+    shootBtn.classList.add('artillery-fire-v146');
+    setTimeout(()=>shootBtn.classList.remove('artillery-fire-v146'),180);
+    beep(760,75,.02);
   }
 
   function startCharge(){
@@ -23949,28 +24039,34 @@ async function startAlienBattleMob(p,humanIndex,runId){
     }
   },{passive:false});
 
+  const rapidDown=e=>{
+    e.preventDefault();
+    rapidHeld=true;
+    fireRapidShot();
+    try{rapidBtn.setPointerCapture(e.pointerId)}catch(_){}
+  };
+  const rapidUp=e=>{
+    if(e)e.preventDefault();
+    rapidHeld=false;
+  };
+
+  rapidBtn.addEventListener('pointerdown',rapidDown,{passive:false});
+  rapidBtn.addEventListener('pointerup',rapidUp,{passive:false});
+  rapidBtn.addEventListener('pointercancel',rapidUp,{passive:false});
+  rapidBtn.addEventListener('lostpointercapture',rapidUp,{passive:false});
+
   shootBtn.addEventListener('pointerdown',e=>{
     e.preventDefault();
 
     if(performance.now()<giantUntil){
       giantPunch();
     }else{
-      startCharge();
+      fireArtillery();
     }
 
     try{
       shootBtn.setPointerCapture(e.pointerId);
     }catch(_){}
-  },{passive:false});
-
-  shootBtn.addEventListener('pointerup',e=>{
-    e.preventDefault();
-    if(charging)releaseCharge();
-  },{passive:false});
-
-  shootBtn.addEventListener('pointercancel',e=>{
-    e.preventDefault();
-    if(charging)releaseCharge();
   },{passive:false});
 
   giantBtn.addEventListener('pointerdown',e=>{
@@ -24447,15 +24543,39 @@ async function startAlienBattleMob(p,humanIndex,runId){
       spawnAirMinis();
     }
 
+    // 地面に立ったまま、巨人が少しだけ左右へ歩く。
+    boss.x=clamp(
+      bossBaseX+
+      Math.sin(elapsed*.82)*13+
+      Math.sin(elapsed*1.9)*4,
+      W*.24,
+      W-boss.w*.72
+    );
+    bossEl.style.left=`${boss.x}px`;
+    bossEl.style.setProperty('--alien-step',Math.sin(elapsed*2.3).toFixed(3));
+
+    if(rapidHeld&&now>=nextRapidShotAt&&now>=giantUntil){
+      fireRapidShot();
+    }
+
+    if(now<giantUntil){
+      heavyCd.textContent=`${Math.max(0,(giantUntil-now)/1000).toFixed(1)}s`;
+    }else if(now<artilleryReadyAt){
+      heavyCd.textContent=`${Math.max(0,(artilleryReadyAt-now)/1000).toFixed(1)}s`;
+    }else{
+      heavyCd.textContent='READY';
+    }
+
     if(giantUsed&&giantUntil>0&&now>=giantUntil){
       giantUntil=0;
       player.el.classList.remove('super-giant-v145');
-      shootBtn.textContent='砲撃';
+      heavyLabel.textContent='砲撃';
+      rapidBtn.disabled=false;
       giantBtn.querySelector('b').textContent='使用済';
       msg.textContent='超巨大化 終了';
     }
 
-    if(charging){
+    if(false&&charging){
       const ms=
         clamp(
           now-chargeStart,
@@ -24846,6 +24966,8 @@ async function startAlienBattleMob(p,humanIndex,runId){
 // =========================================================
 // V10.43 GAME 91 — モブくん無双
 // =========================================================
+
+
 
 
 async function startMobMusou(p,humanIndex,runId){

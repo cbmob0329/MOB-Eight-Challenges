@@ -22194,3 +22194,99 @@ body,
 @keyframes alienMiniDead145{
   to{translate:0 -22px;scale:.3;opacity:0}
 }
+
+
+/* =========================================================
+   V10.46 — Alien battle: actual giant player
+   ========================================================= */
+.alien-robot-v140.player-v140.super-giant-v145{
+  z-index:52!important;
+  transform:scale(4.2)!important;
+  transform-origin:50% 100%!important;
+  filter:
+    drop-shadow(0 0 10px rgba(255,236,91,.88))
+    drop-shadow(0 0 20px rgba(111,221,255,.58))!important;
+}
+.alien-robot-v140.player-v140.super-giant-v145 .alien-robot-pilot-v140{
+  filter:drop-shadow(0 0 5px rgba(255,239,94,.75))!important;
+}
+.alien-robot-v140.player-v140.giant-punch-v145{
+  animation:alienActualGiantPunch146 .21s ease-out!important;
+}
+@keyframes alienActualGiantPunch146{
+  0%{translate:0 0}
+  48%{translate:28px -3px}
+  100%{translate:0 0}
+}
+
+/* Giant alien remains grounded but visibly alive/stepping. */
+.alien-boss-v140.giant-v141{
+  transition:left .08s linear;
+}
+.alien-boss-v140.giant-v141 .alien-head-v140{
+  translate:0 calc(var(--alien-step,0) * -2px);
+}
+.alien-boss-v140.giant-v141 .alien-body-v140{
+  translate:0 calc(var(--alien-step,0) * -1px);
+}
+.alien-boss-v140.giant-v141 .alien-arm-v140.left-v141{
+  rotate:calc(-5deg + var(--alien-step,0) * 8deg);
+}
+.alien-boss-v140.giant-v141 .alien-arm-v141.right-v141{
+  rotate:calc(5deg - var(--alien-step,0) * 8deg);
+}
+.alien-boss-v140.giant-v141 .alien-leg-v141.leg1{
+  rotate:calc(var(--alien-step,0) * 4deg);
+}
+.alien-boss-v140.giant-v141 .alien-leg-v141.leg2{
+  rotate:calc(var(--alien-step,0) * -4deg);
+}
+
+/* Five controls: ← / JUMP / 射撃 / 砲撃 / → */
+.alien-controls-v140{
+  grid-template-columns:repeat(5,minmax(0,1fr))!important;
+  gap:3px!important;
+}
+.alien-controls-v140 button{
+  min-width:0!important;
+  min-height:52px!important;
+  padding:4px 2px!important;
+  font-size:11px!important;
+}
+.alien-controls-v140 button b{
+  display:block;
+  margin-top:2px;
+  font-size:6px;
+  line-height:1;
+}
+.alien-controls-v140 #alienRapid146{
+  background:#dff8ff;
+}
+.alien-controls-v140 #alienShoot140{
+  background:#ffe56c;
+}
+.alien-controls-v140 #alienRapid146:disabled{
+  opacity:.45;
+}
+.alien-controls-v140 #alienShoot140.artillery-fire-v146{
+  box-shadow:inset 0 0 0 4px #ff9c4e;
+}
+
+/* Slow-repeat basic shot. */
+.alien-rapid-shot-v146{
+  position:absolute;
+  z-index:24;
+  width:16px;
+  height:16px;
+  transform:translate(-50%,-50%);
+  border:3px solid var(--ink);
+  border-radius:50%;
+  background:#9cf3ff;
+  box-shadow:0 0 8px #74ddeb;
+}
+.alien-robot-v140.player-v140.rapid-fire-v146{
+  animation:alienRapidRecoil146 .14s ease-out;
+}
+@keyframes alienRapidRecoil146{
+  50%{translate:-4px 0}
+}
