@@ -76,17 +76,17 @@ const GAMES=[
   {no:24,key:"darts",title:"ダーツ1投勝負",sub:"縦・横ゲージの中央を狙う"},
   {no:25,key:"parachute",title:"モブくんとパラシュート",sub:"開くタイミングで着地点を狙う"},
   {no:26,key:"mobCount",title:"モブくんは何人？",sub:"3秒で人数を見抜く"},
-  {no:27,key:"brake",title:"急ブレーキ",sub:"障害物ギリギリで瞬間停止"},
-  {no:28,key:"feint",title:"フェイント反射神経",sub:"見た目が同じ本物のGO!を待つ"},
+  {no:27,key:"brake",title:"モブくんブレーキチキンレース",sub:"障害物ギリギリで瞬間停止"},
+  {no:28,key:"feint",title:"モブくんは騙されやすい",sub:"見た目が同じ本物のGO!を待つ"},
   {no:29,key:"bomb",title:"爆弾チキンレース",sub:"0.000秒直前でSTOP"},
-  {no:30,key:"overlapMaster",title:"重なりマスター",sub:"4つの円を同時に重ねる"},
+  {no:30,key:"overlapMaster",title:"重なりモブくん",sub:"4つの円を同時に重ねる"},
   {no:31,key:"jumpingMob",title:"ジャンピングモブくん",sub:"ホッピングで台を乗り継ぐ"},
   {no:32,key:"heroMaybe",title:"モブくんは勇者かも",sub:"10秒で勇者を育てる"},
-  {no:33,key:"popularGame",title:"あの人気者のゲーム",sub:"モブくんでモグラ踏み"},
-  {no:34,key:"planetEnergy",title:"この星を..！",sub:"3回チャージして高層ビルを貫く"},
+  {no:33,key:"popularGame",title:"アクションモブくん",sub:"モブくんでモグラ踏み"},
+  {no:34,key:"planetEnergy",title:"モブくんは破壊神",sub:"3回チャージして高層ビルを貫く"},
   {no:35,key:"painter",title:"モブくんは画家志望",sub:"猫の顔型を1回で綺麗になぞる"},
-  {no:36,key:"bikeJump",title:"バイクでジャンピング",sub:"約3秒走って巨大ジャンプ台へ"},
-  {no:37,key:"trampoline",title:"ダイナミックトラポリン",sub:"3回連続で跳ねて3回目が記録"},
+  {no:36,key:"bikeJump",title:"モブくんバイクで飛ぶ",sub:"約3秒走って巨大ジャンプ台へ"},
+  {no:37,key:"trampoline",title:"モブくんのトランポリン",sub:"3回連続で跳ねて3回目が記録"},
   {no:38,key:"mobTrain",title:"モブくん列車出発進行！",sub:"5秒で線路を描いてゴールへ"},
   {no:39,key:"giantMob",title:"巨大モブくん大進撃",sub:"1.000秒を刻みながらビル破壊"},
   {no:40,key:"wizardMob",title:"魔法使いモブくん",sub:"闇の炎を円で囲んで町を守る"},
@@ -135,7 +135,8 @@ const GAMES=[
   {no:83,key:"monsterMaster",title:"モブくんはモンスターマスター",sub:"3秒で自作ボールを描き、10秒間何個でも投げて10体を捕獲"},
   {no:84,key:"scoutMan",title:"モブくんはスカウトマン！",sub:"30000円で9ポジションを1秒判断でスカウト"},
   {no:85,key:"atafutaSurvival",title:"モブくんあたふたサバイバル",sub:"崩れる浮遊岩で9人の偽モブくんと最後の1人を目指す"},
-  {no:86,key:"waveMaster",title:"モブくん波動を極める",sub:"魂ゲージと宝玉ゲージを極めて超巨大岩を波動で破壊"}
+  {no:86,key:"waveMaster",title:"モブくん波動を極める",sub:"魂ゲージと円型ゲージを極めて偽モブくんと波動を撃ち合う"},
+  {no:87,key:"battleRoyaleMob",title:"モブくんバトロワに出陣",sub:"3対3の戦場でスキルを使い勝利までの時間を競う"}
 ];
 
 const MODES={
@@ -178,7 +179,7 @@ function freshState(){
         paperPlane:{},tankMob:{},curlingMob:{},bubbleMob:{},
         changeMob:{},baggageMob:{},bridgeMob:{},treasureMob:{},rouletteMob:{},excavationMob:{},
         oldMaidDuel:{},robotMarch:{},monsterMaster:{},scoutMan:{},
-        atafutaSurvival:{},waveMaster:{}
+        atafutaSurvival:{},waveMaster:{},battleRoyaleMob:{}
     },
     total:{},
     roundPoints:[],
@@ -284,7 +285,7 @@ function renderHome(){
     <section class="hero hero-v119">
       <div>
         <span class="kicker">SMARTPHONE PARTY GAME</span>
-        <h1>86 MINI<br>GAMES</h1>
+        <h1>87 MINI<br>GAMES</h1>
         <p>対戦モードは「チーム戦」「個人戦」の2種類。人数・ルール・ゲーム数を自由に設定できます。</p>
       </div>
       <div class="hero-mark">MOB</div>
@@ -309,7 +310,7 @@ function renderHome(){
     </section>
 
     <section class="panel flat">
-      <div class="panel-head"><h3>86 MINI GAMES</h3><span class="tag">GAME 1 → 86</span></div>
+      <div class="panel-head"><h3>87 MINI GAMES</h3><span class="tag">GAME 1 → 87</span></div>
       <div class="compact-game-grid home-compact-games-v119">
         ${GAMES.map(g=>`<div><b>${g.no}</b><span>${g.title}</span></div>`).join("")}
       </div>
@@ -329,7 +330,7 @@ function renderFreePlaySelect(){
   screen.innerHTML=`
     <div class="game-head">
       <div><span class="kicker">FREE PLAY</span><h2>1人で遊ぶ</h2><p class="lead">好きなゲームを1つ選んでプレイ。</p></div>
-      <div class="game-badge">86</div>
+      <div class="game-badge">87</div>
     </div>
 
     <button id="freeBack" class="secondary wizard-back-v119" type="button">← メインへ戻る</button>
@@ -367,7 +368,7 @@ function renderGameGuide(){
   screen.innerHTML=`
     <div class="game-head">
       <div><span class="kicker">GAME GUIDE</span><h2>各ゲームの説明</h2><p class="lead">内容と100点換算の目安を一覧で確認できます。</p></div>
-      <div class="game-badge">86</div>
+      <div class="game-badge">87</div>
     </div>
 
     <button id="guideBack" class="secondary wizard-back-v119" type="button">← メインへ戻る</button>
@@ -701,7 +702,7 @@ function renderGameLengthSelect(config){
 
   screen.innerHTML=`
     <div class="game-head">
-      <div><span class="kicker">GAME MODE</span><h2>プレイするゲーム数</h2><p class="lead">CUSTOM以外は86ゲームからランダムで選択。</p></div>
+      <div><span class="kicker">GAME MODE</span><h2>プレイするゲーム数</h2><p class="lead">CUSTOM以外は87ゲームからランダムで選択。</p></div>
       <div class="game-badge">${config.rule==='score'?'SCORE':'RANK'}</div>
     </div>
 
@@ -709,7 +710,7 @@ function renderGameLengthSelect(config){
       <button data-length="5" type="button"><span>QUICK</span><b>サクッと5ゲーム</b><small>ランダム5種</small></button>
       <button data-length="15" type="button"><span>FUN</span><b>楽しく15ゲーム</b><small>ランダム15種</small></button>
       <button data-length="30" type="button"><span>LONG</span><b>じっくり30ゲーム</b><small>ランダム30種</small></button>
-      <button data-length="all" type="button"><span>ALL</span><b>ガッツリ全ゲーム</b><small>全86種をランダム順</small></button>
+      <button data-length="all" type="button"><span>ALL</span><b>ガッツリ全ゲーム</b><small>全87種をランダム順</small></button>
       <button data-length="custom" class="custom" type="button"><span>CUSTOM</span><b>カスタム</b><small>自由選択 / 最大50ゲーム</small></button>
     </div>
 
@@ -958,7 +959,7 @@ function renderPlayStyleSelect(){
       <button id="normalStyle" class="style-select-card normal" type="button">
         <span>NORMAL</span>
         <b>順番に全種目</b>
-        <small>GAME 1 → 86 を順番にプレイ</small>
+        <small>GAME 1 → 87 を順番にプレイ</small>
       </button>
       <button id="customStyle" class="style-select-card custom" type="button">
         <span>CUSTOM</span>
@@ -968,7 +969,7 @@ function renderPlayStyleSelect(){
     </div>
 
     <section class="panel flat">
-      <h3>86 MINI GAMES</h3>
+      <h3>87 MINI GAMES</h3>
       <div class="compact-game-grid">
         ${GAMES.map(g=>`<div><b>${g.no}</b><span>${g.title}</span></div>`).join("")}
       </div>
@@ -1143,17 +1144,17 @@ function renderModeLobby(){
       <div><b>ダーツ1投勝負</b><span>中心=100 / 外周=0</span></div>
       <div><b>モブくんとパラシュート</b><span>中央着地=100 / 激突=0</span></div>
       <div><b>モブくんは何人？</b><span>正解=100 / 誤差1人=75</span></div>
-      <div><b>急ブレーキ</b><span>衝突せず0m差=100 / 衝突=0</span></div>
-      <div><b>フェイント反射神経</b><span>0.150秒以下=100 / フェイント押し=0</span></div>
+      <div><b>モブくんブレーキチキンレース</b><span>衝突せず0m差=100 / 衝突=0</span></div>
+      <div><b>モブくんは騙されやすい</b><span>0.150秒以下=100 / フェイント押し=0</span></div>
       <div><b>爆弾チキンレース</b><span>5.000秒→0.000秒 / 0秒直前ほど100点</span></div>
-      <div><b>重なりマスター</b><span>4円一致100%=100点</span></div>
+      <div><b>重なりモブくん</b><span>4円一致100%=100点</span></div>
       <div><b>ジャンピングモブくん</b><span>500m以上=100点</span></div>
       <div><b>モブくんは勇者かも</b><span>勇者ポイントがそのまま0〜100点</span></div>
-      <div><b>あの人気者のゲーム</b><span>20体踏みつけ=100点</span></div>
-      <div><b>この星を..！</b><span>100km=100点</span></div>
+      <div><b>アクションモブくん</b><span>20体踏みつけ=100点</span></div>
+      <div><b>モブくんは破壊神</b><span>100km=100点</span></div>
       <div><b>モブくんは画家志望</b><span>猫輪郭一致率100%=100点</span></div>
-      <div><b>バイクでジャンピング</b><span>2000m=100点</span></div>
-      <div><b>ダイナミックトラポリン</b><span>3回目2000m=100点</span></div>
+      <div><b>モブくんバイクで飛ぶ</b><span>2000m=100点</span></div>
+      <div><b>モブくんのトランポリン</b><span>3回目2000m=100点</span></div>
       <div><b>モブくん列車出発進行！</b><span>2.80秒以下=100点 / 衝突=0点</span></div>
       <div><b>巨大モブくん大進撃</b><span>30棟=100点</span></div>
       <div><b>魔法使いモブくん</b><span>闇炎20個消去=100点</span></div>
@@ -1305,7 +1306,8 @@ function scoreRuleForGame(index){
     "3秒デザイン→10秒捕獲 / 捕獲したモンスター数×10点 / 10体GET=100点",
     "甲子園47校中の最終順位 / 1位=100点・47位=0点換算",
     "10人中の生存順位で0〜100点 / 最初に落下=0点 / 最後の1人=100点",
-    "魂ゲージ55% + 宝玉3回のなぞり45%で波動威力0〜100点"
+    "魂ゲージ55% + 円型ゲージ3回のなぞり45%で波動威力0〜100点",
+    "3対3を全滅させるまでの時間 / 速いほど高評価"
   ][index];
 }
 
@@ -1485,8 +1487,10 @@ function showGameIntro(index){
     rules=`<li>所持金30000円で、P / C / 1B / 2B / 3B / SS / RF / LF / CFの9人をスカウトします。</li><li>各ポジションごとに5人が横一列へ表示され、選べる時間は1秒。選んだ選手を即購入します。</li><li>R=500円 / SR=1000円 / SSR=3000円 / UR=5000円 / MOB=10000円。時間切れまたは資金不足ならRが自動加入。</li><li>9人決定後にチーム一覧を確認し、「結果を観る」で47校中の甲子園順位を発表します。</li>`;
   }else if(index===84){
     rules=`<li>プレイヤーと9人の偽モブくんが、宙に浮く岩の足場からスタートします。</li><li>左右の矢印で移動、JUMPで最大2段ジャンプ。モブくん同士はぶつかるので、前をふさがれたらジャンプして越えます。</li><li>岩の足場は部分ごとにヒビが入り、時間とともにどんどん崩落します。落下したらその時点で終了です。</li><li>最初に落ちると0点。最後の1人まで生き残ればCLEARで100点です。</li>`;
+  }else if(index===85){
+    rules=`<li>最初は円形の魂ゲージ。ゲージがMAXに近い瞬間を狙ってタップします。</li><li>次は円型ゲージの輪郭を指でなぞり、これを3回成功させます。</li><li>2つのゲージが終わると「モブくん波動パワー！」が出現。タップすると偽モブくんと波動の撃ち合いが始まります。</li><li>波動が強いほど小さく凝縮され、周囲のリング・火花・衝撃波が強化。かなり弱い場合だけ逆に押し負けます。</li>`;
   }else{
-    rules=`<li>最初は円形の魂ゲージ。ゲージがMAXに近い瞬間を狙ってタップします。</li><li>次に宝玉型ゲージへ進みます。宝玉の輪郭を指でなぞり、これを3回成功させます。</li><li>2つのゲージが終わると「モブくん波動パワー！」が出現。タップすると巨大波動を右へ放ちます。</li><li>超巨大な岩を破壊したあと、2つのゲージ精度から波動威力を0〜100点で記録します。</li>`;
+    rules=`<li>3対3の戦場。自分のチームは左陣地、敵チームは右陣地で、中央ラインを越えることはできません。</li><li>← →で移動、JUMP、射撃、RELOAD、GRENADE、TEAM HEALを使用します。HPは全員10、マガジンは8発。</li><li>RELOADは1秒、GRENADEはCT5秒で威力5、TEAM HEALはCT3秒で味方全員を回復します。</li><li>味方Aは開始5秒後に3秒間ポータルを展開、味方Bは開始8秒後に3秒間ドームシールドを展開。敵3人を全滅させるまでの時間が記録です。</li>`;
   }
   screen.innerHTML=`
     <div class="game-head">
@@ -1612,7 +1616,8 @@ function humanReady(gameIndex,humanIndex){
     else if(gameIndex===82)startMonsterMaster(p,humanIndex,runId);
     else if(gameIndex===83)startScoutMan(p,humanIndex,runId);
     else if(gameIndex===84)startAtafutaSurvival(p,humanIndex,runId);
-    else startWaveMaster(p,humanIndex,runId);
+    else if(gameIndex===85)startWaveMaster(p,humanIndex,runId);
+    else startBattleRoyaleMob(p,humanIndex,runId);
   },{once:true});
 }
 
@@ -6186,7 +6191,7 @@ async function startEmergencyBrake(p,humanIndex,runId){
   gameFit();
   let raf=null,done=false,obstacleVisible=false,last=0,carX=120,speed=520,obstacleX=9999;
   const worldW=3600;
-  screen.innerHTML=`<div class="brake-shell"><div class="game-head"><div><span class="kicker">${esc(p.name)}</span><h2>急ブレーキ</h2></div><div class="game-badge">${playBadge(humanIndex)}</div></div><div class="brake-hud"><span>SPEED</span><b id="brakeSpeed">FAST</b></div><div id="brakeStage" class="brake-stage"><div id="brakeWorld" class="brake-world" style="width:${worldW}px"><div class="brake-road"></div><div id="brakeCar" class="brake-car"><img src="icon/01.png" draggable="false"></div><div id="brakeObstacle" class="brake-obstacle">!</div></div><div id="brakeAlert" class="brake-alert">DRIVE</div></div><button id="brakeBtn" class="brake-button" type="button">BRAKE</button></div>`;
+  screen.innerHTML=`<div class="brake-shell"><div class="game-head"><div><span class="kicker">${esc(p.name)}</span><h2>モブくんブレーキチキンレース</h2></div><div class="game-badge">${playBadge(humanIndex)}</div></div><div class="brake-hud"><span>SPEED</span><b id="brakeSpeed">FAST</b></div><div id="brakeStage" class="brake-stage"><div id="brakeWorld" class="brake-world" style="width:${worldW}px"><div class="brake-road"></div><div id="brakeCar" class="brake-car"><img src="icon/01.png" draggable="false"></div><div id="brakeObstacle" class="brake-obstacle">!</div></div><div id="brakeAlert" class="brake-alert">DRIVE</div></div><button id="brakeBtn" class="brake-button" type="button">BRAKE</button></div>`;
   const stage=document.getElementById('brakeStage'),world=document.getElementById('brakeWorld'),car=document.getElementById('brakeCar'),obs=document.getElementById('brakeObstacle'),alert=document.getElementById('brakeAlert'),btn=document.getElementById('brakeBtn'),speedEl=document.getElementById('brakeSpeed');
   if(!(await countdown('DRIVE',runId)))return;last=performance.now();const revealAt=last+rand(1050,1850);
   function camera(){const vw=stage.clientWidth,cam=clamp(carX-vw*.28,0,worldW-vw);world.style.transform=`translateX(${-cam}px)`}
@@ -6201,7 +6206,7 @@ async function startFeintReaction(p,humanIndex,runId){
   gameFit();
   let live=false,done=false,goAt=0;
   const fakes=['G0','G00','NOW','MOVE','GO?','G O','READY!','GOGO'];
-  screen.innerHTML=`<div class="feint-shell"><div class="game-head"><div><span class="kicker">${esc(p.name)}</span><h2>フェイント反射神経</h2></div><div class="game-badge">${playBadge(humanIndex)}</div></div><button id="feintStage" class="feint-stage" type="button"><img src="icon/01.png" draggable="false"><strong id="feintWord">READY</strong><span>本物のGO!だけタップ</span></button></div>`;
+  screen.innerHTML=`<div class="feint-shell"><div class="game-head"><div><span class="kicker">${esc(p.name)}</span><h2>モブくんは騙されやすい</h2></div><div class="game-badge">${playBadge(humanIndex)}</div></div><button id="feintStage" class="feint-stage" type="button"><img src="icon/01.png" draggable="false"><strong id="feintWord">READY</strong><span>本物のGO!だけタップ</span></button></div>`;
   const stage=document.getElementById('feintStage'),word=document.getElementById('feintWord');
   if(!(await countdown('READY',runId)))return;
   stage.addEventListener('pointerdown',e=>{if(done||!isGameRunValid(runId))return;e.preventDefault();if(!live){done=true;state.records.feint[p.id]=999;word.textContent='FOUL!';stage.classList.add('foul');beep(140,180,.04);setTimeout(()=>{if(isGameRunValid(runId))recordScreen(27,p,humanIndex,`FOUL`,`フェイントを押した`)},550);return;}done=true;const ms=performance.now()-goAt;state.records.feint[p.id]=ms;word.textContent=`${(ms/1000).toFixed(4)}s`;stage.classList.add('hit');beep(ms<=180?980:ms<=260?720:420,85,.025);setTimeout(()=>{if(isGameRunValid(runId))recordScreen(27,p,humanIndex,`${(ms/1000).toFixed(4)}<small>秒</small>`,`TRUE GO REACTION`)},520)},{passive:false});
@@ -6343,7 +6348,7 @@ async function startBombChicken(p,humanIndex,runId){
 async function startOverlapMaster(p,humanIndex,runId){
   gameFit();
   let raf=null,done=false,startAt=0,endAt=0,targetAt=0;
-  screen.innerHTML=`<div class="overlap-shell master-overlap-shell"><div class="game-head"><div><span class="kicker">${esc(p.name)}</span><h2>重なりマスター</h2></div><div class="game-badge">${playBadge(humanIndex)}</div></div><div class="overlap-hud overlap-hud-two"><div><span>4 MATCH</span><b id="masterLive">---</b></div><div><span>TIME</span><b id="masterTime">10.00</b></div></div><button id="masterStage" class="overlap-stage master-stage" type="button">${[1,2,3,4].map((n,i)=>`<div id="masterC${i}" class="overlap-circle master c${i}"><img src="icon/0${n}.png" draggable="false"></div>`).join('')}<div class="overlap-center-line"></div><div class="overlap-tap">MASTER TAP</div></button><p class="hint">4つ全部が重なる瞬間を狙う。</p></div>`;
+  screen.innerHTML=`<div class="overlap-shell master-overlap-shell"><div class="game-head"><div><span class="kicker">${esc(p.name)}</span><h2>重なりモブくん</h2></div><div class="game-badge">${playBadge(humanIndex)}</div></div><div class="overlap-hud overlap-hud-two"><div><span>4 MATCH</span><b id="masterLive">---</b></div><div><span>TIME</span><b id="masterTime">10.00</b></div></div><button id="masterStage" class="overlap-stage master-stage" type="button">${[1,2,3,4].map((n,i)=>`<div id="masterC${i}" class="overlap-circle master c${i}"><img src="icon/0${n}.png" draggable="false"></div>`).join('')}<div class="overlap-center-line"></div><div class="overlap-tap">MASTER TAP</div></button><p class="hint">4つ全部が重なる瞬間を狙う。</p></div>`;
   const stage=document.getElementById('masterStage'),circles=[0,1,2,3].map(i=>document.getElementById(`masterC${i}`)),live=document.getElementById('masterLive'),timeEl=document.getElementById('masterTime');
   if(!(await countdown('MASTER',runId)))return;if(!isGameRunValid(runId))return;
   startAt=performance.now();endAt=startAt+10000;targetAt=startAt+rand(2300,4100);const radius=40,freq=[2.15,3.05,3.95,4.85],amps=[.96,.82,.70,.90];
@@ -6620,7 +6625,7 @@ async function startHeroMaybe(p,humanIndex,runId){
 // GAME 33 -------------------------------------------------
 async function startPopularGame(p,humanIndex,runId){
   gameFit();let raf=null,timerRAF=null,finished=false,leftHeld=false,rightHeld=false,grounded=true,last=0,endAt=0,kills=0,playerX=150,playerY=54,vy=0;const worldW=3400,groundY=54,gravity=980,jumpV=500,moles=[];
-  screen.innerHTML=`<div class="popular-shell"><div class="game-head"><div><span class="kicker">${esc(p.name)}</span><h2>あの人気者のゲーム</h2></div><div class="game-badge">${playBadge(humanIndex)}</div></div><div class="popular-hud"><div><span>TIME</span><b id="popularTime">10.00</b></div><div><span>STOMP</span><b id="popularKills">0</b></div></div><div id="popularView" class="popular-view"><div id="popularWorld" class="popular-world" style="width:${worldW}px">
+  screen.innerHTML=`<div class="popular-shell"><div class="game-head"><div><span class="kicker">${esc(p.name)}</span><h2>アクションモブくん</h2></div><div class="game-badge">${playBadge(humanIndex)}</div></div><div class="popular-hud"><div><span>TIME</span><b id="popularTime">10.00</b></div><div><span>STOMP</span><b id="popularKills">0</b></div></div><div id="popularView" class="popular-view"><div id="popularWorld" class="popular-world" style="width:${worldW}px">
       <div class="popular-sky-decor">
         ${Array.from({length:10},(_,i)=>`<span class="popular-cloud" style="left:${140+i*330}px;top:${28+(i%3)*42}px">☁</span>`).join('')}
         ${Array.from({length:8},(_,i)=>`<span class="popular-hill" style="left:${180+i*430}px"></span>`).join('')}
@@ -6659,7 +6664,7 @@ async function startPlanetEnergy(p,humanIndex,runId){
 
   screen.innerHTML=`<div class="planet-shell planet-v100">
     <div class="game-head">
-      <div><span class="kicker">${esc(p.name)}</span><h2>この星を..！</h2></div>
+      <div><span class="kicker">${esc(p.name)}</span><h2>モブくんは破壊神</h2></div>
       <div class="game-badge">${playBadge(humanIndex)}</div>
     </div>
 
@@ -6808,7 +6813,7 @@ async function startPlanetEnergy(p,humanIndex,runId){
     camera.style.setProperty('--planet-camera-scale',sceneScale.toFixed(3));
 
     showCinematic(
-      finalCharge>=97?'この星を..！':finalCharge>=90?'超巨大エネルギー':'ENERGY READY',
+      finalCharge>=97?'モブくんは破壊神':finalCharge>=90?'超巨大エネルギー':'ENERGY READY',
       900
     );
   }
@@ -7205,7 +7210,7 @@ async function startBikeJump(p,humanIndex,runId){
 
   screen.innerHTML=`<div class="bike-shell">
     <div class="game-head">
-      <div><span class="kicker">${esc(p.name)}</span><h2>バイクでジャンピング</h2></div>
+      <div><span class="kicker">${esc(p.name)}</span><h2>モブくんバイクで飛ぶ</h2></div>
       <div class="game-badge">${playBadge(humanIndex)}</div>
     </div>
 
@@ -7408,7 +7413,7 @@ async function startDynamicTrampoline(p,humanIndex,runId){
 
   screen.innerHTML=`<div class="tramp-shell tramp-v111">
     <div class="game-head">
-      <div><span class="kicker">${esc(p.name)}</span><h2>ダイナミックトラポリン</h2></div>
+      <div><span class="kicker">${esc(p.name)}</span><h2>モブくんのトランポリン</h2></div>
       <div class="game-badge">${playBadge(humanIndex)}</div>
     </div>
 
@@ -21492,48 +21497,48 @@ async function startAtafutaSurvival(p,humanIndex,runId){
   const actors=[];
   const tiles=[];
 
-  screen.innerHTML=`<div class="survival-shell-v136">
+  screen.innerHTML=`<div class="survival-shell-v137">
     <div class="game-head">
       <div><span class="kicker">${esc(p.name)}</span><h2>モブくんあたふたサバイバル</h2></div>
       <div class="game-badge">${playBadge(humanIndex)}</div>
     </div>
 
     <div class="v125-hud">
-      <div><span>SURVIVOR</span><b id="surviveCount136">10</b></div>
-      <div><span>JUMP</span><b id="surviveJump136">2</b></div>
+      <div><span>SURVIVOR</span><b id="surviveCount137">10</b></div>
+      <div><span>JUMP</span><b id="surviveJump137">2</b></div>
     </div>
 
-    <div class="survival-help-v136">
-      ← → で移動 / JUMPは2段まで / 崩れる岩から落ちるな！
+    <div class="survival-help-v137">
+      ← → で移動 / JUMPは2段まで / 他のモブくんの上にも乗れる！
     </div>
 
-    <div id="survivalStage136" class="survival-stage-v136">
-      <div class="survival-sky-v136">
+    <div id="survivalStage137" class="survival-stage-v137">
+      <div class="survival-sky-v137">
         <i class="cloud c1"></i><i class="cloud c2"></i>
       </div>
-      <div id="survivalRockLayer136" class="survival-rock-layer-v136"></div>
-      <div id="survivalActorLayer136" class="survival-actor-layer-v136"></div>
-      <div id="survivalFx136" class="survival-fx-v136"></div>
-      <div id="survivalMessage136" class="survival-message-v136"></div>
+      <div id="survivalRockLayer137" class="survival-rock-layer-v137"></div>
+      <div id="survivalActorLayer137" class="survival-actor-layer-v137"></div>
+      <div id="survivalFx137" class="survival-fx-v137"></div>
+      <div id="survivalMessage137" class="survival-message-v137"></div>
     </div>
 
-    <div class="survival-controls-v136">
-      <button id="surviveLeft136" type="button">←</button>
-      <button id="surviveJumpBtn136" class="jump" type="button">JUMP</button>
-      <button id="surviveRight136" type="button">→</button>
+    <div class="survival-controls-v137">
+      <button id="surviveLeft137" type="button">←</button>
+      <button id="surviveJumpBtn137" class="jump" type="button">JUMP</button>
+      <button id="surviveRight137" type="button">→</button>
     </div>
   </div>`;
 
-  const stage=document.getElementById('survivalStage136');
-  const rockLayer=document.getElementById('survivalRockLayer136');
-  const actorLayer=document.getElementById('survivalActorLayer136');
-  const fx=document.getElementById('survivalFx136');
-  const countEl=document.getElementById('surviveCount136');
-  const jumpEl=document.getElementById('surviveJump136');
-  const msg=document.getElementById('survivalMessage136');
-  const leftBtn=document.getElementById('surviveLeft136');
-  const rightBtn=document.getElementById('surviveRight136');
-  const jumpBtn=document.getElementById('surviveJumpBtn136');
+  const stage=document.getElementById('survivalStage137');
+  const rockLayer=document.getElementById('survivalRockLayer137');
+  const actorLayer=document.getElementById('survivalActorLayer137');
+  const fx=document.getElementById('survivalFx137');
+  const countEl=document.getElementById('surviveCount137');
+  const jumpEl=document.getElementById('surviveJump137');
+  const msg=document.getElementById('survivalMessage137');
+  const leftBtn=document.getElementById('surviveLeft137');
+  const rightBtn=document.getElementById('surviveRight137');
+  const jumpBtn=document.getElementById('surviveJumpBtn137');
 
   const W=Math.max(300,stage.clientWidth||340);
   const H=Math.max(300,stage.clientHeight||360);
@@ -21545,7 +21550,7 @@ async function startAtafutaSurvival(p,humanIndex,runId){
 
   for(let i=0;i<tileCount;i++){
     const el=document.createElement('div');
-    el.className='survival-rock-v136';
+    el.className='survival-rock-v137';
     el.style.left=`${side+i*(tileW+gap)}px`;
     el.style.width=`${tileW}px`;
     el.style.top=`${baseY}px`;
@@ -21565,28 +21570,39 @@ async function startAtafutaSurvival(p,humanIndex,runId){
 
   function makeActor(i,isPlayer=false){
     const el=document.createElement('div');
-    el.className=`survival-actor-v136 ${isPlayer?'player-v136':'fake-v136'}`;
+    el.className=`survival-actor-v137 ${isPlayer?'player-v137':'fake-v137'}`;
     el.style.backgroundImage=`url('${isPlayer?'icon/01.png':`icon/${String((i%9)+2).padStart(2,'0')}.png`}')`;
     actorLayer.appendChild(el);
 
-    const x=side+tileW*.5+(i%10)*(W-side*2-tileW)/9-14;
+    const x=clamp(
+      4+(i+.35)*(W-34)/10,
+      3,W-31
+    );
 
     const a={
       id:i,
       player:isPlayer,
-      x:clamp(x,3,W-31),
-      y:baseY-38,
+      x,
+      y:baseY-36,
+      prevY:baseY-36,
       vx:0,
       vy:0,
       w:28,
       h:36,
       onGround:true,
+      riding:null,
       jumps:0,
       alive:true,
       aiDir:Math.random()<.5?-1:1,
+      aiSpeed:rand(62,87),
       aiChange:performance.now()+rand(450,1200),
       el
     };
+
+    // IMPORTANT: positions are assigned before countdown starts,
+    // so actors never appear stacked at the upper-left.
+    el.style.left=`${a.x}px`;
+    el.style.top=`${a.y}px`;
 
     actors.push(a);
     return a;
@@ -21599,15 +21615,6 @@ async function startAtafutaSurvival(p,humanIndex,runId){
     return actors.filter(a=>a.alive);
   }
 
-  function platformAt(x,footY,margin=0){
-    return tiles.find(t=>
-      t.active &&
-      x>=t.x-margin &&
-      x<=t.x+t.w+margin &&
-      Math.abs(footY-t.y)<18
-    );
-  }
-
   function tileAhead(a,dir){
     const px=a.x+a.w/2+dir*(a.w*.72+10);
     return tiles.some(t=>
@@ -21617,34 +21624,32 @@ async function startAtafutaSurvival(p,humanIndex,runId){
     );
   }
 
+  function bodiesOverlap(a,b,nextX=a.x){
+    if(!a.alive||!b.alive||a===b)return false;
+
+    const ay1=a.y+4;
+    const ay2=a.y+a.h-3;
+    const by1=b.y+4;
+    const by2=b.y+b.h-3;
+
+    const vertical=ay2>by1&&ay1<by2;
+    if(!vertical)return false;
+
+    return(
+      nextX < b.x+b.w-3 &&
+      nextX+a.w > b.x+3
+    );
+  }
+
   function actorBlocked(a,nextX){
-    const ay1=a.y+5;
-    const ay2=a.y+a.h-4;
-
-    return actors.some(b=>{
-      if(!b.alive||b===a)return false;
-
-      const by1=b.y+5;
-      const by2=b.y+b.h-4;
-      const vertical=ay2>by1&&ay1<by2;
-      if(!vertical)return false;
-
-      return (
-        nextX < b.x+b.w-3 &&
-        nextX+a.w > b.x+3
-      );
-    });
+    return actors.some(b=>bodiesOverlap(a,b,nextX));
   }
 
   function tryJump(a){
-    if(!a.alive)return;
-    if(a.jumps>=2)return;
+    if(!a.alive||a.jumps>=2)return;
 
-    a.vy=
-      a.jumps===0
-        ? -245
-        : -220;
-
+    a.riding=null;
+    a.vy=a.jumps===0?-245:-220;
     a.jumps++;
     a.onGround=false;
 
@@ -21652,41 +21657,43 @@ async function startAtafutaSurvival(p,humanIndex,runId){
       jumpEl.textContent=Math.max(0,2-a.jumps);
     }
 
-    a.el.classList.remove('jump-v136');
+    a.el.classList.remove('jump-v137');
     void a.el.offsetWidth;
-    a.el.classList.add('jump-v136');
+    a.el.classList.add('jump-v137');
 
-    beep(
-      a.player
-        ? 540+a.jumps*80
-        : 310,
-      42,.012
-    );
+    beep(a.player?540+a.jumps*80:310,42,.012);
   }
 
-  function collapseOne(now){
+  function collapseOne(){
     const candidates=tiles.filter(t=>t.active&&!t.cracking);
     if(!candidates.length)return;
 
-    // As the game gets late, prefer tiles near remaining actors so the pace never stalls.
     let tile;
+
     if(collapseCount>=7){
       const alive=aliveActors();
       const weighted=candidates.map(t=>{
         const cx=t.x+t.w/2;
-        const d=Math.min(...alive.map(a=>Math.abs((a.x+a.w/2)-cx)));
+        const d=Math.min(
+          ...alive.map(a=>
+            Math.abs((a.x+a.w/2)-cx)
+          )
+        );
         return {t,d};
       }).sort((a,b)=>a.d-b.d);
-      tile=weighted[randi(0,Math.min(2,weighted.length-1))].t;
+
+      tile=weighted[
+        randi(0,Math.min(2,weighted.length-1))
+      ].t;
     }else{
       tile=candidates[randi(0,candidates.length-1)];
     }
 
     tile.cracking=true;
-    tile.el.classList.add('crack-v136');
+    tile.el.classList.add('crack-v137');
 
     const marker=document.createElement('div');
-    marker.className='survival-warning-v136';
+    marker.className='survival-warning-v137';
     marker.style.left=`${tile.x+tile.w/2}px`;
     marker.style.top=`${tile.y-25}px`;
     marker.textContent='!';
@@ -21696,11 +21703,12 @@ async function startAtafutaSurvival(p,humanIndex,runId){
 
     setTimeout(()=>{
       marker.remove();
+
       if(finished||!isGameRunValid(runId))return;
 
       tile.active=false;
-      tile.el.classList.remove('crack-v136');
-      tile.el.classList.add('fall-v136');
+      tile.el.classList.remove('crack-v137');
+      tile.el.classList.add('fall-v137');
 
       setTimeout(()=>tile.el.remove(),760);
     },520);
@@ -21725,24 +21733,14 @@ async function startAtafutaSurvival(p,humanIndex,runId){
     const score=playerScore(place);
     state.records.atafutaSurvival[p.id]=score;
 
-    msg.textContent=
-      clear
-        ? 'LAST MOB!! CLEAR!'
-        : `${place}位`;
-
-    msg.classList.add(
-      clear
-        ? 'clear-v136'
-        : 'lose-v136'
-    );
+    msg.textContent=clear?'LAST MOB!! CLEAR!':`${place}位`;
+    msg.classList.add(clear?'clear-v137':'lose-v137');
 
     beep(
       clear?1120:
       score>=78?810:
-      score>=44?560:
-      160,
-      clear?220:150,
-      .045
+      score>=44?560:160,
+      clear?220:150,.045
     );
 
     await wait(clear?1250:850);
@@ -21763,9 +21761,16 @@ async function startAtafutaSurvival(p,humanIndex,runId){
 
     const place=aliveActors().length;
     a.alive=false;
-    a.el.classList.add('drop-v136');
+    a.el.classList.add('drop-v137');
 
     countEl.textContent=aliveActors().length;
+
+    for(const rider of actors){
+      if(rider.riding===a){
+        rider.riding=null;
+        rider.onGround=false;
+      }
+    }
 
     if(a.player){
       endPlayer(place,false);
@@ -21774,10 +21779,7 @@ async function startAtafutaSurvival(p,humanIndex,runId){
 
     beep(120,50,.01);
 
-    if(
-      player.alive &&
-      aliveActors().length===1
-    ){
+    if(player.alive&&aliveActors().length===1){
       endPlayer(1,true);
     }
   }
@@ -21808,13 +21810,40 @@ async function startAtafutaSurvival(p,humanIndex,runId){
     if(active&&!finished)tryJump(player);
   },{passive:false});
 
+  function landOnActor(a,prevBottom,newBottom){
+    if(a.vy<0)return false;
+
+    const candidates=actors
+      .filter(b=>
+        b!==a &&
+        b.alive &&
+        b.y>a.y &&
+        a.x+a.w-5>b.x &&
+        a.x+5<b.x+b.w &&
+        prevBottom<=b.y+5 &&
+        newBottom>=b.y
+      )
+      .sort((x,y)=>x.y-y.y);
+
+    if(!candidates.length)return false;
+
+    const base=candidates[0];
+
+    a.y=base.y-a.h;
+    a.vy=0;
+    a.onGround=true;
+    a.riding=base;
+    a.jumps=0;
+
+    if(a.player)jumpEl.textContent='2';
+
+    return true;
+  }
+
   async function finishTimeout(){
     if(finished)return;
 
-    // In the unlikely event that several remain, the player is awarded
-    // the current survival placement after the final platform collapse.
-    const alive=aliveActors();
-    const place=Math.max(1,alive.length);
+    const place=Math.max(1,aliveActors().length);
 
     if(player.alive){
       if(place===1)endPlayer(1,true);
@@ -21836,7 +21865,7 @@ async function startAtafutaSurvival(p,humanIndex,runId){
     const elapsed=(now-start)/1000;
 
     if(now>=nextCollapseAt){
-      collapseOne(now);
+      collapseOne();
 
       const gapMs=clamp(
         920-collapseCount*34,
@@ -21846,12 +21875,17 @@ async function startAtafutaSurvival(p,humanIndex,runId){
       nextCollapseAt=now+gapMs;
     }
 
-    if(elapsed>17&&tiles.some(t=>t.active&&!t.cracking)){
+    if(
+      elapsed>17 &&
+      tiles.some(t=>t.active&&!t.cracking)
+    ){
       nextCollapseAt=Math.min(nextCollapseAt,now+120);
     }
 
     for(const a of actors){
       if(!a.alive)continue;
+
+      a.prevY=a.y;
 
       let desired=0;
 
@@ -21872,13 +21906,8 @@ async function startAtafutaSurvival(p,humanIndex,runId){
 
         desired=a.aiDir;
 
-        const blocked=actorBlocked(
-          a,
-          a.x+desired*4
-        );
-
         if(
-          blocked ||
+          actorBlocked(a,a.x+desired*4) ||
           !tileAhead(a,desired)
         ){
           if(a.jumps<2&&Math.random()<.78){
@@ -21890,8 +21919,7 @@ async function startAtafutaSurvival(p,humanIndex,runId){
         }
       }
 
-      const speed=a.player?112:rand(63,86);
-      const wantedVx=desired*speed;
+      const wantedVx=desired*(a.player?112:a.aiSpeed);
 
       if(desired===0){
         a.vx*=Math.pow(.06,dt);
@@ -21905,19 +21933,38 @@ async function startAtafutaSurvival(p,humanIndex,runId){
         nextX=a.x;
         a.vx=0;
 
-        if(!a.player&&a.jumps<2&&Math.random()<.08){
+        if(
+          !a.player &&
+          a.jumps<2 &&
+          Math.random()<.08
+        ){
           tryJump(a);
         }
       }
 
       a.x=nextX;
 
+      if(
+        a.riding &&
+        (
+          !a.riding.alive ||
+          a.x+a.w-5<=a.riding.x ||
+          a.x+5>=a.riding.x+a.riding.w
+        )
+      ){
+        a.riding=null;
+        a.onGround=false;
+      }
+
       const prevBottom=a.y+a.h;
+
       a.vy+=470*dt;
       a.y+=a.vy*dt;
-      const newBottom=a.y+a.h;
 
+      const newBottom=a.y+a.h;
       a.onGround=false;
+
+      let landed=false;
 
       if(a.vy>=0){
         for(const t of tiles){
@@ -21935,14 +21982,18 @@ async function startAtafutaSurvival(p,humanIndex,runId){
             a.y=t.y-a.h;
             a.vy=0;
             a.onGround=true;
+            a.riding=null;
             a.jumps=0;
+            landed=true;
 
-            if(a.player){
-              jumpEl.textContent='2';
-            }
+            if(a.player)jumpEl.textContent='2';
             break;
           }
         }
+      }
+
+      if(!landed){
+        landOnActor(a,prevBottom,newBottom);
       }
 
       if(
@@ -21958,10 +22009,7 @@ async function startAtafutaSurvival(p,humanIndex,runId){
       a.el.style.top=`${a.y}px`;
     }
 
-    if(
-      player.alive &&
-      aliveActors().length===1
-    ){
+    if(player.alive&&aliveActors().length===1){
       endPlayer(1,true);
       return;
     }
@@ -21976,6 +22024,7 @@ async function startAtafutaSurvival(p,humanIndex,runId){
 
   raf=requestAnimationFrame(frame);
 }
+
 
 // =========================================================
 // V10.36 GAME 86 — モブくん波動を極める
@@ -21996,72 +22045,71 @@ async function startWaveMaster(p,humanIndex,runId){
   let traceHits=new Set();
   let traceMoves=0;
   let traceMisses=0;
-  let gemSamples=[];
+  let circleSamples=[];
 
-  screen.innerHTML=`<div class="wave-shell-v136">
+  screen.innerHTML=`<div class="wave-shell-v137">
     <div class="game-head">
       <div><span class="kicker">${esc(p.name)}</span><h2>モブくん波動を極める</h2></div>
       <div class="game-badge">${playBadge(humanIndex)}</div>
     </div>
 
     <div class="v125-hud">
-      <div><span>STEP</span><b id="waveStep136">1 / 2</b></div>
-      <div><span>POWER</span><b id="wavePower136">---</b></div>
+      <div><span>STEP</span><b id="waveStep137">1 / 2</b></div>
+      <div><span>POWER</span><b id="wavePower137">---</b></div>
     </div>
 
-    <div id="waveHelp136" class="wave-help-v136">
+    <div id="waveHelp137" class="wave-help-v137">
       魂ゲージがMAXに近い瞬間を狙え
     </div>
 
-    <div id="waveStage136" class="wave-stage-v136">
-      <div id="waveSoulPanel136" class="wave-soul-panel-v136">
-        <div id="soulGauge136" class="soul-gauge-v136">
-          <div id="soulCore136" class="soul-core-v136"></div>
-          <div class="soul-ring-v136 r1"></div>
-          <div class="soul-ring-v136 r2"></div>
+    <div id="waveStage137" class="wave-stage-v137">
+      <div id="waveSoulPanel137" class="wave-soul-panel-v137">
+        <div id="soulGauge137" class="soul-gauge-v137">
+          <div id="soulCore137" class="soul-core-v137"></div>
+          <div class="soul-ring-v137 r1"></div>
+          <div class="soul-ring-v137 r2"></div>
           <span>MAX</span>
         </div>
       </div>
 
-      <div id="waveGemPanel136" class="wave-gem-panel-v136" hidden>
-        <div class="gem-round-v136">TRACE <b id="gemRound136">1 / 3</b></div>
-        <svg id="gemSvg136" class="gem-svg-v136" viewBox="0 0 240 240">
-          <path id="gemTarget136" class="gem-target-v136"
-            d="M120 20 L194 72 L172 177 L120 218 L68 177 L46 72 Z"/>
-          <polyline id="gemUser136" class="gem-user-v136" points=""/>
+      <div id="waveCirclePanel137" class="wave-circle-panel-v137" hidden>
+        <div class="circle-round-v137">TRACE <b id="circleRound137">1 / 3</b></div>
+        <svg id="circleSvg137" class="circle-svg-v137" viewBox="0 0 240 240">
+          <circle id="circleTarget137" class="circle-target-v137" cx="120" cy="120" r="84"/>
+          <polyline id="circleUser137" class="circle-user-v137" points=""/>
         </svg>
-        <div id="gemProgress136" class="gem-progress-v136">0%</div>
+        <div id="circleProgress137" class="circle-progress-v137">0%</div>
       </div>
 
-      <div id="waveCinema136" class="wave-cinema-v136" hidden></div>
+      <div id="waveCinema137" class="wave-cinema-v137" hidden></div>
     </div>
 
-    <div id="waveControl136" class="wave-control-v136">
-      <button id="soulTap136" type="button" class="primary">魂を込める！</button>
+    <div id="waveControl137" class="wave-control-v137">
+      <button id="soulTap137" type="button" class="primary">魂を込める！</button>
     </div>
   </div>`;
 
-  const stage=document.getElementById('waveStage136');
-  const help=document.getElementById('waveHelp136');
-  const stepEl=document.getElementById('waveStep136');
-  const powerEl=document.getElementById('wavePower136');
-  const soulPanel=document.getElementById('waveSoulPanel136');
-  const soulGauge=document.getElementById('soulGauge136');
-  const soulCore=document.getElementById('soulCore136');
-  const soulBtn=document.getElementById('soulTap136');
-  const gemPanel=document.getElementById('waveGemPanel136');
-  const gemSvg=document.getElementById('gemSvg136');
-  const gemTarget=document.getElementById('gemTarget136');
-  const gemUser=document.getElementById('gemUser136');
-  const gemRoundEl=document.getElementById('gemRound136');
-  const gemProgress=document.getElementById('gemProgress136');
-  const cinema=document.getElementById('waveCinema136');
-  const control=document.getElementById('waveControl136');
+  const stage=document.getElementById('waveStage137');
+  const help=document.getElementById('waveHelp137');
+  const stepEl=document.getElementById('waveStep137');
+  const powerEl=document.getElementById('wavePower137');
+  const soulPanel=document.getElementById('waveSoulPanel137');
+  const soulGauge=document.getElementById('soulGauge137');
+  const soulCore=document.getElementById('soulCore137');
+  const soulBtn=document.getElementById('soulTap137');
+  const circlePanel=document.getElementById('waveCirclePanel137');
+  const circleSvg=document.getElementById('circleSvg137');
+  const circleTarget=document.getElementById('circleTarget137');
+  const circleUser=document.getElementById('circleUser137');
+  const circleRoundEl=document.getElementById('circleRound137');
+  const circleProgress=document.getElementById('circleProgress137');
+  const cinema=document.getElementById('waveCinema137');
+  const control=document.getElementById('waveControl137');
 
   function soulFrame(now){
     if(
-      finished||
-      phase!=='soul'||
+      finished ||
+      phase!=='soul' ||
       !isGameRunValid(runId)
     )return;
 
@@ -22071,27 +22119,25 @@ async function startWaveMaster(p,humanIndex,runId){
     soulGauge.style.background=
       `conic-gradient(#ffe65b ${soulPct*3.6}deg,#314250 0deg)`;
 
+    // Stronger energy visually condenses toward the center.
     soulCore.style.transform=
-      `translate(-50%,-50%) scale(${.62+soulPct/260})`;
+      `translate(-50%,-50%) scale(${1.12-soulPct/245})`;
 
     raf=requestAnimationFrame(soulFrame);
   }
 
-  function buildGemSamples(){
-    const total=gemTarget.getTotalLength();
-    gemSamples=[];
+  function buildCircleSamples(){
+    const total=circleTarget.getTotalLength();
+    circleSamples=[];
 
-    for(let i=0;i<42;i++){
-      const p=gemTarget.getPointAtLength(
-        total*i/42
-      );
-
-      gemSamples.push({x:p.x,y:p.y});
+    for(let i=0;i<48;i++){
+      const q=circleTarget.getPointAtLength(total*i/48);
+      circleSamples.push({x:q.x,y:q.y});
     }
   }
 
-  function localGem(e){
-    const r=gemSvg.getBoundingClientRect();
+  function localCircle(e){
+    const r=circleSvg.getBoundingClientRect();
 
     return{
       x:clamp((e.clientX-r.left)/r.width*240,0,240),
@@ -22105,8 +22151,8 @@ async function startWaveMaster(p,humanIndex,runId){
     let nearest=-1;
     let nearestDist=999;
 
-    for(let i=0;i<gemSamples.length;i++){
-      const p=gemSamples[i];
+    for(let i=0;i<circleSamples.length;i++){
+      const p=circleSamples[i];
       const d=Math.hypot(q.x-p.x,q.y-p.y);
 
       if(d<nearestDist){
@@ -22115,72 +22161,69 @@ async function startWaveMaster(p,humanIndex,runId){
       }
     }
 
-    if(nearestDist<=19){
+    if(nearestDist<=18){
       traceHits.add(nearest);
-      traceHits.add((nearest+1)%gemSamples.length);
-      traceHits.add((nearest+gemSamples.length-1)%gemSamples.length);
+      traceHits.add((nearest+1)%circleSamples.length);
+      traceHits.add((nearest+circleSamples.length-1)%circleSamples.length);
     }else{
       traceMisses++;
     }
 
-    const coverage=
-      traceHits.size/gemSamples.length;
+    const coverage=traceHits.size/circleSamples.length;
+    circleProgress.textContent=`${Math.round(coverage*100)}%`;
 
-    gemProgress.textContent=
-      `${Math.round(coverage*100)}%`;
-
-    if(coverage>=.86){
+    if(coverage>=.88){
       finishTraceRound();
     }
   }
 
-  function resetGemRound(){
+  function resetCircleRound(){
     traceHits=new Set();
     traceMoves=0;
     traceMisses=0;
     tracePointer=null;
-    gemUser.setAttribute('points','');
-    gemProgress.textContent='0%';
-    gemRoundEl.textContent=`${traceRound+1} / 3`;
+
+    circleUser.setAttribute('points','');
+    circleProgress.textContent='0%';
+    circleRoundEl.textContent=`${traceRound+1} / 3`;
   }
 
   async function finishTraceRound(){
-    if(phase!=='gem')return;
+    if(phase!=='circle')return;
 
-    phase='gem-lock';
+    phase='circle-lock';
 
     const accuracy=
       traceMoves
-        ? clamp(100-traceMisses/traceMoves*90,0,100)
+        ? clamp(100-traceMisses/traceMoves*92,0,100)
         : 0;
 
     const coverage=
-      traceHits.size/gemSamples.length*100;
+      traceHits.size/circleSamples.length*100;
 
     const score=clamp(
       Math.round(
-        accuracy*.62+
-        coverage*.38
+        accuracy*.64+
+        coverage*.36
       ),
       0,100
     );
 
     traceScores.push(score);
 
-    gemPanel.classList.add('success-v136');
-    gemProgress.textContent=`${score} POINT`;
+    circlePanel.classList.add('success-v137');
+    circleProgress.textContent=`${score} POINT`;
 
     beep(
       score>=90?980:
-      score>=75?790:
-      610,
+      score>=75?790:610,
       100,.025
     );
 
-    await wait(450);
+    await wait(430);
     if(!isGameRunValid(runId))return;
 
-    gemPanel.classList.remove('success-v136');
+    circlePanel.classList.remove('success-v137');
     traceRound++;
 
     if(traceRound>=3){
@@ -22188,48 +22231,44 @@ async function startWaveMaster(p,humanIndex,runId){
       return;
     }
 
-    phase='gem';
-    resetGemRound();
+    phase='circle';
+    resetCircleRound();
   }
 
-  gemSvg.addEventListener('pointerdown',e=>{
-    if(phase!=='gem'||finished)return;
-
+  circleSvg.addEventListener('pointerdown',e=>{
+    if(phase!=='circle'||finished)return;
     e.preventDefault();
 
     tracePointer={
       id:e.pointerId,
-      points:[localGem(e)]
+      points:[localCircle(e)]
     };
 
     addTracePoint(tracePointer.points[0]);
 
     try{
-      gemSvg.setPointerCapture(e.pointerId);
+      circleSvg.setPointerCapture(e.pointerId);
     }catch(_){}
   },{passive:false});
 
-  gemSvg.addEventListener('pointermove',e=>{
+  circleSvg.addEventListener('pointermove',e=>{
     if(
-      phase!=='gem'||
-      !tracePointer||
+      phase!=='circle' ||
+      !tracePointer ||
       e.pointerId!==tracePointer.id
     )return;
 
     e.preventDefault();
 
-    const q=localGem(e);
-    const prev=
-      tracePointer.points[
-        tracePointer.points.length-1
-      ];
+    const q=localCircle(e);
+    const prev=tracePointer.points[tracePointer.points.length-1];
 
     if(Math.hypot(q.x-prev.x,q.y-prev.y)<2)return;
 
     tracePointer.points.push(q);
     addTracePoint(q);
 
-    gemUser.setAttribute(
+    circleUser.setAttribute(
       'points',
       tracePointer.points
         .map(p=>`${p.x.toFixed(1)},${p.y.toFixed(1)}`)
@@ -22237,25 +22276,24 @@ async function startWaveMaster(p,humanIndex,runId){
     );
   },{passive:false});
 
-  const endGem=e=>{
+  const endCircle=e=>{
     if(!tracePointer)return;
     if(e&&e.pointerId!==tracePointer.id)return;
-
     if(e)e.preventDefault();
 
     tracePointer=null;
-    gemUser.setAttribute('points','');
+    circleUser.setAttribute('points','');
   };
 
-  gemSvg.addEventListener('pointerup',endGem,{passive:false});
-  gemSvg.addEventListener('pointercancel',endGem,{passive:false});
+  circleSvg.addEventListener('pointerup',endCircle,{passive:false});
+  circleSvg.addEventListener('pointercancel',endCircle,{passive:false});
 
   soulBtn.addEventListener('pointerdown',e=>{
     if(phase!=='soul'||finished)return;
-
     e.preventDefault();
 
     phase='soul-lock';
+
     if(raf)cancelAnimationFrame(raf);
 
     soulScore=clamp(
@@ -22268,12 +22306,11 @@ async function startWaveMaster(p,humanIndex,runId){
     powerEl.textContent=`${soulScore}%`;
     soulBtn.disabled=true;
 
-    soulGauge.classList.add('locked-v136');
+    soulGauge.classList.add('locked-v137');
 
     beep(
       soulScore>=95?1080:
-      soulScore>=80?850:
-      570,
+      soulScore>=80?850:570,
       120,.035
     );
 
@@ -22281,16 +22318,16 @@ async function startWaveMaster(p,humanIndex,runId){
       if(!isGameRunValid(runId)||finished)return;
 
       soulPanel.hidden=true;
-      gemPanel.hidden=false;
+      circlePanel.hidden=false;
 
       stepEl.textContent='2 / 2';
-      help.textContent='宝玉の輪郭を3回なぞれ';
+      help.textContent='円型ゲージを3回なぞれ';
       control.innerHTML='';
 
-      buildGemSamples();
+      buildCircleSamples();
       traceRound=0;
-      phase='gem';
-      resetGemRound();
+      phase='circle';
+      resetCircleRound();
     },420);
   },{passive:false});
 
@@ -22313,144 +22350,172 @@ async function startWaveMaster(p,humanIndex,runId){
     powerEl.textContent=`${finalPower}%`;
     help.textContent='波動を放て！';
 
-    gemPanel.hidden=true;
+    circlePanel.hidden=true;
     cinema.hidden=false;
 
+    // Stronger waves are intentionally MORE condensed, not larger.
+    const playerCore=
+      Math.round(64-finalPower*.22);
+
+    const enemyPower=randi(39,57);
+    const enemyCore=Math.round(64-enemyPower*.20);
+
     cinema.innerHTML=`
-      <div class="wave-ground-v136"></div>
+      <div class="wave-duel-bg-v137"></div>
+      <div class="wave-duel-ground-v137"></div>
 
-      <div class="wave-mob-v136" style="background-image:url('icon/01.png')"></div>
+      <div id="wavePlayer137" class="wave-duel-mob-v137 player-v137" style="background-image:url('icon/01.png')"></div>
+      <div id="waveEnemy137" class="wave-duel-mob-v137 enemy-v137" style="background-image:url('icon/10.png')"></div>
 
-      <div id="waveOrb136" class="wave-orb-v136">
-        <i></i><b></b><span></span>
-      </div>
+      <div id="wavePlayerOrb137" class="wave-duel-orb-v137 player-v137" style="--core:${playerCore}px;--power:${finalPower}"></div>
+      <div id="waveEnemyOrb137" class="wave-duel-orb-v137 enemy-v137" style="--core:${enemyCore}px;--power:${enemyPower}"></div>
 
-      <div id="waveRock136" class="wave-rock-v136">
-        ${Array.from({length:12},(_,i)=>`<i style="--i:${i}"></i>`).join('')}
-      </div>
-
-      <div id="waveBeam136" class="wave-beam-v136"></div>
-      <div id="waveShock136" class="wave-shock-v136"></div>
-      <div id="waveDebris136" class="wave-debris-v136"></div>
-      <div id="waveCineText136" class="wave-cine-text-v136"></div>
+      <div id="wavePlayerBeam137" class="wave-duel-beam-v137 player-v137"></div>
+      <div id="waveEnemyBeam137" class="wave-duel-beam-v137 enemy-v137"></div>
+      <div id="waveClash137" class="wave-duel-clash-v137"></div>
+      <div id="waveDuelFx137" class="wave-duel-fx-v137"></div>
+      <div id="waveCineText137" class="wave-cine-text-v137"></div>
     `;
 
-    const orb=document.getElementById('waveOrb136');
-
-    const maxD=Math.min(
-      stage.clientWidth*1.22,
-      stage.clientHeight*.94
-    );
-
-    const d=
-      64+
-      (maxD-64)*
-      Math.pow(finalPower/100,1.35);
-
-    orb.style.width=`${d}px`;
-    orb.style.height=`${d}px`;
-
-    if(finalPower>=85){
-      cinema.classList.add('huge-v136');
-    }
-
-    if(finalPower>=96){
-      cinema.classList.add('max-v136');
-    }
+    const orb=document.getElementById('wavePlayerOrb137');
+    orb.classList.toggle('strong-v137',finalPower>=75);
+    orb.classList.toggle('max-v137',finalPower>=93);
 
     control.innerHTML=`
-      <button id="waveFire136" class="primary wave-fire-btn-v136" type="button">
+      <button id="waveFire137" class="primary wave-fire-btn-v137" type="button">
         モブくん波動パワー！
       </button>
     `;
 
-    document.getElementById('waveFire136')
+    document.getElementById('waveFire137')
       .addEventListener('pointerdown',e=>{
         e.preventDefault();
-        fireWave(finalPower);
+        fireWaveDuel(finalPower,enemyPower);
       },{passive:false});
   }
 
-  async function fireWave(finalPower){
+  async function fireWaveDuel(finalPower,enemyPower){
     if(phase!=='ready'||finished)return;
 
-    phase='fire';
+    phase='duel';
 
-    const btn=document.getElementById('waveFire136');
+    const btn=document.getElementById('waveFire137');
+    const player=document.getElementById('wavePlayer137');
+    const enemy=document.getElementById('waveEnemy137');
+    const pOrb=document.getElementById('wavePlayerOrb137');
+    const eOrb=document.getElementById('waveEnemyOrb137');
+    const pBeam=document.getElementById('wavePlayerBeam137');
+    const eBeam=document.getElementById('waveEnemyBeam137');
+    const clash=document.getElementById('waveClash137');
+    const fx=document.getElementById('waveDuelFx137');
+    const cine=document.getElementById('waveCineText137');
+
     btn.disabled=true;
 
-    const orb=document.getElementById('waveOrb136');
-    const rock=document.getElementById('waveRock136');
-    const beam=document.getElementById('waveBeam136');
-    const shock=document.getElementById('waveShock136');
-    const debris=document.getElementById('waveDebris136');
-    const cine=document.getElementById('waveCineText136');
-
     cine.textContent='波動パワー!!';
-    cine.classList.add('show-v136');
+    cine.classList.add('show-v137');
 
-    orb.classList.add('release-v136');
+    pOrb.classList.add('charge-v137');
+    eOrb.classList.add('charge-v137');
 
-    beep(
-      250+finalPower*5,
-      190,.055
-    );
+    beep(320+finalPower*4,150,.05);
 
-    await wait(420);
+    await wait(480);
     if(!isGameRunValid(runId))return;
 
-    beam.classList.add('fire-v136');
-    shock.classList.add('fire-v136');
-    stage.classList.add('wave-shake-v136');
+    pBeam.classList.add('fire-v137');
+    eBeam.classList.add('fire-v137');
+    clash.classList.add('active-v137');
 
-    await wait(300);
+    const weakLose=finalPower<24;
+    const clashDuration=randi(3200,4700);
+    const clashStart=performance.now();
+
+    while(performance.now()-clashStart<clashDuration){
+      if(!isGameRunValid(runId))return;
+
+      const t=(performance.now()-clashStart)/clashDuration;
+
+      const balance=weakLose
+        ? 50-22*t
+        : 50+Math.min(29,(finalPower-enemyPower)*.20+20*t);
+
+      clash.style.left=`${clamp(balance,24,76)}%`;
+
+      fx.innerHTML='';
+      const sparkCount=
+        finalPower>=90?8:
+        finalPower>=70?5:
+        3;
+
+      for(let i=0;i<sparkCount;i++){
+        const s=document.createElement('i');
+        s.style.setProperty('--sx',`${rand(-55,55)}px`);
+        s.style.setProperty('--sy',`${rand(-45,45)}px`);
+        fx.appendChild(s);
+      }
+
+      stage.classList.toggle(
+        'power-shake-v137',
+        finalPower>=78
+      );
+
+      beep(
+        155+randi(0,60),
+        22,.004
+      );
+
+      await wait(180);
+    }
+
     if(!isGameRunValid(runId))return;
 
-    rock.classList.add('destroy-v136');
+    stage.classList.remove('power-shake-v137');
 
-    debris.innerHTML='';
+    if(weakLose){
+      pBeam.classList.add('burst-v137');
+      pOrb.classList.add('burst-v137');
+      player.classList.add('blown-v137');
 
-    const debrisCount=
-      18+
-      Math.round(finalPower*.36);
+      cine.textContent='押し負けた！！';
+      cine.classList.add('lose-v137');
 
-    for(let i=0;i<debrisCount;i++){
-      const d=document.createElement('i');
+      beep(105,270,.065);
+    }else{
+      eBeam.classList.add('burst-v137');
+      eOrb.classList.add('burst-v137');
+      enemy.classList.add('blown-v137');
 
-      d.style.setProperty('--dx',`${rand(-190,220)}px`);
-      d.style.setProperty('--dy',`${rand(-190,150)}px`);
-      d.style.setProperty('--dr',`${randi(-540,540)}deg`);
-      d.style.animationDelay=`${i*7}ms`;
+      cine.textContent=
+        finalPower>=90
+          ? '圧倒的波動！！'
+          : '波動勝負に勝利！！';
 
-      debris.appendChild(d);
+      cine.classList.add('win-v137');
+
+      if(finalPower>=88){
+        stage.classList.add('finish-impact-v137');
+      }
+
+      beep(
+        finalPower>=90?1180:940,
+        260,.065
+      );
     }
 
-    if(finalPower>=88){
-      cinema.classList.add('massive-v136');
-    }
-
-    beep(95,260,.065);
-
-    await wait(1100);
+    await wait(1350);
     if(!isGameRunValid(runId))return;
 
     finished=true;
     state.records.waveMaster[p.id]=finalPower;
 
-    cine.textContent=`WAVE POWER ${finalPower}`;
-    cine.classList.add('result-v136');
-
-    await wait(900);
-
-    if(isGameRunValid(runId)){
-      recordScreen(
-        85,p,humanIndex,
-        `${finalPower}<small>pt</small>`,
-        `魂 ${soulScore} / 宝玉 ${Math.round(
-          traceScores.reduce((a,b)=>a+b,0)/traceScores.length
-        )}`
-      );
-    }
+    recordScreen(
+      85,p,humanIndex,
+      `${finalPower}<small>pt</small>`,
+      weakLose
+        ? '波動勝負 敗北'
+        : '波動勝負 勝利'
+    );
   }
 
   if(!(await countdown('SOUL GAUGE',runId,{transparent:true})))return;
@@ -22458,6 +22523,896 @@ async function startWaveMaster(p,humanIndex,runId){
   phase='soul';
   phaseStart=performance.now();
   raf=requestAnimationFrame(soulFrame);
+}
+
+
+
+// =========================================================
+// V10.37 GAME 87 — モブくんバトロワに出陣
+// =========================================================
+async function startBattleRoyaleMob(p,humanIndex,runId){
+  gameFit();
+
+  let active=false;
+  let finished=false;
+  let raf=null;
+  let last=0;
+  let start=0;
+
+  let ammo=8;
+  let reloading=false;
+  let reloadUntil=0;
+  let grenadeReadyAt=0;
+  let healReadyAt=0;
+
+  let portalStartDone=false;
+  let portalUntil=0;
+  let portalPair=null;
+
+  let domeStartDone=false;
+  let domeUntil=0;
+  let dome=null;
+
+  const input={left:false,right:false};
+  const actors=[];
+  const bullets=[];
+  const grenades=[];
+
+  screen.innerHTML=`<div class="br-shell-v137">
+    <div class="game-head">
+      <div><span class="kicker">${esc(p.name)}</span><h2>モブくんバトロワに出陣</h2></div>
+      <div class="game-badge">${playBadge(humanIndex)}</div>
+    </div>
+
+    <div class="br-hud-v137">
+      <div><span>TIME</span><b id="brTime137">0.00</b></div>
+      <div><span>AMMO</span><b id="brAmmo137">8 / 8</b></div>
+      <div><span>ALLY</span><b id="brAlly137">30 HP</b></div>
+      <div><span>ENEMY</span><b id="brEnemy137">30 HP</b></div>
+    </div>
+
+    <div class="br-help-v137">
+      中央ライン越境禁止 / 敵3人を全滅させろ
+    </div>
+
+    <div id="brStage137" class="br-stage-v137">
+      <div class="br-war-sky-v137"></div>
+      <div class="br-ruins-v137 left"><i></i><i></i><i></i></div>
+      <div class="br-ruins-v137 right"><i></i><i></i><i></i></div>
+
+      <div class="br-ground-v137"></div>
+      <div class="br-center-line-v137"><span>NO ENTRY</span></div>
+
+      <div class="br-platform-v137 p1"></div>
+      <div class="br-platform-v137 p2"></div>
+
+      <div id="brActorLayer137" class="br-actor-layer-v137"></div>
+      <div id="brBulletLayer137" class="br-bullet-layer-v137"></div>
+      <div id="brGrenadeLayer137" class="br-grenade-layer-v137"></div>
+      <div id="brAbilityLayer137" class="br-ability-layer-v137"></div>
+      <div id="brFx137" class="br-fx-v137"></div>
+      <div id="brMessage137" class="br-message-v137"></div>
+    </div>
+
+    <div class="br-move-controls-v137">
+      <button id="brLeft137" type="button">←</button>
+      <button id="brJump137" type="button">JUMP</button>
+      <button id="brRight137" type="button">→</button>
+    </div>
+
+    <div class="br-action-controls-v137">
+      <button id="brShoot137" class="shoot" type="button">射撃 <b>8</b></button>
+      <button id="brReload137" type="button">RELOAD <b>READY</b></button>
+      <button id="brGrenade137" type="button">GRENADE <b>READY</b></button>
+      <button id="brHeal137" type="button">TEAM HEAL <b>READY</b></button>
+    </div>
+  </div>`;
+
+  const stage=document.getElementById('brStage137');
+  const actorLayer=document.getElementById('brActorLayer137');
+  const bulletLayer=document.getElementById('brBulletLayer137');
+  const grenadeLayer=document.getElementById('brGrenadeLayer137');
+  const abilityLayer=document.getElementById('brAbilityLayer137');
+  const fx=document.getElementById('brFx137');
+  const msg=document.getElementById('brMessage137');
+
+  const timeEl=document.getElementById('brTime137');
+  const ammoEl=document.getElementById('brAmmo137');
+  const allyEl=document.getElementById('brAlly137');
+  const enemyEl=document.getElementById('brEnemy137');
+
+  const leftBtn=document.getElementById('brLeft137');
+  const rightBtn=document.getElementById('brRight137');
+  const jumpBtn=document.getElementById('brJump137');
+  const shootBtn=document.getElementById('brShoot137');
+  const reloadBtn=document.getElementById('brReload137');
+  const grenadeBtn=document.getElementById('brGrenade137');
+  const healBtn=document.getElementById('brHeal137');
+
+  const W=Math.max(300,stage.clientWidth||340);
+  const H=Math.max(300,stage.clientHeight||360);
+  const centerX=W/2;
+  const groundY=H-52;
+
+  const platforms=[
+    {x:W*.09,y:groundY-78,w:W*.22,h:12},
+    {x:W*.27,y:groundY-135,w:W*.18,h:12}
+  ];
+
+  function makeActor({
+    id,
+    team,
+    x,
+    img,
+    player=false,
+    label=''
+  }){
+    const el=document.createElement('div');
+    el.className=`br-actor-v137 ${team} ${player?'player-v137':''}`;
+    el.style.backgroundImage=`url('${img}')`;
+    el.innerHTML=`
+      <span>${label}</span>
+      <div class="br-hpbar-v137"><i></i></div>
+    `;
+    actorLayer.appendChild(el);
+
+    const a={
+      id,team,x,
+      y:groundY-38,
+      prevY:groundY-38,
+      vx:0,vy:0,
+      w:30,h:38,
+      hp:10,maxHp:10,
+      alive:true,
+      player,
+      onGround:true,
+      nextShot:0,
+      nextJump:0,
+      portalLock:0,
+      el,
+      hpEl:el.querySelector('.br-hpbar-v137 i')
+    };
+
+    el.style.left=`${a.x}px`;
+    el.style.top=`${a.y}px`;
+
+    actors.push(a);
+    return a;
+  }
+
+  const player=makeActor({
+    id:'player',
+    team:'ally',
+    x:W*.16,
+    img:'icon/01.png',
+    player:true,
+    label:'YOU'
+  });
+
+  const allyA=makeActor({
+    id:'allyA',
+    team:'ally',
+    x:W*.29,
+    img:'icon/02.png',
+    label:'ALLY A'
+  });
+
+  const allyB=makeActor({
+    id:'allyB',
+    team:'ally',
+    x:W*.39,
+    img:'icon/03.png',
+    label:'ALLY B'
+  });
+
+  const enemyA=makeActor({
+    id:'enemyA',
+    team:'enemy',
+    x:W*.61,
+    img:'icon/08.png',
+    label:'ENEMY'
+  });
+
+  const enemyB=makeActor({
+    id:'enemyB',
+    team:'enemy',
+    x:W*.75,
+    img:'icon/09.png',
+    label:'ENEMY'
+  });
+
+  const enemyC=makeActor({
+    id:'enemyC',
+    team:'enemy',
+    x:W*.88,
+    img:'icon/10.png',
+    label:'ENEMY'
+  });
+
+  function allies(){
+    return actors.filter(a=>a.team==='ally'&&a.alive);
+  }
+
+  function enemies(){
+    return actors.filter(a=>a.team==='enemy'&&a.alive);
+  }
+
+  function teamHp(team){
+    return actors
+      .filter(a=>a.team===team&&a.alive)
+      .reduce((s,a)=>s+a.hp,0);
+  }
+
+  function updateHud(now=performance.now()){
+    ammoEl.textContent=`${ammo} / 8`;
+    allyEl.textContent=`${teamHp('ally')} HP`;
+    enemyEl.textContent=`${teamHp('enemy')} HP`;
+
+    const reloadLeft=Math.max(0,reloadUntil-now);
+    reloadBtn.querySelector('b').textContent=
+      reloading
+        ? `${(reloadLeft/1000).toFixed(1)}`
+        : 'READY';
+
+    const grenadeLeft=Math.max(0,grenadeReadyAt-now);
+    grenadeBtn.querySelector('b').textContent=
+      grenadeLeft>0
+        ? `${(grenadeLeft/1000).toFixed(1)}`
+        : 'READY';
+
+    const healLeft=Math.max(0,healReadyAt-now);
+    healBtn.querySelector('b').textContent=
+      healLeft>0
+        ? `${(healLeft/1000).toFixed(1)}`
+        : 'READY';
+
+    shootBtn.querySelector('b').textContent=ammo;
+  }
+
+  function updateActorHp(a){
+    a.hpEl.style.width=`${clamp(a.hp/a.maxHp*100,0,100)}%`;
+  }
+
+  function hitFx(x,y,text=''){
+    const e=document.createElement('div');
+    e.className='br-hit-fx-v137';
+    e.style.left=`${x}px`;
+    e.style.top=`${y}px`;
+    if(text)e.textContent=text;
+    fx.appendChild(e);
+    setTimeout(()=>e.remove(),500);
+  }
+
+  function eliminate(a){
+    if(!a.alive)return;
+
+    a.alive=false;
+    a.hp=0;
+    updateActorHp(a);
+
+    a.el.classList.add('down-v137');
+    hitFx(a.x+a.w/2,a.y,'DOWN');
+
+    beep(a.team==='enemy'?680:120,90,.025);
+
+    if(enemies().length===0){
+      finishWin();
+    }else if(allies().length===0){
+      finishLose();
+    }
+  }
+
+  function damage(a,amount){
+    if(!a.alive)return;
+
+    a.hp=clamp(a.hp-amount,0,a.maxHp);
+    updateActorHp(a);
+
+    a.el.classList.remove('hit-v137');
+    void a.el.offsetWidth;
+    a.el.classList.add('hit-v137');
+
+    hitFx(a.x+a.w/2,a.y+8,`-${amount}`);
+
+    if(a.hp<=0)eliminate(a);
+  }
+
+  function nearestTarget(a){
+    const pool=a.team==='ally'?enemies():allies();
+    if(!pool.length)return null;
+
+    return pool
+      .slice()
+      .sort((x,y)=>Math.abs(x.x-a.x)-Math.abs(y.x-a.x))[0];
+  }
+
+  function fireBullet(a,manual=false){
+    if(!a.alive)return;
+
+    const target=nearestTarget(a);
+    if(!target)return;
+
+    if(manual){
+      if(reloading||ammo<=0)return;
+      ammo--;
+    }
+
+    const dir=a.team==='ally'?1:-1;
+
+    const el=document.createElement('i');
+    el.className=`br-bullet-v137 ${a.team}`;
+    bulletLayer.appendChild(el);
+
+    bullets.push({
+      team:a.team,
+      owner:a,
+      x:a.x+a.w/2+dir*17,
+      y:a.y+17,
+      vx:dir*(manual?430:345),
+      vy:0,
+      damage:1,
+      dead:false,
+      el
+    });
+
+    a.el.classList.remove('shoot-v137');
+    void a.el.offsetWidth;
+    a.el.classList.add('shoot-v137');
+
+    beep(manual?520:330,30,.009);
+    updateHud();
+  }
+
+  function reload(){
+    const now=performance.now();
+
+    if(
+      !active||
+      finished||
+      reloading||
+      ammo===8
+    )return;
+
+    reloading=true;
+    reloadUntil=now+1000;
+    reloadBtn.disabled=true;
+
+    msg.textContent='RELOAD';
+    msg.classList.add('small-v137');
+
+    beep(280,45,.012);
+  }
+
+  function throwGrenade(){
+    const now=performance.now();
+
+    if(
+      !active||
+      finished||
+      now<grenadeReadyAt||
+      !player.alive
+    )return;
+
+    grenadeReadyAt=now+5000;
+
+    const el=document.createElement('div');
+    el.className='br-grenade-v137';
+    grenadeLayer.appendChild(el);
+
+    grenades.push({
+      team:'ally',
+      x:player.x+player.w,
+      y:player.y+5,
+      vx:235,
+      vy:-265,
+      fuse:now+1150,
+      dead:false,
+      el
+    });
+
+    beep(450,55,.02);
+    updateHud(now);
+  }
+
+  function teamHeal(){
+    const now=performance.now();
+
+    if(
+      !active||
+      finished||
+      now<healReadyAt||
+      !player.alive
+    )return;
+
+    healReadyAt=now+3000;
+
+    for(const a of allies()){
+      a.hp=clamp(a.hp+3,0,a.maxHp);
+      updateActorHp(a);
+
+      a.el.classList.remove('heal-v137');
+      void a.el.offsetWidth;
+      a.el.classList.add('heal-v137');
+    }
+
+    const ring=document.createElement('div');
+    ring.className='br-heal-ring-v137';
+    abilityLayer.appendChild(ring);
+    setTimeout(()=>ring.remove(),650);
+
+    msg.textContent='TEAM HEAL +3';
+    msg.classList.add('small-v137');
+
+    beep(870,100,.025);
+    updateHud(now);
+  }
+
+  function jump(a){
+    if(!a.alive||!a.onGround)return;
+
+    a.vy=-250;
+    a.onGround=false;
+
+    a.el.classList.remove('jump-v137');
+    void a.el.offsetWidth;
+    a.el.classList.add('jump-v137');
+
+    beep(a.player?520:280,35,.01);
+  }
+
+  function bindHold(btn,key){
+    const on=e=>{
+      e.preventDefault();
+      if(active&&!finished)input[key]=true;
+      try{btn.setPointerCapture(e.pointerId)}catch(_){}
+    };
+    const off=e=>{
+      if(e)e.preventDefault();
+      input[key]=false;
+    };
+
+    btn.addEventListener('pointerdown',on,{passive:false});
+    btn.addEventListener('pointerup',off,{passive:false});
+    btn.addEventListener('pointercancel',off,{passive:false});
+    btn.addEventListener('lostpointercapture',off,{passive:false});
+  }
+
+  bindHold(leftBtn,'left');
+  bindHold(rightBtn,'right');
+
+  jumpBtn.addEventListener('pointerdown',e=>{
+    e.preventDefault();
+    if(active&&!finished)jump(player);
+  },{passive:false});
+
+  shootBtn.addEventListener('pointerdown',e=>{
+    e.preventDefault();
+
+    if(!active||finished||!player.alive)return;
+
+    if(ammo<=0){
+      reload();
+      return;
+    }
+
+    fireBullet(player,true);
+  },{passive:false});
+
+  reloadBtn.addEventListener('pointerdown',e=>{
+    e.preventDefault();
+    reload();
+  },{passive:false});
+
+  grenadeBtn.addEventListener('pointerdown',e=>{
+    e.preventDefault();
+    throwGrenade();
+  },{passive:false});
+
+  healBtn.addEventListener('pointerdown',e=>{
+    e.preventDefault();
+    teamHeal();
+  },{passive:false});
+
+  function openPortal(now){
+    portalStartDone=true;
+    portalUntil=now+3000;
+
+    const x1=rand(W*.07,W*.22);
+    const x2=rand(W*.29,W*.44);
+
+    portalPair=[
+      {x:x1,y:groundY-28},
+      {x:x2,y:groundY-28}
+    ];
+
+    abilityLayer.innerHTML+=`
+      <div id="brPortalA137" class="br-portal-v137" style="left:${x1}px;top:${groundY-28}px"></div>
+      <div id="brPortalB137" class="br-portal-v137" style="left:${x2}px;top:${groundY-28}px"></div>
+    `;
+
+    msg.textContent='ALLY A : PORTAL';
+    msg.classList.add('small-v137');
+
+    beep(740,100,.025);
+  }
+
+  function closePortal(){
+    portalPair=null;
+    document.getElementById('brPortalA137')?.remove();
+    document.getElementById('brPortalB137')?.remove();
+  }
+
+  function openDome(now){
+    domeStartDone=true;
+    domeUntil=now+3000;
+
+    dome={
+      x:clamp(allyB.x+15,W*.08,W*.43),
+      y:groundY-55,
+      r:82
+    };
+
+    const el=document.createElement('div');
+    el.id='brDome137';
+    el.className='br-dome-v137';
+    el.style.left=`${dome.x}px`;
+    el.style.top=`${dome.y}px`;
+    abilityLayer.appendChild(el);
+
+    msg.textContent='ALLY B : DOME SHIELD';
+    msg.classList.add('small-v137');
+
+    beep(620,120,.025);
+  }
+
+  function closeDome(){
+    dome=null;
+    document.getElementById('brDome137')?.remove();
+  }
+
+  function maybePortal(a,now){
+    if(
+      !portalPair||
+      a.team!=='ally'||
+      !a.alive||
+      now<a.portalLock
+    )return;
+
+    const [pa,pb]=portalPair;
+
+    if(Math.hypot(a.x+a.w/2-pa.x,a.y+a.h/2-pa.y)<31){
+      a.x=clamp(pb.x-a.w/2,0,centerX-a.w-4);
+      a.y=pb.y-a.h/2;
+      a.portalLock=now+700;
+
+      hitFx(pb.x,pb.y,'PORTAL');
+      beep(900,55,.012);
+    }else if(Math.hypot(a.x+a.w/2-pb.x,a.y+a.h/2-pb.y)<31){
+      a.x=clamp(pa.x-a.w/2,0,centerX-a.w-4);
+      a.y=pa.y-a.h/2;
+      a.portalLock=now+700;
+
+      hitFx(pa.x,pa.y,'PORTAL');
+      beep(900,55,.012);
+    }
+  }
+
+  function bulletBlockedByDome(b){
+    if(!dome||b.team!=='enemy')return false;
+
+    return Math.hypot(
+      b.x-dome.x,
+      b.y-dome.y
+    )<dome.r;
+  }
+
+  function actorLand(a,prevBottom,newBottom){
+    a.onGround=false;
+
+    const minX=a.team==='ally'?0:centerX+5;
+    const maxX=a.team==='ally'?centerX-a.w-5:W-a.w;
+
+    a.x=clamp(a.x,minX,maxX);
+
+    if(
+      prevBottom<=groundY+5 &&
+      newBottom>=groundY
+    ){
+      a.y=groundY-a.h;
+      a.vy=0;
+      a.onGround=true;
+      return;
+    }
+
+    if(a.team==='ally'){
+      for(const pf of platforms){
+        const horiz=
+          a.x+a.w-4>pf.x &&
+          a.x+4<pf.x+pf.w;
+
+        const cross=
+          prevBottom<=pf.y+5 &&
+          newBottom>=pf.y;
+
+        if(horiz&&cross){
+          a.y=pf.y-a.h;
+          a.vy=0;
+          a.onGround=true;
+          return;
+        }
+      }
+    }
+  }
+
+  function aiActor(a,now,dt){
+    if(!a.alive||a.player)return;
+
+    const target=nearestTarget(a);
+    if(!target)return;
+
+    const dir=a.team==='ally'?1:-1;
+    const boundary=
+      a.team==='ally'
+        ? centerX-a.w-12
+        : centerX+12;
+
+    const desiredX=
+      a.team==='ally'
+        ? clamp(target.x-115,16,boundary)
+        : clamp(target.x+115,boundary,W-a.w-16);
+
+    const move=
+      Math.abs(desiredX-a.x)>24
+        ? Math.sign(desiredX-a.x)
+        : 0;
+
+    a.vx=move*rand(45,72);
+
+    if(
+      a.onGround &&
+      now>=a.nextJump &&
+      Math.random()<.018
+    ){
+      jump(a);
+      a.nextJump=now+rand(1300,2400);
+    }
+
+    if(now>=a.nextShot){
+      fireBullet(a,false);
+      a.nextShot=now+rand(760,1350);
+    }
+  }
+
+  async function finishWin(){
+    if(finished)return;
+
+    finished=true;
+    active=false;
+    if(raf)cancelAnimationFrame(raf);
+
+    const elapsed=Math.max(
+      1,
+      Math.round(performance.now()-start)
+    );
+
+    state.records.battleRoyaleMob[p.id]=elapsed;
+
+    msg.textContent='CHAMPION!';
+    msg.classList.remove('small-v137');
+    msg.classList.add('win-v137');
+
+    stage.classList.add('victory-v137');
+    beep(1160,240,.06);
+
+    await wait(1150);
+
+    if(isGameRunValid(runId)){
+      recordScreen(
+        86,p,humanIndex,
+        `${(elapsed/1000).toFixed(2)}<small>秒</small>`,
+        '敵チーム全滅'
+      );
+    }
+  }
+
+  async function finishLose(){
+    if(finished)return;
+
+    finished=true;
+    active=false;
+    if(raf)cancelAnimationFrame(raf);
+
+    state.records.battleRoyaleMob[p.id]=60000;
+
+    msg.textContent='SQUAD ELIMINATED';
+    msg.classList.remove('small-v137');
+    msg.classList.add('lose-v137');
+
+    beep(105,220,.045);
+
+    await wait(900);
+
+    if(isGameRunValid(runId)){
+      recordScreen(
+        86,p,humanIndex,
+        `60.00<small>秒</small>`,
+        '敗北'
+      );
+    }
+  }
+
+  if(!(await countdown('3 VS 3',runId,{transparent:true})))return;
+
+  active=true;
+  start=last=performance.now();
+
+  actors.forEach(a=>{
+    a.nextShot=start+rand(650,1300);
+    a.nextJump=start+rand(1100,2300);
+    updateActorHp(a);
+  });
+
+  updateHud(start);
+
+  function frame(now){
+    if(!active||finished||!isGameRunValid(runId))return;
+
+    const dt=Math.min(.035,(now-last)/1000);
+    last=now;
+
+    timeEl.textContent=((now-start)/1000).toFixed(2);
+
+    if(reloading&&now>=reloadUntil){
+      reloading=false;
+      ammo=8;
+      reloadBtn.disabled=false;
+
+      msg.textContent='RELOAD COMPLETE';
+      beep(640,55,.014);
+    }
+
+    if(!portalStartDone&&now-start>=5000){
+      openPortal(now);
+    }
+
+    if(portalPair&&now>=portalUntil){
+      closePortal();
+    }
+
+    if(!domeStartDone&&now-start>=8000){
+      openDome(now);
+    }
+
+    if(dome&&now>=domeUntil){
+      closeDome();
+    }
+
+    for(const a of actors){
+      if(!a.alive)continue;
+
+      a.prevY=a.y;
+
+      if(a.player){
+        const dir=
+          input.left&&!input.right
+            ? -1
+            : input.right&&!input.left
+              ? 1
+              : 0;
+
+        a.vx=dir*105;
+      }else{
+        aiActor(a,now,dt);
+      }
+
+      a.x+=a.vx*dt;
+
+      const prevBottom=a.y+a.h;
+
+      a.vy+=460*dt;
+      a.y+=a.vy*dt;
+
+      actorLand(a,prevBottom,a.y+a.h);
+      maybePortal(a,now);
+
+      a.el.style.left=`${a.x}px`;
+      a.el.style.top=`${a.y}px`;
+    }
+
+    for(const b of bullets){
+      if(b.dead)continue;
+
+      b.x+=b.vx*dt;
+      b.y+=b.vy*dt;
+
+      b.el.style.left=`${b.x}px`;
+      b.el.style.top=`${b.y}px`;
+
+      if(bulletBlockedByDome(b)){
+        b.dead=true;
+        b.el.remove();
+
+        hitFx(b.x,b.y,'BLOCK');
+        beep(760,28,.006);
+        continue;
+      }
+
+      const targets=
+        actors.filter(a=>
+          a.alive &&
+          a.team!==b.team
+        );
+
+      for(const target of targets){
+        if(
+          b.x>=target.x-4 &&
+          b.x<=target.x+target.w+4 &&
+          b.y>=target.y &&
+          b.y<=target.y+target.h
+        ){
+          b.dead=true;
+          b.el.remove();
+
+          damage(target,b.damage);
+          break;
+        }
+      }
+
+      if(
+        b.x<-25 ||
+        b.x>W+25
+      ){
+        b.dead=true;
+        b.el.remove();
+      }
+    }
+
+    for(const g of grenades){
+      if(g.dead)continue;
+
+      g.x+=g.vx*dt;
+      g.y+=g.vy*dt;
+      g.vy+=480*dt;
+
+      if(g.y>=groundY-12){
+        g.y=groundY-12;
+        g.vy*=-.34;
+        g.vx*=.78;
+      }
+
+      g.el.style.left=`${g.x}px`;
+      g.el.style.top=`${g.y}px`;
+
+      if(now>=g.fuse){
+        g.dead=true;
+        g.el.remove();
+
+        const blast=document.createElement('div');
+        blast.className='br-grenade-blast-v137';
+        blast.style.left=`${g.x}px`;
+        blast.style.top=`${g.y}px`;
+        fx.appendChild(blast);
+        setTimeout(()=>blast.remove(),600);
+
+        for(const target of enemies()){
+          if(Math.hypot(
+            target.x+target.w/2-g.x,
+            target.y+target.h/2-g.y
+          )<92){
+            damage(target,5);
+          }
+        }
+
+        beep(115,150,.045);
+      }
+    }
+
+    updateHud(now);
+
+    raf=requestAnimationFrame(frame);
+  }
+
+  raf=requestAnimationFrame(frame);
 }
 
 // GAME 64 -------------------------------------------------
@@ -22823,7 +23778,7 @@ function softenCpuResultV121(gameIndex,p,ultra){
 
   const specificallyTuned=new Set([
     50,51,59,62,63,
-    64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85
+    64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86
   ]);
 
   if(
@@ -23081,8 +24036,12 @@ function simulateOneCpu(gameIndex,p){
     state.records.atafutaSurvival[p.id]=ultra
       ? survivalScores[randi(7,9)]
       : survivalScores[randi(2,8)];
-  }else{
+  }else if(gameIndex===85){
     state.records.waveMaster[p.id]=ultra?randi(84,98):randi(38,83);
+  }else{
+    state.records.battleRoyaleMob[p.id]=ultra
+      ? randi(6500,10500)
+      : randi(9000,22000);
   }
 
   softenCpuResultV121(
@@ -23224,11 +24183,16 @@ function performancePoints(gameIndex,v){
   if(gameIndex===83)return clamp(Math.round((47-v)/46*100),0,100);
   if(gameIndex===84)return clamp(Math.round(v),0,100);
   if(gameIndex===85)return clamp(Math.round(v),0,100);
+  if(gameIndex===86){
+    if(v<=6000)return 100;
+    if(v>=30000)return 0;
+    return clamp(Math.round((30000-v)/24000*100),0,100);
+  }
   return clamp(Math.round(v),0,100);
 }
 
 function rankRecords(gameIndex){
-  const key=GAMES[gameIndex].key,records=state.records[key],ascRaw=(gameIndex===0||gameIndex===2||gameIndex===5||gameIndex===14||gameIndex===21||gameIndex===23||gameIndex===24||gameIndex===25||gameIndex===26||gameIndex===27||gameIndex===37||gameIndex===40||gameIndex===47||gameIndex===51||gameIndex===53||gameIndex===63||gameIndex===80||gameIndex===83);
+  const key=GAMES[gameIndex].key,records=state.records[key],ascRaw=(gameIndex===0||gameIndex===2||gameIndex===5||gameIndex===14||gameIndex===21||gameIndex===23||gameIndex===24||gameIndex===25||gameIndex===26||gameIndex===27||gameIndex===37||gameIndex===40||gameIndex===47||gameIndex===51||gameIndex===53||gameIndex===63||gameIndex===80||gameIndex===83||gameIndex===86);
   const arr=participants().map(p=>({p,value:records[p.id]}));
   if(mode().performance){
     arr.forEach(e=>e.points=performancePoints(gameIndex,e.value));
@@ -23313,6 +24277,7 @@ function formatRecord(gameIndex,v){
   if(gameIndex===83)return `47校中 ${Math.round(v)}位`;
   if(gameIndex===84)return `${Math.round(v)}pt`;
   if(gameIndex===85)return `${Math.round(v)}pt`;
+  if(gameIndex===86)return `${(v/1000).toFixed(2)}秒`;
   return `${Math.round(v)}pt`;
 }
 
