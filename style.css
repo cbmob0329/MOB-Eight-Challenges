@@ -21325,3 +21325,498 @@ body,
 @keyframes alienShotImpactRing142{
   to{scale:3.4;opacity:0}
 }
+
+
+/* =========================================================
+   V10.43 ALIEN — BIG FEET / LONG KICK / SHOT COOLDOWN
+   ========================================================= */
+.alien-leg-v141{
+  width:54px!important;
+  height:124px!important;
+}
+.alien-leg-v141.leg1{
+  left:24px!important;
+}
+.alien-leg-v141.leg2{
+  right:14px!important;
+}
+.alien-foot-v142{
+  width:94px!important;
+  height:38px!important;
+  bottom:-6px!important;
+  border-width:8px!important;
+  border-radius:62% 50% 20% 17%!important;
+  box-shadow:
+    inset -15px -8px 0 #1d1727,
+    0 7px 0 rgba(17,14,22,.15)!important;
+}
+.alien-leg-v141.kick-warning-v143{
+  filter:brightness(1.45);
+  animation:alienKickWarn143 .13s ease-in-out infinite alternate!important;
+}
+@keyframes alienKickWarn143{
+  to{
+    translate:-8px -4px;
+    rotate:-15deg;
+  }
+}
+.alien-leg-v141.long-kick-v143{
+  z-index:22!important;
+  animation:alienLongKick143 .52s cubic-bezier(.16,.73,.23,1) forwards!important;
+}
+@keyframes alienLongKick143{
+  0%{
+    translate:0 0;
+    rotate:0deg;
+    scale:1 1;
+  }
+  42%,72%{
+    translate:-235px -34px;
+    rotate:-72deg;
+    scale:1.15 2.7;
+  }
+  100%{
+    translate:0 0;
+    rotate:0deg;
+    scale:1 1;
+  }
+}
+.alien-controls-v140 .shoot.cooldown-v143{
+  opacity:.62;
+  box-shadow:inset 0 0 0 4px #6f7d88!important;
+}
+
+/* =========================================================
+   V10.43 MOB MUSOU
+   ========================================================= */
+.musou-shell-v143{
+  height:100%;
+  min-height:0;
+  display:flex;
+  flex-direction:column;
+}
+.musou-hud-v143{
+  display:grid;
+  grid-template-columns:.8fr .7fr 1.5fr;
+  gap:4px;
+  margin-bottom:6px;
+}
+.musou-hud-v143>div{
+  min-width:0;
+  border:3px solid var(--ink);
+  border-radius:10px;
+  background:#fff;
+  padding:4px 3px;
+  text-align:center;
+}
+.musou-hud-v143 span,
+.musou-hud-v143 b{
+  display:block;
+}
+.musou-hud-v143 span{
+  font-size:6px;
+  font-weight:1000;
+  color:var(--muted);
+}
+.musou-hud-v143 b{
+  font-size:10px;
+  font-weight:1000;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.musou-draw-panel-v143{
+  position:relative;
+  flex:1;
+  min-height:330px;
+  border:4px solid var(--ink);
+  border-radius:19px;
+  background:#d7c6a2;
+  overflow:hidden;
+}
+.musou-draw-title-v143{
+  position:absolute;
+  z-index:5;
+  left:50%;
+  top:10px;
+  transform:translateX(-50%);
+  border:3px solid var(--ink);
+  border-radius:999px;
+  background:#fff;
+  padding:5px 12px;
+  white-space:nowrap;
+  font-size:10px;
+  font-weight:1000;
+}
+.musou-draw-svg-v143{
+  position:absolute;
+  left:50%;
+  top:53%;
+  width:min(92%,360px);
+  aspect-ratio:1/1;
+  transform:translate(-50%,-50%);
+  touch-action:none!important;
+}
+.musou-draw-bg-v143{
+  fill:#f4ead4;
+  stroke:var(--ink);
+  stroke-width:6;
+}
+.musou-user-path-v143{
+  fill:none;
+  stroke:#222a32;
+  stroke-width:12;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+.musou-draw-note-v143{
+  position:absolute;
+  left:50%;
+  bottom:12px;
+  transform:translateX(-50%);
+  color:#493c2f;
+  white-space:nowrap;
+  font-size:9px;
+  font-weight:1000;
+}
+
+.musou-power-v143{
+  position:relative;
+  flex:1;
+  min-height:330px;
+  overflow:hidden;
+  border:4px solid var(--ink);
+  border-radius:19px;
+  background:#1f2933;
+}
+.musou-power-v143:before,
+.musou-power-v143:after{
+  content:"";
+  position:absolute;
+  left:50%;
+  width:220px;
+  height:7px;
+  transform:translateX(-50%);
+  border-radius:999px;
+  background:#6fdcff;
+  opacity:.45;
+}
+.musou-power-v143:before{top:32%}
+.musou-power-v143:after{top:68%}
+.musou-power-mob-v143{
+  position:absolute;
+  left:50%;
+  top:46%;
+  width:104px;
+  height:122px;
+  transform:translate(-50%,-50%);
+  background-size:contain;
+  background-position:center;
+  background-repeat:no-repeat;
+  filter:drop-shadow(0 0 13px rgba(112,226,255,.72));
+  animation:musouPowerMob143 .34s ease-in-out infinite alternate;
+}
+@keyframes musouPowerMob143{
+  to{translate:0 -5px}
+}
+.musou-power-text-v143{
+  position:absolute;
+  left:50%;
+  top:11%;
+  width:92%;
+  transform:translateX(-50%);
+  color:#fff15a;
+  -webkit-text-stroke:3px var(--ink);
+  text-align:center;
+  font-size:25px;
+  font-weight:1000;
+}
+.musou-power-name-v143{
+  position:absolute;
+  left:50%;
+  bottom:10%;
+  transform:translateX(-50%);
+  border:4px solid var(--ink);
+  border-radius:999px;
+  background:#fff;
+  padding:8px 18px;
+  white-space:nowrap;
+  font-size:18px;
+  font-weight:1000;
+}
+
+.musou-battle-v143{
+  position:relative;
+  flex:1;
+  min-height:340px;
+  overflow:hidden;
+  border:4px solid var(--ink);
+  border-radius:19px;
+  background:#443c36;
+}
+.musou-cave-back-v143{
+  position:absolute;
+  inset:0 0 42px;
+  background:#4f4640;
+}
+.musou-cave-back-v143:before{
+  content:"";
+  position:absolute;
+  left:0;
+  right:0;
+  top:0;
+  height:54px;
+  background:#38322e;
+  clip-path:polygon(
+    0 0,100% 0,100% 56%,
+    91% 42%,84% 72%,74% 50%,
+    65% 78%,56% 45%,47% 67%,
+    37% 41%,27% 73%,17% 48%,8% 66%,0 44%
+  );
+}
+.musou-cave-back-v143 i{
+  position:absolute;
+  width:24px;
+  height:18px;
+  border:3px solid #27231f;
+  border-radius:50%;
+  background:#665b52;
+  opacity:.72;
+}
+.musou-cave-back-v143 i:nth-child(1){left:8%;top:29%}
+.musou-cave-back-v143 i:nth-child(2){left:32%;top:58%}
+.musou-cave-back-v143 i:nth-child(3){right:19%;top:34%}
+.musou-cave-back-v143 i:nth-child(4){right:6%;top:68%}
+.musou-cave-floor-v143{
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  height:42px;
+  border-top:5px solid var(--ink);
+  background:#6c5a48;
+}
+.musou-layer-v143{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+}
+
+.musou-mob-v143{
+  position:absolute;
+  z-index:22;
+  left:50%;
+  top:60%;
+  width:76px;
+  height:90px;
+  will-change:left,top,transform;
+}
+.musou-mob-v143>img{
+  position:absolute;
+  z-index:4;
+  left:0;
+  bottom:0;
+  width:68px;
+  height:82px;
+  object-fit:contain;
+  pointer-events:none;
+}
+.musou-weapon-svg-v143{
+  position:absolute;
+  z-index:6;
+  left:35px;
+  top:-58px;
+  width:156px;
+  height:130px;
+  overflow:visible;
+  transform-origin:18px 104px;
+  pointer-events:none;
+}
+.musou-battle-path-v143{
+  fill:none;
+  stroke:currentColor;
+  stroke-width:19;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+  filter:drop-shadow(0 0 5px currentColor);
+}
+.musou-mob-v143.slash-horizontal-v143 .musou-weapon-svg-v143{
+  animation:musouSwingHorizontal143 .24s ease-out;
+}
+@keyframes musouSwingHorizontal143{
+  0%{transform:rotate(-52deg) translateX(-8px)}
+  55%{transform:rotate(47deg) translateX(14px)}
+  100%{transform:rotate(10deg)}
+}
+.musou-mob-v143.slash-vertical-v143 .musou-weapon-svg-v143{
+  animation:musouSwingVertical143 .24s ease-out;
+}
+@keyframes musouSwingVertical143{
+  0%{transform:rotate(-12deg) translateY(-32px)}
+  55%{transform:rotate(19deg) translateY(34px)}
+  100%{transform:rotate(8deg)}
+}
+.musou-mob-v143.slash-jump-v143 .musou-weapon-svg-v143{
+  animation:musouSwingJump143 .28s ease-out;
+}
+@keyframes musouSwingJump143{
+  0%{transform:rotate(42deg) translateY(-20px)}
+  55%{transform:rotate(-46deg) translateY(24px)}
+  100%{transform:rotate(5deg)}
+}
+.musou-mob-v143.finish-v143{
+  transform:translateY(-8px);
+}
+
+.musou-slime-v143{
+  position:absolute;
+  z-index:10;
+  transform:translate(-50%,0);
+  border:4px solid var(--ink);
+  border-radius:52% 52% 42% 42%;
+  background:#78cd68;
+}
+.musou-slime-v143.mid-v143{background:#6bc7de}
+.musou-slime-v143.giant-v143{
+  border-width:5px;
+  background:#d887cf;
+}
+.musou-slime-v143 i,
+.musou-slime-v143 b{
+  position:absolute;
+  top:32%;
+  width:5px;
+  height:7px;
+  border-radius:50%;
+  background:#232528;
+}
+.musou-slime-v143 i{left:27%}
+.musou-slime-v143 b{right:27%}
+.musou-slime-v143.knock-v143{
+  animation:musouSlimeKnock143 .42s cubic-bezier(.15,.72,.3,1) forwards;
+}
+@keyframes musouSlimeKnock143{
+  to{
+    translate:var(--kx) var(--ky);
+    rotate:var(--kr);
+    scale:.35;
+    opacity:0;
+  }
+}
+
+/* Technique colors */
+.musou-weapon-svg-v143.lightning-v143{color:#f1e657}
+.musou-weapon-svg-v143.water-v143{color:#65c9f0}
+.musou-weapon-svg-v143.wave-v143{color:#80e1ff}
+.musou-weapon-svg-v143.flame-v143{color:#ff9b54}
+.musou-weapon-svg-v143.fire-v143{color:#ff684f}
+.musou-weapon-svg-v143.flamethrower-v143{color:#ff7a48}
+.musou-weapon-svg-v143.dark-sword-v143{color:#744798}
+.musou-weapon-svg-v143.hero-sword-v143{color:#f7dd5b}
+.musou-weapon-svg-v143.flame-sword-v143{color:#ff764c}
+.musou-weapon-svg-v143.blizzard-sword-v143{color:#9de8f5}
+.musou-weapon-svg-v143.energy-sword-v143{color:#65f0e4}
+
+/* No screen flash / no spinning effect.
+   All FX move linearly or expand only along one axis. */
+.musou-effect-v143{
+  position:absolute;
+  z-index:25;
+  width:1px;
+  height:1px;
+  pointer-events:none;
+}
+.musou-effect-v143 i{
+  position:absolute;
+  left:0;
+  top:0;
+  width:90px;
+  height:8px;
+  border-radius:999px;
+  background:currentColor;
+  opacity:.85;
+  transform-origin:0 50%;
+  animation:musouFxLine143 .31s ease-out forwards;
+}
+.musou-effect-v143 i:nth-child(1){translate:-20px -30px}
+.musou-effect-v143 i:nth-child(2){translate:0 -12px}
+.musou-effect-v143 i:nth-child(3){translate:10px 8px}
+.musou-effect-v143 i:nth-child(4){translate:-4px 27px}
+.musou-effect-v143 i:nth-child(5){translate:20px 43px}
+@keyframes musouFxLine143{
+  from{scale:.25 1;opacity:.95}
+  to{scale:1.55 .35;translate:95px 0;opacity:0}
+}
+.musou-effect-v143.mode-vertical i{
+  width:8px;
+  height:95px;
+}
+.musou-effect-v143.mode-vertical i:nth-child(1){translate:-48px -60px}
+.musou-effect-v143.mode-vertical i:nth-child(2){translate:-24px -48px}
+.musou-effect-v143.mode-vertical i:nth-child(3){translate:0 -56px}
+.musou-effect-v143.mode-vertical i:nth-child(4){translate:22px -42px}
+.musou-effect-v143.mode-vertical i:nth-child(5){translate:44px -54px}
+.musou-effect-v143.mode-jump i{
+  width:72px;
+  height:10px;
+  transform:skewX(-22deg);
+}
+.musou-effect-v143.lightning-v143{
+  color:#f0e857;
+}
+.musou-effect-v143.lightning-v143 i{
+  clip-path:polygon(0 35%,28% 0,22% 42%,58% 20%,48% 68%,100% 45%,100% 70%,56% 92%,63% 53%,26% 76%,31% 48%,0 68%);
+}
+.musou-effect-v143.water-v143{
+  color:#68c9ef;
+}
+.musou-effect-v143.water-v143 i{
+  border-radius:999px 20% 999px 20%;
+}
+.musou-effect-v143.wave-v143{
+  color:#83e5ff;
+}
+.musou-effect-v143.wave-v143 i{
+  height:5px;
+  transform:skewX(-15deg);
+}
+.musou-effect-v143.flame-v143,
+.musou-effect-v143.fire-v143,
+.musou-effect-v143.flamethrower-v143,
+.musou-effect-v143.flame-sword-v143{
+  color:#ff784a;
+}
+.musou-effect-v143.dark-sword-v143{
+  color:#7c4c9f;
+}
+.musou-effect-v143.hero-sword-v143{
+  color:#f6dd5c;
+}
+.musou-effect-v143.blizzard-sword-v143{
+  color:#a9eef8;
+}
+.musou-effect-v143.blizzard-sword-v143 i{
+  clip-path:polygon(0 35%,35% 35%,48% 0,58% 35%,100% 35%,100% 66%,60% 66%,48% 100%,36% 66%,0 66%);
+}
+.musou-effect-v143.energy-sword-v143{
+  color:#63efe5;
+}
+.musou-technique-v143{
+  position:absolute;
+  z-index:40;
+  left:50%;
+  top:8%;
+  transform:translateX(-50%);
+  border:3px solid var(--ink);
+  border-radius:999px;
+  background:#fff;
+  padding:5px 11px;
+  font-size:11px;
+  font-weight:1000;
+  opacity:0;
+  pointer-events:none;
+}
+.musou-technique-v143.show-v143{
+  opacity:1;
+}

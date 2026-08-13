@@ -69,6 +69,24 @@ document.addEventListener("contextmenu",e=>{
   }
 },{capture:true,passive:false});
 
+// V10.43: 押している間も選択範囲を継続的に消す。
+// 長押し中だけ動作し、通常のゲームループには干渉しない。
+let gameplaySelectionGuardTimer=null;
+function stopGameplaySelectionGuard(){
+  if(gameplaySelectionGuardTimer!==null){
+    clearInterval(gameplaySelectionGuardTimer);
+    gameplaySelectionGuardTimer=null;
+  }
+  clearGameplaySelection();
+}
+document.addEventListener("pointerdown",e=>{
+  if(!(e.target&&e.target.closest&&e.target.closest(".gameplay-fit")))return;
+  stopGameplaySelectionGuard();
+  gameplaySelectionGuardTimer=setInterval(clearGameplaySelection,60);
+},{capture:true,passive:true});
+document.addEventListener("pointerup",stopGameplaySelectionGuard,{capture:true,passive:true});
+document.addEventListener("pointercancel",stopGameplaySelectionGuard,{capture:true,passive:true});
+
 const PLAYERS=[
   {id:"p1",no:1,name:"プレイヤー1",cpu:false,img:"play/01.png"},
   {id:"p2",no:2,name:"プレイヤー2",cpu:false,img:"play/02.png"},
@@ -189,7 +207,8 @@ const GAMES=[
   {no:87,key:"battleRoyaleMob",title:"モブくんFPSアリーナに挑戦",sub:"3対3のアリーナでスキルを使い敵チームを全滅させる"},
   {no:88,key:"littleMobShot",title:"Little MOB SHOT",sub:"レコードに乗って10秒間スライムを撃ちまくる縦シューティング"},
   {no:89,key:"monsterBoxMob",title:"モブくんモンスターボックスに挑む",sub:"ロイター板を踏んで15段から20段の跳び箱を越える"},
-  {no:90,key:"alienBattleMob",title:"モブくんエイリアンと戦う",sub:"小型ロボ3機で巨大エイリアンHP100を撃破する"}
+  {no:90,key:"alienBattleMob",title:"モブくんエイリアンと戦う",sub:"小型ロボ2機で地上の巨大エイリアンHP100を撃破する"},
+  {no:91,key:"mobMusou",title:"モブくん無双",sub:"7秒で巨大武器を描き、10秒オートで大量スライムを無双する"}
 ];
 
 const MODES={
@@ -232,7 +251,7 @@ function freshState(){
         paperPlane:{},tankMob:{},curlingMob:{},bubbleMob:{},
         changeMob:{},baggageMob:{},bridgeMob:{},treasureMob:{},rouletteMob:{},excavationMob:{},
         oldMaidDuel:{},robotMarch:{},monsterMaster:{},scoutMan:{},
-        atafutaSurvival:{},waveMaster:{},battleRoyaleMob:{},littleMobShot:{},monsterBoxMob:{},alienBattleMob:{}
+        atafutaSurvival:{},waveMaster:{},battleRoyaleMob:{},littleMobShot:{},monsterBoxMob:{},alienBattleMob:{},mobMusou:{}
     },
     total:{},
     roundPoints:[],
@@ -341,7 +360,7 @@ function renderHome(){
     <section class="hero hero-v119">
       <div>
         <span class="kicker">SMARTPHONE PARTY GAME</span>
-        <h1>90 MINI<br>GAMES</h1>
+        <h1>91 MINI<br>GAMES</h1>
         <p>対戦モードは「チーム戦」「個人戦」の2種類。人数・ルール・ゲーム数を自由に設定できます。</p>
       </div>
       <div class="hero-mark">MOB</div>
@@ -366,7 +385,7 @@ function renderHome(){
     </section>
 
     <section class="panel flat">
-      <div class="panel-head"><h3>90 MINI GAMES</h3><span class="tag">GAME 1 → 90</span></div>
+      <div class="panel-head"><h3>91 MINI GAMES</h3><span class="tag">GAME 1 → 91</span></div>
       <div class="compact-game-grid home-compact-games-v119">
         ${GAMES.map(g=>`<div><b>${g.no}</b><span>${g.title}</span></div>`).join("")}
       </div>
@@ -386,7 +405,7 @@ function renderFreePlaySelect(){
   screen.innerHTML=`
     <div class="game-head">
       <div><span class="kicker">FREE PLAY</span><h2>1人で遊ぶ</h2><p class="lead">好きなゲームを1つ選んでプレイ。</p></div>
-      <div class="game-badge">90</div>
+      <div class="game-badge">91</div>
     </div>
 
     <button id="freeBack" class="secondary wizard-back-v119" type="button">← メインへ戻る</button>
@@ -424,7 +443,7 @@ function renderGameGuide(){
   screen.innerHTML=`
     <div class="game-head">
       <div><span class="kicker">GAME GUIDE</span><h2>各ゲームの説明</h2><p class="lead">内容と100点換算の目安を一覧で確認できます。</p></div>
-      <div class="game-badge">90</div>
+      <div class="game-badge">91</div>
     </div>
 
     <button id="guideBack" class="secondary wizard-back-v119" type="button">← メインへ戻る</button>
@@ -758,7 +777,7 @@ function renderGameLengthSelect(config){
 
   screen.innerHTML=`
     <div class="game-head">
-      <div><span class="kicker">GAME MODE</span><h2>プレイするゲーム数</h2><p class="lead">CUSTOM以外は90ゲームからランダムで選択。</p></div>
+      <div><span class="kicker">GAME MODE</span><h2>プレイするゲーム数</h2><p class="lead">CUSTOM以外は91ゲームからランダムで選択。</p></div>
       <div class="game-badge">${config.rule==='score'?'SCORE':'RANK'}</div>
     </div>
 
@@ -766,7 +785,7 @@ function renderGameLengthSelect(config){
       <button data-length="5" type="button"><span>QUICK</span><b>サクッと5ゲーム</b><small>ランダム5種</small></button>
       <button data-length="15" type="button"><span>FUN</span><b>楽しく15ゲーム</b><small>ランダム15種</small></button>
       <button data-length="30" type="button"><span>LONG</span><b>じっくり30ゲーム</b><small>ランダム30種</small></button>
-      <button data-length="all" type="button"><span>ALL</span><b>ガッツリ全ゲーム</b><small>全90種をランダム順</small></button>
+      <button data-length="all" type="button"><span>ALL</span><b>ガッツリ全ゲーム</b><small>全91種をランダム順</small></button>
       <button data-length="custom" class="custom" type="button"><span>CUSTOM</span><b>カスタム</b><small>自由選択 / 最大50ゲーム</small></button>
     </div>
 
@@ -1015,7 +1034,7 @@ function renderPlayStyleSelect(){
       <button id="normalStyle" class="style-select-card normal" type="button">
         <span>NORMAL</span>
         <b>順番に全種目</b>
-        <small>GAME 1 → 90 を順番にプレイ</small>
+        <small>GAME 1 → 91 を順番にプレイ</small>
       </button>
       <button id="customStyle" class="style-select-card custom" type="button">
         <span>CUSTOM</span>
@@ -1025,7 +1044,7 @@ function renderPlayStyleSelect(){
     </div>
 
     <section class="panel flat">
-      <h3>90 MINI GAMES</h3>
+      <h3>91 MINI GAMES</h3>
       <div class="compact-game-grid">
         ${GAMES.map(g=>`<div><b>${g.no}</b><span>${g.title}</span></div>`).join("")}
       </div>
@@ -1362,11 +1381,12 @@ function scoreRuleForGame(index){
     "3秒デザイン→10秒捕獲 / 捕獲したモンスター数×10点 / 10体GET=100点",
     "甲子園47校中の最終順位 / 1位=100点・47位=0点換算",
     "10人中の生存順位で0〜100点 / 最初に落下=0点 / 最後の1人=100点",
-    "魂ゲージ55% + 円型ゲージ3回のなぞり45%で波動威力0〜100点",
+    "魂ゲージ55% + Z型ゲージ1回のなぞり45%で波動威力0〜100点",
     "3対3を全滅させるまでの時間 / 速いほど高評価",
-    "10秒間のスライムKO数 / 多いほど高得点",
+    "10秒間のスライムKO数 / 200体KO=100点",
     "15段→20段を順番に突破 / 20段クリア=100点",
-    "巨大エイリアンHP100を倒すまでの時間 / 速いほど高評価"
+    "巨大エイリアンHP100を倒すまでの時間 / 速いほど高評価",
+    "10秒オート無双 / 150体KO=100点 / 0体=0点"
   ][index];
 }
 
@@ -1554,8 +1574,10 @@ function showGameIntro(index){
     rules=`<li>10秒間の縦シューティング。弾は自動発射です。</li><li>左右移動・ボム・3秒レーザーでスライムを倒します。</li>`;
   }else if(index===88){
     rules=`<li>自動で走り、JUMPでロイター板を踏みます。</li><li>15段から20段までの跳び箱を順番に越えます。</li>`;
+  }else if(index===89){
+    rules=`<li>← / JUMP / 砲撃 / →で地上の巨大エイリアンHP100と戦います。</li><li>砲撃は最大3秒チャージ。1秒=5、2秒=10、3秒=15ダメージです。</li>`;
   }else{
-    rules=`<li>← / JUMP / 砲撃 / →で巨大エイリアンHP100と戦います。</li><li>砲撃は最大3秒チャージ。1秒=5、2秒=10、3秒=15ダメージです。</li>`;
+    rules=`<li>7秒で巨大な武器を自由に描きます。</li><li>力が宿ったら10秒間オートで大量スライムを無双します。</li>`;
   }
   const conciseRules=(rules.match(/<li>[\s\S]*?<\/li>/g)||[]).slice(0,2).join("");
   rules=conciseRules||`<li>${esc(g.sub)}</li>`;
@@ -1687,7 +1709,8 @@ function humanReady(gameIndex,humanIndex){
     else if(gameIndex===86)startBattleRoyaleMob(p,humanIndex,runId);
     else if(gameIndex===87)startLittleMobShot(p,humanIndex,runId);
     else if(gameIndex===88)startMonsterBoxMob(p,humanIndex,runId);
-    else startAlienBattleMob(p,humanIndex,runId);
+    else if(gameIndex===89)startAlienBattleMob(p,humanIndex,runId);
+    else startMobMusou(p,humanIndex,runId);
   },{once:true});
 }
 
@@ -23297,6 +23320,8 @@ async function startAlienBattleMob(p,humanIndex,runId){
   let bossAttackLock=false;
   let chargeStart=0;
   let charging=false;
+  let activeChargeBall=null;
+  let nextPlayerShotAt=0;
 
   const input={left:false,right:false};
   const shots=[];
@@ -23346,7 +23371,6 @@ async function startAlienBattleMob(p,humanIndex,runId){
         <div class="alien-boss-hp-v140"><i id="alienBossHpBar140"></i></div>
       </div>
 
-      <div id="alienChargeBall141" class="alien-charge-ball-v141" hidden></div>
       <div id="alienWave140" class="alien-full-wave-v140"></div>
       <div id="alienMessage140" class="alien-message-v140"></div>
     </div>
@@ -23368,7 +23392,6 @@ async function startAlienBattleMob(p,humanIndex,runId){
   const armEl=document.getElementById('alienArm140');
   const bossBar=document.getElementById('alienBossHpBar140');
   const waveEl=document.getElementById('alienWave140');
-  const chargeBallEl=document.getElementById('alienChargeBall141');
   const msg=document.getElementById('alienMessage140');
   const bossHpEl=document.getElementById('alienHp140');
   const youHpEl=document.getElementById('alienYouHp140');
@@ -23441,8 +23464,7 @@ async function startAlienBattleMob(p,humanIndex,runId){
   }
 
   const player=makeRobot('you',W*.08,'icon/01.png',true);
-  const allyA=makeRobot('allyA',W*.23,'icon/02.png');
-  const allyB=makeRobot('allyB',W*.36,'icon/03.png');
+  const allyA=makeRobot('allyA',W*.27,'icon/02.png');
 
   function updateRobotHp(r){
     r.hpEl.style.width=`${clamp(r.hp/r.maxHp*100,0,100)}%`;
@@ -23630,26 +23652,33 @@ async function startAlienBattleMob(p,humanIndex,runId){
   }
 
   function startCharge(){
+    const now=performance.now();
+
     if(
       !active||
       finished||
       charging||
       !player.alive||
-      performance.now()<player.stunUntil
+      now<player.stunUntil||
+      now<nextPlayerShotAt
     )return;
 
     charging=true;
-    chargeStart=performance.now();
+    chargeStart=now;
 
     player.el.classList.add('charging-v140');
     shootBtn.classList.add('charging-v140');
 
-    chargeBallEl.hidden=false;
-    chargeBallEl.className='alien-charge-ball-v141';
-    chargeBallEl.style.width='32px';
-    chargeBallEl.style.height='32px';
-    chargeBallEl.style.left=`${player.x+player.w+6}px`;
-    chargeBallEl.style.top=`${player.y+24}px`;
+    const ball=document.createElement('div');
+    ball.className='alien-charge-ball-v141';
+    ball.style.width='32px';
+    ball.style.height='32px';
+    ball.style.left=`${player.x+player.w+6}px`;
+    ball.style.top=`${player.y+24}px`;
+    ball.style.setProperty('--power','0');
+
+    shotLayer.appendChild(ball);
+    activeChargeBall=ball;
   }
 
   function releaseCharge(){
@@ -23657,19 +23686,30 @@ async function startAlienBattleMob(p,humanIndex,runId){
 
     const now=performance.now();
     const ms=clamp(now-chargeStart,0,3000);
+    const ball=activeChargeBall;
 
     charging=false;
+    activeChargeBall=null;
+    nextPlayerShotAt=now+420;
 
     player.el.classList.remove('charging-v140');
     shootBtn.classList.remove('charging-v140');
+    shootBtn.classList.add('cooldown-v143');
 
-    // 溜めていた同じ玉を、そのまま飛翔体へ変える。
-    fireShot(
-      player,
-      ms,
-      false,
-      chargeBallEl
-    );
+    setTimeout(()=>{
+      shootBtn.classList.remove('cooldown-v143');
+    },420);
+
+    if(ball&&ball.isConnected){
+      // このチャージで作った玉だけを、そのまま飛翔体へ変換。
+      // 次の連射では別DOMを作るので前弾が消えない。
+      fireShot(
+        player,
+        ms,
+        false,
+        ball
+      );
+    }
 
     chargeEl.textContent='0.0s';
   }
@@ -23867,6 +23907,54 @@ async function startAlienBattleMob(p,humanIndex,runId){
     bossAttackLock=false;
   }
 
+  async function longKick(){
+    if(finished||!boss.alive)return;
+
+    bossAttackLock=true;
+    msg.textContent='LONG KICK!';
+
+    const kickLeg=
+      bossEl.querySelector('.alien-leg-v141.leg1');
+
+    kickLeg.classList.add('kick-warning-v143');
+
+    await wait(430);
+
+    if(
+      !isGameRunValid(runId)||
+      finished
+    )return;
+
+    kickLeg.classList.remove('kick-warning-v143');
+    kickLeg.classList.add('long-kick-v143');
+
+    for(const r of team){
+      if(!r.alive)continue;
+
+      const inLane=r.y>groundY-185;
+      const inReach=r.x+r.w>W*.08;
+
+      if(inLane&&inReach){
+        damageRobot(
+          r,
+          4,
+          {
+            knock:390,
+            up:155
+          }
+        );
+      }
+    }
+
+    beep(82,175,.055);
+
+    await wait(520);
+
+    kickLeg.classList.remove('long-kick-v143');
+    bossAttackLock=false;
+  }
+
+
   function summonKids(){
     msg.textContent='ALIEN CHILD ×4';
 
@@ -23955,13 +24043,15 @@ async function startAlienBattleMob(p,humanIndex,runId){
       !boss.alive
     )return;
 
-    const roll=randi(1,4);
+    const roll=randi(1,5);
 
     if(roll===1){
       spawnFireball();
     }else if(roll===2){
       await longPunch();
     }else if(roll===3){
+      await longKick();
+    }else if(roll===4){
       summonKids();
     }else{
       await fullPowerWave();
@@ -24030,10 +24120,10 @@ async function startAlienBattleMob(p,humanIndex,runId){
     finished=true;
     active=false;
 
-    if(charging){
-      chargeBallEl.hidden=true;
+    if(activeChargeBall&&activeChargeBall.isConnected){
+      activeChargeBall.remove();
     }
-
+    activeChargeBall=null;
     charging=false;
 
     if(raf){
@@ -24083,10 +24173,10 @@ async function startAlienBattleMob(p,humanIndex,runId){
     finished=true;
     active=false;
 
-    if(charging){
-      chargeBallEl.hidden=true;
+    if(activeChargeBall&&activeChargeBall.isConnected){
+      activeChargeBall.remove();
     }
-
+    activeChargeBall=null;
     charging=false;
 
     if(raf){
@@ -24141,9 +24231,7 @@ async function startAlienBattleMob(p,humanIndex,runId){
   nextBossAttack=start+2100;
 
   allyA.nextShot=start+650;
-  allyB.nextShot=start+900;
   allyA.nextJump=start+900;
-  allyB.nextJump=start+1200;
 
   function frame(now){
     if(
@@ -24178,12 +24266,14 @@ async function startAlienBattleMob(p,humanIndex,runId){
       );
 
       const ballSize=32+ratio*78;
-      chargeBallEl.hidden=false;
-      chargeBallEl.style.width=`${ballSize}px`;
-      chargeBallEl.style.height=`${ballSize}px`;
-      chargeBallEl.style.left=`${player.x+player.w+ballSize*.18}px`;
-      chargeBallEl.style.top=`${player.y+24}px`;
-      chargeBallEl.style.setProperty('--power',ratio.toFixed(3));
+
+      if(activeChargeBall&&activeChargeBall.isConnected){
+        activeChargeBall.style.width=`${ballSize}px`;
+        activeChargeBall.style.height=`${ballSize}px`;
+        activeChargeBall.style.left=`${player.x+player.w+ballSize*.18}px`;
+        activeChargeBall.style.top=`${player.y+24}px`;
+        activeChargeBall.style.setProperty('--power',ratio.toFixed(3));
+      }
 
       if(ms>=3000){
         chargeEl.textContent='3.0s MAX';
@@ -24446,6 +24536,916 @@ async function startAlienBattleMob(p,humanIndex,runId){
   }
 
   raf=requestAnimationFrame(frame);
+}
+
+
+
+// =========================================================
+// V10.43 GAME 91 — モブくん無双
+// =========================================================
+async function startMobMusou(p,humanIndex,runId){
+  gameFit();
+
+  let phase='locked';
+  let drawingActive=false;
+  let drawingFinished=false;
+  let pointer=null;
+  let strokes=[];
+  let currentStroke=null;
+  let drawRaf=null;
+  let drawStart=0;
+  let combatRaf=null;
+  let combatLast=0;
+  let combatStart=0;
+  let nextSpawn=0;
+  let nextAttack=0;
+  let attackCount=0;
+  let kills=0;
+
+  const slimes=[];
+
+  const TECHNIQUES={
+    lightning:{
+      name:'雷',
+      cls:'lightning-v143',
+      radius:116,
+      cadence:205
+    },
+    water:{
+      name:'水',
+      cls:'water-v143',
+      radius:105,
+      cadence:220
+    },
+    wave:{
+      name:'ウェーブ',
+      cls:'wave-v143',
+      radius:132,
+      cadence:235
+    },
+    flame:{
+      name:'炎',
+      cls:'flame-v143',
+      radius:108,
+      cadence:205
+    },
+    fire:{
+      name:'火炎',
+      cls:'fire-v143',
+      radius:121,
+      cadence:220
+    },
+    flamethrower:{
+      name:'火炎放射',
+      cls:'flamethrower-v143',
+      radius:148,
+      cadence:250
+    },
+    darkSword:{
+      name:'ダークソード',
+      cls:'dark-sword-v143',
+      radius:112,
+      cadence:190
+    },
+    heroSword:{
+      name:'ヒーローソード',
+      cls:'hero-sword-v143',
+      radius:116,
+      cadence:195
+    },
+    flameSword:{
+      name:'フレイムソード',
+      cls:'flame-sword-v143',
+      radius:122,
+      cadence:200
+    },
+    blizzardSword:{
+      name:'ブリザードソード',
+      cls:'blizzard-sword-v143',
+      radius:126,
+      cadence:215
+    },
+    energySword:{
+      name:'エネルギーソード',
+      cls:'energy-sword-v143',
+      radius:119,
+      cadence:185
+    }
+  };
+
+  screen.innerHTML=`<div class="musou-shell-v143">
+    <div class="game-head">
+      <div><span class="kicker">${esc(p.name)}</span><h2>モブくん無双</h2></div>
+      <div class="game-badge">${playBadge(humanIndex)}</div>
+    </div>
+
+    <div class="musou-hud-v143">
+      <div><span>TIME</span><b id="musouTime143">7.00</b></div>
+      <div><span>KO</span><b id="musouKo143">0</b></div>
+      <div><span>WEAPON</span><b id="musouWeapon143">DRAW</b></div>
+    </div>
+
+    <div id="musouDrawPanel143" class="musou-draw-panel-v143">
+      <div class="musou-draw-title-v143">7秒で巨大な武器を描け！</div>
+      <svg id="musouDrawSvg143" class="musou-draw-svg-v143" viewBox="0 0 320 220">
+        <rect x="3" y="3" width="314" height="214" rx="18" class="musou-draw-bg-v143"/>
+        <g id="musouPathLayer143"></g>
+      </svg>
+      <div class="musou-draw-note-v143">好きな形を何本でも描ける</div>
+    </div>
+
+    <div id="musouPower143" class="musou-power-v143" hidden>
+      <div class="musou-power-mob-v143" style="background-image:url('icon/01.png')"></div>
+      <div class="musou-power-text-v143">モブくんに力が宿る！</div>
+      <div id="musouPowerName143" class="musou-power-name-v143"></div>
+    </div>
+
+    <div id="musouBattle143" class="musou-battle-v143" hidden>
+      <div class="musou-cave-back-v143">
+        <i></i><i></i><i></i><i></i>
+      </div>
+      <div class="musou-cave-floor-v143"></div>
+      <div id="musouSlimeLayer143" class="musou-layer-v143"></div>
+      <div id="musouFx143" class="musou-layer-v143"></div>
+
+      <div id="musouMob143" class="musou-mob-v143">
+        <img src="icon/01.png" draggable="false" alt="">
+        <svg id="musouWeaponSvg143" class="musou-weapon-svg-v143" viewBox="0 0 320 220"></svg>
+      </div>
+
+      <div id="musouTechnique143" class="musou-technique-v143"></div>
+    </div>
+  </div>`;
+
+  const timeEl=document.getElementById('musouTime143');
+  const koEl=document.getElementById('musouKo143');
+  const weaponEl=document.getElementById('musouWeapon143');
+  const drawPanel=document.getElementById('musouDrawPanel143');
+  const drawSvg=document.getElementById('musouDrawSvg143');
+  const pathLayer=document.getElementById('musouPathLayer143');
+  const powerPanel=document.getElementById('musouPower143');
+  const powerName=document.getElementById('musouPowerName143');
+  const battle=document.getElementById('musouBattle143');
+  const slimeLayer=document.getElementById('musouSlimeLayer143');
+  const fx=document.getElementById('musouFx143');
+  const mob=document.getElementById('musouMob143');
+  const weaponSvg=document.getElementById('musouWeaponSvg143');
+  const techniqueEl=document.getElementById('musouTechnique143');
+
+  function localDraw(e){
+    const r=drawSvg.getBoundingClientRect();
+
+    return{
+      x:clamp((e.clientX-r.left)/r.width*320,8,312),
+      y:clamp((e.clientY-r.top)/r.height*220,8,212)
+    };
+  }
+
+  function addSvgPath(points){
+    const path=document.createElementNS(
+      'http://www.w3.org/2000/svg',
+      'polyline'
+    );
+
+    path.setAttribute(
+      'points',
+      points
+        .map(q=>`${q.x.toFixed(1)},${q.y.toFixed(1)}`)
+        .join(' ')
+    );
+
+    path.setAttribute('class','musou-user-path-v143');
+    pathLayer.appendChild(path);
+
+    return path;
+  }
+
+  drawSvg.addEventListener('pointerdown',e=>{
+    if(!drawingActive||drawingFinished)return;
+
+    e.preventDefault();
+
+    const q=localDraw(e);
+
+    currentStroke={
+      points:[q],
+      path:addSvgPath([q])
+    };
+
+    strokes.push(currentStroke);
+    pointer={id:e.pointerId};
+
+    try{
+      drawSvg.setPointerCapture(e.pointerId);
+    }catch(_){}
+  },{passive:false});
+
+  drawSvg.addEventListener('pointermove',e=>{
+    if(
+      !drawingActive||
+      drawingFinished||
+      !pointer||
+      e.pointerId!==pointer.id||
+      !currentStroke
+    )return;
+
+    e.preventDefault();
+
+    const q=localDraw(e);
+    const prev=currentStroke.points[currentStroke.points.length-1];
+
+    if(Math.hypot(q.x-prev.x,q.y-prev.y)<2.2)return;
+
+    currentStroke.points.push(q);
+
+    currentStroke.path.setAttribute(
+      'points',
+      currentStroke.points
+        .map(pt=>`${pt.x.toFixed(1)},${pt.y.toFixed(1)}`)
+        .join(' ')
+    );
+  },{passive:false});
+
+  const endStroke=e=>{
+    if(!pointer)return;
+    if(e&&e.pointerId!==pointer.id)return;
+
+    if(e)e.preventDefault();
+
+    pointer=null;
+    currentStroke=null;
+  };
+
+  drawSvg.addEventListener('pointerup',endStroke,{passive:false});
+  drawSvg.addEventListener('pointercancel',endStroke,{passive:false});
+
+  function drawingMetrics(){
+    const valid=
+      strokes.filter(s=>s.points.length>=2);
+
+    if(!valid.length){
+      return{
+        count:0,
+        total:0,
+        width:1,
+        height:1,
+        ratio:1,
+        straight:.2,
+        turn:.2,
+        density:0
+      };
+    }
+
+    let minX=999,minY=999,maxX=-999,maxY=-999;
+    let total=0;
+    let straightSum=0;
+    let turnSum=0;
+    let turnCount=0;
+
+    for(const stroke of valid){
+      const pts=stroke.points;
+      let lineLen=0;
+
+      for(let i=0;i<pts.length;i++){
+        const q=pts[i];
+
+        minX=Math.min(minX,q.x);
+        minY=Math.min(minY,q.y);
+        maxX=Math.max(maxX,q.x);
+        maxY=Math.max(maxY,q.y);
+
+        if(i>0){
+          lineLen+=Math.hypot(
+            q.x-pts[i-1].x,
+            q.y-pts[i-1].y
+          );
+        }
+
+        if(i>1){
+          const a=Math.atan2(
+            pts[i-1].y-pts[i-2].y,
+            pts[i-1].x-pts[i-2].x
+          );
+
+          const b=Math.atan2(
+            pts[i].y-pts[i-1].y,
+            pts[i].x-pts[i-1].x
+          );
+
+          let d=Math.abs(a-b);
+          if(d>Math.PI)d=Math.PI*2-d;
+
+          turnSum+=d/Math.PI;
+          turnCount++;
+        }
+      }
+
+      total+=lineLen;
+
+      const endDist=Math.hypot(
+        pts[pts.length-1].x-pts[0].x,
+        pts[pts.length-1].y-pts[0].y
+      );
+
+      straightSum+=
+        lineLen>0
+          ? clamp(endDist/lineLen,0,1)
+          : 0;
+    }
+
+    const width=Math.max(1,maxX-minX);
+    const height=Math.max(1,maxY-minY);
+
+    return{
+      count:valid.length,
+      total,
+      width,
+      height,
+      ratio:width/height,
+      straight:straightSum/valid.length,
+      turn:turnCount?turnSum/turnCount:0,
+      density:total/(width+height)
+    };
+  }
+
+  function chooseTechnique(){
+    const m=drawingMetrics();
+
+    if(m.count===0){
+      return TECHNIQUES.heroSword;
+    }
+
+    if(m.count>=7&&m.turn>.34){
+      return TECHNIQUES.lightning;
+    }
+
+    if(m.ratio>=2.15&&m.count<=2){
+      return TECHNIQUES.flamethrower;
+    }
+
+    if(m.ratio>=1.72&&m.turn>.18){
+      return TECHNIQUES.wave;
+    }
+
+    if(m.ratio>=1.15&&m.ratio<=1.65&&m.count>=4&&m.turn>.22){
+      return TECHNIQUES.water;
+    }
+
+    if(m.ratio<=.60&&m.straight>=.76&&m.count<=2){
+      return TECHNIQUES.energySword;
+    }
+
+    if(m.ratio<=.78&&m.count>=5){
+      return TECHNIQUES.blizzardSword;
+    }
+
+    if(m.ratio<=.88&&m.turn>.32){
+      return TECHNIQUES.flameSword;
+    }
+
+    if(m.count<=2&&m.straight>=.62){
+      return TECHNIQUES.heroSword;
+    }
+
+    if(m.ratio<1.08&&m.count<=3){
+      return TECHNIQUES.darkSword;
+    }
+
+    if(m.total>900||m.density>4.5){
+      return TECHNIQUES.fire;
+    }
+
+    return TECHNIQUES.flame;
+  }
+
+  function copyWeaponToBattle(tech){
+    weaponSvg.innerHTML='';
+
+    const valid=
+      strokes.filter(s=>s.points.length>=2);
+
+    if(!valid.length){
+      const fallback=document.createElementNS(
+        'http://www.w3.org/2000/svg',
+        'polyline'
+      );
+
+      fallback.setAttribute(
+        'points',
+        '70,180 160,40 250,180'
+      );
+
+      fallback.setAttribute(
+        'class',
+        'musou-battle-path-v143'
+      );
+
+      weaponSvg.appendChild(fallback);
+    }else{
+      for(const stroke of valid){
+        const poly=document.createElementNS(
+          'http://www.w3.org/2000/svg',
+          'polyline'
+        );
+
+        poly.setAttribute(
+          'points',
+          stroke.points
+            .map(q=>`${q.x.toFixed(1)},${q.y.toFixed(1)}`)
+            .join(' ')
+        );
+
+        poly.setAttribute(
+          'class',
+          'musou-battle-path-v143'
+        );
+
+        weaponSvg.appendChild(poly);
+      }
+    }
+
+    weaponSvg.className.baseVal=
+      `musou-weapon-svg-v143 ${tech.cls}`;
+  }
+
+  function finishDrawing(){
+    if(drawingFinished)return;
+
+    drawingFinished=true;
+    drawingActive=false;
+    phase='power';
+
+    if(drawRaf){
+      cancelAnimationFrame(drawRaf);
+      drawRaf=null;
+    }
+
+    const tech=chooseTechnique();
+
+    weaponEl.textContent=tech.name;
+    powerName.textContent=tech.name;
+    copyWeaponToBattle(tech);
+
+    drawPanel.hidden=true;
+    powerPanel.hidden=false;
+    timeEl.textContent='---';
+
+    beep(820,90,.025);
+
+    setTimeout(()=>{
+      if(!isGameRunValid(runId))return;
+
+      powerPanel.hidden=true;
+      battle.hidden=false;
+      startCombat(tech);
+    },900);
+  }
+
+  function drawFrame(now){
+    if(
+      !drawingActive||
+      drawingFinished||
+      !isGameRunValid(runId)
+    )return;
+
+    const left=
+      Math.max(
+        0,
+        7-(now-drawStart)/1000
+      );
+
+    timeEl.textContent=left.toFixed(2);
+
+    if(left<=0){
+      finishDrawing();
+      return;
+    }
+
+    drawRaf=requestAnimationFrame(drawFrame);
+  }
+
+  function spawnSlime(W,H,elapsed){
+    const roll=Math.random();
+
+    const size=
+      roll>.93
+        ? rand(48,62)
+        : roll>.72
+          ? rand(34,46)
+          : rand(20,32);
+
+    const side=
+      Math.random()<.5
+        ? -1
+        : 1;
+
+    const x=
+      side<0
+        ? -size
+        : W+size;
+
+    const y=
+      H-42-size*.72-rand(0,22);
+
+    const el=document.createElement('div');
+
+    el.className=
+      `musou-slime-v143 ${
+        size>47
+          ? 'giant-v143'
+          : size>33
+            ? 'mid-v143'
+            : 'small-v143'
+      }`;
+
+    el.style.width=`${size}px`;
+    el.style.height=`${size*.72}px`;
+    el.innerHTML='<i></i><b></b>';
+
+    slimeLayer.appendChild(el);
+
+    slimes.push({
+      x,
+      y,
+      size,
+      speed:rand(80,125)+elapsed*2.5,
+      alive:true,
+      side,
+      el
+    });
+  }
+
+  function killSlime(slime,mobX,mobY,index){
+    if(!slime.alive)return;
+
+    slime.alive=false;
+    kills++;
+
+    koEl.textContent=kills;
+
+    const dx=
+      slime.x<mobX
+        ? -rand(85,145)
+        : rand(85,145);
+
+    const dy=-rand(55,125);
+
+    slime.el.style.setProperty('--kx',`${dx}px`);
+    slime.el.style.setProperty('--ky',`${dy}px`);
+    slime.el.style.setProperty('--kr',`${randi(-28,28)}deg`);
+    slime.el.classList.add('knock-v143');
+
+    setTimeout(()=>{
+      slime.el.remove();
+    },430);
+
+    if(kills%10===0){
+      beep(
+        690+Math.min(260,kills),
+        35,.008
+      );
+    }
+  }
+
+  function effectBurst(tech,mobX,mobY,attackMode){
+    const burst=document.createElement('div');
+
+    burst.className=
+      `musou-effect-v143 ${tech.cls} mode-${attackMode}`;
+
+    burst.style.left=`${mobX}px`;
+    burst.style.top=`${mobY}px`;
+
+    for(let i=0;i<5;i++){
+      const line=document.createElement('i');
+      line.style.setProperty('--n',i);
+      burst.appendChild(line);
+    }
+
+    fx.appendChild(burst);
+
+    setTimeout(()=>{
+      burst.remove();
+    },330);
+
+    techniqueEl.textContent=tech.name;
+    techniqueEl.className=
+      `musou-technique-v143 show-v143 ${tech.cls}`;
+
+    setTimeout(()=>{
+      techniqueEl.classList.remove('show-v143');
+    },260);
+  }
+
+  function attack(tech,W,H,elapsed,mobX,mobY){
+    attackCount++;
+
+    const mode=
+      attackCount%4===0
+        ? 'jump'
+        : attackCount%2===0
+          ? 'vertical'
+          : 'horizontal';
+
+    mob.classList.remove(
+      'slash-horizontal-v143',
+      'slash-vertical-v143',
+      'slash-jump-v143'
+    );
+
+    void mob.offsetWidth;
+
+    mob.classList.add(
+      mode==='horizontal'
+        ? 'slash-horizontal-v143'
+        : mode==='vertical'
+          ? 'slash-vertical-v143'
+          : 'slash-jump-v143'
+    );
+
+    effectBurst(
+      tech,
+      mobX+42,
+      mobY+38,
+      mode
+    );
+
+    let hitCount=0;
+
+    const radius=
+      tech.radius+
+      (mode==='jump'?18:0);
+
+    for(const slime of slimes){
+      if(!slime.alive)continue;
+
+      const dx=
+        slime.x-(mobX+32);
+
+      const dy=
+        slime.y-(mobY+34);
+
+      const horizontalBonus=
+        mode==='horizontal'
+          ? Math.abs(dy)<75
+          : true;
+
+      const verticalBonus=
+        mode==='vertical'
+          ? Math.abs(dx)<88
+          : true;
+
+      if(
+        Math.hypot(dx,dy)<=radius&&
+        horizontalBonus&&
+        verticalBonus
+      ){
+        killSlime(
+          slime,
+          mobX,
+          mobY,
+          hitCount
+        );
+
+        hitCount++;
+      }
+    }
+
+    // 空振りを減らし、無双らしい密度を維持。
+    if(hitCount<2){
+      const nearest=
+        slimes
+          .filter(s=>s.alive)
+          .sort(
+            (a,b)=>
+              Math.hypot(a.x-mobX,a.y-mobY)-
+              Math.hypot(b.x-mobX,b.y-mobY)
+          )
+          .slice(0,2-hitCount);
+
+      for(const slime of nearest){
+        if(
+          Math.hypot(
+            slime.x-mobX,
+            slime.y-mobY
+          )<radius*1.55
+        ){
+          killSlime(
+            slime,
+            mobX,
+            mobY,
+            hitCount
+          );
+        }
+      }
+    }
+
+    beep(
+      tech.cls.includes('dark')
+        ? 180
+        : tech.cls.includes('lightning')
+          ? 930
+          : tech.cls.includes('blizzard')
+            ? 760
+            : 540,
+      28,.006
+    );
+  }
+
+  function finishCombat(){
+    if(phase!=='combat')return;
+
+    phase='result';
+
+    if(combatRaf){
+      cancelAnimationFrame(combatRaf);
+      combatRaf=null;
+    }
+
+    state.records.mobMusou[p.id]=kills;
+    timeEl.textContent='0.00';
+
+    mob.classList.add('finish-v143');
+
+    setTimeout(()=>{
+      if(!isGameRunValid(runId))return;
+
+      document.body.classList.remove('countdown-active-v140');
+      screen.removeAttribute('inert');
+      clearGameplaySelection();
+
+      recordScreen(
+        90,
+        p,
+        humanIndex,
+        `${kills}<small> KO</small>`,
+        `${weaponEl.textContent} / 10秒`
+      );
+    },700);
+  }
+
+  function startCombat(tech){
+    if(!isGameRunValid(runId))return;
+
+    phase='combat';
+
+    const W=Math.max(300,battle.clientWidth||340);
+    const H=Math.max(300,battle.clientHeight||390);
+
+    combatStart=
+      combatLast=
+      performance.now();
+
+    nextSpawn=combatStart;
+    nextAttack=combatStart+120;
+
+    for(let i=0;i<12;i++){
+      spawnSlime(W,H,0);
+    }
+
+    function frame(now){
+      if(
+        phase!=='combat'||
+        !isGameRunValid(runId)
+      )return;
+
+      const dt=
+        Math.min(
+          .035,
+          (now-combatLast)/1000
+        );
+
+      combatLast=now;
+
+      const elapsed=
+        (now-combatStart)/1000;
+
+      const remaining=
+        Math.max(0,10-elapsed);
+
+      timeEl.textContent=
+        remaining.toFixed(2);
+
+      const mobX=
+        clamp(
+          W*.46+
+          Math.sin(elapsed*3.7)*W*.31+
+          Math.sin(elapsed*8.1)*18,
+          24,
+          W-92
+        );
+
+      const jumpWave=
+        Math.max(
+          0,
+          Math.sin(elapsed*4.9)
+        );
+
+      const mobY=
+        H-110-
+        jumpWave*92;
+
+      mob.style.left=`${mobX}px`;
+      mob.style.top=`${mobY}px`;
+
+      if(now>=nextSpawn){
+        const batch=
+          elapsed>5
+            ? randi(3,5)
+            : randi(2,4);
+
+        for(let i=0;i<batch;i++){
+          spawnSlime(
+            W,
+            H,
+            elapsed
+          );
+        }
+
+        nextSpawn=
+          now+
+          clamp(
+            135-elapsed*5,
+            82,
+            135
+          );
+      }
+
+      for(const slime of slimes){
+        if(!slime.alive)continue;
+
+        const targetX=mobX+32;
+        const dx=targetX-slime.x;
+
+        slime.x+=
+          Math.sign(dx)*
+          slime.speed*
+          dt;
+
+        slime.y=
+          H-42-
+          slime.size*.72-
+          Math.sin(
+            elapsed*4+
+            slime.size
+          )*3;
+
+        slime.el.style.left=`${slime.x}px`;
+        slime.el.style.top=`${slime.y}px`;
+
+        if(
+          slime.x<-90||
+          slime.x>W+90
+        ){
+          slime.alive=false;
+          slime.el.remove();
+        }
+      }
+
+      if(now>=nextAttack){
+        attack(
+          tech,
+          W,H,
+          elapsed,
+          mobX,
+          mobY
+        );
+
+        nextAttack=
+          now+
+          tech.cadence+
+          rand(-22,25);
+      }
+
+      if(elapsed>=10){
+        finishCombat();
+        return;
+      }
+
+      combatRaf=requestAnimationFrame(frame);
+    }
+
+    combatRaf=requestAnimationFrame(frame);
+  }
+
+  // 描画画面をカウントダウン前に配置済みにする。
+  timeEl.textContent='7.00';
+
+  if(
+    !(await countdown(
+      'WEAPON DRAW',
+      runId,
+      {transparent:true}
+    ))
+  )return;
+
+  if(!isGameRunValid(runId))return;
+
+  phase='draw';
+  drawingActive=true;
+  drawStart=performance.now();
+
+  drawRaf=requestAnimationFrame(drawFrame);
 }
 
 
@@ -24811,8 +25811,8 @@ function softenCpuResultV121(gameIndex,p,ultra){
   ]);
 
   const specificallyTuned=new Set([
-    50,51,59,62,63,
-    64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89
+    50,51,54,59,62,63,
+    64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90
   ]);
 
   if(
@@ -24985,7 +25985,7 @@ function simulateOneCpu(gameIndex,p){
   }else if(gameIndex===53){
     state.records.toyOnOff[p.id]=ultra?randi(1200,1900):randi(1900,4600);
   }else if(gameIndex===54){
-    state.records.dodgeballMob[p.id]=ultra?randi(96,100):randi(62,96);
+    state.records.dodgeballMob[p.id]=ultra?randi(9,10):randi(4,8);
   }else if(gameIndex===55){
     state.records.amidakujiMob[p.id]=[0,15,30,50,75,100][randi(0,5)];
   }else if(gameIndex===56){
@@ -25002,8 +26002,18 @@ function simulateOneCpu(gameIndex,p){
   }else if(gameIndex===60){
     state.records.balanceMob[p.id]=Math.round((ultra?rand(7.9,10):rand(3.6,8.3))*100)/100;
   }else if(gameIndex===61){
-    const diceTotal=ultra?randi(21,30):randi(10,25);
-    state.records.mobDice[p.id]=clamp(Math.round(diceTotal<=5?1:diceTotal>=30?100:1+(diceTotal-5)/25*99),1,100);
+    const diceTotal=
+      randi(1,6)+randi(1,6)+randi(1,6)+randi(1,6)+randi(1,6);
+    state.records.mobDice[p.id]=clamp(
+      Math.round(
+        diceTotal<=5
+          ? 1
+          : diceTotal>=30
+            ? 100
+            : 1+(diceTotal-5)/25*99
+      ),
+      1,100
+    );
   }else if(gameIndex===62){
     state.records.mobCombo[p.id]=ultra?randi(12,17):randi(4,11);
   }else if(gameIndex===63){
@@ -25077,13 +26087,19 @@ function simulateOneCpu(gameIndex,p){
       ? randi(8500,13500)
       : randi(12000,28000);
   }else if(gameIndex===87){
-    state.records.littleMobShot[p.id]=ultra?randi(58,82):randi(24,58);
+    state.records.littleMobShot[p.id]=ultra
+      ? randi(155,198)
+      : randi(72,158);
   }else if(gameIndex===88){
     state.records.monsterBoxMob[p.id]=ultra?randi(86,100):randi(34,86);
-  }else{
+  }else if(gameIndex===89){
     state.records.alienBattleMob[p.id]=ultra
       ? randi(12500,19000)
       : randi(17500,36000);
+  }else{
+    state.records.mobMusou[p.id]=ultra
+      ? randi(128,165)
+      : randi(62,132);
   }
 
   softenCpuResultV121(
@@ -25219,6 +26235,7 @@ function performancePoints(gameIndex,v){
     return clamp(Math.round((v-30)/60*100),0,100);
   }
   if(gameIndex===71)return clamp(Math.round(v/35*100),0,100);
+  if(gameIndex===79)return clamp(Math.round(v/225*100),0,100);
   if(gameIndex===80)return clamp(110-Math.round(v)*10,0,100);
   if(gameIndex===81)return clamp(Math.round(v/1000*100),0,100);
   if(gameIndex===82)return clamp(Math.round(v/10*100),0,100);
@@ -25230,13 +26247,14 @@ function performancePoints(gameIndex,v){
     if(v>=40000)return 0;
     return clamp(Math.round((40000-v)/31500*100),0,100);
   }
-  if(gameIndex===87)return clamp(Math.round(v/70*100),0,100);
+  if(gameIndex===87)return clamp(Math.round(v/200*100),0,100);
   if(gameIndex===88)return clamp(Math.round(v),0,100);
   if(gameIndex===89){
     if(v<=12000)return 100;
     if(v>=45000)return 0;
     return clamp(Math.round((45000-v)/33000*100),0,100);
   }
+  if(gameIndex===90)return clamp(Math.round(v/150*100),0,100);
   return clamp(Math.round(v),0,100);
 }
 
@@ -25330,6 +26348,7 @@ function formatRecord(gameIndex,v){
   if(gameIndex===87)return `${Math.round(v)} KO`;
   if(gameIndex===88)return `${Math.round(v)}pt`;
   if(gameIndex===89)return `${(v/1000).toFixed(2)}秒`;
+  if(gameIndex===90)return `${Math.round(v)} KO`;
   return `${Math.round(v)}pt`;
 }
 
