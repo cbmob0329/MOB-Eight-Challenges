@@ -160,7 +160,7 @@ const GAMES=[
   {no:87,key:"battleRoyaleMob",title:"モブくんFPSアリーナに挑戦",sub:"3対3のアリーナでスキルを使い敵チームを全滅させる"},
   {no:88,key:"littleMobShot",title:"Little MOB SHOT",sub:"レコードに乗って10秒間スライムを撃ちまくる縦シューティング"},
   {no:89,key:"monsterBoxMob",title:"モブくんモンスターボックスに挑む",sub:"ロイター板を踏んで15段から20段の跳び箱を越える"},
-  {no:90,key:"alienBattleMob",title:"モブくんエイリアンと戦う",sub:"小型ロボ3機で巨大エイリアンHP50を撃破する"}
+  {no:90,key:"alienBattleMob",title:"モブくんエイリアンと戦う",sub:"小型ロボ3機で巨大エイリアンHP100を撃破する"}
 ];
 
 const MODES={
@@ -1337,7 +1337,7 @@ function scoreRuleForGame(index){
     "3対3を全滅させるまでの時間 / 速いほど高評価",
     "10秒間のスライムKO数 / 多いほど高得点",
     "15段→20段を順番に突破 / 20段クリア=100点",
-    "巨大エイリアンHP50を倒すまでの時間 / 速いほど高評価"
+    "巨大エイリアンHP100を倒すまでの時間 / 速いほど高評価"
   ][index];
 }
 
@@ -1526,7 +1526,7 @@ function showGameIntro(index){
   }else if(index===88){
     rules=`<li>自動で走り、JUMPでロイター板を踏みます。</li><li>15段から20段までの跳び箱を順番に越えます。</li>`;
   }else{
-    rules=`<li>← / JUMP / 砲撃 / →で巨大エイリアンHP50と戦います。</li><li>砲撃は最大3秒チャージ。1秒=3、2秒=6、3秒=10ダメージです。</li>`;
+    rules=`<li>← / JUMP / 砲撃 / →で巨大エイリアンHP100と戦います。</li><li>砲撃は最大3秒チャージ。1秒=5、2秒=10、3秒=15ダメージです。</li>`;
   }
   const conciseRules=(rules.match(/<li>[\s\S]*?<\/li>/g)||[]).slice(0,2).join("");
   rules=conciseRules||`<li>${esc(g.sub)}</li>`;
@@ -22475,14 +22475,14 @@ async function startWaveMaster(p,humanIndex,runId){
     cinema.hidden=false;
 
     const enemyPower=randi(48,66);
-    const pCore=Math.round(58-finalPower*.16);
-    const eCore=Math.round(57-enemyPower*.12);
+    const pCore=Math.round(84+finalPower*.46);
+    const eCore=Math.round(92+enemyPower*.38);
 
     const pBeamH=
-      Math.round(34+finalPower*.38);
+      Math.round(54+finalPower*.52);
 
     const eBeamH=
-      Math.round(38+enemyPower*.34);
+      Math.round(58+enemyPower*.46);
 
     cinema.innerHTML=`
       <div class="wave-duel-bg-v140"></div>
@@ -22667,10 +22667,10 @@ async function startWaveMaster(p,humanIndex,runId){
         `${eShift+rand(-2,2)}px ${rand(-3,3)}px`;
 
       pBeam.style.width=
-        `${Math.max(4,balance-29)}%`;
+        `${Math.max(4,balance-26.5)}%`;
 
       eBeam.style.width=
-        `${Math.max(4,71-balance)}%`;
+        `${Math.max(4,73.5-balance)}%`;
 
       pBeam.style.translate=
         `0 ${rand(-4,4)}px`;
@@ -22789,7 +22789,7 @@ async function startBattleRoyaleMob(p,humanIndex,runId){
   gameFit();
 
   let active=false,finished=false,raf=null,last=0,start=0;
-  let grenadeReadyAt=0,healReadyAt=0;
+  let grenadeReadyAt=0,airReadyAt=0;
   let allyPortal=null,allyPortalUntil=0,allyPortalDone=false;
   let enemyPortal=null,enemyPortalUntil=0,enemyPortalReadyAt=0;
   const input={left:false,right:false},actors=[],bullets=[],grenades=[],stunGrenades=[];
@@ -22822,13 +22822,13 @@ async function startBattleRoyaleMob(p,humanIndex,runId){
     </div>
     <div class="br-skill-controls-v139">
       <button id="brGrenade138">GRENADE <b>READY</b></button>
-      <button id="brHeal138">TEAM HEAL <b>READY</b></button>
+      <button id="brAirstrike141">戦闘機 <b>READY</b></button>
     </div>
   </div>`;
 
   const stage=document.getElementById('brStage138'),actorLayer=document.getElementById('brActorLayer138'),bulletLayer=document.getElementById('brBulletLayer138'),grenadeLayer=document.getElementById('brGrenadeLayer138'),abilityLayer=document.getElementById('brAbilityLayer138'),fx=document.getElementById('brFx138'),msg=document.getElementById('brMessage138');
   const timeEl=document.getElementById('brTime138'),ammoEl=document.getElementById('brAmmo138'),allyEl=document.getElementById('brAlly138'),enemyEl=document.getElementById('brEnemy138');
-  const leftBtn=document.getElementById('brLeft138'),rightBtn=document.getElementById('brRight138'),jumpBtn=document.getElementById('brJump138'),shootBtn=document.getElementById('brShoot138'),grenadeBtn=document.getElementById('brGrenade138'),healBtn=document.getElementById('brHeal138');
+  const leftBtn=document.getElementById('brLeft138'),rightBtn=document.getElementById('brRight138'),jumpBtn=document.getElementById('brJump138'),shootBtn=document.getElementById('brShoot138'),grenadeBtn=document.getElementById('brGrenade138'),airBtn=document.getElementById('brAirstrike141');
 
   const W=Math.max(300,stage.clientWidth||340),H=Math.max(300,stage.clientHeight||360),centerX=W/2,groundY=H-48;
   const allyPlatforms=[{x:W*.07,y:groundY-76,w:W*.20},{x:W*.27,y:groundY-134,w:W*.17}];
@@ -22861,7 +22861,7 @@ async function startBattleRoyaleMob(p,humanIndex,runId){
     allyEl.textContent=`${teamHp('ally')} HP`;
     enemyEl.textContent=`${teamHp('enemy')} HP`;
     grenadeBtn.querySelector('b').textContent=now<grenadeReadyAt?`${((grenadeReadyAt-now)/1000).toFixed(1)}`:'READY';
-    healBtn.querySelector('b').textContent=now<healReadyAt?`${((healReadyAt-now)/1000).toFixed(1)}`:'READY';
+    airBtn.querySelector('b').textContent=now<airReadyAt?`${((airReadyAt-now)/1000).toFixed(1)}`:'READY';
   }
   function pop(x,y,text,cls=''){const e=document.createElement('div');e.className=`br-hit-fx-v138 ${cls}`;e.style.left=`${x}px`;e.style.top=`${y}px`;e.textContent=text;fx.appendChild(e);setTimeout(()=>e.remove(),550)}
   function eliminate(a){if(!a.alive)return;a.alive=false;a.hp=0;updateHp(a);a.el.classList.add('down-v138');pop(a.x+a.w/2,a.y,'DOWN');beep(a.team==='enemy'?680:120,90,.025);if(enemies().length===0)finishWin();else if(allies().length===0)finishLose()}
@@ -22882,7 +22882,70 @@ async function startBattleRoyaleMob(p,humanIndex,runId){
     (type==='stun'?stunGrenades:grenades).push({owner,team:owner.team,type,x:owner.x+owner.w/2,y:owner.y+4,vx:dir*220,vy:-245,fuse:performance.now()+1050,dead:false,el});
   }
   function playerGrenade(){const now=performance.now();if(!active||finished||now<grenadeReadyAt||!player.alive)return;grenadeReadyAt=now+5000;spawnGrenade(player);updateHud(now)}
-  function teamHeal(){const now=performance.now();if(!active||finished||now<healReadyAt||!player.alive)return;healReadyAt=now+3000;for(const a of allies()){a.hp=clamp(a.hp+4,0,a.maxHp);updateHp(a);a.el.classList.add('heal-v138');setTimeout(()=>a.el.classList.remove('heal-v138'),300)}msg.textContent='TEAM HEAL +4';beep(870,100,.025);updateHud(now)}
+  function airStrike(){
+    const now=performance.now();
+    if(!active||finished||now<airReadyAt||!player.alive)return;
+
+    airReadyAt=now+3000;
+    msg.textContent='FIGHTER AIR STRIKE!';
+    updateHud(now);
+
+    const plane=document.createElement('div');
+    plane.className='br-fighter-v141';
+    abilityLayer.appendChild(plane);
+
+    requestAnimationFrame(()=>{
+      plane.classList.add('fly-v141');
+    });
+
+    setTimeout(()=>plane.remove(),1250);
+
+    for(let i=0;i<5;i++){
+      setTimeout(()=>{
+        if(!active||finished||!isGameRunValid(runId))return;
+
+        const pool=enemies();
+        if(!pool.length)return;
+
+        const target=pool[i%pool.length]||pool[0];
+        const missile=document.createElement('div');
+        missile.className='br-air-missile-v141';
+
+        const impactX=clamp(target.x+target.w/2,18,W-18);
+        const impactY=target.y+target.h*.55;
+
+        missile.style.left=`${impactX}px`;
+        missile.style.top='-28px';
+        abilityLayer.appendChild(missile);
+
+        requestAnimationFrame(()=>{
+          missile.style.top=`${impactY}px`;
+        });
+
+        setTimeout(()=>{
+          if(!missile.isConnected)return;
+
+          missile.remove();
+
+          const blast=document.createElement('div');
+          blast.className='br-air-blast-v141';
+          blast.style.left=`${impactX}px`;
+          blast.style.top=`${impactY}px`;
+          fx.appendChild(blast);
+
+          setTimeout(()=>blast.remove(),520);
+
+          if(target.alive){
+            damage(target,3);
+          }
+
+          beep(125,95,.025);
+        },430);
+      },180+i*145);
+    }
+
+    beep(710,100,.02);
+  }
   function jump(a){const now=performance.now();if(!a.alive||!a.onGround||now<a.stunUntil)return;a.vy=-395;a.onGround=false;a.el.classList.add('jump-v138');setTimeout(()=>a.el.classList.remove('jump-v138'),160)}
   function activateVoid(a,now){
     if(a.role!=='void'||now<a.voidReadyAt||!a.alive||a.voidUses>=2)return;
@@ -22913,7 +22976,7 @@ async function startBattleRoyaleMob(p,humanIndex,runId){
   jumpBtn.addEventListener('pointerdown',e=>{e.preventDefault();if(active&&!finished)jump(player)},{passive:false});
   shootBtn.addEventListener('pointerdown',e=>{e.preventDefault();if(!active||finished||!player.alive)return;fireBullet(player,true)},{passive:false});
   grenadeBtn.addEventListener('pointerdown',e=>{e.preventDefault();playerGrenade()},{passive:false});
-  healBtn.addEventListener('pointerdown',e=>{e.preventDefault();teamHeal()},{passive:false});
+  airBtn.addEventListener('pointerdown',e=>{e.preventDefault();airStrike()},{passive:false});
 
   function actorLand(a,prevBottom,newBottom){
     a.onGround=false;const min=a.team==='ally'?0:centerX+5,max=a.team==='ally'?centerX-a.w-5:W-a.w;a.x=clamp(a.x,min,max);
@@ -23219,7 +23282,7 @@ async function startAlienBattleMob(p,humanIndex,runId){
     </div>
 
     <div class="alien-hud-v140">
-      <div><span>ALIEN HP</span><b id="alienHp140">50 / 50</b></div>
+      <div><span>ALIEN HP</span><b id="alienHp140">100 / 100</b></div>
       <div><span>YOU HP</span><b id="alienYouHp140">20 / 20</b></div>
       <div><span>CHARGE</span><b id="alienCharge140">0.0s</b></div>
     </div>
@@ -23233,16 +23296,27 @@ async function startAlienBattleMob(p,humanIndex,runId){
       <div id="alienEnemyLayer140" class="alien-layer-v140"></div>
       <div id="alienFx140" class="alien-layer-v140"></div>
 
-      <div id="alienBoss140" class="alien-boss-v140">
+      <div id="alienBoss140" class="alien-boss-v140 giant-v141">
+        <div class="alien-horn-v141 h1"></div>
+        <div class="alien-horn-v141 h2"></div>
         <div class="alien-head-v140">
           <i class="eye e1"></i><i class="eye e2"></i>
+          <i class="eye e3"></i>
           <b class="mouth"></b>
         </div>
-        <div class="alien-body-v140"></div>
-        <div id="alienArm140" class="alien-arm-v140"></div>
+        <div class="alien-body-v140">
+          <i class="alien-spike-v141 s1"></i>
+          <i class="alien-spike-v141 s2"></i>
+          <i class="alien-spike-v141 s3"></i>
+        </div>
+        <div id="alienArm140" class="alien-arm-v140 left-v141"></div>
+        <div class="alien-arm-v141 right-v141"></div>
+        <div class="alien-leg-v141 leg1"></div>
+        <div class="alien-leg-v141 leg2"></div>
         <div class="alien-boss-hp-v140"><i id="alienBossHpBar140"></i></div>
       </div>
 
+      <div id="alienChargeBall141" class="alien-charge-ball-v141" hidden></div>
       <div id="alienWave140" class="alien-full-wave-v140"></div>
       <div id="alienMessage140" class="alien-message-v140"></div>
     </div>
@@ -23264,6 +23338,7 @@ async function startAlienBattleMob(p,humanIndex,runId){
   const armEl=document.getElementById('alienArm140');
   const bossBar=document.getElementById('alienBossHpBar140');
   const waveEl=document.getElementById('alienWave140');
+  const chargeBallEl=document.getElementById('alienChargeBall141');
   const msg=document.getElementById('alienMessage140');
   const bossHpEl=document.getElementById('alienHp140');
   const youHpEl=document.getElementById('alienYouHp140');
@@ -23278,12 +23353,12 @@ async function startAlienBattleMob(p,humanIndex,runId){
   const groundY=H-48;
 
   const boss={
-    hp:50,
-    maxHp:50,
-    x:W-118,
-    y:groundY-176,
-    w:112,
-    h:176,
+    hp:100,
+    maxHp:100,
+    x:W-176,
+    y:5,
+    w:170,
+    h:groundY-5,
     alive:true
   };
 
@@ -23400,7 +23475,7 @@ async function startAlienBattleMob(p,humanIndex,runId){
       0,boss.maxHp
     );
 
-    bossHpEl.textContent=`${boss.hp} / 50`;
+    bossHpEl.textContent=`${boss.hp} / 100`;
     bossBar.style.width=
       `${boss.hp/boss.maxHp*100}%`;
 
@@ -23433,61 +23508,66 @@ async function startAlienBattleMob(p,humanIndex,runId){
       )[0]||null;
   }
 
-  function fireShot(owner,chargeMs=0,ally=false){
+  function fireShot(owner,chargeMs=0,ally=false,existingEl=null){
     if(!owner.alive||finished)return;
 
-    const capped=clamp(
-      chargeMs,
-      0,3000
-    );
+    const capped=clamp(chargeMs,0,3000);
 
     const damage=
-      capped>=2850?10:
-      capped>=1850?6:
-      capped>=850?3:
-      ally?1:1;
+      ally?1:
+      capped>=2850?15:
+      capped>=1850?10:
+      capped>=850?5:
+      1;
 
-    const ratio=
-      clamp(capped/3000,0,1);
+    const ratio=clamp(capped/3000,0,1);
 
     const size=
       ally
         ? 20
-        : 24+ratio*72;
+        : 32+ratio*78;
 
     const speed=
       ally
         ? 300
-        : 250+ratio*70;
+        : 245+ratio*75;
 
     const kidTarget=
       nearestKid(owner.x,owner.y);
 
-    let tx=boss.x+20;
-    let ty=boss.y+68;
+    let tx=boss.x+boss.w*.34;
+    let ty=boss.y+boss.h*.43;
 
     if(kidTarget){
       tx=kidTarget.x;
       ty=kidTarget.y+15;
     }
 
-    const sx=owner.x+owner.w-4;
+    const sx=
+      owner.x+owner.w+
+      (ally?0:size*.18);
+
     const sy=owner.y+24;
     const dx=tx-sx;
     const dy=ty-sy;
-    const d=Math.max(
-      1,
-      Math.hypot(dx,dy)
-    );
+    const d=Math.max(1,Math.hypot(dx,dy));
 
-    const el=document.createElement('div');
+    const el=
+      existingEl||
+      document.createElement('div');
+
+    el.hidden=false;
     el.className=
-      `alien-shot-v140 ${ally?'ally-v140':''}`;
+      `alien-shot-v140 ${ally?'ally-v140':'charged-v141'}`;
 
     el.style.width=`${size}px`;
     el.style.height=`${size}px`;
+    el.style.left=`${sx}px`;
+    el.style.top=`${sy}px`;
 
-    shotLayer.appendChild(el);
+    if(!el.isConnected){
+      shotLayer.appendChild(el);
+    }
 
     shots.push({
       owner,
@@ -23506,8 +23586,8 @@ async function startAlienBattleMob(p,humanIndex,runId){
     owner.el.classList.add('fire-v140');
 
     beep(
-      ally?430:600+damage*35,
-      45,.014
+      ally?430:610+damage*26,
+      55,.017
     );
   }
 
@@ -23525,28 +23605,32 @@ async function startAlienBattleMob(p,humanIndex,runId){
 
     player.el.classList.add('charging-v140');
     shootBtn.classList.add('charging-v140');
+
+    chargeBallEl.hidden=false;
+    chargeBallEl.className='alien-charge-ball-v141';
+    chargeBallEl.style.width='32px';
+    chargeBallEl.style.height='32px';
+    chargeBallEl.style.left=`${player.x+player.w+6}px`;
+    chargeBallEl.style.top=`${player.y+24}px`;
   }
 
   function releaseCharge(){
     if(!charging)return;
 
     const now=performance.now();
-
-    const ms=
-      clamp(
-        now-chargeStart,
-        0,3000
-      );
+    const ms=clamp(now-chargeStart,0,3000);
 
     charging=false;
 
     player.el.classList.remove('charging-v140');
     shootBtn.classList.remove('charging-v140');
 
+    // 溜めていた同じ玉を、そのまま飛翔体へ変える。
     fireShot(
       player,
       ms,
-      false
+      false,
+      chargeBallEl
     );
 
     chargeEl.textContent='0.0s';
@@ -23660,12 +23744,12 @@ async function startAlienBattleMob(p,humanIndex,runId){
       bossEl.classList.remove('attack-mouth-v140');
     },480);
 
-    const sx=boss.x+14;
-    const sy=boss.y+52;
-    const tx=target.x+25;
-    const ty=target.y+20;
+    const sx=boss.x+boss.w*.34;
+    const sy=boss.y+boss.h*.22;
+    const tx=target.x+target.w/2;
+    const ty=groundY-12;
     const dx=tx-sx;
-    const dy=ty-sy;
+    const dy=Math.max(120,ty-sy);
     const d=Math.max(
       1,
       Math.hypot(dx,dy)
@@ -23678,8 +23762,8 @@ async function startAlienBattleMob(p,humanIndex,runId){
     fireballs.push({
       x:sx,
       y:sy,
-      vx:dx/d*255,
-      vy:dy/d*255,
+      vx:dx/d*315,
+      vy:dy/d*315,
       alive:true,
       el
     });
@@ -23804,17 +23888,15 @@ async function startAlienBattleMob(p,humanIndex,runId){
     for(const r of team){
       if(!r.alive)continue;
 
-      if(r.y>groundY-185){
-        damageRobot(
-          r,
-          5,
-          {
-            stun:1500,
-            knock:360,
-            up:210
-          }
-        );
-      }
+      damageRobot(
+        r,
+        5,
+        {
+          stun:1500,
+          knock:360,
+          up:210
+        }
+      );
     }
 
     stage.classList.add('alien-shake-v140');
@@ -23909,6 +23991,7 @@ async function startAlienBattleMob(p,humanIndex,runId){
 
     finished=true;
     active=false;
+    if(charging){chargeBallEl.hidden=true;}
     charging=false;
 
     if(raf)cancelAnimationFrame(raf);
@@ -24032,6 +24115,14 @@ async function startAlienBattleMob(p,humanIndex,runId){
         '--charge',
         ratio.toFixed(3)
       );
+
+      const ballSize=32+ratio*78;
+      chargeBallEl.hidden=false;
+      chargeBallEl.style.width=`${ballSize}px`;
+      chargeBallEl.style.height=`${ballSize}px`;
+      chargeBallEl.style.left=`${player.x+player.w+ballSize*.18}px`;
+      chargeBallEl.style.top=`${player.y+24}px`;
+      chargeBallEl.style.setProperty('--power',ratio.toFixed(3));
 
       if(ms>=3000){
         chargeEl.textContent='3.0s MAX';

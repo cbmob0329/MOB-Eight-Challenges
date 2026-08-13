@@ -20782,3 +20782,304 @@ body.countdown-active-v140 .gameplay-fit{
 .alien-controls-v140 .shoot{position:relative;background:linear-gradient(90deg,#8fe8ff calc(var(--charge,0)*100%),#fff calc(var(--charge,0)*100%));overflow:hidden}
 .alien-controls-v140 .shoot:after{content:"MAX 3s";position:absolute;left:50%;bottom:3px;transform:translateX(-50%);font-size:6px}
 .alien-controls-v140 .shoot.charging-v140{box-shadow:inset 0 0 0 4px #ffe65d}
+
+
+/* =========================================================
+   V10.41 WAVE MASTER
+   波動球をモブくんの身体に重ねて発生させる
+   ========================================================= */
+.wave-source-v140.player-v140{left:26.5%!important}
+.wave-source-v140.enemy-v140{left:73.5%!important}
+.wave-beam-v140.player-v140{left:26.5%!important;width:23.5%}
+.wave-beam-v140.enemy-v140{right:26.5%!important;width:23.5%}
+.wave-orb-v140{
+  border-width:6px;
+}
+.wave-orb-v140.player-v140{
+  box-shadow:
+    0 0 20px #fff,
+    0 0 42px #66e8ff,
+    0 0 76px rgba(84,91,255,.8);
+}
+.wave-orb-v140.enemy-v140{
+  box-shadow:
+    0 0 22px #fff,
+    0 0 48px #ff72b2,
+    0 0 82px rgba(154,41,123,.85);
+}
+
+/* =========================================================
+   V10.41 FPS AIR STRIKE
+   ========================================================= */
+.br-fighter-v141{
+  position:absolute;
+  z-index:31;
+  left:-72px;
+  top:18px;
+  width:66px;
+  height:24px;
+  border:4px solid var(--ink);
+  border-radius:60% 22% 22% 60%;
+  background:#d7e0e5;
+  clip-path:polygon(0 38%,58% 38%,78% 0,88% 0,81% 39%,100% 45%,100% 62%,80% 64%,88% 100%,77% 100%,57% 65%,0 65%);
+  filter:drop-shadow(0 4px 0 rgba(0,0,0,.18));
+  transition:left 1.05s linear;
+}
+.br-fighter-v141.fly-v141{
+  left:calc(100% + 18px);
+}
+.br-air-missile-v141{
+  position:absolute;
+  z-index:33;
+  width:8px;
+  height:28px;
+  transform:translate(-50%,-50%);
+  border:3px solid var(--ink);
+  border-radius:999px;
+  background:#f4e56a;
+  transition:top .43s cubic-bezier(.34,.02,.7,1);
+}
+.br-air-missile-v141:after{
+  content:"";
+  position:absolute;
+  left:50%;
+  top:-12px;
+  width:5px;
+  height:13px;
+  transform:translateX(-50%);
+  background:#ff7956;
+  border-radius:999px;
+}
+.br-air-blast-v141{
+  position:absolute;
+  z-index:34;
+  width:28px;
+  height:28px;
+  transform:translate(-50%,-50%);
+  border:7px solid #ffcf4e;
+  border-radius:50%;
+  box-shadow:0 0 16px #ff8b47;
+  animation:brAirBlast141 .5s ease-out forwards;
+}
+@keyframes brAirBlast141{
+  to{scale:3.3;opacity:0}
+}
+
+/* =========================================================
+   V10.41 GIANT OMINOUS ALIEN
+   ========================================================= */
+.alien-boss-v140.giant-v141{
+  overflow:visible;
+  animation:alienGiantIdle141 1.5s ease-in-out infinite alternate;
+}
+@keyframes alienGiantIdle141{
+  to{translate:0 -4px}
+}
+.alien-head-v140{
+  left:20px!important;
+  top:3px!important;
+  width:132px!important;
+  height:102px!important;
+  border-width:7px!important;
+  border-radius:44% 44% 38% 38%!important;
+  background:#49335f!important;
+  box-shadow:
+    inset 0 -18px 0 #342546,
+    0 0 22px rgba(180,68,212,.35);
+}
+.alien-head-v140 .eye{
+  top:31px!important;
+  width:14px!important;
+  height:18px!important;
+  background:#ff4e80!important;
+  box-shadow:0 0 9px #ff4e80;
+}
+.alien-head-v140 .e1{left:25px!important}
+.alien-head-v140 .e2{right:25px!important}
+.alien-head-v140 .e3{
+  display:block;
+  left:50%;
+  top:16px!important;
+  transform:translateX(-50%);
+  width:12px!important;
+  height:14px!important;
+}
+.alien-head-v140 .mouth{
+  bottom:10px!important;
+  width:55px!important;
+  height:20px!important;
+  border-width:5px!important;
+  background:#180f1f!important;
+  box-shadow:inset 0 -5px 0 #a72e62;
+}
+.alien-body-v140{
+  left:26px!important;
+  top:88px!important;
+  width:122px!important;
+  height:calc(100% - 96px)!important;
+  min-height:178px;
+  border-width:7px!important;
+  border-radius:34% 34% 24% 24%!important;
+  background:#3e2b55!important;
+  box-shadow:inset 0 0 0 12px #52356b;
+}
+.alien-horn-v141{
+  position:absolute;
+  z-index:3;
+  top:-23px;
+  width:42px;
+  height:62px;
+  border:6px solid var(--ink);
+  background:#6b3d81;
+  clip-path:polygon(50% 0,100% 100%,0 100%);
+}
+.alien-horn-v141.h1{
+  left:21px;
+  rotate:-18deg;
+}
+.alien-horn-v141.h2{
+  right:18px;
+  rotate:18deg;
+}
+.alien-spike-v141{
+  position:absolute;
+  right:-28px;
+  width:38px;
+  height:45px;
+  border:5px solid var(--ink);
+  background:#6f3e81;
+  clip-path:polygon(0 50%,100% 0,100% 100%);
+}
+.alien-spike-v141.s1{top:18%}
+.alien-spike-v141.s2{top:43%}
+.alien-spike-v141.s3{top:68%}
+
+.alien-arm-v140.left-v141{
+  left:-11px!important;
+  top:35%!important;
+  width:83px!important;
+  height:31px!important;
+  border-width:6px!important;
+  background:#4f3369!important;
+  transform-origin:100% 50%;
+  animation:alienLeftArmIdle141 .7s ease-in-out infinite alternate;
+}
+@keyframes alienLeftArmIdle141{
+  from{rotate:-11deg}
+  to{rotate:9deg}
+}
+.alien-arm-v140.left-v141.warning-v140{
+  animation:alienArmWarn141 .12s ease-in-out infinite alternate!important;
+}
+@keyframes alienArmWarn141{
+  to{filter:brightness(1.8);rotate:15deg}
+}
+.alien-arm-v140.left-v141.punch-v140{
+  animation:alienLongPunch141 .44s ease-out!important;
+}
+@keyframes alienLongPunch141{
+  0%{width:83px;translate:0 0;rotate:8deg}
+  45%,72%{width:360px;translate:-286px 68px;rotate:-12deg}
+  100%{width:83px;translate:0 0;rotate:8deg}
+}
+.alien-arm-v141.right-v141{
+  position:absolute;
+  z-index:-1;
+  right:-18px;
+  top:42%;
+  width:86px;
+  height:31px;
+  border:6px solid var(--ink);
+  border-radius:999px;
+  background:#4f3369;
+  transform-origin:0 50%;
+  animation:alienRightArmIdle141 .82s ease-in-out infinite alternate;
+}
+@keyframes alienRightArmIdle141{
+  from{rotate:12deg}
+  to{rotate:-11deg}
+}
+.alien-leg-v141{
+  position:absolute;
+  z-index:-2;
+  bottom:-9px;
+  width:42px;
+  height:108px;
+  border:7px solid var(--ink);
+  border-radius:999px 999px 14px 14px;
+  background:#38284c;
+  transform-origin:50% 10%;
+}
+.alien-leg-v141.leg1{
+  left:38px;
+  animation:alienLegOne141 .85s ease-in-out infinite alternate;
+}
+.alien-leg-v141.leg2{
+  right:25px;
+  animation:alienLegTwo141 .85s ease-in-out infinite alternate;
+}
+@keyframes alienLegOne141{
+  from{rotate:5deg}
+  to{rotate:-8deg}
+}
+@keyframes alienLegTwo141{
+  from{rotate:-5deg}
+  to{rotate:8deg}
+}
+.alien-boss-hp-v140{
+  left:15px!important;
+  right:15px!important;
+  bottom:-8px!important;
+  height:10px!important;
+}
+
+/* Charge ball visibly grows at robot muzzle, then same DOM becomes shot. */
+.alien-charge-ball-v141{
+  position:absolute;
+  z-index:25;
+  transform:translate(-50%,-50%);
+  border:5px solid var(--ink);
+  border-radius:50%;
+  background:
+    radial-gradient(circle,#fff 0 16%,#9af1ff 17% 46%,#5378ff 47% 72%,#2834a6 73%);
+  box-shadow:
+    0 0 calc(12px + var(--power,0)*28px) #75e7ff,
+    0 0 calc(20px + var(--power,0)*48px) #5c6dff;
+  animation:alienChargeOrb141 .14s ease-in-out infinite alternate;
+  pointer-events:none;
+}
+@keyframes alienChargeOrb141{
+  to{filter:brightness(1.35);scale:1.04}
+}
+.alien-shot-v140.charged-v141{
+  border-width:6px;
+  background:
+    radial-gradient(circle,#fff 0 14%,#9af1ff 15% 44%,#5378ff 45% 70%,#2834a6 71%);
+  box-shadow:
+    0 0 22px #7cecff,
+    0 0 46px #5d6eff;
+}
+
+/* Attacks come downward from the towering alien. */
+.alien-fireball-v140{
+  width:40px!important;
+  height:40px!important;
+}
+.alien-full-wave-v140{
+  right:118px!important;
+  top:31%!important;
+  height:138px!important;
+  transform-origin:100% 50%!important;
+  rotate:-13deg;
+}
+.alien-full-wave-v140.charging-v140{
+  width:86px!important;
+  opacity:.65!important;
+}
+.alien-full-wave-v140.fire-v140{
+  animation:alienWaveFire141 .66s ease-out forwards!important;
+}
+@keyframes alienWaveFire141{
+  from{width:86px;translate:0 0}
+  to{width:calc(100% - 72px);translate:calc(-100% + 95px) 92px}
+}
