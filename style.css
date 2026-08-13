@@ -23020,3 +23020,767 @@ img,svg,canvas{
 .longnight-stage-v149.defeat-v149{
   filter:saturate(.68) brightness(.82);
 }
+
+
+/* =========================================================
+   V10.50 — モブくんの長い夜
+   ガトリング戦車 / ゾンビラッシュ / 超強化爆撃
+   ========================================================= */
+.longnight-shell-v150{
+  height:100%;
+  min-height:0;
+  display:flex;
+  flex-direction:column;
+}
+.longnight-hud-v150{
+  display:grid;
+  grid-template-columns:.9fr 1fr .7fr .8fr;
+  gap:4px;
+  margin-bottom:6px;
+}
+.longnight-hud-v150>div{
+  min-width:0;
+  border:3px solid var(--ink);
+  border-radius:11px;
+  background:#fff;
+  padding:4px 2px;
+  text-align:center;
+}
+.longnight-hud-v150 span,
+.longnight-hud-v150 b{
+  display:block;
+}
+.longnight-hud-v150 span{
+  color:#65636d;
+  font-size:6px;
+  font-weight:1000;
+}
+.longnight-hud-v150 b{
+  font-size:10px;
+  font-weight:1000;
+  white-space:nowrap;
+}
+.longnight-stage-v150{
+  position:relative;
+  flex:1;
+  min-height:350px;
+  overflow:hidden;
+  border:4px solid var(--ink);
+  border-radius:19px;
+  background:#111a31;
+  isolation:isolate;
+}
+.longnight-stars-v150{
+  position:absolute;
+  inset:0;
+  background-color:#111a31;
+  background-image:
+    radial-gradient(circle at 14px 18px,#fff 0 1px,transparent 1.4px),
+    radial-gradient(circle at 58px 48px,#d8e7ff 0 1px,transparent 1.5px),
+    radial-gradient(circle at 92px 23px,#fff2bd 0 1.2px,transparent 1.6px);
+  background-size:110px 72px,150px 94px,190px 110px;
+}
+.longnight-moon-v150{
+  position:absolute;
+  z-index:1;
+  right:24px;
+  top:24px;
+  width:55px;
+  height:55px;
+  border:4px solid var(--ink);
+  border-radius:50%;
+  background:#f5e7b0;
+  box-shadow:0 0 16px rgba(245,231,176,.28);
+}
+.longnight-dunes-far-v150,
+.longnight-dunes-near-v150{
+  position:absolute;
+  left:-100%;
+  right:-100%;
+  background-repeat:repeat-x;
+}
+.longnight-dunes-far-v150{
+  z-index:2;
+  bottom:48px;
+  height:145px;
+  opacity:.92;
+  background-image:
+    radial-gradient(ellipse at 70px 145px,#6e5a4a 0 68px,transparent 69px),
+    radial-gradient(ellipse at 215px 145px,#675344 0 92px,transparent 93px);
+  background-size:280px 145px;
+}
+.longnight-dunes-near-v150{
+  z-index:3;
+  bottom:45px;
+  height:108px;
+  background-image:
+    radial-gradient(ellipse at 80px 110px,#9b7754 0 78px,transparent 79px),
+    radial-gradient(ellipse at 250px 110px,#8c6b4e 0 105px,transparent 106px);
+  background-size:330px 108px;
+}
+.longnight-ground-v150{
+  position:absolute;
+  z-index:4;
+  left:0;
+  right:0;
+  bottom:0;
+  height:48px;
+  border-top:5px solid var(--ink);
+  background:linear-gradient(#ad845b,#896342);
+}
+.longnight-layer-v150{
+  position:absolute;
+  z-index:9;
+  inset:0;
+  pointer-events:none;
+}
+
+/* --- MOB tank --- */
+.longnight-player-v150{
+  position:absolute;
+  z-index:28;
+  width:68px;
+  height:56px;
+  transform-origin:50% 100%;
+  will-change:left,top,transform;
+}
+.longnight-tank-v150{
+  position:absolute;
+  left:0;
+  bottom:0;
+  width:68px;
+  height:56px;
+}
+.tank-track-v150{
+  position:absolute;
+  left:2px;
+  right:2px;
+  bottom:0;
+  height:21px;
+  overflow:hidden;
+  border:4px solid var(--ink);
+  border-radius:14px 18px 12px 12px;
+  background:#303840;
+}
+.tank-track-v150:before{
+  content:"";
+  position:absolute;
+  inset:4px;
+  border-radius:999px;
+  background:repeating-linear-gradient(90deg,#68727c 0 8px,#343c44 8px 13px);
+}
+.tank-track-v150>b{
+  position:absolute;
+  z-index:2;
+  top:4px;
+  width:10px;
+  height:10px;
+  border:2px solid var(--ink);
+  border-radius:50%;
+  background:#9aa6b0;
+}
+.tank-track-v150>b:nth-child(1){left:8px}
+.tank-track-v150>b:nth-child(2){left:26px}
+.tank-track-v150>b:nth-child(3){right:8px}
+.tank-body-v150{
+  position:absolute;
+  left:8px;
+  bottom:17px;
+  width:49px;
+  height:25px;
+  border:4px solid var(--ink);
+  border-radius:11px 15px 7px 8px;
+  background:#7c9270;
+}
+.tank-body-v150:after{
+  content:"";
+  position:absolute;
+  right:-11px;
+  bottom:4px;
+  width:18px;
+  height:10px;
+  border:3px solid var(--ink);
+  border-radius:5px;
+  background:#66795f;
+}
+.tank-turret-v150{
+  position:absolute;
+  left:20px;
+  bottom:35px;
+  width:30px;
+  height:16px;
+  border:4px solid var(--ink);
+  border-radius:12px 12px 6px 6px;
+  background:#8ca27e;
+}
+.tank-pilot-v150{
+  position:absolute;
+  z-index:8;
+  left:21px;
+  bottom:38px;
+  width:27px;
+  height:28px;
+  object-fit:contain;
+  pointer-events:none;
+}
+.tank-gatling-v150{
+  position:absolute;
+  z-index:10;
+  left:44px;
+  bottom:39px;
+  width:40px;
+  height:15px;
+}
+.tank-gatling-v150:before{
+  content:"";
+  position:absolute;
+  left:0;
+  top:2px;
+  width:11px;
+  height:10px;
+  border:3px solid var(--ink);
+  border-radius:5px;
+  background:#59646e;
+}
+.tank-gatling-v150>b{
+  position:absolute;
+  left:9px;
+  width:29px;
+  height:4px;
+  border:2px solid var(--ink);
+  border-radius:999px;
+  background:#9ba9b6;
+}
+.tank-gatling-v150>b:nth-child(1){top:-1px}
+.tank-gatling-v150>b:nth-child(2){top:4px}
+.tank-gatling-v150>b:nth-child(3){top:9px}
+.tank-gatling-v150>b:nth-child(4){
+  left:34px;
+  top:1px;
+  width:8px;
+  height:13px;
+  border-radius:4px;
+  background:#58626c;
+}
+.longnight-player-hp-v150{
+  position:absolute;
+  left:5px;
+  right:5px;
+  bottom:-8px;
+  height:6px;
+  overflow:hidden;
+  border:2px solid var(--ink);
+  border-radius:999px;
+  background:#fff;
+}
+.longnight-player-hp-v150>i{
+  display:block;
+  width:100%;
+  height:100%;
+  background:#72d27c;
+}
+.longnight-player-v150.gatling-fire-v150 .tank-gatling-v150{
+  animation:lnGatlingShake150 .07s linear infinite alternate;
+}
+.longnight-player-v150.gatling-fire-v150 .tank-track-v150:before{
+  animation:lnTrack150 .2s linear infinite;
+}
+@keyframes lnGatlingShake150{
+  from{translate:-1px -1px}
+  to{translate:2px 1px}
+}
+@keyframes lnTrack150{
+  to{background-position:13px 0}
+}
+.longnight-player-v150.hurt-v150{
+  animation:lnTankHurt150 .2s ease;
+}
+@keyframes lnTankHurt150{
+  50%{opacity:.5;translate:-5px -2px}
+}
+
+/* --- bullets / muzzle sparks --- */
+.longnight-bullet-v150{
+  position:absolute;
+  z-index:35;
+  width:23px;
+  height:5px;
+  border:2px solid var(--ink);
+  border-radius:999px;
+  transform:translate(-50%,-50%);
+  background:linear-gradient(90deg,#fff8c5,#ffd35c 55%,#f0903e);
+  box-shadow:0 0 7px rgba(255,196,68,.86);
+}
+.longnight-gatling-spark-v150{
+  position:absolute;
+  z-index:58;
+  width:32px;
+  height:20px;
+  transform:translate(-50%,-50%);
+  clip-path:polygon(0 42%,34% 31%,18% 0,55% 27%,83% 4%,72% 37%,100% 50%,70% 61%,87% 96%,53% 70%,25% 100%,35% 64%);
+  background:#ffd458;
+  box-shadow:0 0 9px rgba(255,139,55,.92);
+  animation:lnMuzzle150 .14s ease-out forwards;
+}
+@keyframes lnMuzzle150{
+  from{scale:.5;opacity:1}
+  to{scale:1.4;opacity:0}
+}
+.longnight-gatling-chip-v150{
+  position:absolute;
+  z-index:57;
+  width:5px;
+  height:5px;
+  border-radius:50%;
+  background:#ffb13d;
+  animation:lnChip150 .18s ease-out forwards;
+}
+@keyframes lnChip150{
+  to{
+    translate:var(--chipx) var(--chipy);
+    scale:.25;
+    opacity:0;
+  }
+}
+
+/* --- zombies --- */
+.longnight-zombie-v150{
+  position:absolute;
+  z-index:20;
+  width:40px;
+  height:52px;
+  transform-origin:50% 100%;
+  will-change:left,top,transform;
+}
+.longnight-zombie-v150:not(.boss-v150){
+  animation:lnZombieRush150 .21s ease-in-out infinite alternate;
+}
+@keyframes lnZombieRush150{
+  to{translate:0 -3px}
+}
+.longnight-zombie-v150 .z-head-v150{
+  position:absolute;
+  z-index:4;
+  left:8px;
+  top:0;
+  width:25px;
+  height:24px;
+  border:4px solid var(--ink);
+  border-radius:45% 50% 42% 46%;
+  background:#849866;
+}
+.longnight-zombie-v150 .z-head-v150>b{
+  position:absolute;
+  top:8px;
+  width:4px;
+  height:5px;
+  border-radius:50%;
+  background:#f1e55e;
+}
+.longnight-zombie-v150 .z-head-v150>b:first-child{left:5px}
+.longnight-zombie-v150 .z-head-v150>b:last-child{right:5px}
+.longnight-zombie-v150 .z-body-v150{
+  position:absolute;
+  left:9px;
+  top:20px;
+  width:23px;
+  height:25px;
+  border:4px solid var(--ink);
+  border-radius:8px;
+  background:#665c57;
+}
+.longnight-zombie-v150 .z-arm-v150,
+.longnight-zombie-v150 .z-leg-v150{
+  position:absolute;
+  z-index:2;
+  border:3px solid var(--ink);
+  border-radius:999px;
+  background:#7f9161;
+  transform-origin:50% 15%;
+}
+.longnight-zombie-v150 .z-arm-v150{
+  top:24px;
+  width:9px;
+  height:26px;
+  animation-duration:.23s!important;
+}
+.longnight-zombie-v150 .z-arm-v150.a1{
+  left:3px;
+  animation:lnZA150 .23s ease-in-out infinite alternate;
+}
+.longnight-zombie-v150 .z-arm-v150.a2{
+  right:0;
+  animation:lnZB150 .23s ease-in-out infinite alternate;
+}
+@keyframes lnZA150{from{rotate:30deg}to{rotate:-28deg}}
+@keyframes lnZB150{from{rotate:-34deg}to{rotate:22deg}}
+.longnight-zombie-v150 .z-leg-v150{
+  bottom:0;
+  width:9px;
+  height:18px;
+  background:#5f6754;
+}
+.longnight-zombie-v150 .z-leg-v150.l1{left:10px}
+.longnight-zombie-v150 .z-leg-v150.l2{right:7px}
+.longnight-zombie-v150 .z-hp-v150{
+  position:absolute;
+  left:2px;
+  right:2px;
+  bottom:-8px;
+  height:5px;
+  overflow:hidden;
+  border:2px solid var(--ink);
+  border-radius:999px;
+  background:#fff;
+}
+.longnight-zombie-v150 .z-hp-v150>i{
+  display:block;
+  width:100%;
+  height:100%;
+  background:#e36b6b;
+}
+.longnight-zombie-v150.brute-v150{
+  width:58px;
+  height:72px;
+}
+.longnight-zombie-v150.brute-v150 .z-head-v150{
+  left:13px;
+  width:34px;
+  height:31px;
+}
+.longnight-zombie-v150.brute-v150 .z-body-v150{
+  left:11px;
+  top:27px;
+  width:37px;
+  height:34px;
+}
+.longnight-zombie-v150.brute-v150 .z-arm-v150{
+  top:31px;
+  width:12px;
+  height:34px;
+}
+.longnight-zombie-v150.brute-v150 .z-leg-v150{
+  width:12px;
+  height:22px;
+}
+.longnight-zombie-v150.boss-v150{
+  z-index:24;
+  width:118px;
+  height:158px;
+  animation:lnBossWalk150 .72s ease-in-out infinite alternate;
+}
+@keyframes lnBossWalk150{
+  to{translate:0 -2px}
+}
+.longnight-zombie-v150.boss-v150 .z-head-v150{
+  left:31px;
+  width:62px;
+  height:56px;
+  border-width:6px;
+  background:#758b5a;
+}
+.longnight-zombie-v150.boss-v150 .z-head-v150>b{
+  top:18px;
+  width:8px;
+  height:9px;
+}
+.longnight-zombie-v150.boss-v150 .z-head-v150>b:first-child{left:13px}
+.longnight-zombie-v150.boss-v150 .z-head-v150>b:last-child{right:13px}
+.longnight-zombie-v150.boss-v150 .z-body-v150{
+  left:25px;
+  top:50px;
+  width:73px;
+  height:75px;
+  border-width:6px;
+  border-radius:18px;
+  background:#4e4948;
+}
+.longnight-zombie-v150.boss-v150 .z-arm-v150{
+  top:59px;
+  width:21px;
+  height:79px;
+  border-width:5px;
+}
+.longnight-zombie-v150.boss-v150 .z-arm-v150.a1{left:9px}
+.longnight-zombie-v150.boss-v150 .z-arm-v150.a2{right:0}
+.longnight-zombie-v150.boss-v150 .z-leg-v150{
+  width:23px;
+  height:50px;
+  border-width:5px;
+}
+.longnight-zombie-v150.boss-v150 .z-leg-v150.l1{left:31px}
+.longnight-zombie-v150.boss-v150 .z-leg-v150.l2{right:28px}
+.longnight-zombie-v150.attack-v150 .z-arm-v150.a1{
+  animation:lnZAttack150 .24s ease-out;
+}
+@keyframes lnZAttack150{
+  50%{rotate:-72deg;translate:-15px 2px}
+}
+.longnight-zombie-v150.boss-v150.slam-v150{
+  animation:lnBossSlam150 .55s ease;
+}
+@keyframes lnBossSlam150{
+  45%{translate:0 16px;scale:1.04 .92}
+}
+.longnight-zombie-v150.dead-v150{
+  animation:lnZDead150 .42s ease forwards!important;
+}
+@keyframes lnZDead150{
+  to{translate:0 22px;rotate:78deg;opacity:0}
+}
+
+/* --- fighter / bombing --- */
+.longnight-fighter-v150{
+  position:absolute;
+  z-index:60;
+  width:96px;
+  height:34px;
+  border:4px solid var(--ink);
+  border-radius:60% 70% 26% 30%;
+  background:#a7b8c7;
+  box-shadow:0 6px 0 rgba(0,0,0,.18);
+}
+.longnight-fighter-v150:before{
+  content:"";
+  position:absolute;
+  left:25px;
+  top:-17px;
+  width:42px;
+  height:27px;
+  border:4px solid var(--ink);
+  clip-path:polygon(0 100%,45% 0,100% 100%);
+  background:#7e91a2;
+}
+.longnight-fighter-v150:after{
+  content:"";
+  position:absolute;
+  left:-62px;
+  top:13px;
+  width:70px;
+  height:8px;
+  border-radius:999px;
+  background:linear-gradient(90deg,transparent,rgba(218,231,244,.7));
+}
+.longnight-fighter-v150 i{
+  position:absolute;
+  left:19px;
+  top:7px;
+  width:20px;
+  height:9px;
+  border:3px solid var(--ink);
+  border-radius:999px;
+  background:#9cecff;
+}
+.longnight-fighter-v150 b{
+  position:absolute;
+  right:-11px;
+  top:8px;
+  width:18px;
+  height:10px;
+  border:3px solid var(--ink);
+  border-radius:999px;
+  background:#f3c65b;
+}
+.longnight-bomb-v150{
+  position:absolute;
+  z-index:55;
+  width:22px;
+  height:36px;
+  border:4px solid var(--ink);
+  border-radius:50% 50% 45% 45%;
+  background:#38424c;
+  transform:translate(-50%,-50%);
+  box-shadow:0 0 8px rgba(255,174,70,.3);
+}
+.longnight-bomb-v150:before{
+  content:"";
+  position:absolute;
+  left:50%;
+  top:-9px;
+  width:4px;
+  height:10px;
+  background:#e4c45b;
+  transform:translateX(-50%);
+}
+
+/* --- impact FX --- */
+.longnight-burst-v150{
+  position:absolute;
+  z-index:62;
+  transform:translate(-50%,-50%);
+  border:4px solid var(--ink);
+  border-radius:50%;
+  background:radial-gradient(circle,#d9fbff 0 24%,#70dce8 25% 48%,transparent 49%);
+  animation:lnBurst150 .55s ease-out forwards;
+}
+.longnight-burst-v150.air-v150,
+.longnight-burst-v150.bomb-v150{
+  background:radial-gradient(circle,#fff3a1 0 18%,#ff9650 19% 45%,#8c4a33 46% 58%,transparent 59%);
+}
+.longnight-burst-v150.mega-v150{
+  z-index:68;
+  border-width:7px;
+  background:
+    radial-gradient(circle,
+      #fff8b9 0 12%,
+      #ffd55d 13% 24%,
+      #ff8d43 25% 43%,
+      #b84231 44% 56%,
+      rgba(78,48,38,.58) 57% 67%,
+      transparent 68%);
+  box-shadow:
+    0 0 22px rgba(255,138,57,.82),
+    0 0 45px rgba(255,93,41,.42);
+  animation:lnMega150 .65s ease-out forwards;
+}
+@keyframes lnBurst150{
+  from{scale:.32;opacity:1}
+  to{scale:1.35;opacity:0}
+}
+@keyframes lnMega150{
+  0%{scale:.18;opacity:1}
+  38%{scale:1.28;opacity:1}
+  100%{scale:1.75;opacity:0}
+}
+.longnight-bomb-ring-v150{
+  position:absolute;
+  z-index:64;
+  width:205px;
+  height:44px;
+  transform:translate(-50%,-50%);
+  border:8px solid rgba(255,206,97,.92);
+  border-radius:50%;
+  box-shadow:0 0 18px rgba(255,149,65,.76);
+  animation:lnBombRing150 .65s ease-out forwards;
+}
+@keyframes lnBombRing150{
+  from{scale:.14 .8;opacity:1}
+  to{scale:1.6 .34;opacity:0}
+}
+.longnight-bomb-dust-v150{
+  position:absolute;
+  z-index:63;
+  width:20px;
+  height:20px;
+  transform:translate(-50%,-50%);
+  border-radius:45%;
+  background:#bd8554;
+  box-shadow:inset 0 0 0 3px rgba(79,53,37,.36);
+  animation:lnDust150 .65s ease-out forwards;
+}
+@keyframes lnDust150{
+  to{
+    translate:var(--dx) var(--dy);
+    scale:.4;
+    opacity:0;
+  }
+}
+.longnight-shock-v150{
+  position:absolute;
+  z-index:45;
+  width:210px;
+  height:24px;
+  transform:translate(-50%,-50%);
+  border:5px solid #7b6f63;
+  border-radius:50%;
+  background:rgba(214,177,116,.18);
+  animation:lnShock150 .56s ease-out forwards;
+}
+@keyframes lnShock150{
+  from{scale:.2 1;opacity:1}
+  to{scale:1.4 .45;opacity:0}
+}
+.longnight-pop-v150{
+  position:absolute;
+  z-index:70;
+  transform:translate(-50%,-50%);
+  color:#fff7c7;
+  -webkit-text-stroke:1px #211d22;
+  font-size:16px;
+  font-weight:1000;
+  animation:lnPop150 .7s ease forwards;
+}
+.longnight-pop-v150.hit-v150{color:#9cf4ff}
+.longnight-pop-v150.air-hit-v150{color:#ffd568}
+.longnight-pop-v150.enemy-v150{color:#ff9d8c}
+@keyframes lnPop150{
+  to{translate:0 -32px;opacity:0}
+}
+
+/* --- messages / controls --- */
+.longnight-message-v150{
+  position:absolute;
+  z-index:80;
+  left:50%;
+  top:12px;
+  min-width:145px;
+  max-width:90%;
+  transform:translateX(-50%);
+  opacity:0;
+  border:4px solid var(--ink);
+  border-radius:15px;
+  background:#fff8d6;
+  color:#27222a;
+  padding:7px 12px;
+  text-align:center;
+  font-size:16px;
+  font-weight:1000;
+  pointer-events:none;
+}
+.longnight-message-v150.show-v150{opacity:1}
+.longnight-message-v150.boss-v150{background:#d9c5ff}
+.longnight-message-v150.air-v150{background:#cbeeff}
+.longnight-message-v150.clear-v150{background:#d4ffd7;font-size:20px}
+.longnight-message-v150.defeat-v150{background:#ffd0c9}
+.longnight-controls-v150{
+  display:grid;
+  grid-template-columns:repeat(5,minmax(0,1fr));
+  gap:4px;
+  margin-top:6px;
+}
+.longnight-controls-v150 button{
+  min-width:0;
+  min-height:52px;
+  border:4px solid var(--ink);
+  border-radius:14px;
+  background:#fff8d8;
+  padding:3px 2px;
+  font-size:10px;
+  font-weight:1000;
+  touch-action:none!important;
+  -webkit-user-select:none!important;
+  user-select:none!important;
+  -webkit-touch-callout:none!important;
+}
+.longnight-controls-v150 .air-v150{background:#d9f2ff}
+.longnight-controls-v150 .shot-v150{background:#fff1a8}
+.longnight-controls-v150 button b{
+  display:block;
+  margin-top:2px;
+  font-size:7px;
+}
+
+/* Strong local shake only; no fullscreen white flash. */
+.longnight-stage-v150.bomb-shake-v150{
+  animation:lnBombShake150 .34s ease;
+}
+@keyframes lnBombShake150{
+  15%{translate:-7px 2px}
+  30%{translate:7px -3px}
+  45%{translate:-6px 1px}
+  60%{translate:5px -2px}
+  75%{translate:-3px 1px}
+  90%{translate:2px 0}
+}
+.longnight-stage-v150.clear-shake-v150{
+  animation:lnClearShake150 .36s ease;
+}
+@keyframes lnClearShake150{
+  20%{translate:-4px 0}
+  40%{translate:4px -2px}
+  60%{translate:-3px 1px}
+  80%{translate:2px 0}
+}
+.longnight-stage-v150.defeat-v150{
+  filter:saturate(.68) brightness(.82);
+}
