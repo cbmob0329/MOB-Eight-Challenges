@@ -23784,3 +23784,103 @@ img,svg,canvas{
 .longnight-stage-v150.defeat-v150{
   filter:saturate(.68) brightness(.82);
 }
+
+
+/* V10.51: long night controls with reload + wave */
+.longnight-controls-v151{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:4px;
+  margin-top:6px;
+}
+.longnight-controls-v151 button{
+  min-width:0;
+  min-height:56px;
+  border:4px solid var(--ink);
+  border-radius:14px;
+  background:#fff8d8;
+  padding:3px 2px;
+  font-size:11px;
+  font-weight:1000;
+  touch-action:none!important;
+  -webkit-user-select:none!important;
+  user-select:none!important;
+  -webkit-touch-callout:none!important;
+}
+.longnight-controls-v151 .air-v150{background:#d9f2ff}
+.longnight-controls-v151 .shot-v150{background:#fff1a8}
+.longnight-controls-v151 .wave-v151{background:#e6dcff}
+.longnight-controls-v151 button b{
+  display:block;
+  margin-top:2px;
+  font-size:7px;
+}
+.longnight-wave-ring-v151{
+  position:absolute;
+  z-index:66;
+  width:32px;
+  height:32px;
+  border:8px solid rgba(113,237,255,.96);
+  border-radius:50%;
+  box-shadow:0 0 18px rgba(132,244,255,.86), inset 0 0 16px rgba(255,255,255,.48);
+  transform:translate(-50%,-50%);
+  animation:lnWaveRing151 .54s ease-out forwards;
+}
+@keyframes lnWaveRing151{
+  0%{width:20px;height:20px;opacity:1}
+  100%{width:240px;height:240px;opacity:0}
+}
+.longnight-wave-spark-v151{
+  position:absolute;
+  z-index:67;
+  width:20px;
+  height:20px;
+  border-radius:50%;
+  background:radial-gradient(circle,#fff 0 22%,#8cf3ff 23% 66%,transparent 67%);
+  transform:translate(-50%,-50%) rotate(var(--ang));
+  box-shadow:0 0 16px rgba(140,243,255,.8);
+  animation:lnWaveSpark151 .56s ease-out forwards;
+}
+@keyframes lnWaveSpark151{
+  0%{translate:0 0; opacity:1; scale:.5}
+  100%{translate:90px 0; opacity:0; scale:1.4}
+}
+.longnight-zombie-v150.stunned-v151{
+  filter:hue-rotate(160deg) brightness(1.18);
+  animation:lnStun151 .14s linear infinite alternate;
+}
+@keyframes lnStun151{
+  to{translate:2px -1px}
+}
+
+/* V10.51: musou extra platforms/effects */
+.musou-platform-v151{
+  position:absolute;
+  z-index:4;
+  width:84px;
+  height:14px;
+  border:4px solid var(--ink);
+  border-radius:10px;
+  background:#8a6d56;
+}
+.musou-platform-v151:before{
+  content:"";
+  position:absolute;
+  left:10px; right:10px; top:4px;
+  height:4px;
+  border-radius:999px;
+  background:#c9a889;
+}
+.musou-plat-l-v151{ left:58px; bottom:108px; }
+.musou-plat-r-v151{ right:58px; bottom:124px; }
+.musou-wave-v151{
+  position:absolute;
+  z-index:30;
+  width:84px;
+  height:34px;
+  border:4px solid var(--ink);
+  border-radius:50% 20% 50% 20%;
+  background:linear-gradient(90deg,rgba(255,255,255,.2),#9be6ff 35%,#59b8ff 72%,rgba(255,255,255,.1));
+  box-shadow:0 0 14px rgba(89,184,255,.7);
+  transform:translate(-50%,-50%);
+}

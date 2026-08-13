@@ -26649,6 +26649,7 @@ async function startIaidoMaster(p,humanIndex,runId){
 // =========================================================
 
 
+
 async function startKillLeaderMob(p,humanIndex,runId){
   gameFit();
 
@@ -26667,10 +26668,11 @@ async function startKillLeaderMob(p,humanIndex,runId){
   let bossDefeated=false;
   let nextZombieId=1;
 
-  const input={left:false,right:false,shoot:false};
+  const input={shoot:false,wave:false};
   const zombies=[];
   const bullets=[];
   const bombs=[];
+  const stuns=[];
   const worldFx=[];
 
   const player={
@@ -26678,16 +26680,15 @@ async function startKillLeaderMob(p,humanIndex,runId){
     y:0,
     w:68,
     h:56,
-    vx:0,
-    vy:0,
-    speed:190,
-    jump:520,
-    onGround:true,
     face:1,
     hp:50,
     maxHp:50,
-    shotAt:0,
     hurtUntil:0,
+    shotAt:0,
+    ammo:8,
+    reloadUntil:0,
+    waveAt:0,
+    wavePulseUntil:0,
     airAt:0
   };
 
@@ -26734,12 +26735,10 @@ async function startKillLeaderMob(p,humanIndex,runId){
         <div id="lnMsg150" class="longnight-message-v150">夜を生き残れ</div>
       </div>
 
-      <div class="longnight-controls-v150">
-        <button id="lnLeft150">←</button>
-        <button id="lnJump150">JUMP</button>
-        <button id="lnShoot150" class="shot-v150">射撃</button>
-        <button id="lnAir150" class="air-v150">戦闘機<b>READY</b></button>
-        <button id="lnRight150">→</button>
+      <div class="longnight-controls-v151">
+        <button id="lnShoot150" class="shot-v150">射撃<b id="lnAmmo150">8 / 8</b></button>
+        <button id="lnWave150" class="wave-v151">波動<b id="lnWaveCd150">READY</b></button>
+        <button id="lnAir150" class="air-v150">戦闘機<b id="lnAirCd150">READY</b></button>
       </div>
     </div>`;
 
@@ -26753,6 +26752,8 @@ async function startKillLeaderMob(p,humanIndex,runId){
   const killEl=document.getElementById('lnKill150');
   const hpEl=document.getElementById('lnHp150');
   const bossHud=document.getElementById('lnBoss150');
+  const ammoEl=document.getElementById('lnAmmo150');
+  const waveCdEl=document.getElementById('lnWaveCd150');
   const airBtn=document.getElementById('lnAir150');
   const airCd=airBtn.querySelector('b');
   const stars=document.getElementById('lnStars150');
@@ -26768,23 +26769,20 @@ async function startKillLeaderMob(p,humanIndex,runId){
     el.style.left=`${worldX-cameraX}px`;
     el.style.top=`${y}px`;
   }
-
   function trackFx(el,worldX,y,life=600){
     const f={el,worldX,y,life};
     worldFx.push(f);
     positionWorld(el,worldX,y);
     return f;
   }
-
   function showMessage(text,kind=''){
     msg.textContent=text;
     msg.className=`longnight-message-v150 ${kind} show-v150`;
     clearTimeout(showMessage._t);
     showMessage._t=setTimeout(()=>{
       if(msg)msg.classList.remove('show-v150');
-    },850);
+    },880);
   }
-
   function pop(worldX,y,text,kind=''){
     const el=document.createElement('div');
     el.className=`longnight-pop-v150 ${kind}`;
@@ -26792,7 +26790,6 @@ async function startKillLeaderMob(p,humanIndex,runId){
     fxLayer.appendChild(el);
     trackFx(el,worldX,y,700);
   }
-
   function burst(worldX,y,kind='hit-v150',size=56){
     const el=document.createElement('div');
     el.className=`longnight-burst-v150 ${kind}`;
@@ -26834,13 +26831,13 @@ async function startKillLeaderMob(p,humanIndex,runId){
       attackAt:0,
       specialAt:performance.now()+2200,
       wakeDelay,
+      stunUntil:0,
       el
     };
     zombies.push(z);
     updateZombie(z);
     return z;
   }
-
   function seedZombies(){
     for(let i=0;i<NORMAL_TARGET;i++){
       const x=285+i*56+rand(-18,18);
@@ -26848,49 +26845,32 @@ async function startKillLeaderMob(p,humanIndex,runId){
       makeZombie(x,type,i*90);
     }
   }
-
   function updateZombie(z){
     const sx=z.x-cameraX;
     z.el.style.left=`${sx}px`;
     z.el.style.top=`${z.y}px`;
     z.el.style.transform=`scaleX(${z.face})`;
     z.el.style.display=(sx<-190||sx>W+190)?'none':'block';
+    z.el.classList.toggle('stunned-v151', performance.now()<z.stunUntil);
     const hp=z.el.querySelector('.z-hp-v150 i');
     if(hp)hp.style.width=`${clamp(z.hp/z.maxHp,0,1)*100}%`;
   }
-
   function spawnBoss(){
     if(bossSpawned)return;
     bossSpawned=true;
-
-    const boss=makeZombie(
-      player.x+Math.min(W*.88,320),
-      'boss',
-      0
-    );
+    const boss=makeZombie(player.x+Math.min(W*.88,320),'boss',0);
     boss.specialAt=performance.now()+1800;
     bossHud.textContent=BOSS_HP;
     showMessage('巨大ゾンビ出現！','boss-v150');
     stage.classList.add('boss-phase-v150');
     beep(105,180,.045);
   }
-
   function hurtZombie(z,damage,source='shot'){
     if(!z||!z.alive||finished)return;
 
     z.hp=Math.max(0,z.hp-damage);
-    pop(
-      z.x+z.w*.5,
-      z.y-4,
-      `-${damage}`,
-      source==='air'?'air-hit-v150':'hit-v150'
-    );
-    burst(
-      z.x+z.w*.54,
-      z.y+z.h*.46,
-      source==='air'?'air-v150':'hit-v150',
-      source==='air'?76:42
-    );
+    pop(z.x+z.w*.5,z.y-4,`-${damage}`,source==='air'?'air-hit-v150':'hit-v150');
+    burst(z.x+z.w*.54,z.y+z.h*.46,source==='air'?'air-v150':'hit-v150',source==='air'?76:42);
 
     if(z.type==='boss')bossHud.textContent=Math.ceil(z.hp);
 
@@ -26908,7 +26888,6 @@ async function startKillLeaderMob(p,humanIndex,runId){
         kills++;
         killEl.textContent=`${kills} / ${NORMAL_TARGET}`;
         beep(190,58,.014);
-
         if(kills===NORMAL_TARGET){
           showMessage('30体撃破！ 最後の敵だ！','boss-v150');
           setTimeout(()=>{
@@ -26918,32 +26897,42 @@ async function startKillLeaderMob(p,humanIndex,runId){
           showMessage(`${kills}体撃破！`,'kill-v150');
         }
       }
-
-      setTimeout(()=>{
-        if(z.el.isConnected)z.el.remove();
-      },420);
+      setTimeout(()=>{ if(z.el.isConnected)z.el.remove(); },420);
     }
+  }
+
+  function beginReload(){
+    if(player.reloadUntil>performance.now()||finished)return;
+    player.reloadUntil=performance.now()+1000;
+    showMessage('リロード！','air-v150');
+    setTimeout(()=>{
+      if(finished||!isGameRunValid(runId))return;
+      player.ammo=8;
+      player.reloadUntil=0;
+    },1000);
   }
 
   function fireGatling(){
     const now=performance.now();
-    if(!active||finished||now<player.shotAt)return;
+    if(!active||finished)return;
+    if(now<player.reloadUntil)return;
+    if(player.ammo<=0){
+      beginReload();
+      return;
+    }
+    if(now<player.shotAt)return;
 
-    // 約14発/秒の物凄い乱射。
-    player.shotAt=now+70;
+    player.shotAt=now+72;
+    player.ammo--;
 
-    const muzzleX=
-      player.x+
-      (player.face>0?player.w+20:-20);
-
+    const muzzleX=player.x+player.w+20;
     const el=document.createElement('i');
     el.className='longnight-bullet-v150';
     bulletLayer.appendChild(el);
-
     bullets.push({
       x:muzzleX,
       y:player.y+21+rand(-3,3),
-      vx:player.face*720,
+      vx:720,
       alive:true,
       el
     });
@@ -26951,17 +26940,12 @@ async function startKillLeaderMob(p,humanIndex,runId){
     const spark=document.createElement('i');
     spark.className='longnight-gatling-spark-v150';
     fxLayer.appendChild(spark);
-    trackFx(
-      spark,
-      muzzleX,
-      player.y+22+rand(-4,4),
-      140
-    );
+    trackFx(spark,muzzleX,player.y+22+rand(-4,4),140);
 
-    if(Math.random()<.28){
+    if(Math.random()<.3){
       const spark2=document.createElement('i');
       spark2.className='longnight-gatling-chip-v150';
-      spark2.style.setProperty('--chipx',`${rand(10,30)*player.face}px`);
+      spark2.style.setProperty('--chipx',`${rand(10,30)}px`);
       spark2.style.setProperty('--chipy',`${rand(-15,12)}px`);
       fxLayer.appendChild(spark2);
       trackFx(spark2,muzzleX,player.y+22,180);
@@ -26973,9 +26957,44 @@ async function startKillLeaderMob(p,humanIndex,runId){
       if(playerEl)playerEl.classList.remove('gatling-fire-v150');
     },120);
 
-    if(Math.random()<.32){
-      beep(780+rand(-100,100),15,.004);
+    if(player.ammo<=0){
+      beginReload();
     }
+
+    if(Math.random()<.32)beep(780+rand(-100,100),15,.004);
+  }
+
+  function castWave(){
+    const now=performance.now();
+    if(!active||finished||now<player.waveAt)return;
+    player.waveAt=now+5000;
+    player.wavePulseUntil=now+520;
+    showMessage('波動！','wave-v151');
+
+    const ring=document.createElement('div');
+    ring.className='longnight-wave-ring-v151';
+    fxLayer.appendChild(ring);
+    trackFx(ring,player.x+player.w*.5,player.y+player.h*.5,560);
+
+    for(let i=0;i<5;i++){
+      const spark=document.createElement('i');
+      spark.className='longnight-wave-spark-v151';
+      spark.style.setProperty('--ang',`${i*72}deg`);
+      fxLayer.appendChild(spark);
+      trackFx(spark,player.x+player.w*.5,player.y+player.h*.48,560);
+    }
+
+    const center=player.x+player.w*.5;
+    for(const z of zombies){
+      if(!z.alive)continue;
+      const zx=z.x+z.w*.5;
+      const d=Math.abs(zx-center);
+      if(d<=118){
+        z.stunUntil=now+1500;
+        hurtZombie(z,3,'air');
+      }
+    }
+    beep(240,90,.028);
   }
 
   function callFighter(){
@@ -27002,33 +27021,23 @@ async function startKillLeaderMob(p,humanIndex,runId){
     };
     requestAnimationFrame(fly);
 
-    // 爆弾は6連発。見た目だけではなく実際に順番に落下。
     for(let i=0;i<6;i++){
       setTimeout(()=>{
         if(finished||!isGameRunValid(runId))return;
-
-        const worldX=clamp(
-          player.x+95+i*68,
-          cameraX+38,
-          cameraX+W-24
-        );
-
+        const worldX=clamp(player.x+95+i*68,cameraX+38,cameraX+W-24);
         const el=document.createElement('div');
         el.className='longnight-bomb-v150';
         fxLayer.appendChild(el);
-
-        const b={
+        bombs.push({
           x:worldX,
           y:35,
           vy:300+rand(0,45),
           alive:true,
           el
-        };
-        bombs.push(b);
-        positionWorld(el,b.x,b.y);
+        });
+        positionWorld(el,worldX,35);
       },i*145);
     }
-
     beep(340,90,.024);
   }
 
@@ -27037,19 +27046,12 @@ async function startKillLeaderMob(p,humanIndex,runId){
     b.alive=false;
     if(b.el.isConnected)b.el.remove();
 
-    // V10.49比で約5倍派手な局所爆撃。
-    // 全画面フラッシュは使わない。
     burst(b.x,GROUND_Y-16,'mega-v150',190);
 
     for(let i=0;i<5;i++){
       setTimeout(()=>{
         if(finished||!isGameRunValid(runId))return;
-        burst(
-          b.x+rand(-70,70),
-          GROUND_Y-24+rand(-52,8),
-          i%2===0?'bomb-v150':'air-v150',
-          rand(70,116)
-        );
+        burst(b.x+rand(-70,70),GROUND_Y-24+rand(-52,8),i%2===0?'bomb-v150':'air-v150',rand(70,116));
       },i*38);
     }
 
@@ -27064,12 +27066,7 @@ async function startKillLeaderMob(p,humanIndex,runId){
       dust.style.setProperty('--dx',`${rand(-110,110)}px`);
       dust.style.setProperty('--dy',`${rand(-95,-25)}px`);
       fxLayer.appendChild(dust);
-      trackFx(
-        dust,
-        b.x+rand(-18,18),
-        GROUND_Y-18,
-        650
-      );
+      trackFx(dust,b.x+rand(-18,18),GROUND_Y-18,650);
     }
 
     stage.classList.remove('bomb-shake-v150');
@@ -27082,19 +27079,16 @@ async function startKillLeaderMob(p,humanIndex,runId){
         hurtZombie(z,3,'air');
       }
     }
-
     beep(78,140,.035);
   }
 
-  function damagePlayer(amount,knock=0){
+  function damagePlayer(amount){
     const now=performance.now();
     if(now<player.hurtUntil||finished)return;
 
     player.hurtUntil=now+520;
     player.hp=Math.max(0,player.hp-amount);
-    player.vx+=knock;
     hpEl.textContent=Math.ceil(player.hp);
-
     playerEl.classList.add('hurt-v150');
     setTimeout(()=>playerEl.classList.remove('hurt-v150'),210);
     pop(player.x+player.w*.5,player.y-6,`-${amount}`,'enemy-v150');
@@ -27108,27 +27102,19 @@ async function startKillLeaderMob(p,humanIndex,runId){
 
   function bossSlam(z){
     if(!z||!z.alive)return;
-
     z.el.classList.add('slam-v150');
     showMessage('巨大ゾンビの地面叩き！','boss-v150');
 
     setTimeout(()=>{
       if(!z.alive||finished)return;
       z.el.classList.remove('slam-v150');
-
       const shock=document.createElement('div');
       shock.className='longnight-shock-v150';
       fxLayer.appendChild(shock);
       trackFx(shock,z.x-100,GROUND_Y-22,560);
 
-      if(
-        Math.abs(player.x-z.x)<210&&
-        player.onGround
-      ){
-        damagePlayer(
-          6,
-          player.x<z.x?-135:135
-        );
+      if(Math.abs(player.x-z.x)<210){
+        damagePlayer(6);
       }
     },430);
   }
@@ -27137,19 +27123,10 @@ async function startKillLeaderMob(p,humanIndex,runId){
     if(finished)return;
     finished=true;
     active=false;
-    input.left=input.right=input.shoot=false;
+    input.shoot=input.wave=false;
     if(raf)cancelAnimationFrame(raf);
-
-    const elapsed=Math.max(
-      1,
-      Math.round(performance.now()-startedAt)
-    );
-
-    state.records.killLeaderMob[p.id]=
-      clear
-        ? elapsed
-        : 99999;
-
+    const elapsed=Math.max(1,Math.round(performance.now()-startedAt));
+    state.records.killLeaderMob[p.id]=clear?elapsed:99999;
     document.body.classList.remove('countdown-active-v140');
     screen.removeAttribute('inert');
     clearGameplaySelection();
@@ -27164,58 +27141,39 @@ async function startKillLeaderMob(p,humanIndex,runId){
     setTimeout(()=>{
       if(!isGameRunValid(runId))return;
       recordScreen(
-        92,
-        p,
-        humanIndex,
-        clear
-          ? `${(elapsed/1000).toFixed(2)}<small>秒</small>`
-          : `FAILED`,
-        clear
-          ? `ゾンビ30体 + 巨大ゾンビ撃破`
-          : `${kills}体撃破`
+        92,p,humanIndex,
+        clear?`${(elapsed/1000).toFixed(2)}<small>秒</small>`:`FAILED`,
+        clear?`ゾンビ30体 + 巨大ゾンビ撃破`:`${kills}体撃破`
       );
     },900);
   }
 
   function bindHold(id,key){
     const el=document.getElementById(id);
-
     const down=e=>{
       e.preventDefault();
       input[key]=true;
       try{el.setPointerCapture(e.pointerId)}catch(_){}
     };
-
     const up=e=>{
       if(e)e.preventDefault();
       input[key]=false;
     };
-
     el.addEventListener('pointerdown',down,{passive:false});
     el.addEventListener('pointerup',up,{passive:false});
     el.addEventListener('pointercancel',up,{passive:false});
     el.addEventListener('lostpointercapture',up,{passive:false});
   }
-
-  bindHold('lnLeft150','left');
-  bindHold('lnRight150','right');
   bindHold('lnShoot150','shoot');
-
-  document.getElementById('lnJump150').addEventListener('pointerdown',e=>{
+  document.getElementById('lnWave150').addEventListener('pointerdown',e=>{
     e.preventDefault();
-    if(active&&!finished&&player.onGround){
-      player.vy=-player.jump;
-      player.onGround=false;
-      beep(450,30,.01);
-    }
+    castWave();
   },{passive:false});
-
   airBtn.addEventListener('pointerdown',e=>{
     e.preventDefault();
     callFighter();
   },{passive:false});
 
-  // カウントダウン前から戦車とゾンビを初期配置。
   seedZombies();
   cameraX=0;
   playerEl.style.left=`${player.x}px`;
@@ -27237,54 +27195,17 @@ async function startKillLeaderMob(p,humanIndex,runId){
     last=now;
     const elapsed=now-startedAt;
 
-    let dir=0;
-    if(input.left&&!input.right)dir=-1;
-    else if(input.right&&!input.left)dir=1;
-
-    const desired=dir*player.speed;
-    player.vx+=(desired-player.vx)*Math.min(1,dt*13);
-
-    if(dir===0&&Math.abs(player.vx)<2)player.vx=0;
-    if(player.vx<-5)player.face=-1;
-    else if(player.vx>5)player.face=1;
-
-    player.x=clamp(
-      player.x+player.vx*dt,
-      12,
-      WORLD_END
-    );
-
-    player.vy+=1040*dt;
-    player.y+=player.vy*dt;
-
-    if(player.y>=GROUND_Y-player.h){
-      player.y=GROUND_Y-player.h;
-      player.vy=0;
-      player.onGround=true;
-    }else{
-      player.onGround=false;
-    }
-
-    cameraX=clamp(
-      player.x-95,
-      0,
-      WORLD_END-W
-    );
-
+    // fixed tank position, only camera slight tracking from zombie density not needed
     playerEl.style.left=`${player.x-cameraX}px`;
     playerEl.style.top=`${player.y}px`;
-    playerEl.style.transform=`scaleX(${player.face})`;
+    playerEl.style.transform=`scaleX(1)`;
 
     stars.style.backgroundPositionX=`${-cameraX*.10}px`;
     far.style.backgroundPositionX=`${-cameraX*.20}px`;
     near.style.backgroundPositionX=`${-cameraX*.38}px`;
 
-    if(input.shoot&&now>=player.shotAt){
-      fireGatling();
-    }
+    if(input.shoot)fireGatling();
 
-    // 通常ゾンビはプレイヤーが止まっていてもゾンビ側から勢いよく来る。
-    // 巨大ゾンビだけは別でゆっくり接近。
     for(const z of zombies){
       if(!z.alive)continue;
 
@@ -27292,91 +27213,64 @@ async function startKillLeaderMob(p,humanIndex,runId){
       const ad=Math.abs(dist);
       z.face=dist>0?1:-1;
 
+      if(now<z.stunUntil){
+        updateZombie(z);
+        continue;
+      }
+
       if(z.type==='boss'){
         const stop=90;
-
         if(ad>stop){
           z.x+=Math.sign(dist)*z.speed*dt;
         }
-
         if(ad<=stop+12&&now>=z.attackAt){
           z.attackAt=now+920;
           z.el.classList.remove('attack-v150');
           void z.el.offsetWidth;
           z.el.classList.add('attack-v150');
           setTimeout(()=>z.el.classList.remove('attack-v150'),280);
-          damagePlayer(5,dist>0?70:-70);
+          damagePlayer(5);
         }
-
         if(now>=z.specialAt){
           z.specialAt=now+rand(2500,3400);
           bossSlam(z);
         }
       }else if(elapsed>=z.wakeDelay){
-        const stop=z.type==='brute'?44:34;
-
+        const stop=z.type==='brute'?44:24;
         if(ad>stop){
-          const rush=
-            ad>430
-              ? 1.22
-              : ad>200
-                ? 1.10
-                : 1;
-
-          z.x+=
-            Math.sign(dist)*
-            z.speed*
-            rush*
-            dt;
+          const rush=ad>430?1.22:ad>200?1.10:1;
+          z.x+=Math.sign(dist)*z.speed*rush*dt;
         }
-
         if(ad<=stop+10&&now>=z.attackAt){
           z.attackAt=now+(z.type==='brute'?820:690);
           z.el.classList.remove('attack-v150');
           void z.el.offsetWidth;
           z.el.classList.add('attack-v150');
           setTimeout(()=>z.el.classList.remove('attack-v150'),240);
-
-          damagePlayer(
-            z.type==='brute'?3:2,
-            dist>0?78:-78
-          );
+          damagePlayer(z.type==='brute'?3:2);
         }
       }
-
       updateZombie(z);
     }
 
     for(const b of bullets){
       if(!b.alive)continue;
-
       b.x+=b.vx*dt;
       positionWorld(b.el,b.x,b.y);
 
       let hit=null;
-
       for(const z of zombies){
         if(!z.alive)continue;
-
-        if(
-          b.x>=z.x-5&&
-          b.x<=z.x+z.w+5&&
-          b.y>=z.y&&
-          b.y<=z.y+z.h
-        ){
+        if(b.x>=z.x-5&&b.x<=z.x+z.w+5&&b.y>=z.y&&b.y<=z.y+z.h){
           hit=z;
           break;
         }
       }
-
       if(hit){
         b.alive=false;
         b.el.remove();
         hurtZombie(hit,1,'shot');
-      }else if(
-        b.x<cameraX-100||
-        b.x>cameraX+W+180
-      ){
+      }else if(b.x>cameraX+W+180){
         b.alive=false;
         b.el.remove();
       }
@@ -27384,47 +27278,31 @@ async function startKillLeaderMob(p,humanIndex,runId){
 
     for(const b of bombs){
       if(!b.alive)continue;
-
       b.y+=b.vy*dt;
       b.vy+=330*dt;
       positionWorld(b.el,b.x,b.y);
-
-      if(b.y>=GROUND_Y-18){
-        explodeBomb(b);
-      }
+      if(b.y>=GROUND_Y-18)explodeBomb(b);
     }
 
     for(const f of worldFx){
       if(!f.el||!f.el.isConnected)continue;
-
       f.life-=dt*1000;
       positionWorld(f.el,f.worldX,f.y);
-
-      if(f.life<=0){
-        f.el.remove();
-      }
+      if(f.life<=0)f.el.remove();
     }
 
-    if(kills>=NORMAL_TARGET&&!bossSpawned){
-      spawnBoss();
-    }
+    if(kills>=NORMAL_TARGET&&!bossSpawned)spawnBoss();
 
     timeEl.textContent=(elapsed/1000).toFixed(2);
     killEl.textContent=`${kills} / ${NORMAL_TARGET}`;
     hpEl.textContent=Math.ceil(player.hp);
-    airCd.textContent=
-      now<player.airAt
-        ? `${((player.airAt-now)/1000).toFixed(1)}s`
-        : 'READY';
+    ammoEl.textContent=now<player.reloadUntil?`RELOAD ${(player.reloadUntil-now)/1000>0?((player.reloadUntil-now)/1000).toFixed(1):'0.0'}s`:`${player.ammo} / 8`;
+    waveCdEl.textContent=now<player.waveAt?`${((player.waveAt-now)/1000).toFixed(1)}s`:'READY';
+    airCd.textContent=now<player.airAt?`${((player.airAt-now)/1000).toFixed(1)}s`:'READY';
 
     if(bossSpawned&&!bossDefeated){
-      const boss=zombies.find(
-        z=>z.type==='boss'&&z.alive
-      );
-      bossHud.textContent=
-        boss
-          ? Math.ceil(boss.hp)
-          : '0';
+      const boss=zombies.find(z=>z.type==='boss'&&z.alive);
+      bossHud.textContent=boss?Math.ceil(boss.hp):'0';
     }
 
     raf=requestAnimationFrame(frame);
