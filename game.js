@@ -136,7 +136,9 @@ const GAMES=[
   {no:84,key:"scoutMan",title:"モブくんはスカウトマン！",sub:"30000円で9ポジションを1秒判断でスカウト"},
   {no:85,key:"atafutaSurvival",title:"モブくんあたふたサバイバル",sub:"崩れる浮遊岩で9人の偽モブくんと最後の1人を目指す"},
   {no:86,key:"waveMaster",title:"モブくん波動を極める",sub:"魂ゲージと円型ゲージを極めて偽モブくんと波動を撃ち合う"},
-  {no:87,key:"battleRoyaleMob",title:"モブくんバトロワに出陣",sub:"3対3の戦場でスキルを使い勝利までの時間を競う"}
+  {no:87,key:"battleRoyaleMob",title:"モブくんFPSアリーナに挑戦",sub:"3対3のアリーナでスキルを使い敵チームを全滅させる"},
+  {no:88,key:"littleMobShot",title:"Little MOB SHOT",sub:"レコードに乗って10秒間スライムを撃ちまくる縦シューティング"},
+  {no:89,key:"monsterBoxMob",title:"モブくんモンスターボックスに挑む",sub:"ロイター板を踏んで15段から20段の跳び箱を越える"}
 ];
 
 const MODES={
@@ -179,7 +181,7 @@ function freshState(){
         paperPlane:{},tankMob:{},curlingMob:{},bubbleMob:{},
         changeMob:{},baggageMob:{},bridgeMob:{},treasureMob:{},rouletteMob:{},excavationMob:{},
         oldMaidDuel:{},robotMarch:{},monsterMaster:{},scoutMan:{},
-        atafutaSurvival:{},waveMaster:{},battleRoyaleMob:{}
+        atafutaSurvival:{},waveMaster:{},battleRoyaleMob:{},littleMobShot:{},monsterBoxMob:{}
     },
     total:{},
     roundPoints:[],
@@ -285,7 +287,7 @@ function renderHome(){
     <section class="hero hero-v119">
       <div>
         <span class="kicker">SMARTPHONE PARTY GAME</span>
-        <h1>87 MINI<br>GAMES</h1>
+        <h1>89 MINI<br>GAMES</h1>
         <p>対戦モードは「チーム戦」「個人戦」の2種類。人数・ルール・ゲーム数を自由に設定できます。</p>
       </div>
       <div class="hero-mark">MOB</div>
@@ -310,7 +312,7 @@ function renderHome(){
     </section>
 
     <section class="panel flat">
-      <div class="panel-head"><h3>87 MINI GAMES</h3><span class="tag">GAME 1 → 87</span></div>
+      <div class="panel-head"><h3>89 MINI GAMES</h3><span class="tag">GAME 1 → 89</span></div>
       <div class="compact-game-grid home-compact-games-v119">
         ${GAMES.map(g=>`<div><b>${g.no}</b><span>${g.title}</span></div>`).join("")}
       </div>
@@ -330,7 +332,7 @@ function renderFreePlaySelect(){
   screen.innerHTML=`
     <div class="game-head">
       <div><span class="kicker">FREE PLAY</span><h2>1人で遊ぶ</h2><p class="lead">好きなゲームを1つ選んでプレイ。</p></div>
-      <div class="game-badge">87</div>
+      <div class="game-badge">89</div>
     </div>
 
     <button id="freeBack" class="secondary wizard-back-v119" type="button">← メインへ戻る</button>
@@ -368,7 +370,7 @@ function renderGameGuide(){
   screen.innerHTML=`
     <div class="game-head">
       <div><span class="kicker">GAME GUIDE</span><h2>各ゲームの説明</h2><p class="lead">内容と100点換算の目安を一覧で確認できます。</p></div>
-      <div class="game-badge">87</div>
+      <div class="game-badge">89</div>
     </div>
 
     <button id="guideBack" class="secondary wizard-back-v119" type="button">← メインへ戻る</button>
@@ -702,7 +704,7 @@ function renderGameLengthSelect(config){
 
   screen.innerHTML=`
     <div class="game-head">
-      <div><span class="kicker">GAME MODE</span><h2>プレイするゲーム数</h2><p class="lead">CUSTOM以外は87ゲームからランダムで選択。</p></div>
+      <div><span class="kicker">GAME MODE</span><h2>プレイするゲーム数</h2><p class="lead">CUSTOM以外は89ゲームからランダムで選択。</p></div>
       <div class="game-badge">${config.rule==='score'?'SCORE':'RANK'}</div>
     </div>
 
@@ -710,7 +712,7 @@ function renderGameLengthSelect(config){
       <button data-length="5" type="button"><span>QUICK</span><b>サクッと5ゲーム</b><small>ランダム5種</small></button>
       <button data-length="15" type="button"><span>FUN</span><b>楽しく15ゲーム</b><small>ランダム15種</small></button>
       <button data-length="30" type="button"><span>LONG</span><b>じっくり30ゲーム</b><small>ランダム30種</small></button>
-      <button data-length="all" type="button"><span>ALL</span><b>ガッツリ全ゲーム</b><small>全87種をランダム順</small></button>
+      <button data-length="all" type="button"><span>ALL</span><b>ガッツリ全ゲーム</b><small>全89種をランダム順</small></button>
       <button data-length="custom" class="custom" type="button"><span>CUSTOM</span><b>カスタム</b><small>自由選択 / 最大50ゲーム</small></button>
     </div>
 
@@ -959,7 +961,7 @@ function renderPlayStyleSelect(){
       <button id="normalStyle" class="style-select-card normal" type="button">
         <span>NORMAL</span>
         <b>順番に全種目</b>
-        <small>GAME 1 → 87 を順番にプレイ</small>
+        <small>GAME 1 → 89 を順番にプレイ</small>
       </button>
       <button id="customStyle" class="style-select-card custom" type="button">
         <span>CUSTOM</span>
@@ -969,7 +971,7 @@ function renderPlayStyleSelect(){
     </div>
 
     <section class="panel flat">
-      <h3>87 MINI GAMES</h3>
+      <h3>89 MINI GAMES</h3>
       <div class="compact-game-grid">
         ${GAMES.map(g=>`<div><b>${g.no}</b><span>${g.title}</span></div>`).join("")}
       </div>
@@ -1307,7 +1309,9 @@ function scoreRuleForGame(index){
     "甲子園47校中の最終順位 / 1位=100点・47位=0点換算",
     "10人中の生存順位で0〜100点 / 最初に落下=0点 / 最後の1人=100点",
     "魂ゲージ55% + 円型ゲージ3回のなぞり45%で波動威力0〜100点",
-    "3対3を全滅させるまでの時間 / 速いほど高評価"
+    "3対3を全滅させるまでの時間 / 速いほど高評価",
+    "10秒間のスライムKO数 / 多いほど高得点",
+    "15段→20段を順番に突破 / 20段クリア=100点"
   ][index];
 }
 
@@ -1489,9 +1493,15 @@ function showGameIntro(index){
     rules=`<li>プレイヤーと9人の偽モブくんが、宙に浮く岩の足場からスタートします。</li><li>左右の矢印で移動、JUMPで最大2段ジャンプ。モブくん同士はぶつかるので、前をふさがれたらジャンプして越えます。</li><li>岩の足場は部分ごとにヒビが入り、時間とともにどんどん崩落します。落下したらその時点で終了です。</li><li>最初に落ちると0点。最後の1人まで生き残ればCLEARで100点です。</li>`;
   }else if(index===85){
     rules=`<li>最初は円形の魂ゲージ。ゲージがMAXに近い瞬間を狙ってタップします。</li><li>次は円型ゲージの輪郭を指でなぞり、これを3回成功させます。</li><li>2つのゲージが終わると「モブくん波動パワー！」が出現。タップすると偽モブくんと波動の撃ち合いが始まります。</li><li>波動が強いほど小さく凝縮され、周囲のリング・火花・衝撃波が強化。かなり弱い場合だけ逆に押し負けます。</li>`;
+  }else if(index===86){
+    rules=`<li>3対3。中央ラインを越えず、敵3人を全滅させます。</li><li>移動・ジャンプ・射撃・リロード・グレネード・回復を使います。</li>`;
+  }else if(index===87){
+    rules=`<li>10秒間の縦シューティング。弾は自動発射です。</li><li>左右移動・ボム・3秒レーザーでスライムを倒します。</li>`;
   }else{
-    rules=`<li>3対3の戦場。自分のチームは左陣地、敵チームは右陣地で、中央ラインを越えることはできません。</li><li>← →で移動、JUMP、射撃、RELOAD、GRENADE、TEAM HEALを使用します。HPは全員10、マガジンは8発。</li><li>RELOADは1秒、GRENADEはCT5秒で威力5、TEAM HEALはCT3秒で味方全員を回復します。</li><li>味方Aは開始5秒後に3秒間ポータルを展開、味方Bは開始8秒後に3秒間ドームシールドを展開。敵3人を全滅させるまでの時間が記録です。</li>`;
+    rules=`<li>自動で走り、JUMPでロイター板を踏みます。</li><li>15段から20段までの跳び箱を順番に越えます。</li>`;
   }
+  const conciseRules=(rules.match(/<li>[\s\S]*?<\/li>/g)||[]).slice(0,2).join("");
+  rules=conciseRules||`<li>${esc(g.sub)}</li>`;
   screen.innerHTML=`
     <div class="game-head">
       <div><span class="kicker">${currentRoundLabel()}</span><h2>${g.title}</h2><p class="lead">${g.sub}</p></div>
@@ -1617,7 +1627,9 @@ function humanReady(gameIndex,humanIndex){
     else if(gameIndex===83)startScoutMan(p,humanIndex,runId);
     else if(gameIndex===84)startAtafutaSurvival(p,humanIndex,runId);
     else if(gameIndex===85)startWaveMaster(p,humanIndex,runId);
-    else startBattleRoyaleMob(p,humanIndex,runId);
+    else if(gameIndex===86)startBattleRoyaleMob(p,humanIndex,runId);
+    else if(gameIndex===87)startLittleMobShot(p,humanIndex,runId);
+    else startMonsterBoxMob(p,humanIndex,runId);
   },{once:true});
 }
 
@@ -22032,7 +22044,7 @@ async function startAtafutaSurvival(p,humanIndex,runId){
 async function startWaveMaster(p,humanIndex,runId){
   gameFit();
 
-  let phase='soul';
+  let phase='locked';
   let finished=false;
   let raf=null;
   let phaseStart=0;
@@ -22045,100 +22057,85 @@ async function startWaveMaster(p,humanIndex,runId){
   let traceHits=new Set();
   let traceMoves=0;
   let traceMisses=0;
+  let traceLength=0;
   let circleSamples=[];
 
-  screen.innerHTML=`<div class="wave-shell-v137">
+  screen.innerHTML=`<div class="wave-shell-v138">
     <div class="game-head">
       <div><span class="kicker">${esc(p.name)}</span><h2>モブくん波動を極める</h2></div>
       <div class="game-badge">${playBadge(humanIndex)}</div>
     </div>
 
     <div class="v125-hud">
-      <div><span>STEP</span><b id="waveStep137">1 / 2</b></div>
-      <div><span>POWER</span><b id="wavePower137">---</b></div>
+      <div><span>STEP</span><b id="waveStep138">1 / 2</b></div>
+      <div><span>POWER</span><b id="wavePower138">---</b></div>
     </div>
 
-    <div id="waveHelp137" class="wave-help-v137">
-      魂ゲージがMAXに近い瞬間を狙え
-    </div>
+    <div id="waveHelp138" class="wave-help-v138">魂ゲージがMAXに近い瞬間を狙え</div>
 
-    <div id="waveStage137" class="wave-stage-v137">
-      <div id="waveSoulPanel137" class="wave-soul-panel-v137">
-        <div id="soulGauge137" class="soul-gauge-v137">
-          <div id="soulCore137" class="soul-core-v137"></div>
-          <div class="soul-ring-v137 r1"></div>
-          <div class="soul-ring-v137 r2"></div>
+    <div id="waveStage138" class="wave-stage-v138">
+      <div id="waveSoulPanel138" class="wave-soul-panel-v138">
+        <div id="soulGauge138" class="soul-gauge-v138">
+          <div id="soulCore138" class="soul-core-v138"></div>
           <span>MAX</span>
         </div>
       </div>
 
-      <div id="waveCirclePanel137" class="wave-circle-panel-v137" hidden>
-        <div class="circle-round-v137">TRACE <b id="circleRound137">1 / 3</b></div>
-        <svg id="circleSvg137" class="circle-svg-v137" viewBox="0 0 240 240">
-          <circle id="circleTarget137" class="circle-target-v137" cx="120" cy="120" r="84"/>
-          <polyline id="circleUser137" class="circle-user-v137" points=""/>
+      <div id="waveCirclePanel138" class="wave-circle-panel-v138" hidden>
+        <div class="circle-round-v138">TRACE <b id="circleRound138">1 / 3</b></div>
+        <svg id="circleSvg138" class="circle-svg-v138" viewBox="0 0 240 240">
+          <circle class="circle-guide-outer-v138" cx="120" cy="120" r="93"/>
+          <circle id="circleTarget138" class="circle-target-v138" cx="120" cy="120" r="84"/>
+          <circle class="circle-guide-inner-v138" cx="120" cy="120" r="75"/>
+          <polyline id="circleUser138" class="circle-user-v138" points=""/>
         </svg>
-        <div id="circleProgress137" class="circle-progress-v137">0%</div>
+        <div class="circle-trace-label-v138">太いリングを1周なぞる</div>
+        <div id="circleProgress138" class="circle-progress-v138">0%</div>
       </div>
 
-      <div id="waveCinema137" class="wave-cinema-v137" hidden></div>
+      <div id="waveCinema138" class="wave-cinema-v138" hidden></div>
     </div>
 
-    <div id="waveControl137" class="wave-control-v137">
-      <button id="soulTap137" type="button" class="primary">魂を込める！</button>
+    <div id="waveControl138" class="wave-control-v138">
+      <button id="soulTap138" type="button" class="primary" disabled>魂を込める！</button>
     </div>
   </div>`;
 
-  const stage=document.getElementById('waveStage137');
-  const help=document.getElementById('waveHelp137');
-  const stepEl=document.getElementById('waveStep137');
-  const powerEl=document.getElementById('wavePower137');
-  const soulPanel=document.getElementById('waveSoulPanel137');
-  const soulGauge=document.getElementById('soulGauge137');
-  const soulCore=document.getElementById('soulCore137');
-  const soulBtn=document.getElementById('soulTap137');
-  const circlePanel=document.getElementById('waveCirclePanel137');
-  const circleSvg=document.getElementById('circleSvg137');
-  const circleTarget=document.getElementById('circleTarget137');
-  const circleUser=document.getElementById('circleUser137');
-  const circleRoundEl=document.getElementById('circleRound137');
-  const circleProgress=document.getElementById('circleProgress137');
-  const cinema=document.getElementById('waveCinema137');
-  const control=document.getElementById('waveControl137');
+  const stage=document.getElementById('waveStage138');
+  const help=document.getElementById('waveHelp138');
+  const stepEl=document.getElementById('waveStep138');
+  const powerEl=document.getElementById('wavePower138');
+  const soulPanel=document.getElementById('waveSoulPanel138');
+  const soulGauge=document.getElementById('soulGauge138');
+  const soulCore=document.getElementById('soulCore138');
+  const soulBtn=document.getElementById('soulTap138');
+  const circlePanel=document.getElementById('waveCirclePanel138');
+  const circleSvg=document.getElementById('circleSvg138');
+  const circleUser=document.getElementById('circleUser138');
+  const circleRoundEl=document.getElementById('circleRound138');
+  const circleProgress=document.getElementById('circleProgress138');
+  const cinema=document.getElementById('waveCinema138');
+  const control=document.getElementById('waveControl138');
 
   function soulFrame(now){
-    if(
-      finished ||
-      phase!=='soul' ||
-      !isGameRunValid(runId)
-    )return;
-
+    if(finished||phase!=='soul'||!isGameRunValid(runId))return;
     const cyc=((now-phaseStart)%1550)/1550;
     soulPct=cyc*100;
-
-    soulGauge.style.background=
-      `conic-gradient(#ffe65b ${soulPct*3.6}deg,#314250 0deg)`;
-
-    // Stronger energy visually condenses toward the center.
-    soulCore.style.transform=
-      `translate(-50%,-50%) scale(${1.12-soulPct/245})`;
-
+    soulGauge.style.background=`conic-gradient(#ffe65b ${soulPct*3.6}deg,#314250 0deg)`;
+    soulCore.style.transform=`translate(-50%,-50%) scale(${1.04-soulPct/330})`;
     raf=requestAnimationFrame(soulFrame);
   }
 
   function buildCircleSamples(){
-    const total=circleTarget.getTotalLength();
     circleSamples=[];
-
-    for(let i=0;i<48;i++){
-      const q=circleTarget.getPointAtLength(total*i/48);
-      circleSamples.push({x:q.x,y:q.y});
+    for(let i=0;i<72;i++){
+      const a=Math.PI*2*i/72;
+      circleSamples.push({x:120+Math.cos(a)*84,y:120+Math.sin(a)*84});
     }
   }
 
   function localCircle(e){
     const r=circleSvg.getBoundingClientRect();
-
     return{
       x:clamp((e.clientX-r.left)/r.width*240,0,240),
       y:clamp((e.clientY-r.top)/r.height*240,0,240)
@@ -22147,24 +22144,22 @@ async function startWaveMaster(p,humanIndex,runId){
 
   function addTracePoint(q){
     traceMoves++;
-
-    let nearest=-1;
-    let nearestDist=999;
-
-    for(let i=0;i<circleSamples.length;i++){
-      const p=circleSamples[i];
-      const d=Math.hypot(q.x-p.x,q.y-p.y);
-
-      if(d<nearestDist){
-        nearestDist=d;
-        nearest=i;
-      }
+    if(tracePointer&&tracePointer.points.length>1){
+      const prev=tracePointer.points[tracePointer.points.length-2];
+      traceLength+=Math.hypot(q.x-prev.x,q.y-prev.y);
     }
 
-    if(nearestDist<=18){
+    let nearest=-1,nearestDist=999;
+    for(let i=0;i<circleSamples.length;i++){
+      const sp=circleSamples[i];
+      const d=Math.hypot(q.x-sp.x,q.y-sp.y);
+      if(d<nearestDist){nearestDist=d;nearest=i;}
+    }
+
+    if(nearestDist<=16){
       traceHits.add(nearest);
       traceHits.add((nearest+1)%circleSamples.length);
-      traceHits.add((nearest+circleSamples.length-1)%circleSamples.length);
+      traceHits.add((nearest+71)%circleSamples.length);
     }else{
       traceMisses++;
     }
@@ -22172,7 +22167,7 @@ async function startWaveMaster(p,humanIndex,runId){
     const coverage=traceHits.size/circleSamples.length;
     circleProgress.textContent=`${Math.round(coverage*100)}%`;
 
-    if(coverage>=.88){
+    if(coverage>=.92&&traceMoves>=34&&traceLength>=390){
       finishTraceRound();
     }
   }
@@ -22181,8 +22176,8 @@ async function startWaveMaster(p,humanIndex,runId){
     traceHits=new Set();
     traceMoves=0;
     traceMisses=0;
+    traceLength=0;
     tracePointer=null;
-
     circleUser.setAttribute('points','');
     circleProgress.textContent='0%';
     circleRoundEl.textContent=`${traceRound+1} / 3`;
@@ -22190,40 +22185,22 @@ async function startWaveMaster(p,humanIndex,runId){
 
   async function finishTraceRound(){
     if(phase!=='circle')return;
-
     phase='circle-lock';
 
-    const accuracy=
-      traceMoves
-        ? clamp(100-traceMisses/traceMoves*92,0,100)
-        : 0;
-
-    const coverage=
-      traceHits.size/circleSamples.length*100;
-
-    const score=clamp(
-      Math.round(
-        accuracy*.64+
-        coverage*.36
-      ),
-      0,100
-    );
+    const accuracy=traceMoves?clamp(100-traceMisses/traceMoves*95,0,100):0;
+    const coverage=traceHits.size/circleSamples.length*100;
+    const smooth=clamp(100-Math.abs(traceLength-528)*.12,55,100);
+    const score=clamp(Math.round(accuracy*.50+coverage*.35+smooth*.15),0,100);
 
     traceScores.push(score);
-
-    circlePanel.classList.add('success-v137');
+    circlePanel.classList.add('success-v138');
     circleProgress.textContent=`${score} POINT`;
+    beep(score>=90?980:score>=75?790:610,100,.025);
 
-    beep(
-      score>=90?980:
-      score>=75?790:610,
-      100,.025
-    );
-
-    await wait(430);
+    await wait(480);
     if(!isGameRunValid(runId))return;
 
-    circlePanel.classList.remove('success-v137');
+    circlePanel.classList.remove('success-v138');
     traceRound++;
 
     if(traceRound>=3){
@@ -22239,52 +22216,32 @@ async function startWaveMaster(p,humanIndex,runId){
     if(phase!=='circle'||finished)return;
     e.preventDefault();
 
-    tracePointer={
-      id:e.pointerId,
-      points:[localCircle(e)]
-    };
-
+    tracePointer={id:e.pointerId,points:[localCircle(e)]};
     addTracePoint(tracePointer.points[0]);
 
-    try{
-      circleSvg.setPointerCapture(e.pointerId);
-    }catch(_){}
+    try{circleSvg.setPointerCapture(e.pointerId)}catch(_){}
   },{passive:false});
 
   circleSvg.addEventListener('pointermove',e=>{
-    if(
-      phase!=='circle' ||
-      !tracePointer ||
-      e.pointerId!==tracePointer.id
-    )return;
-
+    if(phase!=='circle'||!tracePointer||e.pointerId!==tracePointer.id)return;
     e.preventDefault();
 
     const q=localCircle(e);
     const prev=tracePointer.points[tracePointer.points.length-1];
-
     if(Math.hypot(q.x-prev.x,q.y-prev.y)<2)return;
 
     tracePointer.points.push(q);
     addTracePoint(q);
-
-    circleUser.setAttribute(
-      'points',
-      tracePointer.points
-        .map(p=>`${p.x.toFixed(1)},${p.y.toFixed(1)}`)
-        .join(' ')
-    );
+    circleUser.setAttribute('points',tracePointer.points.map(pt=>`${pt.x.toFixed(1)},${pt.y.toFixed(1)}`).join(' '));
   },{passive:false});
 
   const endCircle=e=>{
     if(!tracePointer)return;
     if(e&&e.pointerId!==tracePointer.id)return;
     if(e)e.preventDefault();
-
     tracePointer=null;
     circleUser.setAttribute('points','');
   };
-
   circleSvg.addEventListener('pointerup',endCircle,{passive:false});
   circleSvg.addEventListener('pointercancel',endCircle,{passive:false});
 
@@ -22293,1127 +22250,540 @@ async function startWaveMaster(p,humanIndex,runId){
     e.preventDefault();
 
     phase='soul-lock';
-
     if(raf)cancelAnimationFrame(raf);
 
-    soulScore=clamp(
-      Math.round(
-        100-Math.abs(100-soulPct)*1.08
-      ),
-      0,100
-    );
-
+    soulScore=clamp(Math.round(100-Math.abs(100-soulPct)*1.08),0,100);
     powerEl.textContent=`${soulScore}%`;
     soulBtn.disabled=true;
+    soulGauge.classList.add('locked-v138');
 
-    soulGauge.classList.add('locked-v137');
-
-    beep(
-      soulScore>=95?1080:
-      soulScore>=80?850:570,
-      120,.035
-    );
+    beep(soulScore>=95?1080:soulScore>=80?850:570,120,.035);
 
     setTimeout(()=>{
       if(!isGameRunValid(runId)||finished)return;
-
       soulPanel.hidden=true;
       circlePanel.hidden=false;
-
       stepEl.textContent='2 / 2';
-      help.textContent='円型ゲージを3回なぞれ';
+      help.textContent='太い円型ゲージを3回なぞれ';
       control.innerHTML='';
-
       buildCircleSamples();
       traceRound=0;
       phase='circle';
       resetCircleRound();
-    },420);
+    },430);
   },{passive:false});
 
   function prepareWave(){
     phase='ready';
-
-    const traceAvg=
-      traceScores.length
-        ? traceScores.reduce((a,b)=>a+b,0)/traceScores.length
-        : 0;
-
-    const finalPower=clamp(
-      Math.round(
-        soulScore*.55+
-        traceAvg*.45
-      ),
-      0,100
-    );
-
+    const traceAvg=traceScores.reduce((a,b)=>a+b,0)/Math.max(1,traceScores.length);
+    const finalPower=clamp(Math.round(soulScore*.55+traceAvg*.45),0,100);
     powerEl.textContent=`${finalPower}%`;
     help.textContent='波動を放て！';
 
     circlePanel.hidden=true;
     cinema.hidden=false;
 
-    // Stronger waves are intentionally MORE condensed, not larger.
-    const playerCore=
-      Math.round(64-finalPower*.22);
-
-    const enemyPower=randi(39,57);
-    const enemyCore=Math.round(64-enemyPower*.20);
+    const playerCore=Math.round(58-finalPower*.20);
+    const enemyPower=randi(48,66);
+    const enemyCore=Math.round(57-enemyPower*.16);
 
     cinema.innerHTML=`
-      <div class="wave-duel-bg-v137"></div>
-      <div class="wave-duel-ground-v137"></div>
+      <div class="wave-duel-bg-v138"></div>
+      <div class="wave-duel-ground-v138"></div>
+      <div id="wavePlayer138" class="wave-duel-mob-v138 player-v138" style="background-image:url('icon/01.png')"></div>
+      <div id="waveEnemy138" class="wave-duel-mob-v138 enemy-v138" style="background-image:url('icon/10.png')"></div>
 
-      <div id="wavePlayer137" class="wave-duel-mob-v137 player-v137" style="background-image:url('icon/01.png')"></div>
-      <div id="waveEnemy137" class="wave-duel-mob-v137 enemy-v137" style="background-image:url('icon/10.png')"></div>
+      <div id="wavePlayerCharge138" class="wave-charge-aura-v138 player-v138"></div>
+      <div id="waveEnemyCharge138" class="wave-charge-aura-v138 enemy-v138"></div>
 
-      <div id="wavePlayerOrb137" class="wave-duel-orb-v137 player-v137" style="--core:${playerCore}px;--power:${finalPower}"></div>
-      <div id="waveEnemyOrb137" class="wave-duel-orb-v137 enemy-v137" style="--core:${enemyCore}px;--power:${enemyPower}"></div>
+      <div id="wavePlayerOrb138" class="wave-duel-orb-v138 player-v138" style="--core:${playerCore}px"></div>
+      <div id="waveEnemyOrb138" class="wave-duel-orb-v138 enemy-v138" style="--core:${enemyCore}px"></div>
 
-      <div id="wavePlayerBeam137" class="wave-duel-beam-v137 player-v137"></div>
-      <div id="waveEnemyBeam137" class="wave-duel-beam-v137 enemy-v137"></div>
-      <div id="waveClash137" class="wave-duel-clash-v137"></div>
-      <div id="waveDuelFx137" class="wave-duel-fx-v137"></div>
-      <div id="waveCineText137" class="wave-cine-text-v137"></div>
+      <div id="wavePlayerBeam138" class="wave-duel-beam-v138 player-v138"></div>
+      <div id="waveEnemyBeam138" class="wave-duel-beam-v138 enemy-v138"></div>
+      <div id="waveClash138" class="wave-duel-clash-v138"></div>
+      <div id="waveDuelFx138" class="wave-duel-fx-v138"></div>
+      <div id="waveCineText138" class="wave-cine-text-v138"></div>
     `;
 
-    const orb=document.getElementById('wavePlayerOrb137');
-    orb.classList.toggle('strong-v137',finalPower>=75);
-    orb.classList.toggle('max-v137',finalPower>=93);
+    if(finalPower>=78)document.getElementById('wavePlayerOrb138').classList.add('strong-v138');
+    if(finalPower>=94)document.getElementById('wavePlayerOrb138').classList.add('max-v138');
+    document.getElementById('waveEnemyOrb138').classList.add('enemy-strong-v138');
 
-    control.innerHTML=`
-      <button id="waveFire137" class="primary wave-fire-btn-v137" type="button">
-        モブくん波動パワー！
-      </button>
-    `;
-
-    document.getElementById('waveFire137')
-      .addEventListener('pointerdown',e=>{
-        e.preventDefault();
-        fireWaveDuel(finalPower,enemyPower);
-      },{passive:false});
+    control.innerHTML=`<button id="waveFire138" class="primary wave-fire-btn-v138" type="button">モブくん波動パワー！</button>`;
+    document.getElementById('waveFire138').addEventListener('pointerdown',e=>{
+      e.preventDefault();
+      fireWaveDuel(finalPower,enemyPower);
+    },{passive:false});
   }
 
   async function fireWaveDuel(finalPower,enemyPower){
     if(phase!=='ready'||finished)return;
+    phase='duel-charge';
 
-    phase='duel';
-
-    const btn=document.getElementById('waveFire137');
-    const player=document.getElementById('wavePlayer137');
-    const enemy=document.getElementById('waveEnemy137');
-    const pOrb=document.getElementById('wavePlayerOrb137');
-    const eOrb=document.getElementById('waveEnemyOrb137');
-    const pBeam=document.getElementById('wavePlayerBeam137');
-    const eBeam=document.getElementById('waveEnemyBeam137');
-    const clash=document.getElementById('waveClash137');
-    const fx=document.getElementById('waveDuelFx137');
-    const cine=document.getElementById('waveCineText137');
+    const btn=document.getElementById('waveFire138');
+    const player=document.getElementById('wavePlayer138');
+    const enemy=document.getElementById('waveEnemy138');
+    const pOrb=document.getElementById('wavePlayerOrb138');
+    const eOrb=document.getElementById('waveEnemyOrb138');
+    const pAura=document.getElementById('wavePlayerCharge138');
+    const eAura=document.getElementById('waveEnemyCharge138');
+    const pBeam=document.getElementById('wavePlayerBeam138');
+    const eBeam=document.getElementById('waveEnemyBeam138');
+    const clash=document.getElementById('waveClash138');
+    const fx=document.getElementById('waveDuelFx138');
+    const cine=document.getElementById('waveCineText138');
 
     btn.disabled=true;
+    cine.textContent='さらにエネルギーを凝縮…！';
+    cine.classList.add('show-v138');
+    pAura.classList.add('charge-v138');
+    eAura.classList.add('charge-v138');
+    pOrb.classList.add('deep-charge-v138');
+    eOrb.classList.add('deep-charge-v138');
+    player.classList.add('charging-v138');
+    enemy.classList.add('charging-v138');
 
-    cine.textContent='波動パワー!!';
-    cine.classList.add('show-v137');
+    for(let i=0;i<6;i++){
+      if(!isGameRunValid(runId))return;
+      stage.classList.toggle('charge-rumble-v138',i%2===0);
+      beep((i%2?320:250)+finalPower*2,70,.02);
+      await wait(220);
+    }
 
-    pOrb.classList.add('charge-v137');
-    eOrb.classList.add('charge-v137');
+    stage.classList.remove('charge-rumble-v138');
+    cine.textContent='波動激突！！';
+    pAura.classList.remove('charge-v138');
+    eAura.classList.remove('charge-v138');
+    player.classList.remove('charging-v138');
+    enemy.classList.remove('charging-v138');
 
-    beep(320+finalPower*4,150,.05);
-
-    await wait(480);
-    if(!isGameRunValid(runId))return;
-
-    pBeam.classList.add('fire-v137');
-    eBeam.classList.add('fire-v137');
-    clash.classList.add('active-v137');
+    pBeam.classList.add('fire-v138');
+    eBeam.classList.add('fire-v138');
+    clash.classList.add('active-v138');
+    phase='duel';
 
     const weakLose=finalPower<24;
-    const clashDuration=randi(3200,4700);
+    const clashDuration=randi(3300,4900);
     const clashStart=performance.now();
 
     while(performance.now()-clashStart<clashDuration){
       if(!isGameRunValid(runId))return;
 
       const t=(performance.now()-clashStart)/clashDuration;
+      const oscillation=Math.sin(t*Math.PI*7)*5+Math.sin(t*Math.PI*13)*2.5;
+      const trend=weakLose?-23*t:Math.min(28,(finalPower-enemyPower)*.16+19*t);
+      const balance=clamp(50+trend+oscillation,25,75);
 
-      const balance=weakLose
-        ? 50-22*t
-        : 50+Math.min(29,(finalPower-enemyPower)*.20+20*t);
+      clash.style.left=`${balance}%`;
 
-      clash.style.left=`${clamp(balance,24,76)}%`;
+      const pShift=clamp((balance-50)*1.15,-26,31);
+      const eShift=clamp((balance-50)*1.05,-31,26);
+      player.style.translate=`${pShift}px 0`;
+      enemy.style.translate=`${eShift}px 0`;
+
+      pBeam.style.translate=`0 ${rand(-4,4)}px`;
+      eBeam.style.translate=`0 ${rand(-4,4)}px`;
+      pOrb.style.translate=`${rand(-2,2)}px ${rand(-3,3)}px`;
+      eOrb.style.translate=`${rand(-3,3)}px ${rand(-3,3)}px`;
 
       fx.innerHTML='';
-      const sparkCount=
-        finalPower>=90?8:
-        finalPower>=70?5:
-        3;
-
+      const sparkCount=finalPower>=90?10:finalPower>=70?7:5;
       for(let i=0;i<sparkCount;i++){
-        const s=document.createElement('i');
-        s.style.setProperty('--sx',`${rand(-55,55)}px`);
-        s.style.setProperty('--sy',`${rand(-45,45)}px`);
-        fx.appendChild(s);
+        const sp=document.createElement('i');
+        sp.style.setProperty('--sx',`${rand(-70,70)}px`);
+        sp.style.setProperty('--sy',`${rand(-58,58)}px`);
+        sp.style.setProperty('--r',`${randi(0,180)}deg`);
+        fx.appendChild(sp);
       }
 
-      stage.classList.toggle(
-        'power-shake-v137',
-        finalPower>=78
-      );
-
-      beep(
-        155+randi(0,60),
-        22,.004
-      );
-
-      await wait(180);
+      stage.classList.toggle('power-shake-v138',finalPower>=70||Math.random()<.5);
+      beep(145+randi(0,80),22,.004);
+      await wait(150);
     }
 
-    if(!isGameRunValid(runId))return;
-
-    stage.classList.remove('power-shake-v137');
+    stage.classList.remove('power-shake-v138');
+    player.style.translate='';
+    enemy.style.translate='';
+    pBeam.style.translate='';
+    eBeam.style.translate='';
+    pOrb.style.translate='';
+    eOrb.style.translate='';
 
     if(weakLose){
-      pBeam.classList.add('burst-v137');
-      pOrb.classList.add('burst-v137');
-      player.classList.add('blown-v137');
-
+      pBeam.classList.add('burst-v138');
+      pOrb.classList.add('burst-v138');
+      player.classList.add('blown-v138');
       cine.textContent='押し負けた！！';
-      cine.classList.add('lose-v137');
-
-      beep(105,270,.065);
+      cine.classList.add('lose-v138');
+      beep(105,280,.065);
     }else{
-      eBeam.classList.add('burst-v137');
-      eOrb.classList.add('burst-v137');
-      enemy.classList.add('blown-v137');
-
-      cine.textContent=
-        finalPower>=90
-          ? '圧倒的波動！！'
-          : '波動勝負に勝利！！';
-
-      cine.classList.add('win-v137');
-
-      if(finalPower>=88){
-        stage.classList.add('finish-impact-v137');
-      }
-
-      beep(
-        finalPower>=90?1180:940,
-        260,.065
-      );
+      eBeam.classList.add('burst-v138');
+      eOrb.classList.add('burst-v138');
+      enemy.classList.add('blown-v138');
+      cine.textContent=finalPower>=90?'圧倒的波動！！':'波動勝負に勝利！！';
+      cine.classList.add('win-v138');
+      stage.classList.add('finish-impact-v138');
+      beep(finalPower>=90?1180:940,270,.065);
     }
 
-    await wait(1350);
+    await wait(1400);
     if(!isGameRunValid(runId))return;
 
     finished=true;
     state.records.waveMaster[p.id]=finalPower;
-
-    recordScreen(
-      85,p,humanIndex,
-      `${finalPower}<small>pt</small>`,
-      weakLose
-        ? '波動勝負 敗北'
-        : '波動勝負 勝利'
-    );
+    recordScreen(85,p,humanIndex,`${finalPower}<small>pt</small>`,weakLose?'波動勝負 敗北':'波動勝負 勝利');
   }
 
+  soulBtn.disabled=true;
   if(!(await countdown('SOUL GAUGE',runId,{transparent:true})))return;
 
+  if(!isGameRunValid(runId))return;
   phase='soul';
+  soulBtn.disabled=false;
   phaseStart=performance.now();
   raf=requestAnimationFrame(soulFrame);
 }
 
 
 
-// =========================================================
-// V10.37 GAME 87 — モブくんバトロワに出陣
-// =========================================================
 async function startBattleRoyaleMob(p,humanIndex,runId){
   gameFit();
 
-  let active=false;
-  let finished=false;
-  let raf=null;
-  let last=0;
-  let start=0;
+  let active=false,finished=false,raf=null,last=0,start=0;
+  let ammo=8,reloading=false,reloadUntil=0,grenadeReadyAt=0,healReadyAt=0;
+  let allyPortal=null,allyPortalUntil=0,allyPortalDone=false;
+  let enemyPortal=null,enemyPortalUntil=0,enemyPortalReadyAt=0;
+  const input={left:false,right:false},actors=[],bullets=[],grenades=[],stunGrenades=[];
 
-  let ammo=8;
-  let reloading=false;
-  let reloadUntil=0;
-  let grenadeReadyAt=0;
-  let healReadyAt=0;
-
-  let portalStartDone=false;
-  let portalUntil=0;
-  let portalPair=null;
-
-  let domeStartDone=false;
-  let domeUntil=0;
-  let dome=null;
-
-  const input={left:false,right:false};
-  const actors=[];
-  const bullets=[];
-  const grenades=[];
-
-  screen.innerHTML=`<div class="br-shell-v137">
-    <div class="game-head">
-      <div><span class="kicker">${esc(p.name)}</span><h2>モブくんバトロワに出陣</h2></div>
-      <div class="game-badge">${playBadge(humanIndex)}</div>
+  screen.innerHTML=`<div class="br-shell-v138">
+    <div class="game-head"><div><span class="kicker">${esc(p.name)}</span><h2>モブくんFPSアリーナに挑戦</h2></div><div class="game-badge">${playBadge(humanIndex)}</div></div>
+    <div class="br-hud-v138">
+      <div><span>TIME</span><b id="brTime138">0.00</b></div>
+      <div><span>AMMO</span><b id="brAmmo138">8 / 8</b></div>
+      <div><span>ALLY</span><b id="brAlly138">60 HP</b></div>
+      <div><span>ENEMY</span><b id="brEnemy138">60 HP</b></div>
     </div>
-
-    <div class="br-hud-v137">
-      <div><span>TIME</span><b id="brTime137">0.00</b></div>
-      <div><span>AMMO</span><b id="brAmmo137">8 / 8</b></div>
-      <div><span>ALLY</span><b id="brAlly137">30 HP</b></div>
-      <div><span>ENEMY</span><b id="brEnemy137">30 HP</b></div>
+    <div class="br-help-v138">中央ライン越境禁止 / 敵3人を全滅させろ</div>
+    <div id="brStage138" class="br-stage-v138">
+      <div class="br-war-sky-v138"></div><div class="br-ground-v138"></div><div class="br-center-line-v138"><span>NO ENTRY</span></div>
+      <div class="br-platform-v138 ally p1"></div><div class="br-platform-v138 ally p2"></div>
+      <div class="br-platform-v138 enemy p1"></div><div class="br-platform-v138 enemy p2"></div>
+      <div id="brActorLayer138" class="br-actor-layer-v138"></div>
+      <div id="brBulletLayer138" class="br-bullet-layer-v138"></div>
+      <div id="brGrenadeLayer138" class="br-grenade-layer-v138"></div>
+      <div id="brAbilityLayer138" class="br-ability-layer-v138"></div>
+      <div id="brFx138" class="br-fx-v138"></div>
+      <div id="brMessage138" class="br-message-v138"></div>
     </div>
-
-    <div class="br-help-v137">
-      中央ライン越境禁止 / 敵3人を全滅させろ
-    </div>
-
-    <div id="brStage137" class="br-stage-v137">
-      <div class="br-war-sky-v137"></div>
-      <div class="br-ruins-v137 left"><i></i><i></i><i></i></div>
-      <div class="br-ruins-v137 right"><i></i><i></i><i></i></div>
-
-      <div class="br-ground-v137"></div>
-      <div class="br-center-line-v137"><span>NO ENTRY</span></div>
-
-      <div class="br-platform-v137 p1"></div>
-      <div class="br-platform-v137 p2"></div>
-
-      <div id="brActorLayer137" class="br-actor-layer-v137"></div>
-      <div id="brBulletLayer137" class="br-bullet-layer-v137"></div>
-      <div id="brGrenadeLayer137" class="br-grenade-layer-v137"></div>
-      <div id="brAbilityLayer137" class="br-ability-layer-v137"></div>
-      <div id="brFx137" class="br-fx-v137"></div>
-      <div id="brMessage137" class="br-message-v137"></div>
-    </div>
-
-    <div class="br-move-controls-v137">
-      <button id="brLeft137" type="button">←</button>
-      <button id="brJump137" type="button">JUMP</button>
-      <button id="brRight137" type="button">→</button>
-    </div>
-
-    <div class="br-action-controls-v137">
-      <button id="brShoot137" class="shoot" type="button">射撃 <b>8</b></button>
-      <button id="brReload137" type="button">RELOAD <b>READY</b></button>
-      <button id="brGrenade137" type="button">GRENADE <b>READY</b></button>
-      <button id="brHeal137" type="button">TEAM HEAL <b>READY</b></button>
+    <div class="br-move-controls-v138"><button id="brLeft138">←</button><button id="brJump138">JUMP</button><button id="brRight138">→</button></div>
+    <div class="br-action-controls-v138">
+      <button id="brShoot138" class="shoot">射撃 <b>8</b></button>
+      <button id="brReload138">RELOAD <b>READY</b></button>
+      <button id="brGrenade138">GRENADE <b>READY</b></button>
+      <button id="brHeal138">TEAM HEAL <b>READY</b></button>
     </div>
   </div>`;
 
-  const stage=document.getElementById('brStage137');
-  const actorLayer=document.getElementById('brActorLayer137');
-  const bulletLayer=document.getElementById('brBulletLayer137');
-  const grenadeLayer=document.getElementById('brGrenadeLayer137');
-  const abilityLayer=document.getElementById('brAbilityLayer137');
-  const fx=document.getElementById('brFx137');
-  const msg=document.getElementById('brMessage137');
+  const stage=document.getElementById('brStage138'),actorLayer=document.getElementById('brActorLayer138'),bulletLayer=document.getElementById('brBulletLayer138'),grenadeLayer=document.getElementById('brGrenadeLayer138'),abilityLayer=document.getElementById('brAbilityLayer138'),fx=document.getElementById('brFx138'),msg=document.getElementById('brMessage138');
+  const timeEl=document.getElementById('brTime138'),ammoEl=document.getElementById('brAmmo138'),allyEl=document.getElementById('brAlly138'),enemyEl=document.getElementById('brEnemy138');
+  const leftBtn=document.getElementById('brLeft138'),rightBtn=document.getElementById('brRight138'),jumpBtn=document.getElementById('brJump138'),shootBtn=document.getElementById('brShoot138'),reloadBtn=document.getElementById('brReload138'),grenadeBtn=document.getElementById('brGrenade138'),healBtn=document.getElementById('brHeal138');
 
-  const timeEl=document.getElementById('brTime137');
-  const ammoEl=document.getElementById('brAmmo137');
-  const allyEl=document.getElementById('brAlly137');
-  const enemyEl=document.getElementById('brEnemy137');
+  const W=Math.max(300,stage.clientWidth||340),H=Math.max(300,stage.clientHeight||360),centerX=W/2,groundY=H-48;
+  const allyPlatforms=[{x:W*.07,y:groundY-76,w:W*.20},{x:W*.27,y:groundY-134,w:W*.17}];
+  const enemyPlatforms=[{x:W*.73,y:groundY-76,w:W*.20},{x:W*.56,y:groundY-134,w:W*.17}];
 
-  const leftBtn=document.getElementById('brLeft137');
-  const rightBtn=document.getElementById('brRight137');
-  const jumpBtn=document.getElementById('brJump137');
-  const shootBtn=document.getElementById('brShoot137');
-  const reloadBtn=document.getElementById('brReload137');
-  const grenadeBtn=document.getElementById('brGrenade137');
-  const healBtn=document.getElementById('brHeal137');
-
-  const W=Math.max(300,stage.clientWidth||340);
-  const H=Math.max(300,stage.clientHeight||360);
-  const centerX=W/2;
-  const groundY=H-52;
-
-  const platforms=[
-    {x:W*.09,y:groundY-78,w:W*.22,h:12},
-    {x:W*.27,y:groundY-135,w:W*.18,h:12}
-  ];
-
-  function makeActor({
-    id,
-    team,
-    x,
-    img,
-    player=false,
-    label=''
-  }){
+  function makeActor(o){
     const el=document.createElement('div');
-    el.className=`br-actor-v137 ${team} ${player?'player-v137':''}`;
-    el.style.backgroundImage=`url('${img}')`;
-    el.innerHTML=`
-      <span>${label}</span>
-      <div class="br-hpbar-v137"><i></i></div>
-    `;
+    el.className=`br-actor-v138 ${o.team} ${o.player?'player-v138':''}`;
+    el.style.backgroundImage=`url('${o.img}')`;
+    el.innerHTML=`<span>${o.label}</span><div class="br-hpbar-v138"><i></i></div>`;
     actorLayer.appendChild(el);
-
-    const a={
-      id,team,x,
-      y:groundY-38,
-      prevY:groundY-38,
-      vx:0,vy:0,
-      w:30,h:38,
-      hp:10,maxHp:10,
-      alive:true,
-      player,
-      onGround:true,
-      nextShot:0,
-      nextJump:0,
-      portalLock:0,
-      el,
-      hpEl:el.querySelector('.br-hpbar-v137 i')
-    };
-
-    el.style.left=`${a.x}px`;
-    el.style.top=`${a.y}px`;
-
-    actors.push(a);
-    return a;
+    const a={...o,y:groundY-38,vx:0,vy:0,w:30,h:38,hp:20,maxHp:20,alive:true,onGround:true,nextShot:0,nextJump:0,nextDecision:0,targetX:o.x,targetY:groundY-38,portalLock:0,voidUntil:0,voidReadyAt:0,stunUntil:0,stunReadyAt:0,el,hpEl:el.querySelector('i')};
+    el.style.left=`${a.x}px`;el.style.top=`${a.y}px`;actors.push(a);return a;
   }
 
-  const player=makeActor({
-    id:'player',
-    team:'ally',
-    x:W*.16,
-    img:'icon/01.png',
-    player:true,
-    label:'YOU'
-  });
+  const player=makeActor({id:'player',team:'ally',x:W*.12,img:'icon/01.png',player:true,label:'YOU',role:''});
+  const allyA=makeActor({id:'allyA',team:'ally',x:W*.27,img:'icon/02.png',label:'ALLY A',role:'portal'});
+  const allyB=makeActor({id:'allyB',team:'ally',x:W*.40,img:'icon/03.png',label:'ALLY B',role:'support'});
+  const enemyA=makeActor({id:'enemyA',team:'enemy',x:W*.60,img:'icon/08.png',label:'ENEMY A',role:'portal'});
+  const enemyB=makeActor({id:'enemyB',team:'enemy',x:W*.74,img:'icon/09.png',label:'ENEMY B',role:'void'});
+  const enemyC=makeActor({id:'enemyC',team:'enemy',x:W*.87,img:'icon/10.png',label:'ENEMY C',role:'stun'});
 
-  const allyA=makeActor({
-    id:'allyA',
-    team:'ally',
-    x:W*.29,
-    img:'icon/02.png',
-    label:'ALLY A'
-  });
+  const allies=()=>actors.filter(a=>a.team==='ally'&&a.alive),enemies=()=>actors.filter(a=>a.team==='enemy'&&a.alive);
+  const teamHp=t=>actors.filter(a=>a.team===t&&a.alive).reduce((s,a)=>s+a.hp,0);
 
-  const allyB=makeActor({
-    id:'allyB',
-    team:'ally',
-    x:W*.39,
-    img:'icon/03.png',
-    label:'ALLY B'
-  });
-
-  const enemyA=makeActor({
-    id:'enemyA',
-    team:'enemy',
-    x:W*.61,
-    img:'icon/08.png',
-    label:'ENEMY'
-  });
-
-  const enemyB=makeActor({
-    id:'enemyB',
-    team:'enemy',
-    x:W*.75,
-    img:'icon/09.png',
-    label:'ENEMY'
-  });
-
-  const enemyC=makeActor({
-    id:'enemyC',
-    team:'enemy',
-    x:W*.88,
-    img:'icon/10.png',
-    label:'ENEMY'
-  });
-
-  function allies(){
-    return actors.filter(a=>a.team==='ally'&&a.alive);
-  }
-
-  function enemies(){
-    return actors.filter(a=>a.team==='enemy'&&a.alive);
-  }
-
-  function teamHp(team){
-    return actors
-      .filter(a=>a.team===team&&a.alive)
-      .reduce((s,a)=>s+a.hp,0);
-  }
-
+  function updateHp(a){a.hpEl.style.width=`${clamp(a.hp/a.maxHp*100,0,100)}%`}
   function updateHud(now=performance.now()){
-    ammoEl.textContent=`${ammo} / 8`;
-    allyEl.textContent=`${teamHp('ally')} HP`;
-    enemyEl.textContent=`${teamHp('enemy')} HP`;
-
-    const reloadLeft=Math.max(0,reloadUntil-now);
-    reloadBtn.querySelector('b').textContent=
-      reloading
-        ? `${(reloadLeft/1000).toFixed(1)}`
-        : 'READY';
-
-    const grenadeLeft=Math.max(0,grenadeReadyAt-now);
-    grenadeBtn.querySelector('b').textContent=
-      grenadeLeft>0
-        ? `${(grenadeLeft/1000).toFixed(1)}`
-        : 'READY';
-
-    const healLeft=Math.max(0,healReadyAt-now);
-    healBtn.querySelector('b').textContent=
-      healLeft>0
-        ? `${(healLeft/1000).toFixed(1)}`
-        : 'READY';
-
+    ammoEl.textContent=`${ammo} / 8`;allyEl.textContent=`${teamHp('ally')} HP`;enemyEl.textContent=`${teamHp('enemy')} HP`;
+    reloadBtn.querySelector('b').textContent=reloading?`${(Math.max(0,reloadUntil-now)/1000).toFixed(1)}`:'READY';
+    grenadeBtn.querySelector('b').textContent=now<grenadeReadyAt?`${((grenadeReadyAt-now)/1000).toFixed(1)}`:'READY';
+    healBtn.querySelector('b').textContent=now<healReadyAt?`${((healReadyAt-now)/1000).toFixed(1)}`:'READY';
     shootBtn.querySelector('b').textContent=ammo;
   }
-
-  function updateActorHp(a){
-    a.hpEl.style.width=`${clamp(a.hp/a.maxHp*100,0,100)}%`;
-  }
-
-  function hitFx(x,y,text=''){
-    const e=document.createElement('div');
-    e.className='br-hit-fx-v137';
-    e.style.left=`${x}px`;
-    e.style.top=`${y}px`;
-    if(text)e.textContent=text;
-    fx.appendChild(e);
-    setTimeout(()=>e.remove(),500);
-  }
-
-  function eliminate(a){
-    if(!a.alive)return;
-
-    a.alive=false;
-    a.hp=0;
-    updateActorHp(a);
-
-    a.el.classList.add('down-v137');
-    hitFx(a.x+a.w/2,a.y,'DOWN');
-
-    beep(a.team==='enemy'?680:120,90,.025);
-
-    if(enemies().length===0){
-      finishWin();
-    }else if(allies().length===0){
-      finishLose();
-    }
-  }
-
-  function damage(a,amount){
-    if(!a.alive)return;
-
-    a.hp=clamp(a.hp-amount,0,a.maxHp);
-    updateActorHp(a);
-
-    a.el.classList.remove('hit-v137');
-    void a.el.offsetWidth;
-    a.el.classList.add('hit-v137');
-
-    hitFx(a.x+a.w/2,a.y+8,`-${amount}`);
-
-    if(a.hp<=0)eliminate(a);
-  }
-
-  function nearestTarget(a){
-    const pool=a.team==='ally'?enemies():allies();
-    if(!pool.length)return null;
-
-    return pool
-      .slice()
-      .sort((x,y)=>Math.abs(x.x-a.x)-Math.abs(y.x-a.x))[0];
-  }
+  function pop(x,y,text,cls=''){const e=document.createElement('div');e.className=`br-hit-fx-v138 ${cls}`;e.style.left=`${x}px`;e.style.top=`${y}px`;e.textContent=text;fx.appendChild(e);setTimeout(()=>e.remove(),550)}
+  function eliminate(a){if(!a.alive)return;a.alive=false;a.hp=0;updateHp(a);a.el.classList.add('down-v138');pop(a.x+a.w/2,a.y,'DOWN');beep(a.team==='enemy'?680:120,90,.025);if(enemies().length===0)finishWin();else if(allies().length===0)finishLose()}
+  function damage(a,n){if(!a.alive||performance.now()<a.voidUntil)return;a.hp=clamp(a.hp-n,0,20);updateHp(a);a.el.classList.remove('hit-v138');void a.el.offsetWidth;a.el.classList.add('hit-v138');pop(a.x+a.w/2,a.y+8,`-${n}`);if(a.hp<=0)eliminate(a)}
+  function nearestTarget(a){const pool=a.team==='ally'?enemies():allies();return pool.slice().sort((x,y)=>Math.hypot(x.x-a.x,x.y-a.y)-Math.hypot(y.x-a.x,y.y-a.y))[0]||null}
 
   function fireBullet(a,manual=false){
-    if(!a.alive)return;
-
-    const target=nearestTarget(a);
-    if(!target)return;
-
-    if(manual){
-      if(reloading||ammo<=0)return;
-      ammo--;
-    }
-
-    const dir=a.team==='ally'?1:-1;
-
-    const el=document.createElement('i');
-    el.className=`br-bullet-v137 ${a.team}`;
-    bulletLayer.appendChild(el);
-
-    bullets.push({
-      team:a.team,
-      owner:a,
-      x:a.x+a.w/2+dir*17,
-      y:a.y+17,
-      vx:dir*(manual?430:345),
-      vy:0,
-      damage:1,
-      dead:false,
-      el
-    });
-
-    a.el.classList.remove('shoot-v137');
-    void a.el.offsetWidth;
-    a.el.classList.add('shoot-v137');
-
-    beep(manual?520:330,30,.009);
-    updateHud();
+    const now=performance.now();if(!a.alive||now<a.stunUntil)return;if(manual&&(reloading||ammo<=0))return;
+    const target=nearestTarget(a);if(!target)return;if(manual)ammo--;
+    const dir=a.team==='ally'?1:-1,dy=clamp((target.y+17)-(a.y+17),-70,70),dx=Math.max(60,Math.abs(target.x-a.x)),speed=manual?440:390;
+    const el=document.createElement('i');el.className=`br-bullet-v138 ${a.team}`;bulletLayer.appendChild(el);
+    bullets.push({team:a.team,x:a.x+a.w/2+dir*17,y:a.y+17,vx:dir*speed,vy:dy/dx*speed,damage:1,dead:false,el});
+    a.el.classList.remove('shoot-v138');void a.el.offsetWidth;a.el.classList.add('shoot-v138');beep(manual?520:330,28,.008);updateHud(now);
   }
 
-  function reload(){
-    const now=performance.now();
-
-    if(
-      !active||
-      finished||
-      reloading||
-      ammo===8
-    )return;
-
-    reloading=true;
-    reloadUntil=now+1000;
-    reloadBtn.disabled=true;
-
-    msg.textContent='RELOAD';
-    msg.classList.add('small-v137');
-
-    beep(280,45,.012);
+  function reload(){const now=performance.now();if(!active||finished||reloading||ammo===8)return;reloading=true;reloadUntil=now+1000;reloadBtn.disabled=true;msg.textContent='RELOAD';beep(280,45,.012)}
+  function spawnGrenade(owner,type='damage'){
+    const dir=owner.team==='ally'?1:-1,el=document.createElement('div');el.className=`br-grenade-v138 ${type==='stun'?'stun-v138':''}`;grenadeLayer.appendChild(el);
+    (type==='stun'?stunGrenades:grenades).push({owner,team:owner.team,type,x:owner.x+owner.w/2,y:owner.y+4,vx:dir*220,vy:-245,fuse:performance.now()+1050,dead:false,el});
   }
+  function playerGrenade(){const now=performance.now();if(!active||finished||now<grenadeReadyAt||!player.alive)return;grenadeReadyAt=now+5000;spawnGrenade(player);updateHud(now)}
+  function teamHeal(){const now=performance.now();if(!active||finished||now<healReadyAt||!player.alive)return;healReadyAt=now+3000;for(const a of allies()){a.hp=clamp(a.hp+4,0,20);updateHp(a);a.el.classList.add('heal-v138');setTimeout(()=>a.el.classList.remove('heal-v138'),300)}msg.textContent='TEAM HEAL +4';beep(870,100,.025);updateHud(now)}
+  function jump(a){const now=performance.now();if(!a.alive||!a.onGround||now<a.stunUntil)return;a.vy=-255;a.onGround=false;a.el.classList.add('jump-v138');setTimeout(()=>a.el.classList.remove('jump-v138'),160)}
+  function activateVoid(a,now){if(a.role!=='void'||now<a.voidReadyAt||!a.alive)return;a.voidUntil=now+2000;a.voidReadyAt=now+3000;a.el.classList.add('void-v138');pop(a.x,a.y,'VOID');setTimeout(()=>a.el.classList.remove('void-v138'),2000)}
 
-  function throwGrenade(){
-    const now=performance.now();
-
-    if(
-      !active||
-      finished||
-      now<grenadeReadyAt||
-      !player.alive
-    )return;
-
-    grenadeReadyAt=now+5000;
-
-    const el=document.createElement('div');
-    el.className='br-grenade-v137';
-    grenadeLayer.appendChild(el);
-
-    grenades.push({
-      team:'ally',
-      x:player.x+player.w,
-      y:player.y+5,
-      vx:235,
-      vy:-265,
-      fuse:now+1150,
-      dead:false,
-      el
-    });
-
-    beep(450,55,.02);
-    updateHud(now);
-  }
-
-  function teamHeal(){
-    const now=performance.now();
-
-    if(
-      !active||
-      finished||
-      now<healReadyAt||
-      !player.alive
-    )return;
-
-    healReadyAt=now+3000;
-
-    for(const a of allies()){
-      a.hp=clamp(a.hp+3,0,a.maxHp);
-      updateActorHp(a);
-
-      a.el.classList.remove('heal-v137');
-      void a.el.offsetWidth;
-      a.el.classList.add('heal-v137');
-    }
-
-    const ring=document.createElement('div');
-    ring.className='br-heal-ring-v137';
-    abilityLayer.appendChild(ring);
-    setTimeout(()=>ring.remove(),650);
-
-    msg.textContent='TEAM HEAL +3';
-    msg.classList.add('small-v137');
-
-    beep(870,100,.025);
-    updateHud(now);
-  }
-
-  function jump(a){
-    if(!a.alive||!a.onGround)return;
-
-    a.vy=-250;
-    a.onGround=false;
-
-    a.el.classList.remove('jump-v137');
-    void a.el.offsetWidth;
-    a.el.classList.add('jump-v137');
-
-    beep(a.player?520:280,35,.01);
-  }
-
-  function bindHold(btn,key){
-    const on=e=>{
-      e.preventDefault();
-      if(active&&!finished)input[key]=true;
-      try{btn.setPointerCapture(e.pointerId)}catch(_){}
-    };
-    const off=e=>{
-      if(e)e.preventDefault();
-      input[key]=false;
-    };
-
-    btn.addEventListener('pointerdown',on,{passive:false});
-    btn.addEventListener('pointerup',off,{passive:false});
-    btn.addEventListener('pointercancel',off,{passive:false});
-    btn.addEventListener('lostpointercapture',off,{passive:false});
-  }
-
-  bindHold(leftBtn,'left');
-  bindHold(rightBtn,'right');
-
-  jumpBtn.addEventListener('pointerdown',e=>{
-    e.preventDefault();
-    if(active&&!finished)jump(player);
-  },{passive:false});
-
-  shootBtn.addEventListener('pointerdown',e=>{
-    e.preventDefault();
-
-    if(!active||finished||!player.alive)return;
-
-    if(ammo<=0){
-      reload();
-      return;
-    }
-
-    fireBullet(player,true);
-  },{passive:false});
-
-  reloadBtn.addEventListener('pointerdown',e=>{
-    e.preventDefault();
-    reload();
-  },{passive:false});
-
-  grenadeBtn.addEventListener('pointerdown',e=>{
-    e.preventDefault();
-    throwGrenade();
-  },{passive:false});
-
-  healBtn.addEventListener('pointerdown',e=>{
-    e.preventDefault();
-    teamHeal();
-  },{passive:false});
-
-  function openPortal(now){
-    portalStartDone=true;
-    portalUntil=now+3000;
-
-    const x1=rand(W*.07,W*.22);
-    const x2=rand(W*.29,W*.44);
-
-    portalPair=[
-      {x:x1,y:groundY-28},
-      {x:x2,y:groundY-28}
-    ];
-
-    abilityLayer.innerHTML+=`
-      <div id="brPortalA137" class="br-portal-v137" style="left:${x1}px;top:${groundY-28}px"></div>
-      <div id="brPortalB137" class="br-portal-v137" style="left:${x2}px;top:${groundY-28}px"></div>
-    `;
-
-    msg.textContent='ALLY A : PORTAL';
-    msg.classList.add('small-v137');
-
-    beep(740,100,.025);
-  }
-
-  function closePortal(){
-    portalPair=null;
-    document.getElementById('brPortalA137')?.remove();
-    document.getElementById('brPortalB137')?.remove();
-  }
-
-  function openDome(now){
-    domeStartDone=true;
-    domeUntil=now+3000;
-
-    dome={
-      x:clamp(allyB.x+15,W*.08,W*.43),
-      y:groundY-55,
-      r:82
-    };
-
-    const el=document.createElement('div');
-    el.id='brDome137';
-    el.className='br-dome-v137';
-    el.style.left=`${dome.x}px`;
-    el.style.top=`${dome.y}px`;
-    abilityLayer.appendChild(el);
-
-    msg.textContent='ALLY B : DOME SHIELD';
-    msg.classList.add('small-v137');
-
-    beep(620,120,.025);
-  }
-
-  function closeDome(){
-    dome=null;
-    document.getElementById('brDome137')?.remove();
-  }
-
+  function renderPortals(pair,team){pair.forEach(q=>{const el=document.createElement('div');el.className=`br-portal-v138 ${team}`;el.dataset.portalTeam=team;el.style.left=`${q.x}px`;el.style.top=`${q.y}px`;abilityLayer.appendChild(el)})}
+  function activateAllyPortal(now){if(allyPortalDone||!allyA.alive)return;allyPortalDone=true;const pf=allyPlatforms[randi(0,1)];allyPortal=[{x:centerX-30,y:groundY-26},{x:pf.x+pf.w/2,y:pf.y-27}];allyPortalUntil=now+3000;renderPortals(allyPortal,'ally');pop(allyA.x,allyA.y,'PORTAL')}
+  function activateEnemyPortal(now){if(enemyPortal||now<enemyPortalReadyAt||!enemyA.alive)return;enemyPortalReadyAt=now+6000;const pf=enemyPlatforms[randi(0,1)];enemyPortal=[{x:centerX+30,y:groundY-26},{x:pf.x+pf.w/2,y:pf.y-27}];enemyPortalUntil=now+3000;renderPortals(enemyPortal,'enemy');pop(enemyA.x,enemyA.y,'PORTAL')}
+  function clearPortals(team){abilityLayer.querySelectorAll(`[data-portal-team="${team}"]`).forEach(e=>e.remove());if(team==='ally')allyPortal=null;else enemyPortal=null}
   function maybePortal(a,now){
-    if(
-      !portalPair||
-      a.team!=='ally'||
-      !a.alive||
-      now<a.portalLock
-    )return;
-
-    const [pa,pb]=portalPair;
-
-    if(Math.hypot(a.x+a.w/2-pa.x,a.y+a.h/2-pa.y)<31){
-      a.x=clamp(pb.x-a.w/2,0,centerX-a.w-4);
-      a.y=pb.y-a.h/2;
-      a.portalLock=now+700;
-
-      hitFx(pb.x,pb.y,'PORTAL');
-      beep(900,55,.012);
-    }else if(Math.hypot(a.x+a.w/2-pb.x,a.y+a.h/2-pb.y)<31){
-      a.x=clamp(pa.x-a.w/2,0,centerX-a.w-4);
-      a.y=pa.y-a.h/2;
-      a.portalLock=now+700;
-
-      hitFx(pa.x,pa.y,'PORTAL');
-      beep(900,55,.012);
-    }
-  }
-
-  function bulletBlockedByDome(b){
-    if(!dome||b.team!=='enemy')return false;
-
-    return Math.hypot(
-      b.x-dome.x,
-      b.y-dome.y
-    )<dome.r;
-  }
-
-  function actorLand(a,prevBottom,newBottom){
-    a.onGround=false;
-
-    const minX=a.team==='ally'?0:centerX+5;
-    const maxX=a.team==='ally'?centerX-a.w-5:W-a.w;
-
-    a.x=clamp(a.x,minX,maxX);
-
-    if(
-      prevBottom<=groundY+5 &&
-      newBottom>=groundY
-    ){
-      a.y=groundY-a.h;
-      a.vy=0;
-      a.onGround=true;
-      return;
-    }
-
-    if(a.team==='ally'){
-      for(const pf of platforms){
-        const horiz=
-          a.x+a.w-4>pf.x &&
-          a.x+4<pf.x+pf.w;
-
-        const cross=
-          prevBottom<=pf.y+5 &&
-          newBottom>=pf.y;
-
-        if(horiz&&cross){
-          a.y=pf.y-a.h;
-          a.vy=0;
-          a.onGround=true;
-          return;
-        }
+    const pair=a.team==='ally'?allyPortal:enemyPortal;if(!pair||now<a.portalLock)return;
+    for(const [src,dst] of [[pair[0],pair[1]],[pair[1],pair[0]]]){
+      if(Math.hypot(a.x+a.w/2-src.x,a.y+a.h/2-src.y)<32){
+        const min=a.team==='ally'?0:centerX+5,max=a.team==='ally'?centerX-a.w-5:W-a.w;
+        a.x=clamp(dst.x-a.w/2,min,max);a.y=dst.y-a.h/2;a.portalLock=now+650;pop(dst.x,dst.y,'WARP');break;
       }
     }
   }
 
-  function aiActor(a,now,dt){
-    if(!a.alive||a.player)return;
+  function bindHold(btn,key){const on=e=>{e.preventDefault();if(active&&!finished)input[key]=true;try{btn.setPointerCapture(e.pointerId)}catch(_){}},off=e=>{if(e)e.preventDefault();input[key]=false};btn.addEventListener('pointerdown',on,{passive:false});btn.addEventListener('pointerup',off,{passive:false});btn.addEventListener('pointercancel',off,{passive:false});btn.addEventListener('lostpointercapture',off,{passive:false})}
+  bindHold(leftBtn,'left');bindHold(rightBtn,'right');
+  jumpBtn.addEventListener('pointerdown',e=>{e.preventDefault();if(active&&!finished)jump(player)},{passive:false});
+  shootBtn.addEventListener('pointerdown',e=>{e.preventDefault();if(!active||finished||!player.alive)return;if(ammo<=0)reload();else fireBullet(player,true)},{passive:false});
+  reloadBtn.addEventListener('pointerdown',e=>{e.preventDefault();reload()},{passive:false});
+  grenadeBtn.addEventListener('pointerdown',e=>{e.preventDefault();playerGrenade()},{passive:false});
+  healBtn.addEventListener('pointerdown',e=>{e.preventDefault();teamHeal()},{passive:false});
 
-    const target=nearestTarget(a);
-    if(!target)return;
-
-    const dir=a.team==='ally'?1:-1;
-    const boundary=
-      a.team==='ally'
-        ? centerX-a.w-12
-        : centerX+12;
-
-    const desiredX=
-      a.team==='ally'
-        ? clamp(target.x-115,16,boundary)
-        : clamp(target.x+115,boundary,W-a.w-16);
-
-    const move=
-      Math.abs(desiredX-a.x)>24
-        ? Math.sign(desiredX-a.x)
-        : 0;
-
-    a.vx=move*rand(45,72);
-
-    if(
-      a.onGround &&
-      now>=a.nextJump &&
-      Math.random()<.018
-    ){
-      jump(a);
-      a.nextJump=now+rand(1300,2400);
+  function actorLand(a,prevBottom,newBottom){
+    a.onGround=false;const min=a.team==='ally'?0:centerX+5,max=a.team==='ally'?centerX-a.w-5:W-a.w;a.x=clamp(a.x,min,max);
+    const ps=a.team==='ally'?allyPlatforms:enemyPlatforms;
+    for(const pf of ps){
+      if(a.x+a.w-4>pf.x&&a.x+4<pf.x+pf.w&&prevBottom<=pf.y+5&&newBottom>=pf.y){a.y=pf.y-a.h;a.vy=0;a.onGround=true;return}
     }
+    if(prevBottom<=groundY+5&&newBottom>=groundY){a.y=groundY-a.h;a.vy=0;a.onGround=true}
+  }
 
-    if(now>=a.nextShot){
-      fireBullet(a,false);
-      a.nextShot=now+rand(760,1350);
+  function aiActor(a,now){
+    if(!a.alive||a.player||now<a.stunUntil)return;const target=nearestTarget(a);if(!target)return;
+    if(a.role==='void'&&now>=a.voidReadyAt&&(a.hp<=14||Math.random()<.016))activateVoid(a,now);
+    if(a.role==='portal'&&a.team==='enemy'&&!enemyPortal&&now>=enemyPortalReadyAt&&(Math.abs(target.x-a.x)>W*.20||a.hp<=13||Math.random()<.018))activateEnemyPortal(now);
+    if(a.role==='stun'&&now>=a.stunReadyAt&&Math.abs(target.x-a.x)<W*.62){a.stunReadyAt=now+4300;spawnGrenade(a,'stun')}
+    if(now>=a.nextDecision){
+      a.nextDecision=now+rand(180,420);const ps=a.team==='ally'?allyPlatforms:enemyPlatforms;
+      if(Math.random()<.50){const pf=ps[randi(0,1)];a.targetX=pf.x+pf.w/2-a.w/2;a.targetY=pf.y-a.h}
+      else{const min=a.team==='ally'?8:centerX+12,max=a.team==='ally'?centerX-a.w-12:W-a.w-8;a.targetX=rand(min,max);a.targetY=groundY-a.h}
+    }
+    const dx=a.targetX-a.x;a.vx=Math.abs(dx)>7?Math.sign(dx)*rand(84,118):0;
+    if(a.onGround&&now>=a.nextJump&&(Math.abs(a.targetY-a.y)>26||Math.random()<.045)){jump(a);a.nextJump=now+rand(560,1050)}
+    if(now>=a.nextShot){fireBullet(a,false);a.nextShot=now+rand(a.team==='enemy'?390:450,a.team==='enemy'?700:800)}
+  }
+
+  function explodeGrenade(g){
+    const targets=g.team==='ally'?enemies():allies();
+    const blast=document.createElement('div');blast.className=`br-grenade-blast-v138 ${g.type==='stun'?'stun-v138':''}`;blast.style.left=`${g.x}px`;blast.style.top=`${g.y}px`;fx.appendChild(blast);setTimeout(()=>blast.remove(),620);
+    for(const target of targets){
+      if(Math.hypot(target.x+target.w/2-g.x,target.y+target.h/2-g.y)<96){
+        if(g.type==='stun'){target.stunUntil=performance.now()+1250;target.el.classList.add('stunned-v138');setTimeout(()=>target.el.classList.remove('stunned-v138'),1250);pop(target.x,target.y,'STUN')}
+        else damage(target,5);
+      }
     }
   }
 
-  async function finishWin(){
-    if(finished)return;
-
-    finished=true;
-    active=false;
-    if(raf)cancelAnimationFrame(raf);
-
-    const elapsed=Math.max(
-      1,
-      Math.round(performance.now()-start)
-    );
-
-    state.records.battleRoyaleMob[p.id]=elapsed;
-
-    msg.textContent='CHAMPION!';
-    msg.classList.remove('small-v137');
-    msg.classList.add('win-v137');
-
-    stage.classList.add('victory-v137');
-    beep(1160,240,.06);
-
-    await wait(1150);
-
-    if(isGameRunValid(runId)){
-      recordScreen(
-        86,p,humanIndex,
-        `${(elapsed/1000).toFixed(2)}<small>秒</small>`,
-        '敵チーム全滅'
-      );
-    }
-  }
-
-  async function finishLose(){
-    if(finished)return;
-
-    finished=true;
-    active=false;
-    if(raf)cancelAnimationFrame(raf);
-
-    state.records.battleRoyaleMob[p.id]=60000;
-
-    msg.textContent='SQUAD ELIMINATED';
-    msg.classList.remove('small-v137');
-    msg.classList.add('lose-v137');
-
-    beep(105,220,.045);
-
-    await wait(900);
-
-    if(isGameRunValid(runId)){
-      recordScreen(
-        86,p,humanIndex,
-        `60.00<small>秒</small>`,
-        '敗北'
-      );
-    }
-  }
+  async function finishWin(){if(finished)return;finished=true;active=false;if(raf)cancelAnimationFrame(raf);const elapsed=Math.max(1,Math.round(performance.now()-start));state.records.battleRoyaleMob[p.id]=elapsed;msg.textContent='CHAMPION!';msg.className='br-message-v138 win-v138';stage.classList.add('victory-v138');beep(1160,240,.06);await wait(1150);if(isGameRunValid(runId))recordScreen(86,p,humanIndex,`${(elapsed/1000).toFixed(2)}<small>秒</small>`,'敵チーム全滅')}
+  async function finishLose(){if(finished)return;finished=true;active=false;if(raf)cancelAnimationFrame(raf);state.records.battleRoyaleMob[p.id]=60000;msg.textContent='SQUAD ELIMINATED';msg.className='br-message-v138 lose-v138';beep(105,220,.045);await wait(900);if(isGameRunValid(runId))recordScreen(86,p,humanIndex,`60.00<small>秒</small>`,'敗北')}
 
   if(!(await countdown('3 VS 3',runId,{transparent:true})))return;
-
-  active=true;
-  start=last=performance.now();
-
-  actors.forEach(a=>{
-    a.nextShot=start+rand(650,1300);
-    a.nextJump=start+rand(1100,2300);
-    updateActorHp(a);
-  });
-
+  active=true;start=last=performance.now();enemyPortalReadyAt=start+4200;
+  actors.forEach(a=>{a.nextShot=start+rand(420,850);a.nextJump=start+rand(550,1100);a.nextDecision=start+rand(80,220);a.voidReadyAt=start+1200;a.stunReadyAt=start+2500;updateHp(a)});
   updateHud(start);
 
   function frame(now){
-    if(!active||finished||!isGameRunValid(runId))return;
-
-    const dt=Math.min(.035,(now-last)/1000);
-    last=now;
-
-    timeEl.textContent=((now-start)/1000).toFixed(2);
-
-    if(reloading&&now>=reloadUntil){
-      reloading=false;
-      ammo=8;
-      reloadBtn.disabled=false;
-
-      msg.textContent='RELOAD COMPLETE';
-      beep(640,55,.014);
-    }
-
-    if(!portalStartDone&&now-start>=5000){
-      openPortal(now);
-    }
-
-    if(portalPair&&now>=portalUntil){
-      closePortal();
-    }
-
-    if(!domeStartDone&&now-start>=8000){
-      openDome(now);
-    }
-
-    if(dome&&now>=domeUntil){
-      closeDome();
-    }
+    if(!active||finished||!isGameRunValid(runId))return;const dt=Math.min(.035,(now-last)/1000);last=now;timeEl.textContent=((now-start)/1000).toFixed(2);
+    if(reloading&&now>=reloadUntil){reloading=false;ammo=8;reloadBtn.disabled=false;msg.textContent='RELOAD COMPLETE'}
+    if(!allyPortalDone&&now-start>=5000)activateAllyPortal(now);
+    if(allyPortal&&now>=allyPortalUntil)clearPortals('ally');
+    if(enemyPortal&&now>=enemyPortalUntil)clearPortals('enemy');
 
     for(const a of actors){
       if(!a.alive)continue;
-
-      a.prevY=a.y;
-
-      if(a.player){
-        const dir=
-          input.left&&!input.right
-            ? -1
-            : input.right&&!input.left
-              ? 1
-              : 0;
-
-        a.vx=dir*105;
-      }else{
-        aiActor(a,now,dt);
-      }
-
-      a.x+=a.vx*dt;
-
-      const prevBottom=a.y+a.h;
-
-      a.vy+=460*dt;
-      a.y+=a.vy*dt;
-
-      actorLand(a,prevBottom,a.y+a.h);
-      maybePortal(a,now);
-
-      a.el.style.left=`${a.x}px`;
-      a.el.style.top=`${a.y}px`;
+      if(a.player){const d=now<a.stunUntil?0:(input.left&&!input.right?-1:input.right&&!input.left?1:0);a.vx=d*110}else aiActor(a,now);
+      a.x+=a.vx*dt;const pb=a.y+a.h;a.vy+=470*dt;a.y+=a.vy*dt;actorLand(a,pb,a.y+a.h);maybePortal(a,now);a.el.style.left=`${a.x}px`;a.el.style.top=`${a.y}px`;
     }
 
     for(const b of bullets){
-      if(b.dead)continue;
-
-      b.x+=b.vx*dt;
-      b.y+=b.vy*dt;
-
-      b.el.style.left=`${b.x}px`;
-      b.el.style.top=`${b.y}px`;
-
-      if(bulletBlockedByDome(b)){
-        b.dead=true;
-        b.el.remove();
-
-        hitFx(b.x,b.y,'BLOCK');
-        beep(760,28,.006);
-        continue;
+      if(b.dead)continue;b.x+=b.vx*dt;b.y+=b.vy*dt;b.el.style.left=`${b.x}px`;b.el.style.top=`${b.y}px`;
+      for(const t of actors.filter(a=>a.alive&&a.team!==b.team)){
+        if(b.x>=t.x-4&&b.x<=t.x+t.w+4&&b.y>=t.y&&b.y<=t.y+t.h){b.dead=true;b.el.remove();damage(t,b.damage);break}
       }
+      if(b.x<-25||b.x>W+25||b.y<-20||b.y>H+20){b.dead=true;b.el.remove()}
+    }
 
-      const targets=
-        actors.filter(a=>
-          a.alive &&
-          a.team!==b.team
-        );
-
-      for(const target of targets){
-        if(
-          b.x>=target.x-4 &&
-          b.x<=target.x+target.w+4 &&
-          b.y>=target.y &&
-          b.y<=target.y+target.h
-        ){
-          b.dead=true;
-          b.el.remove();
-
-          damage(target,b.damage);
-          break;
-        }
-      }
-
-      if(
-        b.x<-25 ||
-        b.x>W+25
-      ){
-        b.dead=true;
-        b.el.remove();
+    for(const list of [grenades,stunGrenades]){
+      for(const g of list){
+        if(g.dead)continue;g.x+=g.vx*dt;g.y+=g.vy*dt;g.vy+=480*dt;
+        if(g.y>=groundY-12){g.y=groundY-12;g.vy*=-.32;g.vx*=.76}
+        g.el.style.left=`${g.x}px`;g.el.style.top=`${g.y}px`;
+        if(now>=g.fuse){g.dead=true;g.el.remove();explodeGrenade(g)}
       }
     }
 
-    for(const g of grenades){
-      if(g.dead)continue;
-
-      g.x+=g.vx*dt;
-      g.y+=g.vy*dt;
-      g.vy+=480*dt;
-
-      if(g.y>=groundY-12){
-        g.y=groundY-12;
-        g.vy*=-.34;
-        g.vx*=.78;
-      }
-
-      g.el.style.left=`${g.x}px`;
-      g.el.style.top=`${g.y}px`;
-
-      if(now>=g.fuse){
-        g.dead=true;
-        g.el.remove();
-
-        const blast=document.createElement('div');
-        blast.className='br-grenade-blast-v137';
-        blast.style.left=`${g.x}px`;
-        blast.style.top=`${g.y}px`;
-        fx.appendChild(blast);
-        setTimeout(()=>blast.remove(),600);
-
-        for(const target of enemies()){
-          if(Math.hypot(
-            target.x+target.w/2-g.x,
-            target.y+target.h/2-g.y
-          )<92){
-            damage(target,5);
-          }
-        }
-
-        beep(115,150,.045);
-      }
-    }
-
-    updateHud(now);
-
-    raf=requestAnimationFrame(frame);
+    updateHud(now);raf=requestAnimationFrame(frame);
   }
-
   raf=requestAnimationFrame(frame);
 }
+
+// =========================================================
+// V10.38 GAME 88 — Little MOB SHOT
+// =========================================================
+async function startLittleMobShot(p,humanIndex,runId){
+  gameFit();
+
+  let active=false,finished=false,raf=null,last=0,start=0,nextSpawn=0,nextAutoShot=0;
+  let x=0,dir=0,kills=0,bombReadyAt=0,waveReadyAt=0,waveUntil=0;
+  const bullets=[],enemies=[];
+
+  screen.innerHTML=`<div class="little-shot-shell-v138">
+    <div class="game-head"><div><span class="kicker">${esc(p.name)}</span><h2>Little MOB SHOT</h2></div><div class="game-badge">${playBadge(humanIndex)}</div></div>
+    <div class="v125-hud"><div><span>TIME</span><b id="lsTime138">10.00</b></div><div><span>KO</span><b id="lsKills138">0</b></div><div><span>WIDE</span><b id="lsWide138">1</b></div></div>
+    <div id="lsStage138" class="ls-stage-v138">
+      <div class="ls-space-lines-v138"></div><div id="lsEnemyLayer138" class="ls-layer-v138"></div><div id="lsBulletLayer138" class="ls-layer-v138"></div><div id="lsFx138" class="ls-layer-v138"></div><div id="lsLaser138" class="ls-laser-v138"></div>
+      <div id="lsPlayer138" class="ls-player-v138"><div class="ls-record-v138"></div><div class="ls-mob-v138" style="background-image:url('icon/01.png')"></div></div>
+    </div>
+    <div class="ls-controls-v138"><button id="lsLeft138">←</button><button id="lsBomb138" class="bomb">BOMB<b>READY</b></button><button id="lsWave138" class="wave">波動<b>READY</b></button><button id="lsRight138">→</button></div>
+  </div>`;
+
+  const stage=document.getElementById('lsStage138'),player=document.getElementById('lsPlayer138'),enemyLayer=document.getElementById('lsEnemyLayer138'),bulletLayer=document.getElementById('lsBulletLayer138'),fx=document.getElementById('lsFx138'),laser=document.getElementById('lsLaser138');
+  const timeEl=document.getElementById('lsTime138'),killsEl=document.getElementById('lsKills138'),wideEl=document.getElementById('lsWide138'),left=document.getElementById('lsLeft138'),right=document.getElementById('lsRight138'),bomb=document.getElementById('lsBomb138'),wave=document.getElementById('lsWave138');
+  const W=Math.max(300,stage.clientWidth||340),H=Math.max(300,stage.clientHeight||420);x=W/2;
+
+  function spawnEnemy(elapsed){
+    const roll=Math.random();let kind='small',hp=1,size=28,speed=80+elapsed*8;
+    if(roll>.93){kind='xl';hp=18;size=78;speed=45+elapsed*4}
+    else if(roll>.82){kind='large';hp=7;size=56;speed=56+elapsed*5}
+    else if(roll>.65){kind='mid';hp=3;size=40;speed=68+elapsed*6}
+    const el=document.createElement('div');el.className=`ls-slime-v138 ${kind}`;el.innerHTML='<i></i><b></b>';enemyLayer.appendChild(el);
+    enemies.push({x:rand(size/2,W-size/2),y:-size,size,hp,speed,dead:false,el});
+  }
+  function destroyEnemy(e){
+    if(e.dead)return;e.dead=true;kills++;killsEl.textContent=kills;wideEl.textContent=1+Math.floor(kills/10);e.el.remove();
+    const b=document.createElement('div');b.className='ls-pop-v138';b.style.left=`${e.x}px`;b.style.top=`${e.y}px`;fx.appendChild(b);setTimeout(()=>b.remove(),400);beep(600+Math.min(350,kills*5),25,.007);
+  }
+  function autoFire(){
+    const lanes=clamp(1+Math.floor(kills/10),1,6);
+    const spread=lanes===1?[0]:Array.from({length:lanes},(_,i)=>(i-(lanes-1)/2)*16);
+    for(const off of spread){const el=document.createElement('i');el.className='ls-bullet-v138';bulletLayer.appendChild(el);bullets.push({x:x+off*.18,y:H-82,vx:off*1.7,vy:-420,dead:false,el})}
+  }
+  function useBomb(){
+    const now=performance.now();if(!active||finished||now<bombReadyAt)return;bombReadyAt=now+4000;stage.classList.add('bomb-v138');setTimeout(()=>stage.classList.remove('bomb-v138'),450);
+    for(const e of enemies){if(!e.dead&&e.y>H*.12){e.hp-=8;if(e.hp<=0)destroyEnemy(e)}}beep(100,170,.05);
+  }
+  function useWave(){const now=performance.now();if(!active||finished||now<waveReadyAt)return;waveReadyAt=now+6000;waveUntil=now+3000;laser.classList.add('active-v138');beep(880,150,.04)}
+  function bind(btn,d){btn.addEventListener('pointerdown',e=>{e.preventDefault();dir=d;try{btn.setPointerCapture(e.pointerId)}catch(_){}},{passive:false});const off=e=>{if(e)e.preventDefault();if(dir===d)dir=0};btn.addEventListener('pointerup',off,{passive:false});btn.addEventListener('pointercancel',off,{passive:false});btn.addEventListener('lostpointercapture',off,{passive:false})}
+  bind(left,-1);bind(right,1);bomb.addEventListener('pointerdown',e=>{e.preventDefault();useBomb()},{passive:false});wave.addEventListener('pointerdown',e=>{e.preventDefault();useWave()},{passive:false});
+
+  async function finish(){if(finished)return;finished=true;active=false;if(raf)cancelAnimationFrame(raf);state.records.littleMobShot[p.id]=kills;beep(kills>=60?1100:kills>=35?780:500,190,.045);await wait(850);if(isGameRunValid(runId))recordScreen(87,p,humanIndex,`${kills}<small> KO</small>`,`10秒 / WIDE ${1+Math.floor(kills/10)}`)}
+  if(!(await countdown('LITTLE MOB SHOT',runId,{transparent:true})))return;
+  active=true;start=last=performance.now();nextSpawn=start+100;nextAutoShot=start+80;
+
+  function frame(now){
+    if(!active||finished||!isGameRunValid(runId))return;const dt=Math.min(.035,(now-last)/1000);last=now;const elapsed=(now-start)/1000;
+    x=clamp(x+dir*190*dt,34,W-34);player.style.left=`${x}px`;
+    if(now>=nextAutoShot){autoFire();nextAutoShot=now+145}
+    const gap=clamp(310-elapsed*16,120,310);if(now>=nextSpawn){spawnEnemy(elapsed);if(elapsed>4&&Math.random()<.35)spawnEnemy(elapsed);nextSpawn=now+gap}
+    for(const b of bullets){
+      if(b.dead)continue;b.x+=b.vx*dt;b.y+=b.vy*dt;b.el.style.left=`${b.x}px`;b.el.style.top=`${b.y}px`;
+      if(b.y<-15){b.dead=true;b.el.remove();continue}
+      for(const e of enemies){if(e.dead)continue;if(Math.hypot(b.x-e.x,b.y-e.y)<e.size*.44+7){b.dead=true;b.el.remove();e.hp--;if(e.hp<=0)destroyEnemy(e);break}}
+    }
+    const waveActive=now<waveUntil;laser.classList.toggle('active-v138',waveActive);laser.style.left=`${x}px`;
+    for(const e of enemies){
+      if(e.dead)continue;e.y+=e.speed*dt;e.el.style.left=`${e.x}px`;e.el.style.top=`${e.y}px`;
+      if(waveActive&&Math.abs(e.x-x)<31&&e.y<H-70){e.hp-=8*dt;if(e.hp<=0){destroyEnemy(e);continue}}
+      if(e.y>H+90){e.dead=true;e.el.remove()}
+    }
+    bomb.querySelector('b').textContent=now<bombReadyAt?`${((bombReadyAt-now)/1000).toFixed(1)}`:'READY';
+    wave.querySelector('b').textContent=now<waveReadyAt?`${((waveReadyAt-now)/1000).toFixed(1)}`:'READY';
+    timeEl.textContent=Math.max(0,10-elapsed).toFixed(2);
+    if(elapsed>=10){finish();return}
+    raf=requestAnimationFrame(frame);
+  }
+  raf=requestAnimationFrame(frame);
+}
+
+// =========================================================
+// V10.38 GAME 89 — モブくんモンスターボックスに挑む
+// =========================================================
+async function startMonsterBoxMob(p,humanIndex,runId){
+  gameFit();
+
+  let active=false,finished=false,raf=null,last=0,level=15,score=0,jumping=false,vy=0,y=0,boardX=0,boxX=0,passedBoard=false,launched=false;
+  screen.innerHTML=`<div class="mbox-shell-v138">
+    <div class="game-head"><div><span class="kicker">${esc(p.name)}</span><h2>モブくんモンスターボックスに挑む</h2></div><div class="game-badge">${playBadge(humanIndex)}</div></div>
+    <div class="v125-hud"><div><span>LEVEL</span><b id="mbLevel138">15段</b></div><div><span>SCORE</span><b id="mbScore138">0</b></div></div>
+    <div id="mbStage138" class="mb-stage-v138"><div class="mb-run-lines-v138"></div><div class="mb-ground-v138"></div><div id="mbBoard138" class="mb-board-v138"></div><div id="mbBox138" class="mb-box-v138"></div><div id="mbMob138" class="mb-mob-v138" style="background-image:url('icon/01.png')"></div><div id="mbFx138" class="mb-fx-v138"></div></div>
+    <button id="mbJump138" class="primary mb-jump-v138">JUMP</button>
+  </div>`;
+
+  const stage=document.getElementById('mbStage138'),board=document.getElementById('mbBoard138'),box=document.getElementById('mbBox138'),mob=document.getElementById('mbMob138'),fx=document.getElementById('mbFx138'),levelEl=document.getElementById('mbLevel138'),scoreEl=document.getElementById('mbScore138'),jumpBtn=document.getElementById('mbJump138');
+  const W=Math.max(300,stage.clientWidth||340),H=Math.max(300,stage.clientHeight||390),groundY=H-50,mobX=54;y=groundY-44;
+  const boxHeight=()=>82+(level-15)*12;
+
+  function resetCycle(){boardX=W+70;boxX=boardX+115;passedBoard=false;launched=false;board.style.left=`${boardX}px`;box.style.left=`${boxX}px`;box.style.height=`${boxHeight()}px`;box.style.top=`${groundY-boxHeight()}px`;board.classList.remove('hit-v138')}
+  function pop(text,xp,yp,cls=''){const e=document.createElement('div');e.className=`mb-pop-v138 ${cls}`;e.textContent=text;e.style.left=`${xp}px`;e.style.top=`${yp}px`;fx.appendChild(e);setTimeout(()=>e.remove(),650)}
+  function jump(){if(!active||finished||jumping||launched)return;jumping=true;vy=-205;beep(500,45,.012)}
+  jumpBtn.addEventListener('pointerdown',e=>{e.preventDefault();jump()},{passive:false});
+
+  async function fail(reason){if(finished)return;finished=true;active=false;if(raf)cancelAnimationFrame(raf);state.records.monsterBoxMob[p.id]=score;mob.classList.add('fail-v138');pop(reason,mobX+30,y,'fail-v138');beep(120,180,.04);await wait(850);if(isGameRunValid(runId))recordScreen(88,p,humanIndex,`${score}<small>pt</small>`,`${level}段で終了`)}
+  async function clearAll(){if(finished)return;finished=true;active=false;if(raf)cancelAnimationFrame(raf);score=100;state.records.monsterBoxMob[p.id]=100;stage.classList.add('clear-v138');pop('20段 CLEAR!!',W/2,H*.34,'clear-v138');beep(1120,220,.055);await wait(1050);if(isGameRunValid(runId))recordScreen(88,p,humanIndex,`100<small>pt</small>`,'20段 CLEAR')}
+
+  if(!(await countdown('MONSTER BOX',runId,{transparent:true})))return;
+  active=true;last=performance.now();resetCycle();
+
+  function frame(now){
+    if(!active||finished||!isGameRunValid(runId))return;const dt=Math.min(.035,(now-last)/1000);last=now;const speed=175+(level-15)*8;
+    boardX-=speed*dt;boxX-=speed*dt;board.style.left=`${boardX}px`;box.style.left=`${boxX}px`;
+
+    if(jumping||launched){vy+=470*dt;y+=vy*dt;if(!launched&&y>=groundY-44){y=groundY-44;vy=0;jumping=false}}
+
+    const footX=mobX+24,boardCenter=boardX+35;
+    if(!passedBoard&&footX>=boardX&&footX<=boardX+70){
+      passedBoard=true;const feet=y+44,boardY=groundY-13;
+      if(Math.abs(feet-boardY)<22&&vy>=0){
+        const err=Math.abs(footX-boardCenter),quality=clamp(1-err/35,0,1),launchHeight=120+quality*145;
+        vy=-Math.sqrt(2*470*Math.max(80,launchHeight));launched=true;jumping=true;board.classList.add('hit-v138');pop(quality>.82?'PERFECT!':quality>.52?'GOOD!':'WEAK',boardCenter,groundY-45,quality>.82?'good-v138':'');mob.dataset.quality=String(quality);beep(quality>.82?940:650,90,.025);
+      }
+    }
+
+    const bh=boxHeight(),boxTop=groundY-bh;
+    if(boxX<mobX+44&&boxX+82>mobX+8&&y+44>boxTop+5){fail('HIT!');return}
+
+    if(launched&&boxX+82<mobX-18&&y>=groundY-44){
+      y=groundY-44;vy=0;jumping=false;launched=false;
+      const quality=Number(mob.dataset.quality||0);score=clamp(Math.round((level-14)/6*88+quality*12),0,100);scoreEl.textContent=score;pop(`${level}段 CLEAR`,W*.50,H*.28,'clear-v138');beep(840,100,.025);
+      if(level>=20){clearAll();return}
+      level++;levelEl.textContent=`${level}段`;resetCycle();
+    }
+
+    if(boxX<-130&&!launched){fail('MISS!');return}
+    mob.style.top=`${y}px`;mob.classList.toggle('air-v138',jumping||launched);
+    raf=requestAnimationFrame(frame);
+  }
+  raf=requestAnimationFrame(frame);
+}
+
 
 // GAME 64 -------------------------------------------------
 function buildElectricMazeFixedV121(cols,rows){
@@ -23778,7 +23148,7 @@ function softenCpuResultV121(gameIndex,p,ultra){
 
   const specificallyTuned=new Set([
     50,51,59,62,63,
-    64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86
+    64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88
   ]);
 
   if(
@@ -24038,10 +23408,14 @@ function simulateOneCpu(gameIndex,p){
       : survivalScores[randi(2,8)];
   }else if(gameIndex===85){
     state.records.waveMaster[p.id]=ultra?randi(84,98):randi(38,83);
-  }else{
+  }else if(gameIndex===86){
     state.records.battleRoyaleMob[p.id]=ultra
-      ? randi(6500,10500)
-      : randi(9000,22000);
+      ? randi(8500,13500)
+      : randi(12000,28000);
+  }else if(gameIndex===87){
+    state.records.littleMobShot[p.id]=ultra?randi(58,82):randi(24,58);
+  }else{
+    state.records.monsterBoxMob[p.id]=ultra?randi(86,100):randi(34,86);
   }
 
   softenCpuResultV121(
@@ -24184,10 +23558,12 @@ function performancePoints(gameIndex,v){
   if(gameIndex===84)return clamp(Math.round(v),0,100);
   if(gameIndex===85)return clamp(Math.round(v),0,100);
   if(gameIndex===86){
-    if(v<=6000)return 100;
-    if(v>=30000)return 0;
-    return clamp(Math.round((30000-v)/24000*100),0,100);
+    if(v<=8500)return 100;
+    if(v>=40000)return 0;
+    return clamp(Math.round((40000-v)/31500*100),0,100);
   }
+  if(gameIndex===87)return clamp(Math.round(v/70*100),0,100);
+  if(gameIndex===88)return clamp(Math.round(v),0,100);
   return clamp(Math.round(v),0,100);
 }
 
@@ -24278,6 +23654,8 @@ function formatRecord(gameIndex,v){
   if(gameIndex===84)return `${Math.round(v)}pt`;
   if(gameIndex===85)return `${Math.round(v)}pt`;
   if(gameIndex===86)return `${(v/1000).toFixed(2)}秒`;
+  if(gameIndex===87)return `${Math.round(v)} KO`;
+  if(gameIndex===88)return `${Math.round(v)}pt`;
   return `${Math.round(v)}pt`;
 }
 
