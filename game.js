@@ -40,6 +40,35 @@ document.addEventListener("touchend",e=>{
   if(e.target&&e.target.closest&&e.target.closest(".gameplay-fit"))clearGameplaySelection();
 },{passive:true});
 
+// V10.42: desktop系の長押し/ドラッグ選択もcapture段階で止める。
+// mousedownのdefaultだけを止めるためpointer/click系ゲーム進行は維持。
+document.addEventListener("mousedown",e=>{
+  if(e.target&&e.target.closest&&e.target.closest(".gameplay-fit")){
+    e.preventDefault();
+    clearGameplaySelection();
+  }
+},{capture:true,passive:false});
+
+document.addEventListener("selectstart",e=>{
+  if(e.target&&e.target.closest&&e.target.closest(".gameplay-fit")){
+    e.preventDefault();
+    clearGameplaySelection();
+  }
+},{capture:true,passive:false});
+
+document.addEventListener("dragstart",e=>{
+  if(e.target&&e.target.closest&&e.target.closest(".gameplay-fit")){
+    e.preventDefault();
+  }
+},{capture:true,passive:false});
+
+document.addEventListener("contextmenu",e=>{
+  if(e.target&&e.target.closest&&e.target.closest(".gameplay-fit")){
+    e.preventDefault();
+    clearGameplaySelection();
+  }
+},{capture:true,passive:false});
+
 const PLAYERS=[
   {id:"p1",no:1,name:"プレイヤー1",cpu:false,img:"play/01.png"},
   {id:"p2",no:2,name:"プレイヤー2",cpu:false,img:"play/02.png"},
@@ -23311,8 +23340,9 @@ async function startAlienBattleMob(p,humanIndex,runId){
         </div>
         <div id="alienArm140" class="alien-arm-v140 left-v141"></div>
         <div class="alien-arm-v141 right-v141"></div>
-        <div class="alien-leg-v141 leg1"></div>
-        <div class="alien-leg-v141 leg2"></div>
+        <div class="alien-leg-v141 leg1"><i class="alien-foot-v142"></i></div>
+        <div class="alien-leg-v141 leg2"><i class="alien-foot-v142"></i></div>
+        <div class="alien-ground-shadow-v142"></div>
         <div class="alien-boss-hp-v140"><i id="alienBossHpBar140"></i></div>
       </div>
 
@@ -23356,9 +23386,9 @@ async function startAlienBattleMob(p,humanIndex,runId){
     hp:100,
     maxHp:100,
     x:W-176,
-    y:5,
+    y:0,
     w:170,
-    h:groundY-5,
+    h:groundY,
     alive:true
   };
 
@@ -23370,7 +23400,15 @@ async function startAlienBattleMob(p,humanIndex,runId){
     el.className=`alien-robot-v140 ${player?'player-v140':'ally-v140'}`;
     el.innerHTML=`
       <div class="alien-robot-pilot-v140" style="background-image:url('${img}')"></div>
-      <div class="alien-robot-body-v140"><i></i><b></b></div>
+      <div class="alien-robot-body-v140 combat-v142">
+        <i class="robot-light-v142 l1"></i>
+        <b class="robot-light-v142 l2"></b>
+        <span class="robot-cannon-v142"></span>
+        <em class="robot-armor-v142 a1"></em>
+        <em class="robot-armor-v142 a2"></em>
+        <u class="robot-leg-v142 leg1"></u>
+        <u class="robot-leg-v142 leg2"></u>
+      </div>
       <div class="alien-robot-hp-v140"><span></span></div>
     `;
     teamLayer.appendChild(el);
@@ -23535,8 +23573,8 @@ async function startAlienBattleMob(p,humanIndex,runId){
     const kidTarget=
       nearestKid(owner.x,owner.y);
 
-    let tx=boss.x+boss.w*.34;
-    let ty=boss.y+boss.h*.43;
+    let tx=boss.x+18;
+    let ty=boss.y+boss.h*.46;
 
     if(kidTarget){
       tx=kidTarget.x;
@@ -23643,7 +23681,7 @@ async function startAlienBattleMob(p,humanIndex,runId){
       performance.now()<r.stunUntil
     )return;
 
-    r.vy=-315;
+    r.vy=r.player?-455:-345;
     r.onGround=false;
 
     r.el.classList.add('jump-v140');
@@ -23986,15 +24024,22 @@ async function startAlienBattleMob(p,humanIndex,runId){
     }
   }
 
-  async function finishWin(){
+  function finishWin(){
     if(finished)return;
 
     finished=true;
     active=false;
-    if(charging){chargeBallEl.hidden=true;}
+
+    if(charging){
+      chargeBallEl.hidden=true;
+    }
+
     charging=false;
 
-    if(raf)cancelAnimationFrame(raf);
+    if(raf){
+      cancelAnimationFrame(raf);
+      raf=null;
+    }
 
     const elapsed=
       Math.max(
@@ -24007,17 +24052,21 @@ async function startAlienBattleMob(p,humanIndex,runId){
     state.records.alienBattleMob[p.id]=elapsed;
 
     bossEl.classList.add('defeat-v140');
-
     msg.textContent='GIANT ALIEN DOWN!';
     msg.classList.add('win-v140');
-
     stage.classList.add('victory-v140');
 
     beep(1160,260,.065);
 
-    await wait(1250);
+    // クリア演出後は必ずRESULTへ。
+    // countdown由来のinertが残っていてもここで明示解除。
+    setTimeout(()=>{
+      if(!isGameRunValid(runId))return;
 
-    if(isGameRunValid(runId)){
+      document.body.classList.remove('countdown-active-v140');
+      screen.removeAttribute('inert');
+      clearGameplaySelection();
+
       recordScreen(
         89,
         p,
@@ -24025,17 +24074,25 @@ async function startAlienBattleMob(p,humanIndex,runId){
         `${(elapsed/1000).toFixed(2)}<small>秒</small>`,
         '巨大エイリアン撃破'
       );
-    }
+    },950);
   }
 
-  async function finishLose(){
+  function finishLose(){
     if(finished)return;
 
     finished=true;
     active=false;
+
+    if(charging){
+      chargeBallEl.hidden=true;
+    }
+
     charging=false;
 
-    if(raf)cancelAnimationFrame(raf);
+    if(raf){
+      cancelAnimationFrame(raf);
+      raf=null;
+    }
 
     state.records.alienBattleMob[p.id]=60000;
 
@@ -24044,9 +24101,13 @@ async function startAlienBattleMob(p,humanIndex,runId){
 
     beep(100,230,.05);
 
-    await wait(900);
+    setTimeout(()=>{
+      if(!isGameRunValid(runId))return;
 
-    if(isGameRunValid(runId)){
+      document.body.classList.remove('countdown-active-v140');
+      screen.removeAttribute('inert');
+      clearGameplaySelection();
+
       recordScreen(
         89,
         p,
@@ -24054,7 +24115,7 @@ async function startAlienBattleMob(p,humanIndex,runId){
         `60.00<small>秒</small>`,
         '敗北'
       );
-    }
+    },800);
   }
 
   // カウントダウン前に全初期配置を完了。
@@ -24160,7 +24221,7 @@ async function startAlienBattleMob(p,humanIndex,runId){
                 ? 1
                 : 0;
 
-        r.vx=d*120;
+        r.vx=d*(r.onGround?132:150);
       }else{
         aiUpdate(r,now);
       }
@@ -24246,15 +24307,31 @@ async function startAlienBattleMob(p,humanIndex,runId){
       }
 
       if(
-        sh.x+sh.size/2>=boss.x&&
-        sh.x-sh.size/2<=boss.x+boss.w&&
-        sh.y>=boss.y&&
-        sh.y<=boss.y+boss.h
+        sh.x>=boss.x+10&&
+        sh.x<=boss.x+boss.w&&
+        sh.y>=boss.y+18&&
+        sh.y<=boss.y+boss.h-8
       ){
         sh.alive=false;
-        sh.el.remove();
+
+        // 見た目がボスへ到達してから爆発させる。
+        sh.x=boss.x+12;
+        sh.el.style.left=`${sh.x}px`;
+        sh.el.style.top=`${sh.y}px`;
+        sh.el.classList.add('impact-v142');
+
+        const impact=document.createElement('div');
+        impact.className='alien-shot-impact-v142';
+        impact.style.left=`${sh.x}px`;
+        impact.style.top=`${sh.y}px`;
+        fx.appendChild(impact);
 
         bossDamage(sh.damage);
+
+        setTimeout(()=>{
+          sh.el.remove();
+          impact.remove();
+        },180);
 
         continue;
       }
