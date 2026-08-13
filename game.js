@@ -373,7 +373,7 @@ function renderHome(){
     <section class="hero hero-v119">
       <div>
         <span class="kicker">SMARTPHONE PARTY GAME</span>
-        <h1>91 MINI<br>GAMES</h1>
+        <h1>93 MINI<br>GAMES</h1>
         <p>対戦モードは「チーム戦」「個人戦」の2種類。人数・ルール・ゲーム数を自由に設定できます。</p>
       </div>
       <div class="hero-mark">MOB</div>
@@ -398,7 +398,7 @@ function renderHome(){
     </section>
 
     <section class="panel flat">
-      <div class="panel-head"><h3>91 MINI GAMES</h3><span class="tag">GAME 1 → 91</span></div>
+      <div class="panel-head"><h3>93 MINI GAMES</h3><span class="tag">GAME 1 → 93</span></div>
       <div class="compact-game-grid home-compact-games-v119">
         ${GAMES.map(g=>`<div><b>${g.no}</b><span>${g.title}</span></div>`).join("")}
       </div>
@@ -418,7 +418,7 @@ function renderFreePlaySelect(){
   screen.innerHTML=`
     <div class="game-head">
       <div><span class="kicker">FREE PLAY</span><h2>1人で遊ぶ</h2><p class="lead">好きなゲームを1つ選んでプレイ。</p></div>
-      <div class="game-badge">91</div>
+      <div class="game-badge">93</div>
     </div>
 
     <button id="freeBack" class="secondary wizard-back-v119" type="button">← メインへ戻る</button>
@@ -456,7 +456,7 @@ function renderGameGuide(){
   screen.innerHTML=`
     <div class="game-head">
       <div><span class="kicker">GAME GUIDE</span><h2>各ゲームの説明</h2><p class="lead">内容と100点換算の目安を一覧で確認できます。</p></div>
-      <div class="game-badge">91</div>
+      <div class="game-badge">93</div>
     </div>
 
     <button id="guideBack" class="secondary wizard-back-v119" type="button">← メインへ戻る</button>
@@ -790,7 +790,7 @@ function renderGameLengthSelect(config){
 
   screen.innerHTML=`
     <div class="game-head">
-      <div><span class="kicker">GAME MODE</span><h2>プレイするゲーム数</h2><p class="lead">CUSTOM以外は91ゲームからランダムで選択。</p></div>
+      <div><span class="kicker">GAME MODE</span><h2>プレイするゲーム数</h2><p class="lead">CUSTOM以外は93ゲームからランダムで選択。</p></div>
       <div class="game-badge">${config.rule==='score'?'SCORE':'RANK'}</div>
     </div>
 
@@ -1047,7 +1047,7 @@ function renderPlayStyleSelect(){
       <button id="normalStyle" class="style-select-card normal" type="button">
         <span>NORMAL</span>
         <b>順番に全種目</b>
-        <small>GAME 1 → 91 を順番にプレイ</small>
+        <small>GAME 1 → 93 を順番にプレイ</small>
       </button>
       <button id="customStyle" class="style-select-card custom" type="button">
         <span>CUSTOM</span>
@@ -1057,7 +1057,7 @@ function renderPlayStyleSelect(){
     </div>
 
     <section class="panel flat">
-      <h3>91 MINI GAMES</h3>
+      <h3>93 MINI GAMES</h3>
       <div class="compact-game-grid">
         ${GAMES.map(g=>`<div><b>${g.no}</b><span>${g.title}</span></div>`).join("")}
       </div>
@@ -1399,7 +1399,9 @@ function scoreRuleForGame(index){
     "10秒間のスライムKO数 / 200体KO=100点",
     "15段→20段を順番に突破 / 20段クリア=100点",
     "巨大エイリアンHP100を倒すまでの時間 / 速いほど高評価",
-    "10秒オート無双 / 150体KO=100点 / 巨大スライム・ロボも出現"
+    "10秒オート無双 / 150体KO=100点 / 巨大スライム・ロボも出現",
+    "1人目敗北0〜30 / 2人目敗北31〜60 / 3人目敗北61〜75 / 3人撃破80〜100",
+    "10人抜き=100点 / 1人撃破ごとに10点"
   ][index];
 }
 
@@ -25748,7 +25750,7 @@ function softenCpuResultV121(gameIndex,p,ultra){
 
   const specificallyTuned=new Set([
     50,51,54,59,62,63,
-    64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90
+    64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92
   ]);
 
   if(
@@ -26032,10 +26034,18 @@ function simulateOneCpu(gameIndex,p){
     state.records.alienBattleMob[p.id]=ultra
       ? randi(12500,19000)
       : randi(17500,36000);
-  }else{
+  }else if(gameIndex===90){
     state.records.mobMusou[p.id]=ultra
       ? randi(128,165)
       : randi(62,132);
+  }else if(gameIndex===91){
+    state.records.iaidoMaster[p.id]=ultra
+      ? randi(82,100)
+      : randi(24,86);
+  }else{
+    state.records.killLeaderMob[p.id]=ultra
+      ? [80,90,100][randi(0,2)]
+      : randi(3,9)*10;
   }
 
   softenCpuResultV121(
@@ -26420,160 +26430,568 @@ function renderFinal(){
 
 
 // =========================================================
-// V10.47 GAME 92 — モブくんは居合切りの達人
+// V10.48 GAME 92 — モブくんは居合切りの達人
 // =========================================================
 async function startIaidoMaster(p,humanIndex,runId){
   gameFit();
-  let totalScore=0,bestMs=9999;
-  const limits=[300,250,225];
+
+  const limits=[300,2500,2250];
+  const lossFloor=[0,31,61];
+  const lossTop=[30,60,75];
+  let bestMs=99999;
+  const clearTimes=[];
+  let finalScore=0;
+  let cleared=0;
+
   screen.innerHTML=`
-    <div class="iaido-shell-v147 gameplay-fit">
+    <div class="iaido-shell-v148 gameplay-fit">
       <div class="game-head">
-        <div><span class="kicker">${esc(p.name)}</span><h2>モブくんは居合切りの達人</h2><p class="lead">「勝負！」の瞬間に一閃</p></div>
+        <div><span class="kicker">${esc(p.name)}</span><h2>モブくんは居合切りの達人</h2><p class="lead">「勝負!!」の瞬間に一閃</p></div>
         <div class="game-badge">${playBadge(humanIndex)}</div>
       </div>
-      <div class="iaido-hud-v147">
-        <div><span>刺客</span><b id="iaidoN147">1 / 3</b></div>
-        <div><span>基準</span><b id="iaidoL147">0.300</b></div>
-        <div><span>BEST</span><b id="iaidoB147">---</b></div>
+
+      <div class="iaido-hud-v148">
+        <div><span>刺客</span><b id="iaidoRound148">1 / 3</b></div>
+        <div><span>勝利ライン</span><b id="iaidoLimit148">0.300</b></div>
+        <div><span>BEST</span><b id="iaidoBest148">---</b></div>
       </div>
-      <div class="iaido-stage-v147">
-        <div class="iaido-night-v147"></div><div class="iaido-moon-v147"></div><div class="iaido-grass-v147"></div>
-        <div id="iaidoText147" class="iaido-text-v147">いざ！尋常に・・</div>
-        <div id="iaidoSlash147" class="iaido-slash-v147" hidden></div>
-        <div id="iaidoP147" class="iaido-fighter-v147 player"><img draggable="false" src="${p.img}" alt=""><div class="iaido-katana-v147"></div></div>
-        <div id="iaidoE147" class="iaido-fighter-v147 enemy"><img draggable="false" src="play/01.png" alt=""><div class="iaido-katana-v147"></div></div>
+
+      <div id="iaidoStage148" class="iaido-stage-v148">
+        <div class="iaido-night-v148"></div>
+        <div class="iaido-moon-v148"></div>
+        <div class="iaido-hills-v148"></div>
+        <div class="iaido-grass-v148"></div>
+        <div id="iaidoCall148" class="iaido-call-v148">READY</div>
+        <div id="iaidoSlash148" class="iaido-slash-v148" hidden></div>
+        <div id="iaidoAfter148" class="iaido-after-v148"></div>
+
+        <div id="iaidoPlayer148" class="iaido-fighter-v148 player-v148">
+          <img draggable="false" src="icon/01.png" alt="モブくん">
+          <div class="iaido-katana-v148">
+            <span class="blade-v148"></span><span class="guard-v148"></span><span class="hilt-v148"></span><span class="pommel-v148"></span>
+          </div>
+        </div>
+
+        <div id="iaidoEnemy148" class="iaido-fighter-v148 enemy-v148">
+          <img id="iaidoEnemyImg148" draggable="false" src="icon/02.png" alt="CPU">
+          <div class="iaido-katana-v148">
+            <span class="blade-v148"></span><span class="guard-v148"></span><span class="hilt-v148"></span><span class="pommel-v148"></span>
+          </div>
+        </div>
       </div>
-      <div class="iaido-help-v147">画面タップで居合い</div>
+
+      <div class="iaido-help-v148">早押しは敗北。中央の文字だけを見てタップ。</div>
     </div>`;
-  const nEl=document.getElementById("iaidoN147"), lEl=document.getElementById("iaidoL147"), bEl=document.getElementById("iaidoB147");
-  const tEl=document.getElementById("iaidoText147"), sEl=document.getElementById("iaidoSlash147");
-  const pEl=document.getElementById("iaidoP147"), eEl=document.getElementById("iaidoE147");
-  if(!(await countdown("COUNTDOWN",runId)))return;
-  const scoreFor=(stage,ms,win)=>win?(ms<=190?100:clamp(Math.round(100-(ms-190)*0.15),80,100)):(ms>=9999?0:[30,60,75][stage]);
-  async function duel(stage){
-    nEl.textContent=`${stage+1} / 3`; lEl.textContent=(limits[stage]/1000).toFixed(3); tEl.textContent="いざ！尋常に・・"; tEl.className="iaido-text-v147";
-    sEl.hidden=true; pEl.classList.remove("fallen-v147"); eEl.classList.remove("fallen-v147"); pEl.style.left="18%"; eEl.style.left="68%";
-    await wait(700);
-    let go=false, goAt=0;
-    const readyAt=performance.now()+rand(600,1000);
-    const result=await new Promise(resolve=>{
-      let raf=0, done=false;
-      const tap=e=>{
-        e.preventDefault();
-        if(done)return;
-        done=true;
-        screen.removeEventListener("pointerdown",tap,true);
-        cancelAnimationFrame(raf);
-        if(!go)resolve({win:false,ms:9999});
-        else{
-          const ms=Math.max(1,performance.now()-goAt);
-          resolve({win:ms<=limits[stage],ms});
-        }
-      };
-      const tick=()=>{
-        if(performance.now()>=readyAt && !go){
-          go=true; goAt=performance.now(); tEl.textContent="勝負！"; tEl.className="iaido-text-v147 go-v147";
-        }
-        if(!done)raf=requestAnimationFrame(tick);
-      };
-      screen.addEventListener("pointerdown",tap,true);
-      raf=requestAnimationFrame(tick);
-    });
-    bestMs=Math.min(bestMs,result.ms); if(bestMs<9999)bEl.textContent=(bestMs/1000).toFixed(3);
-    sEl.hidden=false; sEl.classList.add("flash-v147"); pEl.style.left="56%"; eEl.style.left="30%"; beep(result.win?950:240,120,.03); await wait(220);
-    if(result.win){tEl.textContent=`一閃成功 ${(result.ms/1000).toFixed(3)}s`; eEl.classList.add("fallen-v147");}
-    else{tEl.textContent=result.ms===9999?"早すぎた…":"敗北…"; pEl.classList.add("fallen-v147");}
-    totalScore=Math.max(totalScore,scoreFor(stage,result.ms,result.win));
-    await wait(1800);
-    return result.win;
+
+  const roundEl=document.getElementById('iaidoRound148');
+  const limitEl=document.getElementById('iaidoLimit148');
+  const bestEl=document.getElementById('iaidoBest148');
+  const stage=document.getElementById('iaidoStage148');
+  const call=document.getElementById('iaidoCall148');
+  const slash=document.getElementById('iaidoSlash148');
+  const after=document.getElementById('iaidoAfter148');
+  const player=document.getElementById('iaidoPlayer148');
+  const enemy=document.getElementById('iaidoEnemy148');
+  const enemyImg=document.getElementById('iaidoEnemyImg148');
+
+  function setCall(text,kind=''){
+    call.textContent=text;
+    call.className=`iaido-call-v148 ${kind}`.trim();
   }
-  for(let i=0;i<3;i++){ const win=await duel(i); if(!win)break; if(i<2){tEl.textContent="次の刺客！"; await wait(700);} }
-  state.records.iaidoMaster[p.id]=totalScore;
-  recordScreen(91,p,humanIndex,`${totalScore}<small>PT</small>`,bestMs<9999?`BEST ${(bestMs/1000).toFixed(3)}秒`:"反応失敗");
+  function prepare(stageNo){
+    roundEl.textContent=`${stageNo+1} / 3`;
+    limitEl.textContent=(limits[stageNo]/1000).toFixed(3);
+    enemyImg.src=`icon/${String(Math.min(4,stageNo+2)).padStart(2,'0')}.png`;
+    player.style.left='13%';
+    enemy.style.left='67%';
+    player.classList.remove('fallen-v148','winner-v148','swap-v148');
+    enemy.classList.remove('fallen-v148','winner-v148','swap-v148');
+    stage.classList.remove('impact-v148','lose-v148','win-v148');
+    slash.hidden=true;
+    slash.classList.remove('show-v148');
+    after.innerHTML='';
+    setCall('');
+  }
+  function lossScore(stageNo,ms,early){
+    if(early)return lossFloor[stageNo];
+    const floor=lossFloor[stageNo], top=lossTop[stageNo];
+    const windowMs=[900,2500,2250][stageNo];
+    const over=Math.max(0,ms-limits[stageNo]);
+    return clamp(Math.round(top-(top-floor)*over/windowMs),floor,top);
+  }
+  function clearScore(){
+    if(bestMs<=190)return 100;
+    let q=0;
+    clearTimes.forEach((ms,i)=>{
+      const range=Math.max(1,limits[i]-190);
+      q+=clamp(1-(ms-190)/range,0,1);
+    });
+    q/=Math.max(1,clearTimes.length);
+    return clamp(80+Math.round(q*19),80,99);
+  }
+  function addAfterImages(){
+    after.innerHTML=`<i class="p-v148"></i><i class="e-v148"></i>`;
+  }
+
+  // 2人はカウントダウンの時点ですでに夜の草原に配置。
+  prepare(0);
+  setCall('READY');
+  if(!(await countdown('COUNTDOWN',runId,{transparent:true})))return;
+
+  async function duel(stageNo){
+    prepare(stageNo);
+    let phase='intro';
+    let goAt=0;
+    let settled=false;
+    let tapHandler=null;
+
+    const resultPromise=new Promise(resolve=>{
+      const settle=result=>{
+        if(settled)return;
+        settled=true;
+        if(tapHandler)screen.removeEventListener('pointerdown',tapHandler,true);
+        resolve(result);
+      };
+      tapHandler=e=>{
+        e.preventDefault();
+        if(phase!=='go'){
+          settle({win:false,early:true,ms:99999});
+          return;
+        }
+        const ms=Math.max(1,performance.now()-goAt);
+        settle({win:ms<=limits[stageNo],early:false,ms});
+      };
+      screen.addEventListener('pointerdown',tapHandler,true);
+
+      (async()=>{
+        setCall('いざ・・','intro-v148');
+        await wait(520); if(settled)return;
+        setCall('尋常に','intro-v148');
+        await wait(560); if(settled)return;
+        setCall('','');
+        await wait(rand(420,900)); if(settled)return;
+        phase='go';
+        goAt=performance.now();
+        setCall('勝負!!','go-v148');
+        beep(880,85,.025);
+        await wait(limits[stageNo]+1500); if(settled)return;
+        settle({win:false,early:false,ms:limits[stageNo]+1500});
+      })();
+    });
+
+    const result=await resultPromise;
+    if(!isGameRunValid(runId))return {win:false,abort:true};
+
+    if(result.ms<bestMs){bestMs=result.ms; if(bestMs<99999)bestEl.textContent=(bestMs/1000).toFixed(3);}
+
+    // 超高速で入れ替わって斬り合う。
+    setCall('一閃!!','slash-text-v148');
+    addAfterImages();
+    slash.hidden=false;
+    void slash.offsetWidth;
+    slash.classList.add('show-v148');
+    player.classList.add('swap-v148');
+    enemy.classList.add('swap-v148');
+    player.style.left='61%';
+    enemy.style.left='19%';
+    stage.classList.add('impact-v148');
+    beep(result.win?1040:210,140,.035);
+
+    // 指定どおり、斬り合いから1秒後に負けた方が倒れる。
+    await wait(1000);
+    if(!isGameRunValid(runId))return {win:false,abort:true};
+
+    if(result.win){
+      enemy.classList.add('fallen-v148');
+      player.classList.add('winner-v148');
+      stage.classList.add('win-v148');
+      setCall(`${(result.ms/1000).toFixed(3)}秒  勝利!`,'result-v148 win-text-v148');
+      clearTimes.push(result.ms);
+      cleared=stageNo+1;
+    }else{
+      player.classList.add('fallen-v148');
+      enemy.classList.add('winner-v148');
+      stage.classList.add('lose-v148');
+      finalScore=lossScore(stageNo,result.ms,result.early);
+      setCall(result.early?'早すぎた…':'敗北…','result-v148 lose-text-v148');
+    }
+
+    // 勝敗演出を合計2秒以上確保。
+    await wait(1150);
+    return result;
+  }
+
+  for(let i=0;i<3;i++){
+    const result=await duel(i);
+    if(result.abort)return;
+    if(!result.win)break;
+    if(i<2){
+      setCall('次の刺客!','next-v148');
+      await wait(700);
+    }
+  }
+
+  if(cleared===3)finalScore=clearScore();
+  state.records.iaidoMaster[p.id]=finalScore;
+  recordScreen(91,p,humanIndex,`${finalScore}<small>PT</small>`,cleared===3?`3人撃破 / BEST ${(bestMs/1000).toFixed(3)}秒`:`${cleared}人撃破`);
 }
 
+
 // =========================================================
-// V10.47 GAME 93 — モブくんはキルリーダー
+// V10.48 GAME 93 — モブくんはキルリーダー
 // =========================================================
 async function startKillLeaderMob(p,humanIndex,runId){
   gameFit();
-  const W=360, groundY=420;
-  let timeLeft=10,kills=0,wave=1,last=performance.now(),raf=0,finished=false;
-  let leftHeld=false,rightHeld=false,enemy=null,portals=[];
+
+  const groundY=318;
+  let W=360;
+  let timeLeft=10;
+  let kills=0;
+  let wave=1;
+  let last=performance.now();
+  let raf=0;
+  let finished=false;
+  let leftHeld=false,rightHeld=false;
+  let enemy=null;
   let bullets=[],enemyBullets=[];
-  const player={x:50,y:groundY,w:30,h:38,vx:0,vy:0,onGround:true,hp:50,maxHp:50,face:1,shotAt:0,airAt:0};
+
+  const player={x:38,y:groundY,w:38,h:48,vx:0,vy:0,onGround:true,hp:50,maxHp:50,face:1,shotAt:0,airAt:0};
+
   screen.innerHTML=`
-    <div class="kill-shell-v147 gameplay-fit">
+    <div class="kill-shell-v148 gameplay-fit">
       <div class="game-head">
-        <div><span class="kicker">${esc(p.name)}</span><h2>モブくんはキルリーダー</h2><p class="lead">1対1で10人抜き</p></div>
+        <div><span class="kicker">${esc(p.name)}</span><h2>モブくんはキルリーダー</h2><p class="lead">HP50で1対1・10人抜き</p></div>
         <div class="game-badge">${playBadge(humanIndex)}</div>
       </div>
-      <div class="kill-hud-v147">
-        <div><span>KILL</span><b id="killK147">0 / 10</b></div>
-        <div><span>TIME</span><b id="killT147">10.0</b></div>
-        <div><span>YOU</span><b id="killHP147">50</b></div>
-        <div><span>ENEMY</span><b id="killE147">5</b></div>
+
+      <div class="kill-hud-v148">
+        <div><span>KILL</span><b id="killK148">0 / 10</b></div>
+        <div><span>TIME</span><b id="killT148">10.0</b></div>
+        <div><span>YOU</span><b id="killHP148">50</b></div>
+        <div><span>ENEMY</span><b id="killE148">5</b></div>
       </div>
-      <div class="kill-stage-v147">
-        <div class="kill-bg-v147"></div><div class="kill-ground-v147"></div>
-        <div id="killActor147" class="kill-actor-layer-v147"></div><div id="killBul147" class="kill-bullet-layer-v147"></div><div id="killFx147" class="kill-fx-v147"></div>
-        <div id="killText147" class="kill-text-v147">READY</div>
+
+      <div id="killStage148" class="kill-stage-v148">
+        <div class="kill-sky-v148"></div><div class="kill-city-v148"></div><div class="kill-ground-v148"></div>
+        <div id="killActor148" class="kill-actor-layer-v148"></div>
+        <div id="killBul148" class="kill-bullet-layer-v148"></div>
+        <div id="killFx148" class="kill-fx-v148"></div>
+        <div id="killMsg148" class="kill-msg-v148">READY</div>
+        <div id="killBig148" class="kill-big-v148" hidden></div>
       </div>
-      <div class="kill-controls-v147">
-        <button id="killLeft147">←</button><button id="killJump147">JUMP</button><button id="killShot147">射撃</button><button id="killAir147">戦闘機<b>READY</b></button><button id="killRight147">→</button>
+
+      <div class="kill-controls-v148">
+        <button id="killLeft148">←</button>
+        <button id="killJump148">JUMP</button>
+        <button id="killShot148" class="shot-v148">射撃</button>
+        <button id="killAir148" class="air-v148">戦闘機<b>READY</b></button>
+        <button id="killRight148">→</button>
       </div>
     </div>`;
-  const actor=document.getElementById("killActor147"), bul=document.getElementById("killBul147"), fx=document.getElementById("killFx147");
-  const kEl=document.getElementById("killK147"), tEl=document.getElementById("killT147"), hpEl=document.getElementById("killHP147"), eEl=document.getElementById("killE147"), msg=document.getElementById("killText147");
-  const airBtn=document.getElementById("killAir147"), airCd=airBtn.querySelector("b");
-  const makeActor=(img,isEnemy=false)=>{const el=document.createElement("div");el.className=`kill-actor-v147 ${isEnemy?"enemy":""}`;el.innerHTML=`<img draggable="false" src="${img}" alt=""><i class="gun-v147"></i><b class="hpbar-v147"><i></i></b>`;actor.appendChild(el);return el;};
-  const pEl=makeActor(p.img,false);
-  function spawnEnemy(){
-    if(enemy&&enemy.el&&enemy.el.isConnected)enemy.el.remove();
-    const hp=(wave>=9?20:5);
-    enemy={idx:wave,x:W-90,y:groundY,w:30,h:38,vx:0,vy:0,onGround:true,hp,maxHp:hp,face:-1,shotAt:0,voidAt:performance.now()+1500,voidUntil:0,portalAt:performance.now()+1400,airAt:performance.now()+1800,grenAt:performance.now()+1500,el:makeActor(`play/01.png`,true)};
-    msg.textContent=`ENEMY ${wave}`;
+
+  const stage=document.getElementById('killStage148');
+  const actorLayer=document.getElementById('killActor148');
+  const bulletLayer=document.getElementById('killBul148');
+  const fx=document.getElementById('killFx148');
+  const msg=document.getElementById('killMsg148');
+  const big=document.getElementById('killBig148');
+  const kEl=document.getElementById('killK148');
+  const tEl=document.getElementById('killT148');
+  const hpEl=document.getElementById('killHP148');
+  const eEl=document.getElementById('killE148');
+  const airBtn=document.getElementById('killAir148');
+  const airCd=airBtn.querySelector('b');
+  W=Math.max(300,stage.clientWidth||360);
+
+  function makeActor(img,isEnemy=false){
+    const el=document.createElement('div');
+    el.className=`kill-actor-v148 ${isEnemy?'enemy-v148':'player-v148'}`;
+    el.innerHTML=`<img draggable="false" src="${img}" alt=""><i class="gun-v148"></i><b class="hpbar-v148"><i></i></b>`;
+    actorLayer.appendChild(el);
+    return el;
   }
-  const updateActor=a=>{a.el.style.left=`${a.x}px`;a.el.style.top=`${a.y-a.h}px`;a.el.style.transform=a.face<0?"scaleX(-1)":"scaleX(1)";a.el.querySelector(".hpbar-v147 i").style.width=`${clamp(a.hp/a.maxHp,0,1)*100}%`;};
-  const pop=(x,y,txt,cls="")=>{const el=document.createElement("div");el.className=`kill-pop-v147 ${cls}`;el.textContent=txt;el.style.left=`${x}px`;el.style.top=`${y}px`;fx.appendChild(el);setTimeout(()=>el.remove(),700);};
-  const shoot=(owner,ally=true)=>{const now=performance.now();if(now<owner.shotAt)return;owner.shotAt=now+240;const el=document.createElement("i");el.className=`kill-bullet-v147 ${ally?"ally":"enemy"}`;bul.appendChild(el);(ally?bullets:enemyBullets).push({x:ally?owner.x+owner.w:owner.x,y:owner.y-owner.h+18,vx:(ally?1:-1)*430,el});};
-  const airStrike=(targetEnemy=true)=>{const now=performance.now();if(now<player.airAt)return;player.airAt=now+3000;msg.textContent="AIR STRIKE!";for(let i=0;i<3;i++)setTimeout(()=>{if(targetEnemy&&enemy){enemy.hp=Math.max(0,enemy.hp-3);pop(enemy.x+10,enemy.y-40,"-3","hit")}else{player.hp=Math.max(0,player.hp-3);pop(player.x+10,player.y-40,"-3","enemy")}},i*180);};
-  function finish(){if(finished)return;finished=true;cancelAnimationFrame(raf);const score=clamp(kills*10,0,100);state.records.killLeaderMob[p.id]=score;setTimeout(()=>recordScreen(92,p,humanIndex,`${score}<small>PT</small>`,`${kills}人撃破`),900);}
-  if(!(await countdown("COUNTDOWN",runId)))return;
-  spawnEnemy();
-  const hold=(id,set)=>{const el=document.getElementById(id);el.addEventListener("pointerdown",e=>{e.preventDefault();set(true)},{passive:false});el.addEventListener("pointerup",e=>{e.preventDefault();set(false)},{passive:false});el.addEventListener("pointercancel",e=>{e.preventDefault();set(false)},{passive:false});};
-  hold("killLeft147",v=>leftHeld=v); hold("killRight147",v=>rightHeld=v);
-  document.getElementById("killJump147").addEventListener("pointerdown",e=>{e.preventDefault();if(player.onGround){player.vy=-530;player.onGround=false;}},{passive:false});
-  document.getElementById("killShot147").addEventListener("pointerdown",e=>{e.preventDefault();shoot(player,true)},{passive:false});
-  airBtn.addEventListener("pointerdown",e=>{e.preventDefault();airStrike(true)},{passive:false});
+  const playerEl=makeActor('icon/01.png',false);
+
+  function updateActor(a){
+    if(!a||!a.el)return;
+    a.el.style.left=`${a.x}px`;
+    a.el.style.top=`${a.y-a.h}px`;
+    a.el.style.transform=`scaleX(${a.face<0?-1:1})`;
+    a.el.querySelector('.hpbar-v148 i').style.width=`${clamp(a.hp/a.maxHp,0,1)*100}%`;
+  }
+  function showBig(text,kind='kill',ms=700){
+    big.hidden=false;
+    big.textContent=text;
+    big.className=`kill-big-v148 ${kind}-v148 show-v148`;
+    setTimeout(()=>{
+      if(big.textContent===text){big.hidden=true;big.className='kill-big-v148';}
+    },ms);
+  }
+  function pop(x,y,text,kind=''){
+    const el=document.createElement('div');
+    el.className=`kill-pop-v148 ${kind}`;
+    el.textContent=text;
+    el.style.left=`${x}px`;el.style.top=`${y}px`;
+    fx.appendChild(el);
+    setTimeout(()=>el.remove(),720);
+  }
+  function burst(x,y,kind='hit'){
+    const el=document.createElement('div');
+    el.className=`kill-burst-v148 ${kind}`;
+    el.style.left=`${x}px`;el.style.top=`${y}px`;
+    fx.appendChild(el);
+    setTimeout(()=>el.remove(),520);
+  }
+
+  function spawnEnemy(initial=false){
+    const hp=wave>=9?20:5;
+    const icon=Math.min(10,wave+1);
+    enemy={
+      idx:wave,x:W-82,y:groundY,w:38,h:48,vx:0,vy:0,onGround:true,
+      hp,maxHp:hp,face:-1,shotAt:performance.now()+700,voidAt:performance.now()+1500,voidUntil:0,
+      grenadeAt:performance.now()+1500,portalAt:performance.now()+1100,airAt:performance.now()+1700,
+      voidUsed:false,grenadeUsed:false,portalUsed:false,airUsed:false,
+      el:makeActor(`icon/${String(icon).padStart(2,'0')}.png`,true)
+    };
+    updateActor(enemy);
+    if(!initial){
+      enemy.el.classList.add('drop-v148');
+      setTimeout(()=>enemy&&enemy.el&&enemy.el.classList.remove('drop-v148'),450);
+    }
+    msg.textContent=`ENEMY ${wave} / HP ${hp}`;
+  }
+
+  function shoot(owner,ally=true){
+    const now=performance.now();
+    if(now<owner.shotAt)return;
+    owner.shotAt=now+(ally?170:320);
+    const el=document.createElement('i');
+    el.className=`kill-bullet-v148 ${ally?'ally-v148':'enemy-v148'}`;
+    bulletLayer.appendChild(el);
+    (ally?bullets:enemyBullets).push({
+      x:ally?owner.x+owner.w:owner.x,
+      y:owner.y-owner.h+23,
+      vx:(ally?1:-1)*480,
+      el
+    });
+    beep(ally?660:310,34,.008);
+  }
+
+  function playerAirStrike(){
+    const now=performance.now();
+    if(now<player.airAt)return;
+    player.airAt=now+3000;
+    msg.textContent='FIGHTER!';
+    for(let i=0;i<4;i++){
+      setTimeout(()=>{
+        if(!enemy||finished||!isGameRunValid(runId))return;
+        const x=enemy.x+enemy.w/2+rand(-10,10);
+        const missile=document.createElement('i');
+        missile.className='kill-missile-v148 ally-v148';
+        missile.style.left=`${x}px`;missile.style.top='-28px';
+        fx.appendChild(missile);
+        setTimeout(()=>{
+          if(missile.isConnected)missile.remove();
+          if(!enemy)return;
+          enemy.hp=Math.max(0,enemy.hp-2);
+          burst(x,enemy.y-18,'air-v148');
+          pop(x,enemy.y-48,'-2','hit-v148');
+        },360);
+      },i*120);
+    }
+  }
+
+  function enemyAirStrike(){
+    msg.textContent='ENEMY FIGHTER!';
+    showBig('AIR RAID','danger',650);
+    for(let i=0;i<3;i++){
+      setTimeout(()=>{
+        if(finished)return;
+        const x=player.x+player.w/2+rand(-14,14);
+        const missile=document.createElement('i');
+        missile.className='kill-missile-v148 enemy-v148';
+        missile.style.left=`${x}px`;missile.style.top='-28px';
+        fx.appendChild(missile);
+        setTimeout(()=>{
+          if(missile.isConnected)missile.remove();
+          player.hp=Math.max(0,player.hp-2);
+          burst(x,player.y-18,'enemy-v148');
+          pop(x,player.y-50,'-2','enemy-v148');
+        },380);
+      },i*150);
+    }
+  }
+
+  function useVoid(){
+    if(!enemy||enemy.voidUsed)return;
+    enemy.voidUsed=true;
+    enemy.voidUntil=performance.now()+1500;
+    enemy.el.classList.add('void-v148');
+    msg.textContent='VOID!';
+    showBig('VOID','void',520);
+  }
+  function useGrenade(){
+    if(!enemy||enemy.grenadeUsed)return;
+    enemy.grenadeUsed=true;
+    msg.textContent='GRENADE!';
+    const g=document.createElement('i');
+    g.className='kill-grenade-v148';
+    g.style.left=`${enemy.x}px`;g.style.top=`${enemy.y-44}px`;
+    fx.appendChild(g);
+    setTimeout(()=>{
+      if(g.isConnected)g.remove();
+      player.hp=Math.max(0,player.hp-5);
+      burst(player.x+18,player.y-18,'grenade-v148');
+      pop(player.x+18,player.y-52,'STUN -5','enemy-v148');
+    },430);
+  }
+  function usePortal(){
+    if(!enemy||enemy.portalUsed)return;
+    enemy.portalUsed=true;
+    const from=enemy.x,to=clamp(player.x+rand(85,145),160,W-70);
+    const p1=document.createElement('i'),p2=document.createElement('i');
+    p1.className='kill-portal-v148';p2.className='kill-portal-v148';
+    p1.style.left=`${from}px`;p2.style.left=`${to}px`;
+    p1.style.top=p2.style.top=`${groundY-25}px`;
+    fx.append(p1,p2);
+    msg.textContent='PORTAL!';
+    setTimeout(()=>{
+      if(enemy)enemy.x=to;
+      p1.remove();p2.remove();
+    },330);
+  }
+
+  function finishGameNow(kind){
+    if(finished)return;
+    finished=true;
+    cancelAnimationFrame(raf);
+    const score=clamp(kills*10,0,100);
+    state.records.killLeaderMob[p.id]=score;
+    if(kind==='clear'){
+      stage.classList.add('clear-v148');
+      showBig('KILL LEADER!!','clear',1400);
+      beep(1120,210,.05);
+    }else{
+      stage.classList.add('defeat-v148');
+      showBig('DEFEAT','defeat',1300);
+      beep(150,260,.05);
+    }
+    setTimeout(()=>recordScreen(92,p,humanIndex,`${score}<small>PT</small>`,`${kills}人撃破`),1500);
+  }
+
+  // カウントダウン前にプレイヤーと1人目を配置。
+  updateActor({...player,el:playerEl});
+  player.el=playerEl;
+  spawnEnemy(true);
+  updateActor(player);
+  updateActor(enemy);
+  msg.textContent='READY / 1 VS 1';
+
+  if(!(await countdown('COUNTDOWN',runId,{transparent:true})))return;
+  last=performance.now();
+  msg.textContent='FIGHT!';
+
+  const hold=(id,setter)=>{
+    const el=document.getElementById(id);
+    el.addEventListener('pointerdown',e=>{e.preventDefault();setter(true);try{el.setPointerCapture(e.pointerId)}catch(_){}} ,{passive:false});
+    const off=e=>{if(e)e.preventDefault();setter(false)};
+    el.addEventListener('pointerup',off,{passive:false});
+    el.addEventListener('pointercancel',off,{passive:false});
+    el.addEventListener('lostpointercapture',()=>setter(false),{passive:true});
+  };
+  hold('killLeft148',v=>leftHeld=v);
+  hold('killRight148',v=>rightHeld=v);
+  document.getElementById('killJump148').addEventListener('pointerdown',e=>{
+    e.preventDefault();
+    if(player.onGround){player.vy=-545;player.onGround=false;beep(460,38,.01);}
+  },{passive:false});
+  document.getElementById('killShot148').addEventListener('pointerdown',e=>{e.preventDefault();shoot(player,true)}, {passive:false});
+  airBtn.addEventListener('pointerdown',e=>{e.preventDefault();playerAirStrike()}, {passive:false});
+
   const loop=now=>{
     if(finished||!isGameRunValid(runId))return;
-    const dt=Math.min(.033,(now-last)/1000);last=now;timeLeft=Math.max(0,timeLeft-dt);
-    player.vx=(leftHeld?-175:0)+(rightHeld?175:0);if(player.vx<0)player.face=-1;if(player.vx>0)player.face=1;player.x=clamp(player.x+player.vx*dt,10,W-50);
-    if(!player.onGround){player.vy+=980*dt;player.y+=player.vy*dt;if(player.y>=groundY){player.y=groundY;player.vy=0;player.onGround=true;}} updateActor(player);
+    const dt=Math.min(.033,(now-last)/1000);last=now;
+    timeLeft=Math.max(0,timeLeft-dt);
+
+    player.vx=(leftHeld?-180:0)+(rightHeld?180:0);
+    if(player.vx<0)player.face=-1;if(player.vx>0)player.face=1;
+    player.x=clamp(player.x+player.vx*dt,8,W-player.w-8);
+    if(!player.onGround){
+      player.vy+=980*dt;player.y+=player.vy*dt;
+      if(player.y>=groundY){player.y=groundY;player.vy=0;player.onGround=true;}
+    }
+    updateActor(player);
+
     if(enemy){
-      const dx=player.x-enemy.x;enemy.face=dx>0?1:-1;enemy.x=clamp(enemy.x+Math.sign(dx)*130*dt,10,W-50);
-      if(!enemy.onGround){enemy.vy+=980*dt;enemy.y+=enemy.vy*dt;if(enemy.y>=groundY){enemy.y=groundY;enemy.vy=0;enemy.onGround=true;}}
-      if(Math.random()<0.018&&enemy.onGround){enemy.vy=-500;enemy.onGround=false;}
-      if(enemy.idx===7&&enemy.voidUntil<now&&now>=enemy.voidAt){enemy.voidUntil=now+2000;enemy.el.classList.add("void-v147");msg.textContent="VOID!";}
-      if(enemy.idx===8&&now>=enemy.grenAt){player.hp=Math.max(0,player.hp-4);pop(player.x+10,player.y-40,"STUN","enemy");enemy.grenAt=1e12;}
-      if(enemy.idx===9&&now>=enemy.portalAt){enemy.x=120;msg.textContent="PORTAL!";enemy.portalAt=1e12;if(enemy.voidUntil<now){enemy.voidUntil=now+2000;enemy.el.classList.add("void-v147");}}
-      if(enemy.idx===10&&now>=enemy.airAt){player.hp=Math.max(0,player.hp-6);pop(player.x+10,player.y-40,"AIR","enemy");enemy.airAt=1e12;if(enemy.voidUntil<now){enemy.voidUntil=now+2000;enemy.el.classList.add("void-v147");}}
-      if(enemy.voidUntil<now)enemy.el.classList.remove("void-v147");
-      if(enemy.voidUntil<now)shoot(enemy,false);
+      const dx=player.x-enemy.x;
+      enemy.face=dx>0?1:-1;
+      if(Math.abs(dx)>115)enemy.x=clamp(enemy.x+Math.sign(dx)*78*dt,12,W-enemy.w-12);
+      if(Math.random()<0.007&&enemy.onGround){enemy.vy=-470;enemy.onGround=false;}
+      if(!enemy.onGround){
+        enemy.vy+=980*dt;enemy.y+=enemy.vy*dt;
+        if(enemy.y>=groundY){enemy.y=groundY;enemy.vy=0;enemy.onGround=true;}
+      }
+
+      if(enemy.idx===7 && now>=enemy.voidAt)useVoid();
+      if(enemy.idx===8 && now>=enemy.grenadeAt)useGrenade();
+      if(enemy.idx===9){
+        if(now>=enemy.portalAt)usePortal();
+        if(now>=enemy.voidAt)useVoid();
+      }
+      if(enemy.idx===10){
+        if(now>=enemy.voidAt)useVoid();
+        if(now>=enemy.airAt&&!enemy.airUsed){enemy.airUsed=true;enemyAirStrike();}
+      }
+
+      if(enemy.voidUntil<=now)enemy.el.classList.remove('void-v148');
+      if(now>=enemy.shotAt && enemy.voidUntil<=now)shoot(enemy,false);
       updateActor(enemy);
     }
-    bullets=bullets.filter(b=>{b.x+=b.vx*dt;b.el.style.left=`${b.x}px`;b.el.style.top=`${b.y}px`;if(enemy&&enemy.voidUntil<now&&b.x>enemy.x&&b.x<enemy.x+enemy.w+8&&b.y>enemy.y-enemy.h&&b.y<enemy.y+4){enemy.hp=Math.max(0,enemy.hp-1);pop(enemy.x+10,enemy.y-38,"HIT","hit");b.el.remove();return false}if(b.x>W+20){b.el.remove();return false}return true;});
-    enemyBullets=enemyBullets.filter(b=>{b.x+=b.vx*dt;b.el.style.left=`${b.x}px`;b.el.style.top=`${b.y}px`;if(b.x>player.x&&b.x<player.x+player.w+8&&b.y>player.y-player.h&&b.y<player.y+4){player.hp=Math.max(0,player.hp-1);pop(player.x+8,player.y-38,"-1","enemy");b.el.remove();return false}if(b.x<-20){b.el.remove();return false}return true;});
-    if(enemy&&enemy.hp<=0){kills++;timeLeft+=5;player.hp=Math.min(player.maxHp,player.hp+10);pop(enemy.x+10,enemy.y-52,`KILL ${kills}!`,"kill");enemy.el.classList.add("dead-v147");setTimeout(()=>enemy&&enemy.el&&enemy.el.remove(),260);enemy=null;if(kills>=10){msg.textContent="CLEAR!!";finish();return}wave++;setTimeout(()=>{if(!finished&&isGameRunValid(runId))spawnEnemy()},600);}
-    kEl.textContent=`${kills} / 10`;tEl.textContent=timeLeft.toFixed(1);hpEl.textContent=Math.round(player.hp);eEl.textContent=enemy?Math.round(enemy.hp):"--";airCd.textContent=performance.now()<player.airAt?((player.airAt-performance.now())/1000).toFixed(1):"READY";
-    if(player.hp<=0||timeLeft<=0){msg.textContent=player.hp<=0?"YOU DOWN...":"TIME UP";finish();return}
+
+    bullets=bullets.filter(b=>{
+      b.x+=b.vx*dt;b.el.style.left=`${b.x}px`;b.el.style.top=`${b.y}px`;
+      if(enemy&&enemy.voidUntil<=now&&b.x>=enemy.x&&b.x<=enemy.x+enemy.w&&b.y>=enemy.y-enemy.h&&b.y<=enemy.y){
+        enemy.hp=Math.max(0,enemy.hp-1);burst(enemy.x+enemy.w/2,b.y,'hit-v148');pop(enemy.x+enemy.w/2,enemy.y-52,'HIT','hit-v148');b.el.remove();return false;
+      }
+      if(b.x>W+24){b.el.remove();return false;}return true;
+    });
+
+    enemyBullets=enemyBullets.filter(b=>{
+      b.x+=b.vx*dt;b.el.style.left=`${b.x}px`;b.el.style.top=`${b.y}px`;
+      if(b.x>=player.x&&b.x<=player.x+player.w&&b.y>=player.y-player.h&&b.y<=player.y){
+        player.hp=Math.max(0,player.hp-1);burst(player.x+player.w/2,b.y,'enemy-v148');pop(player.x+player.w/2,player.y-52,'-1','enemy-v148');b.el.remove();return false;
+      }
+      if(b.x<-24){b.el.remove();return false;}return true;
+    });
+
+    if(enemy&&enemy.hp<=0){
+      const dead=enemy;
+      kills++;
+      timeLeft+=5;
+      player.hp=Math.min(player.maxHp,player.hp+10);
+      stage.classList.remove('kill-shake-v148');void stage.offsetWidth;stage.classList.add('kill-shake-v148');
+      showBig(`KILL ${kills}!`,'kill',720);
+      pop(dead.x+dead.w/2,dead.y-65,'+5 SEC / +10 HP','heal-v148');
+      dead.el.classList.add('dead-v148');
+      enemy=null;
+      if(kills>=10){finishGameNow('clear');return;}
+      wave++;
+      setTimeout(()=>{
+        if(!finished&&isGameRunValid(runId))spawnEnemy(false);
+      },350);
+    }
+
+    kEl.textContent=`${kills} / 10`;
+    tEl.textContent=timeLeft.toFixed(1);
+    hpEl.textContent=Math.round(player.hp);
+    eEl.textContent=enemy?Math.round(enemy.hp):'--';
+    airCd.textContent=performance.now()<player.airAt?`${((player.airAt-performance.now())/1000).toFixed(1)}s`:'READY';
+
+    if(player.hp<=0||timeLeft<=0){finishGameNow('defeat');return;}
     raf=requestAnimationFrame(loop);
   };
   raf=requestAnimationFrame(loop);
 }
-
 
 
 renderHome();

@@ -22376,3 +22376,82 @@ img,svg,canvas{
 .kill-controls-v147{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px}
 .kill-controls-v147 button{min-width:0;min-height:52px;border:4px solid var(--ink);border-radius:16px;background:#fff8d8;font-weight:1000}
 .kill-controls-v147 button b{display:block;font-size:8px}
+
+
+/* =========================================================
+   V10.48 — IAIDO MASTER
+   ========================================================= */
+.iaido-shell-v148{display:flex;flex-direction:column;gap:8px;touch-action:none!important}
+.iaido-hud-v148{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.iaido-hud-v148>div{background:#fffbe4;border:3px solid var(--ink);border-radius:14px;padding:6px;text-align:center}
+.iaido-hud-v148 span{display:block;font-size:9px;font-weight:1000;letter-spacing:.03em}
+.iaido-hud-v148 b{font-size:18px;line-height:1.1}
+.iaido-stage-v148{position:relative;height:405px;overflow:hidden;border:4px solid var(--ink);border-radius:22px;background:#17233d;touch-action:none!important}
+.iaido-night-v148{position:absolute;inset:0;background:#162541}
+.iaido-moon-v148{position:absolute;right:22px;top:20px;width:64px;height:64px;border:4px solid var(--ink);border-radius:50%;background:#fff0a9;box-shadow:0 0 0 6px rgba(255,240,169,.12)}
+.iaido-hills-v148{position:absolute;left:-8%;right:-8%;bottom:84px;height:145px;background:#29453c;clip-path:polygon(0 55%,15% 26%,28% 58%,43% 18%,60% 60%,75% 32%,100% 64%,100% 100%,0 100%)}
+.iaido-grass-v148{position:absolute;left:0;right:0;bottom:0;height:96px;background:#35633f;border-top:5px solid var(--ink)}
+.iaido-grass-v148:before{content:"";position:absolute;left:0;right:0;top:-25px;height:28px;background:repeating-linear-gradient(110deg,transparent 0 10px,#4a8150 11px 15px,transparent 16px 25px)}
+.iaido-call-v148{position:absolute;left:50%;top:42%;transform:translate(-50%,-50%);z-index:20;min-width:76%;text-align:center;color:#fff7d0;font-size:48px;line-height:1;font-weight:1000;letter-spacing:.02em;-webkit-text-stroke:2px #181722;text-shadow:0 4px 0 #181722,0 0 16px rgba(0,0,0,.75);pointer-events:none;white-space:nowrap}
+.iaido-call-v148.go-v148{font-size:58px;color:#ffe45f;animation:iaidoCallGo148 .15s ease infinite alternate}
+.iaido-call-v148.slash-text-v148{font-size:50px;color:#e8fbff}
+.iaido-call-v148.result-v148{font-size:34px;top:25%}
+.iaido-call-v148.next-v148{font-size:42px;color:#bfffd4}
+.iaido-call-v148.lose-text-v148{color:#ffb4a6}.iaido-call-v148.win-text-v148{color:#fff072}
+@keyframes iaidoCallGo148{to{transform:translate(-50%,-50%) scale(1.06)}}
+.iaido-fighter-v148{position:absolute;bottom:65px;width:108px;height:158px;z-index:8;transition:left .09s cubic-bezier(.1,.9,.2,1);transform-origin:center bottom}
+.iaido-fighter-v148 img{position:absolute;left:50%;bottom:0;transform:translateX(-50%);width:82px;height:108px;object-fit:contain;filter:drop-shadow(0 7px 0 rgba(0,0,0,.22))}
+.iaido-fighter-v148.enemy-v148{transform:scaleX(-1)}
+.iaido-katana-v148{position:absolute;left:52px;bottom:74px;width:112px;height:28px;transform:rotate(-18deg);transform-origin:8px 14px;z-index:4}
+.iaido-katana-v148 .blade-v148{position:absolute;left:23px;top:7px;width:85px;height:14px;background:#eef6f7;border:3px solid var(--ink);clip-path:polygon(0 25%,84% 8%,100% 50%,84% 92%,0 74%);box-shadow:inset 0 -4px 0 #aebfc3}
+.iaido-katana-v148 .blade-v148:after{content:"";position:absolute;left:8px;right:17px;top:3px;height:2px;background:#fff}
+.iaido-katana-v148 .guard-v148{position:absolute;left:18px;top:3px;width:12px;height:22px;background:#d7aa46;border:3px solid var(--ink);border-radius:45%}
+.iaido-katana-v148 .hilt-v148{position:absolute;left:-14px;top:7px;width:36px;height:14px;background:repeating-linear-gradient(135deg,#5c3b2b 0 6px,#d6b06c 6px 9px);border:3px solid var(--ink);border-radius:8px}
+.iaido-katana-v148 .pommel-v148{position:absolute;left:-20px;top:9px;width:9px;height:10px;background:#c79235;border:3px solid var(--ink);border-radius:50%}
+.iaido-slash-v148{position:absolute;left:50%;top:48%;width:250px;height:12px;transform:translate(-50%,-50%) rotate(-15deg);z-index:18;border-radius:999px;background:#eaffff;box-shadow:0 0 0 4px #69d9f0,0 0 24px 9px rgba(137,238,255,.78);opacity:0}
+.iaido-slash-v148.show-v148{animation:iaidoSlash148 .38s ease forwards}
+@keyframes iaidoSlash148{0%{opacity:0;transform:translate(-50%,-50%) rotate(-15deg) scaleX(.05)}30%{opacity:1;transform:translate(-50%,-50%) rotate(-15deg) scaleX(1.06)}100%{opacity:0;transform:translate(-50%,-50%) rotate(-15deg) scaleX(1.35)}}
+.iaido-after-v148 i{position:absolute;bottom:65px;width:70px;height:105px;border:4px solid rgba(202,249,255,.55);border-radius:45%;opacity:0;z-index:7}
+.iaido-after-v148 .p-v148{left:18%;animation:iaidoAfterP148 .36s ease}.iaido-after-v148 .e-v148{right:18%;animation:iaidoAfterE148 .36s ease}
+@keyframes iaidoAfterP148{30%{opacity:.7;transform:translateX(95px)}100%{opacity:0;transform:translateX(170px)}}
+@keyframes iaidoAfterE148{30%{opacity:.7;transform:translateX(-95px)}100%{opacity:0;transform:translateX(-170px)}}
+.iaido-fighter-v148.fallen-v148 img{animation:iaidoFall148 .42s ease forwards}.iaido-fighter-v148.fallen-v148 .iaido-katana-v148{animation:iaidoSwordDrop148 .45s ease forwards}
+@keyframes iaidoFall148{to{transform:translateX(-50%) rotate(90deg) translateY(-8px)}}
+@keyframes iaidoSwordDrop148{to{transform:translate(18px,28px) rotate(55deg)}}
+.iaido-stage-v148.impact-v148{animation:iaidoImpact148 .22s linear}.iaido-stage-v148.lose-v148{box-shadow:inset 0 0 0 5px #c64a4a}.iaido-stage-v148.win-v148{box-shadow:inset 0 0 0 5px #e8c64a}
+@keyframes iaidoImpact148{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}60%{transform:translateX(6px)}}
+.iaido-help-v148{text-align:center;background:#1c2a46;color:#fff7d0;border:3px solid var(--ink);border-radius:14px;padding:8px;font-weight:1000;font-size:12px}
+
+/* =========================================================
+   V10.48 — KILL LEADER
+   ========================================================= */
+.kill-shell-v148{display:flex;flex-direction:column;gap:7px;touch-action:none!important}
+.kill-hud-v148{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
+.kill-hud-v148>div{background:#fffbe6;border:3px solid var(--ink);border-radius:13px;padding:5px 2px;text-align:center}
+.kill-hud-v148 span{display:block;font-size:9px;font-weight:1000}.kill-hud-v148 b{font-size:18px;line-height:1}
+.kill-stage-v148{position:relative;height:390px;overflow:hidden;border:4px solid var(--ink);border-radius:22px;background:#5c6773;touch-action:none!important}
+.kill-sky-v148{position:absolute;inset:0;background:#718192}
+.kill-city-v148{position:absolute;left:0;right:0;bottom:72px;height:150px;background:repeating-linear-gradient(90deg,#535c65 0 42px,#68717a 42px 78px,#4d565f 78px 115px);clip-path:polygon(0 35%,9% 35%,9% 5%,20% 5%,20% 45%,34% 45%,34% 12%,47% 12%,47% 48%,61% 48%,61% 0,74% 0,74% 40%,88% 40%,88% 18%,100% 18%,100% 100%,0 100%)}
+.kill-ground-v148{position:absolute;left:0;right:0;bottom:0;height:72px;background:#5b4d42;border-top:5px solid var(--ink)}
+.kill-actor-layer-v148,.kill-bullet-layer-v148,.kill-fx-v148{position:absolute;inset:0;pointer-events:none}
+.kill-actor-v148{position:absolute;width:38px;height:48px;z-index:6;transform-origin:center bottom}
+.kill-actor-v148 img{position:absolute;left:50%;bottom:0;transform:translateX(-50%);width:38px;height:48px;object-fit:contain;filter:drop-shadow(0 5px 0 rgba(0,0,0,.2))}
+.kill-actor-v148 .gun-v148{position:absolute;right:-8px;bottom:17px;width:19px;height:7px;border:3px solid var(--ink);border-radius:7px;background:#f2c558}.kill-actor-v148.enemy-v148 .gun-v148{left:-8px;right:auto}
+.hpbar-v148{position:absolute;left:-3px;right:-3px;bottom:-9px;height:7px;border:2px solid var(--ink);border-radius:999px;background:#fff}.hpbar-v148 i{display:block;height:100%;background:#63d572;border-radius:999px}
+.kill-actor-v148.drop-v148{animation:killDrop148 .42s ease both}.kill-actor-v148.dead-v148{animation:killDead148 .55s ease forwards}.kill-actor-v148.void-v148{opacity:.32;filter:drop-shadow(0 0 12px #9d7cff)}
+@keyframes killDrop148{from{transform:translateY(-165px) scaleX(var(--face,1))}to{transform:translateY(0)}}
+@keyframes killDead148{to{transform:translateY(-24px) rotate(35deg);opacity:0}}
+.kill-bullet-v148{position:absolute;width:16px;height:7px;border:2px solid var(--ink);border-radius:999px;transform:translate(-50%,-50%);z-index:8}.kill-bullet-v148.ally-v148{background:#74e8ff}.kill-bullet-v148.enemy-v148{background:#ff9c87}
+.kill-msg-v148{position:absolute;left:50%;top:12px;transform:translateX(-50%);z-index:12;background:#fff6c7;border:4px solid var(--ink);border-radius:16px;padding:7px 13px;font-size:16px;font-weight:1000;color:#222;white-space:nowrap}
+.kill-big-v148{position:absolute;left:50%;top:43%;transform:translate(-50%,-50%);z-index:25;font-size:48px;font-weight:1000;letter-spacing:.02em;color:#ffe366;-webkit-text-stroke:2px #181722;text-shadow:0 4px 0 #181722,0 0 20px rgba(0,0,0,.6);white-space:nowrap;pointer-events:none}.kill-big-v148.danger-v148,.kill-big-v148.defeat-v148{color:#ff8e76}.kill-big-v148.clear-v148{color:#92ffd6}.kill-big-v148.void-v148{color:#c0a9ff}.kill-big-v148.show-v148{animation:killBig148 .7s ease}
+@keyframes killBig148{0%{opacity:0;transform:translate(-50%,-50%) scale(.35)}35%{opacity:1;transform:translate(-50%,-50%) scale(1.12)}100%{opacity:1;transform:translate(-50%,-50%) scale(1)}}
+.kill-pop-v148{position:absolute;z-index:20;transform:translate(-50%,-50%);font-size:15px;font-weight:1000;color:#fff5b8;-webkit-text-stroke:1px #1d1b20;animation:killPop148 .72s ease forwards;white-space:nowrap}.kill-pop-v148.hit-v148{color:#8fefff}.kill-pop-v148.enemy-v148{color:#ff9d8c}.kill-pop-v148.heal-v148{color:#93ffc2;font-size:13px}
+@keyframes killPop148{to{transform:translate(-50%,-90%);opacity:0}}
+.kill-burst-v148{position:absolute;width:56px;height:56px;border:5px solid #ffdc67;border-radius:50%;transform:translate(-50%,-50%);z-index:10;animation:killBurst148 .52s ease forwards}.kill-burst-v148.enemy-v148,.kill-burst-v148.grenade-v148{border-color:#ff846f}.kill-burst-v148.air-v148{border-color:#fff4a2}
+@keyframes killBurst148{from{opacity:1;scale:.15}to{opacity:0;scale:1.35}}
+.kill-missile-v148{position:absolute;width:10px;height:34px;border:3px solid var(--ink);border-radius:999px;background:#ffd75c;z-index:12}.kill-missile-v148.enemy-v148{background:#ff876c}
+.kill-grenade-v148{position:absolute;width:18px;height:18px;border:3px solid var(--ink);border-radius:50%;background:#7d8c63;z-index:12}
+.kill-portal-v148{position:absolute;width:24px;height:60px;border:4px solid var(--ink);border-radius:999px;background:#9d72ff;box-shadow:inset 0 0 0 5px #552ea8;transform:translate(-50%,-50%);z-index:11}
+.kill-stage-v148.kill-shake-v148{animation:killShake148 .28s linear}.kill-stage-v148.defeat-v148{box-shadow:inset 0 0 0 7px #c84b43}.kill-stage-v148.clear-v148{box-shadow:inset 0 0 0 7px #45c98a}
+@keyframes killShake148{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}50%{transform:translateX(7px)}75%{transform:translateX(-4px)}}
+.kill-controls-v148{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:4px}.kill-controls-v148 button{touch-action:none!important;min-width:0;min-height:54px;border:4px solid var(--ink);border-radius:15px;background:#fff8d7;font-weight:1000;font-size:12px;padding:4px}.kill-controls-v148 .shot-v148{background:#dff8ff}.kill-controls-v148 .air-v148{background:#fff0b7}.kill-controls-v148 button b{display:block;font-size:8px;margin-top:2px}
