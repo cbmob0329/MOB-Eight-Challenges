@@ -21972,3 +21972,225 @@ body,
 .musou-effect-v145.jump i{width:72px;height:10px;transform:skewX(-22deg)}
 .musou-effect-v145.blizzard-sword-v145 i{clip-path:polygon(0 35%,35% 35%,48% 0,58% 35%,100% 35%,100% 66%,60% 66%,48% 100%,36% 66%,0 66%)}
 .musou-effect-v145.lightning-v145 i{clip-path:polygon(0 35%,28% 0,22% 42%,58% 20%,48% 68%,100% 45%,100% 70%,56% 92%,63% 53%,26% 76%,31% 48%,0 68%)}
+
+
+/* =========================================================
+   V10.45 — Alien battle correction
+   Restore V10.43 structure, keep background, add only requested systems.
+   ========================================================= */
+.alien-boss-v140.giant-v141{
+  width:224px!important;
+  height:calc(100% - 48px)!important;
+  animation:none!important;
+  transform-origin:50% 100%!important;
+}
+.alien-boss-v140.giant-v141 .alien-head-v140{
+  left:34px!important;
+  top:0!important;
+  width:154px!important;
+  height:112px!important;
+}
+.alien-boss-v140.giant-v141 .alien-body-v140{
+  left:39px!important;
+  top:98px!important;
+  width:146px!important;
+  height:calc(100% - 188px)!important;
+  min-height:188px!important;
+}
+.alien-boss-v140.giant-v141 .alien-arm-v140.left-v141{
+  left:-8px!important;
+  top:33%!important;
+  width:104px!important;
+  height:37px!important;
+}
+.alien-boss-v140.giant-v141 .alien-arm-v141.right-v141{
+  right:-4px!important;
+  top:38%!important;
+  width:102px!important;
+  height:37px!important;
+}
+.alien-boss-v140.giant-v141 .alien-leg-v141{
+  width:62px!important;
+  height:142px!important;
+  bottom:0!important;
+}
+.alien-boss-v140.giant-v141 .alien-leg-v141.leg1{
+  left:45px!important;
+}
+.alien-boss-v140.giant-v141 .alien-leg-v141.leg2{
+  right:35px!important;
+}
+.alien-boss-v140.giant-v141 .alien-foot-v142{
+  width:108px!important;
+  height:42px!important;
+  bottom:-5px!important;
+}
+.alien-ground-shadow-v142{
+  left:18px!important;
+  right:5px!important;
+  bottom:-2px!important;
+}
+
+/* Keep the giant clearly grounded: no full-body floating animation. */
+.alien-boss-v140.giant-v141{
+  translate:none!important;
+}
+.alien-head-v140{
+  animation:alienHeadBreathe145 1.15s ease-in-out infinite alternate;
+}
+@keyframes alienHeadBreathe145{
+  to{transform:scale(1.015,1.008)}
+}
+.alien-body-v140{
+  animation:alienTorsoBreathe145 1.35s ease-in-out infinite alternate;
+}
+@keyframes alienTorsoBreathe145{
+  to{transform:scale(1.01,1.004)}
+}
+
+/* Three small, weak, on-foot allies. Existing robot ally remains untouched. */
+.alien-weak-ally-v145{
+  position:absolute;
+  z-index:14;
+  width:25px;
+  height:34px;
+  pointer-events:none;
+  transition:opacity .18s ease;
+}
+.alien-weak-ally-v145 img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  display:block;
+}
+.alien-weak-shot-v145{
+  position:absolute;
+  z-index:20;
+  width:8px;
+  height:8px;
+  transform:translate(-50%,-50%);
+  border:2px solid var(--ink);
+  border-radius:50%;
+  background:#b7f5ff;
+  box-shadow:0 0 5px #79dff1;
+}
+
+/* Special button stays below battle field, never on top of the arena. */
+.alien-special-row-v145{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:4px;
+  margin-top:4px;
+}
+.alien-special-row-v145 button{
+  min-height:40px;
+  border:4px solid var(--ink);
+  border-radius:11px;
+  background:#e3e8ec;
+  font-size:11px;
+  font-weight:1000;
+  touch-action:none!important;
+  -webkit-user-select:none!important;
+  user-select:none!important;
+}
+.alien-special-row-v145 button b{
+  margin-left:8px;
+  font-size:8px;
+}
+.alien-special-row-v145 button.ready-v145{
+  background:#ffe563;
+}
+.alien-special-row-v145 button.used-v145{
+  background:#cfd6dc;
+  opacity:.72;
+}
+
+/* Actual giant form: still player-controlled. No auto walking or auto punching. */
+.alien-actor-v138.player-v138.super-giant-v145{
+  z-index:42!important;
+  transform-origin:50% 100%!important;
+  scale:2.25!important;
+  filter:
+    drop-shadow(0 0 8px rgba(255,236,91,.85))
+    drop-shadow(0 0 16px rgba(111,221,255,.55))!important;
+}
+.alien-actor-v138.player-v138.super-giant-v145 .br-unit-body-v138{
+  box-shadow:inset 0 0 0 3px #ffe66a;
+}
+.alien-actor-v138.player-v138.giant-punch-v145{
+  animation:alienManualPunch145 .21s ease-out!important;
+}
+@keyframes alienManualPunch145{
+  0%{translate:0 0}
+  48%{translate:35px -4px}
+  100%{translate:0 0}
+}
+.alien-giant-punch-fx-v145{
+  position:absolute;
+  z-index:48;
+  width:44px;
+  height:44px;
+  transform:translate(-50%,-50%);
+  border:8px solid #ffe46a;
+  border-radius:50%;
+  box-shadow:0 0 14px #ffb24e;
+  animation:alienManualPunchFx145 .34s ease-out forwards;
+}
+@keyframes alienManualPunchFx145{
+  to{scale:3.1;opacity:0}
+}
+
+/* Five mini aliens descend at 8 seconds. Bigger than the weak foot allies. */
+.alien-air-mini-v145{
+  position:absolute;
+  z-index:17;
+  width:50px;
+  height:58px;
+  border:5px solid var(--ink);
+  border-radius:48% 48% 34% 34%;
+  background:#6dc45e;
+  box-shadow:inset 0 -8px 0 #529d48;
+  transition:opacity .2s ease;
+}
+.alien-air-mini-v145:before,
+.alien-air-mini-v145:after{
+  content:"";
+  position:absolute;
+  top:-10px;
+  width:15px;
+  height:18px;
+  border:4px solid var(--ink);
+  background:#6dc45e;
+  z-index:-1;
+}
+.alien-air-mini-v145:before{
+  left:3px;
+  rotate:-28deg;
+}
+.alien-air-mini-v145:after{
+  right:3px;
+  rotate:28deg;
+}
+.alien-air-mini-v145 i,
+.alien-air-mini-v145 b{
+  position:absolute;
+  top:18px;
+  width:6px;
+  height:8px;
+  border-radius:50%;
+  background:#202323;
+}
+.alien-air-mini-v145 i{left:12px}
+.alien-air-mini-v145 b{right:12px}
+.alien-air-mini-v145.punch-v145{
+  animation:alienMiniPunch145 .18s ease;
+}
+@keyframes alienMiniPunch145{
+  50%{translate:-8px 0}
+}
+.alien-air-mini-v145.dead-v145{
+  animation:alienMiniDead145 .28s ease forwards;
+}
+@keyframes alienMiniDead145{
+  to{translate:0 -22px;scale:.3;opacity:0}
+}
