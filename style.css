@@ -24003,3 +24003,921 @@ img,svg,canvas{
 .sm-attack-v153{position:absolute;z-index:35;height:12px;transform-origin:0 50%;border:4px solid var(--ink);border-radius:999px;background:var(--atk-color);box-shadow:0 0 12px color-mix(in srgb,var(--atk-color) 70%,transparent);animation:smAttackFx153 .33s ease forwards}.sm-attack-v153.type-orb,.sm-attack-v153.type-thunder{height:18px}.sm-attack-v153.type-slam{height:28px;border-radius:50%}@keyframes smAttackFx153{from{opacity:0;scale:.15 1}35%{opacity:1;scale:1 1}to{opacity:0;scale:1.15 1}}
 .sm-hit-v153{position:absolute;z-index:45;width:55px;height:55px;transform:translate(-50%,-50%);border:5px solid var(--hit-color);border-radius:50%;color:#fff;-webkit-text-stroke:1px #1c1720;display:grid;place-items:center;font-size:18px;font-weight:1000;box-shadow:0 0 16px var(--hit-color);animation:smHit153 .5s ease forwards}@keyframes smHit153{from{scale:.3;opacity:1}to{scale:1.5;opacity:0}}
 .sm-battle-msg-v153{position:absolute;z-index:60;left:50%;top:14px;transform:translateX(-50%);padding:8px 14px;border:4px solid var(--ink);border-radius:16px;background:#fff7d6;color:#242229;font-size:18px;font-weight:1000;white-space:nowrap}.sm-battle-v153.finish-v153 .sm-battle-msg-v153{background:#ffe56f;font-size:22px}
+
+
+/* =========================================================
+   V10.54 — 爆速レーサー
+   ========================================================= */
+.speed-racer-shell-v154{
+  height:100%;
+  display:flex;
+  flex-direction:column;
+  gap:7px;
+}
+.racer-turn-v154{
+  position:relative;
+  flex:1;
+  min-height:370px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  border:4px solid var(--ink);
+  border-radius:22px;
+  background:#fff2ba;
+  overflow:hidden;
+}
+.racer-turn-v154.pop-v154{
+  animation:racerTurn154 .65s ease;
+}
+@keyframes racerTurn154{
+  0%{scale:.75;opacity:0}
+  45%{scale:1.06;opacity:1}
+  100%{scale:1;opacity:1}
+}
+.racer-turn-avatar-v154{
+  width:110px;
+  height:110px;
+  display:grid;
+  place-items:center;
+}
+.racer-turn-img-v154{
+  width:105px;
+  height:105px;
+  object-fit:contain;
+}
+.racer-turn-v154>b{
+  font-size:15px;
+}
+.racer-turn-v154>strong{
+  max-width:92%;
+  text-align:center;
+  font-size:27px;
+  line-height:1.15;
+  font-weight:1000;
+}
+.racer-draw-v154{
+  flex:1;
+  min-height:0;
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+}
+.racer-draw-title-v154{
+  text-align:center;
+  padding:7px;
+  border:4px solid var(--ink);
+  border-radius:15px;
+  background:#fff0a8;
+  font-size:17px;
+  font-weight:1000;
+}
+.racer-drawer-v154{
+  min-height:44px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  font-weight:1000;
+}
+.racer-drawer-v154>div{
+  display:grid;
+}
+.racer-drawer-v154 span{
+  font-size:9px;
+}
+.racer-draw-avatar-v154{
+  width:38px;
+  height:38px;
+  object-fit:contain;
+}
+.racer-svg-v154{
+  width:100%;
+  height:min(48vh,370px);
+  min-height:285px;
+  border:4px solid var(--ink);
+  border-radius:20px;
+  background:#f8f2df;
+  touch-action:none!important;
+  -webkit-user-select:none!important;
+  user-select:none!important;
+  -webkit-touch-callout:none!important;
+}
+.racer-svg-v154 rect{
+  fill:#f8f2df;
+}
+.racer-line-v154{
+  fill:none;
+  stroke:#242229;
+  stroke-width:9;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+.racer-line-v154.cpu-v154{
+  stroke:#334d64;
+}
+.racer-guide-v154{
+  min-height:30px;
+  display:grid;
+  place-items:center;
+  padding:4px 8px;
+  text-align:center;
+  border:3px solid var(--ink);
+  border-radius:12px;
+  background:#fff;
+  font-size:9px;
+  font-weight:1000;
+}
+.racer-time-v154{
+  text-align:center;
+  font-size:22px;
+  font-weight:1000;
+}
+.racer-showcase-v154{
+  flex:1;
+  min-height:420px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:11px;
+  border:4px solid var(--ink);
+  border-radius:22px;
+  background:#e9f6ff;
+  overflow:hidden;
+}
+.racer-showcase-v154.show-v154{
+  animation:racerShow154 .55s ease;
+}
+@keyframes racerShow154{
+  from{scale:.84;opacity:0}
+  to{scale:1;opacity:1}
+}
+.racer-show-title-v154{
+  font-size:24px;
+  font-weight:1000;
+}
+.racer-show-cars-v154{
+  width:100%;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:9px;
+}
+.racer-show-card-v154{
+  width:min(92%,330px);
+  min-height:140px;
+  display:grid;
+  grid-template-columns:78px 1fr 92px;
+  align-items:center;
+  gap:5px;
+  padding:8px;
+  border:4px solid var(--ink);
+  border-radius:17px;
+  background:#fff;
+}
+.racer-show-card-v154>b{
+  text-align:center;
+  font-size:12px;
+}
+.racer-show-car-wrap-v154{
+  position:relative;
+  height:105px;
+  display:grid;
+  place-items:center;
+}
+.racer-show-stat-v154{
+  display:grid;
+  gap:4px;
+  font-size:9px;
+  font-weight:1000;
+}
+.racer-show-stat-v154 span:first-child{
+  font-size:18px;
+}
+.racer-show-stat-v154 small{
+  font-size:8px;
+}
+.racer-car-v154{
+  position:relative;
+  width:126px;
+  height:80px;
+  transform-origin:50% 100%;
+}
+.racer-car-v154.large-v154{
+  scale:1.18;
+}
+.racer-car-body-svg-v154{
+  position:absolute;
+  left:7px;
+  top:0;
+  width:114px;
+  height:61px;
+  overflow:visible;
+}
+.racer-body-line-v154{
+  fill:none;
+  stroke:#3e7ca7;
+  stroke-width:10;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+.racer-wheel-v154{
+  position:absolute;
+  bottom:0;
+  width:47px;
+  height:47px;
+  overflow:visible;
+}
+.racer-wheel-v154.w1{
+  left:7px;
+}
+.racer-wheel-v154.w2{
+  right:7px;
+}
+.racer-tire-line-v154{
+  fill:none;
+  stroke:#25262b;
+  stroke-width:14;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+.racer-riders-v154{
+  position:absolute;
+  z-index:10;
+  left:39px;
+  top:-8px;
+  display:flex;
+  gap:0;
+}
+.racer-rider-v154{
+  width:34px;
+  height:34px;
+  object-fit:contain;
+}
+.racer-boost-v154{
+  position:absolute;
+  left:-38px;
+  bottom:15px;
+  width:45px;
+  height:13px;
+  opacity:0;
+  clip-path:polygon(100% 50%,0 0,18% 50%,0 100%);
+  background:#ffba4e;
+}
+.racer-car-v154.boosting-v154 .racer-boost-v154{
+  opacity:1;
+  animation:racerBoost154 .12s linear infinite alternate;
+}
+@keyframes racerBoost154{
+  to{scale:1.35 .8;translate:-5px 0}
+}
+.racer-race-v154{
+  position:relative;
+  flex:1;
+  min-height:410px;
+  overflow:hidden;
+  border:4px solid var(--ink);
+  border-radius:22px;
+  background:#9edaf0;
+}
+.racer-race-sky-v154{
+  position:absolute;
+  inset:0;
+  background:linear-gradient(#8fd6f1 0 43%,#d9e9c1 43% 50%,#5a5a60 50% 100%);
+}
+.racer-race-road-v154{
+  position:absolute;
+  left:0;
+  right:0;
+  top:50%;
+  bottom:0;
+  background:repeating-linear-gradient(90deg,#4f5056 0 46px,#606168 46px 92px);
+}
+.racer-race-road-v154:after{
+  content:"";
+  position:absolute;
+  left:0;
+  right:0;
+  top:50%;
+  height:5px;
+  background:repeating-linear-gradient(90deg,#fff 0 28px,transparent 28px 52px);
+}
+.racer-race-meter-v154{
+  position:absolute;
+  z-index:5;
+  left:50%;
+  top:12px;
+  transform:translateX(-50%);
+  display:flex;
+  align-items:center;
+  gap:5px;
+  padding:5px 8px;
+  border:3px solid var(--ink);
+  border-radius:999px;
+  background:#fff;
+  font-size:8px;
+  font-weight:1000;
+}
+.racer-race-meter-v154 i{
+  width:8px;
+  height:8px;
+  border:2px solid var(--ink);
+  border-radius:50%;
+  background:#ffd054;
+}
+.racer-lane-v154{
+  position:absolute;
+  z-index:8;
+  left:0;
+  right:0;
+  height:42%;
+}
+.racer-lane-v154.lane-a{
+  top:21%;
+}
+.racer-lane-v154.lane-b{
+  top:57%;
+}
+.racer-lane-v154>b{
+  position:absolute;
+  left:8px;
+  top:4px;
+  padding:2px 5px;
+  border:2px solid var(--ink);
+  border-radius:7px;
+  background:#fff;
+  font-size:8px;
+}
+.racer-lane-v154 .racer-car-v154{
+  position:absolute;
+  left:5%;
+  bottom:10px;
+}
+.racer-dist-v154{
+  position:absolute;
+  right:8px;
+  top:4px;
+  color:#fff;
+  font-size:10px;
+  font-weight:1000;
+  text-shadow:0 2px #222;
+}
+.racer-race-msg-v154{
+  position:absolute;
+  z-index:30;
+  left:50%;
+  top:48%;
+  transform:translate(-50%,-50%);
+  opacity:0;
+  padding:10px 18px;
+  border:5px solid var(--ink);
+  border-radius:18px;
+  background:#fff4ba;
+  font-size:25px;
+  font-weight:1000;
+}
+.racer-race-msg-v154.show-v154{
+  opacity:1;
+}
+.racer-race-msg-v154.win-v154{
+  background:#d9ffd9;
+  animation:racerWin154 .5s ease;
+}
+@keyframes racerWin154{
+  50%{scale:1.16}
+}
+
+/* =========================================================
+   V10.54 — 召喚マスター
+   ========================================================= */
+.summon-master-shell-v154{
+  height:100%;
+  display:flex;
+  flex-direction:column;
+  gap:7px;
+}
+.sm-turn-v154{
+  position:relative;
+  flex:1;
+  min-height:390px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  overflow:hidden;
+  border:4px solid var(--ink);
+  border-radius:22px;
+  background:#eee0ff;
+}
+.sm-turn-v154.pop-v154{
+  animation:smTurn154 .65s ease;
+}
+@keyframes smTurn154{
+  0%{scale:.76;opacity:0}
+  48%{scale:1.07;opacity:1}
+  100%{scale:1;opacity:1}
+}
+.sm-turn-avatar-v154{
+  width:120px;
+  height:120px;
+  display:grid;
+  place-items:center;
+}
+.sm-turn-img-v154{
+  width:115px;
+  height:115px;
+  object-fit:contain;
+}
+.sm-turn-v154>b{
+  font-size:15px;
+}
+.sm-turn-v154>strong{
+  max-width:92%;
+  text-align:center;
+  font-size:28px;
+  line-height:1.15;
+  font-weight:1000;
+}
+.sm-draw-v154{
+  flex:1;
+  min-height:0;
+  display:flex;
+  flex-direction:column;
+  gap:5px;
+}
+.sm-title-v154{
+  text-align:center;
+  padding:7px;
+  border:4px solid var(--ink);
+  border-radius:15px;
+  background:#eee1ff;
+  font-size:17px;
+  font-weight:1000;
+}
+.sm-drawer-v154{
+  min-height:42px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  font-weight:1000;
+}
+.sm-drawer-v154>div{
+  display:grid;
+}
+.sm-drawer-v154 span{
+  font-size:9px;
+}
+.sm-avatar-v154{
+  width:38px;
+  height:38px;
+  object-fit:contain;
+}
+.sm-draw-stage-v154{
+  position:relative;
+  flex:1;
+  min-height:325px;
+  overflow:hidden;
+  border:4px solid var(--ink);
+  border-radius:20px;
+  background:#f4efe4;
+}
+.sm-svg-v154{
+  position:absolute;
+  z-index:5;
+  inset:0;
+  width:100%;
+  height:100%;
+  touch-action:none!important;
+  -webkit-user-select:none!important;
+  user-select:none!important;
+  -webkit-touch-callout:none!important;
+}
+.sm-user-line-v154{
+  fill:none!important;
+  stroke:#27232b;
+  stroke-width:9;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+.sm-user-line-v154.cpu-v154{
+  stroke:#544873;
+}
+.sm-runners-v154{
+  position:absolute;
+  z-index:2;
+  left:0;
+  right:0;
+  bottom:7px;
+  height:74px;
+  pointer-events:none;
+}
+.sm-runner{
+  position:absolute;
+  bottom:0;
+  width:62px;
+  height:62px;
+  animation:smRunner154 2.1s linear infinite;
+}
+.sm-runner.current-v154{
+  animation-duration:1.65s;
+}
+.sm-runner.r2-v154{
+  animation-delay:-.7s;
+  animation-duration:2.35s;
+}
+.sm-runner.r3-v154{
+  animation-delay:-1.4s;
+  animation-duration:2.6s;
+}
+.sm-run-img-v154{
+  width:62px;
+  height:62px;
+  object-fit:contain;
+}
+@keyframes smRunner154{
+  0%{left:-70px;transform:scaleX(1)}
+  48%{left:calc(100% - 30px);transform:scaleX(1)}
+  50%{left:calc(100% - 30px);transform:scaleX(-1)}
+  98%{left:-70px;transform:scaleX(-1)}
+  100%{left:-70px;transform:scaleX(1)}
+}
+.sm-note-v154{
+  text-align:center;
+  font-size:9px;
+  font-weight:1000;
+}
+.sm-time-v154{
+  text-align:center;
+  font-size:22px;
+  font-weight:1000;
+}
+.sm-preview-v154{
+  flex:1;
+  min-height:420px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  border:4px solid var(--ink);
+  border-radius:22px;
+  background:#f5edff;
+}
+.sm-preview-v154.show-v154{
+  animation:smPreview154 .55s ease;
+}
+@keyframes smPreview154{
+  from{scale:.85;opacity:0}
+  to{scale:1;opacity:1}
+}
+.sm-preview-title-v154{
+  font-size:21px;
+  font-weight:1000;
+}
+.sm-preview-grid-v154{
+  width:95%;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:7px;
+}
+.sm-preview-team-v154{
+  border:4px solid var(--ink);
+  border-radius:16px;
+  background:#fff;
+  padding:6px;
+  text-align:center;
+}
+.sm-preview-team-v154>div{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:3px;
+}
+.sm-preview-team-v154 article{
+  display:grid;
+  gap:2px;
+}
+.sm-preview-monster-v154{
+  width:100%;
+  height:120px;
+  overflow:visible;
+}
+.sm-preview-monster-v154 polyline{
+  fill:none!important;
+  stroke:var(--sm-color);
+  stroke-width:11;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+  filter:drop-shadow(0 3px 0 #252029);
+}
+.sm-preview-team-v154 span{
+  font-size:8px;
+  font-weight:1000;
+}
+.sm-battle-v154{
+  position:relative;
+  flex:1;
+  min-height:430px;
+  overflow:hidden;
+  border:4px solid var(--ink);
+  border-radius:22px;
+  background:#171c35;
+  isolation:isolate;
+}
+.sm-night-v154{
+  position:absolute;
+  inset:0;
+  z-index:0;
+  background:
+    radial-gradient(circle at 78% 16%,#f4e8ba 0 20px,transparent 21px),
+    radial-gradient(circle at 17px 22px,#fff 0 1px,transparent 1.5px),
+    linear-gradient(#12172c 0 62%,#242437 62% 100%);
+  background-size:auto,110px 76px,auto;
+}
+.sm-city-v154{
+  position:absolute;
+  z-index:2;
+  left:0;
+  right:0;
+  bottom:73px;
+  height:235px;
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-around;
+  pointer-events:none;
+}
+.sm-building-v154{
+  position:relative;
+  width:8.7%;
+  min-width:24px;
+  height:145px;
+  border:4px solid #15151d;
+  border-bottom:none;
+  background:#495064;
+  transform-origin:50% 100%;
+}
+.sm-building-v154.b1{height:205px;background:#3e475d}
+.sm-building-v154.b2{height:174px;background:#55506a}
+.sm-building-v154.b3{height:226px;background:#38445b}
+.sm-building-v154.b4{height:188px;background:#51495c}
+.sm-building-v154>b{
+  position:absolute;
+  width:7px;
+  height:10px;
+  border:2px solid #15151d;
+  background:#e3cf69;
+}
+.sm-building-v154>b:nth-child(1){left:6px;top:18px}
+.sm-building-v154>b:nth-child(2){right:6px;top:18px}
+.sm-building-v154>b:nth-child(3){left:6px;top:48px}
+.sm-building-v154>b:nth-child(4){right:6px;top:48px}
+.sm-building-v154>em{
+  position:absolute;
+  left:50%;
+  bottom:0;
+  width:11px;
+  height:22px;
+  transform:translateX(-50%);
+  background:#1c1d27;
+}
+.sm-building-v154.hit-v154{
+  filter:brightness(1.45);
+  animation:smBuildingHit154 .18s ease;
+}
+@keyframes smBuildingHit154{
+  30%{translate:-4px 0}
+  65%{translate:4px -1px}
+}
+.sm-building-v154.collapse-v154{
+  animation:smBuildingCollapse154 .8s ease forwards;
+}
+@keyframes smBuildingCollapse154{
+  0%{opacity:1;scale:1}
+  48%{rotate:8deg;scale:1 .72;translate:6px 26px}
+  100%{opacity:.25;rotate:14deg;scale:1.06 .12;translate:12px 110px}
+}
+.sm-ground-v154{
+  position:absolute;
+  z-index:10;
+  left:0;
+  right:0;
+  bottom:0;
+  height:78px;
+  border-top:6px solid #15151d;
+  background:repeating-linear-gradient(90deg,#4e4a50 0 32px,#5c555b 32px 64px);
+}
+.sm-monster-layer-v154,
+.sm-fx-layer-v154{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+}
+.sm-monster-layer-v154{
+  z-index:24;
+}
+.sm-fx-layer-v154{
+  z-index:45;
+}
+.sm-giant-v154{
+  position:absolute;
+  width:124px;
+  height:158px;
+  background:transparent!important;
+  border:none!important;
+  transform:translateX(-50%);
+  transform-origin:50% 100%;
+}
+.sm-giant-svg-v154{
+  position:absolute;
+  left:0;
+  bottom:10px;
+  width:124px;
+  height:145px;
+  overflow:visible;
+  background:transparent!important;
+}
+.sm-giant-svg-v154 polyline{
+  fill:none!important;
+  stroke:var(--sm-color);
+  stroke-width:13;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+  filter:
+    drop-shadow(0 4px 0 #17151e)
+    drop-shadow(0 0 5px var(--sm-color));
+}
+.sm-giant-v154.mirror-v154 .sm-giant-svg-v154{
+  transform:scaleX(-1);
+}
+.sm-giant-hp-v154{
+  position:absolute;
+  left:10px;
+  right:10px;
+  top:-6px;
+  height:9px;
+  overflow:hidden;
+  border:3px solid var(--ink);
+  border-radius:999px;
+  background:#fff;
+}
+.sm-giant-hp-v154>i{
+  display:block;
+  width:100%;
+  height:100%;
+  background:#73d27d;
+}
+.sm-giant-v154.attack-v154{
+  animation:smGiantAttack154 .32s ease;
+}
+@keyframes smGiantAttack154{
+  50%{translate:18px -4px;scale:1.07}
+}
+.sm-giant-v154.team-b.attack-v154{
+  animation-name:smGiantAttackB154;
+}
+@keyframes smGiantAttackB154{
+  50%{translate:-18px -4px;scale:1.07}
+}
+.sm-giant-v154.charge-v154{
+  animation:smGiantCharge154 .48s ease;
+}
+@keyframes smGiantCharge154{
+  45%{translate:55px 0;scale:1.09}
+}
+.sm-giant-v154.team-b.charge-v154{
+  animation-name:smGiantChargeB154;
+}
+@keyframes smGiantChargeB154{
+  45%{translate:-55px 0;scale:1.09}
+}
+.sm-giant-v154.jump-v154{
+  animation:smGiantJump154 .62s ease;
+}
+@keyframes smGiantJump154{
+  45%{scale:1.06}
+}
+.sm-giant-v154.hurt-v154{
+  filter:brightness(1.6);
+}
+.sm-giant-v154.down-v154{
+  animation:smGiantDown154 .9s ease forwards!important;
+}
+@keyframes smGiantDown154{
+  to{translate:0 50px;rotate:70deg;opacity:0}
+}
+.sm-attack-v154{
+  position:absolute;
+  z-index:50;
+  height:16px;
+  transform-origin:0 50%;
+  border:4px solid #19151d;
+  border-radius:999px;
+  background:var(--atk-color);
+  box-shadow:
+    0 0 10px var(--atk-color),
+    0 0 20px color-mix(in srgb,var(--atk-color) 60%,transparent);
+  animation:smAttackFx154 .42s ease forwards;
+}
+.sm-attack-v154.type-beam{
+  height:30px;
+  border-width:5px;
+}
+.sm-attack-v154.type-thunder{
+  height:20px;
+  clip-path:polygon(0 30%,32% 0,42% 43%,70% 12%,100% 55%,67% 100%,54% 58%,27% 90%);
+  border-radius:0;
+}
+.sm-attack-v154.type-dark{
+  height:24px;
+}
+.sm-attack-v154.type-slam{
+  height:36px;
+}
+@keyframes smAttackFx154{
+  0%{opacity:0;scale:.08 1}
+  30%{opacity:1;scale:1 1}
+  100%{opacity:0;scale:1.18 1}
+}
+.sm-impact-v154{
+  position:absolute;
+  z-index:60;
+  width:72px;
+  height:72px;
+  transform:translate(-50%,-50%);
+  display:grid;
+  place-items:center;
+  border:6px solid var(--hit-color);
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(255,255,255,.85) 0 14%,transparent 15%);
+  color:#fff;
+  -webkit-text-stroke:1px #211a22;
+  font-size:19px;
+  font-weight:1000;
+  box-shadow:0 0 20px var(--hit-color);
+  animation:smImpact154 .56s ease forwards;
+}
+.sm-impact-v154.big-v154{
+  width:112px;
+  height:112px;
+  border-width:8px;
+}
+@keyframes smImpact154{
+  from{scale:.25;opacity:1}
+  to{scale:1.6;opacity:0}
+}
+.sm-debris-v154{
+  position:absolute;
+  z-index:55;
+  width:15px;
+  height:18px;
+  border:3px solid #15151d;
+  background:#555b69;
+  animation:smDebris154 .76s ease-out forwards;
+}
+@keyframes smDebris154{
+  to{
+    translate:var(--dx) var(--dy);
+    rotate:110deg;
+    opacity:0;
+  }
+}
+.sm-battle-v154.city-shake-v154{
+  animation:smCityShake154 .28s ease;
+}
+@keyframes smCityShake154{
+  20%{translate:-5px 1px}
+  40%{translate:5px -2px}
+  60%{translate:-4px 1px}
+  80%{translate:3px 0}
+}
+.sm-battle-msg-v154{
+  position:absolute;
+  z-index:80;
+  left:50%;
+  top:12px;
+  transform:translateX(-50%);
+  opacity:0;
+  min-width:170px;
+  padding:8px 14px;
+  border:5px solid var(--ink);
+  border-radius:16px;
+  background:#fff3c4;
+  text-align:center;
+  color:#241e25;
+  font-size:19px;
+  font-weight:1000;
+}
+.sm-battle-msg-v154.show-v154{
+  opacity:1;
+}
+.sm-battle-msg-v154.win-v154{
+  background:#ffe16d;
+  font-size:22px;
+  animation:smWin154 .5s ease;
+}
+@keyframes smWin154{
+  50%{scale:1.14}
+}
