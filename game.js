@@ -232,7 +232,8 @@ const GAMES=[
   {no:87,key:"mobMusou",title:"モブくん無双",sub:"7秒で巨大武器を描き、10秒オートで大量スライムを無双する",legacy:90},
   {no:88,key:"iaidoMaster",title:"モブくんは居合切りの達人",sub:"夜の草原でCPUと居合勝負。勝負！の瞬間を見抜く",legacy:91},
   {no:89,key:"killLeaderMob",title:"モブくんの長い夜",sub:"夜の砂漠を進みながらゾンビ30体を倒し、最後に巨大ゾンビを撃破する横スクロールFPSアクション",legacy:92},
-  {no:90,key:"mobSpeedRacer",title:"モブくんは爆速レーサー",sub:"タッグ専用。1番手がタイヤ、2番手が機体を描き、1kmレースで勝負",legacy:93}
+  {no:90,key:"mobSpeedRacer",title:"モブくんは爆速レーサー",sub:"タッグ専用。1番手がタイヤ、2番手が機体を描き、1kmレースで勝負",legacy:93},
+  {no:91,key:"summonMaster",title:"モブくんは召喚マスター",sub:"タッグ専用。4人が描いた魔物で2対2のオート召喚バトル",legacy:94}
 ];
 
 function legacyGameIndex(gameIndex){
@@ -243,7 +244,8 @@ function currentIndexFromLegacy(legacy){
   return GAMES.findIndex(g=>g.legacy===legacy);
 }
 function tagRacerIndex(){return GAMES.findIndex(g=>g.key==='mobSpeedRacer')}
-function isTagRacerEligible(){
+function summonMasterIndex(){return GAMES.findIndex(g=>g.key==='summonMaster')}
+function isTagDuoGameEligible(){
   if(state&&state.freePlay)return true;
   const m=mode();
   if(!m||!m.team)return false;
@@ -252,11 +254,12 @@ function isTagRacerEligible(){
   if(!keys.every(k=>(m.teams[k]||[]).length===2))return false;
   return humans().length>=1;
 }
+function isTagRacerEligible(){return isTagDuoGameEligible()}
 function isGameEligibleForCurrentMode(gameIndex){
   const g=GAMES[gameIndex];
   if(!g)return false;
-  if(g.key!=='mobSpeedRacer')return true;
-  return isTagRacerEligible();
+  if(g.key!=='mobSpeedRacer'&&g.key!=='summonMaster')return true;
+  return isTagDuoGameEligible();
 }
 function eligibleGameIndices(){
   return GAMES.map((_,i)=>i).filter(isGameEligibleForCurrentMode);
@@ -303,7 +306,7 @@ function freshState(){
         paperPlane:{},tankMob:{},curlingMob:{},bubbleMob:{},
         changeMob:{},baggageMob:{},bridgeMob:{},treasureMob:{},rouletteMob:{},excavationMob:{},
         oldMaidDuel:{},robotMarch:{},monsterMaster:{},scoutMan:{},
-        atafutaSurvival:{},waveMaster:{},battleRoyaleMob:{},littleMobShot:{},monsterBoxMob:{},alienBattleMob:{},mobMusou:{},iaidoMaster:{},killLeaderMob:{},mobSpeedRacer:{}
+        atafutaSurvival:{},waveMaster:{},battleRoyaleMob:{},littleMobShot:{},monsterBoxMob:{},alienBattleMob:{},mobMusou:{},iaidoMaster:{},killLeaderMob:{},mobSpeedRacer:{},summonMaster:{}
     },
     total:{},
     roundPoints:[],
@@ -412,7 +415,7 @@ function renderHome(){
     <section class="hero hero-v119">
       <div>
         <span class="kicker">SMARTPHONE PARTY GAME</span>
-        <h1>90 MINI<br>GAMES</h1>
+        <h1>91 MINI<br>GAMES</h1>
         <p>対戦モードは「チーム戦」「個人戦」の2種類。人数・ルール・ゲーム数を自由に設定できます。</p>
       </div>
       <div class="hero-mark">MOB</div>
@@ -437,7 +440,7 @@ function renderHome(){
     </section>
 
     <section class="panel flat">
-      <div class="panel-head"><h3>90 MINI GAMES</h3><span class="tag">GAME 1 → 90</span></div>
+      <div class="panel-head"><h3>91 MINI GAMES</h3><span class="tag">GAME 1 → 91</span></div>
       <div class="compact-game-grid home-compact-games-v119">
         ${GAMES.map(g=>`<div><b>${g.no}</b><span>${g.title}</span></div>`).join("")}
       </div>
@@ -457,7 +460,7 @@ function renderFreePlaySelect(){
   screen.innerHTML=`
     <div class="game-head">
       <div><span class="kicker">FREE PLAY</span><h2>1人で遊ぶ</h2><p class="lead">好きなゲームを1つ選んでプレイ。</p></div>
-      <div class="game-badge">90</div>
+      <div class="game-badge">91</div>
     </div>
 
     <button id="freeBack" class="secondary wizard-back-v119" type="button">← メインへ戻る</button>
@@ -495,7 +498,7 @@ function renderGameGuide(){
   screen.innerHTML=`
     <div class="game-head">
       <div><span class="kicker">GAME GUIDE</span><h2>各ゲームの説明</h2><p class="lead">内容と100点換算の目安を一覧で確認できます。</p></div>
-      <div class="game-badge">90</div>
+      <div class="game-badge">91</div>
     </div>
 
     <button id="guideBack" class="secondary wizard-back-v119" type="button">← メインへ戻る</button>
@@ -1086,7 +1089,7 @@ function renderPlayStyleSelect(){
       <button id="normalStyle" class="style-select-card normal" type="button">
         <span>NORMAL</span>
         <b>順番に全種目</b>
-        <small>GAME 1 → 90 を順番にプレイ</small>
+        <small>GAME 1 → 91 を順番にプレイ</small>
       </button>
       <button id="customStyle" class="style-select-card custom" type="button">
         <span>CUSTOM</span>
@@ -1096,7 +1099,7 @@ function renderPlayStyleSelect(){
     </div>
 
     <section class="panel flat">
-      <h3>90 MINI GAMES</h3>
+      <h3>91 MINI GAMES</h3>
       <div class="compact-game-grid">
         ${GAMES.map(g=>`<div><b>${g.no}</b><span>${g.title}</span></div>`).join("")}
       </div>
@@ -1144,7 +1147,7 @@ function renderCustomPicker(){
     <section class="panel">
       <h3>追加するゲーム</h3>
       <div class="custom-game-grid">
-        ${GAMES.map((g,i)=>{const ok=isGameEligibleForCurrentMode(i);return `<button class="custom-game-add ${ok?'':'tag-locked-v152'}" data-add-game="${i}" type="button" ${ok?'':'disabled'}><span>GAME ${g.no}</span><b>${g.title}</b><small>${ok?g.sub:'タッグ2対2の時だけ選択可能'}</small></button>`}).join("")}
+        ${GAMES.map((g,i)=>{const ok=isGameEligibleForCurrentMode(i);return `<button class="custom-game-add ${ok?'':'tag-locked-v152'}" data-add-game="${i}" type="button" ${ok?'':'disabled'}><span>GAME ${g.no}</span><b>${g.title}</b><small>${ok?g.sub:'タッグ2対2専用 / ソロ時はCPU自動補充'}</small></button>`}).join("")}
       </div>
     </section>
 
@@ -1376,7 +1379,9 @@ function scoreRuleForGame(index){
     "巨大エイリアンHP100を倒すまでの時間 / 速いほど高評価",
     "10秒オート無双 / 150体KO=100点 / 巨大スライム・ロボも出現",
     "1人目敗北0〜30 / 2人目敗北31〜60 / 3人目敗北61〜75 / 3人撃破80〜100",
-    "ゾンビ30体＋巨大ゾンビ撃破までのクリアタイム / 速いほど高得点"
+    "ゾンビ30体＋巨大ゾンビ撃破までのクリアタイム / 速いほど高得点",
+    "タッグ2対2専用 / 1km先のゴールへ先着したチームが勝利",
+    "描いた魔物2対2 / 勝利チーム100点・敗北チーム0点"
   ][legacyIndex];
 }
 
@@ -1573,8 +1578,12 @@ function showGameIntro(index){
     rules=`<li>7秒で巨大な武器を自由に描きます。</li><li>力が宿ったら10秒間オートで大量スライムを無双します。</li>`;
   }else if(legacyIndex===91){
     rules=`<li>「勝負！」が出た瞬間にタップします。</li><li>3人の刺客を居合で迎え撃ち、反応タイムで高得点を狙います。</li>`;
+  }else if(legacyIndex===92){
+    rules=`<li>夜の砂漠で固定戦車からガトリング・波動・爆撃を使います。</li><li>ゾンビ30体と巨大ゾンビ撃破までのタイムを競います。</li>`;
+  }else if(legacyIndex===93){
+    rules=`<li>1番手がタイヤ、2番手が機体を描きます。タイヤは何筆でも装飾できます。</li><li>2台同時スタート。1km先のゴールへ先着したチームが勝利です。</li>`;
   }else{
-    rules=`<li>夜の砂漠を横スクロールで進み、ゾンビ30体を倒します。</li><li>30体撃破後に巨大ゾンビが出現。撃破までのクリアタイムを競います。</li>`;
+    rules=`<li>4人が1体ずつ魔物を描き、TEAM A 2体 VS TEAM B 2体で戦います。</li><li>ソロでは1P役と4P役を自分で描き、残り2体はCPUが描きます。</li>`;
   }
   const conciseRules=(rules.match(/<li>[\s\S]*?<\/li>/g)||[]).slice(0,2).join("");
   rules=conciseRules||`<li>${esc(g.sub)}</li>`;
@@ -1711,7 +1720,8 @@ function humanReady(gameIndex,humanIndex){
     else if(legacyIndex===90)startMobMusou(p,humanIndex,runId);
     else if(legacyIndex===91)startIaidoMaster(p,humanIndex,runId);
     else if(legacyIndex===92)startKillLeaderMob(p,humanIndex,runId);
-    else startMobSpeedRacer(p,humanIndex,runId);
+    else if(legacyIndex===93)startMobSpeedRacer(p,humanIndex,runId);
+    else startSummonMaster(p,humanIndex,runId);
   },{once:true});
 }
 
@@ -23274,7 +23284,7 @@ async function startMonsterBoxMob(p,humanIndex,runId){
   screen.innerHTML=`<div class="mbox-shell-v138">
     <div class="game-head"><div><span class="kicker">${esc(p.name)}</span><h2>モブくんモンスターボックスに挑む</h2></div><div class="game-badge">${playBadge(humanIndex)}</div></div>
     <div class="v125-hud"><div><span>LEVEL</span><b id="mbLevel138">15段</b></div><div><span>SCORE</span><b id="mbScore138">0</b></div></div>
-    <div id="mbStage138" class="mb-stage-v138"><div class="mb-audience-v152">${Array.from({length:10},(_,i)=>`<i style="background-image:url('icon/${String((i%9)+2).padStart(2,'0')}.png')"></i>`).join('')}</div><div class="mb-run-lines-v138"></div><div class="mb-ground-v138"></div><div id="mbBoard138" class="mb-board-v138"></div><div id="mbBox138" class="mb-box-v138"></div><div id="mbMob138" class="mb-mob-v138" style="background-image:url('icon/01.png')"></div><div id="mbFx138" class="mb-fx-v138"></div></div>
+    <div id="mbStage138" class="mb-stage-v138"><div class="mb-audience-simple-v153">${Array.from({length:14},(_,i)=>`<i class="a${i%4}"><b></b></i>`).join('')}</div><div class="mb-run-lines-v138"></div><div class="mb-ground-v138"></div><div id="mbBoard138" class="mb-board-v138"></div><div id="mbBox138" class="mb-box-v138"></div><div id="mbMob138" class="mb-mob-v138" style="background-image:url('icon/01.png')"></div><div id="mbFx138" class="mb-fx-v138"></div></div>
     <button id="mbJump138" class="primary mb-jump-v138">JUMP</button>
   </div>`;
 
@@ -25382,6 +25392,12 @@ async function startMobMusou(p,humanIndex,runId){
         if(en.x<-100||en.x>W+100||en.y>H+100){en.alive=false;en.el.remove();}
       }
 
+      const bubbleX=clamp(mx+38,72,W-72);
+      const bubbleY=clamp(my-42,8,H-120);
+      speechEl.style.left=`${bubbleX}px`;
+      speechEl.style.top=`${bubbleY}px`;
+      speechEl.style.setProperty('--tail-x',`${clamp(mx+34-bubbleX+70,22,118)}px`);
+
       if(now>=nextSpeechAt){
         nextSpeechAt=now+1000;
         speechEl.textContent=MUSOU_LINES[randi(0,MUSOU_LINES.length-1)];
@@ -27395,6 +27411,7 @@ async function startKillLeaderMob(p,humanIndex,runId){
 // =========================================================
 // V10.52 GAME 90 — モブくんは爆速レーサー (TAG ONLY)
 // =========================================================
+
 async function startMobSpeedRacer(p,humanIndex,runId){
   gameFit();
   const gameIndex=tagRacerIndex();
@@ -27405,13 +27422,16 @@ async function startMobSpeedRacer(p,humanIndex,runId){
   const teamData=(()=>{
     if(state.freePlay){
       return [
-        {key:'A',name:'TEAM A',ids:['p1','c2']},
-        {key:'B',name:'TEAM B',ids:['c3','c4']}
+        {key:'A',name:'TEAM A',ids:['p1','c2'],humanSlots:new Set([0])},
+        {key:'B',name:'TEAM B',ids:['c3','p1'],humanSlots:new Set([1])}
       ];
     }
     const m=mode();
     const keys=Object.keys(m.teams||{}).slice(0,2);
-    return keys.map(k=>({key:k,name:m.teamNames[k]||`TEAM ${k}`,ids:[...(m.teams[k]||[])]}));
+    return keys.map(k=>({
+      key:k,name:m.teamNames[k]||`TEAM ${k}`,
+      ids:[...(m.teams[k]||[])],humanSlots:null
+    }));
   })();
 
   if(teamData.length!==2||teamData.some(t=>t.ids.length!==2)){
@@ -27421,116 +27441,135 @@ async function startMobSpeedRacer(p,humanIndex,runId){
   }
 
   const teams=teamData.map((t,ti)=>({
-    ...t,
-    members:t.ids.map(pById),
-    tire:null,
-    body:null,
-    tireQ:.55,
-    bodyQ:.55,
-    normal:240,
-    boost:450,
-    stretch:1.32,
-    distance:0,
-    finishMs:null,
-    lane:ti
+    ...t,members:t.ids.map(pById),
+    tire:[],body:[],tireQ:.55,bodyQ:.55,
+    normal:240,boost:450,stretch:1.32,
+    distance:0,finishMs:null,lane:ti
   }));
 
-  screen.innerHTML=`<div class="speed-racer-shell-v152 gameplay-fit">
+  screen.innerHTML=`<div class="speed-racer-shell-v153 gameplay-fit">
     <div class="game-head"><div><span class="kicker">TAG DRAW RACE</span><h2>モブくんは爆速レーサー</h2><p class="lead">タイヤ + 機体を描いて1km勝負</p></div><div class="game-badge">2 VS 2</div></div>
-    <div id="racerDraw152" class="racer-draw-v152">
-      <div id="racerDrawTitle152" class="racer-draw-title-v152">DRAW</div>
-      <div id="racerDrawer152" class="racer-drawer-v152"></div>
-      <svg id="racerSvg152" class="racer-svg-v152" viewBox="0 0 320 250"><rect x="3" y="3" width="314" height="244" rx="18"></rect><g id="racerPath152"></g></svg>
-      <div id="racerDrawTime152" class="racer-draw-time-v152">5.0</div>
+    <div id="racerDraw153" class="racer-draw-v152">
+      <div id="racerDrawTitle153" class="racer-draw-title-v152">DRAW</div>
+      <div id="racerDrawer153" class="racer-drawer-v152"></div>
+      <svg id="racerSvg153" class="racer-svg-v152" viewBox="0 0 320 250"><rect x="3" y="3" width="314" height="244" rx="18"></rect><g id="racerPath153"></g></svg>
+      <div class="racer-draw-guide-v153">何筆でもOK / タイヤにスポーク・模様・装飾を追加できます</div>
+      <div id="racerDrawTime153" class="racer-draw-time-v152">5.0</div>
     </div>
-    <div id="racerBuild152" class="racer-build-v152" hidden></div>
-    <div id="racerRace152" class="racer-race-v152" hidden>
+    <div id="racerBuild153" class="racer-build-v152" hidden></div>
+    <div id="racerRace153" class="racer-race-v152" hidden>
       <div class="racer-sky-v152"></div><div class="racer-road-v152"></div>
       <div class="racer-meter-v152"><i></i><b>500m</b><i></i><b>GOAL 1km</b></div>
-      <div id="racerLaneA152" class="racer-lane-v152 lane-a"></div>
-      <div id="racerLaneB152" class="racer-lane-v152 lane-b"></div>
-      <div id="racerRaceMsg152" class="racer-race-msg-v152">READY</div>
+      <div id="racerLaneA153" class="racer-lane-v152 lane-a"></div>
+      <div id="racerLaneB153" class="racer-lane-v152 lane-b"></div>
+      <div id="racerRaceMsg153" class="racer-race-msg-v152">READY</div>
     </div>
   </div>`;
 
-  const drawPanel=document.getElementById('racerDraw152');
-  const title=document.getElementById('racerDrawTitle152');
-  const drawer=document.getElementById('racerDrawer152');
-  const svg=document.getElementById('racerSvg152');
-  const pathLayer=document.getElementById('racerPath152');
-  const timeEl=document.getElementById('racerDrawTime152');
-  const build=document.getElementById('racerBuild152');
-  const race=document.getElementById('racerRace152');
-  const laneEls=[document.getElementById('racerLaneA152'),document.getElementById('racerLaneB152')];
-  const raceMsg=document.getElementById('racerRaceMsg152');
+  const drawPanel=document.getElementById('racerDraw153');
+  const title=document.getElementById('racerDrawTitle153');
+  const drawer=document.getElementById('racerDrawer153');
+  const svg=document.getElementById('racerSvg153');
+  const pathLayer=document.getElementById('racerPath153');
+  const timeEl=document.getElementById('racerDrawTime153');
+  const build=document.getElementById('racerBuild153');
+  const race=document.getElementById('racerRace153');
+  const laneEls=[document.getElementById('racerLaneA153'),document.getElementById('racerLaneB153')];
+  const raceMsg=document.getElementById('racerRaceMsg153');
 
-  let stroke=null,pointer=null,points=[];
+  let pointer=null,currentStroke=null,drawEnabled=false,strokes=[];
+
   function local(e){const r=svg.getBoundingClientRect();return{x:clamp((e.clientX-r.left)/r.width*320,8,312),y:clamp((e.clientY-r.top)/r.height*250,8,242)}}
-  function renderPoints(){pathLayer.innerHTML='';if(points.length<2)return;const pth=document.createElementNS('http://www.w3.org/2000/svg','polyline');pth.setAttribute('points',points.map(q=>`${q.x.toFixed(1)},${q.y.toFixed(1)}`).join(' '));pth.setAttribute('class','racer-user-line-v152');pathLayer.appendChild(pth)}
-  svg.addEventListener('pointerdown',e=>{e.preventDefault();if(pointer!==null)return;pointer=e.pointerId;points=[local(e)];try{svg.setPointerCapture(e.pointerId)}catch(_){}} ,{passive:false});
-  svg.addEventListener('pointermove',e=>{if(pointer!==e.pointerId)return;e.preventDefault();const q=local(e),last=points[points.length-1];if(!last||Math.hypot(q.x-last.x,q.y-last.y)>2.5){points.push(q);renderPoints();}}, {passive:false});
-  const endDraw=e=>{if(pointer===e.pointerId){e.preventDefault();pointer=null;}};
-  svg.addEventListener('pointerup',endDraw,{passive:false});svg.addEventListener('pointercancel',endDraw,{passive:false});
+  function makeLine(points,cls='racer-user-line-v152'){const el=document.createElementNS('http://www.w3.org/2000/svg','polyline');el.setAttribute('class',cls);el.setAttribute('points',points.map(q=>`${q.x.toFixed(1)},${q.y.toFixed(1)}`).join(' '));pathLayer.appendChild(el);return el}
 
-  function quality(kind,pts){
+  svg.addEventListener('pointerdown',e=>{
+    if(!drawEnabled||pointer!==null)return;
+    e.preventDefault();pointer=e.pointerId;
+    const q=local(e);currentStroke={points:[q],el:makeLine([q])};strokes.push(currentStroke.points);
+    try{svg.setPointerCapture(e.pointerId)}catch(_){}
+  },{passive:false});
+  svg.addEventListener('pointermove',e=>{
+    if(!drawEnabled||pointer!==e.pointerId||!currentStroke)return;
+    e.preventDefault();const q=local(e),pts=currentStroke.points,last=pts[pts.length-1];
+    if(!last||Math.hypot(q.x-last.x,q.y-last.y)>2.2){pts.push(q);currentStroke.el.setAttribute('points',pts.map(v=>`${v.x.toFixed(1)},${v.y.toFixed(1)}`).join(' '))}
+  },{passive:false});
+  const endDraw=e=>{if(pointer!==e.pointerId)return;e.preventDefault();pointer=null;currentStroke=null};
+  svg.addEventListener('pointerup',endDraw,{passive:false});
+  svg.addEventListener('pointercancel',endDraw,{passive:false});
+
+  function quality(kind,ss){
+    const pts=ss.flatMap(s=>s);
     if(pts.length<4)return .25;
     let minX=999,minY=999,maxX=-999,maxY=-999,len=0;
-    for(let i=0;i<pts.length;i++){const q=pts[i];minX=Math.min(minX,q.x);minY=Math.min(minY,q.y);maxX=Math.max(maxX,q.x);maxY=Math.max(maxY,q.y);if(i)len+=Math.hypot(q.x-pts[i-1].x,q.y-pts[i-1].y)}
+    for(const s of ss){for(let i=0;i<s.length;i++){const q=s[i];minX=Math.min(minX,q.x);minY=Math.min(minY,q.y);maxX=Math.max(maxX,q.x);maxY=Math.max(maxY,q.y);if(i)len+=Math.hypot(q.x-s[i-1].x,q.y-s[i-1].y)}}
     const w=Math.max(1,maxX-minX),h=Math.max(1,maxY-minY),area=w*h;
     if(kind==='tire'){
-      const close=Math.hypot(pts[0].x-pts.at(-1).x,pts[0].y-pts.at(-1).y);
+      const main=[...ss].sort((a,b)=>b.length-a.length)[0]||[];
+      const close=main.length>1?Math.hypot(main[0].x-main.at(-1).x,main[0].y-main.at(-1).y):90;
       const round=1-Math.min(1,Math.abs(w-h)/Math.max(w,h));
-      const closure=1-Math.min(1,close/90);
-      const size=clamp(area/20000,0,1);
-      return clamp(.2+round*.32+closure*.32+size*.16,.2,1);
+      const closure=1-Math.min(1,close/95);
+      const size=clamp(area/19000,0,1);
+      const deco=clamp((ss.length-1)/6+len/1800,0,1);
+      return clamp(.18+round*.27+closure*.27+size*.14+deco*.14,.2,1);
     }
-    const wide=clamp(w/(h*1.6),0,1);
-    const size=clamp(area/26000,0,1);
-    const detail=clamp(len/650,0,1);
-    return clamp(.22+wide*.3+size*.3+detail*.18,.2,1);
+    const wide=clamp(w/(h*1.55),0,1),size=clamp(area/25000,0,1),detail=clamp(len/900+ss.length/10,0,1);
+    return clamp(.20+wide*.28+size*.28+detail*.24,.2,1);
   }
+
   function cpuSketch(kind){
-    const pts=[];
     if(kind==='tire'){
-      const cx=160,cy=128,r=68+rand(-7,7);for(let i=0;i<=30;i++){const a=i/30*Math.PI*2;pts.push({x:cx+Math.cos(a)*r*(1+rand(-.04,.04)),y:cy+Math.sin(a)*r*(1+rand(-.04,.04))})}
-    }else{
-      pts.push({x:55,y:165},{x:78,y:104},{x:132,y:70},{x:220,y:76},{x:270,y:125},{x:264,y:172},{x:70,y:178},{x:55,y:165});
+      const out=[],cx=160,cy=128,r=68+rand(-7,7),rim=[];
+      for(let i=0;i<=34;i++){const a=i/34*Math.PI*2;rim.push({x:cx+Math.cos(a)*r*(1+rand(-.025,.025)),y:cy+Math.sin(a)*r*(1+rand(-.025,.025))})}
+      out.push(rim);
+      for(let s=0;s<4;s++){const a=s/4*Math.PI;out.push([{x:cx-Math.cos(a)*r*.78,y:cy-Math.sin(a)*r*.78},{x:cx+Math.cos(a)*r*.78,y:cy+Math.sin(a)*r*.78}])}
+      return out;
     }
-    return pts;
+    return [
+      [{x:50,y:170},{x:72,y:112},{x:126,y:72},{x:218,y:76},{x:275,y:126},{x:268,y:174},{x:66,y:180},{x:50,y:170}],
+      [{x:105,y:117},{x:132,y:92},{x:205,y:94},{x:230,y:119}],
+      [{x:84,y:145},{x:250,y:145}]
+    ];
   }
-  async function drawOne(team,memberIndex,kind){
-    const member=team.members[memberIndex];
-    title.textContent=`${team.name} / ${memberIndex===0?'1番手 タイヤ':'2番手 機体'}`;
-    drawer.innerHTML=`${imgTag(member,'racer-draw-avatar-v152')}<b>${esc(member.name)}</b><span>${member.cpu?'CPU DRAW':'指で描く'}</span>`;
-    pathLayer.innerHTML='';points=[];timeEl.textContent='5.0';
-    if(member.cpu){
-      points=cpuSketch(kind);renderPoints();timeEl.textContent='CPU';await wait(850);
-    }else{
-      const st=performance.now();
-      await new Promise(resolve=>{const loop=()=>{if(!isGameRunValid(runId)){resolve();return}const left=Math.max(0,DRAW_MS-(performance.now()-st));timeEl.textContent=(left/1000).toFixed(1);if(left<=0){resolve();return}requestAnimationFrame(loop)};loop()});
+
+  async function animateCpu(kind){
+    drawEnabled=false;strokes=[];pathLayer.innerHTML='';
+    const target=cpuSketch(kind);
+    for(const src of target){
+      const dst=[];strokes.push(dst);const el=makeLine(dst,'racer-user-line-v152 cpu-v153');
+      for(let i=0;i<src.length;i++){if(!isGameRunValid(runId))return;dst.push(src[i]);el.setAttribute('points',dst.map(q=>`${q.x.toFixed(1)},${q.y.toFixed(1)}`).join(' '));if(i%3===0)await new Promise(r=>setTimeout(r,16))}
+      await new Promise(r=>setTimeout(r,45));
     }
-    const saved=points.map(q=>({...q}));
+  }
+
+  function humanTurn(team,slot,member){return state.freePlay?team.humanSlots?.has(slot)===true:!member.cpu}
+
+  async function drawOne(team,slot,kind){
+    const member=team.members[slot],isHuman=humanTurn(team,slot,member);
+    title.textContent=`${team.name} / ${slot===0?'1番手 タイヤ':'2番手 機体'}`;
+    drawer.innerHTML=`${imgTag(member,'racer-draw-avatar-v152')}<b>${state.freePlay&&isHuman?'あなた':esc(member.name)}</b><span>${isHuman?'指で描く / 何筆でもOK':'CPU DRAW'}</span>`;
+    pathLayer.innerHTML='';strokes=[];pointer=null;currentStroke=null;drawEnabled=false;
+    if(isHuman){
+      drawEnabled=true;const st=performance.now();
+      await new Promise(resolve=>{const loop=()=>{if(!isGameRunValid(runId)){resolve();return}const left=Math.max(0,DRAW_MS-(performance.now()-st));timeEl.textContent=(left/1000).toFixed(1);if(left<=0){resolve();return}requestAnimationFrame(loop)};loop()});
+      drawEnabled=false;pointer=null;currentStroke=null;
+    }else{
+      timeEl.textContent='CPU';await animateCpu(kind);await wait(260);
+    }
+    const saved=strokes.map(s=>s.map(q=>({...q})));
     if(kind==='tire'){team.tire=saved;team.tireQ=quality('tire',saved)}else{team.body=saved;team.bodyQ=quality('body',saved)}
     beep(650,55,.014);await wait(250);
   }
-  function pathSvg(pts,cls){if(!pts||pts.length<2)return '';return `<polyline class="${cls}" points="${pts.map(q=>`${q.x.toFixed(1)},${q.y.toFixed(1)}`).join(' ')}"/>`}
-  function carHtml(team){
-    const t=pathSvg(team.tire,'racer-tire-line-v152'),b=pathSvg(team.body,'racer-body-line-v152');
-    return `<div class="racer-car-v152"><svg class="racer-car-body-svg-v152" viewBox="0 0 320 250">${b}</svg><svg class="racer-wheel-v152 w1" viewBox="0 0 320 250">${t}</svg><svg class="racer-wheel-v152 w2" viewBox="0 0 320 250">${t}</svg><div class="racer-riders-v152">${team.members.map(m=>imgTag(m,'racer-rider-v152')).join('')}</div><i class="racer-boost-v152"></i></div>`;
-  }
-  function calcStats(team){
-    const q=(team.tireQ+team.bodyQ)/2;
-    team.normal=clamp(Math.round(200+q*72+rand(0,32)),200,300);
-    team.boost=clamp(Math.round(400+q*72+rand(0,32)),400,500);
-    team.stretch=clamp(1.2+q*.20+rand(0,.10),1.20,1.50);
-  }
+
+  function pathSvg(ss,cls){return (ss||[]).map(pts=>pts.length>=2?`<polyline class="${cls}" points="${pts.map(q=>`${q.x.toFixed(1)},${q.y.toFixed(1)}`).join(' ')}"/>`:'').join('')}
+  function carHtml(team){const t=pathSvg(team.tire,'racer-tire-line-v152'),b=pathSvg(team.body,'racer-body-line-v152');return `<div class="racer-car-v152"><svg class="racer-car-body-svg-v152" viewBox="0 0 320 250">${b}</svg><svg class="racer-wheel-v152 w1" viewBox="0 0 320 250">${t}</svg><svg class="racer-wheel-v152 w2" viewBox="0 0 320 250">${t}</svg><div class="racer-riders-v152">${team.members.map(m=>imgTag(m,'racer-rider-v152')).join('')}</div><i class="racer-boost-v152"></i></div>`}
+  function calcStats(team){const q=(team.tireQ+team.bodyQ)/2;team.normal=clamp(Math.round(200+q*72+rand(0,32)),200,300);team.boost=clamp(Math.round(400+q*72+rand(0,32)),400,500);team.stretch=clamp(1.2+q*.20+rand(0,.10),1.20,1.50)}
 
   if(!(await countdown('TAG DRAW',runId,{transparent:true})))return;
   for(const team of teams){await drawOne(team,0,'tire');await drawOne(team,1,'body');calcStats(team)}
   if(!isGameRunValid(runId))return;
 
   drawPanel.hidden=true;build.hidden=false;
-  build.innerHTML=teams.map((t,i)=>`<div class="racer-build-card-v152"><b>${t.name}</b>${carHtml(t)}<span>NORMAL ${t.normal}km/h</span><span>BOOST ${t.boost}km/h</span><span>伸び ${(t.stretch*100).toFixed(0)}%</span></div>`).join('');
+  build.innerHTML=teams.map(t=>`<div class="racer-build-card-v152"><b>${t.name}</b>${carHtml(t)}<span>NORMAL ${t.normal}km/h</span><span>BOOST ${t.boost}km/h</span><span>伸び ${(t.stretch*100).toFixed(0)}%</span></div>`).join('');
   await wait(1500);if(!isGameRunValid(runId))return;
 
   build.hidden=true;race.hidden=false;
@@ -27541,43 +27580,229 @@ async function startMobSpeedRacer(p,humanIndex,runId){
   await new Promise(resolve=>{
     const frame=now=>{
       if(!isGameRunValid(runId)||finished){resolve();return}
-      const dt=Math.min(.034,(now-last)/1000);last=now;
-      const elapsed=(now-raceStart)/1000;
-      const raw=[];
-      teams.forEach((t,i)=>{
-        if(t.finishMs!==null){raw[i]=t.distance;return}
-        const boostPhase=t.distance>=360&&t.distance<620;
-        let kmh=boostPhase?t.boost:t.normal;
-        if(t.distance>=650)kmh*=t.stretch;
-        raw[i]=t.distance+(kmh/3.6)*dt;
-      });
-      // 500mまでは必ず接戦。差が開いても最大およそ35mに圧縮。
+      const dt=Math.min(.034,(now-last)/1000);last=now;const raw=[];
+      teams.forEach((t,i)=>{if(t.finishMs!==null){raw[i]=t.distance;return}const boost=t.distance>=360&&t.distance<620;let kmh=boost?t.boost:t.normal;if(t.distance>=650)kmh*=t.stretch;raw[i]=t.distance+(kmh/3.6)*dt});
       if(Math.min(...raw)<500){const avg=(raw[0]+raw[1])/2;raw[0]=avg+clamp(raw[0]-avg,-17.5,17.5);raw[1]=avg+clamp(raw[1]-avg,-17.5,17.5)}
-      teams.forEach((t,i)=>{
-        if(t.finishMs===null){t.distance=Math.min(1000,raw[i]);if(t.distance>=1000)t.finishMs=now-raceStart}
-        const car=laneEls[i].querySelector('.racer-car-v152');const dist=laneEls[i].querySelector('.racer-dist-v152');
-        const x=8+clamp(t.distance/1000,0,1)*78;car.style.left=`${x}%`;car.classList.toggle('boosting-v152',t.distance>=360&&t.distance<620);dist.textContent=`${Math.round(t.distance)}m`;
-      });
-      if(teams.every(t=>t.finishMs!==null)){resolve();return}
-      raceRaf=requestAnimationFrame(frame);
+      teams.forEach((t,i)=>{if(t.finishMs===null){t.distance=Math.min(1000,raw[i]);if(t.distance>=1000)t.finishMs=now-raceStart}const car=laneEls[i].querySelector('.racer-car-v152'),dist=laneEls[i].querySelector('.racer-dist-v152');car.style.left=`${8+clamp(t.distance/1000,0,1)*78}%`;car.classList.toggle('boosting-v152',t.distance>=360&&t.distance<620);dist.textContent=`${Math.round(t.distance)}m`});
+      if(teams.every(t=>t.finishMs!==null)){resolve();return}raceRaf=requestAnimationFrame(frame);
     };raceRaf=requestAnimationFrame(frame);
   });
+
   if(!isGameRunValid(runId))return;
   if(raceRaf)cancelAnimationFrame(raceRaf);
   finished=true;
   const winner=teams[0].finishMs<=teams[1].finishMs?teams[0]:teams[1];
-  raceMsg.textContent=`${winner.name} WIN!`;
-  race.classList.add('finish-v152');beep(1080,180,.04);
+  raceMsg.textContent=`${winner.name} WIN!`;race.classList.add('finish-v152');beep(1080,180,.04);
 
-  teams.forEach(t=>t.members.forEach(m=>{state.records.mobSpeedRacer[m.id]=Math.round(t.finishMs)}));
-  await wait(1800);
   if(state.freePlay){
-    const human=teams.flatMap(t=>t.members).find(m=>!m.cpu)||p;
-    const myTeam=teams.find(t=>t.members.some(m=>m.id===human.id));
-    recordScreen(gameIndex,human,0,`${(myTeam.finishMs/1000).toFixed(2)}<small>秒</small>`,winner.key===myTeam.key?'WIN!':'LOSE');
+    state.records.mobSpeedRacer[p.id]=Math.round(Math.min(teams[0].finishMs,teams[1].finishMs));
+    await wait(1600);
+    recordScreen(gameIndex,p,0,`${winner.name}<small> WIN</small>`,`A ${(teams[0].finishMs/1000).toFixed(2)}秒 / B ${(teams[1].finishMs/1000).toFixed(2)}秒`);
   }else{
-    gameSessionActive=false;activeGameIndex=-1;cancelCountdown();
-    finishGame(gameIndex);
+    teams.forEach(t=>t.members.forEach(m=>{state.records.mobSpeedRacer[m.id]=Math.round(t.finishMs)}));
+    await wait(1600);gameSessionActive=false;activeGameIndex=-1;cancelCountdown();finishGame(gameIndex);
+  }
+}
+
+// =========================================================
+// V10.53 GAME 91 — モブくんは召喚マスター
+// =========================================================
+async function startSummonMaster(p,humanIndex,runId){
+  gameFit();
+  const gameIndex=summonMasterIndex();
+  const DRAW_MS=5000;
+  let finished=false,drawEnabled=false,pointer=null,currentStroke=null,strokes=[];
+
+  const teamData=(()=>{
+    if(state.freePlay){
+      return [
+        {key:'A',name:'TEAM A',ids:['p1','c2'],humanSlots:new Set([0])},
+        {key:'B',name:'TEAM B',ids:['c3','p1'],humanSlots:new Set([1])}
+      ];
+    }
+    const m=mode(),keys=Object.keys(m.teams||{}).slice(0,2);
+    return keys.map(k=>({key:k,name:m.teamNames[k]||`TEAM ${k}`,ids:[...(m.teams[k]||[])],humanSlots:null}));
+  })();
+
+  if(teamData.length!==2||teamData.some(t=>t.ids.length!==2)){
+    state.records.summonMaster[p.id]=0;
+    recordScreen(gameIndex,p,humanIndex,'TAG ONLY','2対2タッグでプレイしてください');
+    return;
+  }
+
+  const teams=teamData.map((t,ti)=>({...t,members:t.ids.map(pById),monsters:[],lane:ti}));
+
+  screen.innerHTML=`<div class="summon-master-shell-v153 gameplay-fit">
+    <div class="game-head"><div><span class="kicker">TAG SUMMON BATTLE</span><h2>モブくんは召喚マスター</h2><p class="lead">描いた魔物 2 VS 2</p></div><div class="game-badge">2 VS 2</div></div>
+    <div id="smDraw153" class="sm-draw-v153">
+      <div id="smTitle153" class="sm-title-v153">DRAW MONSTER</div>
+      <div id="smDrawer153" class="sm-drawer-v153"></div>
+      <svg id="smSvg153" class="sm-svg-v153" viewBox="0 0 340 300"><rect x="4" y="4" width="332" height="292" rx="20"></rect><g id="smPath153"></g></svg>
+      <div class="sm-note-v153">何筆でも自由 / 大きさ・形・描き込みで能力が変化</div>
+      <div id="smTime153" class="sm-time-v153">5.0</div>
+    </div>
+    <div id="smPreview153" class="sm-preview-v153" hidden></div>
+    <div id="smBattle153" class="sm-battle-v153" hidden>
+      <div class="sm-arena-bg-v153"></div><div class="sm-ground-v153"></div>
+      <div class="sm-team-label-v153 a">TEAM A</div><div class="sm-team-label-v153 b">TEAM B</div>
+      <div id="smMonsterLayer153" class="sm-monster-layer-v153"></div><div id="smFx153" class="sm-fx-layer-v153"></div>
+      <div id="smBattleMsg153" class="sm-battle-msg-v153">READY</div>
+    </div>
+  </div>`;
+
+  const draw=document.getElementById('smDraw153'),title=document.getElementById('smTitle153'),drawer=document.getElementById('smDrawer153');
+  const svg=document.getElementById('smSvg153'),pathLayer=document.getElementById('smPath153'),timeEl=document.getElementById('smTime153');
+  const preview=document.getElementById('smPreview153'),battle=document.getElementById('smBattle153'),monsterLayer=document.getElementById('smMonsterLayer153');
+  const fx=document.getElementById('smFx153'),battleMsg=document.getElementById('smBattleMsg153');
+
+  function local(e){const r=svg.getBoundingClientRect();return{x:clamp((e.clientX-r.left)/r.width*340,8,332),y:clamp((e.clientY-r.top)/r.height*300,8,292)}}
+  function line(points,cls='sm-user-line-v153'){const el=document.createElementNS('http://www.w3.org/2000/svg','polyline');el.setAttribute('class',cls);el.setAttribute('points',points.map(q=>`${q.x.toFixed(1)},${q.y.toFixed(1)}`).join(' '));pathLayer.appendChild(el);return el}
+
+  svg.addEventListener('pointerdown',e=>{
+    if(!drawEnabled||pointer!==null)return;
+    e.preventDefault();pointer=e.pointerId;const q=local(e);currentStroke={points:[q],el:line([q])};strokes.push(currentStroke.points);
+    try{svg.setPointerCapture(e.pointerId)}catch(_){}
+  },{passive:false});
+  svg.addEventListener('pointermove',e=>{
+    if(!drawEnabled||pointer!==e.pointerId||!currentStroke)return;
+    e.preventDefault();const q=local(e),pts=currentStroke.points,last=pts[pts.length-1];
+    if(!last||Math.hypot(q.x-last.x,q.y-last.y)>2.1){pts.push(q);currentStroke.el.setAttribute('points',pts.map(v=>`${v.x.toFixed(1)},${v.y.toFixed(1)}`).join(' '))}
+  },{passive:false});
+  const endStroke=e=>{if(pointer!==e.pointerId)return;e.preventDefault();pointer=null;currentStroke=null};
+  svg.addEventListener('pointerup',endStroke,{passive:false});svg.addEventListener('pointercancel',endStroke,{passive:false});
+
+  function analyze(ss){
+    const pts=ss.flatMap(s=>s);
+    if(pts.length<4)return{q:.28,hp:38,atk:5,speed:.95,type:'ORB',color:'#8ee9df'};
+    let minX=999,minY=999,maxX=-999,maxY=-999,len=0;
+    for(const s of ss){for(let i=0;i<s.length;i++){const q=s[i];minX=Math.min(minX,q.x);minY=Math.min(minY,q.y);maxX=Math.max(maxX,q.x);maxY=Math.max(maxY,q.y);if(i)len+=Math.hypot(q.x-s[i-1].x,q.y-s[i-1].y)}}
+    const w=Math.max(1,maxX-minX),h=Math.max(1,maxY-minY),area=w*h,density=clamp(len/1200+ss.length/12,0,1),size=clamp(area/65000,0,1),balance=1-Math.min(1,Math.abs(w-h)/Math.max(w,h));
+    const q=clamp(.22+size*.34+density*.30+balance*.14,.22,1),ratio=w/h;
+    let type='ORB',color='#8ee9df';
+    if(ratio>1.7){type='BEAM';color='#75d7ff'}else if(ratio<.66){type='SLASH';color='#ffd76d'}else if(ss.length>=6){type='THUNDER';color='#e7df5e'}else if(density>.72){type='DARK';color='#a98ae8'}else if(size>.72){type='SLAM';color='#ef9165'}
+    return{q,hp:Math.round(34+q*32),atk:Math.round(4+q*6),speed:.72+q*.58,type,color};
+  }
+
+  function cpuSketch(slot){
+    const cx=170+rand(-10,10),cy=150+rand(-8,8);
+    if(slot%4===0)return[
+      Array.from({length:25},(_,i)=>{const a=i/24*Math.PI*2;return{x:cx+Math.cos(a)*78,y:cy+Math.sin(a)*62}}),
+      [{x:cx-45,y:cy},{x:cx+45,y:cy}],[{x:cx,y:cy-42},{x:cx,y:cy+42}]
+    ];
+    if(slot%4===1)return[
+      [{x:70,y:210},{x:95,y:85},{x:170,y:48},{x:245,y:90},{x:275,y:205},{x:70,y:210}],
+      [{x:115,y:150},{x:225,y:150}],[{x:140,y:105},{x:150,y:118}],[{x:200,y:105},{x:190,y:118}]
+    ];
+    if(slot%4===2)return[
+      [{x:60,y:160},{x:110,y:100},{x:170,y:75},{x:240,y:102},{x:285,y:160},{x:240,y:210},{x:165,y:225},{x:95,y:205},{x:60,y:160}],
+      [{x:90,y:150},{x:250,y:150}],[{x:170,y:80},{x:170,y:225}]
+    ];
+    return[
+      [{x:80,y:235},{x:118,y:70},{x:160,y:220},{x:205,y:58},{x:260,y:235}],
+      [{x:100,y:182},{x:245,y:182}],[{x:120,y:125},{x:225,y:125}]
+    ];
+  }
+
+  async function cpuDraw(slot){
+    drawEnabled=false;strokes=[];pathLayer.innerHTML='';
+    for(const src of cpuSketch(slot)){
+      const dst=[];strokes.push(dst);const el=line(dst,'sm-user-line-v153 cpu-v153');
+      for(let i=0;i<src.length;i++){if(!isGameRunValid(runId))return;dst.push(src[i]);el.setAttribute('points',dst.map(q=>`${q.x.toFixed(1)},${q.y.toFixed(1)}`).join(' '));if(i%2===0)await new Promise(r=>setTimeout(r,18))}
+      await new Promise(r=>setTimeout(r,45));
+    }
+  }
+
+  function isHumanTurn(team,slot,member){return state.freePlay?team.humanSlots?.has(slot)===true:!member.cpu}
+
+  async function drawMonster(team,slot,globalSlot){
+    const member=team.members[slot],isHuman=isHumanTurn(team,slot,member);
+    title.textContent=`${team.name} / ${slot+1}番手`;
+    drawer.innerHTML=`${imgTag(member,'sm-avatar-v153')}<b>${state.freePlay&&isHuman?'あなた':esc(member.name)}</b><span>${isHuman?'MONSTER DRAW':'CPU DRAW'}</span>`;
+    pathLayer.innerHTML='';strokes=[];pointer=null;currentStroke=null;drawEnabled=false;
+    if(isHuman){
+      drawEnabled=true;const st=performance.now();
+      await new Promise(resolve=>{const loop=()=>{if(!isGameRunValid(runId)){resolve();return}const left=Math.max(0,DRAW_MS-(performance.now()-st));timeEl.textContent=(left/1000).toFixed(1);if(left<=0){resolve();return}requestAnimationFrame(loop)};loop()});
+      drawEnabled=false;pointer=null;currentStroke=null;
+    }else{
+      timeEl.textContent='CPU';await cpuDraw(globalSlot);await wait(250);
+    }
+    const saved=strokes.map(s=>s.map(q=>({...q}))),stat=analyze(saved);
+    team.monsters.push({owner:member,strokes:saved,...stat});
+    beep(680,55,.014);await wait(220);
+  }
+
+  function monsterSvg(m){
+    const lines=m.strokes.length?m.strokes.map(s=>`<polyline points="${s.map(q=>`${q.x.toFixed(1)},${q.y.toFixed(1)}`).join(' ')}"/>`).join(''):`<circle cx="170" cy="150" r="62"></circle>`;
+    return `<svg viewBox="0 0 340 300" style="--sm-color:${m.color}">${lines}</svg>`;
+  }
+
+  if(!(await countdown('SUMMON TAG',runId,{transparent:true})))return;
+  let globalSlot=0;
+  for(const team of teams){await drawMonster(team,0,globalSlot++);await drawMonster(team,1,globalSlot++)}
+  if(!isGameRunValid(runId))return;
+
+  draw.hidden=true;preview.hidden=false;
+  preview.innerHTML=teams.map(t=>`<section class="sm-preview-team-v153"><b>${t.name}</b><div>${t.monsters.map(m=>`<article>${monsterSvg(m)}<span>HP ${m.hp}</span><span>ATK ${m.atk}</span></article>`).join('')}</div></section>`).join('');
+  await wait(1400);if(!isGameRunValid(runId))return;
+  preview.hidden=true;battle.hidden=false;
+
+  const W=Math.max(300,battle.clientWidth||360),H=Math.max(330,battle.clientHeight||390);
+  const pos=[[{x:62,y:H*.40},{x:98,y:H*.67}],[{x:W-122,y:H*.40},{x:W-158,y:H*.67}]];
+  const fighters=[];
+  teams.forEach((t,ti)=>t.monsters.forEach((m,mi)=>{
+    const el=document.createElement('div');el.className=`sm-fighter-v153 team-${ti?'b':'a'}`;el.innerHTML=`${monsterSvg(m)}<b class="sm-hp-v153"><i></i></b>`;monsterLayer.appendChild(el);
+    const f={team:ti,member:mi,m,hp:m.hp,maxHp:m.hp,x:pos[ti][mi].x,y:pos[ti][mi].y,baseX:pos[ti][mi].x,baseY:pos[ti][mi].y,alive:true,nextAttack:performance.now()+rand(450,950),el,hpEl:el.querySelector('.sm-hp-v153 i')};
+    el.style.left=`${f.x}px`;el.style.top=`${f.y}px`;if(ti===1)el.classList.add('mirror-v153');fighters.push(f);
+  }));
+
+  const alive=ti=>fighters.filter(f=>f.team===ti&&f.alive);
+  const update=f=>{f.el.style.left=`${f.x}px`;f.el.style.top=`${f.y}px`;f.hpEl.style.width=`${clamp(f.hp/f.maxHp,0,1)*100}%`};
+
+  function attackFx(from,to,type,color){
+    const el=document.createElement('div');el.className=`sm-attack-v153 type-${type.toLowerCase()}`;el.style.setProperty('--atk-color',color);
+    const dx=to.x-from.x,dy=to.y-from.y,len=Math.hypot(dx,dy),ang=Math.atan2(dy,dx)*180/Math.PI;
+    el.style.left=`${from.x+35}px`;el.style.top=`${from.y+42}px`;el.style.width=`${Math.max(30,len)}px`;el.style.transform=`rotate(${ang}deg)`;fx.appendChild(el);setTimeout(()=>el.remove(),330);
+  }
+  function hitFx(target,damage,color){
+    const el=document.createElement('div');el.className='sm-hit-v153';el.style.left=`${target.x+45}px`;el.style.top=`${target.y+40}px`;el.style.setProperty('--hit-color',color);el.textContent=`-${damage}`;fx.appendChild(el);setTimeout(()=>el.remove(),500);
+  }
+  function defeat(f){if(!f.alive)return;f.alive=false;f.el.classList.add('down-v153');setTimeout(()=>f.el.remove(),650)}
+
+  battleMsg.textContent='SUMMON BATTLE!';beep(860,90,.02);
+  const start=performance.now();let last=performance.now();
+
+  await new Promise(resolve=>{
+    const frame=now=>{
+      if(!isGameRunValid(runId)||finished){resolve();return}
+      const elapsed=now-start;last=now;
+      for(const f of fighters){
+        if(!f.alive)continue;
+        const dir=f.team===0?1:-1;f.x=f.baseX+Math.sin(elapsed*.0024+f.member)*12*dir;f.y=f.baseY+Math.sin(elapsed*.003+f.member)*4;update(f);
+        if(now>=f.nextAttack){
+          const targets=alive(1-f.team);if(!targets.length)continue;
+          const target=[...targets].sort((a,b)=>a.hp-b.hp)[0];
+          f.nextAttack=now+clamp(1050-f.m.speed*330+rand(-90,130),480,950);
+          f.el.classList.add('attack-v153');setTimeout(()=>f.el.classList.remove('attack-v153'),260);attackFx(f,target,f.m.type,f.m.color);
+          const dmg=Math.max(2,f.m.atk+randi(-1,2));
+          setTimeout(()=>{if(!target.alive||finished)return;target.hp=Math.max(0,target.hp-dmg);hitFx(target,dmg,f.m.color);target.el.classList.add('hurt-v153');setTimeout(()=>target.el.classList.remove('hurt-v153'),180);if(target.hp<=0)defeat(target)},170);
+        }
+      }
+      if(!alive(0).length||!alive(1).length||elapsed>=12000){resolve();return}
+      requestAnimationFrame(frame);
+    };requestAnimationFrame(frame);
+  });
+
+  if(!isGameRunValid(runId))return;
+  finished=true;
+  const hpA=alive(0).reduce((s,f)=>s+f.hp,0),hpB=alive(1).reduce((s,f)=>s+f.hp,0),winner=hpA===hpB?(Math.random()<.5?0:1):(hpA>hpB?0:1);
+  battleMsg.textContent=`${teams[winner].name} WIN!`;battle.classList.add('finish-v153');beep(1080,180,.04);
+
+  if(state.freePlay){
+    state.records.summonMaster[p.id]=100;await wait(1500);
+    recordScreen(gameIndex,p,0,`${teams[winner].name}<small> WIN</small>`,`残りHP A:${Math.round(hpA)} / B:${Math.round(hpB)}`);
+  }else{
+    teams.forEach((t,ti)=>t.members.forEach(m=>{state.records.summonMaster[m.id]=ti===winner?100:0}));
+    await wait(1500);gameSessionActive=false;activeGameIndex=-1;cancelCountdown();finishGame(gameIndex);
   }
 }
 
