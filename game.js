@@ -1,5 +1,78 @@
+
 (()=>{
 "use strict";
+
+// =========================================================
+// V10.56 — COMPLETE APP INPUT LOCK
+// Every menu + every game:
+//   • no text/image selection
+//   • no long-press callout/context menu
+//   • no drag
+//   • no double-tap zoom
+// Existing clicks, taps, swipes and drawing remain usable.
+// =========================================================
+function clearAllSelectionV156(){
+  try{
+    const sel=window.getSelection&&window.getSelection();
+    if(sel&&sel.rangeCount)sel.removeAllRanges();
+  }catch(_){}
+}
+
+function blockNativeUiV156(e){
+  e.preventDefault();
+  clearAllSelectionV156();
+}
+
+// Native selection/callout/drag is blocked at capture phase for the WHOLE app.
+document.addEventListener("selectstart",blockNativeUiV156,{capture:true,passive:false});
+document.addEventListener("contextmenu",blockNativeUiV156,{capture:true,passive:false});
+document.addEventListener("dragstart",blockNativeUiV156,{capture:true,passive:false});
+document.addEventListener("copy",blockNativeUiV156,{capture:true,passive:false});
+document.addEventListener("cut",blockNativeUiV156,{capture:true,passive:false});
+document.addEventListener("dblclick",blockNativeUiV156,{capture:true,passive:false});
+
+// iOS gesture zoom is disabled globally.
+document.addEventListener("gesturestart",blockNativeUiV156,{capture:true,passive:false});
+document.addEventListener("gesturechange",blockNativeUiV156,{capture:true,passive:false});
+document.addEventListener("gestureend",blockNativeUiV156,{capture:true,passive:false});
+
+// Keep clearing any selection that iOS tries to create while a finger is held.
+// Do NOT prevent pointer/touch defaults here so buttons, counters, drawing,
+// scrolling menus and game controls continue to work.
+document.addEventListener("selectionchange",clearAllSelectionV156,{capture:true});
+document.addEventListener("pointerdown",clearAllSelectionV156,{capture:true,passive:true});
+document.addEventListener("pointermove",clearAllSelectionV156,{capture:true,passive:true});
+document.addEventListener("pointerup",clearAllSelectionV156,{capture:true,passive:true});
+document.addEventListener("pointercancel",clearAllSelectionV156,{capture:true,passive:true});
+document.addEventListener("touchstart",clearAllSelectionV156,{capture:true,passive:true});
+document.addEventListener("touchmove",clearAllSelectionV156,{capture:true,passive:true});
+document.addEventListener("touchend",clearAllSelectionV156,{capture:true,passive:true});
+document.addEventListener("touchcancel",clearAllSelectionV156,{capture:true,passive:true});
+document.addEventListener("mousedown",clearAllSelectionV156,{capture:true,passive:true});
+document.addEventListener("mouseup",clearAllSelectionV156,{capture:true,passive:true});
+window.addEventListener("blur",clearAllSelectionV156,{passive:true});
+
+// During a long hold, keep clearing selection even if Safari never emits
+// a useful selection event. This is intentionally app-wide.
+let appSelectionGuardV156=null;
+function startAppSelectionGuardV156(){
+  clearAllSelectionV156();
+  if(appSelectionGuardV156!==null)clearInterval(appSelectionGuardV156);
+  appSelectionGuardV156=setInterval(clearAllSelectionV156,40);
+}
+function stopAppSelectionGuardV156(){
+  if(appSelectionGuardV156!==null){
+    clearInterval(appSelectionGuardV156);
+    appSelectionGuardV156=null;
+  }
+  clearAllSelectionV156();
+}
+document.addEventListener("pointerdown",startAppSelectionGuardV156,{capture:true,passive:true});
+document.addEventListener("pointerup",stopAppSelectionGuardV156,{capture:true,passive:true});
+document.addEventListener("pointercancel",stopAppSelectionGuardV156,{capture:true,passive:true});
+document.addEventListener("touchend",stopAppSelectionGuardV156,{capture:true,passive:true});
+document.addEventListener("touchcancel",stopAppSelectionGuardV156,{capture:true,passive:true});
+
 
 const screen=document.getElementById("screen");
 const homeBtn=document.getElementById("homeBtn");

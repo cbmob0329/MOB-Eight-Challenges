@@ -25125,3 +25125,103 @@ img,svg,canvas{
     height:45px!important;
   }
 }
+
+
+/* =========================================================
+   V10.56 — COMPLETE APP-WIDE LONG-PRESS / DOUBLE-TAP LOCK
+   ========================================================= */
+
+/* Selection/callout/drag lock applies to absolutely everything in the app,
+   not only .gameplay-fit. */
+html,
+body,
+#app,
+#screen,
+#app *,
+#screen *,
+#app *::before,
+#app *::after,
+#screen *::before,
+#screen *::after{
+  -webkit-user-select:none!important;
+  user-select:none!important;
+  -webkit-touch-callout:none!important;
+  -webkit-user-drag:none!important;
+  -webkit-tap-highlight-color:transparent!important;
+}
+
+/* Disable browser double-tap zoom on every interactive/menu/game element
+   while still allowing normal one-finger scrolling on menu screens.
+   Existing gameplay-specific touch-action:none!important rules remain stronger. */
+#app *{
+  touch-action:manipulation;
+}
+
+html,
+body,
+#app,
+#screen{
+  -webkit-text-size-adjust:100%!important;
+}
+
+/* Buttons/counters/menu cards are frequent long-press targets. */
+button,
+button *,
+a,
+a *,
+label,
+label *,
+[role="button"],
+[role="button"] *,
+[data-basic],
+[data-ind],
+[data-counter],
+.choice-card,
+.choice-card *,
+.panel,
+.panel *{
+  -webkit-user-select:none!important;
+  user-select:none!important;
+  -webkit-touch-callout:none!important;
+  -webkit-user-drag:none!important;
+  -webkit-tap-highlight-color:transparent!important;
+  touch-action:manipulation;
+}
+
+/* Images/SVG/canvas must never open native image menus or selection handles. */
+img,
+svg,
+canvas{
+  -webkit-user-select:none!important;
+  user-select:none!important;
+  -webkit-touch-callout:none!important;
+  -webkit-user-drag:none!important;
+}
+
+/* Explicitly preserve the strict game/drawing controls. */
+.gameplay-fit,
+.gameplay-fit *,
+.gameplay-fit button,
+.gameplay-fit svg,
+.gameplay-fit canvas{
+  -webkit-user-select:none!important;
+  user-select:none!important;
+  -webkit-touch-callout:none!important;
+  -webkit-user-drag:none!important;
+}
+
+.gameplay-fit button,
+.gameplay-fit svg,
+.gameplay-fit canvas{
+  touch-action:none!important;
+}
+
+/* There is no visible selection highlight even if WebKit internally creates one. */
+::selection{
+  background:transparent!important;
+  color:inherit!important;
+}
+::-moz-selection{
+  background:transparent!important;
+  color:inherit!important;
+}
