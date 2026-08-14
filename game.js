@@ -209,10 +209,30 @@ const PLAYERS=[
   {id:"c7",no:7,name:"モブティラノ",cpu:true,img:"play/07.PNG"},
   {id:"c8",no:8,name:"モブスーパーマン",cpu:true,img:"play/08.PNG"},
 
-  // 10 VS 10 モード用CPU追加枠。
+  // CPU登録枠。V10.57で最大30CPUまで拡張。
   {id:"c9",no:9,name:"CPUモブ09",cpu:true,img:"icon/09.png"},
   {id:"c10",no:10,name:"CPUモブ10",cpu:true,img:"icon/10.png"},
-  {id:"c11",no:11,name:"CPUモブ11",cpu:true,img:"icon/01.png"}
+  {id:"c11",no:11,name:"CPUモブ11",cpu:true,img:"icon/01.png"},
+  {id:"c12",no:12,name:"CPUモブ12",cpu:true,img:"icon/02.png"},
+  {id:"c13",no:13,name:"CPUモブ13",cpu:true,img:"icon/03.png"},
+  {id:"c14",no:14,name:"CPUモブ14",cpu:true,img:"icon/04.png"},
+  {id:"c15",no:15,name:"CPUモブ15",cpu:true,img:"icon/05.png"},
+  {id:"c16",no:16,name:"CPUモブ16",cpu:true,img:"icon/06.png"},
+  {id:"c17",no:17,name:"CPUモブ17",cpu:true,img:"icon/07.png"},
+  {id:"c18",no:18,name:"CPUモブ18",cpu:true,img:"icon/08.png"},
+  {id:"c19",no:19,name:"CPUモブ19",cpu:true,img:"icon/09.png"},
+  {id:"c20",no:20,name:"CPUモブ20",cpu:true,img:"icon/10.png"},
+  {id:"c21",no:21,name:"CPUモブ21",cpu:true,img:"icon/01.png"},
+  {id:"c22",no:22,name:"CPUモブ22",cpu:true,img:"icon/02.png"},
+  {id:"c23",no:23,name:"CPUモブ23",cpu:true,img:"icon/03.png"},
+  {id:"c24",no:24,name:"CPUモブ24",cpu:true,img:"icon/04.png"},
+  {id:"c25",no:25,name:"CPUモブ25",cpu:true,img:"icon/05.png"},
+  {id:"c26",no:26,name:"CPUモブ26",cpu:true,img:"icon/06.png"},
+  {id:"c27",no:27,name:"CPUモブ27",cpu:true,img:"icon/07.png"},
+  {id:"c28",no:28,name:"CPUモブ28",cpu:true,img:"icon/08.png"},
+  {id:"c29",no:29,name:"CPUモブ29",cpu:true,img:"icon/09.png"},
+  {id:"c30",no:30,name:"CPUモブ30",cpu:true,img:"icon/10.png"},
+  {id:"c31",no:31,name:"CPUモブ31",cpu:true,img:"icon/01.png"}
 ];
 
 const GAMES=[
@@ -608,7 +628,7 @@ function renderBattleTypeSelect(){
 
     <div class="battle-type-grid-v119">
       <button id="battleTeam" class="battle-type-card-v119 team" type="button">
-        <span>TEAM BATTLE</span><b>チーム戦</b><small>最大4チーム / PLAYER・CPUを各チームへ割り当て</small>
+        <span>TEAM BATTLE</span><b>チーム戦</b><small>最大4チーム / PLAYER最大10人・CPU最大30人</small>
       </button>
       <button id="battleSolo" class="battle-type-card-v119 solo" type="button">
         <span>INDIVIDUAL</span><b>個人戦</b><small>PLAYER人数 + CPU人数で全員対戦</small>
@@ -641,7 +661,7 @@ function renderTeamBasics(config){
   state.setup=config;
 
   function maxTeamSize(){
-    return Math.min(10,Math.floor(20/config.teamCount));
+    return Math.min(10,Math.floor(40/config.teamCount));
   }
 
   config.teamSize=clamp(config.teamSize,1,maxTeamSize());
@@ -760,8 +780,8 @@ function renderTeamAssignment(config){
     `).join('');
 
     const t=totals();
-    const valid=t.players<=10&&t.cpus<=10&&config.assignments.every(x=>x.players+x.cpus===config.teamSize);
-    status.innerHTML=`PLAYER 合計 <b>${t.players}/10</b>　CPU 合計 <b>${t.cpus}/10</b>${valid?'':'<strong>人数上限を超えています</strong>'}`;
+    const valid=t.players<=10&&t.cpus<=30&&config.assignments.every(x=>x.players+x.cpus===config.teamSize);
+    status.innerHTML=`PLAYER 合計 <b>${t.players}/10</b>　CPU 合計 <b>${t.cpus}/30</b>${valid?'':'<strong>人数上限を超えています</strong>'}`;
     next.disabled=!valid;
 
     list.querySelectorAll('[data-adjust]').forEach(btn=>btn.addEventListener('click',()=>{
@@ -787,7 +807,7 @@ function renderIndividualSetup(config){
 
   screen.innerHTML=`
     <div class="game-head">
-      <div><span class="kicker">INDIVIDUAL / 1</span><h2>参加人数</h2><p class="lead">PLAYER 1〜10人 / CPU 0〜10人。CPU無しでもOK。</p></div>
+      <div><span class="kicker">INDIVIDUAL / 1</span><h2>参加人数</h2><p class="lead">PLAYER 1〜10人 / CPU 0〜30人。CPU無しでもOK。</p></div>
       <div class="game-badge"><span id="individualTotal">${config.humanCount+config.cpuCount}</span>人</div>
     </div>
 
@@ -800,7 +820,7 @@ function renderIndividualSetup(config){
       <div class="wizard-counter-v119">
         <span>CPU</span>
         <div><button data-ind="c-" type="button">−</button><b id="individualC">${config.cpuCount}</b><button data-ind="c+" type="button">＋</button></div>
-        <small>0〜10人</small>
+        <small>0〜30人</small>
       </div>
     </section>
 
@@ -823,7 +843,7 @@ function renderIndividualSetup(config){
     if(k==='p-')config.humanCount=Math.max(1,config.humanCount-1);
     if(k==='p+')config.humanCount=Math.min(10,config.humanCount+1);
     if(k==='c-')config.cpuCount=Math.max(0,config.cpuCount-1);
-    if(k==='c+')config.cpuCount=Math.min(10,config.cpuCount+1);
+    if(k==='c+')config.cpuCount=Math.min(30,config.cpuCount+1);
     redraw();
   }));
 
@@ -859,7 +879,7 @@ function renderRuleSelect(config){
 
 function applyConfiguredBattle(config){
   const humanIds=['p1','p2','p3','p4','p5','p6','p7','p8','p9','p10'];
-  const cpuIds=['c2','c3','c4','c5','c6','c7','c8','c9','c10','c11'];
+  const cpuIds=['c2','c3','c4','c5','c6','c7','c8','c9','c10','c11','c12','c13','c14','c15','c16','c17','c18','c19','c20','c21','c22','c23','c24','c25','c26','c27','c28','c29','c30','c31'];
   const m=MODES.configured;
 
   m.team=config.type==='team';
