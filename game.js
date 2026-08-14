@@ -98,6 +98,20 @@ document.addEventListener("touchmove",e=>{
 },{capture:true,passive:true});
 window.addEventListener("blur",clearGameplaySelection,{passive:true});
 
+// V10.52 COMPLETE GAMEPLAY SELECTION LOCK
+document.addEventListener('contextmenu',e=>{
+  if(e.target&&e.target.closest&&e.target.closest('.gameplay-fit'))e.preventDefault();
+},{capture:true,passive:false});
+document.addEventListener('selectstart',e=>{
+  if(e.target&&e.target.closest&&e.target.closest('.gameplay-fit'))e.preventDefault();
+},{capture:true,passive:false});
+document.addEventListener('dragstart',e=>{
+  if(e.target&&e.target.closest&&e.target.closest('.gameplay-fit'))e.preventDefault();
+},{capture:true,passive:false});
+document.addEventListener('selectionchange',()=>{
+  if(screen&&screen.classList.contains('gameplay-fit'))clearGameplaySelection();
+});
+
 const PLAYERS=[
   {id:"p1",no:1,name:"プレイヤー1",cpu:false,img:"play/01.png"},
   {id:"p2",no:2,name:"プレイヤー2",cpu:false,img:"play/02.png"},
@@ -129,100 +143,125 @@ const PLAYERS=[
 ];
 
 const GAMES=[
-  {no:1,key:"reaction",title:"モブくんの反射神経",sub:"モブくんが出た瞬間をタップ"},
-  {no:2,key:"memory",title:"モブくんを覚えて！",sub:"10枚の点灯順を記憶"},
-  {no:3,key:"puzzle",title:"モブくん12",sub:"1〜12を順番に消すタイムアタック"},
-  {no:4,key:"launch",title:"モブくん人形空を飛ぶ",sub:"感覚で狙う最大2000m"},
-  {no:5,key:"stack",title:"グラグラモブくん",sub:"10秒で色々なモブくんを積む"},
-  {no:6,key:"breakdance",title:"モブくん1990にチャレンジ",sub:"4択から1990を見抜く"},
-  {no:7,key:"crisis",title:"モブくん危機一髪",sub:"3体で足元エネルギーを連続回避"},
-  {no:8,key:"factory",title:"モブくん人形大人気",sub:"10秒で箱詰め・封印を量産"},
-  {no:9,key:"catcher",title:"モブくんキャッチャー",sub:"多種モブくんをUFOキャッチ"},
-  {no:10,key:"tidy",title:"モブくん整理整頓",sub:"7体を見本の部屋へ近づける"},
-  {no:11,key:"ski",title:"モブくんスキージャンプ",sub:"踏切タイミングで最大1km"},
-  {no:12,key:"slot",title:"モブくんスロット",sub:"キャラクタースロットでコイン勝負"},
-  {no:13,key:"rope",title:"モブ跳び",sub:"左右から走るモブくんを飛び越える"},
-  {no:14,key:"pk",title:"モブくんPK",sub:"10本のシュートを止める"},
-  {no:15,key:"rhythm",title:"モブくん椅子取りゲーム",sub:"♪が消えた瞬間に椅子をタップ"},
-  {no:16,key:"cut",title:"モブくんカットゲーム",sub:"指定%を感覚で切り分ける"},
-  {no:17,key:"climb",title:"モブくん木登り",sub:"中央を狙って10秒登る"},
-  {no:18,key:"errand",title:"お使いモブくん",sub:"1000円を10秒で使い切る"},
-  {no:19,key:"dontHitMob",title:"モブくんを叩かないで",sub:"モグラだけを叩く10秒勝負"},
-  {no:20,key:"mobStop",title:"モブくんストップ",sub:"棒のギリギリで止める"},
-  {no:21,key:"overlap",title:"重なる瞬間を狙え！",sub:"2つの円を10秒以内に重ねる"},
-  {no:22,key:"shutter",title:"モブくんシャッターチャンス",sub:"ジャンプの頂点を撮影"},
-  {no:23,key:"cup",title:"コップ限界チャレンジ",sub:"表面張力ギリギリまで注ぐ"},
-  {no:24,key:"darts",title:"ダーツ1投勝負",sub:"縦・横ゲージの中央を狙う"},
-  {no:25,key:"parachute",title:"モブくんとパラシュート",sub:"開くタイミングで着地点を狙う"},
-  {no:26,key:"mobCount",title:"モブくんは何人？",sub:"3秒で人数を見抜く"},
-  {no:27,key:"brake",title:"モブくんブレーキチキンレース",sub:"障害物ギリギリで瞬間停止"},
-  {no:28,key:"feint",title:"モブくんは騙されやすい",sub:"見た目が同じ本物のGO!を待つ"},
-  {no:29,key:"bomb",title:"爆弾チキンレース",sub:"0.000秒直前でSTOP"},
-  {no:30,key:"overlapMaster",title:"重なりモブくん",sub:"4つの円を同時に重ねる"},
-  {no:31,key:"jumpingMob",title:"ジャンピングモブくん",sub:"ホッピングで台を乗り継ぐ"},
-  {no:32,key:"heroMaybe",title:"モブくんは勇者かも",sub:"10秒で勇者を育てる"},
-  {no:33,key:"popularGame",title:"アクションモブくん",sub:"モブくんでモグラ踏み"},
-  {no:34,key:"planetEnergy",title:"モブくんは破壊神",sub:"3回チャージして高層ビルを貫く"},
-  {no:35,key:"painter",title:"モブくんは画家志望",sub:"猫の顔型を1回で綺麗になぞる"},
-  {no:36,key:"bikeJump",title:"モブくんバイクで飛ぶ",sub:"約3秒走って巨大ジャンプ台へ"},
-  {no:37,key:"trampoline",title:"モブくんのトランポリン",sub:"3回連続で跳ねて3回目が記録"},
-  {no:38,key:"mobTrain",title:"モブくん列車出発進行！",sub:"5秒で線路を描いてゴールへ"},
-  {no:39,key:"giantMob",title:"巨大モブくん大進撃",sub:"1.000秒を刻みながらビル破壊"},
-  {no:40,key:"wizardMob",title:"魔法使いモブくん",sub:"闇の炎を円で囲んで町を守る"},
-  {no:41,key:"brawlerMob",title:"モブくんは喧嘩番長",sub:"30人を倒すまでのタイムアタック"},
-  {no:42,key:"summonerMob",title:"モブくんは召喚師",sub:"広く描いて超火力の中央オート無双"},
-  {no:43,key:"blackjackMob",title:"ブラックジャックの決戦",sub:"動く13枚を追って21を作る"},
-  {no:44,key:"mobIssen",title:"モブくん一閃",sub:"3回の一閃 合計300ポイント"},
-  {no:45,key:"crowEscape",title:"カラスから逃げろ！",sub:"4体のカラスから20秒逃げ切る"},
-  {no:46,key:"dancingMob",title:"ダンシングモブくん",sub:"7秒で描いた絵と一緒に踊る"},
-  {no:47,key:"guardianMob",title:"モブくんはガーディアン",sub:"7秒で描いた城で巨大エネルギーを防ぐ"},
-  {no:48,key:"mob50m",title:"モブくん50m走",sub:"左足・右足を交互に連打"},
-  {no:49,key:"sniperMob",title:"モブくんはスナイパー",sub:"超遠距離ターゲットへ4発勝負"},
-  {no:50,key:"mobRacePredict",title:"モブくんレースだれが勝つ!?",sub:"5秒のセリフからゴール順を予想"},
-  {no:51,key:"mobRocket",title:"モブくんロケット",sub:"7秒でロケットを描いて最大100km"},
-  {no:52,key:"bossDuel",title:"モブくん番長決戦",sub:"屋上タイマンを最速で制する"},
-  {no:53,key:"plushCatcher",title:"モブくんはぬいぐるみが好き",sub:"巨大ぬいぐるみを3回キャッチ"},
-  {no:54,key:"toyOnOff",title:"モブくんおもちゃON or OFF",sub:"OFF5体を全部ONにするタイムアタック"},
-  {no:55,key:"dodgeballMob",title:"モブくんドッジボール",sub:"10秒で何体の黒モブくんを倒せるか"},
-  {no:56,key:"amidakujiMob",title:"モブくんのあみだくじ",sub:"6本から選んで0〜100点のゴールへ"},
-  {no:57,key:"katanaSmith",title:"モブくんは刀鍛冶",sub:"7秒で縦向きの刀身だけを自由に描く"},
-  {no:58,key:"homeRunMob",title:"モブくんはパワーヒッター",sub:"角度とパワーを決めて最大3000m"},
-  {no:59,key:"mobMisfortune",title:"モブくんの災難",sub:"大量の落石を左右移動で避ける"},
-  {no:60,key:"aimMob",title:"狙ってモブくん！",sub:"弓矢で木の細い白線を狙う"},
-  {no:61,key:"balanceMob",title:"極限バランスモブくん",sub:"細い棒の上で10秒耐える"},
-  {no:62,key:"mobDice",title:"モブくんのサイコロ",sub:"5個のサイコロで大きな合計を狙う"},
-  {no:63,key:"mobCombo",title:"モブくん20連コンボ",sub:"10秒でモブ球を動かして20連コンボを狙う"},
-  {no:64,key:"electricMaze",title:"こっちだよモブくん！",sub:"タップでピンを立ててビリビリ迷路を突破"},
-  {no:65,key:"cardShop",title:"モブくんカードショップ",sub:"6枚入りパックを開封して合計ポイントを競う"},
-  {no:66,key:"pizzaChef",title:"モブくんピザ職人",sub:"具材をスワイプで投げてピザを焼き上げる"},
-  {no:67,key:"mobHammer",title:"モブくんハンマー！",sub:"固定された滅→剛→力を5秒で順番連打して破壊力を溜める"},
-  {no:68,key:"bungeeMob",title:"モブくんバンジー",sub:"逆さで急降下して地面ギリギリSTOP"},
-  {no:69,key:"waterSlide",title:"モブくんウォータースライダー",sub:"波の横流れと障害物に耐えて10秒攻略"},
-  {no:70,key:"pancakeMob",title:"モブくん巨大パンケーキ",sub:"2枚同時フリップを2回成功させる"},
-  {no:71,key:"paperPlane",title:"モブくん紙飛行機研究所",sub:"完成済み機体へ翼を描いて実際に飛ばす"},
-  {no:72,key:"tankMob",title:"モブくん戦車に乗る",sub:"見下ろし戦車で4方向から迫るスライムを10秒撃退"},
-  {no:73,key:"curlingMob",title:"モブくん氷上カーリング",sub:"1スワイプでハウス中央を狙う"},
-  {no:74,key:"bubbleMob",title:"モブくん巨大シャボン玉",sub:"画面中央の泡を見た目だけで限界まで膨らませる"},
-  {no:75,key:"changeMob",title:"モブくん何が変わった？",sub:"部屋の1ヶ所の変化を見抜く"},
-  {no:76,key:"baggageMob",title:"モブくん荷物検査",sub:"複数の箱が流れる検査ラインで「！」を1回勝負"},
-  {no:77,key:"bridgeMob",title:"モブくん橋を作って！",sub:"自由に橋を描いてモブくんを渡らせる"},
-  {no:78,key:"treasureMob",title:"モブくん宝箱どれだ!?",sub:"100点の宝箱をシャッフルから追いかける"},
-  {no:79,key:"rouletteMob",title:"モブくんルーレットジャンプ",sub:"ジャンプして着地した床のポイントを獲得"},
-  {no:80,key:"excavationMob",title:"モブくん地下発掘",sub:"9マスから3ヶ所掘って化石ポイントを獲得"},
-  {no:81,key:"oldMaidDuel",title:"モブくんのババ抜き決闘",sub:"偽モブくんの2枚から引いて何回目で勝てるか"},
-  {no:82,key:"robotMarch",title:"モブくんロボット大発進",sub:"何本でも自由に電池を描いて補給し巨大ロボを前進させる"},
-  {no:83,key:"monsterMaster",title:"モブくんはモンスターマスター",sub:"3秒で自作ボールを描き、10秒間何個でも投げて10体を捕獲"},
-  {no:84,key:"scoutMan",title:"モブくんはスカウトマン！",sub:"30000円で9ポジションを1秒判断でスカウト"},
-  {no:85,key:"atafutaSurvival",title:"モブくんあたふたサバイバル",sub:"崩れる浮遊岩で9人の偽モブくんと最後の1人を目指す"},
-  {no:86,key:"waveMaster",title:"モブくん波動を極める",sub:"魂ゲージと円型ゲージを極めて偽モブくんと波動を撃ち合う"},
-  {no:87,key:"battleRoyaleMob",title:"モブくんFPSアリーナに挑戦",sub:"3対3のアリーナでスキルを使い敵チームを全滅させる"},
-  {no:88,key:"littleMobShot",title:"Little MOB SHOT",sub:"レコードに乗って10秒間スライムを撃ちまくる縦シューティング"},
-  {no:89,key:"monsterBoxMob",title:"モブくんモンスターボックスに挑む",sub:"ロイター板を踏んで15段から20段の跳び箱を越える"},
-  {no:90,key:"alienBattleMob",title:"モブくんエイリアンと戦う",sub:"小型ロボ2機で地上の巨大エイリアンHP100を撃破する"},
-  {no:91,key:"mobMusou",title:"モブくん無双",sub:"7秒で巨大武器を描き、10秒オートで大量スライムを無双する"},
-  {no:92,key:"iaidoMaster",title:"モブくんは居合切りの達人",sub:"夜の草原でCPUと居合勝負。勝負！の瞬間を見抜く"},
-  {no:93,key:"killLeaderMob",title:"モブくんの長い夜",sub:"夜の砂漠を進みながらゾンビ30体を倒し、最後に巨大ゾンビを撃破する横スクロールFPSアクション"}
+  {no:1,key:"reaction",title:"モブくんの反射神経",sub:"モブくんが出た瞬間をタップ",legacy:0},
+  {no:2,key:"memory",title:"モブくんを覚えて！",sub:"10枚の点灯順を記憶",legacy:1},
+  {no:3,key:"puzzle",title:"モブくん12",sub:"1〜12を順番に消すタイムアタック",legacy:2},
+  {no:4,key:"launch",title:"モブくん人形空を飛ぶ",sub:"感覚で狙う最大2000m",legacy:3},
+  {no:5,key:"stack",title:"グラグラモブくん",sub:"10秒で色々なモブくんを積む",legacy:4},
+  {no:6,key:"breakdance",title:"モブくん1990にチャレンジ",sub:"4択から1990を見抜く",legacy:5},
+  {no:7,key:"crisis",title:"モブくん危機一髪",sub:"3体で足元エネルギーを連続回避",legacy:6},
+  {no:8,key:"factory",title:"モブくん人形大人気",sub:"10秒で箱詰め・封印を量産",legacy:7},
+  {no:9,key:"catcher",title:"モブくんキャッチャー",sub:"多種モブくんをUFOキャッチ",legacy:8},
+  {no:10,key:"tidy",title:"モブくん整理整頓",sub:"7体を見本の部屋へ近づける",legacy:9},
+  {no:11,key:"ski",title:"モブくんスキージャンプ",sub:"踏切タイミングで最大1km",legacy:10},
+  {no:12,key:"slot",title:"モブくんスロット",sub:"キャラクタースロットでコイン勝負",legacy:11},
+  {no:13,key:"pk",title:"モブくんPK",sub:"10本のシュートを止める",legacy:13},
+  {no:14,key:"rhythm",title:"モブくん椅子取りゲーム",sub:"♪が消えた瞬間に椅子をタップ",legacy:14},
+  {no:15,key:"cut",title:"モブくんカットゲーム",sub:"指定%を感覚で切り分ける",legacy:15},
+  {no:16,key:"errand",title:"お使いモブくん",sub:"1000円を10秒で使い切る",legacy:17},
+  {no:17,key:"dontHitMob",title:"モブくんを叩かないで",sub:"モグラだけを叩く10秒勝負",legacy:18},
+  {no:18,key:"mobStop",title:"モブくんストップ",sub:"棒のギリギリで止める",legacy:19},
+  {no:19,key:"overlap",title:"重なる瞬間を狙え！",sub:"2つの円を10秒以内に重ねる",legacy:20},
+  {no:20,key:"shutter",title:"モブくんシャッターチャンス",sub:"ジャンプの頂点を撮影",legacy:21},
+  {no:21,key:"cup",title:"コップ限界チャレンジ",sub:"表面張力ギリギリまで注ぐ",legacy:22},
+  {no:22,key:"darts",title:"ダーツ1投勝負",sub:"縦・横ゲージの中央を狙う",legacy:23},
+  {no:23,key:"parachute",title:"モブくんとパラシュート",sub:"開くタイミングで着地点を狙う",legacy:24},
+  {no:24,key:"mobCount",title:"モブくんは何人？",sub:"3秒で人数を見抜く",legacy:25},
+  {no:25,key:"brake",title:"モブくんブレーキチキンレース",sub:"障害物ギリギリで瞬間停止",legacy:26},
+  {no:26,key:"feint",title:"モブくんは騙されやすい",sub:"見た目が同じ本物のGO!を待つ",legacy:27},
+  {no:27,key:"bomb",title:"爆弾チキンレース",sub:"0.000秒直前でSTOP",legacy:28},
+  {no:28,key:"overlapMaster",title:"重なりモブくん",sub:"4つの円を同時に重ねる",legacy:29},
+  {no:29,key:"jumpingMob",title:"ジャンピングモブくん",sub:"ホッピングで台を乗り継ぐ",legacy:30},
+  {no:30,key:"heroMaybe",title:"モブくんは勇者かも",sub:"10秒で勇者を育てる",legacy:31},
+  {no:31,key:"popularGame",title:"アクションモブくん",sub:"モブくんでモグラ踏み",legacy:32},
+  {no:32,key:"planetEnergy",title:"モブくんは破壊神",sub:"3回チャージして高層ビルを貫く",legacy:33},
+  {no:33,key:"painter",title:"モブくんは画家志望",sub:"猫の顔型を1回で綺麗になぞる",legacy:34},
+  {no:34,key:"bikeJump",title:"モブくんバイクで飛ぶ",sub:"約3秒走って巨大ジャンプ台へ",legacy:35},
+  {no:35,key:"mobTrain",title:"モブくん列車出発進行！",sub:"5秒で線路を描いてゴールへ",legacy:37},
+  {no:36,key:"giantMob",title:"巨大モブくん大進撃",sub:"1.000秒を刻みながらビル破壊",legacy:38},
+  {no:37,key:"wizardMob",title:"魔法使いモブくん",sub:"闇の炎を円で囲んで町を守る",legacy:39},
+  {no:38,key:"brawlerMob",title:"モブくんは喧嘩番長",sub:"30人を倒すまでのタイムアタック",legacy:40},
+  {no:39,key:"summonerMob",title:"モブくんは召喚師",sub:"広く描いて超火力の中央オート無双",legacy:41},
+  {no:40,key:"blackjackMob",title:"ブラックジャックの決戦",sub:"動く13枚を追って21を作る",legacy:42},
+  {no:41,key:"mobIssen",title:"モブくん一閃",sub:"3回の一閃 合計300ポイント",legacy:43},
+  {no:42,key:"dancingMob",title:"ダンシングモブくん",sub:"7秒で描いた絵と一緒に踊る",legacy:45},
+  {no:43,key:"guardianMob",title:"モブくんはガーディアン",sub:"7秒で描いた城で巨大エネルギーを防ぐ",legacy:46},
+  {no:44,key:"mob50m",title:"モブくん50m走",sub:"左足・右足を交互に連打",legacy:47},
+  {no:45,key:"sniperMob",title:"モブくんはスナイパー",sub:"超遠距離ターゲットへ4発勝負",legacy:48},
+  {no:46,key:"mobRacePredict",title:"モブくんレースだれが勝つ!?",sub:"5秒のセリフからゴール順を予想",legacy:49},
+  {no:47,key:"mobRocket",title:"モブくんロケット",sub:"7秒でロケットを描いて最大100km",legacy:50},
+  {no:48,key:"bossDuel",title:"モブくん番長決戦",sub:"屋上タイマンを最速で制する",legacy:51},
+  {no:49,key:"plushCatcher",title:"モブくんはぬいぐるみが好き",sub:"巨大ぬいぐるみを3回キャッチ",legacy:52},
+  {no:50,key:"toyOnOff",title:"モブくんおもちゃON or OFF",sub:"OFF5体を全部ONにするタイムアタック",legacy:53},
+  {no:51,key:"dodgeballMob",title:"モブくんドッジボール",sub:"10秒で何体の黒モブくんを倒せるか",legacy:54},
+  {no:52,key:"amidakujiMob",title:"モブくんのあみだくじ",sub:"6本から選んで0〜100点のゴールへ",legacy:55},
+  {no:53,key:"katanaSmith",title:"モブくんは刀鍛冶",sub:"7秒で縦向きの刀身だけを自由に描く",legacy:56},
+  {no:54,key:"homeRunMob",title:"モブくんはパワーヒッター",sub:"角度とパワーを決めて最大3000m",legacy:57},
+  {no:55,key:"mobMisfortune",title:"モブくんの災難",sub:"大量の落石を左右移動で避ける",legacy:58},
+  {no:56,key:"aimMob",title:"狙ってモブくん！",sub:"弓矢で木の細い白線を狙う",legacy:59},
+  {no:57,key:"balanceMob",title:"極限バランスモブくん",sub:"細い棒の上で10秒耐える",legacy:60},
+  {no:58,key:"mobDice",title:"モブくんのサイコロ",sub:"5個のサイコロで大きな合計を狙う",legacy:61},
+  {no:59,key:"mobCombo",title:"モブくん20連コンボ",sub:"10秒でモブ球を動かして20連コンボを狙う",legacy:62},
+  {no:60,key:"electricMaze",title:"こっちだよモブくん！",sub:"タップでピンを立ててビリビリ迷路を突破",legacy:63},
+  {no:61,key:"cardShop",title:"モブくんカードショップ",sub:"6枚入りパックを開封して合計ポイントを競う",legacy:64},
+  {no:62,key:"pizzaChef",title:"モブくんピザ職人",sub:"具材をスワイプで投げてピザを焼き上げる",legacy:65},
+  {no:63,key:"mobHammer",title:"モブくんハンマー！",sub:"固定された滅→剛→力を5秒で順番連打して破壊力を溜める",legacy:66},
+  {no:64,key:"bungeeMob",title:"モブくんバンジー",sub:"逆さで急降下して地面ギリギリSTOP",legacy:67},
+  {no:65,key:"waterSlide",title:"モブくんウォータースライダー",sub:"波の横流れと障害物に耐えて10秒攻略",legacy:68},
+  {no:66,key:"pancakeMob",title:"モブくん巨大パンケーキ",sub:"2枚同時フリップを2回成功させる",legacy:69},
+  {no:67,key:"paperPlane",title:"モブくん紙飛行機研究所",sub:"完成済み機体へ翼を描いて実際に飛ばす",legacy:70},
+  {no:68,key:"tankMob",title:"モブくん戦車に乗る",sub:"見下ろし戦車で4方向から迫るスライムを10秒撃退",legacy:71},
+  {no:69,key:"curlingMob",title:"モブくん氷上カーリング",sub:"1スワイプでハウス中央を狙う",legacy:72},
+  {no:70,key:"bubbleMob",title:"モブくん巨大シャボン玉",sub:"画面中央の泡を見た目だけで限界まで膨らませる",legacy:73},
+  {no:71,key:"changeMob",title:"モブくん何が変わった？",sub:"部屋の1ヶ所の変化を見抜く",legacy:74},
+  {no:72,key:"baggageMob",title:"モブくん荷物検査",sub:"複数の箱が流れる検査ラインで「！」を1回勝負",legacy:75},
+  {no:73,key:"bridgeMob",title:"モブくん橋を作って！",sub:"自由に橋を描いてモブくんを渡らせる",legacy:76},
+  {no:74,key:"treasureMob",title:"モブくん宝箱どれだ!?",sub:"100点の宝箱をシャッフルから追いかける",legacy:77},
+  {no:75,key:"rouletteMob",title:"モブくんルーレットジャンプ",sub:"ジャンプして着地した床のポイントを獲得",legacy:78},
+  {no:76,key:"excavationMob",title:"モブくん地下発掘",sub:"9マスから3ヶ所掘って化石ポイントを獲得",legacy:79},
+  {no:77,key:"oldMaidDuel",title:"モブくんのババ抜き決闘",sub:"偽モブくんの2枚から引いて何回目で勝てるか",legacy:80},
+  {no:78,key:"robotMarch",title:"モブくんロボット大発進",sub:"何本でも自由に電池を描いて補給し巨大ロボを前進させる",legacy:81},
+  {no:79,key:"monsterMaster",title:"モブくんはモンスターマスター",sub:"3秒で自作ボールを描き、10秒間何個でも投げて10体を捕獲",legacy:82},
+  {no:80,key:"scoutMan",title:"モブくんはスカウトマン！",sub:"30000円で9ポジションを1秒判断でスカウト",legacy:83},
+  {no:81,key:"atafutaSurvival",title:"モブくんあたふたサバイバル",sub:"崩れる浮遊岩で9人の偽モブくんと最後の1人を目指す",legacy:84},
+  {no:82,key:"waveMaster",title:"モブくん波動を極める",sub:"魂ゲージと円型ゲージを極めて偽モブくんと波動を撃ち合う",legacy:85},
+  {no:83,key:"battleRoyaleMob",title:"モブくんFPSアリーナに挑戦",sub:"3対3のアリーナでスキルを使い敵チームを全滅させる",legacy:86},
+  {no:84,key:"littleMobShot",title:"Little MOB SHOT",sub:"レコードに乗って10秒間スライムを撃ちまくる縦シューティング",legacy:87},
+  {no:85,key:"monsterBoxMob",title:"モブくんモンスターボックスに挑む",sub:"ロイター板を踏んで15段から20段の跳び箱を越える",legacy:88},
+  {no:86,key:"alienBattleMob",title:"モブくんエイリアンと戦う",sub:"小型ロボ2機で地上の巨大エイリアンHP100を撃破する",legacy:89},
+  {no:87,key:"mobMusou",title:"モブくん無双",sub:"7秒で巨大武器を描き、10秒オートで大量スライムを無双する",legacy:90},
+  {no:88,key:"iaidoMaster",title:"モブくんは居合切りの達人",sub:"夜の草原でCPUと居合勝負。勝負！の瞬間を見抜く",legacy:91},
+  {no:89,key:"killLeaderMob",title:"モブくんの長い夜",sub:"夜の砂漠を進みながらゾンビ30体を倒し、最後に巨大ゾンビを撃破する横スクロールFPSアクション",legacy:92},
+  {no:90,key:"mobSpeedRacer",title:"モブくんは爆速レーサー",sub:"タッグ専用。1番手がタイヤ、2番手が機体を描き、1kmレースで勝負",legacy:93}
 ];
+
+function legacyGameIndex(gameIndex){
+  const g=GAMES[gameIndex];
+  return g&&Number.isFinite(g.legacy)?g.legacy:gameIndex;
+}
+function currentIndexFromLegacy(legacy){
+  return GAMES.findIndex(g=>g.legacy===legacy);
+}
+function tagRacerIndex(){return GAMES.findIndex(g=>g.key==='mobSpeedRacer')}
+function isTagRacerEligible(){
+  if(state&&state.freePlay)return true;
+  const m=mode();
+  if(!m||!m.team)return false;
+  const keys=Object.keys(m.teams||{});
+  if(keys.length!==2)return false;
+  if(!keys.every(k=>(m.teams[k]||[]).length===2))return false;
+  return humans().length>=1;
+}
+function isGameEligibleForCurrentMode(gameIndex){
+  const g=GAMES[gameIndex];
+  if(!g)return false;
+  if(g.key!=='mobSpeedRacer')return true;
+  return isTagRacerEligible();
+}
+function eligibleGameIndices(){
+  return GAMES.map((_,i)=>i).filter(isGameEligibleForCurrentMode);
+}
+
 
 const MODES={
   solo4:{name:"4人 個人戦",short:"プレイヤー4人",participants:["p1","p2","p3","p4"],team:false,points:[5,3,1,0]},
@@ -264,7 +303,7 @@ function freshState(){
         paperPlane:{},tankMob:{},curlingMob:{},bubbleMob:{},
         changeMob:{},baggageMob:{},bridgeMob:{},treasureMob:{},rouletteMob:{},excavationMob:{},
         oldMaidDuel:{},robotMarch:{},monsterMaster:{},scoutMan:{},
-        atafutaSurvival:{},waveMaster:{},battleRoyaleMob:{},littleMobShot:{},monsterBoxMob:{},alienBattleMob:{},mobMusou:{},iaidoMaster:{},killLeaderMob:{}
+        atafutaSurvival:{},waveMaster:{},battleRoyaleMob:{},littleMobShot:{},monsterBoxMob:{},alienBattleMob:{},mobMusou:{},iaidoMaster:{},killLeaderMob:{},mobSpeedRacer:{}
     },
     total:{},
     roundPoints:[],
@@ -373,7 +412,7 @@ function renderHome(){
     <section class="hero hero-v119">
       <div>
         <span class="kicker">SMARTPHONE PARTY GAME</span>
-        <h1>93 MINI<br>GAMES</h1>
+        <h1>90 MINI<br>GAMES</h1>
         <p>対戦モードは「チーム戦」「個人戦」の2種類。人数・ルール・ゲーム数を自由に設定できます。</p>
       </div>
       <div class="hero-mark">MOB</div>
@@ -398,7 +437,7 @@ function renderHome(){
     </section>
 
     <section class="panel flat">
-      <div class="panel-head"><h3>93 MINI GAMES</h3><span class="tag">GAME 1 → 93</span></div>
+      <div class="panel-head"><h3>90 MINI GAMES</h3><span class="tag">GAME 1 → 90</span></div>
       <div class="compact-game-grid home-compact-games-v119">
         ${GAMES.map(g=>`<div><b>${g.no}</b><span>${g.title}</span></div>`).join("")}
       </div>
@@ -418,7 +457,7 @@ function renderFreePlaySelect(){
   screen.innerHTML=`
     <div class="game-head">
       <div><span class="kicker">FREE PLAY</span><h2>1人で遊ぶ</h2><p class="lead">好きなゲームを1つ選んでプレイ。</p></div>
-      <div class="game-badge">93</div>
+      <div class="game-badge">90</div>
     </div>
 
     <button id="freeBack" class="secondary wizard-back-v119" type="button">← メインへ戻る</button>
@@ -456,7 +495,7 @@ function renderGameGuide(){
   screen.innerHTML=`
     <div class="game-head">
       <div><span class="kicker">GAME GUIDE</span><h2>各ゲームの説明</h2><p class="lead">内容と100点換算の目安を一覧で確認できます。</p></div>
-      <div class="game-badge">93</div>
+      <div class="game-badge">90</div>
     </div>
 
     <button id="guideBack" class="secondary wizard-back-v119" type="button">← メインへ戻る</button>
@@ -790,7 +829,7 @@ function renderGameLengthSelect(config){
 
   screen.innerHTML=`
     <div class="game-head">
-      <div><span class="kicker">GAME MODE</span><h2>プレイするゲーム数</h2><p class="lead">CUSTOM以外は93ゲームからランダムで選択。</p></div>
+      <div><span class="kicker">GAME MODE</span><h2>プレイするゲーム数</h2><p class="lead">通常は条件に合うゲームからランダム選択。爆速レーサーは2対2タッグ専用。</p></div>
       <div class="game-badge">${config.rule==='score'?'SCORE':'RANK'}</div>
     </div>
 
@@ -798,7 +837,7 @@ function renderGameLengthSelect(config){
       <button data-length="5" type="button"><span>QUICK</span><b>サクッと5ゲーム</b><small>ランダム5種</small></button>
       <button data-length="15" type="button"><span>FUN</span><b>楽しく15ゲーム</b><small>ランダム15種</small></button>
       <button data-length="30" type="button"><span>LONG</span><b>じっくり30ゲーム</b><small>ランダム30種</small></button>
-      <button data-length="all" type="button"><span>ALL</span><b>ガッツリ全ゲーム</b><small>全93種をランダム順</small></button>
+      <button data-length="all" type="button"><span>ALL</span><b>ガッツリ全ゲーム</b><small>条件を満たす全ゲームをランダム順</small></button>
       <button data-length="custom" class="custom" type="button"><span>CUSTOM</span><b>カスタム</b><small>自由選択 / 最大50ゲーム</small></button>
     </div>
 
@@ -818,8 +857,8 @@ function renderGameLengthSelect(config){
       return;
     }
 
-    const all=shuffle(GAMES.map((_,i)=>i));
-    const count=kind==='all'?GAMES.length:Number(kind);
+    const all=shuffle(eligibleGameIndices());
+    const count=kind==='all'?all.length:Math.min(Number(kind),all.length);
     state.playStyle=kind;
     state.playlist=all.slice(0,count);
     renderModeLobby();
@@ -1047,7 +1086,7 @@ function renderPlayStyleSelect(){
       <button id="normalStyle" class="style-select-card normal" type="button">
         <span>NORMAL</span>
         <b>順番に全種目</b>
-        <small>GAME 1 → 93 を順番にプレイ</small>
+        <small>GAME 1 → 90 を順番にプレイ</small>
       </button>
       <button id="customStyle" class="style-select-card custom" type="button">
         <span>CUSTOM</span>
@@ -1057,7 +1096,7 @@ function renderPlayStyleSelect(){
     </div>
 
     <section class="panel flat">
-      <h3>93 MINI GAMES</h3>
+      <h3>90 MINI GAMES</h3>
       <div class="compact-game-grid">
         ${GAMES.map(g=>`<div><b>${g.no}</b><span>${g.title}</span></div>`).join("")}
       </div>
@@ -1105,7 +1144,7 @@ function renderCustomPicker(){
     <section class="panel">
       <h3>追加するゲーム</h3>
       <div class="custom-game-grid">
-        ${GAMES.map((g,i)=>`<button class="custom-game-add" data-add-game="${i}" type="button"><span>GAME ${g.no}</span><b>${g.title}</b><small>${g.sub}</small></button>`).join("")}
+        ${GAMES.map((g,i)=>{const ok=isGameEligibleForCurrentMode(i);return `<button class="custom-game-add ${ok?'':'tag-locked-v152'}" data-add-game="${i}" type="button" ${ok?'':'disabled'}><span>GAME ${g.no}</span><b>${g.title}</b><small>${ok?g.sub:'タッグ2対2の時だけ選択可能'}</small></button>`}).join("")}
       </div>
     </section>
 
@@ -1204,73 +1243,7 @@ function renderCustomPicker(){
 function renderModeLobby(){
   clearGameFit();
   const m=mode();
-  const scoreRules=`
-    <div class="score-rule-grid">
-      <div><b>モブくんの反射神経</b><span>0.150秒以下=100 / 0.300秒=50 / 0.500秒以上=0</span></div>
-      <div><b>モブくんを覚えて！</b><span>正解数 × 10点</span></div>
-      <div><b>モブくん12</b><span>2.50秒=100 / 6.00秒以上=0</span></div>
-      <div><b>モブくん人形空を飛ぶ</b><span>2000m=100 / 0m=0</span></div>
-      <div><b>グラグラモブくん</b><span>30体以上=100 / 0体=0</span></div>
-      <div><b>モブくん1990にチャレンジ</b><span>世界1位=100 / 40位=0</span></div>
-      <div><b>モブくん危機一髪</b><span>20回以上=100 / 0回=0</span></div>
-      <div><b>モブくん人形大人気</b><span>25箱以上=100 / 0箱=0</span></div>
-      <div><b>モブくんキャッチャー</b><span>1体=10 / 10体以上=100</span></div>
-      <div><b>モブくん整理整頓</b><span>一致率0〜100%=そのまま点数</span></div>
-      <div><b>モブくんスキージャンプ</b><span>1000m=100 / 200m以下=0</span></div>
-      <div><b>モブくんスロット</b><span>3000コイン以上=100 / 1000以下=0</span></div>
-      <div><b>モブ跳び</b><span>30回以上=100 / 0回=0</span></div>
-      <div><b>モブくんPK</b><span>10セーブ=100 / 1セーブ=10</span></div>
-      <div><b>モブくん椅子取りゲーム</b><span>ベスト反応0.180秒以下=100</span></div>
-      <div><b>モブくんカットゲーム</b><span>3回の誤差から0〜100</span></div>
-      <div><b>モブくん木登り</b><span>700m以上=100 / 0m=0</span></div>
-      <div><b>お使いモブくん</b><span>残金0円=100 / 10円=90 / 100円以上=0</span></div>
-      <div><b>モブくんを叩かないで</b><span>モグラ12体以上=100 / MOBを叩くと終了</span></div>
-      <div><b>モブくんストップ</b><span>右端ギリギリ=100 / 落下=0</span></div>
-      <div><b>重なる瞬間を狙え！</b><span>一致率100%=100点</span></div>
-      <div><b>モブくんシャッターチャンス</b><span>頂点誤差0秒=100 / 0.15秒以上=0</span></div>
-      <div><b>コップ限界チャレンジ</b><span>限界ギリギリ=100 / あふれたら0</span></div>
-      <div><b>ダーツ1投勝負</b><span>中心=100 / 外周=0</span></div>
-      <div><b>モブくんとパラシュート</b><span>中央着地=100 / 激突=0</span></div>
-      <div><b>モブくんは何人？</b><span>正解=100 / 誤差1人=75</span></div>
-      <div><b>モブくんブレーキチキンレース</b><span>衝突せず0m差=100 / 衝突=0</span></div>
-      <div><b>モブくんは騙されやすい</b><span>0.150秒以下=100 / フェイント押し=0</span></div>
-      <div><b>爆弾チキンレース</b><span>5.000秒→0.000秒 / 0秒直前ほど100点</span></div>
-      <div><b>重なりモブくん</b><span>4円一致100%=100点</span></div>
-      <div><b>ジャンピングモブくん</b><span>500m以上=100点</span></div>
-      <div><b>モブくんは勇者かも</b><span>勇者ポイントがそのまま0〜100点</span></div>
-      <div><b>アクションモブくん</b><span>20体踏みつけ=100点</span></div>
-      <div><b>モブくんは破壊神</b><span>100km=100点</span></div>
-      <div><b>モブくんは画家志望</b><span>猫輪郭一致率100%=100点</span></div>
-      <div><b>モブくんバイクで飛ぶ</b><span>2000m=100点</span></div>
-      <div><b>モブくんのトランポリン</b><span>3回目2000m=100点</span></div>
-      <div><b>モブくん列車出発進行！</b><span>2.80秒以下=100点 / 衝突=0点</span></div>
-      <div><b>巨大モブくん大進撃</b><span>30棟=100点</span></div>
-      <div><b>魔法使いモブくん</b><span>闇炎20個消去=100点</span></div>
-      <div><b>モブくんは喧嘩番長</b><span>30KO 10秒以内=100点</span></div>
-      <div><b>モブくんは召喚師</b><span>500体KO=100点</span></div>
-      <div><b>ブラックジャックの決戦</b><span>21=100点</span></div>
-      <div><b>モブくん一閃</b><span>3回合計300pt=100点</span></div>
-      <div><b>カラスから逃げろ！</b><span>20秒生存=100点</span></div>
-      <div><b>ダンシングモブくん</b><span>描画評価1〜100点</span></div>
-      <div><b>モブくんはガーディアン</b><span>残耐久50%以上=100点 / 3%=6点 / 全壊0点</span></div>
-      <div><b>モブくん50m走</b><span>4.50秒以下=100 / 12.50秒以上=0</span></div>
-      <div><b>モブくんはスナイパー</b><span>1発25点 / 4発100点</span></div>
-      <div><b>モブくんレースだれが勝つ!?</b><span>完全一致100 / 3一致80 / 2一致50 / 1一致30</span></div>
-      <div><b>モブくんロケット</b><span>100km=100点</span></div>
-      <div><b>モブくん番長決戦</b><span>12秒以内=100 / 32秒以上=0</span></div>
-      <div><b>モブくんはぬいぐるみが好き</b><span>3回GET=100 / 2回・1回は時間加点</span></div>
-      <div><b>モブくんおもちゃON or OFF</b><span>1.40秒以下=100 / 6.50秒以上=0</span></div>
-      <div><b>モブくんドッジボール</b><span>10秒 / 10体KO=100点</span></div>
-      <div><b>モブくんのあみだくじ</b><span>ゴールの0 / 15 / 30 / 50 / 75 / 100がそのまま得点</span></div>
-      <div><b>モブくんは刀鍛冶</b><span>縦向きの刀身だけ描いて1〜100点</span></div>
-      <div><b>モブくんはパワーヒッター</b><span>ゴルフショット3000m=100点</span></div>
-      <div><b>モブくんの災難</b><span>12秒生存=100点</span></div>
-      <div><b>狙ってモブくん！</b><span>白線との誤差0px=100点</span></div>
-      <div><b>極限バランスモブくん</b><span>10秒維持=100点</span></div>
-      <div><b>モブくんのサイコロ</b><span>合計5=1点 / 合計30=100点</span></div>
-      <div><b>モブくん10連コンボ</b><span>10 COMBO=100点</span></div>
-      <div><b>こっちだよモブくん！</b><span>8秒以内=100点 / 30秒以上=0点</span></div>
-    </div>`;
+  const scoreRules=`<div class="score-rule-grid">${GAMES.map((g,i)=>`<div><b>${g.title}</b><span>${scoreRuleForGame(i)}</span></div>`).join('')}</div>`;
 
   screen.innerHTML=`
     <div class="game-head">
@@ -1308,6 +1281,8 @@ function renderModeLobby(){
 }
 
 function scoreRuleForGame(index){
+  const legacyIndex=legacyGameIndex(index);
+  if(GAMES[index]?.key==='mobSpeedRacer')return "1kmレースのゴールタイム / 速いチームほど高得点";
   return [
     "0.150秒以下=100点 / 0.300秒=50点 / 0.500秒以上=0点",
     "正解数×10点 / 10枚正解=100点",
@@ -1320,7 +1295,7 @@ function scoreRuleForGame(index){
     "景品価値10以上=100点 / 0=0点",
     "見本との一致率がそのまま0〜100点",
     "1000m=100点 / 200m以下=0点",
-    "3000コイン以上=100点 / 1000コイン以下=0点",
+    "6500コイン以上=100点 / 500コイン以下=1点",
     "30体回避=100点 / 0体=0点",
     "10本セーブ=100点 / 1本=10点",
     "0.180秒以下=100点 / 0.210秒≈90点 / 0.300秒≈55点",
@@ -1402,198 +1377,201 @@ function scoreRuleForGame(index){
     "10秒オート無双 / 150体KO=100点 / 巨大スライム・ロボも出現",
     "1人目敗北0〜30 / 2人目敗北31〜60 / 3人目敗北61〜75 / 3人撃破80〜100",
     "ゾンビ30体＋巨大ゾンビ撃破までのクリアタイム / 速いほど高得点"
-  ][index];
+  ][legacyIndex];
 }
 
 function showGameIntro(index){
   clearGameFit();
   state.gameIndex=index;
   const g=GAMES[index];
+  const legacyIndex=legacyGameIndex(index);
   let rules="";
 
-  if(index===0){
+  if(g.key==='mobSpeedRacer'){
+    rules=`<li>タッグ2対2専用。1番手がタイヤ、2番手が車体を描きます。</li><li>描いた車で同時スタートし、1km先のゴールを先に抜けたチームが勝利。</li>`;
+  }else if(legacyIndex===0){
     rules=`<li>READY? → 3・2・1 → ランダム待機。</li><li>モブくんが大きく出た瞬間にタップ。</li><li>0.001秒単位で計測。</li>`;
-  }else if(index===1){
+  }else if(legacyIndex===1){
     rules=`<li>記憶力ゲームの10キャラクターが順番に光ります。</li><li>同じ順番でタップ。間違えた時点で終了。</li>`;
-  }else if(index===2){
+  }else if(legacyIndex===2){
     rules=`<li>1〜12をランダム配置。</li><li>1 → 12の順番だけ入力可能。</li><li>12を消した瞬間のタイム。</li>`;
-  }else if(index===3){
+  }else if(legacyIndex===3){
     rules=`<li>高速横ゲージ → 円形ゲージ。</li><li>横ゲージの両端約10%は「？」で隠れます。</li><li>最大2000m。</li>`;
-  }else if(index===4){
+  }else if(legacyIndex===4){
     rules=`<li>1体ずつつかんで積みます。</li><li>10秒。時間が経つほど風が強化。</li>`;
-  }else if(index===5){
+  }else if(legacyIndex===5){
     rules=`<li>10秒間の4択。</li><li>左上・右上・左下・右下のどこか1つだけが1990。</li><li>1990=1周、5連続でBONUS +1周、罠は-1周。</li><li>15周以上で世界1位級。</li>`;
-  }else if(index===6){
+  }else if(legacyIndex===6){
     rules=`<li>3体を少し近めの横一列に配置。</li><li>足元の小さいエネルギーをP1 → P2 → P3が順番にジャンプ。</li><li>成功するほど急激に高速化。</li>`;
-  }else if(index===7){
+  }else if(legacyIndex===7){
     rules=`<li>ベルトコンベアの箱を10秒で完成。</li><li>人形入り箱へさらに人形を入れると不良品として破棄。</li>`;
-  }else if(index===8){
+  }else if(legacyIndex===8){
     rules=`<li>高速アーム幅ゲージをタップで停止。</li><li>広く止めるほど取りやすい。</li><li>左右位置と降下深度で本当にアーム内にいる景品だけを取得。</li><li>レア景品は1体で3体分。</li>`;
-  }else if(index===9){
+  }else if(legacyIndex===9){
     rules=`<li>上が毎回ランダムな見本、下が操作エリア。</li><li>7体は最初に中央へ集まっています。</li><li>自動吸着なし。10秒で見本へ近づけます。</li><li>判定はシビア。</li>`;
-  }else if(index===10){
+  }else if(legacyIndex===10){
     rules=`<li>3・2・1で長いスロープを滑走。</li><li>黄色いJUMPリップ付近だけジャンプ可能。</li><li>押さない・遅すぎると0mで落下。</li><li>最大1000m。</li>`;
-  }else if(index===11){
+  }else if(legacyIndex===11){
     rules=`<li>1000コイン開始 / 1回100コイン / 10秒。</li><li>記憶力ゲームの10キャラクターがリールに登場。</li><li>最初の2リールはかなり揃いやすく、3つ目が勝負。</li><li>同じキャラクター3つで配当。</li>`;
-  }else if(index===12){
+  }else if(legacyIndex===12){
     rules=`<li>3・2・1後、左右どちらからも様々なモブくんが走ってきます。</li><li>ジャンプ中の連打は無効。着地してから次のジャンプが可能。</li><li>相手と重なる瞬間に十分な高さまで跳べていないと接触終了。</li><li>基本はどんどん高速化。たまに遅いモブくんも混ざります。</li><li>30体回避で100点。</li>`;
-  }else if(index===13){
-    rules=`<li>3・2・1後、様々なモブくんが合計10本シュート。</li><li>左スワイプ / 中央タップ / 右スワイプでセーブ。</li><li>基本速度は少し遅め。たまに高速シュートが混ざります。</li><li>10本全部止めれば100点。</li>`;
-  }else if(index===14){
+  }else if(legacyIndex===13){
+    rules=`<li>3・2・1後、様々なモブくんが合計10本シュート。</li><li>左スワイプ / 右スワイプでセーブ。正面シュートはありません。</li><li>基本速度は少し遅め。たまに高速シュートが混ざります。</li><li>10本全部止めれば100点。</li>`;
+  }else if(legacyIndex===14){
     rules=`<li>プレイヤー1人 + CPU4人で椅子取り反射勝負。</li><li>中央の椅子の周りで♪が流れている間は待機。</li><li><strong>♪が消えた瞬間</strong>に中央の椅子をタップ。</li><li>早押しはFOUL。</li><li>全2回。1回目はCPU最速が約0.30秒、2回目は約0.21秒が勝負ライン。</li><li>2回のうち<strong>良かったタイム</strong>を最終記録にします。</li>`;
-  }else if(index===15){
+  }else if(legacyIndex===15){
     rules=`<li>「右側を○%残せ！」と表示。</li><li>長い棒を縦スワイプしてカット。</li><li>右側に残った割合と指定%の誤差を判定。</li><li>3回の平均精度で0〜100点。</li>`;
-  }else if(index===16){
+  }else if(legacyIndex===16){
     rules=`<li>3・2・1後、10秒間木登り。</li><li>短いゲージのマーカーが左右へ移動。</li><li>中央に近い時ほど1タップで大きく登ります。</li><li>700m以上で100点。</li>`;
-  }else if(index===17){
+  }else if(legacyIndex===17){
     rules=`<li>1000円を持って3・2・1スタート。</li><li>食材・お菓子など100種類から毎回30商品。</li><li>3円〜250円の商品をタップ購入。</li><li>10秒で1000円ぴったり使い切れば100点。</li>`;
-  }else if(index===18){
+  }else if(legacyIndex===18){
     rules=`<li>3・2・1後、9個の穴からモグラが出現。</li><li>1〜6体が一気に出ることがあります。</li><li>モグラをタップすると+1。</li><li>モグラと一緒にモブくんが混ざって出ることもあります。</li><li>モブくんを1回でも叩いたらその場で終了。</li><li>10秒。モグラ12体以上で100点。</li>`;
-  }else if(index===19){
+  }else if(legacyIndex===19){
     rules=`<li>横長の棒の左端にモブくん。</li><li>モブくんを左へ引っ張り、離すと発射。</li><li>引っ張る距離が長いほど遠くへ進みます。</li><li>右端ギリギリで止めるほど高得点。</li><li>棒から落ちたら0点。</li>`;
-  }else if(index===20){
+  }else if(legacyIndex===20){
     rules=`<li>3・2・1で2つの円が毎回ランダムな速度・振幅・向きで左右移動。</li><li>10秒以内に完全に重なる瞬間をタップ。</li><li>毎プレイ必ず違う動きですが、どこかで完全一致するタイミングがあります。</li><li>円の重なり面積を0.1%単位で計算。TIME UPは0点。</li>`;
-  }else if(index===21){
+  }else if(legacyIndex===21){
     rules=`<li>最初に3・2・1で見本ジャンプを1回確認。</li><li>次の3・2・1で本番。カメラのファインダー・フォーカス枠・露出表示が出ます。</li><li>モブくんが一番高い瞬間にシャッターを切ります。</li><li>撮影時はフラッシュではなくシャッター幕・フォーカス固定・撮影写真の演出。</li><li>頂点との時間誤差を記録。0.000秒に近いほど高得点。</li>`;
-  }else if(index===22){
+  }else if(legacyIndex===22){
     rules=`<li>3・2・1後、水が自動で注がれます。</li><li>操作はSTOPだけ。</li><li>表面張力でコップの縁より少し上まで耐えます。</li><li>限界ギリギリほど高得点。あふれたら0点。</li>`;
-  }else if(index===23){
+  }else if(legacyIndex===23){
     rules=`<li>的は固定。</li><li>3・2・1後、縦ゲージの中央ラインでSTOP。</li><li>続けて横ゲージの中央ラインでSTOP。</li><li>2軸から命中地点を決定。中心からの距離が小さいほど上位。</li>`;
-  }else if(index===24){
+  }else if(legacyIndex===24){
     rules=`<li>3・2・1後、モブくんが高空から落下。</li><li>途中で中央に「！」が出ます。</li><li><strong>！が出てから3.000秒後</strong>にパラシュートを開くと中央へ着地。</li><li>3.000秒との時間誤差が小さいほど高得点。</li><li>遅れすぎると地面激突。カメラはモブくんを追跡。</li>`;
-  }else if(index===25){
+  }else if(legacyIndex===25){
     rules=`<li>3・2・1後、21〜30体のモブくんを3秒表示。</li><li>消えた後、21〜30から人数を回答。</li><li>正解で100点。誤差が小さいほど高得点。</li>`;
-  }else if(index===26){
+  }else if(legacyIndex===26){
     rules=`<li>3・2・1後、モブくんの車が高速走行。</li><li>突然障害物が出現。</li><li>BRAKEをタップした瞬間に車はピタッと停止。</li><li>衝突せず障害物ギリギリほど高得点。</li><li>カメラが車を追尾。</li>`;
-  }else if(index===27){
+  }else if(legacyIndex===27){
     rules=`<li>3・2・1後にREADY。</li><li>G0 / G00 / NOW / MOVE / GO?などのフェイント。</li><li>本物のGO!もフェイントと同じ色・同じ演出。</li><li>本物だけを見分けて素早くタップ。フェイント押しは0点。</li>`;
-  }else if(index===28){
+  }else if(legacyIndex===28){
     rules=`<li>3・2・1後、爆弾が5.000秒から0.000秒へカウント。</li><li>好きなタイミングでSTOP。</li><li>0.000秒に近いほど高得点。</li><li>0秒を超えたら爆発して0点。</li>`;
-  }else if(index===29){
+  }else if(legacyIndex===29){
     rules=`<li>「重なる瞬間を狙え！」のMASTER版。</li><li>4つの円がそれぞれ別の速度で左右移動。</li><li>10秒以内に4つ全部が重なる瞬間をタップ。</li><li>4円の広がりから一致率を計算。100.0%を狙います。</li>`;
-  }else if(index===30){
+  }else if(legacyIndex===30){
     rules=`<li>3・2・1後10秒。</li><li>モブくんはバネのホッピングマシーンに乗っています。</li><li>← →で左右移動、JUMPでジャンプ。</li><li>ランダムに並ぶ台を乗り継いで上へ。高い台ほど横幅が短くなります。</li><li>長距離はカメラが上方向へ追跡。500m以上で100点。</li>`;
-  }else if(index===31){
+  }else if(legacyIndex===31){
     rules=`<li>「あなたは、、勇者様！？」のナレーションから3・2・1。</li><li>10秒間、4つの項目から1つを選び続けます。</li><li>選ぶたび4項目が全部入れ替わり、同じ項目は再登場しません。</li><li>強化と罠が合計50種。必ず1つ以上は強化。</li><li>勇者シリーズは高得点。弱点・呪いなどは弱体化。</li>`;
-  }else if(index===32){
+  }else if(legacyIndex===32){
     rules=`<li>3・2・1後10秒の横スクロールアクション。</li><li>← →で移動、JUMPでジャンプ。</li><li>モグラは最大4体。上から踏むと+1体、倒すと1体リポップ。</li><li>カメラはモブくんを左右に追跡。</li><li>20体踏みつけで100点。</li>`;
-  }else if(index===33){
+  }else if(legacyIndex===33){
     rules=`<li>3・2・1後、円形ゲージでエネルギーを3回チャージ。</li><li>中の玉が最大まで膨らみ、外周ゲージと同じ大きさになった瞬間をタップ。</li><li>3回の合計精度で最終エネルギーサイズが決定。最大時は画面いっぱい近くまで巨大化しカメラが引きます。</li><li>「放つ！」でエネルギーが頭上へ上がってから右へ発射。</li><li>カメラが追跡し、高層ビルを破壊しながら最大100km進みます。</li>`;
-  }else if(index===34){
+  }else if(legacyIndex===34){
     rules=`<li>3・2・1後、猫の顔型を指で1周なぞります。</li><li>1回勝負。線への近さ・輪郭をどれだけ覆えたか・始点と終点のつながりを判定。</li><li>青い線が自分の描いた軌跡。</li><li>猫の輪郭との一致率がそのまま記録になります。</li>`;
-  }else if(index===35){
+  }else if(legacyIndex===35){
     rules=`<li>3・2・1後、まず約3秒間高速走行。</li><li>その後、大きなジャンプ台が前方から見えてきます。</li><li>ジャンプ台中央の太いCENTERラインにバイクが来た瞬間をタップ。</li><li>中央とのタイミング誤差が小さいほど遠くへ飛びます。</li><li>ジャンプ後はカメラが追跡。最高2000m。</li>`;
-  }else if(index===36){
+  }else if(legacyIndex===36){
     rules=`<li>3・2・1後、モブくんが高いところからトランポリンへ落下。</li><li>着地するとトランポリンが深く沈み、その状態で横ゲージが出ます。</li><li>STOPするまでモブくんは沈んだまま。動くマーカーを中央で止めるほど高精度。</li><li>1回目最大500m、2回目最大1000m、3回目最大2000m。</li><li>前の回で失った%は次の回へ累積。正式記録は3回目の高さです。</li>`;
-  }else if(index===37){
+  }else if(legacyIndex===37){
     rules=`<li>3・2・1後、5秒間だけ線路を描けます。</li><li>列車が乗っている左側の短い線路から、右側のGOAL旗まで線をつなぎます。</li><li>岩・水・木を避けて線を描いてください。</li><li>GOAL周辺には障害物が出ない安全エリアがあります。</li><li>5秒後にGO！ 障害物にぶつかると0点。ゴールタイムを競います。</li>`;
-  }else if(index===38){
+  }else if(legacyIndex===38){
     rules=`<li>巨大モブくんが自動で進撃し、高層ビルを次々破壊します。</li><li>エネルギーは100から開始。</li><li>円形エネルギーのストップウォッチを<strong>1.000秒ピッタリ</strong>でタップ。</li><li>1.000秒との誤差×100だけエネルギー減少。例：0.500秒差なら-50。</li><li>エネルギーが0になるまでに破壊したビル数が記録。30棟=100点。</li>`;
-  }else if(index===39){
+  }else if(legacyIndex===39){
     rules=`<li>田舎町へ闇の炎が降ってきます。前バージョンより少し遅くし、円で囲む余裕を増やしています。小さなモブくん達は逃げ回っています。</li><li>闇の炎の周りを指で円形に囲むと、魔法のステッキが反応して炎を消します。</li><li>民も低確率で小さなエネルギー弾を撃ち、闇の炎をほんの少しだけ減速させます。</li><li>大きな闇の炎も出現。大きい炎は遅め。炎を消せなくてもモブくんに当たらなければ継続。</li><li>10秒勝負。20個消去=100点。後半ほど落下速度・数・同時出現数が上がります。</li>`;
-  }else if(index===40){
+  }else if(legacyIndex===40){
     rules=`<li>黒モブくん30人を全員倒すまでのタイムアタック。</li><li>左右には移動限界があります。敵は基本的に教室のドアからテンポよく登場し、1波で最大10人。</li><li>27人目までは通常の黒モブくん。最後の3人は「他のクラスの番長」で10回攻撃しないと倒せません。</li><li>敵もたまに攻撃。HPダメージはありませんが、食らうと少し吹き飛ばされます。</li><li>必殺PUNCHは10KOで解禁、ゲーム中1回だけ。番長も一撃。10.00秒以内=100点。</li>`;
-  }else if(index===41){
+  }else if(legacyIndex===41){
     rules=`<li>最初の7秒で、画面の大部分を使ってモンスターを自由に描きます。</li><li>眼も含めて全部自分で描きます。戦闘開始時は元の描画・枠・召喚師表示をすべて消し、描いた召喚獣だけが残ります。</li><li>描いたサイズを統一せず、その大きさのまま中央から戦闘開始。</li><li>普段は部位攻撃・ジャンプ・高速移動・分身などで連続攻撃。時々、巨大エネルギー・炎ブレス・落雷・レーザー・メテオなどの一掃技を使用。</li><li>左右から大量の黒スライムが襲来する10秒オート無双。500体KO=100点。</li>`;
-  }else if(index===42){
+  }else if(legacyIndex===42){
     rules=`<li>1〜13のモブくんカード13枚を最初に表向きで確認。</li><li>3・2・1後、5秒間カードがランダムに位置をシャッフル。</li><li>最後の1秒はカードが暗くなって「？」だけになりますが、位置移動は続きます。</li><li>終了後、まず2枚選択。選んだカードはその場で必ず表向きになり、数字とモブくんを確認できます。</li><li>21でなければ「もう1枚」か「FINISH」。22→1、23→2の循環方式。</li>`;
-  }else if(index===43){
+  }else if(legacyIndex===43){
     rules=`<li>巨大な木が上から3回落下します。</li><li>木の中央には白いCENTER帯。画面中央のSLASHライン通過時にタップ。</li><li>1回ごとに0〜100点。木は真っ二つになり強い一閃演出。</li><li>3回の合計ポイントが正式記録。最大300pt。</li>`;
-  }else if(index===44){
+  }else if(legacyIndex===44){
     rules=`<li>ランダム配置された空飛ぶ4体のカラスから20秒逃げ切るゲーム。</li><li>← →とJUMPのみ。2段ジャンプ可能。5段階に配置された大量のテーブル・木箱を上へ登れます。</li><li>カラスの当たり判定は見た目よりかなり小さく、実際に接触するくらい近づいた時だけ捕まります。</li><li>カラスは障害物を貫通。5秒で同速、8秒以降はプレイヤーより速いが、急旋回とブレーキが苦手。</li>`;
-  }else if(index===45){
+  }else if(legacyIndex===45){
     rules=`<li>7秒間、中央のモブくんの周りに盛り上がる絵を好きなだけ描きます。</li><li>時間終了で「レッツ、ダンシング！」。モブくんが跳ねたり走ったり回ったりしてダンス。</li><li>自分が描いた線もそれぞれ跳ねる・回る・揺れるなど別々に動きます。</li><li>線の量だけでなく、画面への広がり・ストローク数・複雑さを評価して1〜100点。</li>`;
-  }else if(index===46){
+  }else if(legacyIndex===46){
     rules=`<li>7秒でモブくんを守るお城・タワー・壁などを自由に描きます。</li><li>攻撃は3連続。第一陣=通常 / 第二陣=約2倍 / 第三陣=画面を覆う超巨大エネルギー。</li><li>エネルギーは絵の手前で止まり、押し合い・衝撃波・揺れを挟んでから耐久を削ります。</li><li>離して描いた建造物は別々の防衛施設として判定。大きさだけでなく線量・密度・ストローク数・複雑さも耐久へ反映。</li><li>最終残耐久50%以上=100点。50%未満は残耐久率×2で採点。例:3%なら6点。全壊してモブくん直撃=0点。</li>`;
-  }else if(index===47){
+  }else if(legacyIndex===47){
     rules=`<li>3・2・1で50m走スタート。</li><li>LEFT FOOT → RIGHT FOOT → LEFT FOOT…と左右の足ボタンを必ず交互に連打。</li><li>正しい足入力ごとに前進。同じ足を連続で押しても進みません。</li><li>目安は最速4.5秒、普通6.5秒、ゆっくり12.5秒。50m到達タイムを競います。</li>`;
-  }else if(index===48){
+  }else if(legacyIndex===48){
     rules=`<li>かなり遠距離の狙撃。プレイヤーもターゲットも小さく表示されます。</li><li>右端付近のターゲットは上下に揺れます。揺れは10段階から毎回ランダムで、ゲーム中は変化しません。</li><li>画面をタップすると、その地点へ弾を1発だけ発射。弾が飛んでいる間は次を撃てません。</li><li>弾は4発。命中1発=25点、4発全て命中で100点。</li>`;
-  }else if(index===49){
+  }else if(legacyIndex===49){
     rules=`<li>1〜4レーンのモブくんが5秒間、1秒ごとに吹き出しで本音をつぶやきます。</li><li>調子が良いモブくんは好調セリフ、悪いモブくんは不調セリフ。どちらとも言えない時は両方を話します。</li><li>5秒後、1〜4のゴール順位予想を自由に並び替えて決定。</li><li>3・2・1でレース開始。完全一致=100点 / 3つ一致=80 / 2つ=50 / 1つ=30。</li>`;
-  }else if(index===50){
+  }else if(legacyIndex===50){
     rules=`<li>モブくんが乗ったコクピットは完成済み。7秒でその周りにロケットを自由に描きます。</li><li>描き終えたら3・2・1で発射。カメラが上空〜宇宙まで追従。</li><li>大きさだけではなく、左右バランス・縦長形状・線量・複雑さ・コクピットとの接続を評価。</li><li>描いたロケットによって飛行距離が変化。最大100km。</li>`;
-  }else if(index===51){
+  }else if(legacyIndex===51){
     rules=`<li>学校の屋上で他校の番長とタイマン。相手の耐久値は表示されません。</li><li>通常PUNCHでも相手は短く怯みます。同時に攻撃がぶつかるとCLASHになり、お互い横へ弾け飛びます。</li><li>超密着でPUNCHを連打すると、番長が時々ジャンプして背後へ回り込みます。</li><li>通常PUNCHを3回受けるごとに番長は高速バックステップ。追いかける必要があります。</li><li>プレイヤーは派手な突進SPECIALを2回まで使用可能。1回命中で5ダメージ。</li><li>相手の攻撃頻度は少し控えめ。ただし壁際へ追い込むと強烈な反撃があります。</li>`;
-  }else if(index===52){
+  }else if(legacyIndex===52){
     rules=`<li>巨大モブくんぬいぐるみ1個だけのUFOキャッチャー。</li><li>まずARM WIDTHゲージをSTOPしてアームの広さを決定。狭すぎても広すぎても掴みにくく、適度な幅が重要。</li><li>その後◀ ▶で横位置を合わせて「降下」。降下中のSTOPは高さだけ。</li><li>アーム幅・横位置・高さでまず掴みます。ただし掴み方が浅いと持ち上げ中に滑り落ちることがあります。</li><li>3回とも景品口まで運べたら100点。</li><li>2回GETは80点から、1回GETは50点から。使った合計時間が短いほど追加点。</li>`;
-  }else if(index===53){
+  }else if(legacyIndex===53){
     rules=`<li>play/001.png=ON、play/002.png=OFF。</li><li>30体のおもちゃがランダム位置に出現。ON25体・OFF5体。</li><li>OFFだけを素早くタップするとONへ変化。</li><li>5体すべてONになった瞬間までのタイムを競います。</li>`;
-  }else if(index===54){
+  }else if(legacyIndex===54){
     rules=`<li>ドッジボール大好きなモブくんが10秒で何体倒せるか挑戦。</li><li>play/003.pngがプレイヤー。黒塗り反転モブくんが5体ずつ出現。</li><li>敵はそれぞれ上下移動し、必ず中央のボールラインを通過します。</li><li>THROWまたは画面タップで真っすぐボールを発射。1回投げるとリロード1秒。</li><li>5体全滅すると新しい5体が即登場。10秒終了時のKO数が記録。</li>`;
-  }else if(index===55){
+  }else if(legacyIndex===55){
     rules=`<li>6本のあみだくじ。ゴールは0 / 15 / 30 / 50 / 75 / 100。</li><li>最初はゴール側からカメラが始まり、あみだの一部をヒントとして見せてから入口へ移動。</li><li>入口を1つ選ぶとモブくんが自動で線をたどり、カメラが追従してゴールへ。</li><li>あみだの横線・数字の配置は毎回ランダム。</li>`;
-  }else if(index===56){
+  }else if(legacyIndex===56){
     rules=`<li>鍔・柄・柄頭は最初から完成済み。プレイヤーが描くのは刀身だけ。</li><li>刀は縦向き。黄色い根元から上へ、好きな形のカッコイイ刀身を7秒で描きます。</li><li>長さ・根元への接続・滑らかさ・中央バランスなどを採点。刀身の太さは自由です。</li><li>まっすぐでも少し曲がっていてもOK。1〜100点。</li>`;
-  }else if(index===57){
+  }else if(legacyIndex===57){
     rules=`<li>野球ではなくゴルフのパワーヒッターゲーム。</li><li>最初にANGLEゲージをSTOPして10〜70°から打ち出し角を決定。</li><li>次にPOWERゲージをSTOP。100%に近いほど強いショット。</li><li>自動でゴルフスイングし、カメラがボールを追跡。角度45°付近＋POWER100%で最大3000m。</li>`;
-  }else if(index===58){
+  }else if(legacyIndex===58){
     rules=`<li>上から大量の岩が落下。← →でモブくんを動かして避けます。</li><li>岩に1回でも当たったら即終了。</li><li>7秒までは徐々に難しくなり、7秒以降は落石数・速度が一気に上がるROCK STORM。</li><li>最大12秒生存。</li>`;
-  }else if(index===59){
+  }else if(legacyIndex===59){
     rules=`<li>右側の巨大な木に、矢と同じくらい細い白線があります。</li><li>左のモブくんを▲ ▼で上下移動。</li><li>モブくんの弓から短い照準線が出るので、矢が出る高さを確認できます。</li><li>FIREまたは画面タップで矢を1発だけ真っすぐ発射。判定は以前より少し広めです。</li><li>矢が刺さった高さと白線の誤差から0〜100点。</li>`;
-  }else if(index===60){
+  }else if(legacyIndex===60){
     rules=`<li>細い棒の上にモブくん。10秒間倒れないように維持。</li><li>右へ傾いたらLEFT、左へ傾いたらRIGHTをタップして補正。</li><li>風と傾き加速はかなり強め。後半ほど不安定になります。</li><li>約26°から補正不能、32°で転倒。</li>`;
-  }else if(index===61){
+  }else if(legacyIndex===61){
     rules=`<li>5個の巨大サイコロを1回だけ振る完全な運勝負。</li><li>合計5（全部1）=1点、合計30（全部6）=100点。</li><li>途中の合計は5〜30を1〜100点へ比例換算。</li>`;
-  }else if(index===62){
+  }else if(legacyIndex===62){
     rules=`<li>6×5のモブ球パズル。10秒間、押したモブ球を指で動かして隣と入れ替えます。</li><li>同じモブ球が横に3体以上並ぶと、揃った組から順番に消えます。</li><li>その盤面で消える組が全部消えてから、上のモブ球が落下・補充されます。落ちた結果たまたま揃えば落ちコン。</li><li>落ちコンは起こりやすめですが確定ではありません。初期盤面も毎回大きく変化します。</li><li>カウントダウン前から盤面を確認できます。20 COMBO=100点。</li>`;
-  }else if(index===63){
+  }else if(legacyIndex===63){
     rules=`<li>固定されたビリビリ迷路のGOALを目指します。全員同じコースなので公平です。</li><li>画面をタップするとピンが立ち、モブくんがその場所へ歩きます。</li><li>途中には上下に動き続ける「ビリビリモブくんマシーン」が3台。壁やマシーンへ触れると1秒スタン。</li><li>カウントダウン中からステージと初期配置を確認できます。GOALまでのタイムを競います。</li>`;
-  }else if(index===64){
+  }else if(legacyIndex===64){
     rules=`<li>中央にMOBと描かれたパックを1つ購入して開封します。1パック6枚入り。</li><li>「開封！」を押すと1枚ずつカードが表示され、レア度ごとの演出が入ります。</li><li>最後に6枚のカードが並び、合計ポイントを発表。合計ポイントが高いほど有利です。</li><li>レア度は R=5点 / SR=8点 / SSR=10点 / UR=15点 / MOB=30点。</li>`;
-  }else if(index===65){
+  }else if(legacyIndex===65){
     rules=`<li>輪切りトマト / チーズ / サラミ / 輪切りピーマンの巨大具材8個が最初から全部並びます。</li><li>制限時間は3秒。具材を1個ずつピザへ直接スワイプしてください。</li><li>指を離した位置がそのまま着地点。中央へ自動補正しません。</li><li>時間終了後はオーブンでこんがり焼き、乗せた数・配置・散らばりを採点します。</li>`;
-  }else if(index===66){
+  }else if(legacyIndex===66){
     rules=`<li>制限時間5秒。ボタンは左から「滅・剛・力」で固定されています。</li><li>滅 → 剛 → 力 → 滅 → 剛 → 力…の順番でタップしてENERGYを溜めます。</li><li>間違えるとENERGY減少・連鎖リセット。5秒間にどこまで溜められるか勝負。</li><li>終了後に巨大ハンマーを振り下ろし、高ENERGYでは周囲の建物、さらに強ければピラミッドまで崩壊します。</li>`;
-  }else if(index===67){
+  }else if(legacyIndex===67){
     rules=`<li>モブくんが台から飛び出し、逆さになって高速落下します。</li><li>地面ギリギリだと思った瞬間にSTOP。</li><li>約8px手前がPERFECT。地面接触は0点。</li><li>成功するとゴムが縮み、モブくんが大きく跳ね返ります。</li>`;
-  }else if(index===68){
+  }else if(legacyIndex===68){
     rules=`<li>モブくんがそりに乗って10秒間ウォータースライダーを疾走。</li><li>LEFT / RIGHTで操作しますが、水流と波が常に左右へ押してきます。</li><li>途中には岩・ブイ・樽。後半は障害物も波も強くなります。</li><li>壁・障害物への接触で減点。波へ逆らいながらノーヒットを狙います。</li>`;
-  }else if(index===69){
+  }else if(legacyIndex===69){
     rules=`<li>1回の挑戦で巨大パンケーキ2枚を同時にひっくり返します。</li><li>その2枚同時フリップを合計2回。全部で4枚。</li><li>1回のスワイプで2枚の高さ・回転・着地点が少しずつ変わります。</li><li>2枚とも約1回転してフライパン中央へ戻すことが重要。2回の平均点が記録です。</li>`;
-  }else if(index===70){
+  }else if(legacyIndex===70){
     rules=`<li>胴体・機首・尾翼は最初から完成済み。5秒で左右の翼だけ描きます。</li><li>左右の広がり・対称性・機体への接続を採点。</li><li>完成後は描いた線を含む紙飛行機そのものが空を飛びます。</li><li>最大100m。</li>`;
-  }else if(index===71){
+  }else if(legacyIndex===71){
     rules=`<li>中央の戦車を動かさない見下ろし型シューティングです。</li><li>上下左右からスライムが戦車へ接近。画面をフリックした方向へ大砲を1発発射します。</li><li>発射方向は上・下・左・右の4方向。10秒間、後半ほど敵の出現間隔と移動速度が上がります。</li><li>倒したスライムの数が記録。戦車へ到達した敵は消滅し、撃破数には入りません。</li>`;
-  }else if(index===72){
+  }else if(legacyIndex===72){
     rules=`<li>ストーンを上方向へ1回だけスワイプ。</li><li>スワイプ速度で距離、横方向のブレでコースが決まります。</li><li>氷の軌跡・スピン・ハウス到達演出を追加。</li><li>ハウス中央へ近いほど高得点。中心で100点。</li>`;
-  }else if(index===73){
+  }else if(legacyIndex===73){
     rules=`<li>画面中央の巨大シャボン玉を、モブくんが下から吹いて膨らませます。</li><li>BLOWを長押しして、好きなタイミングで離します。</li><li>残り余裕を文字では表示しません。泡の揺れと「!」だけがヒント。</li><li>限界直前ほど高得点。破裂すると0点です。</li>`;
-  }else if(index===74){
+  }else if(legacyIndex===74){
     rules=`<li>カートゥーンの部屋を最初に2.5秒観察します。</li><li>小さな表示だけなので「覚えて！」が部屋を隠しません。</li><li>短い切替演出後、家具・小物の1ヶ所だけ色や形が変化。</li><li>変化した物をタップ。正解が速いほど高得点。</li>`;
-  }else if(index===75){
+  }else if(legacyIndex===75){
     rules=`<li>複数の箱が高速コンベアを流れ、順番にMOB CHECKゲートを通過します。</li><li>箱が検査ゲートを通る瞬間、マークが表示されることがあります。</li><li>「！」が出た瞬間に赤いDETECTを1回だけタップ。</li><li>！から105ms以内=100点、185ms以内=90点。押せるのは1回だけです。</li>`;
-  }else if(index===76){
+  }else if(legacyIndex===76){
     rules=`<li>左右の崖の黄色いアンカー付近をつなぐよう、5秒で自由に橋を描きます。</li><li>判定はかなり緩め。多少ずれても橋として扱います。</li><li>終了後モブくんが描いた橋をゆっくり歩いて渡ります。</li><li>両岸への接続・滑らかさ・急傾斜を総合採点。</li>`;
-  }else if(index===77){
+  }else if(legacyIndex===77){
     rules=`<li>5個の宝箱のうち、最初に100点の宝箱だけ豪華に開きます。</li><li>閉じたあと高速シャッフル。光の残像や砂煙にも注目。</li><li>終了後、100点だと思う宝箱を1つタップ。</li><li>選択後は全箱を開き、100点箱も公開します。</li>`;
-  }else if(index===78){
+  }else if(legacyIndex===78){
     rules=`<li>32分割の高速ルーレット。100点床は1マス、90点床も1マスだけです。</li><li>JUMPを押すとモブくんがルーレット外から飛びます。ジャンプ中も高速回転を続けます。</li><li>実際に着地した瞬間のLAND位置にある極細の床を判定。</li><li>高得点床はかなり狭く、回転速度も以前より速くなっています。</li>`;
-  }else if(index===79){
+  }else if(legacyIndex===79){
     rules=`<li>地面の9マスから3ヶ所を選んで発掘します。</li><li>1ヶ所掘るたびに土が飛び、化石や石が出現。演出終了後に次を掘れます。</li><li>0 / 10 / 30 / 50 / 75 / 100ポイント。</li><li>3回の合計ポイントで競います。</li>`;
-  }else if(index===80){
+  }else if(legacyIndex===80){
     rules=`<li>偽モブくんはジョーカーとスペードのA、こちらはダイヤのAを持って開始。</li><li>相手の2枚から1枚を選ぶたび「このカードを引きますか？」と確認が出ます。「はい」で確定、「いいえ」で選び直せます。</li><li>スペードのAを引けばAのペアが完成して勝利。ジョーカーなら相手へ戻り、2枚をシャッフルして次の挑戦。</li><li>何回目の「はい」で勝てたかを競います。1回目勝利が最高記録。</li>`;
-  }else if(index===81){
+  }else if(legacyIndex===81){
     rules=`<li>モブくんが乗った巨大ロボは自動で前進し続け、前進中はENERGYが減り続けます。</li><li>右下のBATTERY枠へ好きな形を何本でも自由に描きます。描き終わったあと、絵を短くタップすると電池としてロボへ飛びます。</li><li>一筆だけでも送れますが補給量は少なめ。複数の線で大きく描くほど補給量が伸びます。</li><li>ENERGYが0になった瞬間に終了し、それまでの前進距離が記録です。</li>`;
-  }else if(index===82){
+  }else if(legacyIndex===82){
     rules=`<li>中央〜上部では10体のモンスターがそれぞれ違う速度で左右に歩いています。</li><li>下の正方形BALL DESIGN枠で円と中のデザインを何本でも自由に描けます。</li><li>描いたボールを上方向へフリックすると、その方向と速さのままモンスターへ飛びます。命中すると吸い込み→揺れ→捕獲判定。</li><li>モンスターごとに捕まりやすさが異なります。10体すべてGETで100点です。</li>`;
-  }else if(index===83){
+  }else if(legacyIndex===83){
     rules=`<li>所持金30000円で、P / C / 1B / 2B / 3B / SS / RF / LF / CFの9人をスカウトします。</li><li>各ポジションごとに5人が横一列へ表示され、選べる時間は1秒。選んだ選手を即購入します。</li><li>R=500円 / SR=1000円 / SSR=3000円 / UR=5000円 / MOB=10000円。時間切れまたは資金不足ならRが自動加入。</li><li>9人決定後にチーム一覧を確認し、「結果を観る」で47校中の甲子園順位を発表します。</li>`;
-  }else if(index===84){
+  }else if(legacyIndex===84){
     rules=`<li>プレイヤーと9人の偽モブくんが、宙に浮く岩の足場からスタートします。</li><li>左右の矢印で移動、JUMPで最大2段ジャンプ。モブくん同士はぶつかるので、前をふさがれたらジャンプして越えます。</li><li>岩の足場は部分ごとにヒビが入り、時間とともにどんどん崩落します。落下したらその時点で終了です。</li><li>最初に落ちると0点。最後の1人まで生き残ればCLEARで100点です。</li>`;
-  }else if(index===85){
+  }else if(legacyIndex===85){
     rules=`<li>最初は円形の魂ゲージ。ゲージがMAXに近い瞬間を狙ってタップします。</li><li>次は円型ゲージの輪郭を指でなぞり、これを3回成功させます。</li><li>2つのゲージが終わると「モブくん波動パワー！」が出現。タップすると偽モブくんと波動の撃ち合いが始まります。</li><li>波動が強いほど小さく凝縮され、周囲のリング・火花・衝撃波が強化。かなり弱い場合だけ逆に押し負けます。</li>`;
-  }else if(index===86){
+  }else if(legacyIndex===86){
     rules=`<li>3対3。中央ラインを越えず、敵3人を全滅させます。</li><li>移動・ジャンプ・射撃・リロード・グレネード・回復を使います。</li>`;
-  }else if(index===87){
+  }else if(legacyIndex===87){
     rules=`<li>10秒間の縦シューティング。弾は自動発射です。</li><li>左右移動・ボム・3秒レーザーでスライムを倒します。</li>`;
-  }else if(index===88){
+  }else if(legacyIndex===88){
     rules=`<li>自動で走り、JUMPでロイター板を踏みます。</li><li>15段から20段までの跳び箱を順番に越えます。</li>`;
-  }else if(index===89){
+  }else if(legacyIndex===89){
     rules=`<li>← / JUMP / 射撃 / 砲撃 / →で画面いっぱいの巨大エイリアンHP100と戦います。</li><li>5秒後に超巨大化。3秒間だけ砲撃が手動パンチに変わり無敵になります。</li>`;
-  }else if(index===90){
+  }else if(legacyIndex===90){
     rules=`<li>7秒で巨大な武器を自由に描きます。</li><li>力が宿ったら10秒間オートで大量スライムを無双します。</li>`;
-  }else if(index===91){
+  }else if(legacyIndex===91){
     rules=`<li>「勝負！」が出た瞬間にタップします。</li><li>3人の刺客を居合で迎え撃ち、反応タイムで高得点を狙います。</li>`;
   }else{
     rules=`<li>夜の砂漠を横スクロールで進み、ゾンビ30体を倒します。</li><li>30体撃破後に巨大ゾンビが出現。撃破までのクリアタイムを競います。</li>`;
@@ -1625,6 +1603,7 @@ function humanReady(gameIndex,humanIndex){
   }
 
   const p=list[humanIndex],g=GAMES[gameIndex];
+  const legacyIndex=legacyGameIndex(gameIndex);
 
   screen.innerHTML=`<div class="ready-wrap"><div class="ready-card">
     ${imgTag(p,"ready-avatar")}
@@ -1639,99 +1618,100 @@ function humanReady(gameIndex,humanIndex){
   document.getElementById("readyBtn").addEventListener("click",()=>{
     const runId=beginGameRun(gameIndex);
 
-    if(gameIndex===0)startReaction(p,humanIndex,runId);
-    else if(gameIndex===1)startMemory(p,humanIndex,runId);
-    else if(gameIndex===2)startPuzzle(p,humanIndex,runId);
-    else if(gameIndex===3)startLaunch(p,humanIndex,runId);
-    else if(gameIndex===4)startStack(p,humanIndex,runId);
-    else if(gameIndex===5)startGanbareMob(p,humanIndex,runId);
-    else if(gameIndex===6)startCrisis(p,humanIndex,runId);
-    else if(gameIndex===7)startFactory(p,humanIndex,runId);
-    else if(gameIndex===8)startCatcher(p,humanIndex,runId);
-    else if(gameIndex===9)startTidy(p,humanIndex,runId);
-    else if(gameIndex===10)startSkiJump(p,humanIndex,runId);
-    else if(gameIndex===11)startMobSlot(p,humanIndex,runId);
-    else if(gameIndex===12)startJumpRope(p,humanIndex,runId);
-    else if(gameIndex===13)startPK(p,humanIndex,runId);
-    else if(gameIndex===14)startMusicalChairs(p,humanIndex,runId);
-    else if(gameIndex===15)startCutGame(p,humanIndex,runId);
-    else if(gameIndex===16)startTreeClimb(p,humanIndex,runId);
-    else if(gameIndex===17)startErrand(p,humanIndex,runId);
-    else if(gameIndex===18)startDontHitMob(p,humanIndex,runId);
-    else if(gameIndex===19)startMobStop(p,humanIndex,runId);
-    else if(gameIndex===20)startOverlapMoment(p,humanIndex,runId);
-    else if(gameIndex===21)startShutterChance(p,humanIndex,runId);
-    else if(gameIndex===22)startCupLimit(p,humanIndex,runId);
-    else if(gameIndex===23)startDartsOneShot(p,humanIndex,runId);
-    else if(gameIndex===24)startParachute(p,humanIndex,runId);
-    else if(gameIndex===25)startMobCount(p,humanIndex,runId);
-    else if(gameIndex===26)startEmergencyBrake(p,humanIndex,runId);
-    else if(gameIndex===27)startFeintReaction(p,humanIndex,runId);
-    else if(gameIndex===28)startBombChicken(p,humanIndex,runId);
-    else if(gameIndex===29)startOverlapMaster(p,humanIndex,runId);
-    else if(gameIndex===30)startJumpingMob(p,humanIndex,runId);
-    else if(gameIndex===31)startHeroMaybe(p,humanIndex,runId);
-    else if(gameIndex===32)startPopularGame(p,humanIndex,runId);
-    else if(gameIndex===33)startPlanetEnergy(p,humanIndex,runId);
-    else if(gameIndex===34)startPainterMob(p,humanIndex,runId);
-    else if(gameIndex===35)startBikeJump(p,humanIndex,runId);
-    else if(gameIndex===36)startDynamicTrampoline(p,humanIndex,runId);
-    else if(gameIndex===37)startMobTrain(p,humanIndex,runId);
-    else if(gameIndex===38)startGiantMob(p,humanIndex,runId);
-    else if(gameIndex===39)startWizardMob(p,humanIndex,runId);
-    else if(gameIndex===40)startBrawlerMob(p,humanIndex,runId);
-    else if(gameIndex===41)startSummonerMob(p,humanIndex,runId);
-    else if(gameIndex===42)startBlackjackMob(p,humanIndex,runId);
-    else if(gameIndex===43)startMobIssen(p,humanIndex,runId);
-    else if(gameIndex===44)startCrowEscape(p,humanIndex,runId);
-    else if(gameIndex===45)startDancingMob(p,humanIndex,runId);
-    else if(gameIndex===46)startGuardianMob(p,humanIndex,runId);
-    else if(gameIndex===47)startMob50m(p,humanIndex,runId);
-    else if(gameIndex===48)startSniperMob(p,humanIndex,runId);
-    else if(gameIndex===49)startMobRacePredict(p,humanIndex,runId);
-    else if(gameIndex===50)startMobRocket(p,humanIndex,runId);
-    else if(gameIndex===51)startBossDuel(p,humanIndex,runId);
-    else if(gameIndex===52)startPlushCatcher(p,humanIndex,runId);
-    else if(gameIndex===53)startToyOnOff(p,humanIndex,runId);
-    else if(gameIndex===54)startDodgeballMob(p,humanIndex,runId);
-    else if(gameIndex===55)startAmidakujiMob(p,humanIndex,runId);
-    else if(gameIndex===56)startKatanaSmith(p,humanIndex,runId);
-    else if(gameIndex===57)startPowerHitter(p,humanIndex,runId);
-    else if(gameIndex===58)startMobMisfortune(p,humanIndex,runId);
-    else if(gameIndex===59)startAimMob(p,humanIndex,runId);
-    else if(gameIndex===60)startBalanceMob(p,humanIndex,runId);
-    else if(gameIndex===61)startMobDice(p,humanIndex,runId);
-    else if(gameIndex===62)startMobCombo(p,humanIndex,runId);
-    else if(gameIndex===63)startElectricMaze(p,humanIndex,runId);
-    else if(gameIndex===64)startCardShop(p,humanIndex,runId);
-    else if(gameIndex===65)startPizzaChef(p,humanIndex,runId);
-    else if(gameIndex===66)startMobHammer(p,humanIndex,runId);
-    else if(gameIndex===67)startBungeeMob(p,humanIndex,runId);
-    else if(gameIndex===68)startWaterSlide(p,humanIndex,runId);
-    else if(gameIndex===69)startPancakeMob(p,humanIndex,runId);
-    else if(gameIndex===70)startPaperPlane(p,humanIndex,runId);
-    else if(gameIndex===71)startTankMob(p,humanIndex,runId);
-    else if(gameIndex===72)startCurlingMob(p,humanIndex,runId);
-    else if(gameIndex===73)startBubbleMob(p,humanIndex,runId);
-    else if(gameIndex===74)startChangeMob(p,humanIndex,runId);
-    else if(gameIndex===75)startBaggageMob(p,humanIndex,runId);
-    else if(gameIndex===76)startBridgeMob(p,humanIndex,runId);
-    else if(gameIndex===77)startTreasureMob(p,humanIndex,runId);
-    else if(gameIndex===78)startRouletteMob(p,humanIndex,runId);
-    else if(gameIndex===79)startExcavationMob(p,humanIndex,runId);
-    else if(gameIndex===80)startOldMaidDuel(p,humanIndex,runId);
-    else if(gameIndex===81)startRobotMarch(p,humanIndex,runId);
-    else if(gameIndex===82)startMonsterMaster(p,humanIndex,runId);
-    else if(gameIndex===83)startScoutMan(p,humanIndex,runId);
-    else if(gameIndex===84)startAtafutaSurvival(p,humanIndex,runId);
-    else if(gameIndex===85)startWaveMaster(p,humanIndex,runId);
-    else if(gameIndex===86)startBattleRoyaleMob(p,humanIndex,runId);
-    else if(gameIndex===87)startLittleMobShot(p,humanIndex,runId);
-    else if(gameIndex===88)startMonsterBoxMob(p,humanIndex,runId);
-    else if(gameIndex===89)startAlienBattleMob(p,humanIndex,runId);
-    else if(gameIndex===90)startMobMusou(p,humanIndex,runId);
-    else if(gameIndex===91)startIaidoMaster(p,humanIndex,runId);
-    else startKillLeaderMob(p,humanIndex,runId);
+    if(legacyIndex===0)startReaction(p,humanIndex,runId);
+    else if(legacyIndex===1)startMemory(p,humanIndex,runId);
+    else if(legacyIndex===2)startPuzzle(p,humanIndex,runId);
+    else if(legacyIndex===3)startLaunch(p,humanIndex,runId);
+    else if(legacyIndex===4)startStack(p,humanIndex,runId);
+    else if(legacyIndex===5)startGanbareMob(p,humanIndex,runId);
+    else if(legacyIndex===6)startCrisis(p,humanIndex,runId);
+    else if(legacyIndex===7)startFactory(p,humanIndex,runId);
+    else if(legacyIndex===8)startCatcher(p,humanIndex,runId);
+    else if(legacyIndex===9)startTidy(p,humanIndex,runId);
+    else if(legacyIndex===10)startSkiJump(p,humanIndex,runId);
+    else if(legacyIndex===11)startMobSlot(p,humanIndex,runId);
+    else if(legacyIndex===12)startJumpRope(p,humanIndex,runId);
+    else if(legacyIndex===13)startPK(p,humanIndex,runId);
+    else if(legacyIndex===14)startMusicalChairs(p,humanIndex,runId);
+    else if(legacyIndex===15)startCutGame(p,humanIndex,runId);
+    else if(legacyIndex===16)startTreeClimb(p,humanIndex,runId);
+    else if(legacyIndex===17)startErrand(p,humanIndex,runId);
+    else if(legacyIndex===18)startDontHitMob(p,humanIndex,runId);
+    else if(legacyIndex===19)startMobStop(p,humanIndex,runId);
+    else if(legacyIndex===20)startOverlapMoment(p,humanIndex,runId);
+    else if(legacyIndex===21)startShutterChance(p,humanIndex,runId);
+    else if(legacyIndex===22)startCupLimit(p,humanIndex,runId);
+    else if(legacyIndex===23)startDartsOneShot(p,humanIndex,runId);
+    else if(legacyIndex===24)startParachute(p,humanIndex,runId);
+    else if(legacyIndex===25)startMobCount(p,humanIndex,runId);
+    else if(legacyIndex===26)startEmergencyBrake(p,humanIndex,runId);
+    else if(legacyIndex===27)startFeintReaction(p,humanIndex,runId);
+    else if(legacyIndex===28)startBombChicken(p,humanIndex,runId);
+    else if(legacyIndex===29)startOverlapMaster(p,humanIndex,runId);
+    else if(legacyIndex===30)startJumpingMob(p,humanIndex,runId);
+    else if(legacyIndex===31)startHeroMaybe(p,humanIndex,runId);
+    else if(legacyIndex===32)startPopularGame(p,humanIndex,runId);
+    else if(legacyIndex===33)startPlanetEnergy(p,humanIndex,runId);
+    else if(legacyIndex===34)startPainterMob(p,humanIndex,runId);
+    else if(legacyIndex===35)startBikeJump(p,humanIndex,runId);
+    else if(legacyIndex===36)startDynamicTrampoline(p,humanIndex,runId);
+    else if(legacyIndex===37)startMobTrain(p,humanIndex,runId);
+    else if(legacyIndex===38)startGiantMob(p,humanIndex,runId);
+    else if(legacyIndex===39)startWizardMob(p,humanIndex,runId);
+    else if(legacyIndex===40)startBrawlerMob(p,humanIndex,runId);
+    else if(legacyIndex===41)startSummonerMob(p,humanIndex,runId);
+    else if(legacyIndex===42)startBlackjackMob(p,humanIndex,runId);
+    else if(legacyIndex===43)startMobIssen(p,humanIndex,runId);
+    else if(legacyIndex===44)startCrowEscape(p,humanIndex,runId);
+    else if(legacyIndex===45)startDancingMob(p,humanIndex,runId);
+    else if(legacyIndex===46)startGuardianMob(p,humanIndex,runId);
+    else if(legacyIndex===47)startMob50m(p,humanIndex,runId);
+    else if(legacyIndex===48)startSniperMob(p,humanIndex,runId);
+    else if(legacyIndex===49)startMobRacePredict(p,humanIndex,runId);
+    else if(legacyIndex===50)startMobRocket(p,humanIndex,runId);
+    else if(legacyIndex===51)startBossDuel(p,humanIndex,runId);
+    else if(legacyIndex===52)startPlushCatcher(p,humanIndex,runId);
+    else if(legacyIndex===53)startToyOnOff(p,humanIndex,runId);
+    else if(legacyIndex===54)startDodgeballMob(p,humanIndex,runId);
+    else if(legacyIndex===55)startAmidakujiMob(p,humanIndex,runId);
+    else if(legacyIndex===56)startKatanaSmith(p,humanIndex,runId);
+    else if(legacyIndex===57)startPowerHitter(p,humanIndex,runId);
+    else if(legacyIndex===58)startMobMisfortune(p,humanIndex,runId);
+    else if(legacyIndex===59)startAimMob(p,humanIndex,runId);
+    else if(legacyIndex===60)startBalanceMob(p,humanIndex,runId);
+    else if(legacyIndex===61)startMobDice(p,humanIndex,runId);
+    else if(legacyIndex===62)startMobCombo(p,humanIndex,runId);
+    else if(legacyIndex===63)startElectricMaze(p,humanIndex,runId);
+    else if(legacyIndex===64)startCardShop(p,humanIndex,runId);
+    else if(legacyIndex===65)startPizzaChef(p,humanIndex,runId);
+    else if(legacyIndex===66)startMobHammer(p,humanIndex,runId);
+    else if(legacyIndex===67)startBungeeMob(p,humanIndex,runId);
+    else if(legacyIndex===68)startWaterSlide(p,humanIndex,runId);
+    else if(legacyIndex===69)startPancakeMob(p,humanIndex,runId);
+    else if(legacyIndex===70)startPaperPlane(p,humanIndex,runId);
+    else if(legacyIndex===71)startTankMob(p,humanIndex,runId);
+    else if(legacyIndex===72)startCurlingMob(p,humanIndex,runId);
+    else if(legacyIndex===73)startBubbleMob(p,humanIndex,runId);
+    else if(legacyIndex===74)startChangeMob(p,humanIndex,runId);
+    else if(legacyIndex===75)startBaggageMob(p,humanIndex,runId);
+    else if(legacyIndex===76)startBridgeMob(p,humanIndex,runId);
+    else if(legacyIndex===77)startTreasureMob(p,humanIndex,runId);
+    else if(legacyIndex===78)startRouletteMob(p,humanIndex,runId);
+    else if(legacyIndex===79)startExcavationMob(p,humanIndex,runId);
+    else if(legacyIndex===80)startOldMaidDuel(p,humanIndex,runId);
+    else if(legacyIndex===81)startRobotMarch(p,humanIndex,runId);
+    else if(legacyIndex===82)startMonsterMaster(p,humanIndex,runId);
+    else if(legacyIndex===83)startScoutMan(p,humanIndex,runId);
+    else if(legacyIndex===84)startAtafutaSurvival(p,humanIndex,runId);
+    else if(legacyIndex===85)startWaveMaster(p,humanIndex,runId);
+    else if(legacyIndex===86)startBattleRoyaleMob(p,humanIndex,runId);
+    else if(legacyIndex===87)startLittleMobShot(p,humanIndex,runId);
+    else if(legacyIndex===88)startMonsterBoxMob(p,humanIndex,runId);
+    else if(legacyIndex===89)startAlienBattleMob(p,humanIndex,runId);
+    else if(legacyIndex===90)startMobMusou(p,humanIndex,runId);
+    else if(legacyIndex===91)startIaidoMaster(p,humanIndex,runId);
+    else if(legacyIndex===92)startKillLeaderMob(p,humanIndex,runId);
+    else startMobSpeedRacer(p,humanIndex,runId);
   },{once:true});
 }
 
@@ -1968,7 +1948,7 @@ async function startLaunch(p,humanIndex,runId){
         <div class="circle-center"><span>POWER</span><b id="circleLive">--</b></div>
       </div>
     </section>
-    <p class="hint">横は見えない両端、円は上のMAXを狙う。最大2000m。</p>
+    <p class="hint">横は見えない両端、円は上のMAXを狙う。最大2000m。</p><div class="launch-float-mob-v152"><img src="icon/01.png" draggable="false" alt=""></div>
   </div>`;
 
   const lg=document.getElementById("linearGauge"),lm=document.getElementById("linearMarker"),
@@ -2377,25 +2357,42 @@ function build1990WorldRanking(laps){
     name,
     score:rand(7,28)+(COUNTRY_1990_BIAS[name]||rand(-.5,1.8)),
     mob:false
-  }));
+  })).sort((a,b)=>b.score-a.score);
 
-  // V8.7: 4択化に合わせて15周以上を世界1位確定ラインへ。
-  let mobScore;
+  let desiredRank;
   if(laps>=15){
-    const currentBest=Math.max(...entries.map(e=>e.score));
-    mobScore=currentBest+4+rand(0,2);
+    desiredRank=Math.random()<.98?1:randi(2,3);
+  }else if(laps>=14){
+    desiredRank=randi(1,3);
+  }else if(laps>=13){
+    desiredRank=randi(1,4);
   }else if(laps>=12){
-    const currentBest=Math.max(...entries.map(e=>e.score));
-    mobScore=currentBest-rand(0,3.2);
+    desiredRank=randi(2,5);
+  }else if(laps>=11){
+    desiredRank=randi(4,7);
+  }else if(laps>=10){
+    desiredRank=randi(6,9);
   }else{
-    mobScore=10+laps*1.45+rand(-1.1,1.1);
+    desiredRank=clamp(Math.round(38-laps*3.0+rand(-2,2)),10,40);
   }
 
-  entries.push({name:"MOB",score:mobScore,mob:true});
+  let mobScore;
+  if(desiredRank<=1){
+    mobScore=entries[0].score+rand(.8,2.2);
+  }else if(desiredRank>entries.length){
+    mobScore=entries[entries.length-1].score-rand(.5,1.5);
+  }else{
+    const upper=entries[desiredRank-2].score;
+    const lower=entries[desiredRank-1].score;
+    mobScore=(upper+lower)/2;
+  }
+
+  entries.push({name:'MOB',score:mobScore,mob:true});
   entries.sort((a,b)=>b.score-a.score);
-  entries.forEach((e,i)=>e.rank=i+1);
+  entries.forEach((x,i)=>x.rank=i+1);
   return entries;
 }
+
 
 async function startGanbareMob(p,humanIndex,runId){
   gameFit();
@@ -3834,14 +3831,12 @@ const SLOT_SYMBOLS=Array.from({length:10},(_,i)=>({
 }));
 
 function slotPayout(keys){
-  if(!(keys[0]===keys[1]&&keys[1]===keys[2]))return {mult:0,label:"MISS"};
-
+  if(!(keys[0]===keys[1]&&keys[1]===keys[2]))return {mult:0,label:'MISS',tier:0};
   const index=Number(keys[0].slice(1));
-
-  if(index===10)return {mult:8,label:"JACKPOT ×8"};
-  if(index>=8)return {mult:5,label:"RARE ×5"};
-  if(index>=6)return {mult:3,label:"SPECIAL ×3"};
-  return {mult:2,label:"MATCH ×2"};
+  if(index===10)return {mult:30,label:'MOB JACKPOT ×30',tier:4};
+  if(index>=8)return {mult:15,label:'SUPER RARE ×15',tier:3};
+  if(index>=6)return {mult:8,label:'SPECIAL ×8',tier:2};
+  return {mult:4,label:'MATCH ×4',tier:1};
 }
 
 async function startMobSlot(p,humanIndex,runId){
@@ -3887,14 +3882,14 @@ async function startMobSlot(p,humanIndex,runId){
           </div>`).join("")}
       </div>
 
-      <div id="slotResult" class="slot-result">READY</div>
+      <div id="slotResult" class="slot-result">READY</div><div id="slotCoinBurst152" class="slot-coin-burst-v152"></div>
       <button id="slotMainBtn" class="slot-main-button" type="button">SPIN</button>
     </div>
 
     <div class="slot-paytable character-paytable">
-      <span><i style="background-image:url('icon/01.png')"></i><b>×2</b></span>
-      <span><i style="background-image:url('icon/06.png')"></i><b>×3</b></span>
-      <span><i style="background-image:url('icon/08.png')"></i><b>×5</b></span>
+      <span><i style="background-image:url('icon/01.png')"></i><b>×4</b></span>
+      <span><i style="background-image:url('icon/06.png')"></i><b>×30</b></span>
+      <span><i style="background-image:url('icon/08.png')"></i><b>×15</b></span>
       <span><i style="background-image:url('icon/10.png')"></i><b>×8</b></span>
     </div>
   </div>`;
@@ -3902,6 +3897,8 @@ async function startMobSlot(p,humanIndex,runId){
   const timeEl=document.getElementById("slotTime");
   const coinsEl=document.getElementById("slotCoins");
   const resultEl=document.getElementById("slotResult");
+  const coinBurst=document.getElementById('slotCoinBurst152');
+  const slotMachine=screen.querySelector('.slot-machine');
   const mainBtn=document.getElementById("slotMainBtn");
   const symbolEls=[0,1,2].map(i=>document.getElementById(`slotSymbol${i}`));
   const prevEls=[0,1,2].map(i=>document.getElementById(`slotPrev${i}`));
@@ -3935,9 +3932,9 @@ async function startMobSlot(p,humanIndex,runId){
 
   function chooseTargetIndex(){
     const r=Math.random();
-    if(r<.62)return randi(0,4);
-    if(r<.84)return randi(5,6);
-    if(r<.96)return randi(7,8);
+    if(r<.45)return randi(0,4);
+    if(r<.70)return randi(5,6);
+    if(r<.90)return randi(7,8);
     return 9;
   }
 
@@ -3968,13 +3965,29 @@ async function startMobSlot(p,humanIndex,runId){
     stopped=[null,null,null];
     targetIndex=chooseTargetIndex();
     resultEl.textContent="-";
-    resultEl.classList.remove("win");
+    resultEl.className="slot-result";
     mainBtn.textContent="STOP 1";
     mainBtn.classList.add("stopping");
 
     reelStart=performance.now();
     reelRAF=requestAnimationFrame(spinReels);
     beep(420,40,.012);
+  }
+
+  function burstCoins(tier){
+    if(!coinBurst)return;
+    coinBurst.innerHTML='';
+    const count=[0,20,32,46,64][tier]||18;
+    for(let i=0;i<count;i++){
+      const c=document.createElement('i');
+      c.style.setProperty('--cx',`${rand(-145,145).toFixed(0)}px`);
+      c.style.setProperty('--cy',`${rand(-170,-45).toFixed(0)}px`);
+      c.style.setProperty('--cr',`${randi(-280,280)}deg`);
+      c.style.setProperty('--cd',`${(i%10)*.018}s`);
+      coinBurst.appendChild(c);
+    }
+    slotMachine.className=`slot-machine slot-win-tier-${tier}-v152`;
+    setTimeout(()=>{if(slotMachine)slotMachine.className='slot-machine';},720);
   }
 
   async function stopCurrent(){
@@ -3992,7 +4005,7 @@ async function startMobSlot(p,humanIndex,runId){
       idx=targetIndex;
     }else if(stopIndex===1&&Math.random()<.985){
       idx=targetIndex;
-    }else if(stopIndex===2&&Math.random()<.36){
+    }else if(stopIndex===2&&Math.random()<.55){
       idx=targetIndex;
     }
 
@@ -4019,11 +4032,12 @@ async function startMobSlot(p,humanIndex,runId){
       coins+=win;
       coinsEl.textContent=coins;
       resultEl.textContent=`${payout.label} +${win}`;
-      resultEl.classList.add("win");
-      beep(payout.mult>=8?980:payout.mult>=5?860:740,100,.03);
+      resultEl.className=`slot-result win slot-tier-${payout.tier}-v152`;
+      burstCoins(payout.tier);
+      beep(payout.tier>=4?1160:payout.tier>=3?1010:payout.tier>=2?870:740,120,payout.tier>=3?.045:.03);
     }else{
       resultEl.textContent="MISS";
-      resultEl.classList.remove("win");
+      resultEl.className='slot-result';
       beep(180,65,.012);
     }
 
@@ -4298,12 +4312,12 @@ async function startPK(p,humanIndex,runId){
 
       <div class="pk-gesture-guide">
         <span>← SWIPE</span>
-        <b>TAP</b>
+        <b>LEFT / RIGHT</b>
         <span>SWIPE →</span>
       </div>
     </div>
 
-    <p id="pkHint" class="hint">左へスワイプ / 中央はタップ / 右へスワイプ。</p>
+    <p id="pkHint" class="hint">左スワイプ / 右スワイプのみ。正面はありません。</p>
   </div>`;
 
   const field=document.getElementById("pkField");
@@ -4338,10 +4352,8 @@ async function startPK(p,humanIndex,runId){
     const dy=e.clientY-gestureStart.y;
     const dist=Math.hypot(dx,dy);
 
-    if(Math.abs(dx)>=34&&Math.abs(dx)>Math.abs(dy)*.65){
+    if(Math.abs(dx)>=28&&Math.abs(dx)>Math.abs(dy)*.55){
       chooseKeeper(dx<0?0:2);
-    }else if(dist<28){
-      chooseKeeper(1);
     }
 
     gestureStart=null;
@@ -4368,7 +4380,7 @@ async function startPK(p,humanIndex,runId){
 
     await wait(480+rand(100,300));
 
-    const dir=randi(0,2);
+    const dir=Math.random()<.5?0:2;
     shooter.classList.remove("kick");
     void shooter.offsetWidth;
     shooter.classList.add("kick");
@@ -4877,7 +4889,7 @@ async function startCutGame(p,humanIndex,runId){
         <div id="cutKnife" class="cut-knife"></div>
         <div id="cutImpact" class="cut-impact">CUT!</div>
       </div>
-      <div class="cut-swipe-guide">↑ SWIPE ↑</div>
+      <div class="cut-swipe-guide">↑ SWIPE ↑</div><div id="cutCheer152" class="cut-cheer-mob-v152"><img src="icon/01.png" draggable="false" alt=""></div>
     </div>
 
     <div id="cutResult" class="cut-result">縦スワイプでCUT</div>
@@ -4903,6 +4915,7 @@ async function startCutGame(p,humanIndex,runId){
   const resultEl=document.getElementById("cutResult");
   const roundEl=document.getElementById("cutRound");
   const scoreEl=document.getElementById("cutScore");
+  const cheer=document.getElementById('cutCheer152');
 
   const overlay=document.getElementById("cutResultOverlay");
   const overlayRound=document.getElementById("cutResultRound");
@@ -4994,6 +5007,9 @@ async function startCutGame(p,humanIndex,runId){
     bar.classList.add("cut-shake");
     leftPiece.classList.add("cut-left-fall");
     remain.classList.add("cut-right-kick");
+    cheer.classList.remove('cheer-v152');
+    void cheer.offsetWidth;
+    cheer.classList.add('cheer-v152');
     beep(760,45,.024);
     await wait(430);
 
@@ -22334,7 +22350,7 @@ async function startWaveMaster(p,humanIndex,runId){
     );
 
     if(
-      near.distance<=19 &&
+      near.distance<=17 &&
       near.index>=Math.max(0,currentIndex-5) &&
       near.index<=Math.min(
         traceSamples.length-1,
@@ -22367,7 +22383,7 @@ async function startWaveMaster(p,humanIndex,runId){
 
     const q=localZ(e);
 
-    if(Math.hypot(q.x-48,q.y-48)>31){
+    if(Math.hypot(q.x-48,q.y-48)>28){
       zHint.textContent='STARTから光るZをなぞれ！';
       zPanel.classList.add('retry-v140');
       beep(170,60,.014);
@@ -22414,12 +22430,12 @@ async function startWaveMaster(p,humanIndex,runId){
       {x:0,y:0};
 
     const endOk=
-      Math.hypot(last.x-272,last.y-192)<=34;
+      Math.hypot(last.x-272,last.y-192)<=30;
 
     const enough=
-      traceProgress>=.78 &&
-      traceMoves>=18 &&
-      traceLength>=260 &&
+      traceProgress>=.86 &&
+      traceMoves>=30 &&
+      traceLength>=380 &&
       endOk;
 
     tracePointer=null;
@@ -23258,7 +23274,7 @@ async function startMonsterBoxMob(p,humanIndex,runId){
   screen.innerHTML=`<div class="mbox-shell-v138">
     <div class="game-head"><div><span class="kicker">${esc(p.name)}</span><h2>モブくんモンスターボックスに挑む</h2></div><div class="game-badge">${playBadge(humanIndex)}</div></div>
     <div class="v125-hud"><div><span>LEVEL</span><b id="mbLevel138">15段</b></div><div><span>SCORE</span><b id="mbScore138">0</b></div></div>
-    <div id="mbStage138" class="mb-stage-v138"><div class="mb-run-lines-v138"></div><div class="mb-ground-v138"></div><div id="mbBoard138" class="mb-board-v138"></div><div id="mbBox138" class="mb-box-v138"></div><div id="mbMob138" class="mb-mob-v138" style="background-image:url('icon/01.png')"></div><div id="mbFx138" class="mb-fx-v138"></div></div>
+    <div id="mbStage138" class="mb-stage-v138"><div class="mb-audience-v152">${Array.from({length:10},(_,i)=>`<i style="background-image:url('icon/${String((i%9)+2).padStart(2,'0')}.png')"></i>`).join('')}</div><div class="mb-run-lines-v138"></div><div class="mb-ground-v138"></div><div id="mbBoard138" class="mb-board-v138"></div><div id="mbBox138" class="mb-box-v138"></div><div id="mbMob138" class="mb-mob-v138" style="background-image:url('icon/01.png')"></div><div id="mbFx138" class="mb-fx-v138"></div></div>
     <button id="mbJump138" class="primary mb-jump-v138">JUMP</button>
   </div>`;
 
@@ -23658,7 +23674,7 @@ async function startAlienBattleMob(p,humanIndex,runId){
     const size=
       ally
         ? 20
-        : 32+ratio*78;
+        : 42+ratio*105;
 
     const speed=
       ally
@@ -25054,8 +25070,10 @@ async function startMobMusou(p,humanIndex,runId){
     <div id="musouBattle145" class="musou-battle-v145" hidden>
       <div class="musou-cave-back-v145"><i></i><i></i><i></i><i></i></div>
       <div class="musou-cave-floor-v145"></div>
+      <div class="musou-platform-v152 left-v152"></div><div class="musou-platform-v152 right-v152"></div>
       <div id="musouEnemyLayer145" class="musou-layer-v145"></div>
       <div id="musouFx145" class="musou-layer-v145"></div>
+      <div id="musouSpeech152" class="musou-speech-v152"></div>
       <div id="musouMob145" class="musou-mob-v145">
         <img src="icon/01.png" draggable="false" alt="">
         <svg id="musouWeapon145" class="musou-weapon-svg-v145" viewBox="0 0 360 320"></svg>
@@ -25075,6 +25093,9 @@ async function startMobMusou(p,humanIndex,runId){
   const fxLayer=document.getElementById('musouFx145');
   const mobEl=document.getElementById('musouMob145');
   const weaponSvg=document.getElementById('musouWeapon145');
+  const speechEl=document.getElementById('musouSpeech152');
+  let nextSpeechAt=0;
+  const MUSOU_LINES=['でや！','てやー！','やってやんべ！','こんちくしょう！','これでどうだ！','モブアタック！','かかってこいやー！','オラオラおらー！','やんのかー！'];
 
   function localPt(e){
     const r=svg.getBoundingClientRect();
@@ -25188,22 +25209,28 @@ async function startMobMusou(p,humanIndex,runId){
   }
   function spawnEnemy(W,H,elapsed){
     const roll=Math.random();
-    let kind='slime', size=rand(22,34), hp=1, speed=rand(85,120)+elapsed*2.4;
-    if(roll>.88){ kind='giant'; size=rand(52,70); hp=2; speed=rand(55,82)+elapsed*1.5; }
-    else if(roll>.68){ kind='robot'; size=rand(28,42); hp=1; speed=rand(95,130)+elapsed*2.6; }
-    else if(roll>.52){ kind='heavy'; size=rand(42,54); hp=2; speed=rand(72,100)+elapsed*2; }
+    let kind='slime',size=rand(22,34),hp=1,speed=rand(92,132)+elapsed*3,air=false,fromTop=false;
+    if(roll>.91){kind='giant';size=rand(68,88);hp=3;speed=rand(55,76)+elapsed*1.2;}
+    else if(roll>.78){kind='fly';size=rand(30,44);hp=1;speed=rand(110,150)+elapsed*2.4;air=true;}
+    else if(roll>.66){kind='drop';size=rand(28,42);hp=1;speed=rand(120,160);fromTop=true;}
+    else if(roll>.52){kind='robot';size=rand(32,46);hp=1;speed=rand(105,142)+elapsed*2.6;}
+    else if(roll>.38){kind='heavy';size=rand(46,60);hp=2;speed=rand(78,108)+elapsed*2;}
+
     const side=Math.random()<.5?-1:1;
-    const x=side<0?-size:W+size;
-    const y=H-44-size*.76-rand(0,18);
+    let x=side<0?-size:W+size;
+    let y=H-44-size*.76-rand(0,18);
+    if(air)y=rand(65,H*.48);
+    if(fromTop){x=rand(35,W-55);y=-size-20;}
+
     const el=document.createElement('div');
     el.className=`musou-enemy-v145 ${kind}-v145`;
-    el.innerHTML=kind==='robot'||kind==='heavy'
+    el.innerHTML=(kind==='robot'||kind==='heavy')
       ? '<i class="head"></i><b class="arm a1"></b><b class="arm a2"></b>'
       : '<i></i><b></b>';
     el.style.width=`${size}px`;
-    el.style.height=`${kind==='robot'||kind==='heavy' ? size*.95 : size*.74}px`;
+    el.style.height=`${kind==='robot'||kind==='heavy'?size*.95:kind==='fly'?size*.62:size*.74}px`;
     enemyLayer.appendChild(el);
-    enemies.push({kind,size,hp,speed,side,x,y,alive:true,el});
+    enemies.push({kind,size,hp,speed,side,x,y,alive:true,el,air,fromTop,phase:rand(0,Math.PI*2),vy:fromTop?rand(120,190):0});
   }
   function killEnemy(en,mx,my){
     if(!en.alive)return;
@@ -25231,12 +25258,13 @@ async function startMobMusou(p,humanIndex,runId){
   }
   function doAttack(W,H,elapsed,mx,my){
     attackCount++;
-    const mode=attackCount%4===0?'jump':attackCount%2===0?'vertical':'horizontal';
-    mobEl.classList.remove('slash-horizontal-v145','slash-vertical-v145','slash-jump-v145');
+    const modes=['horizontal','vertical','jump','dash','aerial','burst'];
+    const mode=modes[attackCount%modes.length];
+    mobEl.classList.remove('slash-horizontal-v145','slash-vertical-v145','slash-jump-v145','slash-dash-v152','slash-aerial-v152','slash-burst-v152');
     void mobEl.offsetWidth;
-    mobEl.classList.add(mode==='horizontal'?'slash-horizontal-v145':mode==='vertical'?'slash-vertical-v145':'slash-jump-v145');
+    mobEl.classList.add(mode==='horizontal'?'slash-horizontal-v145':mode==='vertical'?'slash-vertical-v145':mode==='jump'?'slash-jump-v145':mode==='dash'?'slash-dash-v152':mode==='aerial'?'slash-aerial-v152':'slash-burst-v152');
     addSlashFx(mx+42,my+34,mode);
-    const radius=tech.radius+(mode==='jump'?20:0);
+    const radius=tech.radius+(mode==='jump'||mode==='aerial'?28:mode==='burst'?48:mode==='dash'?36:0);
 
     let hitCount=0;
     for(const en of enemies){
@@ -25298,6 +25326,7 @@ async function startMobMusou(p,humanIndex,runId){
     battleStart=battleLast=performance.now();
     nextSpawnAt=battleStart;
     nextAttackAt=battleStart+120;
+    nextSpeechAt=battleStart+350;
     for(let i=0;i<12;i++)spawnEnemy(W,H,0);
 
     function frame(now){
@@ -25308,40 +25337,57 @@ async function startMobMusou(p,humanIndex,runId){
       const remain=Math.max(0,10-elapsed);
       timeEl.textContent=remain.toFixed(2);
 
-      const mx=clamp(W*.46+Math.sin(elapsed*3.6)*W*.31+Math.sin(elapsed*8.0)*18,24,W-98);
-      const jumpWave=Math.max(0,Math.sin(elapsed*4.8));
-      const my=H-112-jumpWave*92;
+      const mx=clamp(W*.46+Math.sin(elapsed*3.9)*W*.33+Math.sin(elapsed*9.2)*22,24,W-98);
+      const jumpWave=Math.max(0,Math.sin(elapsed*5.25));
+      const nearLeft=mx>42&&mx<150;
+      const nearRight=mx>W-160&&mx<W-45;
+      const platformLift=nearLeft?58:nearRight?72:0;
+      const my=H-112-platformLift-jumpWave*(platformLift?68:105);
       mobEl.style.left=`${mx}px`;
       mobEl.style.top=`${my}px`;
       const face=Math.sin(elapsed*3.6)>=0?1:-1;
       mobEl.style.transform=`scaleX(${face})`;
 
       if(now>=nextSpawnAt){
-        const batch=elapsed>5?randi(3,5):randi(2,4);
+        const batch=elapsed>5?randi(4,7):randi(3,5);
         for(let i=0;i<batch;i++)spawnEnemy(W,H,elapsed);
-        nextSpawnAt=now+clamp(138-elapsed*5,84,138);
+        nextSpawnAt=now+clamp(118-elapsed*4,70,118);
       }
 
       for(const en of enemies){
         if(!en.alive)continue;
         const targetX=mx+34;
+        const targetY=my+32;
         const dx=targetX-en.x;
-        en.x+=Math.sign(dx)*en.speed*dt;
-        if(en.kind==='robot'||en.kind==='heavy'){
-          en.y=H-44-en.size*.95-Math.abs(Math.sin(elapsed*4+en.size))*3;
+
+        if(en.fromTop){
+          en.vy+=250*dt;
+          en.y+=en.vy*dt;
+          en.x+=Math.sign(dx)*en.speed*.35*dt;
+          if(en.y>H-44-en.size*.74){en.fromTop=false;en.y=H-44-en.size*.74;}
+        }else if(en.air){
+          en.phase+=dt*4.4;
+          en.x+=Math.sign(dx)*en.speed*dt;
+          en.y+=clamp(targetY-en.y,-85,85)*dt*.8+Math.sin(en.phase)*26*dt;
+          en.y=clamp(en.y,48,H-135);
         }else{
-          en.y=H-44-en.size*.74-Math.abs(Math.sin(elapsed*4+en.size))*2;
+          en.x+=Math.sign(dx)*en.speed*dt;
+          if(en.kind==='robot'||en.kind==='heavy')en.y=H-44-en.size*.95-Math.abs(Math.sin(elapsed*4+en.size))*3;
+          else en.y=H-44-en.size*.74-Math.abs(Math.sin(elapsed*4+en.size))*2;
         }
+
         en.el.style.left=`${en.x}px`;
         en.el.style.top=`${en.y}px`;
-        if(en.kind==='robot'||en.kind==='heavy'){
-          if(dx<0)en.el.style.transform='scaleX(-1)';
-          else en.el.style.transform='scaleX(1)';
-        }
-        if(en.x<-90||en.x>W+90){
-          en.alive=false;
-          en.el.remove();
-        }
+        if(dx<0)en.el.style.transform='scaleX(-1)'; else en.el.style.transform='scaleX(1)';
+        if(en.x<-100||en.x>W+100||en.y>H+100){en.alive=false;en.el.remove();}
+      }
+
+      if(now>=nextSpeechAt){
+        nextSpeechAt=now+1000;
+        speechEl.textContent=MUSOU_LINES[randi(0,MUSOU_LINES.length-1)];
+        speechEl.classList.remove('show-v152');
+        void speechEl.offsetWidth;
+        speechEl.classList.add('show-v152');
       }
 
       if(now>=nextAttackAt){
@@ -25687,6 +25733,7 @@ async function startElectricMaze(p,humanIndex,runId){
 
 
 function recordScreen(gameIndex,p,humanIndex,main,sub=""){
+  if(activeGameIndex>=0&&legacyGameIndex(activeGameIndex)===gameIndex)gameIndex=activeGameIndex;
   if(
     !gameSessionActive||
     activeGameIndex!==gameIndex
@@ -25731,11 +25778,12 @@ async function simulateCpuThenResult(gameIndex){
 }
 
 function cpuUltraDraw(gameIndex){
+  const legacyIndex=legacyGameIndex(gameIndex);
   const luckOnly=new Set([
     5,11,25,42,49,55,61,64,77,79,80
   ]);
 
-  if(luckOnly.has(gameIndex)){
+  if(luckOnly.has(legacyIndex)){
     return false;
   }
 
@@ -25744,6 +25792,7 @@ function cpuUltraDraw(gameIndex){
 
 
 function softenCpuResultV121(gameIndex,p,ultra){
+  const legacyIndex=legacyGameIndex(gameIndex);
   const luckOnly=new Set([
     5,11,25,42,49,55,61,64,77,79,80
   ]);
@@ -25754,8 +25803,8 @@ function softenCpuResultV121(gameIndex,p,ultra){
   ]);
 
   if(
-    luckOnly.has(gameIndex)||
-    specificallyTuned.has(gameIndex)
+    luckOnly.has(legacyIndex)||
+    specificallyTuned.has(legacyIndex)
   )return;
 
   const key=GAMES[gameIndex]?.key;
@@ -25774,7 +25823,7 @@ function softenCpuResultV121(gameIndex,p,ultra){
     26,27,37,40,47,51,53,63
   ]);
 
-  if(lowerIsBetter.has(gameIndex)){
+  if(lowerIsBetter.has(legacyIndex)){
     records[p.id]=
       value*
       (
@@ -25793,116 +25842,135 @@ function softenCpuResultV121(gameIndex,p,ultra){
   }
 }
 
+function normalizeCpuRecordV152(gameIndex,p){
+  const legacyIndex=legacyGameIndex(gameIndex);
+  const key=GAMES[gameIndex]?.key;
+  const rec=state.records[key];
+  if(!rec)return;
+  let v=rec[p.id];
+  if(typeof v!=='number'||!Number.isFinite(v))return;
+
+  // Raw milliseconds and discrete measurements are stored as integers.
+  const tenths=new Set([20,22,23,26,29,33,34,35,36,50,57]);
+  const hundredths=new Set([44,58,60]);
+  if(tenths.has(legacyIndex))v=Math.round(v*10)/10;
+  else if(hundredths.has(legacyIndex))v=Math.round(v*100)/100;
+  else v=Math.round(v);
+
+  rec[p.id]=v;
+}
+
 function simulateOneCpu(gameIndex,p){
+  const legacyIndex=legacyGameIndex(gameIndex);
   const ultra=cpuUltraDraw(gameIndex);
   state.cpuTier[`${state.roundIndex}:${p.id}`]=ultra?"SUPER":"STRONG";
 
-  if(gameIndex===0){
+  if(legacyIndex===0){
     const bias={c2:10,c3:4,c4:14,c5:8,c6:2,c7:12,c8:0}[p.id]||0;
     state.records.reaction[p.id]=ultra
       ? rand(155,185)
       : clamp(rand(185,305)+bias,180,325);
-  }else if(gameIndex===1){
+  }else if(legacyIndex===1){
     const base={c5:9,c6:9,c7:8,c8:10}[p.id]||9;
     state.records.memory[p.id]=ultra?10:clamp(base+randi(-1,1),7,10);
-  }else if(gameIndex===2){
+  }else if(legacyIndex===2){
     state.records.puzzle[p.id]=ultra?randi(2450,2850):randi(2900,4700);
-  }else if(gameIndex===3){
+  }else if(legacyIndex===3){
     state.records.launch[p.id]=Math.round((ultra?rand(1840,2000):rand(1280,1900))*10);
-  }else if(gameIndex===4){
+  }else if(legacyIndex===4){
     state.records.stack[p.id]=ultra?randi(17,20):randi(10,17);
-  }else if(gameIndex===5){
+  }else if(legacyIndex===5){
     state.records.breakdance[p.id]=ultra?1:randi(1,12);
-  }else if(gameIndex===6){
+  }else if(legacyIndex===6){
     state.records.crisis[p.id]=ultra?randi(22,28):randi(12,23);
-  }else if(gameIndex===7){
+  }else if(legacyIndex===7){
     state.records.factory[p.id]=ultra?randi(23,28):randi(15,24);
-  }else if(gameIndex===8){
+  }else if(legacyIndex===8){
     state.records.catcher[p.id]=ultra?randi(9,13):randi(4,10);
-  }else if(gameIndex===9){
+  }else if(legacyIndex===9){
     state.records.tidy[p.id]=ultra?randi(88,96):randi(55,84);
-  }else if(gameIndex===10){
+  }else if(legacyIndex===10){
     state.records.ski[p.id]=Math.round((ultra?rand(850,960):rand(500,850))*10);
-  }else if(gameIndex===11){
-    state.records.slot[p.id]=ultra?randi(2500,3400):randi(1450,2750);
-  }else if(gameIndex===12){
+  }else if(legacyIndex===11){
+    state.records.slot[p.id]=ultra?randi(4600,7200):randi(900,5600);
+  }else if(legacyIndex===12){
     state.records.rope[p.id]=ultra?randi(26,33):randi(15,27);
-  }else if(gameIndex===13){
+  }else if(legacyIndex===13){
     state.records.pk[p.id]=ultra?randi(8,10):randi(4,8);
-  }else if(gameIndex===14){
+  }else if(legacyIndex===14){
     state.records.rhythm[p.id]=ultra?rand(175,210):rand(210,335);
-  }else if(gameIndex===15){
+  }else if(legacyIndex===15){
     state.records.cut[p.id]=ultra?randi(88,97):randi(55,88);
-  }else if(gameIndex===16){
+  }else if(legacyIndex===16){
     state.records.climb[p.id]=Math.round((ultra?rand(620,760):rand(340,650))*10);
-  }else if(gameIndex===17){
+  }else if(legacyIndex===17){
     state.records.errand[p.id]=ultra?randi(970,1000):randi(730,985);
-  }else if(gameIndex===18){
+  }else if(legacyIndex===18){
     state.records.dontHitMob[p.id]=ultra?randi(11,14):randi(5,11);
-  }else if(gameIndex===19){
+  }else if(legacyIndex===19){
     state.records.mobStop[p.id]=ultra?randi(86,96):randi(42,88);
-  }else if(gameIndex===20){
+  }else if(legacyIndex===20){
     state.records.overlap[p.id]=Math.round((ultra?rand(98.2,100):rand(87,98.8))*10)/10;
-  }else if(gameIndex===21){
+  }else if(legacyIndex===21){
     state.records.shutter[p.id]=ultra?rand(12,32):rand(32,105);
-  }else if(gameIndex===22){
+  }else if(legacyIndex===22){
     state.records.cup[p.id]=Math.round((ultra?rand(94,100):rand(62,95))*10)/10;
-  }else if(gameIndex===23){
+  }else if(legacyIndex===23){
     state.records.darts[p.id]=Math.round((ultra?rand(1.5,7):rand(7,34))*10)/10;
-  }else if(gameIndex===24){
+  }else if(legacyIndex===24){
     state.records.parachute[p.id]=ultra?rand(18,85):rand(80,520);
-  }else if(gameIndex===25){
+  }else if(legacyIndex===25){
     state.records.mobCount[p.id]=ultra?(Math.random()<.85?0:1):randi(0,3);
-  }else if(gameIndex===26){
+  }else if(legacyIndex===26){
     state.records.brake[p.id]=Math.round((ultra?rand(.2,1.4):rand(1.2,6.5))*10)/10;
-  }else if(gameIndex===27){
+  }else if(legacyIndex===27){
     state.records.feint[p.id]=ultra?rand(170,205):rand(205,335);
-  }else if(gameIndex===28){
+  }else if(legacyIndex===28){
     state.records.bomb[p.id]=ultra?randi(9600,9960):randi(7600,9700);
-  }else if(gameIndex===29){
+  }else if(legacyIndex===29){
     state.records.overlapMaster[p.id]=Math.round((ultra?rand(95,99.7):rand(78,95.5))*10)/10;
-  }else if(gameIndex===30){
+  }else if(legacyIndex===30){
     state.records.jumpingMob[p.id]=ultra?randi(430,545):randi(240,445);
-  }else if(gameIndex===31){
+  }else if(legacyIndex===31){
     state.records.heroMaybe[p.id]=ultra?randi(84,98):randi(48,85);
-  }else if(gameIndex===32){
+  }else if(legacyIndex===32){
     state.records.popularGame[p.id]=ultra?randi(17,23):randi(9,18);
-  }else if(gameIndex===33){
+  }else if(legacyIndex===33){
     state.records.planetEnergy[p.id]=Math.round((ultra?rand(82,98):rand(38,84))*10)/10;
-  }else if(gameIndex===34){
+  }else if(legacyIndex===34){
     state.records.painter[p.id]=Math.round((ultra?rand(88,97):rand(58,88))*10)/10;
-  }else if(gameIndex===35){
+  }else if(legacyIndex===35){
     state.records.bikeJump[p.id]=Math.round((ultra?rand(1720,1975):rand(820,1760))*10)/10;
-  }else if(gameIndex===36){
+  }else if(legacyIndex===36){
     state.records.trampoline[p.id]=Math.round((ultra?rand(1660,1965):rand(850,1690))*10)/10;
-  }else if(gameIndex===37){
+  }else if(legacyIndex===37){
     state.records.mobTrain[p.id]=ultra?randi(2750,3350):randi(3300,5200);
-  }else if(gameIndex===38){
+  }else if(legacyIndex===38){
     state.records.giantMob[p.id]=ultra?randi(23,30):randi(10,22);
-  }else if(gameIndex===39){
+  }else if(legacyIndex===39){
     state.records.wizardMob[p.id]=ultra?randi(18,23):randi(9,18);
-  }else if(gameIndex===40){
+  }else if(legacyIndex===40){
     state.records.brawlerMob[p.id]=ultra?randi(9400,12800):randi(12200,21800);
-  }else if(gameIndex===41){
+  }else if(legacyIndex===41){
     state.records.summonerMob[p.id]=ultra?randi(465,555):randi(290,485);
-  }else if(gameIndex===42){
+  }else if(legacyIndex===42){
     state.records.blackjackMob[p.id]=ultra?randi(19,21):randi(13,20);
-  }else if(gameIndex===43){
+  }else if(legacyIndex===43){
     state.records.mobIssen[p.id]=ultra?randi(255,294):randi(165,258);
-  }else if(gameIndex===44){
+  }else if(legacyIndex===44){
     state.records.crowEscape[p.id]=Math.round((ultra?rand(16.8,20):rand(7.2,17.4))*100)/100;
-  }else if(gameIndex===45){
+  }else if(legacyIndex===45){
     state.records.dancingMob[p.id]=ultra?randi(91,100):randi(58,92);
-  }else if(gameIndex===46){
+  }else if(legacyIndex===46){
     state.records.guardianMob[p.id]=ultra?randi(82,100):randi(24,88);
-  }else if(gameIndex===47){
+  }else if(legacyIndex===47){
     state.records.mob50m[p.id]=ultra?randi(4550,5300):randi(5350,8900);
-  }else if(gameIndex===48){
+  }else if(legacyIndex===48){
     const cpuHits=ultra?(Math.random()<.62?4:3):randi(1,3);
     state.records.sniperMob[p.id]=cpuHits*25;
-  }else if(gameIndex===49){
+  }else if(legacyIndex===49){
     state.records.mobRacePredict[p.id]=ultra?(Math.random()<.55?100:80):[30,50,50,80][randi(0,3)];
-  }else if(gameIndex===50){
+  }else if(legacyIndex===50){
     state.records.mobRocket[p.id]=Math.round(
       (
         ultra
@@ -25911,35 +25979,35 @@ function simulateOneCpu(gameIndex,p){
       )*
       10
     )/10;
-  }else if(gameIndex===51){
+  }else if(legacyIndex===51){
     state.records.bossDuel[p.id]=ultra?randi(13500,17500):randi(17500,30000);
-  }else if(gameIndex===52){
+  }else if(legacyIndex===52){
     const catches=ultra?randi(2,3):randi(0,2);
     state.records.plushCatcher[p.id]=
       catches===3?100:
       catches===2?randi(81,92):
       catches===1?randi(50,66):
       0;
-  }else if(gameIndex===53){
+  }else if(legacyIndex===53){
     state.records.toyOnOff[p.id]=ultra?randi(1200,1900):randi(1900,4600);
-  }else if(gameIndex===54){
+  }else if(legacyIndex===54){
     state.records.dodgeballMob[p.id]=ultra?randi(9,10):randi(4,8);
-  }else if(gameIndex===55){
+  }else if(legacyIndex===55){
     state.records.amidakujiMob[p.id]=[0,15,30,50,75,100][randi(0,5)];
-  }else if(gameIndex===56){
+  }else if(legacyIndex===56){
     state.records.katanaSmith[p.id]=ultra?randi(88,100):randi(55,91);
-  }else if(gameIndex===57){
+  }else if(legacyIndex===57){
     state.records.homeRunMob[p.id]=Math.round((ultra?rand(2500,3000):rand(900,2550))*10)/10;
-  }else if(gameIndex===58){
+  }else if(legacyIndex===58){
     state.records.mobMisfortune[p.id]=Math.round((ultra?rand(10.3,12):rand(5.6,10.8))*100)/100;
-  }else if(gameIndex===59){
+  }else if(legacyIndex===59){
     state.records.aimMob[p.id]=
       ultra
         ? randi(58,76)
         : randi(24,58);
-  }else if(gameIndex===60){
+  }else if(legacyIndex===60){
     state.records.balanceMob[p.id]=Math.round((ultra?rand(7.9,10):rand(3.6,8.3))*100)/100;
-  }else if(gameIndex===61){
+  }else if(legacyIndex===61){
     const diceTotal=
       randi(1,6)+randi(1,6)+randi(1,6)+randi(1,6)+randi(1,6);
     state.records.mobDice[p.id]=clamp(
@@ -25952,14 +26020,14 @@ function simulateOneCpu(gameIndex,p){
       ),
       1,100
     );
-  }else if(gameIndex===62){
+  }else if(legacyIndex===62){
     state.records.mobCombo[p.id]=ultra?randi(12,17):randi(4,11);
-  }else if(gameIndex===63){
+  }else if(legacyIndex===63){
     state.records.electricMaze[p.id]=
       ultra
         ? randi(7800,10800)
         : randi(11200,22500);
-  }else if(gameIndex===64){
+  }else if(legacyIndex===64){
     const cpuCardPoints=()=>{
       const roll=Math.random()*100;
       if(roll<32)return 5;
@@ -25972,80 +26040,82 @@ function simulateOneCpu(gameIndex,p){
     let total=0;
     for(let i=0;i<6;i++)total+=cpuCardPoints();
     state.records.cardShop[p.id]=total;
-  }else if(gameIndex===65){
+  }else if(legacyIndex===65){
     state.records.pizzaChef[p.id]=ultra?randi(78,92):randi(34,76);
-  }else if(gameIndex===66){
+  }else if(legacyIndex===66){
     state.records.mobHammer[p.id]=ultra?randi(82,95):randi(35,79);
-  }else if(gameIndex===67){
+  }else if(legacyIndex===67){
     state.records.bungeeMob[p.id]=ultra?randi(80,95):randi(32,79);
-  }else if(gameIndex===68){
+  }else if(legacyIndex===68){
     state.records.waterSlide[p.id]=ultra?randi(80,92):randi(35,76);
-  }else if(gameIndex===69){
+  }else if(legacyIndex===69){
     state.records.pancakeMob[p.id]=ultra?randi(78,91):randi(32,75);
-  }else if(gameIndex===70){
+  }else if(legacyIndex===70){
     state.records.paperPlane[p.id]=ultra?randi(80,94):randi(36,79);
-  }else if(gameIndex===71){
+  }else if(legacyIndex===71){
     state.records.tankMob[p.id]=ultra?randi(28,36):randi(12,28);
-  }else if(gameIndex===72){
+  }else if(legacyIndex===72){
     state.records.curlingMob[p.id]=ultra?randi(80,95):randi(30,79);
-  }else if(gameIndex===73){
+  }else if(legacyIndex===73){
     state.records.bubbleMob[p.id]=ultra?randi(82,94):randi(34,77);
-  }else if(gameIndex===74){
+  }else if(legacyIndex===74){
     state.records.changeMob[p.id]=ultra?randi(82,97):randi(36,80);
-  }else if(gameIndex===75){
+  }else if(legacyIndex===75){
     state.records.baggageMob[p.id]=ultra?randi(88,97):randi(30,80);
-  }else if(gameIndex===76){
+  }else if(legacyIndex===76){
     state.records.bridgeMob[p.id]=ultra?randi(80,95):randi(36,79);
-  }else if(gameIndex===77){
+  }else if(legacyIndex===77){
     state.records.treasureMob[p.id]=[20,40,60,80,100][randi(0,4)];
-  }else if(gameIndex===78){
+  }else if(legacyIndex===78){
     state.records.rouletteMob[p.id]=ultra?[75,90,90,100][randi(0,3)]:[0,10,20,20,20,30,30,30,40,40,50,50,60,75,90][randi(0,14)];
-  }else if(gameIndex===79){
+  }else if(legacyIndex===79){
     const values=shuffle([0,0,10,10,30,30,50,75,100]);
     state.records.excavationMob[p.id]=values[0]+values[1]+values[2];
-  }else if(gameIndex===80){
+  }else if(legacyIndex===80){
     let tries=1;
     while(tries<10&&Math.random()>.5)tries++;
     state.records.oldMaidDuel[p.id]=tries;
-  }else if(gameIndex===81){
+  }else if(legacyIndex===81){
     state.records.robotMarch[p.id]=Math.round(ultra?rand(720,980):rand(280,760));
-  }else if(gameIndex===82){
+  }else if(legacyIndex===82){
     state.records.monsterMaster[p.id]=ultra?randi(8,10):randi(3,8);
-  }else if(gameIndex===83){
+  }else if(legacyIndex===83){
     state.records.scoutMan[p.id]=ultra?randi(1,10):randi(5,34);
-  }else if(gameIndex===84){
+  }else if(legacyIndex===84){
     const survivalScores=[0,11,22,33,44,56,67,78,89,100];
     state.records.atafutaSurvival[p.id]=ultra
       ? survivalScores[randi(7,9)]
       : survivalScores[randi(2,8)];
-  }else if(gameIndex===85){
+  }else if(legacyIndex===85){
     state.records.waveMaster[p.id]=ultra?randi(84,98):randi(38,83);
-  }else if(gameIndex===86){
+  }else if(legacyIndex===86){
     state.records.battleRoyaleMob[p.id]=ultra
       ? randi(8500,13500)
       : randi(12000,28000);
-  }else if(gameIndex===87){
+  }else if(legacyIndex===87){
     state.records.littleMobShot[p.id]=ultra
       ? randi(155,198)
       : randi(72,158);
-  }else if(gameIndex===88){
+  }else if(legacyIndex===88){
     state.records.monsterBoxMob[p.id]=ultra?randi(86,100):randi(34,86);
-  }else if(gameIndex===89){
+  }else if(legacyIndex===89){
     state.records.alienBattleMob[p.id]=ultra
       ? randi(12500,19000)
       : randi(17500,36000);
-  }else if(gameIndex===90){
+  }else if(legacyIndex===90){
     state.records.mobMusou[p.id]=ultra
       ? randi(128,165)
       : randi(62,132);
-  }else if(gameIndex===91){
+  }else if(legacyIndex===91){
     state.records.iaidoMaster[p.id]=ultra
       ? randi(82,100)
       : randi(24,86);
-  }else{
+  }else if(legacyIndex===92){
     state.records.killLeaderMob[p.id]=ultra
       ? randi(28000,39000)
       : randi(39000,69000);
+  }else{
+    state.records.mobSpeedRacer[p.id]=ultra?randi(7800,9400):randi(9000,12800);
   }
 
   softenCpuResultV121(
@@ -26053,94 +26123,96 @@ function simulateOneCpu(gameIndex,p){
     p,
     ultra
   );
+  normalizeCpuRecordV152(gameIndex,p);
 
   return ultra;
 }
 
 // RANKING ------------------------------------------------
 function performancePoints(gameIndex,v){
-  if(gameIndex===0){
+  const legacyIndex=legacyGameIndex(gameIndex);
+  if(legacyIndex===0){
     if(v<=150)return 100;
     if(v<=300)return Math.round(100-(v-150)/150*50);
     if(v<=500)return Math.round(50-(v-300)/200*50);
     return 0;
   }
-  if(gameIndex===1)return clamp(Math.round(v*10),0,100);
-  if(gameIndex===2)return clamp(Math.round((6000-v)/3500*100),0,100);
-  if(gameIndex===3)return clamp(Math.round((v/10)/2000*100),0,100);
-  if(gameIndex===4)return clamp(Math.round(v/30*100),0,100);
-  if(gameIndex===5)return clamp(Math.round((40-v)/39*100),0,100);
-  if(gameIndex===6)return clamp(Math.round(v/20*100),0,100);
-  if(gameIndex===7)return clamp(Math.round(v/25*100),0,100);
-  if(gameIndex===8)return clamp(Math.round(v/10*100),0,100);
-  if(gameIndex===9)return clamp(Math.round(v),0,100);
-  if(gameIndex===10)return clamp(Math.round(((v/10)-200)/800*100),0,100);
-  if(gameIndex===11)return clamp(Math.round((v-1000)/2000*100),0,100);
-  if(gameIndex===12)return clamp(Math.round(v/30*100),0,100);
-  if(gameIndex===13)return clamp(Math.round(v*10),0,100);
-  if(gameIndex===14){
+  if(legacyIndex===1)return clamp(Math.round(v*10),0,100);
+  if(legacyIndex===2)return clamp(Math.round((6000-v)/3500*100),0,100);
+  if(legacyIndex===3)return clamp(Math.round((v/10)/2000*100),0,100);
+  if(legacyIndex===4)return clamp(Math.round(v/30*100),0,100);
+  if(legacyIndex===5)return clamp(Math.round((40-v)/39*100),0,100);
+  if(legacyIndex===6)return clamp(Math.round(v/20*100),0,100);
+  if(legacyIndex===7)return clamp(Math.round(v/25*100),0,100);
+  if(legacyIndex===8)return clamp(Math.round(v/10*100),0,100);
+  if(legacyIndex===9)return clamp(Math.round(v),0,100);
+  if(legacyIndex===10)return clamp(Math.round(((v/10)-200)/800*100),0,100);
+  if(legacyIndex===11)return clamp(Math.round(1+(v-500)/6000*99),1,100);
+  if(legacyIndex===12)return clamp(Math.round(v/30*100),0,100);
+  if(legacyIndex===13)return clamp(Math.round(v*10),0,100);
+  if(legacyIndex===14){
     if(v<=180)return 100;
     if(v<=210)return Math.round(100-(v-180)/30*10);
     if(v<=300)return Math.round(90-(v-210)/90*35);
     if(v<=500)return Math.round(55-(v-300)/200*55);
     return 0;
   }
-  if(gameIndex===15)return clamp(Math.round(v),0,100);
-  if(gameIndex===16)return clamp(Math.round((v/10)/700*100),0,100);
-  if(gameIndex===17)return clamp(Math.round(v-900),0,100);
-  if(gameIndex===18)return clamp(Math.round(v/12*100),0,100);
-  if(gameIndex===19)return clamp(Math.round(v),0,100);
-  if(gameIndex===20)return clamp(Math.round(v),0,100);
-  if(gameIndex===21)return clamp(Math.round(100-v/150*100),0,100);
-  if(gameIndex===22)return clamp(Math.round(v),0,100);
-  if(gameIndex===23)return clamp(Math.round(100-v),0,100);
-  if(gameIndex===24)return v>=9000?0:clamp(Math.round(100-v/10),0,100);
-  if(gameIndex===25)return [100,75,50,25,0][Math.min(4,Math.round(v))];
-  if(gameIndex===26)return v>=900?0:clamp(Math.round(100-v/10*100),0,100);
-  if(gameIndex===27){
+  if(legacyIndex===15)return clamp(Math.round(v),0,100);
+  if(legacyIndex===16)return clamp(Math.round((v/10)/700*100),0,100);
+  if(legacyIndex===17)return clamp(Math.round(v-900),0,100);
+  if(legacyIndex===18)return clamp(Math.round(v/12*100),0,100);
+  if(legacyIndex===19)return clamp(Math.round(v),0,100);
+  if(legacyIndex===20)return clamp(Math.round(v),0,100);
+  if(legacyIndex===21)return clamp(Math.round(100-v/150*100),0,100);
+  if(legacyIndex===22)return clamp(Math.round(v),0,100);
+  if(legacyIndex===23)return clamp(Math.round(100-v),0,100);
+  if(legacyIndex===24)return v>=9000?0:clamp(Math.round(100-v/10),0,100);
+  if(legacyIndex===25)return [100,75,50,25,0][Math.min(4,Math.round(v))];
+  if(legacyIndex===26)return v>=900?0:clamp(Math.round(100-v/10*100),0,100);
+  if(legacyIndex===27){
     if(v>=900)return 0;
     if(v<=150)return 100;
     if(v<=300)return Math.round(100-(v-150)/150*50);
     if(v<=500)return Math.round(50-(v-300)/200*50);
     return 0;
   }
-  if(gameIndex===28)return clamp(Math.round(v/100),0,100);
-  if(gameIndex===29)return clamp(Math.round(v),0,100);
-  if(gameIndex===30)return clamp(Math.round(v/500*100),0,100);
-  if(gameIndex===31)return clamp(Math.round(v),0,100);
-  if(gameIndex===32)return clamp(Math.round(v/20*100),0,100);
-  if(gameIndex===33)return clamp(Math.round(v),0,100);
-  if(gameIndex===34)return clamp(Math.round(v),0,100);
-  if(gameIndex===35)return clamp(Math.round(v/2000*100),0,100);
-  if(gameIndex===36)return clamp(Math.round(v/2000*100),0,100);
-  if(gameIndex===37){
+  if(legacyIndex===28)return clamp(Math.round(v/100),0,100);
+  if(legacyIndex===29)return clamp(Math.round(v),0,100);
+  if(legacyIndex===30)return clamp(Math.round(v/500*100),0,100);
+  if(legacyIndex===31)return clamp(Math.round(v),0,100);
+  if(legacyIndex===32)return clamp(Math.round(v/20*100),0,100);
+  if(legacyIndex===33)return clamp(Math.round(v),0,100);
+  if(legacyIndex===34)return clamp(Math.round(v),0,100);
+  if(legacyIndex===35)return clamp(Math.round(v/2000*100),0,100);
+  if(legacyIndex===36)return clamp(Math.round(v/2000*100),0,100);
+  if(legacyIndex===37){
     if(v>=90000)return 0;
     if(v<=2800)return 100;
     if(v>=6000)return 0;
     return clamp(Math.round((6000-v)/3200*100),0,100);
   }
-  if(gameIndex===38)return clamp(Math.round(v/30*100),0,100);
-  if(gameIndex===39)return clamp(Math.round(v/20*100),0,100);
-  if(gameIndex===40){
+  if(legacyIndex===38)return clamp(Math.round(v/30*100),0,100);
+  if(legacyIndex===39)return clamp(Math.round(v/20*100),0,100);
+  if(legacyIndex===40){
     if(v<=10000)return 100;
     if(v>=25000)return 0;
     return clamp(Math.round((25000-v)/15000*100),0,100);
   }
-  if(gameIndex===41)return clamp(Math.round(v/500*100),0,100);
-  if(gameIndex===42)return clamp(Math.round(v/21*100),0,100);
-  if(gameIndex===43)return clamp(Math.round(v/300*100),0,100);
-  if(gameIndex===44)return clamp(Math.round(v/20*100),0,100);
-  if(gameIndex===45)return clamp(Math.round(v),0,100);
-  if(gameIndex===46)return clamp(Math.round(v),0,100);
-  if(gameIndex===47){
+  if(legacyIndex===41)return clamp(Math.round(v/500*100),0,100);
+  if(legacyIndex===42)return clamp(Math.round(v/21*100),0,100);
+  if(legacyIndex===43)return clamp(Math.round(v/300*100),0,100);
+  if(legacyIndex===44)return clamp(Math.round(v/20*100),0,100);
+  if(legacyIndex===45)return clamp(Math.round(v),0,100);
+  if(legacyIndex===46)return clamp(Math.round(v),0,100);
+  if(legacyIndex===47){
     if(v<=4500)return 100;
     if(v>=12500)return 0;
     return clamp(Math.round((12500-v)/8000*100),0,100);
   }
-  if(gameIndex===48)return clamp(Math.round(v),0,100);
-  if(gameIndex===49)return clamp(Math.round(v),0,100);
-  if(gameIndex===50)return clamp(Math.round(v),0,100);
-  if(gameIndex===51){
+  if(legacyIndex===48)return clamp(Math.round(v),0,100);
+  if(legacyIndex===49)return clamp(Math.round(v),0,100);
+  if(legacyIndex===50)return clamp(Math.round(v),0,100);
+  if(legacyIndex===51){
     if(v<=12000)return 100;
     if(v>=32000)return 0;
     return clamp(
@@ -26148,22 +26220,22 @@ function performancePoints(gameIndex,v){
       0,100
     );
   }
-  if(gameIndex===52)return clamp(Math.round(v),0,100);
-  if(gameIndex===53){
+  if(legacyIndex===52)return clamp(Math.round(v),0,100);
+  if(legacyIndex===53){
     if(v<=1400)return 100;
     if(v>=6500)return 0;
     return clamp(Math.round((6500-v)/5100*100),0,100);
   }
-  if(gameIndex===54)return clamp(Math.round(v/10*100),0,100);
-  if(gameIndex===55)return clamp(Math.round(v),0,100);
-  if(gameIndex===56)return clamp(Math.round(v),0,100);
-  if(gameIndex===57)return clamp(Math.round(v/3000*100),0,100);
-  if(gameIndex===58)return clamp(Math.round(v/12*100),0,100);
-  if(gameIndex===59)return clamp(Math.round(v),0,100);
-  if(gameIndex===60)return clamp(Math.round(v/10*100),0,100);
-  if(gameIndex===61)return clamp(Math.round(v),0,100);
-  if(gameIndex===62)return clamp(Math.round(v/20*100),0,100);
-  if(gameIndex===63){
+  if(legacyIndex===54)return clamp(Math.round(v/10*100),0,100);
+  if(legacyIndex===55)return clamp(Math.round(v),0,100);
+  if(legacyIndex===56)return clamp(Math.round(v),0,100);
+  if(legacyIndex===57)return clamp(Math.round(v/3000*100),0,100);
+  if(legacyIndex===58)return clamp(Math.round(v/12*100),0,100);
+  if(legacyIndex===59)return clamp(Math.round(v),0,100);
+  if(legacyIndex===60)return clamp(Math.round(v/10*100),0,100);
+  if(legacyIndex===61)return clamp(Math.round(v),0,100);
+  if(legacyIndex===62)return clamp(Math.round(v/20*100),0,100);
+  if(legacyIndex===63){
     if(v<=10000)return 100;
     if(v>=30000)return 0;
     return clamp(
@@ -26175,48 +26247,54 @@ function performancePoints(gameIndex,v){
       0,100
     );
   }
-  if(gameIndex===64){
+  if(legacyIndex===64){
     if(v<=30)return 0;
     if(v>=90)return 100;
     return clamp(Math.round((v-30)/60*100),0,100);
   }
-  if(gameIndex===71)return clamp(Math.round(v/35*100),0,100);
-  if(gameIndex===79)return clamp(Math.round(v/225*100),0,100);
-  if(gameIndex===80)return clamp(110-Math.round(v)*10,0,100);
-  if(gameIndex===81)return clamp(Math.round(v/1000*100),0,100);
-  if(gameIndex===82)return clamp(Math.round(v/10*100),0,100);
-  if(gameIndex===83)return clamp(Math.round((47-v)/46*100),0,100);
-  if(gameIndex===84)return clamp(Math.round(v),0,100);
-  if(gameIndex===85)return clamp(Math.round(v),0,100);
-  if(gameIndex===86){
+  if(legacyIndex===71)return clamp(Math.round(v/35*100),0,100);
+  if(legacyIndex===79)return clamp(Math.round(v/225*100),0,100);
+  if(legacyIndex===80)return clamp(110-Math.round(v)*10,0,100);
+  if(legacyIndex===81)return clamp(Math.round(v/1000*100),0,100);
+  if(legacyIndex===82)return clamp(Math.round(v/10*100),0,100);
+  if(legacyIndex===83)return clamp(Math.round((47-v)/46*100),0,100);
+  if(legacyIndex===84)return clamp(Math.round(v),0,100);
+  if(legacyIndex===85)return clamp(Math.round(v),0,100);
+  if(legacyIndex===86){
     if(v<=8500)return 100;
     if(v>=40000)return 0;
     return clamp(Math.round((40000-v)/31500*100),0,100);
   }
-  if(gameIndex===87)return clamp(Math.round(v/200*100),0,100);
-  if(gameIndex===88)return clamp(Math.round(v),0,100);
-  if(gameIndex===89){
+  if(legacyIndex===87)return clamp(Math.round(v/200*100),0,100);
+  if(legacyIndex===88)return clamp(Math.round(v),0,100);
+  if(legacyIndex===89){
     if(v<=12000)return 100;
     if(v>=45000)return 0;
     return clamp(Math.round((45000-v)/33000*100),0,100);
   }
-  if(gameIndex===90)return clamp(Math.round(v/150*100),0,100);
-  if(gameIndex===92){
+  if(legacyIndex===90)return clamp(Math.round(v/150*100),0,100);
+  if(legacyIndex===92){
     if(v>=99999)return 0;
     if(v<=30000)return 100;
     if(v>=75000)return 0;
     return clamp(Math.round((75000-v)/45000*100),0,100);
   }
+  if(legacyIndex===93){
+    if(v<=8000)return 100;
+    if(v>=15000)return 1;
+    return clamp(Math.round(100-(v-8000)/7000*99),1,100);
+  }
   return clamp(Math.round(v),0,100);
 }
 
 function rankRecords(gameIndex){
-  const key=GAMES[gameIndex].key,records=state.records[key],ascRaw=(gameIndex===0||gameIndex===2||gameIndex===5||gameIndex===14||gameIndex===21||gameIndex===23||gameIndex===24||gameIndex===25||gameIndex===26||gameIndex===27||gameIndex===37||gameIndex===40||gameIndex===47||gameIndex===51||gameIndex===53||gameIndex===63||gameIndex===80||gameIndex===83||gameIndex===86||gameIndex===89||gameIndex===92);
+  const legacyIndex=legacyGameIndex(gameIndex);
+  const key=GAMES[gameIndex].key,records=state.records[key],ascRaw=(legacyIndex===0||legacyIndex===2||legacyIndex===5||legacyIndex===14||legacyIndex===21||legacyIndex===23||legacyIndex===24||legacyIndex===25||legacyIndex===26||legacyIndex===27||legacyIndex===37||legacyIndex===40||legacyIndex===47||legacyIndex===51||legacyIndex===53||legacyIndex===63||legacyIndex===80||legacyIndex===83||legacyIndex===86||legacyIndex===89||legacyIndex===92||legacyIndex===93);
   const arr=participants().map(p=>({p,value:records[p.id]}));
   if(mode().performance){
     arr.forEach(e=>e.points=performancePoints(gameIndex,e.value));
     arr.sort((a,b)=>b.points-a.points || (ascRaw?a.value-b.value:b.value-a.value));
-    let last=null,lastRank=0;arr.forEach((e,i)=>{e.rank=i>0&&e.points===last?lastRank:i+1;last=e.points;lastRank=e.rank});
+    let lastPoints=null,lastValue=null,lastRank=0;arr.forEach((e,i)=>{const same=i>0&&e.points===lastPoints&&e.value===lastValue;e.rank=same?lastRank:i+1;lastPoints=e.points;lastValue=e.value;lastRank=e.rank});
   }else{
     arr.sort((a,b)=>ascRaw?a.value-b.value:b.value-a.value);let last=null,lastRank=0;
     arr.forEach((e,i)=>{const same=i>0&&e.value===last;e.rank=same?lastRank:i+1;e.points=mode().points[e.rank-1]??0;last=e.value;lastRank=e.rank});
@@ -26224,84 +26302,86 @@ function rankRecords(gameIndex){
   return arr;
 }
 function formatRecord(gameIndex,v){
-  if(gameIndex===0)return `${(v/1000).toFixed(4)}秒`;
-  if(gameIndex===1)return `${v}/10`;
-  if(gameIndex===2)return `${(v/1000).toFixed(2)}秒`;
-  if(gameIndex===3)return `${(v/10).toFixed(1)}m`;
-  if(gameIndex===4)return `${v}体`;
-  if(gameIndex===5)return `世界${v}位`;
-  if(gameIndex===6)return `${v}回`;
-  if(gameIndex===7)return `${v}箱`;
-  if(gameIndex===8)return `${v} VALUE`;
-  if(gameIndex===9)return `${v}%`;
-  if(gameIndex===10)return `${(v/10).toFixed(1)}m`;
-  if(gameIndex===11)return `${v} COIN`;
-  if(gameIndex===12)return `${v}回`;
-  if(gameIndex===13)return `${v}/10`;
-  if(gameIndex===14)return `${(v/1000).toFixed(3)}秒`;
-  if(gameIndex===15)return `${v}pt`;
-  if(gameIndex===16)return `${(v/10).toFixed(1)}m`;
-  if(gameIndex===17)return `¥${v}使用`;
-  if(gameIndex===18)return `${v}体`;
-  if(gameIndex===19)return `${v}pt`;
-  if(gameIndex===20)return `${Number(v).toFixed(1)}%`;
-  if(gameIndex===21)return `${(v/1000).toFixed(3)}秒`;
-  if(gameIndex===22)return `${Number(v).toFixed(1)}pt`;
-  if(gameIndex===23)return `${Number(v).toFixed(1)}%`;
-  if(gameIndex===24)return v>=9000?`CRASH`:`誤差${(v/1000).toFixed(3)}秒`;
-  if(gameIndex===25)return v===0?`PERFECT`:`誤差${v}人`;
-  if(gameIndex===26)return v>=900?`CRASH`:`${Number(v).toFixed(1)}m`;
-  if(gameIndex===27)return v>=900?`FOUL`:`${(v/1000).toFixed(4)}秒`;
-  if(gameIndex===28)return `${Math.round(v)}pt`;
-  if(gameIndex===29)return `${Number(v).toFixed(1)}%`;
-  if(gameIndex===30)return `${Math.round(v)}m`;
-  if(gameIndex===31)return `${Math.round(v)}pt`;
-  if(gameIndex===32)return `${Math.round(v)}体`;
-  if(gameIndex===33)return `${Number(v).toFixed(1)}km`;
-  if(gameIndex===34)return `${Number(v).toFixed(1)}%`;
-  if(gameIndex===35)return `${Number(v).toFixed(1)}m`;
-  if(gameIndex===36)return `${Number(v).toFixed(1)}m`;
-  if(gameIndex===37)return v>=90000?`CRASH`:`${(v/1000).toFixed(2)}秒`;
-  if(gameIndex===38)return `${Math.round(v)}棟`;
-  if(gameIndex===39)return `${Math.round(v)}個`;
-  if(gameIndex===40)return `${(v/1000).toFixed(2)}秒`;
-  if(gameIndex===41)return `${Math.round(v)}体`;
-  if(gameIndex===42)return `${Math.round(v)}/21`;
-  if(gameIndex===43)return `${Math.round(v)}/300pt`;
-  if(gameIndex===44)return `${Number(v).toFixed(2)}秒`;
-  if(gameIndex===45)return `${Math.round(v)}pt`;
-  if(gameIndex===46)return `${Math.round(v)}pt`;
-  if(gameIndex===47)return `${(v/1000).toFixed(2)}秒`;
-  if(gameIndex===48)return `${Math.round(v)}pt`;
-  if(gameIndex===49)return `${Math.round(v)}pt`;
-  if(gameIndex===50)return `${Number(v).toFixed(1)}km`;
-  if(gameIndex===51)return `${(v/1000).toFixed(2)}秒`;
-  if(gameIndex===52)return `${Math.round(v)}pt`;
-  if(gameIndex===53)return `${(v/1000).toFixed(2)}秒`;
-  if(gameIndex===54)return `${Math.round(v)}体`;
-  if(gameIndex===55)return `${Math.round(v)}pt`;
-  if(gameIndex===56)return `${Math.round(v)}pt`;
-  if(gameIndex===57)return `${Number(v).toFixed(1)}m`;
-  if(gameIndex===58)return `${Number(v).toFixed(2)}秒`;
-  if(gameIndex===59)return `${Math.round(v)}pt`;
-  if(gameIndex===60)return `${Number(v).toFixed(2)}秒`;
-  if(gameIndex===61)return `${Math.round(v)}pt`;
-  if(gameIndex===62)return `${Math.round(v)} COMBO`;
-  if(gameIndex===63)return `${(v/1000).toFixed(2)}秒`;
-  if(gameIndex===70)return `${Math.round(v)}m`;
-  if(gameIndex===71)return `${Math.round(v)}体`;
-  if(gameIndex===80)return `${Math.round(v)}回目`;
-  if(gameIndex===81)return `${Math.round(v)}m`;
-  if(gameIndex===82)return `${Math.round(v)}体`;
-  if(gameIndex===83)return `47校中 ${Math.round(v)}位`;
-  if(gameIndex===84)return `${Math.round(v)}pt`;
-  if(gameIndex===85)return `${Math.round(v)}pt`;
-  if(gameIndex===86)return `${(v/1000).toFixed(2)}秒`;
-  if(gameIndex===87)return `${Math.round(v)} KO`;
-  if(gameIndex===88)return `${Math.round(v)}pt`;
-  if(gameIndex===89)return `${(v/1000).toFixed(2)}秒`;
-  if(gameIndex===90)return `${Math.round(v)} KO`;
-  if(gameIndex===92)return v>=99999?`FAILED`:`${(v/1000).toFixed(2)}秒`;
+  const legacyIndex=legacyGameIndex(gameIndex);
+  if(legacyIndex===0)return `${(v/1000).toFixed(4)}秒`;
+  if(legacyIndex===1)return `${v}/10`;
+  if(legacyIndex===2)return `${(v/1000).toFixed(2)}秒`;
+  if(legacyIndex===3)return `${(v/10).toFixed(1)}m`;
+  if(legacyIndex===4)return `${v}体`;
+  if(legacyIndex===5)return `世界${v}位`;
+  if(legacyIndex===6)return `${v}回`;
+  if(legacyIndex===7)return `${v}箱`;
+  if(legacyIndex===8)return `${v} VALUE`;
+  if(legacyIndex===9)return `${v}%`;
+  if(legacyIndex===10)return `${(v/10).toFixed(1)}m`;
+  if(legacyIndex===11)return `${v} COIN`;
+  if(legacyIndex===12)return `${v}回`;
+  if(legacyIndex===13)return `${v}/10`;
+  if(legacyIndex===14)return `${(v/1000).toFixed(3)}秒`;
+  if(legacyIndex===15)return `${v}pt`;
+  if(legacyIndex===16)return `${(v/10).toFixed(1)}m`;
+  if(legacyIndex===17)return `¥${v}使用`;
+  if(legacyIndex===18)return `${v}体`;
+  if(legacyIndex===19)return `${v}pt`;
+  if(legacyIndex===20)return `${Number(v).toFixed(1)}%`;
+  if(legacyIndex===21)return `${(v/1000).toFixed(3)}秒`;
+  if(legacyIndex===22)return `${Number(v).toFixed(1)}pt`;
+  if(legacyIndex===23)return `${Number(v).toFixed(1)}%`;
+  if(legacyIndex===24)return v>=9000?`CRASH`:`誤差${(v/1000).toFixed(3)}秒`;
+  if(legacyIndex===25)return v===0?`PERFECT`:`誤差${v}人`;
+  if(legacyIndex===26)return v>=900?`CRASH`:`${Number(v).toFixed(1)}m`;
+  if(legacyIndex===27)return v>=900?`FOUL`:`${(v/1000).toFixed(4)}秒`;
+  if(legacyIndex===28)return `${Math.round(v)}pt`;
+  if(legacyIndex===29)return `${Number(v).toFixed(1)}%`;
+  if(legacyIndex===30)return `${Math.round(v)}m`;
+  if(legacyIndex===31)return `${Math.round(v)}pt`;
+  if(legacyIndex===32)return `${Math.round(v)}体`;
+  if(legacyIndex===33)return `${Number(v).toFixed(1)}km`;
+  if(legacyIndex===34)return `${Number(v).toFixed(1)}%`;
+  if(legacyIndex===35)return `${Number(v).toFixed(1)}m`;
+  if(legacyIndex===36)return `${Number(v).toFixed(1)}m`;
+  if(legacyIndex===37)return v>=90000?`CRASH`:`${(v/1000).toFixed(2)}秒`;
+  if(legacyIndex===38)return `${Math.round(v)}棟`;
+  if(legacyIndex===39)return `${Math.round(v)}個`;
+  if(legacyIndex===40)return `${(v/1000).toFixed(2)}秒`;
+  if(legacyIndex===41)return `${Math.round(v)}体`;
+  if(legacyIndex===42)return `${Math.round(v)}/21`;
+  if(legacyIndex===43)return `${Math.round(v)}/300pt`;
+  if(legacyIndex===44)return `${Number(v).toFixed(2)}秒`;
+  if(legacyIndex===45)return `${Math.round(v)}pt`;
+  if(legacyIndex===46)return `${Math.round(v)}pt`;
+  if(legacyIndex===47)return `${(v/1000).toFixed(2)}秒`;
+  if(legacyIndex===48)return `${Math.round(v)}pt`;
+  if(legacyIndex===49)return `${Math.round(v)}pt`;
+  if(legacyIndex===50)return `${Number(v).toFixed(1)}km`;
+  if(legacyIndex===51)return `${(v/1000).toFixed(2)}秒`;
+  if(legacyIndex===52)return `${Math.round(v)}pt`;
+  if(legacyIndex===53)return `${(v/1000).toFixed(2)}秒`;
+  if(legacyIndex===54)return `${Math.round(v)}体`;
+  if(legacyIndex===55)return `${Math.round(v)}pt`;
+  if(legacyIndex===56)return `${Math.round(v)}pt`;
+  if(legacyIndex===57)return `${Number(v).toFixed(1)}m`;
+  if(legacyIndex===58)return `${Number(v).toFixed(2)}秒`;
+  if(legacyIndex===59)return `${Math.round(v)}pt`;
+  if(legacyIndex===60)return `${Number(v).toFixed(2)}秒`;
+  if(legacyIndex===61)return `${Math.round(v)}pt`;
+  if(legacyIndex===62)return `${Math.round(v)} COMBO`;
+  if(legacyIndex===63)return `${(v/1000).toFixed(2)}秒`;
+  if(legacyIndex===70)return `${Math.round(v)}m`;
+  if(legacyIndex===71)return `${Math.round(v)}体`;
+  if(legacyIndex===80)return `${Math.round(v)}回目`;
+  if(legacyIndex===81)return `${Math.round(v)}m`;
+  if(legacyIndex===82)return `${Math.round(v)}体`;
+  if(legacyIndex===83)return `47校中 ${Math.round(v)}位`;
+  if(legacyIndex===84)return `${Math.round(v)}pt`;
+  if(legacyIndex===85)return `${Math.round(v)}pt`;
+  if(legacyIndex===86)return `${(v/1000).toFixed(2)}秒`;
+  if(legacyIndex===87)return `${Math.round(v)} KO`;
+  if(legacyIndex===88)return `${Math.round(v)}pt`;
+  if(legacyIndex===89)return `${(v/1000).toFixed(2)}秒`;
+  if(legacyIndex===90)return `${Math.round(v)} KO`;
+  if(legacyIndex===92)return v>=99999?`FAILED`:`${(v/1000).toFixed(2)}秒`;
+  if(legacyIndex===93)return `${(v/1000).toFixed(2)}秒`;
   return `${Math.round(v)}pt`;
 }
 
@@ -27309,6 +27389,196 @@ async function startKillLeaderMob(p,humanIndex,runId){
   }
 
   raf=requestAnimationFrame(frame);
+}
+
+
+// =========================================================
+// V10.52 GAME 90 — モブくんは爆速レーサー (TAG ONLY)
+// =========================================================
+async function startMobSpeedRacer(p,humanIndex,runId){
+  gameFit();
+  const gameIndex=tagRacerIndex();
+  const DRAW_MS=5000;
+  let finished=false;
+  let raceRaf=0;
+
+  const teamData=(()=>{
+    if(state.freePlay){
+      return [
+        {key:'A',name:'TEAM A',ids:['p1','c2']},
+        {key:'B',name:'TEAM B',ids:['c3','c4']}
+      ];
+    }
+    const m=mode();
+    const keys=Object.keys(m.teams||{}).slice(0,2);
+    return keys.map(k=>({key:k,name:m.teamNames[k]||`TEAM ${k}`,ids:[...(m.teams[k]||[])]}));
+  })();
+
+  if(teamData.length!==2||teamData.some(t=>t.ids.length!==2)){
+    state.records.mobSpeedRacer[p.id]=15000;
+    recordScreen(gameIndex,p,humanIndex,'TAG ONLY','2対2タッグでプレイしてください');
+    return;
+  }
+
+  const teams=teamData.map((t,ti)=>({
+    ...t,
+    members:t.ids.map(pById),
+    tire:null,
+    body:null,
+    tireQ:.55,
+    bodyQ:.55,
+    normal:240,
+    boost:450,
+    stretch:1.32,
+    distance:0,
+    finishMs:null,
+    lane:ti
+  }));
+
+  screen.innerHTML=`<div class="speed-racer-shell-v152 gameplay-fit">
+    <div class="game-head"><div><span class="kicker">TAG DRAW RACE</span><h2>モブくんは爆速レーサー</h2><p class="lead">タイヤ + 機体を描いて1km勝負</p></div><div class="game-badge">2 VS 2</div></div>
+    <div id="racerDraw152" class="racer-draw-v152">
+      <div id="racerDrawTitle152" class="racer-draw-title-v152">DRAW</div>
+      <div id="racerDrawer152" class="racer-drawer-v152"></div>
+      <svg id="racerSvg152" class="racer-svg-v152" viewBox="0 0 320 250"><rect x="3" y="3" width="314" height="244" rx="18"></rect><g id="racerPath152"></g></svg>
+      <div id="racerDrawTime152" class="racer-draw-time-v152">5.0</div>
+    </div>
+    <div id="racerBuild152" class="racer-build-v152" hidden></div>
+    <div id="racerRace152" class="racer-race-v152" hidden>
+      <div class="racer-sky-v152"></div><div class="racer-road-v152"></div>
+      <div class="racer-meter-v152"><i></i><b>500m</b><i></i><b>GOAL 1km</b></div>
+      <div id="racerLaneA152" class="racer-lane-v152 lane-a"></div>
+      <div id="racerLaneB152" class="racer-lane-v152 lane-b"></div>
+      <div id="racerRaceMsg152" class="racer-race-msg-v152">READY</div>
+    </div>
+  </div>`;
+
+  const drawPanel=document.getElementById('racerDraw152');
+  const title=document.getElementById('racerDrawTitle152');
+  const drawer=document.getElementById('racerDrawer152');
+  const svg=document.getElementById('racerSvg152');
+  const pathLayer=document.getElementById('racerPath152');
+  const timeEl=document.getElementById('racerDrawTime152');
+  const build=document.getElementById('racerBuild152');
+  const race=document.getElementById('racerRace152');
+  const laneEls=[document.getElementById('racerLaneA152'),document.getElementById('racerLaneB152')];
+  const raceMsg=document.getElementById('racerRaceMsg152');
+
+  let stroke=null,pointer=null,points=[];
+  function local(e){const r=svg.getBoundingClientRect();return{x:clamp((e.clientX-r.left)/r.width*320,8,312),y:clamp((e.clientY-r.top)/r.height*250,8,242)}}
+  function renderPoints(){pathLayer.innerHTML='';if(points.length<2)return;const pth=document.createElementNS('http://www.w3.org/2000/svg','polyline');pth.setAttribute('points',points.map(q=>`${q.x.toFixed(1)},${q.y.toFixed(1)}`).join(' '));pth.setAttribute('class','racer-user-line-v152');pathLayer.appendChild(pth)}
+  svg.addEventListener('pointerdown',e=>{e.preventDefault();if(pointer!==null)return;pointer=e.pointerId;points=[local(e)];try{svg.setPointerCapture(e.pointerId)}catch(_){}} ,{passive:false});
+  svg.addEventListener('pointermove',e=>{if(pointer!==e.pointerId)return;e.preventDefault();const q=local(e),last=points[points.length-1];if(!last||Math.hypot(q.x-last.x,q.y-last.y)>2.5){points.push(q);renderPoints();}}, {passive:false});
+  const endDraw=e=>{if(pointer===e.pointerId){e.preventDefault();pointer=null;}};
+  svg.addEventListener('pointerup',endDraw,{passive:false});svg.addEventListener('pointercancel',endDraw,{passive:false});
+
+  function quality(kind,pts){
+    if(pts.length<4)return .25;
+    let minX=999,minY=999,maxX=-999,maxY=-999,len=0;
+    for(let i=0;i<pts.length;i++){const q=pts[i];minX=Math.min(minX,q.x);minY=Math.min(minY,q.y);maxX=Math.max(maxX,q.x);maxY=Math.max(maxY,q.y);if(i)len+=Math.hypot(q.x-pts[i-1].x,q.y-pts[i-1].y)}
+    const w=Math.max(1,maxX-minX),h=Math.max(1,maxY-minY),area=w*h;
+    if(kind==='tire'){
+      const close=Math.hypot(pts[0].x-pts.at(-1).x,pts[0].y-pts.at(-1).y);
+      const round=1-Math.min(1,Math.abs(w-h)/Math.max(w,h));
+      const closure=1-Math.min(1,close/90);
+      const size=clamp(area/20000,0,1);
+      return clamp(.2+round*.32+closure*.32+size*.16,.2,1);
+    }
+    const wide=clamp(w/(h*1.6),0,1);
+    const size=clamp(area/26000,0,1);
+    const detail=clamp(len/650,0,1);
+    return clamp(.22+wide*.3+size*.3+detail*.18,.2,1);
+  }
+  function cpuSketch(kind){
+    const pts=[];
+    if(kind==='tire'){
+      const cx=160,cy=128,r=68+rand(-7,7);for(let i=0;i<=30;i++){const a=i/30*Math.PI*2;pts.push({x:cx+Math.cos(a)*r*(1+rand(-.04,.04)),y:cy+Math.sin(a)*r*(1+rand(-.04,.04))})}
+    }else{
+      pts.push({x:55,y:165},{x:78,y:104},{x:132,y:70},{x:220,y:76},{x:270,y:125},{x:264,y:172},{x:70,y:178},{x:55,y:165});
+    }
+    return pts;
+  }
+  async function drawOne(team,memberIndex,kind){
+    const member=team.members[memberIndex];
+    title.textContent=`${team.name} / ${memberIndex===0?'1番手 タイヤ':'2番手 機体'}`;
+    drawer.innerHTML=`${imgTag(member,'racer-draw-avatar-v152')}<b>${esc(member.name)}</b><span>${member.cpu?'CPU DRAW':'指で描く'}</span>`;
+    pathLayer.innerHTML='';points=[];timeEl.textContent='5.0';
+    if(member.cpu){
+      points=cpuSketch(kind);renderPoints();timeEl.textContent='CPU';await wait(850);
+    }else{
+      const st=performance.now();
+      await new Promise(resolve=>{const loop=()=>{if(!isGameRunValid(runId)){resolve();return}const left=Math.max(0,DRAW_MS-(performance.now()-st));timeEl.textContent=(left/1000).toFixed(1);if(left<=0){resolve();return}requestAnimationFrame(loop)};loop()});
+    }
+    const saved=points.map(q=>({...q}));
+    if(kind==='tire'){team.tire=saved;team.tireQ=quality('tire',saved)}else{team.body=saved;team.bodyQ=quality('body',saved)}
+    beep(650,55,.014);await wait(250);
+  }
+  function pathSvg(pts,cls){if(!pts||pts.length<2)return '';return `<polyline class="${cls}" points="${pts.map(q=>`${q.x.toFixed(1)},${q.y.toFixed(1)}`).join(' ')}"/>`}
+  function carHtml(team){
+    const t=pathSvg(team.tire,'racer-tire-line-v152'),b=pathSvg(team.body,'racer-body-line-v152');
+    return `<div class="racer-car-v152"><svg class="racer-car-body-svg-v152" viewBox="0 0 320 250">${b}</svg><svg class="racer-wheel-v152 w1" viewBox="0 0 320 250">${t}</svg><svg class="racer-wheel-v152 w2" viewBox="0 0 320 250">${t}</svg><div class="racer-riders-v152">${team.members.map(m=>imgTag(m,'racer-rider-v152')).join('')}</div><i class="racer-boost-v152"></i></div>`;
+  }
+  function calcStats(team){
+    const q=(team.tireQ+team.bodyQ)/2;
+    team.normal=clamp(Math.round(200+q*72+rand(0,32)),200,300);
+    team.boost=clamp(Math.round(400+q*72+rand(0,32)),400,500);
+    team.stretch=clamp(1.2+q*.20+rand(0,.10),1.20,1.50);
+  }
+
+  if(!(await countdown('TAG DRAW',runId,{transparent:true})))return;
+  for(const team of teams){await drawOne(team,0,'tire');await drawOne(team,1,'body');calcStats(team)}
+  if(!isGameRunValid(runId))return;
+
+  drawPanel.hidden=true;build.hidden=false;
+  build.innerHTML=teams.map((t,i)=>`<div class="racer-build-card-v152"><b>${t.name}</b>${carHtml(t)}<span>NORMAL ${t.normal}km/h</span><span>BOOST ${t.boost}km/h</span><span>伸び ${(t.stretch*100).toFixed(0)}%</span></div>`).join('');
+  await wait(1500);if(!isGameRunValid(runId))return;
+
+  build.hidden=true;race.hidden=false;
+  laneEls.forEach((el,i)=>{el.innerHTML=`<b>${teams[i].name}</b>${carHtml(teams[i])}<span class="racer-dist-v152">0m</span>`});
+  await wait(450);raceMsg.textContent='GO!';beep(850,85,.02);
+
+  const raceStart=performance.now();let last=performance.now();
+  await new Promise(resolve=>{
+    const frame=now=>{
+      if(!isGameRunValid(runId)||finished){resolve();return}
+      const dt=Math.min(.034,(now-last)/1000);last=now;
+      const elapsed=(now-raceStart)/1000;
+      const raw=[];
+      teams.forEach((t,i)=>{
+        if(t.finishMs!==null){raw[i]=t.distance;return}
+        const boostPhase=t.distance>=360&&t.distance<620;
+        let kmh=boostPhase?t.boost:t.normal;
+        if(t.distance>=650)kmh*=t.stretch;
+        raw[i]=t.distance+(kmh/3.6)*dt;
+      });
+      // 500mまでは必ず接戦。差が開いても最大およそ35mに圧縮。
+      if(Math.min(...raw)<500){const avg=(raw[0]+raw[1])/2;raw[0]=avg+clamp(raw[0]-avg,-17.5,17.5);raw[1]=avg+clamp(raw[1]-avg,-17.5,17.5)}
+      teams.forEach((t,i)=>{
+        if(t.finishMs===null){t.distance=Math.min(1000,raw[i]);if(t.distance>=1000)t.finishMs=now-raceStart}
+        const car=laneEls[i].querySelector('.racer-car-v152');const dist=laneEls[i].querySelector('.racer-dist-v152');
+        const x=8+clamp(t.distance/1000,0,1)*78;car.style.left=`${x}%`;car.classList.toggle('boosting-v152',t.distance>=360&&t.distance<620);dist.textContent=`${Math.round(t.distance)}m`;
+      });
+      if(teams.every(t=>t.finishMs!==null)){resolve();return}
+      raceRaf=requestAnimationFrame(frame);
+    };raceRaf=requestAnimationFrame(frame);
+  });
+  if(!isGameRunValid(runId))return;
+  if(raceRaf)cancelAnimationFrame(raceRaf);
+  finished=true;
+  const winner=teams[0].finishMs<=teams[1].finishMs?teams[0]:teams[1];
+  raceMsg.textContent=`${winner.name} WIN!`;
+  race.classList.add('finish-v152');beep(1080,180,.04);
+
+  teams.forEach(t=>t.members.forEach(m=>{state.records.mobSpeedRacer[m.id]=Math.round(t.finishMs)}));
+  await wait(1800);
+  if(state.freePlay){
+    const human=teams.flatMap(t=>t.members).find(m=>!m.cpu)||p;
+    const myTeam=teams.find(t=>t.members.some(m=>m.id===human.id));
+    recordScreen(gameIndex,human,0,`${(myTeam.finishMs/1000).toFixed(2)}<small>秒</small>`,winner.key===myTeam.key?'WIN!':'LOSE');
+  }else{
+    gameSessionActive=false;activeGameIndex=-1;cancelCountdown();
+    finishGame(gameIndex);
+  }
 }
 
 
