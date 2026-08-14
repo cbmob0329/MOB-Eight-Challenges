@@ -24921,3 +24921,207 @@ img,svg,canvas{
 @keyframes smWin154{
   50%{scale:1.14}
 }
+
+
+/* =========================================================
+   V10.55 — Summon Master drawing-screen visibility fix
+   ========================================================= */
+
+/* IMPORTANT:
+   Author CSS using display:flex was overriding hidden panels on some mobile
+   browsers/builds.  Hidden game phases must never take layout space. */
+[hidden]{
+  display:none!important;
+}
+
+/* Keep the summon game inside one viewport and give the drawing canvas
+   almost all remaining vertical space. */
+.summon-master-shell-v154{
+  position:relative!important;
+  height:100%!important;
+  min-height:0!important;
+  overflow:hidden!important;
+  gap:4px!important;
+}
+
+/* Compact only this game's header. */
+.summon-master-shell-v154 .game-head{
+  flex:0 0 auto!important;
+  min-height:0!important;
+  padding-top:2px!important;
+  padding-bottom:2px!important;
+  margin-bottom:0!important;
+}
+.summon-master-shell-v154 .game-head h2{
+  margin:0!important;
+  font-size:clamp(18px,5.4vw,25px)!important;
+  line-height:1.08!important;
+}
+.summon-master-shell-v154 .game-head .kicker{
+  font-size:8px!important;
+  line-height:1!important;
+}
+.summon-master-shell-v154 .game-head .lead{
+  margin:2px 0 0!important;
+  font-size:9px!important;
+  line-height:1.05!important;
+}
+.summon-master-shell-v154 .game-badge{
+  flex:0 0 auto!important;
+  min-width:58px!important;
+  padding:6px!important;
+  font-size:14px!important;
+}
+
+/* The "巨大な魔物を描こう！" phase is a single full game phase.
+   It must not push the drawing panel below the viewport. */
+.sm-turn-v154{
+  position:absolute!important;
+  z-index:140!important;
+  left:0!important;
+  right:0!important;
+  top:88px!important;
+  bottom:0!important;
+  width:auto!important;
+  height:auto!important;
+  min-height:0!important;
+  margin:0!important;
+  flex:none!important;
+  border-radius:20px!important;
+}
+.sm-turn-v154[hidden]{
+  display:none!important;
+}
+
+/* Drawing phase: use the full remaining viewport. */
+.sm-draw-v154{
+  position:relative!important;
+  flex:1 1 auto!important;
+  min-height:0!important;
+  height:auto!important;
+  overflow:hidden!important;
+  gap:3px!important;
+}
+.sm-draw-v154[hidden]{
+  display:none!important;
+}
+.sm-title-v154{
+  flex:0 0 auto!important;
+  padding:4px 8px!important;
+  border-width:3px!important;
+  border-radius:11px!important;
+  font-size:13px!important;
+  line-height:1.05!important;
+}
+.sm-drawer-v154{
+  flex:0 0 auto!important;
+  min-height:34px!important;
+  max-height:38px!important;
+  gap:6px!important;
+  font-size:11px!important;
+}
+.sm-avatar-v154{
+  width:31px!important;
+  height:31px!important;
+}
+.sm-drawer-v154 span{
+  font-size:8px!important;
+}
+
+/* This is the actual drawing area.  Remove the old 325px floor that could
+   extend off-screen and let flexbox give it all available height. */
+.sm-draw-stage-v154{
+  position:relative!important;
+  flex:1 1 0!important;
+  min-height:0!important;
+  height:100%!important;
+  max-height:none!important;
+  overflow:hidden!important;
+  border-width:4px!important;
+  border-radius:18px!important;
+}
+
+/* Canvas always fills the visible drawing stage. */
+.sm-svg-v154{
+  position:absolute!important;
+  z-index:5!important;
+  inset:0!important;
+  width:100%!important;
+  height:100%!important;
+  min-height:0!important;
+}
+
+/* Keep the running Mob characters visible, but only as a bottom overlay
+   instead of consuming drawing space. */
+.sm-runners-v154{
+  z-index:8!important;
+  bottom:4px!important;
+  height:58px!important;
+  opacity:.96!important;
+}
+.sm-runner{
+  width:52px!important;
+  height:52px!important;
+}
+.sm-run-img-v154{
+  width:52px!important;
+  height:52px!important;
+}
+
+/* Instructions/time are compact so the canvas remains dominant. */
+.sm-note-v154{
+  flex:0 0 auto!important;
+  margin:0!important;
+  padding:1px 0!important;
+  font-size:8px!important;
+  line-height:1!important;
+}
+.sm-time-v154{
+  flex:0 0 auto!important;
+  margin:0!important;
+  font-size:18px!important;
+  line-height:1!important;
+}
+
+/* Preview and battle are also exclusive phases. */
+.sm-preview-v154[hidden],
+.sm-battle-v154[hidden]{
+  display:none!important;
+}
+
+/* Short-height phones: make the canvas even more dominant. */
+@media (max-height:760px){
+  .summon-master-shell-v154 .game-head .lead{
+    display:none!important;
+  }
+  .sm-turn-v154{
+    top:72px!important;
+  }
+  .sm-turn-avatar-v154{
+    width:82px!important;
+    height:82px!important;
+  }
+  .sm-turn-img-v154{
+    width:80px!important;
+    height:80px!important;
+  }
+  .sm-turn-v154>strong{
+    font-size:22px!important;
+  }
+  .sm-drawer-v154{
+    min-height:30px!important;
+    max-height:32px!important;
+  }
+  .sm-avatar-v154{
+    width:28px!important;
+    height:28px!important;
+  }
+  .sm-runners-v154{
+    height:50px!important;
+  }
+  .sm-runner,
+  .sm-run-img-v154{
+    width:45px!important;
+    height:45px!important;
+  }
+}
