@@ -330,9 +330,11 @@ const GAMES=[
   {no:92,key:"bowlingMob",title:"モブくんボウリング",sub:"モブくんが1投。上スワイプでポケットを狙って10ピンを倒す",legacy:100},
   {no:93,key:"waterSkip",title:"モブくん水切り",sub:"速度・角度・水面の状態で毎回変化する水切り回数を競う",legacy:101},
   {no:94,key:"tamaireMob",title:"モブくん玉入れ",sub:"動くカゴへ10球をテンポよく連投。1個10点",legacy:102},
-  {no:95,key:"jengaMob",title:"モブくんジェンガ",sub:"本物らしい交互積みタワーから倒れるまでブロックを抜き続ける",legacy:103},
-  {no:96,key:"mineCartMob",title:"モブくんトロッコ",sub:"鉱山トロッコで途切れた線路をジャンプし、ゴールタイムを競う",legacy:105},
-  {no:97,key:"cleaningMob",title:"お掃除モブくん",sub:"大きなモブくんぬいぐるみへ水を長押し噴射し、埃10個を7秒で落とす",legacy:106}
+  {no:95,key:"mineCartMob",title:"モブくんトロッコ",sub:"長い鉱山コースを高速走行。穴・スロープ・トランポリン・マグマを2段ジャンプで突破",legacy:105},
+  {no:96,key:"airHockeyMob",title:"モブくんエアホッケー",sub:"8秒間パドルを直接動かし、壁反射と角度を使って上ゴールを狙う",legacy:107},
+  {no:97,key:"ropeSwingMob",title:"モブくんロープスイング",sub:"3本のロープをタイミングよく離して渡り、最後の着地点100点ゾーンを狙う",legacy:108},
+  {no:98,key:"wallJumpMob",title:"モブくん壁ジャンプ",sub:"画面タップで左右の壁を飛び移り、障害物を避けながら10秒で頂上を目指す",legacy:109},
+  {no:99,key:"billiardsMob",title:"モブくんビリヤード",sub:"白球を引いて離し、最大4ショットで3つの色球をポケットへ落とす",legacy:110}
 ];
 
 function legacyGameIndex(gameIndex){
@@ -406,7 +408,7 @@ function freshState(){
         paperPlane:{},tankMob:{},curlingMob:{},bubbleMob:{},
         changeMob:{},baggageMob:{},treasureMob:{},rouletteMob:{},excavationMob:{},
         oldMaidDuel:{},robotMarch:{},monsterMaster:{},scoutMan:{},
-        atafutaSurvival:{},waveMaster:{},battleRoyaleMob:{},littleMobShot:{},monsterBoxMob:{},alienBattleMob:{},mobMusou:{},iaidoMaster:{},killLeaderMob:{},mobSpeedRacer:{},summonMaster:{},mobPinball:{},hurdleRun:{},longJumpMob:{},pkKicker:{},threePoint:{},bowlingMob:{},waterSkip:{},tamaireMob:{},jengaMob:{},mineCartMob:{},cleaningMob:{}
+        atafutaSurvival:{},waveMaster:{},battleRoyaleMob:{},littleMobShot:{},monsterBoxMob:{},alienBattleMob:{},mobMusou:{},iaidoMaster:{},killLeaderMob:{},mobSpeedRacer:{},summonMaster:{},mobPinball:{},hurdleRun:{},longJumpMob:{},pkKicker:{},threePoint:{},bowlingMob:{},waterSkip:{},tamaireMob:{},mineCartMob:{},airHockeyMob:{},ropeSwingMob:{},wallJumpMob:{},billiardsMob:{}
     },
     total:{},
     roundPoints:[],
@@ -516,7 +518,7 @@ function renderHome(){
     <section class="hero hero-v119">
       <div>
         <span class="kicker">SMARTPHONE PARTY GAME</span>
-        <h1>97 MINI<br>GAMES</h1>
+        <h1>99 MINI<br>GAMES</h1>
         <p>通常対戦は「チーム戦」「個人戦」。さらに8人/16人の「モブくんゲーム王決定戦」を遊べます。</p>
       </div>
       <div class="hero-mark">MOB</div>
@@ -541,7 +543,7 @@ function renderHome(){
     </section>
 
     <section class="panel flat">
-      <div class="panel-head"><h3>97 MINI GAMES</h3><span class="tag">GAME 1 → 97</span></div>
+      <div class="panel-head"><h3>99 MINI GAMES</h3><span class="tag">GAME 1 → 99</span></div>
       <div class="compact-game-grid home-compact-games-v119">
         ${GAMES.map(g=>`<div><b>${g.no}</b><span>${g.title}</span></div>`).join("")}
       </div>
@@ -561,7 +563,7 @@ function renderFreePlaySelect(){
   screen.innerHTML=`
     <div class="game-head">
       <div><span class="kicker">FREE PLAY</span><h2>1人で遊ぶ</h2><p class="lead">好きなゲームを1つ選んでプレイ。</p></div>
-      <div class="game-badge">97</div>
+      <div class="game-badge">99</div>
     </div>
 
     <button id="freeBack" class="secondary wizard-back-v119" type="button">← メインへ戻る</button>
@@ -599,7 +601,7 @@ function renderGameGuide(){
   screen.innerHTML=`
     <div class="game-head">
       <div><span class="kicker">GAME GUIDE</span><h2>各ゲームの説明</h2><p class="lead">内容と100点換算の目安を一覧で確認できます。</p></div>
-      <div class="game-badge">97</div>
+      <div class="game-badge">99</div>
     </div>
 
     <button id="guideBack" class="secondary wizard-back-v119" type="button">← メインへ戻る</button>
@@ -2035,7 +2037,7 @@ function renderPlayStyleSelect(){
       <button id="normalStyle" class="style-select-card normal" type="button">
         <span>NORMAL</span>
         <b>順番に全種目</b>
-        <small>GAME 1 → 97 を順番にプレイ</small>
+        <small>GAME 1 → 99 を順番にプレイ</small>
       </button>
       <button id="customStyle" class="style-select-card custom" type="button">
         <span>CUSTOM</span>
@@ -2045,7 +2047,7 @@ function renderPlayStyleSelect(){
     </div>
 
     <section class="panel flat">
-      <h3>97 MINI GAMES</h3>
+      <h3>99 MINI GAMES</h3>
       <div class="compact-game-grid">
         ${GAMES.map(g=>`<div><b>${g.no}</b><span>${g.title}</span></div>`).join("")}
       </div>
@@ -2336,10 +2338,14 @@ function scoreRuleForGame(index){
     "1投で倒したピン×10点 / STRIKE=100点",
     "水切り1回=10点 / 速度・角度・水面状態で回数が毎回変化 / 10回以上=100点",
     "10球を連投 / 1個IN=10点 / 10個=100点",
-    "倒れるまで抜き続ける / 1本成功=10点 / 10本以上成功で100点",
     "",
-    "トロッコ完走タイム / 12.00秒以下=100点 / 20.00秒以上=0点",
-    "埃10個 / 1個完全除去=10点 / 7秒以内に全消しで100点"
+    "",
+    "長距離トロッコ完走タイム / 17.00秒以下=100点 / 27.00秒以上=0点 / 落下はタイム加算",
+    "",
+    "8秒 / 相手ゴール+20点 / 自陣ゴール-10点 / 最大100点",
+    "3本のロープを渡った後の着地点 / 100・80・60・40点 / 途中落下は到達度で記録",
+    "10秒 / 頂上到達=100点 / 途中終了はHEIGHT進行率を得点化",
+    "色球1個=25点 / 3球全部で75点 + ショット数ボーナス最大25点 / 最大4ショット"
   ][legacyIndex];
 }
 
@@ -2550,12 +2556,16 @@ function showGameIntro(index){
     rules=`<li>石を右へ少し上向きにフリック。速度・角度・毎回変わる水面状態で回数が変化します。</li><li>同じ6回に固定されません。10回以上で100点です。</li>`;
   }else if(legacyIndex===102){
     rules=`<li>画面下の投球エリアを上へフリック。10球を待ち時間なしで連投できます。</li><li>1個INで10点。最後の球が判定されるまでゲームは続きます。</li>`;
-  }else if(legacyIndex===103){
-    rules=`<li>交互向きに積まれたジェンガから光るブロックを横へ抜きます。</li><li>3本で終了せず、塔が倒れるまで続行。1本成功ごとに10点です。</li>`;
-  }else if(legacyIndex===105){
-    rules=`<li>トロッコは自動で鉱山を進みます。線路の切れ目が来たら画面をタップしてJUMP。</li><li>連続した穴も出現。落下するとタイムロスし、ゴールタイムが遅くなります。</li>`;
-  }else if(legacyIndex===106){
-    rules=`<li>画面を長押しすると下のノズルから水が出ます。埃へ水を当て続けて消してください。</li><li>埃は10個・位置は毎回ランダム。制限時間7秒、1個完全除去で10点です。</li>`;
+    }else if(legacyIndex===105){
+    rules=`<li>高速トロッコをタップでJUMP、空中でもう一度タップでDOUBLE JUMP。長い鉱山を走り切ります。</li><li>穴・スロープ・トランポリン・マグマが出現。ギミックを使い分けて最速ゴールを狙います。</li>`;
+  }else if(legacyIndex===107){
+    rules=`<li>画面下半分でパドルを直接ドラッグ。パックを上側ゴールへ入れると+20点です。</li><li>8秒勝負。自陣ゴールは-10点。パドルの端や移動速度で反射角が変わります。</li>`;
+  }else if(legacyIndex===108){
+    rules=`<li>モブくんがロープで揺れています。画面タップで離し、次のロープへ飛び移ります。</li><li>3本目の後は着地点勝負。100点ゾーンを飛び越えても得点は下がります。</li>`;
+  }else if(legacyIndex===109){
+    rules=`<li>画面タップで反対側の壁へジャンプ。壁にいる間はゆっくり下へ滑ります。</li><li>障害物を避けて10秒以内に頂上へ。1回目の接触は落下、2回目で終了です。</li>`;
+  }else if(legacyIndex===110){
+    rules=`<li>白球から後ろへ引っ張って離し、色球3個をポケットへ入れます。</li><li>最大4ショット。3球すべて落とすとショット数ボーナスが付き、2ショット以内なら100点です。</li>`;
   }else{
     rules=`<li>${esc(g.sub)}</li>`;
   }
@@ -2699,9 +2709,11 @@ function humanReady(gameIndex,humanIndex){
     else if(legacyIndex===100)startBowlingMob(p,humanIndex,runId);
     else if(legacyIndex===101)startWaterSkip(p,humanIndex,runId);
     else if(legacyIndex===102)startTamaireMob(p,humanIndex,runId);
-    else if(legacyIndex===103)startJengaMob(p,humanIndex,runId);
     else if(legacyIndex===105)startMineCartMob(p,humanIndex,runId);
-    else if(legacyIndex===106)startCleaningMob(p,humanIndex,runId);
+    else if(legacyIndex===107)startAirHockeyMob(p,humanIndex,runId);
+    else if(legacyIndex===108)startRopeSwingMob(p,humanIndex,runId);
+    else if(legacyIndex===109)startWallJumpMob(p,humanIndex,runId);
+    else if(legacyIndex===110)startBilliardsMob(p,humanIndex,runId);
     else{
       gameSessionActive=false;
       activeGameIndex=-1;
@@ -25578,7 +25590,7 @@ function softenCpuResultV121(gameIndex,p,ultra){
 
   const specificallyTuned=new Set([
     50,51,54,59,62,63,
-    64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,95,96,97,98,99,100,101,102,103,105,106
+    64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,95,96,97,98,99,100,101,102,105,107,108,109,110
   ]);
 
   if(
@@ -25905,12 +25917,16 @@ function simulateOneCpu(gameIndex,p){
     state.records.waterSkip[p.id]=ultra?randi(80,100):randi(20,90);
   }else if(legacyIndex===102){
     state.records.tamaireMob[p.id]=ultra?randi(80,100):randi(30,80);
-  }else if(legacyIndex===103){
-    state.records.jengaMob[p.id]=ultra?randi(80,100):randi(30,90);
   }else if(legacyIndex===105){
-    state.records.mineCartMob[p.id]=ultra?randi(11800,13900):randi(13200,19000);
-  }else if(legacyIndex===106){
-    state.records.cleaningMob[p.id]=ultra?randi(80,100):randi(30,90);
+    state.records.mineCartMob[p.id]=ultra?randi(16800,19200):randi(18800,26500);
+  }else if(legacyIndex===107){
+    state.records.airHockeyMob[p.id]=ultra?randi(80,100):randi(20,90);
+  }else if(legacyIndex===108){
+    state.records.ropeSwingMob[p.id]=ultra?[80,100][randi(0,1)]:[10,30,40,60,80,100][randi(0,5)];
+  }else if(legacyIndex===109){
+    state.records.wallJumpMob[p.id]=ultra?randi(86,100):randi(30,92);
+  }else if(legacyIndex===110){
+    state.records.billiardsMob[p.id]=ultra?[93,100][randi(0,1)]:[25,50,75,85,93][randi(0,4)];
   }else{
     const fallbackKey=GAMES[gameIndex]?.key;
     if(fallbackKey&&state.records[fallbackKey])state.records[fallbackKey][p.id]=0;
@@ -26084,15 +26100,17 @@ function performancePoints(gameIndex,v){
   if(legacyIndex===97){
     return clamp(Math.round(v/300*100),0,100);
   }
-  if(legacyIndex>=98&&legacyIndex<=103){
+  if(legacyIndex>=98&&legacyIndex<=102){
     return clamp(Math.round(v),0,100);
   }
   if(legacyIndex===105){
-    if(v<=12000)return 100;
-    if(v>=20000)return 0;
-    return clamp(Math.round((20000-v)/8000*100),0,100);
+    if(v<=17000)return 100;
+    if(v>=27000)return 0;
+    return clamp(Math.round((27000-v)/10000*100),0,100);
   }
-  if(legacyIndex===106)return clamp(Math.round(v),0,100);
+  if(legacyIndex>=107&&legacyIndex<=110){
+    return clamp(Math.round(v),0,100);
+  }
   return clamp(Math.round(v),0,100);
 }
 
@@ -26198,9 +26216,11 @@ function formatRecord(gameIndex,v){
   if(legacyIndex===100)return `${Math.round(v/10)}本 / ${Math.round(v)}pt`;
   if(legacyIndex===101)return `${Math.round(v/10)}回`;
   if(legacyIndex===102)return `${Math.round(v/10)}/10`;
-  if(legacyIndex===103)return `${Math.round(v)}pt`;
   if(legacyIndex===105)return `${(v/1000).toFixed(2)}秒`;
-  if(legacyIndex===106)return `${Math.round(v/10)}/10`;
+  if(legacyIndex===107)return `${Math.round(v)}pt`;
+  if(legacyIndex===108)return `${Math.round(v)}pt`;
+  if(legacyIndex===109)return `${Math.round(v)}%`;
+  if(legacyIndex===110)return `${Math.round(v)}pt`;
   return `${Math.round(v)}pt`;
 }
 
@@ -28284,266 +28304,6 @@ async function startTamaireMob(p,humanIndex,runId){
 // =========================================================
 // V10.69 GAME — モブくんジェンガ
 // =========================================================
-async function startJengaMob(p,humanIndex,runId){
-  gameFit();
-  const gameIndex=GAMES.findIndex(g=>g.key==='jengaMob');
-  const LAYERS=14;
-
-  const blocks=Array.from({length:LAYERS*3},(_,i)=>({
-    i,
-    layer:Math.floor(i/3),
-    col:i%3,
-    alive:true
-  }));
-
-  screen.innerHTML=`
-    <div class="jenga-shell-v171 gameplay-fit">
-      <div class="game-head">
-        <div><span class="kicker">${esc(p.name)}</span><h2>モブくんジェンガ</h2><p class="lead">PULL UNTIL THE TOWER FALLS</p></div>
-        <div class="game-badge">${playBadge(humanIndex)}</div>
-      </div>
-      <div class="jenga-hud-v171">
-        <div><span>PULLED</span><b id="jengaPulled171">0</b></div>
-        <div><span>STABILITY</span><b id="jengaStab171">100</b></div>
-        <div><span>SCORE</span><b id="jengaScore171">0</b></div>
-      </div>
-      <div class="jenga-stage-v171">
-        <div class="jenga-table-v171"></div>
-        <div id="jengaTower171" class="jenga-tower-v171">
-          ${Array.from({length:LAYERS},(_,row)=>LAYERS-1-row).map(layer=>`
-            <div class="jenga-layer-v171 ${layer%2?'depth-v171':'front-v171'}" data-layer="${layer}">
-              ${blocks.filter(b=>b.layer===layer).map(b=>`
-                <button type="button"
-                  class="jenga-block-v171"
-                  data-jenga="${b.i}"
-                  data-col="${b.col}"
-                  aria-label="Jenga block"></button>
-              `).join('')}
-            </div>
-          `).join('')}
-        </div>
-        <div id="jengaCall171" class="jenga-call-v171">READY</div>
-      </div>
-    </div>`;
-
-  const tower=document.getElementById('jengaTower171');
-  const call=document.getElementById('jengaCall171');
-  const pulledEl=document.getElementById('jengaPulled171');
-  const stabEl=document.getElementById('jengaStab171');
-  const scoreEl=document.getElementById('jengaScore171');
-  const els=[...tower.querySelectorAll('[data-jenga]')];
-
-  let active=false,finished=false,pulled=0,balance=100,lean=0,drag=null;
-
-  function aliveOnLayer(layer){
-    return blocks.filter(b=>b.layer===layer&&b.alive);
-  }
-
-  function removalLeavesSupport(b){
-    const remaining=aliveOnLayer(b.layer).filter(x=>x.i!==b.i);
-    if(remaining.length>=2)return true;
-    if(remaining.length===1){
-      // A single center block can still barely support the tower.
-      // A single outer block would leave the upper tower obviously unsupported.
-      return remaining[0].col===1;
-    }
-    return false;
-  }
-
-  function riskOf(b){
-    const low=(LAYERS-1-b.layer)/(LAYERS-1);
-    const remaining=aliveOnLayer(b.layer).filter(x=>x.i!==b.i);
-    const singleCenter=remaining.length===1&&remaining[0].col===1;
-    const side=b.col===1?.03:.10;
-
-    return clamp(
-      .04+
-      low*.25+
-      side+
-      (singleCenter?.24:0)+
-      Math.max(0,pulled-5)*.012,
-      .04,.72
-    );
-  }
-
-  function chooseCandidates(){
-    els.forEach(el=>el.classList.remove('candidate-v171'));
-
-    const valid=blocks
-      .filter(b=>b.alive)
-      .filter(b=>b.layer<LAYERS-2)
-      .filter(removalLeavesSupport)
-      .sort((a,b)=>riskOf(a)-riskOf(b));
-
-    if(!valid.length){
-      finish(false);
-      return;
-    }
-
-    const pool=shuffle(valid.slice(0,Math.min(16,valid.length)));
-    pool.slice(0,Math.min(6,pool.length)).forEach(b=>{
-      els[b.i].classList.add('candidate-v171');
-    });
-
-    call.textContent='光るブロックを横へ抜く';
-    call.className='jenga-call-v171';
-    active=true;
-  }
-
-  function finish(collapsed=true){
-    if(finished)return;
-    finished=true;
-    active=false;
-
-    const score=clamp(pulled*10,0,100);
-    state.records.jengaMob[p.id]=score;
-    scoreEl.textContent=score;
-
-    if(collapsed){
-      tower.classList.add(lean>=0?'fall-right-v171':'fall-left-v171');
-      call.textContent='TOWER DOWN!';
-      call.className='jenga-call-v171 down-v171';
-      beep(180,220,.04);
-    }else{
-      call.textContent='MAX SAFE PULL!';
-      call.className='jenga-call-v171 clear-v171';
-      beep(980,130,.03);
-    }
-
-    setTimeout(()=>{
-      if(isGameRunValid(runId)){
-        recordScreen(
-          gameIndex,p,humanIndex,
-          `${score}<small>pt</small>`,
-          `${pulled} BLOCKS / STABILITY ${Math.round(balance)}`
-        );
-      }
-    },collapsed?950:700);
-  }
-
-  tower.addEventListener('pointerdown',e=>{
-    const el=e.target.closest('[data-jenga]');
-    if(!el||!active||finished||!el.classList.contains('candidate-v171'))return;
-
-    e.preventDefault();
-
-    const idx=Number(el.dataset.jenga);
-    const b=blocks[idx];
-
-    tower.setPointerCapture?.(e.pointerId);
-    drag={
-      id:e.pointerId,
-      el,b,
-      sx:e.clientX,
-      sy:e.clientY,
-      maxY:0,
-      start:performance.now()
-    };
-
-    active=false;
-    el.classList.add('drag-v171');
-  },{passive:false});
-
-  tower.addEventListener('pointermove',e=>{
-    if(!drag||drag.id!==e.pointerId)return;
-    e.preventDefault();
-
-    const dx=e.clientX-drag.sx;
-    const dy=e.clientY-drag.sy;
-    drag.maxY=Math.max(drag.maxY,Math.abs(dy));
-    drag.el.style.transform=`translate(${dx}px,${dy*.13}px)`;
-  },{passive:false});
-
-  tower.addEventListener('pointerup',e=>{
-    if(!drag||drag.id!==e.pointerId||finished)return;
-    e.preventDefault();
-
-    const d=drag;
-    const dx=e.clientX-d.sx;
-    const distance=Math.abs(dx);
-    const duration=Math.max(80,performance.now()-d.start);
-
-    if(distance<64){
-      d.el.style.transform='';
-      d.el.classList.remove('drag-v171');
-      drag=null;
-      active=true;
-      call.textContent='もっと横へ抜く';
-      return;
-    }
-
-    if(!removalLeavesSupport(d.b)){
-      d.el.style.transform='';
-      d.el.classList.remove('drag-v171');
-      drag=null;
-      active=true;
-      call.textContent='そこを抜くと支えが無くなる';
-      call.className='jenga-call-v171 danger-v171';
-      beep(220,80,.015);
-      return;
-    }
-
-    const speed=distance/(duration/1000);
-    const speedQ=clamp(1-Math.abs(speed-390)/420,0,1);
-    const straightQ=clamp(1-d.maxY/44,0,1);
-    const quality=straightQ*.62+speedQ*.38;
-    const risk=riskOf(d.b);
-
-    d.b.alive=false;
-    const remaining=aliveOnLayer(d.b.layer);
-    const singleCenter=remaining.length===1&&remaining[0].col===1;
-
-    const penalty=
-      3.2+
-      risk*13+
-      (1-quality)*12+
-      (singleCenter?8:0)+
-      Math.max(0,pulled-6)*.55;
-
-    balance=clamp(balance-penalty,0,100);
-
-    const direction=dx>0?1:-1;
-    const supportBias=
-      remaining.length===1
-        ? (remaining[0].col-1)*2.5
-        : remaining.reduce((sum,b)=>sum+(b.col-1),0)*.45;
-
-    lean+=direction*(d.b.col===1?.18:.75)+supportBias*.35;
-    tower.style.setProperty('--lean',`${clamp(lean,-12,12)}deg`);
-
-    d.el.classList.remove('candidate-v171','drag-v171');
-    d.el.classList.add(dx>0?'out-right-v171':'out-left-v171');
-    drag=null;
-
-    pulled++;
-    pulledEl.textContent=pulled;
-    stabEl.textContent=Math.round(balance);
-    scoreEl.textContent=Math.min(100,pulled*10);
-
-    beep(700+Math.min(8,pulled)*30,65,.018);
-
-    const collapseThreshold=12+Math.min(20,pulled*1.45)+(singleCenter?7:0);
-    const unsupportedAbove=Math.abs(lean)>10.2;
-    const collapsed=
-      quality<.08||
-      unsupportedAbove||
-      (pulled>=3&&balance<collapseThreshold);
-
-    if(collapsed){
-      setTimeout(()=>finish(true),250);
-      return;
-    }
-
-    call.textContent=singleCenter?'CENTER SUPPORT!':`GOOD PULL ${Math.round(quality*100)}%`;
-    setTimeout(()=>{
-      if(isGameRunValid(runId))chooseCandidates();
-    },360);
-  },{passive:false});
-
-  if(!(await countdown('JENGA',runId,{transparent:true})))return;
-  chooseCandidates();
-}
-
 
 // =========================================================
 // V10.69 GAME — モブくん新聞配達
@@ -28556,107 +28316,174 @@ async function startJengaMob(p,humanIndex,runId){
 async function startMineCartMob(p,humanIndex,runId){
   gameFit();
   const gameIndex=GAMES.findIndex(g=>g.key==='mineCartMob');
-  const WORLD_W=3100;
-  const GOAL_X=2860;
 
-  const gaps=[];
-  let cursor=480;
+  const WORLD_W=5700;
+  const GOAL_X=5380;
+  const BASE_SPEED=310;
 
-  function singleGap(){
-    const w=rand(58,82);
-    gaps.push({x:cursor,w,kind:'single'});
-    cursor+=w+rand(210,265);
-  }
+  const gaps=[
+    {x:610,w:70,kind:'single'},
+    {x:1080,w:76,kind:'single'},
+    {x:1690,w:66,kind:'double-a'},
+    {x:1845,w:68,kind:'double-b'},
+    {x:2930,w:78,kind:'single'},
+    {x:3830,w:68,kind:'double-a'},
+    {x:3992,w:70,kind:'double-b'},
+    {x:4910,w:82,kind:'single'}
+  ];
 
-  function doubleGap(){
-    const w1=rand(58,72);
-    const bridge=rand(78,106);
-    const w2=rand(56,72);
-    gaps.push({x:cursor,w:w1,kind:'double-a'});
-    gaps.push({x:cursor+w1+bridge,w:w2,kind:'double-b'});
-    cursor+=w1+bridge+w2+rand(235,285);
-  }
+  const slopes=[
+    {x:1260,w:230,h:58,type:'up'},
+    {x:3170,w:250,h:62,type:'down'}
+  ];
 
-  // First gaps teach the timing. Later sections introduce double gaps.
-  singleGap();
-  singleGap();
-  doubleGap();
-  singleGap();
-  doubleGap();
-  singleGap();
-  doubleGap();
+  const trampolines=[
+    {x:2220,w:62},
+    {x:4370,w:62}
+  ];
+
+  const magma=[
+    {x:2350,w:275},
+    {x:4505,w:300}
+  ];
 
   screen.innerHTML=`
-    <div class="cart-shell-v171 gameplay-fit">
+    <div class="cart-shell-v172 gameplay-fit">
       <div class="game-head">
-        <div><span class="kicker">${esc(p.name)}</span><h2>モブくんトロッコ</h2><p class="lead">TAP → DOUBLE JUMP / TIME ATTACK</p></div>
+        <div><span class="kicker">${esc(p.name)}</span><h2>モブくんトロッコ</h2><p class="lead">HIGH SPEED MINE / DOUBLE JUMP</p></div>
         <div class="game-badge">${playBadge(humanIndex)}</div>
       </div>
-      <div class="cart-hud-v171">
-        <div><span>DISTANCE</span><b id="cartDist171">0%</b></div>
-        <div><span>TIME</span><b id="cartTime171">0.00</b></div>
-        <div><span>FALL</span><b id="cartFall171">0</b></div>
+
+      <div class="cart-hud-v172">
+        <div><span>DISTANCE</span><b id="cartDist172">0%</b></div>
+        <div><span>TIME</span><b id="cartTime172">0.00</b></div>
+        <div><span>FALL</span><b id="cartFall172">0</b></div>
       </div>
-      <div id="cartStage171" class="cart-stage-v171">
-        <div id="cartWorld171" class="cart-world-v171" style="width:${WORLD_W}px">
-          <div class="cart-cave-v171"></div>
-          <div class="cart-rails-v171">
+
+      <div id="cartStage172" class="cart-stage-v172">
+        <div id="cartWorld172" class="cart-world-v172" style="width:${WORLD_W}px">
+          <div class="cart-cave-v172"></div>
+
+          <div class="cart-track-v172">
             ${gaps.map((g,i)=>`
-              <i class="cart-gap-v171 ${g.kind}" data-gap="${i}" style="left:${g.x}px;width:${g.w}px">
+              <i class="cart-gap-v172 ${g.kind}" data-gap="${i}" style="left:${g.x}px;width:${g.w}px">
                 <b></b><em></em><span></span>
               </i>
             `).join('')}
-            <b class="cart-goal-v171" style="left:${GOAL_X}px">GOAL</b>
+
+            ${slopes.map((s,i)=>`
+              <div class="cart-slope-v172 ${s.type}-v172" data-slope="${i}"
+                style="left:${s.x}px;width:${s.w}px;--slope-h:${s.h}px">
+                <i></i><b></b>
+              </div>
+            `).join('')}
+
+            ${trampolines.map((t,i)=>`
+              <div class="cart-trampoline-v172" data-trampoline="${i}" style="left:${t.x}px;width:${t.w}px">
+                <i></i><i></i><i></i>
+              </div>
+            `).join('')}
+
+            ${magma.map((m,i)=>`
+              <div class="cart-magma-v172" data-magma="${i}" style="left:${m.x}px;width:${m.w}px">
+                ${Array.from({length:7},(_,j)=>`<i style="left:${8+j*14}%"></i>`).join('')}
+              </div>
+            `).join('')}
+
+            <b class="cart-goal-v172" style="left:${GOAL_X}px">GOAL</b>
           </div>
-          <div class="cart-rocks-v171">
-            ${Array.from({length:27},(_,i)=>`<i style="left:${i*112+rand(15,70)}px;top:${rand(22,135)}px"></i>`).join('')}
+
+          <div class="cart-rocks-v172">
+            ${Array.from({length:46},(_,i)=>`
+              <i style="left:${i*119+rand(15,72)}px;top:${rand(24,145)}px"></i>
+            `).join('')}
           </div>
         </div>
-        <div id="cartActor171" class="cart-actor-v171">
-          <div class="cart-cart-v171"><i></i><i></i></div>
+
+        <div id="cartActor172" class="cart-actor-v172">
+          <div class="cart-cart-v172"><i></i><i></i></div>
           <img src="icon/01.png" draggable="false" alt="">
         </div>
-        <div id="cartCall171" class="cart-call-v171">TAP JUMP</div>
-        <div id="cartJump171" class="cart-jump-v171">JUMP 0 / 2</div>
+
+        <div id="cartCall172" class="cart-call-v172">TAP JUMP</div>
+        <div id="cartJump172" class="cart-jump-v172">JUMP 0 / 2</div>
+        <div id="cartGimmick172" class="cart-gimmick-v172">TRACK</div>
       </div>
     </div>`;
 
-  const stage=document.getElementById('cartStage171');
-  const world=document.getElementById('cartWorld171');
-  const actor=document.getElementById('cartActor171');
-  const call=document.getElementById('cartCall171');
-  const jumpEl=document.getElementById('cartJump171');
-  const distEl=document.getElementById('cartDist171');
-  const timeEl=document.getElementById('cartTime171');
-  const fallEl=document.getElementById('cartFall171');
+  const stage=document.getElementById('cartStage172');
+  const world=document.getElementById('cartWorld172');
+  const actor=document.getElementById('cartActor172');
+  const call=document.getElementById('cartCall172');
+  const jumpEl=document.getElementById('cartJump172');
+  const gimmickEl=document.getElementById('cartGimmick172');
+  const distEl=document.getElementById('cartDist172');
+  const timeEl=document.getElementById('cartTime172');
+  const fallEl=document.getElementById('cartFall172');
 
   let active=false,finished=false,raf=null,last=performance.now(),start=0;
-  let worldX=95,cameraX=0,jumpY=0,jumpV=0,falls=0,penaltyMs=0,stunUntil=0,ignoreGapUntil=0;
-  let jumpsUsed=0,lastJumpAt=0;
+  let worldX=95,cameraX=0;
+  let airY=0,jumpV=0,jumpsUsed=0,lastJumpAt=0;
+  let slopeLift=0,slopeAngle=0;
+  let falls=0,penaltyMs=0,stunUntil=0,ignoreHazardUntil=0;
+  let speedBoostUntil=0;
+  let touchedTrampoline=-1;
+  let lastSlopeIndex=-1;
 
-  function currentGap(){
-    const frontX=worldX+35;
-    return gaps.find(g=>frontX>=g.x&&frontX<=g.x+g.w);
+  function frontX(){ return worldX+42; }
+  function gapAt(x){ return gaps.find(g=>x>=g.x&&x<=g.x+g.w); }
+  function magmaAt(x){ return magma.find(m=>x>=m.x&&x<=m.x+m.w); }
+  function trampolineAt(x){ return trampolines.findIndex(t=>x>=t.x&&x<=t.x+t.w); }
+
+  function slopeAt(x){
+    const idx=slopes.findIndex(s=>x>=s.x&&x<=s.x+s.w);
+    return idx>=0?{idx,s:slopes[idx]}:null;
+  }
+
+  function setGimmick(text,cls=''){
+    gimmickEl.textContent=text;
+    gimmickEl.className=`cart-gimmick-v172 ${cls}`;
   }
 
   function finish(){
     if(finished)return;
-    finished=true;
-    active=false;
+    finished=true;active=false;
     if(raf)cancelAnimationFrame(raf);
 
     const raw=Math.round((performance.now()-start)+penaltyMs);
     state.records.mineCartMob[p.id]=raw;
     timeEl.textContent=(raw/1000).toFixed(2);
+
     call.textContent=falls?'GOAL!':'PERFECT RUN!';
-    call.className='cart-call-v171 result-v171';
+    call.className='cart-call-v172 result-v172';
+    setGimmick('FINISH','finish-v172');
     beep(falls?820:1080,160,.035);
 
     setTimeout(()=>{
       if(isGameRunValid(runId)){
-        recordScreen(gameIndex,p,humanIndex,`${(raw/1000).toFixed(2)}<small>秒</small>`,`${falls} FALL`);
+        recordScreen(gameIndex,p,humanIndex,`${(raw/1000).toFixed(2)}<small>秒</small>`,`${falls} FALL / LONG MINE`);
       }
     },700);
+  }
+
+  function fallInto(kind,hazardEnd,now){
+    falls++;
+    fallEl.textContent=falls;
+
+    const magmaFall=kind==='MAGMA';
+    penaltyMs+=magmaFall?1500:1200;
+    stunUntil=now+(magmaFall?760:620);
+    ignoreHazardUntil=hazardEnd+34;
+    worldX=hazardEnd+34;
+
+    actor.classList.add(magmaFall?'magma-fall-v172':'fall-v172');
+    call.textContent=magmaFall?'+1.50s MAGMA!':'+1.20s FALL!';
+    setGimmick(magmaFall?'MAGMA':'HOLE',magmaFall?'magma-v172':'hole-v172');
+
+    jumpsUsed=0;airY=0;jumpV=0;
+    beep(magmaFall?125:180,magmaFall?200:160,.035);
+
+    setTimeout(()=>actor.classList.remove('fall-v172','magma-fall-v172'),magmaFall?700:560);
   }
 
   stage.addEventListener('pointerdown',e=>{
@@ -28666,11 +28493,9 @@ async function startMineCartMob(p,humanIndex,runId){
     const now=performance.now();
     if(now<stunUntil)return;
 
-    const onGround=jumpY<=1;
-
-    if(onGround){
+    if(airY<=1){
       jumpsUsed=1;
-      jumpV=440;
+      jumpV=470;
       lastJumpAt=now;
       call.textContent='JUMP!';
       jumpEl.textContent='JUMP 1 / 2';
@@ -28678,12 +28503,12 @@ async function startMineCartMob(p,humanIndex,runId){
       return;
     }
 
-    if(jumpsUsed===1&&jumpY>12&&now-lastJumpAt>90){
+    if(jumpsUsed===1&&airY>14&&now-lastJumpAt>80){
       jumpsUsed=2;
-      jumpV=Math.max(jumpV,0)+365;
+      jumpV=Math.max(jumpV,20)+385;
       lastJumpAt=now;
-      actor.classList.add('double-v171');
-      setTimeout(()=>actor.classList.remove('double-v171'),260);
+      actor.classList.add('double-v172');
+      setTimeout(()=>actor.classList.remove('double-v172'),260);
       call.textContent='DOUBLE JUMP!';
       jumpEl.textContent='JUMP 2 / 2';
       beep(850,55,.018);
@@ -28691,62 +28516,113 @@ async function startMineCartMob(p,humanIndex,runId){
   },{passive:false});
 
   if(!(await countdown('MINE CART',runId,{transparent:true})))return;
+
   active=true;
   start=last=performance.now();
 
   function frame(now){
     if(finished||!isGameRunValid(runId))return;
-
     const dt=Math.min(.030,(now-last)/1000);
     last=now;
 
     if(now>=stunUntil){
-      const speed=232;
-      worldX+=speed*dt;
+      const x=frontX();
+      const slopeInfo=slopeAt(x);
 
-      if(jumpY>0||jumpV>0){
-        jumpV-=930*dt;
-        jumpY+=jumpV*dt;
+      slopeLift=0;
+      slopeAngle=0;
 
-        if(jumpY<=0){
-          jumpY=0;
-          jumpV=0;
-          jumpsUsed=0;
+      if(slopeInfo&&airY<=1){
+        const {idx,s}=slopeInfo;
+        const t=clamp((x-s.x)/s.w,0,1);
+
+        if(s.type==='up'){
+          slopeLift=Math.sin(t*Math.PI*.5)*s.h;
+          slopeAngle=-13;
+          setGimmick('UP SLOPE','slope-v172');
+
+          if(t>.94&&lastSlopeIndex!==idx){
+            lastSlopeIndex=idx;
+            airY=slopeLift;
+            jumpV=360;
+            jumpsUsed=1;
+            call.textContent='RAMP JUMP!';
+            jumpEl.textContent='JUMP 1 / 2';
+            speedBoostUntil=now+700;
+            beep(760,60,.016);
+          }
+        }else{
+          slopeLift=Math.cos(t*Math.PI*.5)*s.h;
+          slopeAngle=12;
+          setGimmick('DOWN SLOPE','slope-v172');
+          speedBoostUntil=Math.max(speedBoostUntil,now+520);
+        }
+      }else if(!slopeInfo){
+        lastSlopeIndex=-1;
+      }
+
+      const boosted=now<speedBoostUntil;
+      worldX+=(boosted?365:BASE_SPEED)*dt;
+
+      if(airY>0||jumpV>0){
+        jumpV-=960*dt;
+        airY+=jumpV*dt;
+
+        if(airY<=0){
+          airY=0;jumpV=0;jumpsUsed=0;
           jumpEl.textContent='JUMP 0 / 2';
         }
       }
 
-      const gap=currentGap();
+      const x2=frontX();
 
-      if(gap&&worldX>ignoreGapUntil&&jumpY<17){
-        falls++;
-        fallEl.textContent=falls;
-        penaltyMs+=1200;
-        stunUntil=now+620;
-        ignoreGapUntil=gap.x+gap.w+28;
-        worldX=gap.x+gap.w+28;
+      const trampIndex=trampolineAt(x2);
+      if(trampIndex>=0&&airY<14&&trampIndex!==touchedTrampoline){
+        touchedTrampoline=trampIndex;
+        airY=8;
+        jumpV=610;
+        jumpsUsed=1;
+        speedBoostUntil=now+950;
 
-        actor.classList.add('fall-v171');
-        call.textContent='+1.20s FALL!';
-        jumpEl.textContent='JUMP 0 / 2';
-        jumpsUsed=0;
-        jumpY=0;
-        jumpV=0;
+        actor.classList.add('trampoline-v172');
+        setTimeout(()=>actor.classList.remove('trampoline-v172'),320);
 
-        beep(180,160,.03);
-        setTimeout(()=>actor.classList.remove('fall-v171'),560);
+        call.textContent='TRAMPOLINE!';
+        jumpEl.textContent='JUMP 1 / 2';
+        setGimmick('TRAMPOLINE','trampoline-v172');
+        beep(980,70,.022);
+      }
+
+      if(trampIndex<0&&touchedTrampoline>=0){
+        const t=trampolines[touchedTrampoline];
+        if(x2>t.x+t.w+80)touchedTrampoline=-1;
+      }
+
+      const gap=gapAt(x2);
+      if(gap&&x2>ignoreHazardUntil&&airY+slopeLift<19){
+        fallInto('HOLE',gap.x+gap.w,now);
+      }
+
+      const lava=magmaAt(x2);
+      if(lava&&x2>ignoreHazardUntil&&airY+slopeLift<23){
+        fallInto('MAGMA',lava.x+lava.w,now);
+      }
+
+      if(!gap&&!lava&&!slopeInfo&&trampIndex<0&&now>=speedBoostUntil){
+        setGimmick('TRACK');
       }
     }
 
     cameraX=clamp(worldX-95,0,WORLD_W-stage.clientWidth);
     world.style.transform=`translate3d(${-cameraX}px,0,0)`;
-    actor.style.transform=`translateY(${-jumpY}px)`;
+
+    actor.style.transform=`translateY(${-(airY+slopeLift)}px) rotate(${slopeAngle}deg)`;
 
     const pct=clamp(worldX/GOAL_X,0,1);
     distEl.textContent=`${Math.round(pct*100)}%`;
     timeEl.textContent=((now-start+penaltyMs)/1000).toFixed(2);
 
-    if(now>=stunUntil&&call.textContent.includes('FALL')){
+    if(now>=stunUntil&&(call.textContent.includes('FALL')||call.textContent.includes('MAGMA'))){
       call.textContent='TAP JUMP';
     }
 
@@ -28765,198 +28641,455 @@ async function startMineCartMob(p,humanIndex,runId){
 // =========================================================
 // V10.70 GAME — お掃除モブくん
 // =========================================================
-async function startCleaningMob(p,humanIndex,runId){
+
+
+// =========================================================
+// V10.73 GAME — モブくんエアホッケー
+// =========================================================
+async function startAirHockeyMob(p,humanIndex,runId){
   gameFit();
-  const gameIndex=GAMES.findIndex(g=>g.key==='cleaningMob');
-
-  const spots=[];
-  let guard=0;
-
-  while(spots.length<10&&guard<600){
-    guard++;
-    const a=rand(0,Math.PI*2);
-    const r=Math.sqrt(Math.random())*.82;
-    const x=.5+Math.cos(a)*r*.27;
-    const y=.49+Math.sin(a)*r*.33;
-
-    if(spots.every(s=>Math.hypot((s.x-x)*300,(s.y-y)*390)>43)){
-      spots.push({x,y,water:0,done:false});
-    }
-  }
+  const gameIndex=GAMES.findIndex(g=>g.key==='airHockeyMob');
 
   screen.innerHTML=`
-    <div class="clean-shell-v171 gameplay-fit">
+    <div class="airh-shell-v173 gameplay-fit">
       <div class="game-head">
-        <div><span class="kicker">${esc(p.name)}</span><h2>お掃除モブくん</h2><p class="lead">7 SECONDS / HOLD TO SPRAY</p></div>
+        <div><span class="kicker">${esc(p.name)}</span><h2>モブくんエアホッケー</h2><p class="lead">8 SECONDS / DIRECT PADDLE</p></div>
         <div class="game-badge">${playBadge(humanIndex)}</div>
       </div>
-      <div class="clean-hud-v171">
-        <div><span>TIME</span><b id="cleanTime171">7.00</b></div>
-        <div><span>CLEAN</span><b id="cleanCount171">0 / 10</b></div>
-        <div><span>SCORE</span><b id="cleanScore171">0</b></div>
-      </div>
-      <div id="cleanStage171" class="clean-stage-v171">
-        <div class="clean-room-v171"></div>
-        <div class="clean-plush-v171"><img src="icon/01.png" draggable="false" alt=""></div>
 
-        <div id="cleanDustLayer171" class="clean-dust-layer-v171">
-          ${spots.map((s,i)=>`
-            <i data-dust="${i}" style="left:${s.x*100}%;top:${s.y*100}%">
-              <b></b><b></b><b></b>
-            </i>
-          `).join('')}
+      <div class="airh-hud-v173">
+        <div><span>TIME</span><b id="airhTime173">8.00</b></div>
+        <div><span>GOAL</span><b id="airhGoal173">0</b></div>
+        <div><span>SCORE</span><b id="airhScore173">0</b></div>
+      </div>
+
+      <div id="airhStage173" class="airh-stage-v173">
+        <div class="airh-rink-v173">
+          <div class="airh-line-v173"></div>
+          <div class="airh-circle-v173"></div>
+          <div class="airh-goal top-v173"></div>
+          <div class="airh-goal bottom-v173"></div>
         </div>
 
-        <div id="cleanStream171" class="clean-stream-v171" hidden><i></i></div>
-        <div class="clean-nozzle-v171"><i></i></div>
-        <div id="cleanCall171" class="clean-call-v171">埃を長押しで水洗い！</div>
+        <div id="airhDefense173" class="airh-defense-v173"></div>
+        <div id="airhPuck173" class="airh-puck-v173"></div>
+        <div id="airhPaddle173" class="airh-paddle-v173"><img src="icon/01.png" draggable="false" alt=""></div>
+        <div id="airhCall173" class="airh-call-v173">DRAG!</div>
       </div>
     </div>`;
 
-  const stage=document.getElementById('cleanStage171');
-  const dustEls=[...stage.querySelectorAll('[data-dust]')];
-  const stream=document.getElementById('cleanStream171');
-  const timeEl=document.getElementById('cleanTime171');
-  const countEl=document.getElementById('cleanCount171');
-  const scoreEl=document.getElementById('cleanScore171');
-  const call=document.getElementById('cleanCall171');
+  const stage=document.getElementById('airhStage173');
+  const puck=document.getElementById('airhPuck173');
+  const paddle=document.getElementById('airhPaddle173');
+  const defense=document.getElementById('airhDefense173');
+  const call=document.getElementById('airhCall173');
+  const timeEl=document.getElementById('airhTime173');
+  const goalEl=document.getElementById('airhGoal173');
+  const scoreEl=document.getElementById('airhScore173');
 
-  let active=false,finished=false,spraying=false,pointerId=null,targetPt=null,cleaned=0,start=0,raf=null,last=0;
+  void stage.offsetHeight;
+
+  const W=stage.clientWidth;
+  const H=stage.clientHeight;
+  const PUCK_R=12;
+  const PAD_R=28;
+  const GOAL_HALF=48;
+
+  let active=false,finished=false,dragId=null,raf=null,last=performance.now(),start=0;
+  let score=0,goals=0,resetUntil=0;
+  let px=W*.5,py=H*.72,pvx=0,pvy=0,prevMoveAt=performance.now();
+  let bx=W*.5,by=H*.5,bvx=rand(-95,95),bvy=250;
+  let defenseX=W*.5,defenseDir=1;
 
   function local(e){
     const r=stage.getBoundingClientRect();
     return {x:e.clientX-r.left,y:e.clientY-r.top};
   }
 
-  function updateStream(pt){
-    const ox=stage.clientWidth*.5;
-    const oy=stage.clientHeight*.93;
-    const dx=pt.x-ox;
-    const dy=pt.y-oy;
-    const len=Math.hypot(dx,dy);
-    const angle=Math.atan2(dy,dx)*180/Math.PI;
-
-    stream.hidden=false;
-    stream.style.left=`${ox}px`;
-    stream.style.top=`${oy}px`;
-    stream.style.width=`${len}px`;
-    stream.style.transform=`rotate(${angle}deg)`;
-  }
-
-  function clearWaterHighlights(){
-    dustEls.forEach(el=>el.classList.remove('watering-v171'));
-  }
-
-  function applyWater(pt,dt){
-    const w=stage.clientWidth;
-    const h=stage.clientHeight;
-    let nearest=-1;
-    let nearestDist=Infinity;
-
-    spots.forEach((s,i)=>{
-      if(s.done)return;
-      const sx=s.x*w;
-      const sy=s.y*h;
-      const d=Math.hypot(pt.x-sx,pt.y-sy);
-      if(d<nearestDist){
-        nearestDist=d;
-        nearest=i;
-      }
-    });
-
-    clearWaterHighlights();
-
-    if(nearest<0||nearestDist>40)return;
-
-    const s=spots[nearest];
-    const el=dustEls[nearest];
-    el.classList.add('watering-v171');
-
-    // About 0.38 sec of direct water contact clears one dust spot.
-    s.water+=dt/0.38;
-    const pct=clamp(s.water,0,1);
-
-    el.style.opacity=String(1-pct*.84);
-    el.style.transform=`translate(-50%,-50%) scale(${1-pct*.34})`;
-
-    if(pct>=1&&!s.done){
-      s.done=true;
-      cleaned++;
-      el.classList.remove('watering-v171');
-      el.classList.add('done-v171');
-      countEl.textContent=`${cleaned} / 10`;
-      scoreEl.textContent=cleaned*10;
-      beep(760+cleaned*18,35,.010);
-
-      if(cleaned===10){
-        finish(true);
-      }
+  function clampSpeed(){
+    const s=Math.hypot(bvx,bvy);
+    const max=720;
+    if(s>max){
+      bvx=bvx/s*max;
+      bvy=bvy/s*max;
+    }
+    if(s>0&&s<150){
+      bvx=bvx/s*150;
+      bvy=bvy/s*150;
     }
   }
 
-  function finish(perfect=false){
-    if(finished)return;
-    finished=true;
-    active=false;
-    spraying=false;
-    stream.hidden=true;
-    clearWaterHighlights();
+  function resetPuck(towardPlayer=true){
+    bx=W*.5+rand(-24,24);
+    by=H*.48;
+    bvx=rand(-125,125);
+    bvy=towardPlayer?rand(225,285):-rand(225,285);
+    resetUntil=performance.now()+230;
+    puck.style.opacity='.55';
+  }
 
-    if(raf)cancelAnimationFrame(raf);
+  function resolvePaddle(){
+    const dx=bx-px,dy=by-py;
+    const dist=Math.hypot(dx,dy);
+    const min=PUCK_R+PAD_R;
 
-    const score=cleaned*10;
-    state.records.cleaningMob[p.id]=score;
-    call.textContent=perfect?'ALL CLEAN!!':'TIME UP!';
-    call.className='clean-call-v171 result-v171';
-    beep(perfect?1080:650,140,.03);
+    if(dist<=0||dist>=min)return;
 
-    setTimeout(()=>{
-      if(isGameRunValid(runId)){
-        recordScreen(gameIndex,p,humanIndex,`${score}<small>pt</small>`,`${cleaned} / 10 CLEAN`);
-      }
-    },650);
+    const nx=dx/dist,ny=dy/dist;
+    bx=px+nx*(min+.5);
+    by=py+ny*(min+.5);
+
+    const rel=bvx*nx+bvy*ny;
+    const impact=Math.max(0,-rel);
+
+    bvx=bvx-(1.85*rel)*nx+pvx*.62;
+    bvy=bvy-(1.85*rel)*ny+pvy*.62;
+
+    const boost=150+Math.min(250,Math.hypot(pvx,pvy)*.38)+impact*.12;
+    bvx+=nx*boost;
+    bvy+=ny*boost;
+
+    clampSpeed();
+    beep(520+Math.min(300,Math.hypot(bvx,bvy)*.4),24,.008);
+  }
+
+  function resolveDefense(){
+    const barY=63;
+    const halfW=46;
+    const halfH=10;
+
+    if(
+      by-PUCK_R<=barY+halfH&&
+      by+PUCK_R>=barY-halfH&&
+      bx>=defenseX-halfW-PUCK_R&&
+      bx<=defenseX+halfW+PUCK_R&&
+      bvy<0
+    ){
+      by=barY+halfH+PUCK_R+1;
+      const edge=(bx-defenseX)/halfW;
+      bvy=Math.abs(bvy)*.94+65;
+      bvx+=edge*170+defenseDir*35;
+      clampSpeed();
+      beep(360,25,.007);
+    }
+  }
+
+  function scoreGoal(own=false){
+    if(own){
+      score=Math.max(0,score-10);
+      call.textContent='OWN GOAL -10';
+      call.className='airh-call-v173 bad-v173';
+      beep(180,100,.025);
+      resetPuck(false);
+    }else{
+      goals++;
+      score=Math.min(100,score+20);
+      call.textContent='GOAL! +20';
+      call.className='airh-call-v173 goal-v173';
+      beep(990,100,.03);
+      resetPuck(true);
+    }
+
+    goalEl.textContent=goals;
+    scoreEl.textContent=score;
   }
 
   stage.addEventListener('pointerdown',e=>{
     if(!active||finished)return;
-    e.preventDefault();
+    const pt=local(e);
+    if(pt.y<H*.50)return;
 
+    e.preventDefault();
+    dragId=e.pointerId;
     stage.setPointerCapture?.(e.pointerId);
-    spraying=true;
-    pointerId=e.pointerId;
-    targetPt=local(e);
-    updateStream(targetPt);
-    call.textContent='WATER ON!';
-    call.className='clean-call-v171 water-v171';
-    beep(470,35,.008);
+
+    px=clamp(pt.x,31,W-31);
+    py=clamp(pt.y-30,H*.55,H-30);
+    pvx=pvy=0;
+    prevMoveAt=performance.now();
   },{passive:false});
 
   stage.addEventListener('pointermove',e=>{
-    if(!spraying||e.pointerId!==pointerId||finished)return;
+    if(!active||finished||e.pointerId!==dragId)return;
     e.preventDefault();
 
-    targetPt=local(e);
-    updateStream(targetPt);
+    const pt=local(e);
+    const now=performance.now();
+    const dt=Math.max(.008,(now-prevMoveAt)/1000);
+    const nx=clamp(pt.x,31,W-31);
+    const ny=clamp(pt.y-30,H*.55,H-30);
+
+    pvx=clamp((nx-px)/dt,-900,900);
+    pvy=clamp((ny-py)/dt,-900,900);
+    px=nx;py=ny;
+    prevMoveAt=now;
   },{passive:false});
 
-  function stopSpray(e){
-    if(e.pointerId!==pointerId)return;
-    spraying=false;
-    pointerId=null;
-    targetPt=null;
-    stream.hidden=true;
-    clearWaterHighlights();
-
-    if(!finished){
-      call.textContent='埃を長押し！';
-      call.className='clean-call-v171';
-    }
+  function stopDrag(e){
+    if(e.pointerId!==dragId)return;
+    dragId=null;
+    pvx*=.15;pvy*=.15;
   }
 
-  stage.addEventListener('pointerup',stopSpray,{passive:false});
-  stage.addEventListener('pointercancel',stopSpray,{passive:false});
+  stage.addEventListener('pointerup',stopDrag,{passive:false});
+  stage.addEventListener('pointercancel',stopDrag,{passive:false});
 
-  if(!(await countdown('CLEANING',runId,{transparent:true})))return;
+  function render(){
+    paddle.style.left=`${px}px`;
+    paddle.style.top=`${py}px`;
+    puck.style.left=`${bx}px`;
+    puck.style.top=`${by}px`;
+    defense.style.left=`${defenseX}px`;
+  }
+
+  render();
+
+  if(!(await countdown('AIR HOCKEY',runId,{transparent:true})))return;
+
+  active=true;
+  start=last=performance.now();
+  call.textContent='GO!';
+  call.className='airh-call-v173';
+
+  function frame(now){
+    if(finished||!isGameRunValid(runId))return;
+    const dt=Math.min(.024,(now-last)/1000);
+    last=now;
+
+    const elapsed=now-start;
+    const rem=Math.max(0,8000-elapsed);
+    timeEl.textContent=(rem/1000).toFixed(2);
+
+    const defenseSpeed=elapsed>4000?185:150;
+    defenseX+=defenseDir*defenseSpeed*dt;
+    if(defenseX>W-72){defenseX=W-72;defenseDir=-1}
+    if(defenseX<72){defenseX=72;defenseDir=1}
+
+    if(now>=resetUntil){
+      puck.style.opacity='1';
+
+      bx+=bvx*dt;
+      by+=bvy*dt;
+
+      if(bx<PUCK_R+7){
+        bx=PUCK_R+7;
+        bvx=Math.abs(bvx);
+      }
+      if(bx>W-PUCK_R-7){
+        bx=W-PUCK_R-7;
+        bvx=-Math.abs(bvx);
+      }
+
+      const inGoal=Math.abs(bx-W*.5)<=GOAL_HALF;
+
+      if(by<PUCK_R+3){
+        if(inGoal){
+          scoreGoal(false);
+        }else{
+          by=PUCK_R+3;
+          bvy=Math.abs(bvy);
+        }
+      }
+
+      if(by>H-PUCK_R-3){
+        if(inGoal){
+          scoreGoal(true);
+        }else{
+          by=H-PUCK_R-3;
+          bvy=-Math.abs(bvy);
+        }
+      }
+
+      resolveDefense();
+      resolvePaddle();
+
+      bvx*=Math.pow(.9985,dt*60);
+      bvy*=Math.pow(.9985,dt*60);
+      clampSpeed();
+    }
+
+    render();
+
+    if(rem<=0){
+      finished=true;
+      active=false;
+      if(raf)cancelAnimationFrame(raf);
+
+      state.records.airHockeyMob[p.id]=clamp(score,0,100);
+      call.textContent=score>=80?'AIR HOCKEY MASTER!':'TIME UP!';
+      call.className='airh-call-v173 result-v173';
+
+      setTimeout(()=>{
+        if(isGameRunValid(runId)){
+          recordScreen(gameIndex,p,humanIndex,`${score}<small>pt</small>`,`${goals} GOALS / 8 SEC`);
+        }
+      },600);
+      return;
+    }
+
+    raf=requestAnimationFrame(frame);
+  }
+
+  raf=requestAnimationFrame(frame);
+}
+
+
+// =========================================================
+// V10.73 GAME — モブくんロープスイング
+// =========================================================
+async function startRopeSwingMob(p,humanIndex,runId){
+  gameFit();
+  const gameIndex=GAMES.findIndex(g=>g.key==='ropeSwingMob');
+  const WORLD_W=1320;
+
+  screen.innerHTML=`
+    <div class="rsw-shell-v173 gameplay-fit">
+      <div class="game-head">
+        <div><span class="kicker">${esc(p.name)}</span><h2>モブくんロープスイング</h2><p class="lead">TAP TO RELEASE / 3 ROPES</p></div>
+        <div class="game-badge">${playBadge(humanIndex)}</div>
+      </div>
+
+      <div class="rsw-hud-v173">
+        <div><span>ROPE</span><b id="rswRope173">1 / 3</b></div>
+        <div><span>STATUS</span><b id="rswStatus173">HOLD</b></div>
+        <div><span>SCORE</span><b id="rswScore173">---</b></div>
+      </div>
+
+      <div id="rswStage173" class="rsw-stage-v173">
+        <div id="rswWorld173" class="rsw-world-v173" style="width:${WORLD_W}px">
+          <div class="rsw-sky-v173"></div>
+          <div class="rsw-cliffs-v173"></div>
+
+          <div id="rswRopeA173" class="rsw-rope-v173"></div>
+          <div id="rswRopeB173" class="rsw-rope-v173"></div>
+          <div id="rswRopeC173" class="rsw-rope-v173"></div>
+
+          <div class="rsw-landing-v173">
+            <i class="z40">40</i><i class="z60">60</i><i class="z80">80</i><i class="z100">100</i><i class="z80b">80</i><i class="z60b">60</i><i class="z40b">40</i>
+          </div>
+        </div>
+
+        <div id="rswPlayer173" class="rsw-player-v173"><img src="icon/01.png" draggable="false" alt=""></div>
+        <div id="rswCall173" class="rsw-call-v173">TAP TO RELEASE</div>
+      </div>
+    </div>`;
+
+  const stage=document.getElementById('rswStage173');
+  const world=document.getElementById('rswWorld173');
+  const player=document.getElementById('rswPlayer173');
+  const ropeEls=[
+    document.getElementById('rswRopeA173'),
+    document.getElementById('rswRopeB173'),
+    document.getElementById('rswRopeC173')
+  ];
+  const ropeEl=document.getElementById('rswRope173');
+  const statusEl=document.getElementById('rswStatus173');
+  const scoreEl=document.getElementById('rswScore173');
+  const call=document.getElementById('rswCall173');
+
+  void stage.offsetHeight;
+
+  const H=stage.clientHeight;
+  const FLOOR=H*.84;
+  const pivotY=Math.max(42,H*.11);
+  const ropeScale=.96+Math.random()*.08;
+
+  const ropes=[
+    {x:180,L:Math.min(168,H*.47),amp:.66,omega:1.82*ropeScale,phase:-Math.PI/2},
+    {x:435,L:Math.min(158,H*.44),amp:.72,omega:1.95*ropeScale,phase:-Math.PI/2+.40},
+    {x:700,L:Math.min(148,H*.42),amp:.80,omega:2.10*ropeScale,phase:-Math.PI/2+.75}
+  ];
+
+  ropes.forEach((r,i)=>{
+    const el=ropeEls[i];
+    el.style.left=`${r.x}px`;
+    el.style.top=`${pivotY}px`;
+    el.style.height=`${r.L}px`;
+  });
+
+  let active=false,finished=false,raf=null,last=performance.now(),start=0;
+  let mode='attached';
+  let ropeIndex=0;
+  let x=0,y=0,vx=0,vy=0,cameraX=0;
+  const GRAVITY=450;
+  const CATCH_R=64;
+
+  function ropeState(i,t){
+    const r=ropes[i];
+    const theta=r.amp*Math.sin(r.omega*t+r.phase);
+    const dtheta=r.amp*r.omega*Math.cos(r.omega*t+r.phase);
+
+    return {
+      theta,dtheta,
+      x:r.x+r.L*Math.sin(theta),
+      y:pivotY+r.L*Math.cos(theta),
+      vx:r.L*Math.cos(theta)*dtheta,
+      vy:-r.L*Math.sin(theta)*dtheta
+    };
+  }
+
+  function updateRopes(t){
+    ropes.forEach((r,i)=>{
+      const st=ropeState(i,t);
+      ropeEls[i].style.transform=`rotate(${-st.theta*180/Math.PI}deg)`;
+    });
+  }
+
+  function scoreLanding(px){
+    const d=Math.abs(px-1045);
+    if(d<=34)return 100;
+    if(d<=77)return 80;
+    if(d<=126)return 60;
+    return 40;
+  }
+
+  function finish(score,label){
+    if(finished)return;
+    finished=true;
+    active=false;
+    if(raf)cancelAnimationFrame(raf);
+
+    score=clamp(Math.round(score),0,100);
+    state.records.ropeSwingMob[p.id]=score;
+    scoreEl.textContent=score;
+    statusEl.textContent='FINISH';
+    call.textContent=label;
+    call.className='rsw-call-v173 result-v173';
+
+    beep(score>=80?1020:620,130,.03);
+
+    setTimeout(()=>{
+      if(isGameRunValid(runId)){
+        recordScreen(gameIndex,p,humanIndex,`${score}<small>pt</small>`,label);
+      }
+    },650);
+  }
+
+  function release(t){
+    if(mode!=='attached')return;
+
+    const st=ropeState(ropeIndex,t);
+    x=st.x;
+    y=st.y;
+
+    const launchMul=2.25;
+    vx=st.vx*launchMul+70;
+    vy=st.vy*1.05;
+
+    mode='flight';
+    statusEl.textContent='FLY';
+    call.textContent=ropeIndex<2?'CATCH NEXT!':'LAND!';
+    beep(690+ropeIndex*90,55,.016);
+  }
+
+  stage.addEventListener('pointerdown',e=>{
+    if(!active||finished||mode!=='attached')return;
+    e.preventDefault();
+    const t=(performance.now()-start)/1000;
+    release(t);
+  },{passive:false});
+
+  if(!(await countdown('ROPE SWING',runId,{transparent:true})))return;
 
   active=true;
   start=last=performance.now();
@@ -28964,21 +29097,645 @@ async function startCleaningMob(p,humanIndex,runId){
   function frame(now){
     if(finished||!isGameRunValid(runId))return;
 
-    const dt=Math.min(.035,(now-last)/1000);
+    const dt=Math.min(.028,(now-last)/1000);
     last=now;
+    const t=(now-start)/1000;
 
-    const rem=7000-(now-start);
-    timeEl.textContent=(Math.max(0,rem)/1000).toFixed(2);
+    updateRopes(t);
 
-    if(spraying&&targetPt){
-      applyWater(targetPt,dt);
+    if(mode==='attached'){
+      const st=ropeState(ropeIndex,t);
+      x=st.x;
+      y=st.y;
+    }else{
+      vy+=GRAVITY*dt;
+      x+=vx*dt;
+      y+=vy*dt;
+      vx*=Math.pow(.998,dt*60);
+
+      if(ropeIndex<2){
+        const next=ropeState(ropeIndex+1,t);
+        const dist=Math.hypot(x-next.x,y-next.y);
+
+        if(dist<=CATCH_R&&vx>40){
+          ropeIndex++;
+          mode='attached';
+          x=next.x;
+          y=next.y;
+          ropeEl.textContent=`${ropeIndex+1} / 3`;
+          statusEl.textContent='HOLD';
+          call.textContent='TAP TO RELEASE';
+          beep(930,70,.02);
+        }else if(y>=FLOOR){
+          finish(ropeIndex===0?10:30,ropeIndex===0?'MISS 2nd ROPE':'MISS 3rd ROPE');
+          return;
+        }
+      }else if(y>=FLOOR){
+        const s=scoreLanding(x);
+        finish(s,`LANDING ${s}`);
+        return;
+      }
     }
 
-    if(rem<=0){
-      finish(false);
+    cameraX=clamp(x-stage.clientWidth*.30,0,WORLD_W-stage.clientWidth);
+    world.style.transform=`translate3d(${-cameraX}px,0,0)`;
+
+    player.style.left=`${x-cameraX}px`;
+    player.style.top=`${y}px`;
+
+    raf=requestAnimationFrame(frame);
+  }
+
+  raf=requestAnimationFrame(frame);
+}
+
+
+// =========================================================
+// V10.73 GAME — モブくん壁ジャンプ
+// =========================================================
+async function startWallJumpMob(p,humanIndex,runId){
+  gameFit();
+  const gameIndex=GAMES.findIndex(g=>g.key==='wallJumpMob');
+  const WORLD_H=1500;
+  const GOAL_Y=1260;
+
+  const obstacles=[
+    {y:145,side:'left',w:66},
+    {y:245,side:'right',w:74},
+    {y:350,side:'left',w:78},
+    {y:455,side:'right',w:60},
+    {y:560,side:'left',w:84},
+    {y:655,side:'right',w:76},
+    {y:750,side:'left',w:60},
+    {y:842,side:'right',w:84},
+    {y:930,side:'left',w:70},
+    {y:1018,side:'right',w:74},
+    {y:1100,side:'left',w:82},
+    {y:1180,side:'right',w:66}
+  ];
+
+  screen.innerHTML=`
+    <div class="wj-shell-v173 gameplay-fit">
+      <div class="game-head">
+        <div><span class="kicker">${esc(p.name)}</span><h2>モブくん壁ジャンプ</h2><p class="lead">TAP → OTHER WALL / 10 SEC</p></div>
+        <div class="game-badge">${playBadge(humanIndex)}</div>
+      </div>
+
+      <div class="wj-hud-v173">
+        <div><span>TIME</span><b id="wjTime173">10.00</b></div>
+        <div><span>HEIGHT</span><b id="wjHeight173">0%</b></div>
+        <div><span>HIT</span><b id="wjHit173">0 / 2</b></div>
+      </div>
+
+      <div id="wjStage173" class="wj-stage-v173">
+        <div id="wjWorld173" class="wj-world-v173" style="height:${WORLD_H}px">
+          <div class="wj-wall left-v173"></div>
+          <div class="wj-wall right-v173"></div>
+
+          ${obstacles.map((o,i)=>`
+            <i class="wj-obstacle-v173 ${o.side}-v173" data-obs="${i}"
+              style="bottom:${o.y}px;width:${o.w}px"></i>
+          `).join('')}
+
+          <div class="wj-goal-v173" style="bottom:${GOAL_Y}px">TOP</div>
+        </div>
+
+        <div id="wjPlayer173" class="wj-player-v173"><img src="icon/01.png" draggable="false" alt=""></div>
+        <div id="wjCall173" class="wj-call-v173">TAP JUMP</div>
+      </div>
+    </div>`;
+
+  const stage=document.getElementById('wjStage173');
+  const world=document.getElementById('wjWorld173');
+  const player=document.getElementById('wjPlayer173');
+  const call=document.getElementById('wjCall173');
+  const timeEl=document.getElementById('wjTime173');
+  const heightEl=document.getElementById('wjHeight173');
+  const hitEl=document.getElementById('wjHit173');
+
+  void stage.offsetHeight;
+
+  const W=stage.clientWidth;
+  const PLAYER_R=19;
+  const LEFT_X=28;
+  const RIGHT_X=W-28;
+
+  let active=false,finished=false,raf=null,last=performance.now(),start=0;
+  let side='left';
+  let x=LEFT_X;
+  let progress=38;
+  let vx=0,vy=0;
+  let airborne=false;
+  let hits=0;
+  let hitCooldown=0;
+  let cameraY=0;
+
+  function finish(label){
+    if(finished)return;
+
+    finished=true;
+    active=false;
+    if(raf)cancelAnimationFrame(raf);
+
+    const score=clamp(Math.round(progress/GOAL_Y*100),0,100);
+    state.records.wallJumpMob[p.id]=score;
+
+    call.textContent=label;
+    call.className='wj-call-v173 result-v173';
+    heightEl.textContent=`${score}%`;
+
+    beep(score>=90?1030:620,130,.03);
+
+    setTimeout(()=>{
+      if(isGameRunValid(runId)){
+        recordScreen(gameIndex,p,humanIndex,`${score}<small>%</small>`,`${hits} HIT / HEIGHT`);
+      }
+    },620);
+  }
+
+  function collideObstacle(){
+    if(performance.now()<hitCooldown)return false;
+
+    for(const o of obstacles){
+      if(Math.abs(progress-o.y)>25)continue;
+
+      const hitX=o.side==='left'
+        ? x-PLAYER_R<o.w
+        : x+PLAYER_R>W-o.w;
+
+      if(hitX){
+        hits++;
+        hitEl.textContent=`${hits} / 2`;
+        hitCooldown=performance.now()+620;
+
+        progress=Math.max(20,progress-72);
+        airborne=false;
+        vx=0;vy=0;
+        side=x<W*.5?'left':'right';
+        x=side==='left'?LEFT_X:RIGHT_X;
+
+        player.classList.add('hit-v173');
+        setTimeout(()=>player.classList.remove('hit-v173'),420);
+
+        call.textContent=hits>=2?'2nd HIT!':'HIT! -HEIGHT';
+        call.className='wj-call-v173 hit-v173';
+        beep(190,120,.025);
+
+        if(hits>=2){
+          finish('2 HITS!');
+        }
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  stage.addEventListener('pointerdown',e=>{
+    if(!active||finished||airborne)return;
+    e.preventDefault();
+
+    airborne=true;
+    const target=side==='left'?'right':'left';
+    vx=(target==='right'?1:-1)*(W-56)/.42;
+    vy=355;
+
+    call.textContent='JUMP!';
+    call.className='wj-call-v173';
+    beep(690,45,.014);
+  },{passive:false});
+
+  if(!(await countdown('WALL JUMP',runId,{transparent:true})))return;
+
+  active=true;
+  start=last=performance.now();
+
+  function frame(now){
+    if(finished||!isGameRunValid(runId))return;
+
+    const dt=Math.min(.026,(now-last)/1000);
+    last=now;
+
+    const rem=Math.max(0,10000-(now-start));
+    timeEl.textContent=(rem/1000).toFixed(2);
+
+    if(airborne){
+      x+=vx*dt;
+      progress+=vy*dt;
+      vy-=760*dt;
+
+      if(x<=LEFT_X){
+        x=LEFT_X;
+        side='left';
+        airborne=false;
+        vx=0;vy=0;
+        call.textContent='TAP JUMP';
+      }
+
+      if(x>=RIGHT_X){
+        x=RIGHT_X;
+        side='right';
+        airborne=false;
+        vx=0;vy=0;
+        call.textContent='TAP JUMP';
+      }
+    }else{
+      progress=Math.max(0,progress-17*dt);
+    }
+
+    if(collideObstacle())return;
+
+    if(progress>=GOAL_Y){
+      progress=GOAL_Y;
+      finish('TOP!');
       return;
     }
 
+    cameraY=Math.max(0,progress-stage.clientHeight*.58);
+    world.style.transform=`translateY(${cameraY}px)`;
+
+    player.style.left=`${x}px`;
+    player.style.bottom=`${progress-cameraY}px`;
+
+    heightEl.textContent=`${Math.round(clamp(progress/GOAL_Y,0,1)*100)}%`;
+
+    if(rem<=0){
+      finish('TIME UP!');
+      return;
+    }
+
+    raf=requestAnimationFrame(frame);
+  }
+
+  raf=requestAnimationFrame(frame);
+}
+
+
+// =========================================================
+// V10.73 GAME — モブくんビリヤード
+// =========================================================
+async function startBilliardsMob(p,humanIndex,runId){
+  gameFit();
+  const gameIndex=GAMES.findIndex(g=>g.key==='billiardsMob');
+
+  screen.innerHTML=`
+    <div class="bil-shell-v173 gameplay-fit">
+      <div class="game-head">
+        <div><span class="kicker">${esc(p.name)}</span><h2>モブくんビリヤード</h2><p class="lead">PULL CUE BALL / MAX 4 SHOTS</p></div>
+        <div class="game-badge">${playBadge(humanIndex)}</div>
+      </div>
+
+      <div class="bil-hud-v173">
+        <div><span>SHOT</span><b id="bilShot173">0 / 4</b></div>
+        <div><span>POCKET</span><b id="bilPocket173">0 / 3</b></div>
+        <div><span>SCORE</span><b id="bilScore173">0</b></div>
+      </div>
+
+      <div id="bilStage173" class="bil-stage-v173">
+        <div class="bil-rail-v173"></div>
+        <div class="bil-pocket-v173 p1"></div>
+        <div class="bil-pocket-v173 p2"></div>
+        <div class="bil-pocket-v173 p3"></div>
+        <div id="bilBallLayer173" class="bil-ball-layer-v173"></div>
+        <div id="bilAim173" class="bil-aim-v173" hidden><i></i></div>
+        <div id="bilCall173" class="bil-call-v173">PULL WHITE BALL</div>
+      </div>
+    </div>`;
+
+  const stage=document.getElementById('bilStage173');
+  const layer=document.getElementById('bilBallLayer173');
+  const aim=document.getElementById('bilAim173');
+  const call=document.getElementById('bilCall173');
+  const shotEl=document.getElementById('bilShot173');
+  const pocketEl=document.getElementById('bilPocket173');
+  const scoreEl=document.getElementById('bilScore173');
+
+  void stage.offsetHeight;
+
+  const W=stage.clientWidth;
+  const H=stage.clientHeight;
+  const R=12;
+  const PAD=18;
+
+  const pockets=[
+    {x:PAD+3,y:PAD+3},
+    {x:W*.5,y:PAD},
+    {x:W-PAD-3,y:PAD+3}
+  ];
+
+  const patterns=[
+    [[.32,.43],[.68,.42],[.50,.29]],
+    [[.27,.35],[.53,.47],[.72,.31]],
+    [[.35,.30],[.67,.35],[.49,.49]],
+    [[.24,.46],[.50,.34],[.75,.47]],
+    [[.31,.38],[.60,.28],[.70,.48]],
+    [[.29,.29],[.52,.44],[.73,.36]]
+  ];
+
+  const pattern=patterns[randi(0,patterns.length-1)];
+
+  let shots=0,pocketed=0,active=false,finished=false,moving=false;
+  let drag=null,raf=null,last=performance.now(),stillFor=0,cueFoul=false;
+
+  const balls=[
+    {id:'cue',x:W*.5,y:H*.79,vx:0,vy:0,active:true,cue:true},
+    ...pattern.map((q,i)=>({
+      id:`b${i}`,
+      x:W*q[0],
+      y:H*q[1],
+      vx:0,vy:0,active:true,cue:false
+    }))
+  ];
+
+  function makeBall(b){
+    const el=document.createElement('div');
+    el.className=`bil-ball-v173 ${b.cue?'cue-v173':`target-${b.id.slice(1)}-v173`}`;
+    el.dataset.ball=b.id;
+    layer.appendChild(el);
+    b.el=el;
+  }
+
+  balls.forEach(makeBall);
+
+  function cueBall(){
+    return balls[0];
+  }
+
+  function renderBalls(){
+    for(const b of balls){
+      if(!b.active){
+        b.el.hidden=true;
+        continue;
+      }
+      b.el.hidden=false;
+      b.el.style.left=`${b.x}px`;
+      b.el.style.top=`${b.y}px`;
+    }
+  }
+
+  function currentScore(){
+    if(pocketed<3)return pocketed*25;
+    const bonus=shots<=2?25:shots===3?18:10;
+    return 75+bonus;
+  }
+
+  function finish(){
+    if(finished)return;
+
+    finished=true;
+    active=false;
+    if(raf)cancelAnimationFrame(raf);
+
+    const score=clamp(currentScore(),0,100);
+    state.records.billiardsMob[p.id]=score;
+    scoreEl.textContent=score;
+
+    call.textContent=pocketed===3
+      ? (score===100?'CLEAR IN 2!':'TABLE CLEAR!')
+      : '4 SHOTS FINISH!';
+    call.className='bil-call-v173 result-v173';
+
+    beep(score>=93?1030:650,140,.03);
+
+    setTimeout(()=>{
+      if(isGameRunValid(runId)){
+        recordScreen(gameIndex,p,humanIndex,`${score}<small>pt</small>`,`${pocketed} / 3 POCKET / ${shots} SHOTS`);
+      }
+    },680);
+  }
+
+  function respawnCue(){
+    const cue=cueBall();
+    cue.active=true;
+    cue.x=W*.5;
+    cue.y=H*.79;
+    cue.vx=cue.vy=0;
+    cueFoul=false;
+  }
+
+  function allStopped(){
+    return balls.every(b=>!b.active||Math.hypot(b.vx,b.vy)<8);
+  }
+
+  function local(e){
+    const r=stage.getBoundingClientRect();
+    return {x:e.clientX-r.left,y:e.clientY-r.top};
+  }
+
+  function updateAim(dx,dy){
+    const cue=cueBall();
+    const pull=Math.min(110,Math.hypot(dx,dy));
+    const angle=Math.atan2(-dy,-dx);
+
+    aim.hidden=false;
+    aim.style.left=`${cue.x}px`;
+    aim.style.top=`${cue.y}px`;
+    aim.style.width=`${75+pull*.72}px`;
+    aim.style.transform=`rotate(${angle}rad)`;
+    aim.querySelector('i').style.width=`${Math.min(100,pull)}px`;
+  }
+
+  stage.addEventListener('pointerdown',e=>{
+    if(!active||finished||moving)return;
+
+    const cue=cueBall();
+    if(!cue.active)return;
+
+    const pt=local(e);
+    if(Math.hypot(pt.x-cue.x,pt.y-cue.y)>62)return;
+
+    e.preventDefault();
+    stage.setPointerCapture?.(e.pointerId);
+    drag={id:e.pointerId,sx:cue.x,sy:cue.y,cx:pt.x,cy:pt.y};
+    updateAim(pt.x-cue.x,pt.y-cue.y);
+  },{passive:false});
+
+  stage.addEventListener('pointermove',e=>{
+    if(!drag||e.pointerId!==drag.id)return;
+    e.preventDefault();
+
+    const pt=local(e);
+    drag.cx=pt.x;
+    drag.cy=pt.y;
+
+    updateAim(pt.x-drag.sx,pt.y-drag.sy);
+  },{passive:false});
+
+  stage.addEventListener('pointerup',e=>{
+    if(!drag||e.pointerId!==drag.id||finished)return;
+    e.preventDefault();
+
+    const cue=cueBall();
+    const dx=drag.cx-drag.sx;
+    const dy=drag.cy-drag.sy;
+    const pull=Math.min(110,Math.hypot(dx,dy));
+    drag=null;
+    aim.hidden=true;
+
+    if(pull<18){
+      call.textContent='もっと引っ張る';
+      return;
+    }
+
+    shots++;
+    shotEl.textContent=`${shots} / 4`;
+
+    const power=clamp(pull*4.65,120,510);
+    const len=Math.max(1,Math.hypot(dx,dy));
+    cue.vx=-dx/len*power;
+    cue.vy=-dy/len*power;
+
+    moving=true;
+    stillFor=0;
+    call.textContent='SHOT!';
+    beep(620,45,.014);
+  },{passive:false});
+
+  function pocketBall(b){
+    if(!b.active)return;
+
+    b.active=false;
+    b.vx=b.vy=0;
+
+    if(b.cue){
+      cueFoul=true;
+      call.textContent='CUE FOUL';
+      call.className='bil-call-v173 foul-v173';
+      beep(190,90,.02);
+    }else{
+      pocketed++;
+      pocketEl.textContent=`${pocketed} / 3`;
+      scoreEl.textContent=currentScore();
+      call.textContent=pocketed===3?'ALL POCKET!':'POCKET!';
+      call.className='bil-call-v173 pocket-v173';
+      beep(910,80,.024);
+    }
+  }
+
+  function resolveWalls(b){
+    if(b.x<PAD+R){
+      b.x=PAD+R;
+      b.vx=Math.abs(b.vx)*.88;
+    }
+    if(b.x>W-PAD-R){
+      b.x=W-PAD-R;
+      b.vx=-Math.abs(b.vx)*.88;
+    }
+    if(b.y<PAD+R){
+      b.y=PAD+R;
+      b.vy=Math.abs(b.vy)*.88;
+    }
+    if(b.y>H-PAD-R){
+      b.y=H-PAD-R;
+      b.vy=-Math.abs(b.vy)*.88;
+    }
+  }
+
+  function resolvePair(a,b){
+    if(!a.active||!b.active)return;
+
+    const dx=b.x-a.x,dy=b.y-a.y;
+    const dist=Math.hypot(dx,dy);
+    const min=R*2;
+
+    if(dist<=0||dist>=min)return;
+
+    const nx=dx/dist,ny=dy/dist;
+    const overlap=min-dist;
+
+    a.x-=nx*overlap*.5;
+    a.y-=ny*overlap*.5;
+    b.x+=nx*overlap*.5;
+    b.y+=ny*overlap*.5;
+
+    const rel=(a.vx-b.vx)*nx+(a.vy-b.vy)*ny;
+    if(rel<=0)return;
+
+    a.vx-=rel*nx;
+    a.vy-=rel*ny;
+    b.vx+=rel*nx;
+    b.vy+=rel*ny;
+
+    beep(430,18,.004);
+  }
+
+  renderBalls();
+  active=false;
+
+  if(!(await countdown('BILLIARDS',runId,{transparent:true})))return;
+
+  active=true;
+  last=performance.now();
+
+  function frame(now){
+    if(finished||!isGameRunValid(runId))return;
+
+    const dt=Math.min(.022,(now-last)/1000);
+    last=now;
+
+    if(moving){
+      for(const b of balls){
+        if(!b.active)continue;
+
+        b.x+=b.vx*dt;
+        b.y+=b.vy*dt;
+
+        for(const pock of pockets){
+          if(Math.hypot(b.x-pock.x,b.y-pock.y)<=22){
+            pocketBall(b);
+            break;
+          }
+        }
+
+        if(!b.active)continue;
+
+        resolveWalls(b);
+
+        const damp=Math.pow(.976,dt*60);
+        b.vx*=damp;
+        b.vy*=damp;
+
+        if(Math.hypot(b.vx,b.vy)<6){
+          b.vx=b.vy=0;
+        }
+      }
+
+      for(let i=0;i<balls.length;i++){
+        for(let j=i+1;j<balls.length;j++){
+          resolvePair(balls[i],balls[j]);
+        }
+      }
+
+      if(allStopped()){
+        stillFor+=dt;
+
+        if(stillFor>.26){
+          moving=false;
+          stillFor=0;
+
+          if(cueFoul){
+            respawnCue();
+          }
+
+          if(pocketed>=3){
+            finish();
+            return;
+          }
+
+          if(shots>=4){
+            finish();
+            return;
+          }
+
+          call.textContent='PULL WHITE BALL';
+          call.className='bil-call-v173';
+        }
+      }else{
+        stillFor=0;
+      }
+    }
+
+    renderBalls();
     raf=requestAnimationFrame(frame);
   }
 

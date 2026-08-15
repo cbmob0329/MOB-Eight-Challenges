@@ -25843,25 +25843,25 @@ canvas{
 /* =========================================================
    V10.71 — PK / 3PT / Jenga / Mine Cart / Water Cleaning
    ========================================================= */
-.pkx-shell-v171,.tp-shell-v171,.jenga-shell-v171,.cart-shell-v171,.clean-shell-v171{
+.pkx-shell-v171,.tp-shell-v171{
   height:100%;min-height:0;display:flex;flex-direction:column;gap:6px;overflow:hidden;
   -webkit-user-select:none;user-select:none;-webkit-touch-callout:none;
 }
-.pkx-stage-v171,.tp-stage-v171,.jenga-stage-v171,.cart-stage-v171,.clean-stage-v171{
+.pkx-stage-v171,.tp-stage-v171{
   position:relative;flex:1;min-height:285px;overflow:hidden;
   border:4px solid var(--ink);border-radius:20px;
   touch-action:none!important;-webkit-user-select:none!important;user-select:none!important;-webkit-touch-callout:none!important;
 }
-.pkx-hud-v171,.tp-hud-v171,.jenga-hud-v171,.cart-hud-v171,.clean-hud-v171{
+.pkx-hud-v171,.tp-hud-v171{
   display:grid;grid-template-columns:repeat(3,1fr);gap:5px;
 }
-.pkx-hud-v171>div,.tp-hud-v171>div,.jenga-hud-v171>div,.cart-hud-v171>div,.clean-hud-v171>div{
+.pkx-hud-v171>div,.tp-hud-v171>div{
   padding:5px 3px;border:3px solid var(--ink);border-radius:10px;background:#fff;text-align:center;
 }
-.pkx-hud-v171 span,.tp-hud-v171 span,.jenga-hud-v171 span,.cart-hud-v171 span,.clean-hud-v171 span{
+.pkx-hud-v171 span,.tp-hud-v171 span{
   display:block;font-size:6px;font-weight:1000
 }
-.pkx-hud-v171 b,.tp-hud-v171 b,.jenga-hud-v171 b,.cart-hud-v171 b,.clean-hud-v171 b{
+.pkx-hud-v171 b,.tp-hud-v171 b{
   font-size:12px
 }
 
@@ -25905,137 +25905,330 @@ canvas{
 .tp-call-v171.in-v171{background:#8ce08b}.tp-call-v171.miss-v171{background:#ef9991}.tp-call-v171.result-v171{background:#ffe15d}
 
 /* Jenga — alternating face / depth layers */
-.jenga-stage-v171{background:#d7e8ef}
-.jenga-table-v171{position:absolute;left:4%;right:4%;bottom:4%;height:24px;border:4px solid var(--ink);border-radius:10px;background:#725035}
-.jenga-tower-v171{
-  --lean:0deg;position:absolute;z-index:10;left:50%;bottom:9%;
-  width:250px;display:flex;flex-direction:column;gap:1px;
-  transform:translateX(-50%) rotate(var(--lean));transform-origin:50% 100%;
-  transition:transform .45s ease
-}
-.jenga-layer-v171{position:relative;height:21px;display:flex;justify-content:center;align-items:center}
-.jenga-layer-v171.front-v171{gap:2px}
-.jenga-layer-v171.depth-v171{
-  height:20px;gap:5px;
-  transform:perspective(230px) rotateX(52deg);
-  transform-origin:50% 100%;
-  margin:-2px 0 1px
-}
-.jenga-block-v171{
-  position:relative;height:21px;padding:0!important;
-  border:3px solid #4c3320!important;border-radius:4px!important;
-  background:#d7a05f!important;
-  box-shadow:inset 0 -4px 0 rgba(91,50,22,.16),inset 0 3px 0 rgba(255,229,178,.38);
-  touch-action:none!important
-}
-.jenga-layer-v171.front-v171 .jenga-block-v171{width:78px}
-.jenga-layer-v171.depth-v171 .jenga-block-v171{
-  width:69px;height:34px;background:#c88d50!important;
-  border-radius:3px!important
-}
-.jenga-block-v171:before{
-  content:"";position:absolute;left:9px;right:8px;top:5px;height:2px;
-  border-radius:3px;background:rgba(102,59,26,.18);
-  box-shadow:0 5px 0 rgba(102,59,26,.12)
-}
-.jenga-block-v171.candidate-v171{background:#ffe36c!important;box-shadow:0 0 0 3px #fff inset}
-.jenga-block-v171.drag-v171{z-index:40}
-.jenga-block-v171.out-right-v171{transform:translateX(285px)!important;opacity:0;transition:transform .34s ease,opacity .34s ease}
-.jenga-block-v171.out-left-v171{transform:translateX(-285px)!important;opacity:0;transition:transform .34s ease,opacity .34s ease}
-.jenga-tower-v171.fall-right-v171{transform:translateX(-50%) rotate(69deg) translate(60px,24px)!important}
-.jenga-tower-v171.fall-left-v171{transform:translateX(-50%) rotate(-69deg) translate(-60px,24px)!important}
-.jenga-call-v171{position:absolute;z-index:24;left:50%;top:10px;transform:translateX(-50%);padding:4px 9px;border:3px solid var(--ink);border-radius:999px;background:#fff4b1;font-size:9px;font-weight:1000;white-space:nowrap}
-.jenga-call-v171.down-v171{background:#ef958e}.jenga-call-v171.clear-v171{background:#8ce08b}.jenga-call-v171.danger-v171{background:#f1a181}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /* Mine cart */
-.cart-stage-v171{background:#20262e}
-.cart-world-v171{position:absolute;left:0;top:0;height:100%;will-change:transform}
-.cart-cave-v171{position:absolute;inset:0;background:repeating-linear-gradient(115deg,#353d47 0 48px,#292f38 48px 96px)}
-.cart-rails-v171{
-  position:absolute;left:0;right:0;bottom:21%;height:72px;
-  background:
-    linear-gradient(#9a7855,#9a7855) 0 10px/100% 7px no-repeat,
-    linear-gradient(#9a7855,#9a7855) 0 53px/100% 7px no-repeat,
-    repeating-linear-gradient(90deg,transparent 0 27px,#704f35 27px 35px);
-  border-top:2px solid rgba(255,255,255,.08);
-  border-bottom:2px solid rgba(0,0,0,.45)
-}
-.cart-gap-v171{
-  position:absolute;z-index:8;top:-18px;height:108px;
-  background:linear-gradient(#0e1217 0,#050608 72%,#000 100%);
-  clip-path:polygon(0 10%,12% 3%,23% 11%,37% 0,51% 9%,67% 2%,82% 12%,100% 4%,100% 100%,0 100%);
-  box-shadow:inset 0 12px 18px rgba(0,0,0,.82)
-}
-.cart-gap-v171:before,.cart-gap-v171:after{
-  content:"";position:absolute;top:25px;width:34px;height:7px;
-  border:3px solid #171a1e;border-radius:4px;background:#8d704f
-}
-.cart-gap-v171:before{left:-17px;transform:rotate(16deg)}
-.cart-gap-v171:after{right:-17px;transform:rotate(-17deg)}
-.cart-gap-v171>b,.cart-gap-v171>em,.cart-gap-v171>span{
-  position:absolute;width:20px;height:6px;border:2px solid #111;background:#6f4d32
-}
-.cart-gap-v171>b{left:18%;top:43%;transform:rotate(28deg)}
-.cart-gap-v171>em{right:18%;top:58%;transform:rotate(-32deg)}
-.cart-gap-v171>span{left:46%;top:73%;transform:rotate(67deg)}
-.cart-goal-v171{position:absolute;z-index:10;top:-62px;padding:4px 8px;border:3px solid #fff;border-radius:7px;background:#ffe15e;color:#111;font-size:9px}
-.cart-rocks-v171 i{position:absolute;width:22px;height:18px;border:3px solid #171b20;border-radius:45%;background:#59616b}
-.cart-actor-v171{position:absolute;z-index:18;left:62px;bottom:19%;width:76px;height:82px;will-change:transform}
-.cart-actor-v171 img{position:absolute;left:20px;top:0;width:43px;height:48px;object-fit:contain}
-.cart-cart-v171{position:absolute;left:5px;bottom:5px;width:66px;height:33px;border:4px solid #15191e;border-radius:5px 5px 13px 13px;background:#a56d46}
-.cart-cart-v171 i{position:absolute;bottom:-14px;width:18px;height:18px;border:4px solid #15191e;border-radius:50%;background:#555}
-.cart-cart-v171 i:first-child{left:4px}.cart-cart-v171 i:last-child{right:4px}
-.cart-actor-v171.double-v171{animation:cartDouble171 .28s ease}
-@keyframes cartDouble171{50%{scale:1.08;rotate:-5deg}}
-.cart-actor-v171.fall-v171{animation:cartFall171 .55s ease}
-@keyframes cartFall171{45%{transform:translateY(70px) rotate(18deg);opacity:.48}100%{transform:translateY(0);opacity:1}}
-.cart-call-v171{position:absolute;z-index:24;left:50%;top:13px;transform:translateX(-50%);padding:5px 10px;border:3px solid #14181d;border-radius:999px;background:#fff3aa;font-size:10px;font-weight:1000;white-space:nowrap}
-.cart-call-v171.result-v171{background:#ffe15e}
-.cart-jump-v171{position:absolute;z-index:23;right:8px;bottom:8px;padding:4px 7px;border:3px solid #12161b;border-radius:9px;background:#d9f2ff;font-size:8px;font-weight:1000;pointer-events:none}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /* Water cleaning */
-.clean-stage-v171{background:#edf0e9}
-.clean-room-v171{position:absolute;inset:0;background:#e9e1ce;border-bottom:70px solid #b8946e}
-.clean-plush-v171{position:absolute;z-index:5;left:50%;top:49%;width:min(76%,310px);height:76%;transform:translate(-50%,-50%);display:grid;place-items:center}
-.clean-plush-v171:before{content:"";position:absolute;inset:6%;border:8px solid rgba(88,68,55,.18);border-radius:45%;background:#fff8e8}
-.clean-plush-v171 img{position:relative;z-index:2;width:92%;height:92%;object-fit:contain;filter:drop-shadow(0 6px 0 rgba(50,45,40,.15))}
-.clean-dust-layer-v171{position:absolute;z-index:12;inset:0}
-.clean-dust-layer-v171>i{
-  position:absolute;width:36px;height:36px;transform:translate(-50%,-50%);
-  border:3px dashed #37383b;border-radius:50%;background:rgba(92,88,84,.46);
-  touch-action:none!important
-}
-.clean-dust-layer-v171>i b{position:absolute;width:7px;height:7px;border-radius:50%;background:#4f4e4d}
-.clean-dust-layer-v171>i b:nth-child(1){left:7px;top:8px}
-.clean-dust-layer-v171>i b:nth-child(2){right:6px;top:12px}
-.clean-dust-layer-v171>i b:nth-child(3){left:14px;bottom:5px}
-.clean-dust-layer-v171>i.watering-v171{
-  box-shadow:0 0 0 7px rgba(119,216,247,.28),0 0 14px rgba(90,205,244,.7)
-}
-.clean-dust-layer-v171>i.done-v171{opacity:0!important;scale:.2;transition:opacity .2s ease,scale .2s ease}
-.clean-nozzle-v171{
-  position:absolute;z-index:20;left:50%;bottom:3px;width:52px;height:25px;
-  transform:translateX(-50%);border:4px solid var(--ink);border-radius:10px 10px 5px 5px;background:#77b7d7
-}
-.clean-nozzle-v171 i{
-  position:absolute;left:50%;top:-15px;width:13px;height:22px;transform:translateX(-50%);
-  border:3px solid var(--ink);border-radius:7px 7px 2px 2px;background:#cbd8df
-}
-.clean-stream-v171{
-  position:absolute;z-index:18;height:9px;transform-origin:0 50%;pointer-events:none;
-  border-radius:999px;
-  background:linear-gradient(90deg,rgba(91,196,239,.78),rgba(225,249,255,.94));
-  box-shadow:0 0 8px rgba(88,203,243,.7)
-}
-.clean-stream-v171 i{
-  position:absolute;right:-8px;top:50%;width:23px;height:23px;transform:translateY(-50%);
-  border:4px solid rgba(219,248,255,.9);border-radius:50%;animation:cleanSplash171 .28s ease-in-out infinite alternate
-}
-@keyframes cleanSplash171{to{scale:1.3;opacity:.55}}
-.clean-call-v171{position:absolute;z-index:25;left:50%;top:10px;transform:translateX(-50%);padding:4px 9px;border:3px solid var(--ink);border-radius:999px;background:#fff4b0;font-size:9px;font-weight:1000;white-space:nowrap}
-.clean-call-v171.water-v171{background:#b8edff}.clean-call-v171.result-v171{background:#8fe18c}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 @media(max-height:700px){
-  .pkx-stage-v171,.tp-stage-v171,.jenga-stage-v171,.cart-stage-v171,.clean-stage-v171{min-height:245px}
-  .jenga-tower-v171{scale:.86;bottom:5%}
+  .pkx-stage-v171,.tp-stage-v171{min-height:245px}
+  
+}
+
+
+/* =========================================================
+   V10.72 — Long high-speed Mine Cart
+   ========================================================= */
+.cart-shell-v172{height:100%;min-height:0;display:flex;flex-direction:column;gap:6px;overflow:hidden;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.cart-stage-v172{position:relative;flex:1;min-height:285px;overflow:hidden;border:4px solid var(--ink);border-radius:20px;background:#1e242b;touch-action:none!important;-webkit-user-select:none!important;user-select:none!important;-webkit-touch-callout:none!important}
+.cart-hud-v172{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}
+.cart-hud-v172>div{padding:5px 3px;border:3px solid var(--ink);border-radius:10px;background:#fff;text-align:center}
+.cart-hud-v172 span{display:block;font-size:6px;font-weight:1000}
+.cart-hud-v172 b{font-size:12px}
+
+.cart-world-v172{position:absolute;left:0;top:0;height:100%;will-change:transform}
+.cart-cave-v172{position:absolute;inset:0;background:radial-gradient(circle at 18% 24%,rgba(255,207,111,.11) 0 4%,transparent 4.5%),radial-gradient(circle at 72% 18%,rgba(255,207,111,.08) 0 3%,transparent 3.5%),repeating-linear-gradient(112deg,#343c46 0 56px,#282e36 56px 112px)}
+.cart-track-v172{position:absolute;left:0;right:0;bottom:21%;height:74px;background:linear-gradient(#9a7855,#9a7855) 0 10px/100% 7px no-repeat,linear-gradient(#9a7855,#9a7855) 0 54px/100% 7px no-repeat,repeating-linear-gradient(90deg,transparent 0 27px,#704f35 27px 35px)}
+
+.cart-gap-v172{position:absolute;z-index:8;top:-19px;height:112px;background:linear-gradient(#10141a 0,#07090c 70%,#000 100%);clip-path:polygon(0 10%,11% 2%,24% 12%,38% 0,52% 10%,67% 3%,83% 13%,100% 4%,100% 100%,0 100%);box-shadow:inset 0 13px 20px rgba(0,0,0,.86)}
+.cart-gap-v172:before,.cart-gap-v172:after{content:"";position:absolute;top:25px;width:34px;height:7px;border:3px solid #15181c;border-radius:4px;background:#8d704f}
+.cart-gap-v172:before{left:-17px;transform:rotate(16deg)}
+.cart-gap-v172:after{right:-17px;transform:rotate(-17deg)}
+.cart-gap-v172>b,.cart-gap-v172>em,.cart-gap-v172>span{position:absolute;width:20px;height:6px;border:2px solid #101215;background:#6f4d32}
+.cart-gap-v172>b{left:17%;top:42%;transform:rotate(29deg)}
+.cart-gap-v172>em{right:17%;top:58%;transform:rotate(-33deg)}
+.cart-gap-v172>span{left:47%;top:75%;transform:rotate(66deg)}
+
+.cart-slope-v172{position:absolute;z-index:9;top:-62px;height:120px;overflow:visible;pointer-events:none}
+.cart-slope-v172:before{content:"";position:absolute;left:0;right:0;bottom:0;height:var(--slope-h);background:#4d5359;border:4px solid #171b20;clip-path:polygon(0 100%,100% 0,100% 100%)}
+.cart-slope-v172.down-v172:before{clip-path:polygon(0 0,100% 100%,0 100%)}
+.cart-slope-v172>i,.cart-slope-v172>b{position:absolute;height:7px;background:#a48660;border:3px solid #171b20;border-radius:5px;transform-origin:left center}
+.cart-slope-v172.up-v172>i{left:4px;bottom:12px;width:94%;transform:rotate(-13deg)}
+.cart-slope-v172.up-v172>b{left:4px;bottom:42px;width:94%;transform:rotate(-13deg)}
+.cart-slope-v172.down-v172>i{left:4px;top:16px;width:94%;transform:rotate(13deg)}
+.cart-slope-v172.down-v172>b{left:4px;top:47px;width:94%;transform:rotate(13deg)}
+
+.cart-trampoline-v172{position:absolute;z-index:12;top:-11px;height:75px;border:4px solid #171b20;border-radius:9px;background:#5b6871;overflow:visible}
+.cart-trampoline-v172:before{content:"";position:absolute;left:-5px;right:-5px;top:-12px;height:16px;border:4px solid #171b20;border-radius:10px;background:#6dd6e5}
+.cart-trampoline-v172 i{position:absolute;bottom:5px;width:9px;height:43px;border:3px solid #171b20;border-radius:999px;background:repeating-linear-gradient(0deg,#f6e565 0 5px,#4b5862 5px 10px)}
+.cart-trampoline-v172 i:nth-child(1){left:9px}
+.cart-trampoline-v172 i:nth-child(2){left:50%;transform:translateX(-50%)}
+.cart-trampoline-v172 i:nth-child(3){right:9px}
+
+.cart-magma-v172{position:absolute;z-index:8;top:-18px;height:112px;border:4px solid #451f18;border-radius:5px;background:radial-gradient(circle at 20% 48%,#ffe36b 0 10px,transparent 11px),radial-gradient(circle at 65% 62%,#ffcb3f 0 13px,transparent 14px),linear-gradient(#ff7350,#d52f2b 52%,#8b1e20);overflow:hidden;box-shadow:inset 0 11px 0 rgba(255,224,85,.25)}
+.cart-magma-v172:before{content:"";position:absolute;left:0;right:0;top:-3px;height:14px;background:repeating-radial-gradient(ellipse at 50% 100%,#ffdd53 0 7px,#f14b35 8px 15px)}
+.cart-magma-v172 i{position:absolute;bottom:11px;width:11px;height:25px;border-radius:50% 50% 45% 45%;background:#ffd94f;animation:cartMagmaBubble172 .65s ease-in-out infinite alternate}
+.cart-magma-v172 i:nth-child(even){animation-delay:.22s;height:17px}
+@keyframes cartMagmaBubble172{to{transform:translateY(-28px) scale(.45);opacity:.25}}
+
+.cart-goal-v172{position:absolute;z-index:14;top:-63px;padding:4px 8px;border:3px solid #fff;border-radius:7px;background:#ffe15e;color:#111;font-size:9px}
+.cart-rocks-v172 i{position:absolute;width:22px;height:18px;border:3px solid #171b20;border-radius:45%;background:#59616b}
+
+.cart-actor-v172{position:absolute;z-index:20;left:62px;bottom:19%;width:76px;height:82px;transform-origin:50% 80%;will-change:transform}
+.cart-actor-v172 img{position:absolute;left:20px;top:0;width:43px;height:48px;object-fit:contain}
+.cart-cart-v172{position:absolute;left:5px;bottom:5px;width:66px;height:33px;border:4px solid #15191e;border-radius:5px 5px 13px 13px;background:#a56d46}
+.cart-cart-v172 i{position:absolute;bottom:-14px;width:18px;height:18px;border:4px solid #15191e;border-radius:50%;background:#555}
+.cart-cart-v172 i:first-child{left:4px}.cart-cart-v172 i:last-child{right:4px}
+
+.cart-actor-v172.double-v172{animation:cartDouble172 .28s ease}
+@keyframes cartDouble172{50%{scale:1.09;rotate:-5deg}}
+.cart-actor-v172.trampoline-v172{animation:cartTrampoline172 .34s ease}
+@keyframes cartTrampoline172{45%{scale:1.12;rotate:6deg}}
+.cart-actor-v172.fall-v172{animation:cartFall172 .55s ease}
+@keyframes cartFall172{45%{transform:translateY(72px) rotate(18deg);opacity:.48}100%{transform:translateY(0);opacity:1}}
+.cart-actor-v172.magma-fall-v172{animation:cartMagmaFall172 .68s ease}
+@keyframes cartMagmaFall172{40%{transform:translateY(76px) rotate(-20deg);filter:saturate(1.8);opacity:.35}100%{transform:translateY(0);filter:none;opacity:1}}
+
+.cart-call-v172{position:absolute;z-index:26;left:50%;top:13px;transform:translateX(-50%);padding:5px 10px;border:3px solid #14181d;border-radius:999px;background:#fff3aa;font-size:10px;font-weight:1000;white-space:nowrap}
+.cart-call-v172.result-v172{background:#ffe15e}
+.cart-jump-v172{position:absolute;z-index:25;right:8px;bottom:8px;padding:4px 7px;border:3px solid #12161b;border-radius:9px;background:#d9f2ff;font-size:8px;font-weight:1000;pointer-events:none}
+.cart-gimmick-v172{position:absolute;z-index:25;left:8px;bottom:8px;padding:4px 7px;border:3px solid #12161b;border-radius:9px;background:#eef1f3;font-size:8px;font-weight:1000;pointer-events:none}
+.cart-gimmick-v172.slope-v172{background:#d9d2c4}
+.cart-gimmick-v172.trampoline-v172{background:#b9eef5}
+.cart-gimmick-v172.magma-v172{background:#ff9b69}
+.cart-gimmick-v172.hole-v172{background:#d1d4d8}
+.cart-gimmick-v172.finish-v172{background:#ffe15e}
+
+@media(max-height:700px){.cart-stage-v172{min-height:245px}}
+
+
+/* =========================================================
+   V10.73 — Air Hockey / Rope Swing / Wall Jump / Billiards
+   ========================================================= */
+.airh-shell-v173,.rsw-shell-v173,.wj-shell-v173,.bil-shell-v173{
+  height:100%;min-height:0;display:flex;flex-direction:column;gap:6px;overflow:hidden;
+  -webkit-user-select:none;user-select:none;-webkit-touch-callout:none
+}
+.airh-stage-v173,.rsw-stage-v173,.wj-stage-v173,.bil-stage-v173{
+  position:relative;flex:1;min-height:285px;overflow:hidden;
+  border:4px solid var(--ink);border-radius:20px;
+  touch-action:none!important;-webkit-user-select:none!important;user-select:none!important;-webkit-touch-callout:none!important
+}
+.airh-hud-v173,.rsw-hud-v173,.wj-hud-v173,.bil-hud-v173{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:5px
+}
+.airh-hud-v173>div,.rsw-hud-v173>div,.wj-hud-v173>div,.bil-hud-v173>div{
+  padding:5px 3px;border:3px solid var(--ink);border-radius:10px;background:#fff;text-align:center
+}
+.airh-hud-v173 span,.rsw-hud-v173 span,.wj-hud-v173 span,.bil-hud-v173 span{
+  display:block;font-size:6px;font-weight:1000
+}
+.airh-hud-v173 b,.rsw-hud-v173 b,.wj-hud-v173 b,.bil-hud-v173 b{font-size:12px}
+
+/* Air Hockey */
+.airh-stage-v173{
+  background:#dff4f4;
+  box-shadow:inset 0 0 0 7px #7ebfc7
+}
+.airh-rink-v173{position:absolute;inset:8px;border:4px solid #1e5961;border-radius:17px;background:#effafa}
+.airh-line-v173{position:absolute;left:5%;right:5%;top:50%;height:4px;background:#85c9d0;transform:translateY(-50%)}
+.airh-circle-v173{position:absolute;left:50%;top:50%;width:84px;height:84px;transform:translate(-50%,-50%);border:4px solid #85c9d0;border-radius:50%}
+.airh-goal{position:absolute;left:50%;width:96px;height:17px;transform:translateX(-50%);border:4px solid #1b3940;background:#c5d9db}
+.airh-goal.top-v173{top:-5px;border-radius:0 0 12px 12px}
+.airh-goal.bottom-v173{bottom:-5px;border-radius:12px 12px 0 0}
+.airh-defense-v173{
+  position:absolute;z-index:8;left:50%;top:63px;width:92px;height:20px;
+  transform:translate(-50%,-50%);border:4px solid var(--ink);border-radius:999px;background:#ef7b6d
+}
+.airh-puck-v173{
+  position:absolute;z-index:12;width:24px;height:24px;transform:translate(-50%,-50%);
+  border:4px solid var(--ink);border-radius:50%;background:#31343a;will-change:left,top
+}
+.airh-paddle-v173{
+  position:absolute;z-index:15;width:58px;height:58px;transform:translate(-50%,-50%);
+  border:4px solid var(--ink);border-radius:50%;background:#66bbd8;will-change:left,top
+}
+.airh-paddle-v173:after{
+  content:"";position:absolute;inset:9px;border:3px solid rgba(255,255,255,.65);border-radius:50%
+}
+.airh-paddle-v173 img{
+  position:absolute;z-index:2;left:50%;top:50%;width:38px;height:38px;transform:translate(-50%,-50%);object-fit:contain;pointer-events:none
+}
+.airh-call-v173{
+  position:absolute;z-index:23;left:50%;top:10px;transform:translateX(-50%);
+  padding:4px 9px;border:3px solid var(--ink);border-radius:999px;background:#fff4b0;
+  font-size:10px;font-weight:1000;white-space:nowrap;pointer-events:none
+}
+.airh-call-v173.goal-v173{background:#8ce08b}.airh-call-v173.bad-v173{background:#ef958e}.airh-call-v173.result-v173{background:#ffe15e}
+
+/* Rope Swing */
+.rsw-stage-v173{background:#bfe5f2}
+.rsw-world-v173{position:absolute;left:0;top:0;height:100%;will-change:transform}
+.rsw-sky-v173{position:absolute;inset:0;background:#bfe5f2}
+.rsw-cliffs-v173{
+  position:absolute;left:0;right:0;bottom:0;height:17%;
+  background:repeating-linear-gradient(110deg,#8b6b4f 0 45px,#74573f 45px 90px);
+  border-top:5px solid #423326
+}
+.rsw-rope-v173{
+  position:absolute;z-index:7;width:7px;transform-origin:50% 0;
+  border:3px solid #2d2117;border-radius:999px;background:#b18b5c
+}
+.rsw-rope-v173:after{
+  content:"";position:absolute;left:50%;bottom:-8px;width:18px;height:18px;transform:translateX(-50%);
+  border:3px solid var(--ink);border-radius:50%;background:#d9ad6c
+}
+.rsw-player-v173{
+  position:absolute;z-index:18;width:58px;height:66px;transform:translate(-50%,-50%);
+  will-change:left,top
+}
+.rsw-player-v173 img{width:100%;height:100%;object-fit:contain}
+.rsw-landing-v173{
+  position:absolute;left:895px;bottom:5%;width:300px;height:34px;display:flex;border:4px solid var(--ink);border-radius:8px;overflow:hidden
+}
+.rsw-landing-v173 i{
+  flex:1;display:grid;place-items:center;font-size:8px;font-weight:1000;font-style:normal;border-right:2px solid var(--ink)
+}
+.rsw-landing-v173 .z40,.rsw-landing-v173 .z40b{background:#d9e0e5}
+.rsw-landing-v173 .z60,.rsw-landing-v173 .z60b{background:#b9dced}
+.rsw-landing-v173 .z80,.rsw-landing-v173 .z80b{background:#91d894}
+.rsw-landing-v173 .z100{background:#ffe15e}
+.rsw-call-v173{
+  position:absolute;z-index:25;left:50%;top:10px;transform:translateX(-50%);
+  padding:4px 9px;border:3px solid var(--ink);border-radius:999px;background:#fff4b1;
+  font-size:9px;font-weight:1000;white-space:nowrap;pointer-events:none
+}
+.rsw-call-v173.result-v173{background:#ffe15e}
+
+/* Wall Jump */
+.wj-stage-v173{background:#323b45}
+.wj-world-v173{
+  position:absolute;left:0;right:0;bottom:0;will-change:transform;
+  background:repeating-linear-gradient(0deg,#3b4651 0 70px,#343e48 70px 140px)
+}
+.wj-wall{
+  position:absolute;top:0;bottom:0;width:28px;
+  background:repeating-linear-gradient(0deg,#706155 0 26px,#5e5047 26px 52px);
+  border:4px solid #191d21
+}
+.wj-wall.left-v173{left:0}.wj-wall.right-v173{right:0}
+.wj-obstacle-v173{
+  position:absolute;z-index:8;height:30px;background:#996447;border:4px solid #1b1c1f;
+  clip-path:polygon(0 20%,70% 15%,100% 50%,70% 85%,0 80%)
+}
+.wj-obstacle-v173.left-v173{left:24px}
+.wj-obstacle-v173.right-v173{right:24px;transform:scaleX(-1)}
+.wj-goal-v173{
+  position:absolute;left:50%;width:130px;height:34px;transform:translateX(-50%);
+  border:4px solid #fff;border-radius:10px;background:#ffe15e;display:grid;place-items:center;
+  color:#12161b;font-size:10px;font-weight:1000
+}
+.wj-player-v173{
+  position:absolute;z-index:18;width:46px;height:52px;transform:translate(-50%,50%);
+  will-change:left,bottom
+}
+.wj-player-v173 img{width:100%;height:100%;object-fit:contain}
+.wj-player-v173.hit-v173{animation:wjHit173 .38s ease}
+@keyframes wjHit173{45%{scale:.86;rotate:12deg;opacity:.55}}
+.wj-call-v173{
+  position:absolute;z-index:25;left:50%;top:10px;transform:translateX(-50%);
+  padding:4px 9px;border:3px solid var(--ink);border-radius:999px;background:#fff4b0;
+  font-size:9px;font-weight:1000;white-space:nowrap;pointer-events:none
+}
+.wj-call-v173.hit-v173{background:#ef968f}.wj-call-v173.result-v173{background:#ffe15e}
+
+/* Billiards */
+.bil-stage-v173{
+  background:#2c8c62;
+  box-shadow:inset 0 0 0 16px #744d2f,inset 0 0 0 21px #2b1b12
+}
+.bil-rail-v173{position:absolute;inset:18px;border:3px solid rgba(255,255,255,.18);border-radius:8px;pointer-events:none}
+.bil-pocket-v173{
+  position:absolute;z-index:4;top:8px;width:42px;height:42px;border:5px solid #23170f;border-radius:50%;background:#080909
+}
+.bil-pocket-v173.p1{left:8px}.bil-pocket-v173.p2{left:50%;transform:translateX(-50%)}.bil-pocket-v173.p3{right:8px}
+.bil-ball-layer-v173{position:absolute;inset:0;pointer-events:none}
+.bil-ball-v173{
+  position:absolute;z-index:12;width:24px;height:24px;transform:translate(-50%,-50%);
+  border:3px solid #1b1c1f;border-radius:50%;will-change:left,top
+}
+.bil-ball-v173.cue-v173{background:#fff}
+.bil-ball-v173.target-0-v173{background:#ef695d}
+.bil-ball-v173.target-1-v173{background:#f3d85e}
+.bil-ball-v173.target-2-v173{background:#6e9fe3}
+.bil-aim-v173{
+  position:absolute;z-index:18;height:4px;transform-origin:0 50%;
+  background:rgba(255,255,255,.85);pointer-events:none
+}
+.bil-aim-v173:before{
+  content:"";position:absolute;left:0;top:50%;width:9px;height:9px;transform:translate(-50%,-50%);
+  border:2px solid #fff;border-radius:50%
+}
+.bil-aim-v173 i{
+  position:absolute;right:100%;top:50%;height:6px;transform:translateY(-50%);
+  border-radius:999px;background:#e0b98a
+}
+.bil-call-v173{
+  position:absolute;z-index:25;left:50%;bottom:8px;transform:translateX(-50%);
+  padding:4px 9px;border:3px solid var(--ink);border-radius:999px;background:#fff4b0;
+  font-size:9px;font-weight:1000;white-space:nowrap;pointer-events:none
+}
+.bil-call-v173.pocket-v173{background:#8ce08b}.bil-call-v173.foul-v173{background:#ef958e}.bil-call-v173.result-v173{background:#ffe15e}
+
+@media(max-height:700px){
+  .airh-stage-v173,.rsw-stage-v173,.wj-stage-v173,.bil-stage-v173{min-height:245px}
 }
