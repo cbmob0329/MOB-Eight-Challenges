@@ -26836,3 +26836,35 @@ canvas{
   from{transform:translateY(10px);opacity:0}
   to{transform:translateY(0);opacity:1}
 }
+
+
+/* =========================================================
+   V10.65 — Long Jump no-teleport / actual takeoff marker
+   ========================================================= */
+.longjump-actual-takeoff-v165{
+  position:absolute;
+  z-index:12;
+  bottom:0;
+  display:none;
+  width:5px;
+  height:150px;
+  transform:translateX(-50%);
+  background:#ff9b42;
+  border-left:2px solid #1b1820;
+  border-right:2px solid #1b1820;
+  pointer-events:none;
+}
+.longjump-actual-takeoff-v165:before{
+  content:"JUMP";
+  position:absolute;
+  left:50%;
+  top:10px;
+  transform:translateX(-50%);
+  padding:2px 5px;
+  border:2px solid #1b1820;
+  border-radius:7px;
+  background:#fff1c8;
+  font-size:7px;
+  font-weight:1000;
+  white-space:nowrap;
+}

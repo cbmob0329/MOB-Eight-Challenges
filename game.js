@@ -28217,6 +28217,7 @@ async function startLongJumpMob(p,humanIndex,runId){
         <div id="ljWorld162" class="longjump-world-v162" style="width:${WORLD_W}px">
           <div class="longjump-runway-v162"></div>
           <div class="longjump-takeoff-v162" style="left:${TAKEOFF_X}px"></div>
+          <div id="ljActualTakeoff165" class="longjump-actual-takeoff-v165"></div>
           <div class="longjump-sand-v162" style="left:${SAND_X}px">
             ${Array.from({length:12},(_,i)=>`<i style="left:${i*42}px"></i>`).join('')}
           </div>
@@ -28261,6 +28262,7 @@ async function startLongJumpMob(p,humanIndex,runId){
   const timingEl=document.getElementById('ljTiming162');
   const distanceEl=document.getElementById('ljDistance162');
   const landingMark=document.getElementById('ljLandingMark162');
+  const actualTakeoff=document.getElementById('ljActualTakeoff165');
 
   let phase='gauge';
   let finished=false;
@@ -28290,7 +28292,7 @@ async function startLongJumpMob(p,humanIndex,runId){
     // Player screen position is always derived from the REAL world position.
     // This prevents any teleport when JUMP is pressed early.
     const worldPlayerX=
-      phase==='flight'
+      (phase==='flight'||phase==='end')
         ? flightWorldX
         : runnerX;
 
@@ -28405,11 +28407,17 @@ async function startLongJumpMob(p,humanIndex,runId){
     flightPeak=92+jumpDistance/300*120;
     flightT=0;
 
-    // CRITICAL: the jump begins from the exact position where the user pressed JUMP.
+    // Jump begins from the exact world position where the user pressed JUMP.
     flightStartX=runnerX;
     flightWorldX=runnerX;
     flightLandingX=runnerX+jumpDistance*1.72;
 
+    // Show the exact point where JUMP was pressed.
+    actualTakeoff.style.display='block';
+    actualTakeoff.style.left=`${flightStartX}px`;
+
+    // cameraX is intentionally NOT changed here.
+    // The first flight frame starts from the exact same camera position.
     msg.textContent='JUMP!!';
 
     player.classList.add('flying-v162');
@@ -28499,8 +28507,9 @@ async function startLongJumpMob(p,humanIndex,runId){
     }else if(phase==='run'){
       runnerX+=runSpeed*dt;
 
-      // Camera follows the real running position continuously.
-      cameraX=clamp(runnerX-98,0,RUNWAY_END-260);
+      // Keep the same screen anchor all the way through the runway.
+      // Do not cap at RUNWAY_END: the world also contains the sand pit.
+      cameraX=clamp(runnerX-98,0,WORLD_W-360);
       player.style.transform='translate3d(0,0,0)';
 
       if(runnerX>TAKEOFF_X-150&&runnerX<TAKEOFF_X+12){
@@ -28528,8 +28537,10 @@ async function startLongJumpMob(p,humanIndex,runId){
       flightWorldX=flightStartX+visualTravel*t;
       const jumpY=arc*flightPeak;
 
+      // Same 98px screen anchor as the run phase.
+      // At t=0 this equals the pre-jump camera exactly, so there is no snap.
       cameraX=clamp(
-        flightWorldX-82,
+        flightWorldX-98,
         0,
         WORLD_W-360
       );
