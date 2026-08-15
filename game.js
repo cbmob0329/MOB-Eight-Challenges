@@ -2530,7 +2530,7 @@ function showGameIntro(index){
   }else if(legacyIndex===94){
     rules=`<li>4人が1体ずつ魔物を描き、TEAM A 2体 VS TEAM B 2体で戦います。</li><li>ソロでは1P役と4P役を自分で描き、残り2体はCPUが描きます。</li>`;
   }else if(legacyIndex===95){
-    rules=`<li>上部を左右に動くボールをDROP。障害物・回転ファン・得点スロットは毎回ランダム配置です。</li><li>カメラがボールを追従。最後に入ったランダム配置の10〜100点がそのまま得点です。</li>`;
+    rules=`<li>上部を左右に動くボールをDROP。障害物・5基の回転ファン・得点スロットは毎回ランダム配置です。</li><li>カメラがボールを追従。最後に入ったランダム配置の10〜100点がそのまま得点です。</li>`;
   }else if(legacyIndex===96){
     rules=`<li>モブくんは自動で200mを走ります。JUMPで間隔を広げた8個のハードルを越えてください。</li><li>1台越えるたび加速。完走タイムが速いほど高得点で、最速は約10秒です。</li>`;
   }else{
@@ -27569,15 +27569,24 @@ async function startMobPinball(p,humanIndex,runId){
 
   // Familiar pinball-style rotating fan/bumpers.
   const fans=[];
-  const fanYs=shuffle([305,520,745,980]).slice(0,3).sort((a,b)=>a-b);
 
-  fanYs.forEach((y,i)=>{
+  // More rotating obstacles, with a stronger presence in the lower half.
+  // Each vertical band still randomizes its exact position every game.
+  const fanBands=[
+    [300,390],
+    [510,610],
+    [720,820],
+    [915,1025],
+    [1080,1180]
+  ];
+
+  fanBands.forEach(([minY,maxY],i)=>{
     fans.push({
-      x:rand(78,282),
-      y:y+rand(-18,18),
-      r:31,
+      x:rand(i%2===0?72:92,i%2===0?288:268),
+      y:rand(minY,maxY),
+      r:i>=3?34:31,
       dir:Math.random()<.5?-1:1,
-      speed:rand(2.2,3.5),
+      speed:rand(i>=3?2.5:2.2,i>=3?3.9:3.5),
       phase:rand(0,Math.PI*2)
     });
   });
@@ -27826,7 +27835,7 @@ async function startMobPinball(p,humanIndex,runId){
         const ny=dy/dist;
         const tx=-ny*fan.dir;
         const ty=nx*fan.dir;
-        const push=235+fan.speed*34;
+        const push=(fan.y>850?255:235)+fan.speed*34;
 
         ball.x=fan.x+nx*hitR;
         ball.y=fan.y+ny*hitR;
@@ -28233,6 +28242,10 @@ async function startLongJumpMob(p,humanIndex,runId){
             DASH STOP
           </button>
         </div>
+
+        <button id="ljJump162" class="primary longjump-jump-v163" type="button" hidden>
+          JUMP!
+        </button>
       </div>
     </div>`;
 
@@ -28240,6 +28253,7 @@ async function startLongJumpMob(p,humanIndex,runId){
   const player=document.getElementById('ljPlayer162');
   const needle=document.getElementById('ljGaugeNeedle162');
   const action=document.getElementById('ljAction162');
+  const jumpButton=document.getElementById('ljJump162');
   const panel=document.getElementById('ljGaugePanel162');
   const msg=document.getElementById('ljMessage162');
 
@@ -28364,7 +28378,8 @@ async function startLongJumpMob(p,humanIndex,runId){
 
   function beginFlight(){
     phase='flight';
-    panel.classList.add('hidden-v162');
+    panel.hidden=true;
+    jumpButton.hidden=true;
 
     // Both dash power and take-off timing are important.
     // Perfect + perfect is ~300m.
@@ -28412,30 +28427,31 @@ async function startLongJumpMob(p,humanIndex,runId){
   action.addEventListener('pointerdown',e=>{
     e.preventDefault();
 
-    if(finished)return;
+    if(finished||phase!=='gauge')return;
 
-    if(phase==='gauge'){
-      const error=Math.abs(gaugePos-.5);
-      dashQuality=clamp(1-error/.5,0,1);
+    const error=Math.abs(gaugePos-.5);
+    dashQuality=clamp(1-error/.5,0,1);
 
-      dashScoreEl.textContent=`${dashLabel(dashQuality)} ${Math.round(dashQuality*100)}%`;
+    dashScoreEl.textContent=`${dashLabel(dashQuality)} ${Math.round(dashQuality*100)}%`;
 
-      phase='run';
-      panel.classList.add('run-v162');
-      panel.querySelector('span').textContent='RUN → TAKE OFF';
-      action.textContent='JUMP!';
-      msg.textContent='砂場ギリギリ手前でJUMP！';
+    // IMPORTANT:
+    // The DASH gauge disappears completely before the run begins.
+    // JUMP uses its own large button, so the player can focus only on the runway.
+    phase='run';
+    panel.hidden=true;
+    jumpButton.hidden=false;
+    msg.textContent='砂場ギリギリ手前でJUMP！';
 
-      runnerX=82;
-      runSpeed=250+dashQuality*115;
+    runnerX=82;
+    runSpeed=250+dashQuality*115;
 
-      beep(dashQuality>=.95?1030:dashQuality>=.75?760:520,100,.028);
-      return;
-    }
+    beep(dashQuality>=.95?1030:dashQuality>=.75?760:520,100,.028);
+  },{passive:false});
 
-    if(phase==='run'){
-      doTakeoff();
-    }
+  jumpButton.addEventListener('pointerdown',e=>{
+    e.preventDefault();
+    if(finished||phase!=='run')return;
+    doTakeoff();
   },{passive:false});
 
   // Player, runway and sand are all positioned before countdown.
@@ -28473,7 +28489,7 @@ async function startLongJumpMob(p,humanIndex,runId){
       cameraX=clamp(runnerX-82,0,RUNWAY_END-260);
       player.style.transform='translate3d(0,0,0)';
 
-      if(runnerX>TAKEOFF_X-125&&runnerX<TAKEOFF_X+10){
+      if(runnerX>TAKEOFF_X-150&&runnerX<TAKEOFF_X+12){
         msg.textContent='NOW!!';
         msg.classList.add('now-v162');
       }else{

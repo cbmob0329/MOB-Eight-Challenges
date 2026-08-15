@@ -26776,3 +26776,30 @@ canvas{
   transform:translateY(-50%);
   font-size:8px;
 }
+
+
+/* =========================================================
+   V10.63 — Long Jump control visibility fix
+   ========================================================= */
+.longjump-gauge-panel-v162[hidden],
+.longjump-jump-v163[hidden]{
+  display:none!important;
+}
+
+.longjump-jump-v163{
+  position:absolute;
+  z-index:48;
+  left:14px;
+  right:14px;
+  bottom:14px;
+  min-height:62px;
+  border-width:4px!important;
+  font-size:22px!important;
+  letter-spacing:.5px;
+  animation:longJumpButtonReady163 .42s ease;
+}
+
+@keyframes longJumpButtonReady163{
+  from{transform:translateY(18px);opacity:0}
+  to{transform:translateY(0);opacity:1}
+}
