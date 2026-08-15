@@ -332,7 +332,7 @@ const GAMES=[
   {no:94,key:"tamaireMob",title:"モブくん玉入れ",sub:"動くカゴへ10球をテンポよく連投。1個10点",legacy:102},
   {no:95,key:"jengaMob",title:"モブくんジェンガ",sub:"本物らしい交互積みタワーから倒れるまでブロックを抜き続ける",legacy:103},
   {no:96,key:"mineCartMob",title:"モブくんトロッコ",sub:"鉱山トロッコで途切れた線路をジャンプし、ゴールタイムを競う",legacy:105},
-  {no:97,key:"cleaningMob",title:"お掃除モブくん",sub:"大きなモブくんぬいぐるみの埃10個を7秒で擦って落とす",legacy:106}
+  {no:97,key:"cleaningMob",title:"お掃除モブくん",sub:"大きなモブくんぬいぐるみへ水を長押し噴射し、埃10個を7秒で落とす",legacy:106}
 ];
 
 function legacyGameIndex(gameIndex){
@@ -2555,7 +2555,7 @@ function showGameIntro(index){
   }else if(legacyIndex===105){
     rules=`<li>トロッコは自動で鉱山を進みます。線路の切れ目が来たら画面をタップしてJUMP。</li><li>連続した穴も出現。落下するとタイムロスし、ゴールタイムが遅くなります。</li>`;
   }else if(legacyIndex===106){
-    rules=`<li>大きなモブくんぬいぐるみに付いた埃10個を指で擦って消します。</li><li>埃の位置は毎回ランダム。制限時間7秒、1個完全除去で10点です。</li>`;
+    rules=`<li>画面を長押しすると下のノズルから水が出ます。埃へ水を当て続けて消してください。</li><li>埃は10個・位置は毎回ランダム。制限時間7秒、1個完全除去で10点です。</li>`;
   }else{
     rules=`<li>${esc(g.sub)}</li>`;
   }
@@ -25909,8 +25909,11 @@ function simulateOneCpu(gameIndex,p){
     state.records.jengaMob[p.id]=ultra?randi(80,100):randi(30,90);
   }else if(legacyIndex===105){
     state.records.mineCartMob[p.id]=ultra?randi(11800,13900):randi(13200,19000);
-  }else{
+  }else if(legacyIndex===106){
     state.records.cleaningMob[p.id]=ultra?randi(80,100):randi(30,90);
+  }else{
+    const fallbackKey=GAMES[gameIndex]?.key;
+    if(fallbackKey&&state.records[fallbackKey])state.records[fallbackKey][p.id]=0;
   }
 
   softenCpuResultV121(
@@ -27414,48 +27417,48 @@ async function startPkKicker(p,humanIndex,runId){
   const gameIndex=GAMES.findIndex(g=>g.key==='pkKicker');
 
   screen.innerHTML=`
-    <div class="pkx-shell-v170 gameplay-fit">
+    <div class="pkx-shell-v171 gameplay-fit">
       <div class="game-head">
         <div><span class="kicker">${esc(p.name)}</span><h2>モブくんPKキッカー</h2><p class="lead">5 SHOTS / AIM → POWER</p></div>
         <div class="game-badge">${playBadge(humanIndex)}</div>
       </div>
-      <div class="pkx-hud-v170">
-        <div><span>SHOT</span><b id="pkxShot170">1 / 5</b></div>
-        <div><span>SCORE</span><b id="pkxScore170">0</b></div>
-        <div><span>LAST</span><b id="pkxLast170">---</b></div>
+      <div class="pkx-hud-v171">
+        <div><span>SHOT</span><b id="pkxShot171">1 / 5</b></div>
+        <div><span>SCORE</span><b id="pkxScore171">0</b></div>
+        <div><span>LAST</span><b id="pkxLast171">---</b></div>
       </div>
-      <div id="pkxStage170" class="pkx-stage-v170">
-        <div class="pkx-stand-v170"></div>
-        <div id="pkxGoal170" class="pkx-goal-v170">
-          <div class="pkx-net-v170"></div>
-          <div id="pkxAim170" class="pkx-aim-v170"><i></i></div>
-          <div id="pkxKeeper170" class="pkx-keeper-v170"><img src="icon/02.png" draggable="false" alt=""></div>
+      <div id="pkxStage171" class="pkx-stage-v171">
+        <div class="pkx-stand-v171"></div>
+        <div id="pkxGoal171" class="pkx-goal-v171">
+          <div class="pkx-net-v171"></div>
+          <div id="pkxAim171" class="pkx-aim-v171"><i></i></div>
+          <div id="pkxKeeper171" class="pkx-keeper-v171"><img src="icon/02.png" draggable="false" alt=""></div>
         </div>
-        <div class="pkx-player-v170"><img src="icon/01.png" draggable="false" alt=""></div>
-        <div id="pkxBall170" class="pkx-ball-v170"></div>
-        <div id="pkxCall170" class="pkx-call-v170">READY</div>
+        <div class="pkx-player-v171"><img src="icon/01.png" draggable="false" alt=""></div>
+        <div id="pkxBall171" class="pkx-ball-v171"></div>
+        <div id="pkxCall171" class="pkx-call-v171">READY</div>
       </div>
-      <div id="pkxControl170" class="pkx-control-v170">
-        <div><span id="pkxMode170">AIM</span><b id="pkxHint170">動く照準をSTOP</b></div>
-        <div class="pkx-meter-v170"><i id="pkxNeedle170"></i><em></em></div>
-        <button id="pkxStop170" class="primary pkx-stop-v170" type="button" disabled>STOP</button>
+      <div id="pkxControl171" class="pkx-control-v171">
+        <div><span id="pkxMode171">AIM</span><b id="pkxHint171">動く照準をSTOP</b></div>
+        <div class="pkx-meter-v171"><i id="pkxNeedle171"></i><em></em></div>
+        <button id="pkxStop171" class="primary pkx-stop-v171" type="button" disabled>STOP</button>
       </div>
     </div>`;
 
-  const stage=document.getElementById('pkxStage170');
-  const goal=document.getElementById('pkxGoal170');
-  const aim=document.getElementById('pkxAim170');
-  const keeper=document.getElementById('pkxKeeper170');
-  const ball=document.getElementById('pkxBall170');
-  const call=document.getElementById('pkxCall170');
-  const control=document.getElementById('pkxControl170');
-  const modeEl=document.getElementById('pkxMode170');
-  const hintEl=document.getElementById('pkxHint170');
-  const needle=document.getElementById('pkxNeedle170');
-  const stop=document.getElementById('pkxStop170');
-  const shotEl=document.getElementById('pkxShot170');
-  const scoreEl=document.getElementById('pkxScore170');
-  const lastEl=document.getElementById('pkxLast170');
+  const stage=document.getElementById('pkxStage171');
+  const goal=document.getElementById('pkxGoal171');
+  const aim=document.getElementById('pkxAim171');
+  const keeper=document.getElementById('pkxKeeper171');
+  const ball=document.getElementById('pkxBall171');
+  const call=document.getElementById('pkxCall171');
+  const control=document.getElementById('pkxControl171');
+  const modeEl=document.getElementById('pkxMode171');
+  const hintEl=document.getElementById('pkxHint171');
+  const needle=document.getElementById('pkxNeedle171');
+  const stop=document.getElementById('pkxStop171');
+  const shotEl=document.getElementById('pkxShot171');
+  const scoreEl=document.getElementById('pkxScore171');
+  const lastEl=document.getElementById('pkxLast171');
 
   let active=false,finished=false,shot=0,total=0,phase=0;
   let gauge=.08,dir=1,last=performance.now(),raf=null;
@@ -27463,22 +27466,21 @@ async function startPkKicker(p,humanIndex,runId){
 
   function resetShot(){
     ball.style.transition='none';
+    ball.classList.remove('deflected-v171');
     ball.style.left='50%';
     ball.style.top='84%';
-    ball.style.transform='translate(-50%,-50%) scale(1)';
+    ball.style.transform='translate(-50%,-50%) scale(1) rotate(0deg)';
     keeper.style.transition='none';
     keeper.style.left='50%';
     keeper.style.transform='translateX(-50%) rotate(0deg)';
     aim.hidden=false;
     control.hidden=false;
     stop.disabled=false;
-    phase=0;
-    gauge=.08;
-    dir=1;
+    phase=0;gauge=.08;dir=1;
     modeEl.textContent='AIM';
     hintEl.textContent='動く照準をSTOP';
     call.textContent='AIM!';
-    call.className='pkx-call-v170';
+    call.className='pkx-call-v171';
     active=true;
   }
 
@@ -27503,7 +27505,6 @@ async function startPkKicker(p,humanIndex,runId){
 
     const central=Math.abs(aimX-.5)<.18 && aimY<.62;
     const saved=(central&&powerQ<.76)||(shotQ<.61);
-
     const pts=saved
       ? clamp(Math.round(shotQ*4),0,4)
       : clamp(Math.round(20*(.50+.30*zone+.20*powerQ)),10,20);
@@ -27515,21 +27516,52 @@ async function startPkKicker(p,humanIndex,runId){
     const tx=gx+aimX*goalRect.width;
     const ty=gy+(1-aimY)*goalRect.height;
 
-    const keeperX=aimX<.5?.25:.75;
-    keeper.style.transition='left .36s cubic-bezier(.2,.8,.2,1),transform .36s ease';
+    const keeperX=saved
+      ? clamp(aimX+(aimX<.5?.035:-.035),.16,.84)
+      : (aimX<.5?.25:.75);
+
+    keeper.style.transition='left .33s cubic-bezier(.2,.8,.2,1),transform .33s ease';
     keeper.style.left=`${keeperX*100}%`;
-    keeper.style.transform=`translateX(-50%) rotate(${keeperX<.5?-20:20}deg)`;
+    keeper.style.transform=`translateX(-50%) rotate(${keeperX<.5?-21:21}deg)`;
 
-    ball.style.transition=`left .46s cubic-bezier(.18,.72,.22,1),top .46s cubic-bezier(.18,.72,.22,1),transform .46s ease`;
-    requestAnimationFrame(()=>{
-      ball.style.left=`${tx}px`;
-      ball.style.top=`${ty}px`;
-      ball.style.transform='translate(-50%,-50%) scale(.65)';
-    });
+    if(saved){
+      const blockX=gx+keeperX*goalRect.width;
+      const blockY=clamp(ty,gy+goalRect.height*.34,gy+goalRect.height*.72);
 
-    call.textContent=saved?'SAVE!':pts===20?'PERFECT GOAL!':'GOAL!';
-    call.className=`pkx-call-v170 ${saved?'save-v170':'goal-v170'}`;
-    beep(saved?250:pts===20?1120:820,110,.03);
+      ball.style.transition='left .31s cubic-bezier(.18,.72,.22,1),top .31s cubic-bezier(.18,.72,.22,1),transform .31s linear';
+      requestAnimationFrame(()=>{
+        ball.style.left=`${blockX}px`;
+        ball.style.top=`${blockY}px`;
+        ball.style.transform='translate(-50%,-50%) scale(.72) rotate(260deg)';
+      });
+
+      setTimeout(()=>{
+        if(!isGameRunValid(runId))return;
+        call.textContent='SAVE!';
+        call.className='pkx-call-v171 save-v171';
+        ball.classList.add('deflected-v171');
+
+        const side=aimX<.5?-1:1;
+        const outX=clamp(blockX+side*(95+power*55),18,stage.clientWidth-18);
+        const outY=clamp(blockY+70+power*35,50,stage.clientHeight-28);
+
+        ball.style.transition='left .30s cubic-bezier(.14,.72,.28,1),top .30s cubic-bezier(.14,.72,.28,1),transform .30s linear';
+        ball.style.left=`${outX}px`;
+        ball.style.top=`${outY}px`;
+        ball.style.transform=`translate(-50%,-50%) scale(.82) rotate(${side*760}deg)`;
+        beep(235,120,.03);
+      },300);
+    }else{
+      ball.style.transition='left .46s cubic-bezier(.18,.72,.22,1),top .46s cubic-bezier(.18,.72,.22,1),transform .46s ease';
+      requestAnimationFrame(()=>{
+        ball.style.left=`${tx}px`;
+        ball.style.top=`${ty}px`;
+        ball.style.transform='translate(-50%,-50%) scale(.65) rotate(480deg)';
+      });
+      call.textContent=pts===20?'PERFECT GOAL!':'GOAL!';
+      call.className='pkx-call-v171 goal-v171';
+      beep(pts===20?1120:820,110,.03);
+    }
 
     setTimeout(()=>{
       if(!isGameRunValid(runId))return;
@@ -27537,12 +27569,13 @@ async function startPkKicker(p,humanIndex,runId){
       scoreEl.textContent=total;
       lastEl.textContent=`+${pts}`;
       shot++;
+
       if(shot>=5){
         finished=true;
         if(raf)cancelAnimationFrame(raf);
         state.records.pkKicker[p.id]=clamp(total,0,100);
         call.textContent=total>=92?'PK MASTER!':'5 SHOTS FINISH!';
-        call.className='pkx-call-v170 result-v170';
+        call.className='pkx-call-v171 result-v171';
         setTimeout(()=>{
           if(isGameRunValid(runId)){
             recordScreen(gameIndex,p,humanIndex,`${total}<small>pt</small>`,`PK 5本合計`);
@@ -27552,7 +27585,7 @@ async function startPkKicker(p,humanIndex,runId){
         shotEl.textContent=`${shot+1} / 5`;
         resetShot();
       }
-    },720);
+    },saved?800:700);
   }
 
   stop.addEventListener('pointerdown',e=>{
@@ -27562,8 +27595,7 @@ async function startPkKicker(p,humanIndex,runId){
     if(phase===0){
       const a=aimFromGauge();
       aimX=a.x;aimY=a.y;
-      phase=1;
-      gauge=.08;dir=1;
+      phase=1;gauge=.08;dir=1;
       modeEl.textContent='POWER';
       hintEl.textContent='中央付近がBEST';
       beep(650,50,.015);
@@ -27599,6 +27631,7 @@ async function startPkKicker(p,humanIndex,runId){
         aim.style.top=`${(1-a.y)*100}%`;
       }
     }
+
     raf=requestAnimationFrame(frame);
   }
   raf=requestAnimationFrame(frame);
@@ -27613,36 +27646,36 @@ async function startThreePoint(p,humanIndex,runId){
   const gameIndex=GAMES.findIndex(g=>g.key==='threePoint');
 
   screen.innerHTML=`
-    <div class="tp-shell-v170 gameplay-fit">
+    <div class="tp-shell-v171 gameplay-fit">
       <div class="game-head">
         <div><span class="kicker">${esc(p.name)}</span><h2>モブくん3ポイント</h2><p class="lead">モブくんを引っ張ってシュート / 5 BALLS</p></div>
         <div class="game-badge">${playBadge(humanIndex)}</div>
       </div>
-      <div class="tp-hud-v170">
-        <div><span>BALL</span><b id="tpCount170">1 / 5</b></div>
-        <div><span>SCORE</span><b id="tpScore170">0</b></div>
-        <div><span>SWISH</span><b id="tpSwish170">0</b></div>
+      <div class="tp-hud-v171">
+        <div><span>BALL</span><b id="tpCount171">1 / 5</b></div>
+        <div><span>SCORE</span><b id="tpScore171">0</b></div>
+        <div><span>SWISH</span><b id="tpSwish171">0</b></div>
       </div>
-      <div id="tpStage170" class="tp-stage-v170">
-        <div class="tp-court-v170"></div>
-        <div class="tp-board-v170"></div>
-        <div class="tp-ring-v170"></div>
-        <div class="tp-net-v170"></div>
-        <div id="tpMob170" class="tp-mob-v170"><img src="icon/01.png" draggable="false" alt=""><i>↓ PULL</i></div>
-        <div id="tpBall170" class="tp-ball-v170"></div>
-        <div id="tpGuide170" class="tp-guide-v170" hidden></div>
-        <div id="tpCall170" class="tp-call-v170">モブくんを引っ張る</div>
+      <div id="tpStage171" class="tp-stage-v171">
+        <div class="tp-court-v171"></div>
+        <div class="tp-board-v171"></div>
+        <div class="tp-ring-v171"></div>
+        <div class="tp-net-v171"></div>
+        <div id="tpMob171" class="tp-mob-v171"><img src="icon/01.png" draggable="false" alt=""><i>↓ PULL</i></div>
+        <div id="tpBall171" class="tp-ball-v171"></div>
+        <div id="tpGuide171" class="tp-guide-v171" hidden></div>
+        <div id="tpCall171" class="tp-call-v171">モブくんを引っ張る</div>
       </div>
     </div>`;
 
-  const stage=document.getElementById('tpStage170');
-  const mob=document.getElementById('tpMob170');
-  const ball=document.getElementById('tpBall170');
-  const guide=document.getElementById('tpGuide170');
-  const call=document.getElementById('tpCall170');
-  const countEl=document.getElementById('tpCount170');
-  const scoreEl=document.getElementById('tpScore170');
-  const swishEl=document.getElementById('tpSwish170');
+  const stage=document.getElementById('tpStage171');
+  const mob=document.getElementById('tpMob171');
+  const ball=document.getElementById('tpBall171');
+  const guide=document.getElementById('tpGuide171');
+  const call=document.getElementById('tpCall171');
+  const countEl=document.getElementById('tpCount171');
+  const scoreEl=document.getElementById('tpScore171');
+  const swishEl=document.getElementById('tpSwish171');
 
   let shot=0,total=0,swishes=0,ready=false,drag=null,flight=null,raf=null,last=performance.now(),finished=false;
   let startX=0,startY=0;
@@ -27663,7 +27696,7 @@ async function startThreePoint(p,humanIndex,runId){
     ball.style.transform='translate(-50%,-50%)';
     ball.hidden=false;
     call.textContent='モブくんを下へ引っ張る';
-    call.className='tp-call-v170';
+    call.className='tp-call-v171';
     countEl.textContent=`${shot+1} / 5`;
     flight=null;
     ready=true;
@@ -27675,18 +27708,19 @@ async function startThreePoint(p,humanIndex,runId){
     scoreEl.textContent=total;
     if(label==='SWISH'){swishes++;swishEl.textContent=swishes}
     call.textContent=points?`${label} +${points}`:'MISS';
-    call.className=`tp-call-v170 ${points?'in-v170':'miss-v170'}`;
+    call.className=`tp-call-v171 ${points?'in-v171':'miss-v171'}`;
     beep(points===20?1040:points?760:230,85,.024);
 
     setTimeout(()=>{
       if(!isGameRunValid(runId))return;
       shot++;
+
       if(shot>=5){
         finished=true;
         if(raf)cancelAnimationFrame(raf);
         state.records.threePoint[p.id]=clamp(total,0,100);
         call.textContent=total===100?'5 SWISH!!':'3 POINT FINISH!';
-        call.className='tp-call-v170 result-v170';
+        call.className='tp-call-v171 result-v171';
         setTimeout(()=>{
           if(isGameRunValid(runId)){
             recordScreen(gameIndex,p,humanIndex,`${total}<small>pt</small>`,`SWISH ${swishes} / 5`);
@@ -27702,25 +27736,31 @@ async function startThreePoint(p,humanIndex,runId){
     if(!ready||flight||finished)return;
     const pt=local(e);
     const dist=Math.hypot(pt.x-startX,pt.y-startY);
-    if(dist>82)return;
+    if(dist>88)return;
+
     e.preventDefault();
     stage.setPointerCapture?.(e.pointerId);
-    drag={id:e.pointerId,sx:startX,sy:startY,cx:pt.x,cy:pt.y};
-    mob.classList.add('drag-v170');
+    drag={id:e.pointerId,cx:pt.x,cy:pt.y};
+    mob.classList.add('drag-v171');
     guide.hidden=false;
   },{passive:false});
 
   stage.addEventListener('pointermove',e=>{
     if(!drag||drag.id!==e.pointerId)return;
     e.preventDefault();
+
     const pt=local(e);
-    drag.cx=clamp(pt.x,startX-75,startX+75);
-    drag.cy=clamp(pt.y,startY,startY+135);
-    const dx=drag.cx-startX,dy=drag.cy-startY;
+    drag.cx=clamp(pt.x,startX-78,startX+78);
+    drag.cy=clamp(pt.y,startY,startY+145);
+
+    const dx=drag.cx-startX;
+    const dy=drag.cy-startY;
+
     mob.style.left=`${startX+dx}px`;
     mob.style.top=`${startY+dy}px`;
     ball.style.left=`${startX+dx+20}px`;
     ball.style.top=`${startY+dy-24}px`;
+
     guide.style.left=`${startX}px`;
     guide.style.top=`${startY}px`;
     guide.style.width=`${Math.hypot(dx,dy)}px`;
@@ -27730,34 +27770,47 @@ async function startThreePoint(p,humanIndex,runId){
   stage.addEventListener('pointerup',e=>{
     if(!drag||drag.id!==e.pointerId||finished)return;
     e.preventDefault();
+
     const dx=drag.cx-startX;
     const dy=drag.cy-startY;
     drag=null;
     guide.hidden=true;
-    mob.classList.remove('drag-v170');
+    mob.classList.remove('drag-v171');
 
-    if(dy<42){
-      mob.style.left=`${startX}px`;mob.style.top=`${startY}px`;
-      ball.style.left=`${startX+20}px`;ball.style.top=`${startY-24}px`;
+    if(dy<40){
+      mob.style.left=`${startX}px`;
+      mob.style.top=`${startY}px`;
+      ball.style.left=`${startX+20}px`;
+      ball.style.top=`${startY-24}px`;
       call.textContent='もっと下へ引っ張る';
       return;
     }
 
     ready=false;
     const {w,h}=dims();
+    const hoopY=h*.245;
+    const launchY=startY-24;
+    const gravity=820;
+    const requiredRise=Math.max(90,launchY-hoopY+20);
+    const baseVy=Math.sqrt(2*gravity*requiredRise);
+    const pullQ=clamp((dy-40)/105,0,1);
+    const launchScale=.84+pullQ*.37;
+
     flight={
-      x:startX+20,y:startY-24,
-      vx:clamp(-dx*2.45,-250,250),
-      vy:-clamp(dy,42,135)*4.75,
-      prevY:startY-24,
-      board:false,age:0,w,h
+      x:startX+20,
+      y:launchY,
+      vx:clamp(-dx*2.25,-225,225),
+      vy:-baseVy*launchScale,
+      prevY:launchY,
+      board:false,
+      age:0,w,h,gravity
     };
 
     mob.style.transition='left .18s ease,top .18s ease';
     mob.style.left=`${startX}px`;
     mob.style.top=`${startY}px`;
-    call.textContent='SHOOT!';
-    beep(620,50,.016);
+    call.textContent=pullQ>.88?'MAX POWER!':'SHOOT!';
+    beep(620+pullQ*110,50,.016);
   },{passive:false});
 
   setShot();
@@ -27769,14 +27822,14 @@ async function startThreePoint(p,humanIndex,runId){
 
   function frame(now){
     if(finished||!isGameRunValid(runId))return;
-    const dt=Math.min(.028,(now-last)/1000);
+    const dt=Math.min(.026,(now-last)/1000);
     last=now;
 
     if(flight){
       const f=flight;
       f.age+=dt;
       f.prevY=f.y;
-      f.vy+=900*dt;
+      f.vy+=f.gravity*dt;
       f.x+=f.vx*dt;
       f.y+=f.vy*dt;
 
@@ -27785,7 +27838,7 @@ async function startThreePoint(p,humanIndex,runId){
 
       if(!f.board&&f.x>f.w*.61&&f.y>f.h*.13&&f.y<f.h*.35&&f.vx>0){
         f.x=f.w*.61;
-        f.vx=-Math.abs(f.vx)*.58;
+        f.vx=-Math.abs(f.vx)*.56;
         f.board=true;
         beep(430,25,.008);
       }
@@ -27796,12 +27849,18 @@ async function startThreePoint(p,humanIndex,runId){
 
       if(f.prevY<hoopY&&f.y>=hoopY&&f.vy>0){
         const d=Math.abs(f.x-hoopX);
-        if(d<=11){flight=null;endShot(f.board?16:20,f.board?'BOARD IN':'SWISH')}
-        else if(d<=22){flight=null;endShot(18,'RIM IN')}
+        if(d<=11){
+          flight=null;
+          endShot(f.board?16:20,f.board?'BOARD IN':'SWISH');
+        }else if(d<=22){
+          flight=null;
+          endShot(18,'RIM IN');
+        }
       }
 
-      if(flight&&(f.y>f.h+30||f.x<-40||f.x>f.w+40||f.age>2.4)){
-        flight=null;endShot(0,'MISS');
+      if(flight&&(f.y>f.h+35||f.x<-45||f.x>f.w+45||f.age>2.8)){
+        flight=null;
+        endShot(0,'MISS');
       }
     }
 
@@ -28228,166 +28287,257 @@ async function startTamaireMob(p,humanIndex,runId){
 async function startJengaMob(p,humanIndex,runId){
   gameFit();
   const gameIndex=GAMES.findIndex(g=>g.key==='jengaMob');
-  const LAYERS=12;
+  const LAYERS=14;
+
   const blocks=Array.from({length:LAYERS*3},(_,i)=>({
-    i,layer:Math.floor(i/3),col:i%3,alive:true
+    i,
+    layer:Math.floor(i/3),
+    col:i%3,
+    alive:true
   }));
 
   screen.innerHTML=`
-    <div class="jenga-shell-v170 gameplay-fit">
+    <div class="jenga-shell-v171 gameplay-fit">
       <div class="game-head">
         <div><span class="kicker">${esc(p.name)}</span><h2>モブくんジェンガ</h2><p class="lead">PULL UNTIL THE TOWER FALLS</p></div>
         <div class="game-badge">${playBadge(humanIndex)}</div>
       </div>
-      <div class="jenga-hud-v170">
-        <div><span>PULLED</span><b id="jengaPulled170">0</b></div>
-        <div><span>STABILITY</span><b id="jengaStab170">100</b></div>
-        <div><span>SCORE</span><b id="jengaScore170">0</b></div>
+      <div class="jenga-hud-v171">
+        <div><span>PULLED</span><b id="jengaPulled171">0</b></div>
+        <div><span>STABILITY</span><b id="jengaStab171">100</b></div>
+        <div><span>SCORE</span><b id="jengaScore171">0</b></div>
       </div>
-      <div id="jengaStage170" class="jenga-stage-v170">
-        <div class="jenga-table-v170"></div>
-        <div id="jengaTower170" class="jenga-tower-v170">
+      <div class="jenga-stage-v171">
+        <div class="jenga-table-v171"></div>
+        <div id="jengaTower171" class="jenga-tower-v171">
           ${Array.from({length:LAYERS},(_,row)=>LAYERS-1-row).map(layer=>`
-            <div class="jenga-layer-v170 ${layer%2?'cross-v170':'front-v170'}" data-jenga-layer="${layer}">
+            <div class="jenga-layer-v171 ${layer%2?'depth-v171':'front-v171'}" data-layer="${layer}">
               ${blocks.filter(b=>b.layer===layer).map(b=>`
-                <button type="button" class="jenga-block-v170" data-jenga="${b.i}" data-col="${b.col}"></button>
+                <button type="button"
+                  class="jenga-block-v171"
+                  data-jenga="${b.i}"
+                  data-col="${b.col}"
+                  aria-label="Jenga block"></button>
               `).join('')}
             </div>
           `).join('')}
         </div>
-        <div id="jengaCall170" class="jenga-call-v170">READY</div>
+        <div id="jengaCall171" class="jenga-call-v171">READY</div>
       </div>
     </div>`;
 
-  const tower=document.getElementById('jengaTower170');
-  const call=document.getElementById('jengaCall170');
-  const pulledEl=document.getElementById('jengaPulled170');
-  const stabEl=document.getElementById('jengaStab170');
-  const scoreEl=document.getElementById('jengaScore170');
+  const tower=document.getElementById('jengaTower171');
+  const call=document.getElementById('jengaCall171');
+  const pulledEl=document.getElementById('jengaPulled171');
+  const stabEl=document.getElementById('jengaStab171');
+  const scoreEl=document.getElementById('jengaScore171');
   const els=[...tower.querySelectorAll('[data-jenga]')];
 
   let active=false,finished=false,pulled=0,balance=100,lean=0,drag=null;
 
+  function aliveOnLayer(layer){
+    return blocks.filter(b=>b.layer===layer&&b.alive);
+  }
+
+  function removalLeavesSupport(b){
+    const remaining=aliveOnLayer(b.layer).filter(x=>x.i!==b.i);
+    if(remaining.length>=2)return true;
+    if(remaining.length===1){
+      // A single center block can still barely support the tower.
+      // A single outer block would leave the upper tower obviously unsupported.
+      return remaining[0].col===1;
+    }
+    return false;
+  }
+
   function riskOf(b){
     const low=(LAYERS-1-b.layer)/(LAYERS-1);
-    const side=b.col===1?.03:.12;
-    const layerAlive=blocks.filter(x=>x.layer===b.layer&&x.alive).length;
-    const scarcity=layerAlive<=2?.16:0;
-    return clamp(.05+low*.25+side+scarcity,.05,.58);
+    const remaining=aliveOnLayer(b.layer).filter(x=>x.i!==b.i);
+    const singleCenter=remaining.length===1&&remaining[0].col===1;
+    const side=b.col===1?.03:.10;
+
+    return clamp(
+      .04+
+      low*.25+
+      side+
+      (singleCenter?.24:0)+
+      Math.max(0,pulled-5)*.012,
+      .04,.72
+    );
   }
 
   function chooseCandidates(){
-    els.forEach(el=>el.classList.remove('candidate-v170'));
-    const candidates=blocks
-      .filter(b=>b.alive&&b.layer<LAYERS-2)
-      .filter(b=>blocks.filter(x=>x.layer===b.layer&&x.alive).length>=2)
+    els.forEach(el=>el.classList.remove('candidate-v171'));
+
+    const valid=blocks
+      .filter(b=>b.alive)
+      .filter(b=>b.layer<LAYERS-2)
+      .filter(removalLeavesSupport)
       .sort((a,b)=>riskOf(a)-riskOf(b));
 
-    if(!candidates.length){
+    if(!valid.length){
       finish(false);
       return;
     }
 
-    shuffle(candidates.slice(0,Math.min(14,candidates.length)))
-      .slice(0,Math.min(6,candidates.length))
-      .forEach(b=>els[b.i].classList.add('candidate-v170'));
+    const pool=shuffle(valid.slice(0,Math.min(16,valid.length)));
+    pool.slice(0,Math.min(6,pool.length)).forEach(b=>{
+      els[b.i].classList.add('candidate-v171');
+    });
 
     call.textContent='光るブロックを横へ抜く';
+    call.className='jenga-call-v171';
     active=true;
   }
 
   function finish(collapsed=true){
     if(finished)return;
-    finished=true;active=false;
+    finished=true;
+    active=false;
+
     const score=clamp(pulled*10,0,100);
     state.records.jengaMob[p.id]=score;
     scoreEl.textContent=score;
 
     if(collapsed){
-      tower.classList.add(lean>=0?'fall-right-v170':'fall-left-v170');
+      tower.classList.add(lean>=0?'fall-right-v171':'fall-left-v171');
       call.textContent='TOWER DOWN!';
-      call.className='jenga-call-v170 down-v170';
+      call.className='jenga-call-v171 down-v171';
       beep(180,220,.04);
     }else{
-      call.textContent='NO MORE BLOCKS!';
-      call.className='jenga-call-v170 clear-v170';
+      call.textContent='MAX SAFE PULL!';
+      call.className='jenga-call-v171 clear-v171';
+      beep(980,130,.03);
     }
 
     setTimeout(()=>{
       if(isGameRunValid(runId)){
-        recordScreen(gameIndex,p,humanIndex,`${score}<small>pt</small>`,`${pulled} BLOCKS / STABILITY ${Math.round(balance)}`);
+        recordScreen(
+          gameIndex,p,humanIndex,
+          `${score}<small>pt</small>`,
+          `${pulled} BLOCKS / STABILITY ${Math.round(balance)}`
+        );
       }
     },collapsed?950:700);
   }
 
   tower.addEventListener('pointerdown',e=>{
     const el=e.target.closest('[data-jenga]');
-    if(!el||!active||finished||!el.classList.contains('candidate-v170'))return;
+    if(!el||!active||finished||!el.classList.contains('candidate-v171'))return;
+
     e.preventDefault();
+
     const idx=Number(el.dataset.jenga);
     const b=blocks[idx];
+
     tower.setPointerCapture?.(e.pointerId);
-    drag={id:e.pointerId,idx,el,b,sx:e.clientX,sy:e.clientY,maxY:0,start:performance.now(),cx:e.clientX};
+    drag={
+      id:e.pointerId,
+      el,b,
+      sx:e.clientX,
+      sy:e.clientY,
+      maxY:0,
+      start:performance.now()
+    };
+
     active=false;
-    el.classList.add('drag-v170');
+    el.classList.add('drag-v171');
   },{passive:false});
 
   tower.addEventListener('pointermove',e=>{
     if(!drag||drag.id!==e.pointerId)return;
     e.preventDefault();
-    const dx=e.clientX-drag.sx,dy=e.clientY-drag.sy;
-    drag.cx=e.clientX;
+
+    const dx=e.clientX-drag.sx;
+    const dy=e.clientY-drag.sy;
     drag.maxY=Math.max(drag.maxY,Math.abs(dy));
-    drag.el.style.transform=`translate(${dx}px,${dy*.16}px)`;
+    drag.el.style.transform=`translate(${dx}px,${dy*.13}px)`;
   },{passive:false});
 
   tower.addEventListener('pointerup',e=>{
     if(!drag||drag.id!==e.pointerId||finished)return;
     e.preventDefault();
+
     const d=drag;
     const dx=e.clientX-d.sx;
     const distance=Math.abs(dx);
     const duration=Math.max(80,performance.now()-d.start);
 
-    if(distance<66){
+    if(distance<64){
       d.el.style.transform='';
-      d.el.classList.remove('drag-v170');
-      drag=null;active=true;call.textContent='もっと横へ抜く';
+      d.el.classList.remove('drag-v171');
+      drag=null;
+      active=true;
+      call.textContent='もっと横へ抜く';
+      return;
+    }
+
+    if(!removalLeavesSupport(d.b)){
+      d.el.style.transform='';
+      d.el.classList.remove('drag-v171');
+      drag=null;
+      active=true;
+      call.textContent='そこを抜くと支えが無くなる';
+      call.className='jenga-call-v171 danger-v171';
+      beep(220,80,.015);
       return;
     }
 
     const speed=distance/(duration/1000);
-    const speedQ=clamp(1-Math.abs(speed-400)/430,0,1);
-    const straightQ=clamp(1-d.maxY/46,0,1);
-    const quality=straightQ*.60+speedQ*.40;
+    const speedQ=clamp(1-Math.abs(speed-390)/420,0,1);
+    const straightQ=clamp(1-d.maxY/44,0,1);
+    const quality=straightQ*.62+speedQ*.38;
     const risk=riskOf(d.b);
 
-    const penalty=4.5+risk*14+(1-quality)*13+Math.max(0,pulled-5)*.7;
+    d.b.alive=false;
+    const remaining=aliveOnLayer(d.b.layer);
+    const singleCenter=remaining.length===1&&remaining[0].col===1;
+
+    const penalty=
+      3.2+
+      risk*13+
+      (1-quality)*12+
+      (singleCenter?8:0)+
+      Math.max(0,pulled-6)*.55;
+
     balance=clamp(balance-penalty,0,100);
-    lean+=dx>0?(d.b.col===0?-1.0:d.b.col===2?1.25:.25):(d.b.col===0?-1.15:d.b.col===2?1.0:-.25);
+
+    const direction=dx>0?1:-1;
+    const supportBias=
+      remaining.length===1
+        ? (remaining[0].col-1)*2.5
+        : remaining.reduce((sum,b)=>sum+(b.col-1),0)*.45;
+
+    lean+=direction*(d.b.col===1?.18:.75)+supportBias*.35;
     tower.style.setProperty('--lean',`${clamp(lean,-12,12)}deg`);
 
-    d.b.alive=false;
-    d.el.classList.remove('candidate-v170','drag-v170');
-    d.el.classList.add(dx>0?'out-right-v170':'out-left-v170');
+    d.el.classList.remove('candidate-v171','drag-v171');
+    d.el.classList.add(dx>0?'out-right-v171':'out-left-v171');
     drag=null;
 
     pulled++;
     pulledEl.textContent=pulled;
     stabEl.textContent=Math.round(balance);
     scoreEl.textContent=Math.min(100,pulled*10);
+
     beep(700+Math.min(8,pulled)*30,65,.018);
 
-    const collapseThreshold=15+Math.min(13,pulled*1.15);
-    const collapsed=quality<.10||Math.abs(lean)>10.5||(pulled>=3&&balance<collapseThreshold);
+    const collapseThreshold=12+Math.min(20,pulled*1.45)+(singleCenter?7:0);
+    const unsupportedAbove=Math.abs(lean)>10.2;
+    const collapsed=
+      quality<.08||
+      unsupportedAbove||
+      (pulled>=3&&balance<collapseThreshold);
 
     if(collapsed){
-      setTimeout(()=>finish(true),260);
+      setTimeout(()=>finish(true),250);
       return;
     }
 
-    call.textContent=`GOOD PULL ${Math.round(quality*100)}%`;
-    setTimeout(()=>{if(isGameRunValid(runId))chooseCandidates()},380);
+    call.textContent=singleCenter?'CENTER SUPPORT!':`GOOD PULL ${Math.round(quality*100)}%`;
+    setTimeout(()=>{
+      if(isGameRunValid(runId))chooseCandidates();
+    },360);
   },{passive:false});
 
   if(!(await countdown('JENGA',runId,{transparent:true})))return;
@@ -28406,76 +28556,102 @@ async function startJengaMob(p,humanIndex,runId){
 async function startMineCartMob(p,humanIndex,runId){
   gameFit();
   const gameIndex=GAMES.findIndex(g=>g.key==='mineCartMob');
-  const WORLD_W=2900;
-  const GOAL_X=2700;
+  const WORLD_W=3100;
+  const GOAL_X=2860;
 
   const gaps=[];
-  let gx=390;
-  while(gx<2350){
-    const double=Math.random()<.28;
-    const w=rand(66,100);
-    gaps.push({x:gx,w});
-    if(double&&gx<2150){
-      gaps.push({x:gx+w+rand(42,68),w:rand(60,88)});
-      gx+=w+rand(175,235);
-    }else{
-      gx+=w+rand(210,300);
-    }
+  let cursor=480;
+
+  function singleGap(){
+    const w=rand(58,82);
+    gaps.push({x:cursor,w,kind:'single'});
+    cursor+=w+rand(210,265);
   }
 
+  function doubleGap(){
+    const w1=rand(58,72);
+    const bridge=rand(78,106);
+    const w2=rand(56,72);
+    gaps.push({x:cursor,w:w1,kind:'double-a'});
+    gaps.push({x:cursor+w1+bridge,w:w2,kind:'double-b'});
+    cursor+=w1+bridge+w2+rand(235,285);
+  }
+
+  // First gaps teach the timing. Later sections introduce double gaps.
+  singleGap();
+  singleGap();
+  doubleGap();
+  singleGap();
+  doubleGap();
+  singleGap();
+  doubleGap();
+
   screen.innerHTML=`
-    <div class="cart-shell-v170 gameplay-fit">
+    <div class="cart-shell-v171 gameplay-fit">
       <div class="game-head">
-        <div><span class="kicker">${esc(p.name)}</span><h2>モブくんトロッコ</h2><p class="lead">TAP JUMP / MINE TIME ATTACK</p></div>
+        <div><span class="kicker">${esc(p.name)}</span><h2>モブくんトロッコ</h2><p class="lead">TAP → DOUBLE JUMP / TIME ATTACK</p></div>
         <div class="game-badge">${playBadge(humanIndex)}</div>
       </div>
-      <div class="cart-hud-v170">
-        <div><span>DISTANCE</span><b id="cartDist170">0%</b></div>
-        <div><span>TIME</span><b id="cartTime170">0.00</b></div>
-        <div><span>FALL</span><b id="cartFall170">0</b></div>
+      <div class="cart-hud-v171">
+        <div><span>DISTANCE</span><b id="cartDist171">0%</b></div>
+        <div><span>TIME</span><b id="cartTime171">0.00</b></div>
+        <div><span>FALL</span><b id="cartFall171">0</b></div>
       </div>
-      <div id="cartStage170" class="cart-stage-v170">
-        <div id="cartWorld170" class="cart-world-v170" style="width:${WORLD_W}px">
-          <div class="cart-cave-v170"></div>
-          <div class="cart-rails-v170">
-            ${gaps.map(g=>`<i class="cart-gap-v170" style="left:${g.x}px;width:${g.w}px"></i>`).join('')}
-            <b class="cart-goal-v170" style="left:${GOAL_X}px">GOAL</b>
+      <div id="cartStage171" class="cart-stage-v171">
+        <div id="cartWorld171" class="cart-world-v171" style="width:${WORLD_W}px">
+          <div class="cart-cave-v171"></div>
+          <div class="cart-rails-v171">
+            ${gaps.map((g,i)=>`
+              <i class="cart-gap-v171 ${g.kind}" data-gap="${i}" style="left:${g.x}px;width:${g.w}px">
+                <b></b><em></em><span></span>
+              </i>
+            `).join('')}
+            <b class="cart-goal-v171" style="left:${GOAL_X}px">GOAL</b>
           </div>
-          <div class="cart-rocks-v170">${Array.from({length:26},(_,i)=>`<i style="left:${i*112+rand(15,70)}px;top:${rand(22,135)}px"></i>`).join('')}</div>
+          <div class="cart-rocks-v171">
+            ${Array.from({length:27},(_,i)=>`<i style="left:${i*112+rand(15,70)}px;top:${rand(22,135)}px"></i>`).join('')}
+          </div>
         </div>
-        <div id="cartActor170" class="cart-actor-v170">
-          <div class="cart-cart-v170"><i></i><i></i></div>
+        <div id="cartActor171" class="cart-actor-v171">
+          <div class="cart-cart-v171"><i></i><i></i></div>
           <img src="icon/01.png" draggable="false" alt="">
         </div>
-        <div id="cartCall170" class="cart-call-v170">TAP JUMP</div>
+        <div id="cartCall171" class="cart-call-v171">TAP JUMP</div>
+        <div id="cartJump171" class="cart-jump-v171">JUMP 0 / 2</div>
       </div>
     </div>`;
 
-  const stage=document.getElementById('cartStage170');
-  const world=document.getElementById('cartWorld170');
-  const actor=document.getElementById('cartActor170');
-  const call=document.getElementById('cartCall170');
-  const distEl=document.getElementById('cartDist170');
-  const timeEl=document.getElementById('cartTime170');
-  const fallEl=document.getElementById('cartFall170');
+  const stage=document.getElementById('cartStage171');
+  const world=document.getElementById('cartWorld171');
+  const actor=document.getElementById('cartActor171');
+  const call=document.getElementById('cartCall171');
+  const jumpEl=document.getElementById('cartJump171');
+  const distEl=document.getElementById('cartDist171');
+  const timeEl=document.getElementById('cartTime171');
+  const fallEl=document.getElementById('cartFall171');
 
   let active=false,finished=false,raf=null,last=performance.now(),start=0;
   let worldX=95,cameraX=0,jumpY=0,jumpV=0,falls=0,penaltyMs=0,stunUntil=0,ignoreGapUntil=0;
+  let jumpsUsed=0,lastJumpAt=0;
 
   function currentGap(){
-    return gaps.find(g=>worldX>=g.x&&worldX<=g.x+g.w);
+    const frontX=worldX+35;
+    return gaps.find(g=>frontX>=g.x&&frontX<=g.x+g.w);
   }
 
   function finish(){
     if(finished)return;
-    finished=true;active=false;
+    finished=true;
+    active=false;
     if(raf)cancelAnimationFrame(raf);
+
     const raw=Math.round((performance.now()-start)+penaltyMs);
     state.records.mineCartMob[p.id]=raw;
     timeEl.textContent=(raw/1000).toFixed(2);
     call.textContent=falls?'GOAL!':'PERFECT RUN!';
-    call.className='cart-call-v170 result-v170';
+    call.className='cart-call-v171 result-v171';
     beep(falls?820:1080,160,.035);
+
     setTimeout(()=>{
       if(isGameRunValid(runId)){
         recordScreen(gameIndex,p,humanIndex,`${(raw/1000).toFixed(2)}<small>秒</small>`,`${falls} FALL`);
@@ -28486,44 +28662,79 @@ async function startMineCartMob(p,humanIndex,runId){
   stage.addEventListener('pointerdown',e=>{
     if(!active||finished)return;
     e.preventDefault();
+
     const now=performance.now();
     if(now<stunUntil)return;
-    if(jumpY<=1){
-      jumpV=455;
+
+    const onGround=jumpY<=1;
+
+    if(onGround){
+      jumpsUsed=1;
+      jumpV=440;
+      lastJumpAt=now;
+      call.textContent='JUMP!';
+      jumpEl.textContent='JUMP 1 / 2';
       beep(670,45,.014);
+      return;
+    }
+
+    if(jumpsUsed===1&&jumpY>12&&now-lastJumpAt>90){
+      jumpsUsed=2;
+      jumpV=Math.max(jumpV,0)+365;
+      lastJumpAt=now;
+      actor.classList.add('double-v171');
+      setTimeout(()=>actor.classList.remove('double-v171'),260);
+      call.textContent='DOUBLE JUMP!';
+      jumpEl.textContent='JUMP 2 / 2';
+      beep(850,55,.018);
     }
   },{passive:false});
 
   if(!(await countdown('MINE CART',runId,{transparent:true})))return;
-  active=true;start=last=performance.now();
+  active=true;
+  start=last=performance.now();
 
   function frame(now){
     if(finished||!isGameRunValid(runId))return;
+
     const dt=Math.min(.030,(now-last)/1000);
     last=now;
 
     if(now>=stunUntil){
-      const speed=222;
+      const speed=232;
       worldX+=speed*dt;
 
       if(jumpY>0||jumpV>0){
-        jumpV-=980*dt;
+        jumpV-=930*dt;
         jumpY+=jumpV*dt;
-        if(jumpY<=0){jumpY=0;jumpV=0}
+
+        if(jumpY<=0){
+          jumpY=0;
+          jumpV=0;
+          jumpsUsed=0;
+          jumpEl.textContent='JUMP 0 / 2';
+        }
       }
 
       const gap=currentGap();
-      if(gap&&worldX>ignoreGapUntil&&jumpY<18){
+
+      if(gap&&worldX>ignoreGapUntil&&jumpY<17){
         falls++;
         fallEl.textContent=falls;
         penaltyMs+=1200;
         stunUntil=now+620;
-        ignoreGapUntil=gap.x+gap.w+24;
-        worldX=gap.x+gap.w+24;
-        actor.classList.add('fall-v170');
+        ignoreGapUntil=gap.x+gap.w+28;
+        worldX=gap.x+gap.w+28;
+
+        actor.classList.add('fall-v171');
         call.textContent='+1.20s FALL!';
+        jumpEl.textContent='JUMP 0 / 2';
+        jumpsUsed=0;
+        jumpY=0;
+        jumpV=0;
+
         beep(180,160,.03);
-        setTimeout(()=>actor.classList.remove('fall-v170'),560);
+        setTimeout(()=>actor.classList.remove('fall-v171'),560);
       }
     }
 
@@ -28533,13 +28744,20 @@ async function startMineCartMob(p,humanIndex,runId){
 
     const pct=clamp(worldX/GOAL_X,0,1);
     distEl.textContent=`${Math.round(pct*100)}%`;
-    timeEl.textContent=`${((now-start+penaltyMs)/1000).toFixed(2)}`;
+    timeEl.textContent=((now-start+penaltyMs)/1000).toFixed(2);
 
-    if(now>=stunUntil&&call.textContent.includes('FALL'))call.textContent='TAP JUMP';
+    if(now>=stunUntil&&call.textContent.includes('FALL')){
+      call.textContent='TAP JUMP';
+    }
 
-    if(worldX>=GOAL_X){finish();return}
+    if(worldX>=GOAL_X){
+      finish();
+      return;
+    }
+
     raf=requestAnimationFrame(frame);
   }
+
   raf=requestAnimationFrame(frame);
 }
 
@@ -28553,82 +28771,145 @@ async function startCleaningMob(p,humanIndex,runId){
 
   const spots=[];
   let guard=0;
-  while(spots.length<10&&guard<500){
+
+  while(spots.length<10&&guard<600){
     guard++;
     const a=rand(0,Math.PI*2);
     const r=Math.sqrt(Math.random())*.82;
     const x=.5+Math.cos(a)*r*.27;
-    const y=.50+Math.sin(a)*r*.34;
-    if(spots.every(s=>Math.hypot((s.x-x)*300,(s.y-y)*390)>42)){
-      spots.push({x,y,clean:0,done:false});
+    const y=.49+Math.sin(a)*r*.33;
+
+    if(spots.every(s=>Math.hypot((s.x-x)*300,(s.y-y)*390)>43)){
+      spots.push({x,y,water:0,done:false});
     }
   }
 
   screen.innerHTML=`
-    <div class="clean-shell-v170 gameplay-fit">
+    <div class="clean-shell-v171 gameplay-fit">
       <div class="game-head">
-        <div><span class="kicker">${esc(p.name)}</span><h2>お掃除モブくん</h2><p class="lead">7 SECONDS / RUB 10 DUST</p></div>
+        <div><span class="kicker">${esc(p.name)}</span><h2>お掃除モブくん</h2><p class="lead">7 SECONDS / HOLD TO SPRAY</p></div>
         <div class="game-badge">${playBadge(humanIndex)}</div>
       </div>
-      <div class="clean-hud-v170">
-        <div><span>TIME</span><b id="cleanTime170">7.00</b></div>
-        <div><span>CLEAN</span><b id="cleanCount170">0 / 10</b></div>
-        <div><span>SCORE</span><b id="cleanScore170">0</b></div>
+      <div class="clean-hud-v171">
+        <div><span>TIME</span><b id="cleanTime171">7.00</b></div>
+        <div><span>CLEAN</span><b id="cleanCount171">0 / 10</b></div>
+        <div><span>SCORE</span><b id="cleanScore171">0</b></div>
       </div>
-      <div id="cleanStage170" class="clean-stage-v170">
-        <div class="clean-room-v170"></div>
-        <div class="clean-plush-v170"><img src="icon/01.png" draggable="false" alt=""></div>
-        <div id="cleanDustLayer170" class="clean-dust-layer-v170">
-          ${spots.map((s,i)=>`<i data-dust="${i}" style="left:${s.x*100}%;top:${s.y*100}%"><b></b><b></b><b></b></i>`).join('')}
+      <div id="cleanStage171" class="clean-stage-v171">
+        <div class="clean-room-v171"></div>
+        <div class="clean-plush-v171"><img src="icon/01.png" draggable="false" alt=""></div>
+
+        <div id="cleanDustLayer171" class="clean-dust-layer-v171">
+          ${spots.map((s,i)=>`
+            <i data-dust="${i}" style="left:${s.x*100}%;top:${s.y*100}%">
+              <b></b><b></b><b></b>
+            </i>
+          `).join('')}
         </div>
-        <div id="cleanCall170" class="clean-call-v170">埃を擦って消す！</div>
+
+        <div id="cleanStream171" class="clean-stream-v171" hidden><i></i></div>
+        <div class="clean-nozzle-v171"><i></i></div>
+        <div id="cleanCall171" class="clean-call-v171">埃を長押しで水洗い！</div>
       </div>
     </div>`;
 
-  const stage=document.getElementById('cleanStage170');
+  const stage=document.getElementById('cleanStage171');
   const dustEls=[...stage.querySelectorAll('[data-dust]')];
-  const timeEl=document.getElementById('cleanTime170');
-  const countEl=document.getElementById('cleanCount170');
-  const scoreEl=document.getElementById('cleanScore170');
-  const call=document.getElementById('cleanCall170');
+  const stream=document.getElementById('cleanStream171');
+  const timeEl=document.getElementById('cleanTime171');
+  const countEl=document.getElementById('cleanCount171');
+  const scoreEl=document.getElementById('cleanScore171');
+  const call=document.getElementById('cleanCall171');
 
-  let active=false,finished=false,rubbing=false,pointerId=null,lastPt=null,cleaned=0,start=0,raf=null;
+  let active=false,finished=false,spraying=false,pointerId=null,targetPt=null,cleaned=0,start=0,raf=null,last=0;
 
-  function local(e){const r=stage.getBoundingClientRect();return{x:e.clientX-r.left,y:e.clientY-r.top}}
+  function local(e){
+    const r=stage.getBoundingClientRect();
+    return {x:e.clientX-r.left,y:e.clientY-r.top};
+  }
 
-  function applyRub(pt,dist){
-    const w=stage.clientWidth,h=stage.clientHeight;
+  function updateStream(pt){
+    const ox=stage.clientWidth*.5;
+    const oy=stage.clientHeight*.93;
+    const dx=pt.x-ox;
+    const dy=pt.y-oy;
+    const len=Math.hypot(dx,dy);
+    const angle=Math.atan2(dy,dx)*180/Math.PI;
+
+    stream.hidden=false;
+    stream.style.left=`${ox}px`;
+    stream.style.top=`${oy}px`;
+    stream.style.width=`${len}px`;
+    stream.style.transform=`rotate(${angle}deg)`;
+  }
+
+  function clearWaterHighlights(){
+    dustEls.forEach(el=>el.classList.remove('watering-v171'));
+  }
+
+  function applyWater(pt,dt){
+    const w=stage.clientWidth;
+    const h=stage.clientHeight;
+    let nearest=-1;
+    let nearestDist=Infinity;
+
     spots.forEach((s,i)=>{
       if(s.done)return;
-      const sx=s.x*w,sy=s.y*h;
-      if(Math.hypot(pt.x-sx,pt.y-sy)<=38){
-        s.clean+=dist;
-        const el=dustEls[i];
-        const pct=clamp(s.clean/95,0,1);
-        el.style.opacity=String(1-pct*.82);
-        el.style.transform=`translate(-50%,-50%) scale(${1-pct*.35})`;
-        if(s.clean>=95){
-          s.done=true;
-          cleaned++;
-          el.classList.add('done-v170');
-          countEl.textContent=`${cleaned} / 10`;
-          scoreEl.textContent=cleaned*10;
-          beep(760+cleaned*18,35,.010);
-          if(cleaned===10)finish(true);
-        }
+      const sx=s.x*w;
+      const sy=s.y*h;
+      const d=Math.hypot(pt.x-sx,pt.y-sy);
+      if(d<nearestDist){
+        nearestDist=d;
+        nearest=i;
       }
     });
+
+    clearWaterHighlights();
+
+    if(nearest<0||nearestDist>40)return;
+
+    const s=spots[nearest];
+    const el=dustEls[nearest];
+    el.classList.add('watering-v171');
+
+    // About 0.38 sec of direct water contact clears one dust spot.
+    s.water+=dt/0.38;
+    const pct=clamp(s.water,0,1);
+
+    el.style.opacity=String(1-pct*.84);
+    el.style.transform=`translate(-50%,-50%) scale(${1-pct*.34})`;
+
+    if(pct>=1&&!s.done){
+      s.done=true;
+      cleaned++;
+      el.classList.remove('watering-v171');
+      el.classList.add('done-v171');
+      countEl.textContent=`${cleaned} / 10`;
+      scoreEl.textContent=cleaned*10;
+      beep(760+cleaned*18,35,.010);
+
+      if(cleaned===10){
+        finish(true);
+      }
+    }
   }
 
   function finish(perfect=false){
     if(finished)return;
-    finished=true;active=false;rubbing=false;
+    finished=true;
+    active=false;
+    spraying=false;
+    stream.hidden=true;
+    clearWaterHighlights();
+
     if(raf)cancelAnimationFrame(raf);
+
     const score=cleaned*10;
     state.records.cleaningMob[p.id]=score;
     call.textContent=perfect?'ALL CLEAN!!':'TIME UP!';
-    call.className='clean-call-v170 result-v170';
+    call.className='clean-call-v171 result-v171';
     beep(perfect?1080:650,140,.03);
+
     setTimeout(()=>{
       if(isGameRunValid(runId)){
         recordScreen(gameIndex,p,humanIndex,`${score}<small>pt</small>`,`${cleaned} / 10 CLEAN`);
@@ -28639,39 +28920,71 @@ async function startCleaningMob(p,humanIndex,runId){
   stage.addEventListener('pointerdown',e=>{
     if(!active||finished)return;
     e.preventDefault();
+
     stage.setPointerCapture?.(e.pointerId);
-    rubbing=true;pointerId=e.pointerId;lastPt=local(e);
-    applyRub(lastPt,8);
+    spraying=true;
+    pointerId=e.pointerId;
+    targetPt=local(e);
+    updateStream(targetPt);
+    call.textContent='WATER ON!';
+    call.className='clean-call-v171 water-v171';
+    beep(470,35,.008);
   },{passive:false});
 
   stage.addEventListener('pointermove',e=>{
-    if(!rubbing||e.pointerId!==pointerId||finished)return;
+    if(!spraying||e.pointerId!==pointerId||finished)return;
     e.preventDefault();
-    const pt=local(e);
-    const d=Math.hypot(pt.x-lastPt.x,pt.y-lastPt.y);
-    if(d>0)applyRub(pt,Math.min(24,d));
-    lastPt=pt;
+
+    targetPt=local(e);
+    updateStream(targetPt);
   },{passive:false});
 
-  const stopRub=e=>{
+  function stopSpray(e){
     if(e.pointerId!==pointerId)return;
-    rubbing=false;pointerId=null;lastPt=null;
-  };
-  stage.addEventListener('pointerup',stopRub,{passive:false});
-  stage.addEventListener('pointercancel',stopRub,{passive:false});
+    spraying=false;
+    pointerId=null;
+    targetPt=null;
+    stream.hidden=true;
+    clearWaterHighlights();
+
+    if(!finished){
+      call.textContent='埃を長押し！';
+      call.className='clean-call-v171';
+    }
+  }
+
+  stage.addEventListener('pointerup',stopSpray,{passive:false});
+  stage.addEventListener('pointercancel',stopSpray,{passive:false});
 
   if(!(await countdown('CLEANING',runId,{transparent:true})))return;
-  active=true;start=performance.now();
+
+  active=true;
+  start=last=performance.now();
 
   function frame(now){
     if(finished||!isGameRunValid(runId))return;
+
+    const dt=Math.min(.035,(now-last)/1000);
+    last=now;
+
     const rem=7000-(now-start);
     timeEl.textContent=(Math.max(0,rem)/1000).toFixed(2);
-    if(rem<=0){finish(false);return}
+
+    if(spraying&&targetPt){
+      applyWater(targetPt,dt);
+    }
+
+    if(rem<=0){
+      finish(false);
+      return;
+    }
+
     raf=requestAnimationFrame(frame);
   }
+
   raf=requestAnimationFrame(frame);
 }
+
 
 // =========================================================
 // V10.48 GAME 92 — モブくんは居合切りの達人
