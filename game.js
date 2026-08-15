@@ -28243,7 +28243,7 @@ async function startLongJumpMob(p,humanIndex,runId){
           </button>
         </div>
 
-        <button id="ljJump162" class="primary longjump-jump-v163" type="button" hidden>
+        <button id="ljJump162" class="primary longjump-jump-v164" type="button" hidden>
           JUMP!
         </button>
       </div>
@@ -28280,11 +28280,21 @@ async function startLongJumpMob(p,humanIndex,runId){
   let flightT=0;
   let flightDuration=2.25;
   let flightStartX=82;
+  let flightWorldX=82;
+  let flightLandingX=82;
   let flightPeak=155;
 
   function render(){
     world.style.transform=`translate3d(${-cameraX}px,0,0)`;
-    player.style.left=`${82}px`;
+
+    // Player screen position is always derived from the REAL world position.
+    // This prevents any teleport when JUMP is pressed early.
+    const worldPlayerX=
+      phase==='flight'
+        ? flightWorldX
+        : runnerX;
+
+    player.style.left=`${worldPlayerX-cameraX}px`;
 
     if(phase==='gauge'){
       needle.style.left=`${gaugePos*100}%`;
@@ -28335,7 +28345,7 @@ async function startLongJumpMob(p,humanIndex,runId){
     msg.classList.add('result-v162');
 
     landingMark.style.display='block';
-    landingMark.style.left=`${SAND_X+Math.min(530,distance*1.72)}px`;
+    landingMark.style.left=`${clamp(flightLandingX,0,WORLD_W-12)}px`;
 
     beep(distance>=298?1180:distance>=250?980:distance>=180?780:540,190,.045);
 
@@ -28394,7 +28404,11 @@ async function startLongJumpMob(p,humanIndex,runId){
     flightDuration=1.62+jumpDistance/300*.92;
     flightPeak=92+jumpDistance/300*120;
     flightT=0;
+
+    // CRITICAL: the jump begins from the exact position where the user pressed JUMP.
     flightStartX=runnerX;
+    flightWorldX=runnerX;
+    flightLandingX=runnerX+jumpDistance*1.72;
 
     msg.textContent='JUMP!!';
 
@@ -28485,8 +28499,8 @@ async function startLongJumpMob(p,humanIndex,runId){
     }else if(phase==='run'){
       runnerX+=runSpeed*dt;
 
-      // Camera follows the run.
-      cameraX=clamp(runnerX-82,0,RUNWAY_END-260);
+      // Camera follows the real running position continuously.
+      cameraX=clamp(runnerX-98,0,RUNWAY_END-260);
       player.style.transform='translate3d(0,0,0)';
 
       if(runnerX>TAKEOFF_X-150&&runnerX<TAKEOFF_X+12){
@@ -28496,8 +28510,9 @@ async function startLongJumpMob(p,humanIndex,runId){
         msg.classList.remove('now-v162');
       }
 
-      // If the user never taps, auto-foul jump after the sand edge.
-      if(runnerX>SAND_X+20){
+      // If the user never taps, force a very poor jump only after actually
+      // running past the board. The launch still starts from that exact position.
+      if(runnerX>SAND_X+24){
         takeoffQuality=.02;
         timingEl.textContent='FOUL 2%';
         beginFlight();
@@ -28509,11 +28524,12 @@ async function startLongJumpMob(p,humanIndex,runId){
       const arc=Math.sin(Math.PI*t);
       const visualTravel=jumpDistance*1.72;
 
-      const visualX=TAKEOFF_X + visualTravel*t;
+      // Continue from the real JUMP position. No snap to TAKEOFF_X.
+      flightWorldX=flightStartX+visualTravel*t;
       const jumpY=arc*flightPeak;
 
       cameraX=clamp(
-        visualX-82,
+        flightWorldX-82,
         0,
         WORLD_W-360
       );
