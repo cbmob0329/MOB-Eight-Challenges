@@ -325,13 +325,14 @@ const GAMES=[
   {no:87,key:"mobPinball",title:"モブくんピンボール",sub:"上から落としたボールをカメラで追い、10〜100点のスロットを狙う",legacy:95},
   {no:88,key:"hurdleRun",title:"モブくんのハードル走",sub:"自動走行＋ジャンプで間隔を広げた8個のハードルを越える200mタイムアタック",legacy:96},
   {no:89,key:"longJumpMob",title:"モブくんの走り幅跳び",sub:"高速ダッシュゲージを中央で止め、砂場ギリギリで踏み切って最大300m",legacy:97},
-  {no:90,key:"pkKicker",title:"モブくんPKキッカー",sub:"左右・高さ・POWERを止めて3本のPKを決める",legacy:98},
-  {no:91,key:"threePoint",title:"モブくん3ポイント",sub:"ボールを引いて離し、5球でリングを狙う",legacy:99},
-  {no:92,key:"bowlingMob",title:"モブくんボウリング",sub:"1スワイプ1投勝負。ポケットを狙って10ピンを倒す",legacy:100},
-  {no:93,key:"waterSkip",title:"モブくん水切り",sub:"石を右へフリックして最大10回以上の水切りを狙う",legacy:101},
-  {no:94,key:"tamaireMob",title:"モブくん玉入れ",sub:"動くカゴへ10球をフリック。10個全部入れば100点",legacy:102},
-  {no:95,key:"jengaMob",title:"モブくんジェンガ",sub:"3本のブロックを丁寧に抜いて塔を残す",legacy:103},
-  {no:96,key:"newspaperMob",title:"モブくん新聞配達",sub:"走行中に左右の郵便受けへ10軒分の新聞を投げる",legacy:104}
+  {no:90,key:"pkKicker",title:"モブくんPKキッカー",sub:"動く照準とPOWERの2回だけ止めて5本のPKを蹴る",legacy:98},
+  {no:91,key:"threePoint",title:"モブくん3ポイント",sub:"中央のモブくんを引っ張って離し、5球でリングを狙う",legacy:99},
+  {no:92,key:"bowlingMob",title:"モブくんボウリング",sub:"モブくんが1投。上スワイプでポケットを狙って10ピンを倒す",legacy:100},
+  {no:93,key:"waterSkip",title:"モブくん水切り",sub:"速度・角度・水面の状態で毎回変化する水切り回数を競う",legacy:101},
+  {no:94,key:"tamaireMob",title:"モブくん玉入れ",sub:"動くカゴへ10球をテンポよく連投。1個10点",legacy:102},
+  {no:95,key:"jengaMob",title:"モブくんジェンガ",sub:"本物らしい交互積みタワーから倒れるまでブロックを抜き続ける",legacy:103},
+  {no:96,key:"mineCartMob",title:"モブくんトロッコ",sub:"鉱山トロッコで途切れた線路をジャンプし、ゴールタイムを競う",legacy:105},
+  {no:97,key:"cleaningMob",title:"お掃除モブくん",sub:"大きなモブくんぬいぐるみの埃10個を7秒で擦って落とす",legacy:106}
 ];
 
 function legacyGameIndex(gameIndex){
@@ -405,7 +406,7 @@ function freshState(){
         paperPlane:{},tankMob:{},curlingMob:{},bubbleMob:{},
         changeMob:{},baggageMob:{},treasureMob:{},rouletteMob:{},excavationMob:{},
         oldMaidDuel:{},robotMarch:{},monsterMaster:{},scoutMan:{},
-        atafutaSurvival:{},waveMaster:{},battleRoyaleMob:{},littleMobShot:{},monsterBoxMob:{},alienBattleMob:{},mobMusou:{},iaidoMaster:{},killLeaderMob:{},mobSpeedRacer:{},summonMaster:{},mobPinball:{},hurdleRun:{},longJumpMob:{},pkKicker:{},threePoint:{},bowlingMob:{},waterSkip:{},tamaireMob:{},jengaMob:{},newspaperMob:{}
+        atafutaSurvival:{},waveMaster:{},battleRoyaleMob:{},littleMobShot:{},monsterBoxMob:{},alienBattleMob:{},mobMusou:{},iaidoMaster:{},killLeaderMob:{},mobSpeedRacer:{},summonMaster:{},mobPinball:{},hurdleRun:{},longJumpMob:{},pkKicker:{},threePoint:{},bowlingMob:{},waterSkip:{},tamaireMob:{},jengaMob:{},mineCartMob:{},cleaningMob:{}
     },
     total:{},
     roundPoints:[],
@@ -515,7 +516,7 @@ function renderHome(){
     <section class="hero hero-v119">
       <div>
         <span class="kicker">SMARTPHONE PARTY GAME</span>
-        <h1>96 MINI<br>GAMES</h1>
+        <h1>97 MINI<br>GAMES</h1>
         <p>通常対戦は「チーム戦」「個人戦」。さらに8人/16人の「モブくんゲーム王決定戦」を遊べます。</p>
       </div>
       <div class="hero-mark">MOB</div>
@@ -540,7 +541,7 @@ function renderHome(){
     </section>
 
     <section class="panel flat">
-      <div class="panel-head"><h3>96 MINI GAMES</h3><span class="tag">GAME 1 → 96</span></div>
+      <div class="panel-head"><h3>97 MINI GAMES</h3><span class="tag">GAME 1 → 97</span></div>
       <div class="compact-game-grid home-compact-games-v119">
         ${GAMES.map(g=>`<div><b>${g.no}</b><span>${g.title}</span></div>`).join("")}
       </div>
@@ -560,7 +561,7 @@ function renderFreePlaySelect(){
   screen.innerHTML=`
     <div class="game-head">
       <div><span class="kicker">FREE PLAY</span><h2>1人で遊ぶ</h2><p class="lead">好きなゲームを1つ選んでプレイ。</p></div>
-      <div class="game-badge">96</div>
+      <div class="game-badge">97</div>
     </div>
 
     <button id="freeBack" class="secondary wizard-back-v119" type="button">← メインへ戻る</button>
@@ -598,7 +599,7 @@ function renderGameGuide(){
   screen.innerHTML=`
     <div class="game-head">
       <div><span class="kicker">GAME GUIDE</span><h2>各ゲームの説明</h2><p class="lead">内容と100点換算の目安を一覧で確認できます。</p></div>
-      <div class="game-badge">96</div>
+      <div class="game-badge">97</div>
     </div>
 
     <button id="guideBack" class="secondary wizard-back-v119" type="button">← メインへ戻る</button>
@@ -2034,7 +2035,7 @@ function renderPlayStyleSelect(){
       <button id="normalStyle" class="style-select-card normal" type="button">
         <span>NORMAL</span>
         <b>順番に全種目</b>
-        <small>GAME 1 → 96 を順番にプレイ</small>
+        <small>GAME 1 → 97 を順番にプレイ</small>
       </button>
       <button id="customStyle" class="style-select-card custom" type="button">
         <span>CUSTOM</span>
@@ -2044,7 +2045,7 @@ function renderPlayStyleSelect(){
     </div>
 
     <section class="panel flat">
-      <h3>96 MINI GAMES</h3>
+      <h3>97 MINI GAMES</h3>
       <div class="compact-game-grid">
         ${GAMES.map(g=>`<div><b>${g.no}</b><span>${g.title}</span></div>`).join("")}
       </div>
@@ -2330,13 +2331,15 @@ function scoreRuleForGame(index){
     "10 / 20 / 30 / 40 / 50 / 60 / 70 / 80 / 90 / 100 の入ったスロットがそのまま得点",
     "200m完走タイム / 8個のハードル / 10.00秒以下=100点 / 18.00秒以上=0点",
     "ダッシュゲージ中央 + 砂場直前の完璧な踏切で約300m=100点",
-    "PK3本合計100点 / 四隅・高さ・適正POWERほど高得点",
-    "3ポイント5球 / SWISH20点×5球=100点",
+    "PK5本 / 1本最大20点 / 動く照準 + POWERの2回だけSTOP",
+    "3ポイント5球 / モブくんを引いて離す / SWISH20点×5球=100点",
     "1投で倒したピン×10点 / STRIKE=100点",
-    "水切り1回=10点 / 10回以上=100点",
-    "10球の玉入れ / 1個IN=10点 / 10個=100点",
-    "3本抜き90点 + 最終STABILITY最大10点 / 崩壊で大幅減点",
-    "10軒配達 / 郵便受けPERFECT=10点・玄関付近7点・庭3点"
+    "水切り1回=10点 / 速度・角度・水面状態で回数が毎回変化 / 10回以上=100点",
+    "10球を連投 / 1個IN=10点 / 10個=100点",
+    "倒れるまで抜き続ける / 1本成功=10点 / 10本以上成功で100点",
+    "",
+    "トロッコ完走タイム / 12.00秒以下=100点 / 20.00秒以上=0点",
+    "埃10個 / 1個完全除去=10点 / 7秒以内に全消しで100点"
   ][legacyIndex];
 }
 
@@ -2538,19 +2541,23 @@ function showGameIntro(index){
   }else if(legacyIndex===97){
     rules=`<li>最初に高速の矢印型DASHゲージを中央でSTOP。中央ほど走力が上がります。</li><li>自動で走り出したら砂場の踏切線ギリギリ手前でJUMP。両方完璧なら約300mです。</li>`;
   }else if(legacyIndex===98){
-    rules=`<li>左右→高さ→POWERの順にSTOPしてシュート位置を決めます。</li><li>3本合計100点。四隅と適正POWERを狙うほど高得点です。</li>`;
+    rules=`<li>動く照準をSTOPして狙いを決め、次にPOWERをSTOP。操作は1本につき2回だけです。</li><li>5本合計100点。四隅と適正POWERほど高得点です。</li>`;
   }else if(legacyIndex===99){
-    rules=`<li>下の投球エリアを下方向へ引いて離すと、逆方向へボールをシュートします。</li><li>5球勝負。SWISHは20点、リングIN・ボードINでも得点します。</li>`;
+    rules=`<li>中央のモブくんを下へ引っ張り、離すとボールを投げます。毎球中央から開始します。</li><li>5球勝負。SWISHは20点、リングIN・ボードINでも得点します。</li>`;
   }else if(legacyIndex===100){
-    rules=`<li>下のボール付近から上へ1回だけスワイプ。横成分でコースが決まります。</li><li>10本すべて倒せばSTRIKEで100点です。</li>`;
+    rules=`<li>モブくんの前から上へ1回スワイプ。モブくんが投球してボールがレーンを進みます。</li><li>10本すべて倒せばSTRIKEで100点です。</li>`;
   }else if(legacyIndex===101){
-    rules=`<li>石を右へ、少しだけ上向きにフリック。速度と角度で水切り回数が決まります。</li><li>石とカメラは同じworld座標を連続追従。10回以上で100点です。</li>`;
+    rules=`<li>石を右へ少し上向きにフリック。速度・角度・毎回変わる水面状態で回数が変化します。</li><li>同じ6回に固定されません。10回以上で100点です。</li>`;
   }else if(legacyIndex===102){
-    rules=`<li>画面下の投球エリアを上へフリックし、左右に動くカゴへ10球投げます。</li><li>1個INで10点。カゴの口を上から通過した時だけ成功です。</li>`;
+    rules=`<li>画面下の投球エリアを上へフリック。10球を待ち時間なしで連投できます。</li><li>1個INで10点。最後の球が判定されるまでゲームは続きます。</li>`;
   }else if(legacyIndex===103){
-    rules=`<li>光っているブロックを直接横へスワイプして3本抜きます。</li><li>真っ直ぐ・適度な速度ほど安定。塔を倒さず3本抜けば最大100点です。</li>`;
+    rules=`<li>交互向きに積まれたジェンガから光るブロックを横へ抜きます。</li><li>3本で終了せず、塔が倒れるまで続行。1本成功ごとに10点です。</li>`;
+  }else if(legacyIndex===105){
+    rules=`<li>トロッコは自動で鉱山を進みます。線路の切れ目が来たら画面をタップしてJUMP。</li><li>連続した穴も出現。落下するとタイムロスし、ゴールタイムが遅くなります。</li>`;
+  }else if(legacyIndex===106){
+    rules=`<li>大きなモブくんぬいぐるみに付いた埃10個を指で擦って消します。</li><li>埃の位置は毎回ランダム。制限時間7秒、1個完全除去で10点です。</li>`;
   }else{
-    rules=`<li>道路を進むモブくんから、左右の郵便受けへ新聞をフリックします。</li><li>10軒勝負。郵便受け10点、玄関付近7点、庭3点です。</li>`;
+    rules=`<li>${esc(g.sub)}</li>`;
   }
   const conciseRules=(rules.match(/<li>[\s\S]*?<\/li>/g)||[]).slice(0,2).join("");
   rules=conciseRules||`<li>${esc(g.sub)}</li>`;
@@ -2693,7 +2700,8 @@ function humanReady(gameIndex,humanIndex){
     else if(legacyIndex===101)startWaterSkip(p,humanIndex,runId);
     else if(legacyIndex===102)startTamaireMob(p,humanIndex,runId);
     else if(legacyIndex===103)startJengaMob(p,humanIndex,runId);
-    else if(legacyIndex===104)startNewspaperMob(p,humanIndex,runId);
+    else if(legacyIndex===105)startMineCartMob(p,humanIndex,runId);
+    else if(legacyIndex===106)startCleaningMob(p,humanIndex,runId);
     else{
       gameSessionActive=false;
       activeGameIndex=-1;
@@ -25570,7 +25578,7 @@ function softenCpuResultV121(gameIndex,p,ultra){
 
   const specificallyTuned=new Set([
     50,51,54,59,62,63,
-    64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,95,96,97,98,99,100,101,102,103,104
+    64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,95,96,97,98,99,100,101,102,103,105,106
   ]);
 
   if(
@@ -25894,13 +25902,15 @@ function simulateOneCpu(gameIndex,p){
   }else if(legacyIndex===100){
     state.records.bowlingMob[p.id]=ultra?[90,100][randi(0,1)]:randi(40,90);
   }else if(legacyIndex===101){
-    state.records.waterSkip[p.id]=ultra?randi(90,100):randi(30,90);
+    state.records.waterSkip[p.id]=ultra?randi(80,100):randi(20,90);
   }else if(legacyIndex===102){
     state.records.tamaireMob[p.id]=ultra?randi(80,100):randi(30,80);
   }else if(legacyIndex===103){
-    state.records.jengaMob[p.id]=ultra?randi(88,100):randi(28,88);
+    state.records.jengaMob[p.id]=ultra?randi(80,100):randi(30,90);
+  }else if(legacyIndex===105){
+    state.records.mineCartMob[p.id]=ultra?randi(11800,13900):randi(13200,19000);
   }else{
-    state.records.newspaperMob[p.id]=ultra?randi(86,100):randi(32,88);
+    state.records.cleaningMob[p.id]=ultra?randi(80,100):randi(30,90);
   }
 
   softenCpuResultV121(
@@ -26071,15 +26081,21 @@ function performancePoints(gameIndex,v){
   if(legacyIndex===97){
     return clamp(Math.round(v/300*100),0,100);
   }
-  if(legacyIndex>=98&&legacyIndex<=104){
+  if(legacyIndex>=98&&legacyIndex<=103){
     return clamp(Math.round(v),0,100);
   }
+  if(legacyIndex===105){
+    if(v<=12000)return 100;
+    if(v>=20000)return 0;
+    return clamp(Math.round((20000-v)/8000*100),0,100);
+  }
+  if(legacyIndex===106)return clamp(Math.round(v),0,100);
   return clamp(Math.round(v),0,100);
 }
 
 function rankRecords(gameIndex){
   const legacyIndex=legacyGameIndex(gameIndex);
-  const key=GAMES[gameIndex].key,records=state.records[key],ascRaw=(legacyIndex===0||legacyIndex===2||legacyIndex===5||legacyIndex===21||legacyIndex===23||legacyIndex===24||legacyIndex===25||legacyIndex===26||legacyIndex===27||legacyIndex===37||legacyIndex===40||legacyIndex===47||legacyIndex===51||legacyIndex===53||legacyIndex===63||legacyIndex===80||legacyIndex===83||legacyIndex===86||legacyIndex===89||legacyIndex===92||legacyIndex===93||legacyIndex===96);
+  const key=GAMES[gameIndex].key,records=state.records[key],ascRaw=(legacyIndex===0||legacyIndex===2||legacyIndex===5||legacyIndex===21||legacyIndex===23||legacyIndex===24||legacyIndex===25||legacyIndex===26||legacyIndex===27||legacyIndex===37||legacyIndex===40||legacyIndex===47||legacyIndex===51||legacyIndex===53||legacyIndex===63||legacyIndex===80||legacyIndex===83||legacyIndex===86||legacyIndex===89||legacyIndex===92||legacyIndex===93||legacyIndex===96||legacyIndex===105);
   const arr=participants().map(p=>({p,value:records[p.id]}));
   if(mode().performance){
     arr.forEach(e=>e.points=performancePoints(gameIndex,e.value));
@@ -26180,7 +26196,8 @@ function formatRecord(gameIndex,v){
   if(legacyIndex===101)return `${Math.round(v/10)}回`;
   if(legacyIndex===102)return `${Math.round(v/10)}/10`;
   if(legacyIndex===103)return `${Math.round(v)}pt`;
-  if(legacyIndex===104)return `${Math.round(v)}pt`;
+  if(legacyIndex===105)return `${(v/1000).toFixed(2)}秒`;
+  if(legacyIndex===106)return `${Math.round(v/10)}/10`;
   return `${Math.round(v)}pt`;
 }
 
@@ -27395,61 +27412,56 @@ async function startLongJumpMob(p,humanIndex,runId){
 async function startPkKicker(p,humanIndex,runId){
   gameFit();
   const gameIndex=GAMES.findIndex(g=>g.key==='pkKicker');
-  const shotCaps=[33,33,34];
 
   screen.innerHTML=`
-    <div class="pkx-shell-v169 gameplay-fit">
+    <div class="pkx-shell-v170 gameplay-fit">
       <div class="game-head">
-        <div><span class="kicker">${esc(p.name)}</span><h2>モブくんPKキッカー</h2><p class="lead">3 SHOTS / AIM → HEIGHT → POWER</p></div>
+        <div><span class="kicker">${esc(p.name)}</span><h2>モブくんPKキッカー</h2><p class="lead">5 SHOTS / AIM → POWER</p></div>
         <div class="game-badge">${playBadge(humanIndex)}</div>
       </div>
-      <div class="pkx-hud-v169">
-        <div><span>SHOT</span><b id="pkxShot169">1 / 3</b></div>
-        <div><span>SCORE</span><b id="pkxScore169">0</b></div>
-        <div><span>LAST</span><b id="pkxLast169">---</b></div>
+      <div class="pkx-hud-v170">
+        <div><span>SHOT</span><b id="pkxShot170">1 / 5</b></div>
+        <div><span>SCORE</span><b id="pkxScore170">0</b></div>
+        <div><span>LAST</span><b id="pkxLast170">---</b></div>
       </div>
-      <div id="pkxStage169" class="pkx-stage-v169">
-        <div class="pkx-crowd-v169">${Array.from({length:30},(_,i)=>`<i class="c${i%5}"></i>`).join('')}</div>
-        <div class="pkx-goal-v169">
-          <div class="pkx-net-v169"></div>
-          <div id="pkxKeeper169" class="pkx-keeper-v169"><img src="icon/02.png" draggable="false" alt=""></div>
+      <div id="pkxStage170" class="pkx-stage-v170">
+        <div class="pkx-stand-v170"></div>
+        <div id="pkxGoal170" class="pkx-goal-v170">
+          <div class="pkx-net-v170"></div>
+          <div id="pkxAim170" class="pkx-aim-v170"><i></i></div>
+          <div id="pkxKeeper170" class="pkx-keeper-v170"><img src="icon/02.png" draggable="false" alt=""></div>
         </div>
-        <div class="pkx-spot-v169"></div>
-        <div class="pkx-player-v169"><img src="icon/01.png" draggable="false" alt=""></div>
-        <div id="pkxBall169" class="pkx-ball-v169"></div>
-        <div id="pkxCall169" class="pkx-call-v169">READY</div>
+        <div class="pkx-player-v170"><img src="icon/01.png" draggable="false" alt=""></div>
+        <div id="pkxBall170" class="pkx-ball-v170"></div>
+        <div id="pkxCall170" class="pkx-call-v170">READY</div>
       </div>
-      <div id="pkxControl169" class="pkx-control-v169">
-        <div class="pkx-control-label-v169"><span id="pkxMode169">AIM</span><b id="pkxHint169">LEFT ↔ RIGHT</b></div>
-        <div class="pkx-gauge-v169">
-          <i id="pkxNeedle169"></i>
-          <em></em>
-        </div>
-        <button id="pkxStop169" class="primary pkx-stop-v169" type="button" disabled>STOP</button>
+      <div id="pkxControl170" class="pkx-control-v170">
+        <div><span id="pkxMode170">AIM</span><b id="pkxHint170">動く照準をSTOP</b></div>
+        <div class="pkx-meter-v170"><i id="pkxNeedle170"></i><em></em></div>
+        <button id="pkxStop170" class="primary pkx-stop-v170" type="button" disabled>STOP</button>
       </div>
     </div>`;
 
-  const stage=document.getElementById('pkxStage169');
-  const ball=document.getElementById('pkxBall169');
-  const keeper=document.getElementById('pkxKeeper169');
-  const call=document.getElementById('pkxCall169');
-  const control=document.getElementById('pkxControl169');
-  const modeEl=document.getElementById('pkxMode169');
-  const hintEl=document.getElementById('pkxHint169');
-  const needle=document.getElementById('pkxNeedle169');
-  const stop=document.getElementById('pkxStop169');
-  const shotEl=document.getElementById('pkxShot169');
-  const scoreEl=document.getElementById('pkxScore169');
-  const lastEl=document.getElementById('pkxLast169');
+  const stage=document.getElementById('pkxStage170');
+  const goal=document.getElementById('pkxGoal170');
+  const aim=document.getElementById('pkxAim170');
+  const keeper=document.getElementById('pkxKeeper170');
+  const ball=document.getElementById('pkxBall170');
+  const call=document.getElementById('pkxCall170');
+  const control=document.getElementById('pkxControl170');
+  const modeEl=document.getElementById('pkxMode170');
+  const hintEl=document.getElementById('pkxHint170');
+  const needle=document.getElementById('pkxNeedle170');
+  const stop=document.getElementById('pkxStop170');
+  const shotEl=document.getElementById('pkxShot170');
+  const scoreEl=document.getElementById('pkxScore170');
+  const lastEl=document.getElementById('pkxLast170');
 
   let active=false,finished=false,shot=0,total=0,phase=0;
   let gauge=.08,dir=1,last=performance.now(),raf=null;
-  let aimX=.5,aimY=.5,power=.85;
+  let aimX=.5,aimY=.65,power=.85;
 
-  const phaseNames=['AIM','HEIGHT','POWER'];
-  const phaseHints=['LEFT ↔ RIGHT','LOW ↔ HIGH','SOFT ↔ HARD'];
-
-  function resetBall(){
+  function resetShot(){
     ball.style.transition='none';
     ball.style.left='50%';
     ball.style.top='84%';
@@ -27457,53 +27469,67 @@ async function startPkKicker(p,humanIndex,runId){
     keeper.style.transition='none';
     keeper.style.left='50%';
     keeper.style.transform='translateX(-50%) rotate(0deg)';
-    call.textContent='READY';
+    aim.hidden=false;
+    control.hidden=false;
+    stop.disabled=false;
+    phase=0;
+    gauge=.08;
+    dir=1;
+    modeEl.textContent='AIM';
+    hintEl.textContent='動く照準をSTOP';
+    call.textContent='AIM!';
+    call.className='pkx-call-v170';
+    active=true;
   }
 
-  function phaseUi(){
-    modeEl.textContent=phaseNames[phase];
-    hintEl.textContent=phaseHints[phase];
+  function aimFromGauge(){
+    const x=.10+gauge*.80;
+    const wave=.5+.5*Math.sin(gauge*Math.PI*2+shot*.92);
+    const y=.30+wave*.58;
+    return {x,y};
   }
 
-  function shotResult(){
-    const xCorner=Math.abs(aimX-.5)*2;
-    const yHigh=aimY;
-    const zone=clamp(.63+xCorner*.24+yHigh*.13,.63,1);
-    const pQuality=clamp(1-Math.abs(power-.85)/.50,0,1);
+  function shoot(){
+    active=false;
+    stop.disabled=true;
+    control.hidden=true;
+    aim.hidden=true;
 
-    const keeperGuess=clamp(.5+(aimX-.5)*.68+rand(-.18,.18),.08,.92);
-    const keeperDist=Math.abs(aimX-keeperGuess);
-    const saveThreshold=.08+(1-pQuality)*.17+(1-zone)*.06;
-    const saved=keeperDist<saveThreshold && !(zone>.92&&pQuality>.88);
+    const cornerX=Math.abs(aimX-.5)*2;
+    const heightQ=clamp((aimY-.28)/.60,0,1);
+    const zone=clamp(.52+cornerX*.30+heightQ*.18,.52,1);
+    const powerQ=clamp(1-Math.abs(power-.84)/.46,0,1);
+    const shotQ=zone*.58+powerQ*.42;
 
-    const cap=shotCaps[shot];
-    let pts=saved
-      ? Math.min(6,Math.round(cap*.17*zone*pQuality))
-      : Math.round(cap*(.52+.28*zone+.20*pQuality));
-    pts=clamp(pts,0,cap);
+    const central=Math.abs(aimX-.5)<.18 && aimY<.62;
+    const saved=(central&&powerQ<.76)||(shotQ<.61);
 
-    const rect=stage.getBoundingClientRect();
-    const goalLeft=rect.width*.18;
-    const goalW=rect.width*.64;
-    const goalTop=rect.height*.18;
-    const goalH=rect.height*.32;
-    const tx=goalLeft+aimX*goalW;
-    const ty=goalTop+(1-aimY)*goalH;
+    const pts=saved
+      ? clamp(Math.round(shotQ*4),0,4)
+      : clamp(Math.round(20*(.50+.30*zone+.20*powerQ)),10,20);
 
-    keeper.style.transition='left .38s cubic-bezier(.2,.8,.2,1), transform .38s ease';
-    keeper.style.left=`${goalLeft+keeperGuess*goalW}px`;
-    keeper.style.transform=`translateX(-50%) rotate(${keeperGuess<.5?-18:18}deg)`;
+    const goalRect=goal.getBoundingClientRect();
+    const stageRect=stage.getBoundingClientRect();
+    const gx=goalRect.left-stageRect.left;
+    const gy=goalRect.top-stageRect.top;
+    const tx=gx+aimX*goalRect.width;
+    const ty=gy+(1-aimY)*goalRect.height;
 
-    ball.style.transition=`left ${clamp(.58-power*.17,.40,.55)}s cubic-bezier(.18,.72,.22,1), top ${clamp(.58-power*.17,.40,.55)}s cubic-bezier(.18,.72,.22,1), transform .5s ease`;
+    const keeperX=aimX<.5?.25:.75;
+    keeper.style.transition='left .36s cubic-bezier(.2,.8,.2,1),transform .36s ease';
+    keeper.style.left=`${keeperX*100}%`;
+    keeper.style.transform=`translateX(-50%) rotate(${keeperX<.5?-20:20}deg)`;
+
+    ball.style.transition=`left .46s cubic-bezier(.18,.72,.22,1),top .46s cubic-bezier(.18,.72,.22,1),transform .46s ease`;
     requestAnimationFrame(()=>{
       ball.style.left=`${tx}px`;
       ball.style.top=`${ty}px`;
       ball.style.transform='translate(-50%,-50%) scale(.65)';
     });
 
-    call.textContent=saved?'SAVE!':pts>=31?'TOP CORNER!':'GOAL!';
-    call.className=`pkx-call-v169 ${saved?'save-v169':'goal-v169'}`;
-    beep(saved?260:pts>=31?1100:820,120,.035);
+    call.textContent=saved?'SAVE!':pts===20?'PERFECT GOAL!':'GOAL!';
+    call.className=`pkx-call-v170 ${saved?'save-v170':'goal-v170'}`;
+    beep(saved?250:pts===20?1120:820,110,.03);
 
     setTimeout(()=>{
       if(!isGameRunValid(runId))return;
@@ -27511,80 +27537,67 @@ async function startPkKicker(p,humanIndex,runId){
       scoreEl.textContent=total;
       lastEl.textContent=`+${pts}`;
       shot++;
-      if(shot>=3){
-        finish();
-        return;
+      if(shot>=5){
+        finished=true;
+        if(raf)cancelAnimationFrame(raf);
+        state.records.pkKicker[p.id]=clamp(total,0,100);
+        call.textContent=total>=92?'PK MASTER!':'5 SHOTS FINISH!';
+        call.className='pkx-call-v170 result-v170';
+        setTimeout(()=>{
+          if(isGameRunValid(runId)){
+            recordScreen(gameIndex,p,humanIndex,`${total}<small>pt</small>`,`PK 5本合計`);
+          }
+        },650);
+      }else{
+        shotEl.textContent=`${shot+1} / 5`;
+        resetShot();
       }
-      shotEl.textContent=`${shot+1} / 3`;
-      phase=0;
-      gauge=.08;
-      dir=1;
-      phaseUi();
-      resetBall();
-      control.hidden=false;
-      stop.disabled=false;
-      active=true;
-    },760);
-  }
-
-  function finish(){
-    if(finished)return;
-    finished=true;
-    active=false;
-    if(raf)cancelAnimationFrame(raf);
-    state.records.pkKicker[p.id]=clamp(total,0,100);
-    control.hidden=true;
-    call.textContent=total>=92?'PK MASTER!':total>=70?'NICE KICK!':'FINISH!';
-    call.className='pkx-call-v169 result-v169';
-    setTimeout(()=>{
-      if(!isGameRunValid(runId))return;
-      recordScreen(gameIndex,p,humanIndex,`${total}<small>pt</small>`,`PK 3本合計`);
-    },650);
+    },720);
   }
 
   stop.addEventListener('pointerdown',e=>{
     e.preventDefault();
     if(!active||finished)return;
 
-    if(phase===0)aimX=gauge;
-    if(phase===1)aimY=gauge;
-    if(phase===2)power=gauge;
-
-    beep(560+phase*140,55,.018);
-
-    if(phase<2){
-      phase++;
-      gauge=.08;
-      dir=1;
-      phaseUi();
+    if(phase===0){
+      const a=aimFromGauge();
+      aimX=a.x;aimY=a.y;
+      phase=1;
+      gauge=.08;dir=1;
+      modeEl.textContent='POWER';
+      hintEl.textContent='中央付近がBEST';
+      beep(650,50,.015);
       return;
     }
 
-    active=false;
-    stop.disabled=true;
-    control.hidden=true;
-    shotResult();
+    power=gauge;
+    shoot();
   },{passive:false});
 
-  resetBall();
-  phaseUi();
+  resetShot();
+  active=false;
+  stop.disabled=true;
 
   if(!(await countdown('PK KICKER',runId,{transparent:true})))return;
-
-  active=true;
-  stop.disabled=false;
+  resetShot();
   last=performance.now();
 
   function frame(now){
     if(finished||!isGameRunValid(runId))return;
     const dt=Math.min(.032,(now-last)/1000);
     last=now;
+
     if(active){
-      const speed=phase===2?1.48:1.25;
-      gauge+=dir*speed*dt;
+      gauge+=dir*(phase===0?1.06:1.46)*dt;
       if(gauge>=1){gauge=1;dir=-1}
       if(gauge<=0){gauge=0;dir=1}
       needle.style.left=`${gauge*100}%`;
+
+      if(phase===0){
+        const a=aimFromGauge();
+        aim.style.left=`${a.x*100}%`;
+        aim.style.top=`${(1-a.y)*100}%`;
+      }
     }
     raf=requestAnimationFrame(frame);
   }
@@ -27598,80 +27611,72 @@ async function startPkKicker(p,humanIndex,runId){
 async function startThreePoint(p,humanIndex,runId){
   gameFit();
   const gameIndex=GAMES.findIndex(g=>g.key==='threePoint');
-  const starts=[.50,.37,.63,.28,.72];
 
   screen.innerHTML=`
-    <div class="tp-shell-v169 gameplay-fit">
+    <div class="tp-shell-v170 gameplay-fit">
       <div class="game-head">
-        <div><span class="kicker">${esc(p.name)}</span><h2>モブくん3ポイント</h2><p class="lead">5 BALLS / PULL DOWN & RELEASE</p></div>
+        <div><span class="kicker">${esc(p.name)}</span><h2>モブくん3ポイント</h2><p class="lead">モブくんを引っ張ってシュート / 5 BALLS</p></div>
         <div class="game-badge">${playBadge(humanIndex)}</div>
       </div>
-      <div class="tp-hud-v169">
-        <div><span>BALL</span><b id="tpBallCount169">1 / 5</b></div>
-        <div><span>SCORE</span><b id="tpScore169">0</b></div>
-        <div><span>SWISH</span><b id="tpSwish169">0</b></div>
+      <div class="tp-hud-v170">
+        <div><span>BALL</span><b id="tpCount170">1 / 5</b></div>
+        <div><span>SCORE</span><b id="tpScore170">0</b></div>
+        <div><span>SWISH</span><b id="tpSwish170">0</b></div>
       </div>
-      <div id="tpStage169" class="tp-stage-v169">
-        <div class="tp-court-v169"></div>
-        <div class="tp-board-v169"></div>
-        <div class="tp-ring-v169"></div>
-        <div class="tp-net-v169"></div>
-        <div id="tpMob169" class="tp-mob-v169"><img src="icon/01.png" draggable="false" alt=""></div>
-        <div id="tpBall169" class="tp-ball-v169"></div>
-        <div id="tpGuide169" class="tp-guide-v169" hidden></div>
-        <div id="tpCall169" class="tp-call-v169">READY</div>
-        <div class="tp-touch-zone-v169">PULL DOWN → RELEASE</div>
+      <div id="tpStage170" class="tp-stage-v170">
+        <div class="tp-court-v170"></div>
+        <div class="tp-board-v170"></div>
+        <div class="tp-ring-v170"></div>
+        <div class="tp-net-v170"></div>
+        <div id="tpMob170" class="tp-mob-v170"><img src="icon/01.png" draggable="false" alt=""><i>↓ PULL</i></div>
+        <div id="tpBall170" class="tp-ball-v170"></div>
+        <div id="tpGuide170" class="tp-guide-v170" hidden></div>
+        <div id="tpCall170" class="tp-call-v170">モブくんを引っ張る</div>
       </div>
     </div>`;
 
-  const stage=document.getElementById('tpStage169');
-  const mob=document.getElementById('tpMob169');
-  const ball=document.getElementById('tpBall169');
-  const guide=document.getElementById('tpGuide169');
-  const call=document.getElementById('tpCall169');
-  const countEl=document.getElementById('tpBallCount169');
-  const scoreEl=document.getElementById('tpScore169');
-  const swishEl=document.getElementById('tpSwish169');
+  const stage=document.getElementById('tpStage170');
+  const mob=document.getElementById('tpMob170');
+  const ball=document.getElementById('tpBall170');
+  const guide=document.getElementById('tpGuide170');
+  const call=document.getElementById('tpCall170');
+  const countEl=document.getElementById('tpCount170');
+  const scoreEl=document.getElementById('tpScore170');
+  const swishEl=document.getElementById('tpSwish170');
 
   let shot=0,total=0,swishes=0,ready=false,drag=null,flight=null,raf=null,last=performance.now(),finished=false;
+  let startX=0,startY=0;
 
-  function dims(){
-    return {w:stage.clientWidth,h:stage.clientHeight};
-  }
-
-  function local(e){
-    const r=stage.getBoundingClientRect();
-    return {x:e.clientX-r.left,y:e.clientY-r.top};
-  }
+  function dims(){return {w:stage.clientWidth,h:stage.clientHeight}}
+  function local(e){const r=stage.getBoundingClientRect();return{x:e.clientX-r.left,y:e.clientY-r.top}}
 
   function setShot(){
     const {w,h}=dims();
-    const sx=w*starts[shot];
-    const sy=h*.79;
-    mob.style.left=`${sx-25}px`;
-    mob.style.top=`${sy+5}px`;
-    ball.style.left=`${sx}px`;
-    ball.style.top=`${sy}px`;
+    startX=w*.5;
+    startY=h*.77;
+    mob.style.transition='none';
+    mob.style.left=`${startX}px`;
+    mob.style.top=`${startY}px`;
+    mob.style.transform='translate(-50%,-50%)';
+    ball.style.left=`${startX+20}px`;
+    ball.style.top=`${startY-24}px`;
     ball.style.transform='translate(-50%,-50%)';
     ball.hidden=false;
-    call.textContent='PULL!';
-    call.className='tp-call-v169';
+    call.textContent='モブくんを下へ引っ張る';
+    call.className='tp-call-v170';
     countEl.textContent=`${shot+1} / 5`;
-    ready=true;
     flight=null;
+    ready=true;
   }
 
   function endShot(points,label){
     ready=false;
     total+=points;
     scoreEl.textContent=total;
-    if(label==='SWISH'){
-      swishes++;
-      swishEl.textContent=swishes;
-    }
+    if(label==='SWISH'){swishes++;swishEl.textContent=swishes}
     call.textContent=points?`${label} +${points}`:'MISS';
-    call.className=`tp-call-v169 ${points?'in-v169':'miss-v169'}`;
-    beep(points===20?1050:points?760:250,90,.025);
+    call.className=`tp-call-v170 ${points?'in-v170':'miss-v170'}`;
+    beep(points===20?1040:points?760:230,85,.024);
 
     setTimeout(()=>{
       if(!isGameRunValid(runId))return;
@@ -27680,8 +27685,8 @@ async function startThreePoint(p,humanIndex,runId){
         finished=true;
         if(raf)cancelAnimationFrame(raf);
         state.records.threePoint[p.id]=clamp(total,0,100);
-        call.textContent=total===100?'5 / 5 SWISH!!':'3 POINT FINISH!';
-        call.className='tp-call-v169 result-v169';
+        call.textContent=total===100?'5 SWISH!!':'3 POINT FINISH!';
+        call.className='tp-call-v170 result-v170';
         setTimeout(()=>{
           if(isGameRunValid(runId)){
             recordScreen(gameIndex,p,humanIndex,`${total}<small>pt</small>`,`SWISH ${swishes} / 5`);
@@ -27690,17 +27695,18 @@ async function startThreePoint(p,humanIndex,runId){
       }else{
         setShot();
       }
-    },620);
+    },560);
   }
 
   stage.addEventListener('pointerdown',e=>{
     if(!ready||flight||finished)return;
     const pt=local(e);
-    const {h}=dims();
-    if(pt.y<h*.55)return;
+    const dist=Math.hypot(pt.x-startX,pt.y-startY);
+    if(dist>82)return;
     e.preventDefault();
     stage.setPointerCapture?.(e.pointerId);
-    drag={id:e.pointerId,x:pt.x,y:pt.y,cx:pt.x,cy:pt.y};
+    drag={id:e.pointerId,sx:startX,sy:startY,cx:pt.x,cy:pt.y};
+    mob.classList.add('drag-v170');
     guide.hidden=false;
   },{passive:false});
 
@@ -27708,53 +27714,57 @@ async function startThreePoint(p,humanIndex,runId){
     if(!drag||drag.id!==e.pointerId)return;
     e.preventDefault();
     const pt=local(e);
-    drag.cx=pt.x;drag.cy=pt.y;
-    const dx=pt.x-drag.x,dy=pt.y-drag.y;
-    const len=Math.hypot(dx,dy);
-    guide.style.width=`${Math.min(145,len)}px`;
-    guide.style.left=`${drag.x}px`;
-    guide.style.top=`${drag.y}px`;
+    drag.cx=clamp(pt.x,startX-75,startX+75);
+    drag.cy=clamp(pt.y,startY,startY+135);
+    const dx=drag.cx-startX,dy=drag.cy-startY;
+    mob.style.left=`${startX+dx}px`;
+    mob.style.top=`${startY+dy}px`;
+    ball.style.left=`${startX+dx+20}px`;
+    ball.style.top=`${startY+dy-24}px`;
+    guide.style.left=`${startX}px`;
+    guide.style.top=`${startY}px`;
+    guide.style.width=`${Math.hypot(dx,dy)}px`;
     guide.style.transform=`rotate(${Math.atan2(dy,dx)*180/Math.PI}deg)`;
   },{passive:false});
 
   stage.addEventListener('pointerup',e=>{
-    if(!drag||drag.id!==e.pointerId)return;
+    if(!drag||drag.id!==e.pointerId||finished)return;
     e.preventDefault();
-    const pt=local(e);
-    const dx=pt.x-drag.x;
-    const dy=pt.y-drag.y;
+    const dx=drag.cx-startX;
+    const dy=drag.cy-startY;
     drag=null;
     guide.hidden=true;
+    mob.classList.remove('drag-v170');
 
-    if(dy<38){
-      call.textContent='もっと下へ引く';
+    if(dy<42){
+      mob.style.left=`${startX}px`;mob.style.top=`${startY}px`;
+      ball.style.left=`${startX+20}px`;ball.style.top=`${startY-24}px`;
+      call.textContent='もっと下へ引っ張る';
       return;
     }
 
-    const {w,h}=dims();
-    const sx=parseFloat(ball.style.left);
-    const sy=parseFloat(ball.style.top);
-
     ready=false;
+    const {w,h}=dims();
     flight={
-      x:sx,y:sy,
-      vx:clamp(-dx*2.35,-260,260),
-      vy:-clamp(dy,38,145)*4.75,
-      prevY:sy,
-      board:false,
-      age:0,
-      w,h
+      x:startX+20,y:startY-24,
+      vx:clamp(-dx*2.45,-250,250),
+      vy:-clamp(dy,42,135)*4.75,
+      prevY:startY-24,
+      board:false,age:0,w,h
     };
+
+    mob.style.transition='left .18s ease,top .18s ease';
+    mob.style.left=`${startX}px`;
+    mob.style.top=`${startY}px`;
     call.textContent='SHOOT!';
-    beep(620,50,.018);
+    beep(620,50,.016);
   },{passive:false});
 
   setShot();
   ready=false;
 
   if(!(await countdown('3 POINT',runId,{transparent:true})))return;
-
-  ready=true;
+  setShot();
   last=performance.now();
 
   function frame(now){
@@ -27786,18 +27796,12 @@ async function startThreePoint(p,humanIndex,runId){
 
       if(f.prevY<hoopY&&f.y>=hoopY&&f.vy>0){
         const d=Math.abs(f.x-hoopX);
-        if(d<=11){
-          flight=null;
-          endShot(f.board?16:20,f.board?'BOARD IN':'SWISH');
-        }else if(d<=22){
-          flight=null;
-          endShot(18,'RIM IN');
-        }
+        if(d<=11){flight=null;endShot(f.board?16:20,f.board?'BOARD IN':'SWISH')}
+        else if(d<=22){flight=null;endShot(18,'RIM IN')}
       }
 
       if(flight&&(f.y>f.h+30||f.x<-40||f.x>f.w+40||f.age>2.4)){
-        flight=null;
-        endShot(0,'MISS');
+        flight=null;endShot(0,'MISS');
       }
     }
 
@@ -27814,51 +27818,44 @@ async function startBowlingMob(p,humanIndex,runId){
   gameFit();
   const gameIndex=GAMES.findIndex(g=>g.key==='bowlingMob');
   const pinPos=[
-    [0,0],
-    [-18,-27],[18,-27],
-    [-36,-54],[0,-54],[36,-54],
-    [-54,-81],[-18,-81],[18,-81],[54,-81]
+    [0,0],[-18,-27],[18,-27],[-36,-54],[0,-54],[36,-54],[-54,-81],[-18,-81],[18,-81],[54,-81]
   ];
 
   screen.innerHTML=`
-    <div class="bowl-shell-v169 gameplay-fit">
+    <div class="bowl-shell-v170 gameplay-fit">
       <div class="game-head">
         <div><span class="kicker">${esc(p.name)}</span><h2>モブくんボウリング</h2><p class="lead">ONE THROW / SWIPE UP</p></div>
         <div class="game-badge">${playBadge(humanIndex)}</div>
       </div>
-      <div class="bowl-hud-v169">
+      <div class="bowl-hud-v170">
         <div><span>THROW</span><b>1 / 1</b></div>
-        <div><span>PINS</span><b id="bowlPins169">---</b></div>
-        <div><span>SCORE</span><b id="bowlScore169">---</b></div>
+        <div><span>PINS</span><b id="bowlPins170">---</b></div>
+        <div><span>SCORE</span><b id="bowlScore170">---</b></div>
       </div>
-      <div id="bowlStage169" class="bowl-stage-v169">
-        <div class="bowl-lane-v169">
-          <i></i><i></i><i></i><i></i><i></i><i></i><i></i>
-        </div>
-        <div class="bowl-pocket-v169 left-v169"></div>
-        <div class="bowl-pocket-v169 right-v169"></div>
-        <div id="bowlPinsWrap169" class="bowl-pins-v169">
+      <div id="bowlStage170" class="bowl-stage-v170">
+        <div class="bowl-lane-v170"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        <div class="bowl-pocket-v170 left-v170"></div><div class="bowl-pocket-v170 right-v170"></div>
+        <div class="bowl-pins-v170">
           ${pinPos.map((q,i)=>`<span data-pin="${i}" style="left:calc(50% + ${q[0]}px);top:${105+q[1]}px"></span>`).join('')}
         </div>
-        <div id="bowlBall169" class="bowl-ball-v169"></div>
-        <div id="bowlCall169" class="bowl-call-v169">SWIPE ↑</div>
-        <div class="bowl-swipe-zone-v169">SWIPE UP ONCE</div>
+        <div id="bowlMob170" class="bowl-mob-v170"><img src="icon/01.png" draggable="false" alt=""></div>
+        <div id="bowlBall170" class="bowl-ball-v170"></div>
+        <div id="bowlCall170" class="bowl-call-v170">SWIPE ↑</div>
+        <div class="bowl-zone-v170">モブくんの前から上へSWIPE</div>
       </div>
     </div>`;
 
-  const stage=document.getElementById('bowlStage169');
-  const ball=document.getElementById('bowlBall169');
-  const call=document.getElementById('bowlCall169');
-  const pinsEl=[...stage.querySelectorAll('[data-pin]')];
-  const pinsCount=document.getElementById('bowlPins169');
-  const scoreEl=document.getElementById('bowlScore169');
+  const stage=document.getElementById('bowlStage170');
+  const mob=document.getElementById('bowlMob170');
+  const ball=document.getElementById('bowlBall170');
+  const call=document.getElementById('bowlCall170');
+  const pins=[...stage.querySelectorAll('[data-pin]')];
+  const pinsEl=document.getElementById('bowlPins170');
+  const scoreEl=document.getElementById('bowlScore170');
 
   let active=false,done=false,drag=null;
 
-  function local(e){
-    const r=stage.getBoundingClientRect();
-    return {x:e.clientX-r.left,y:e.clientY-r.top};
-  }
+  function local(e){const r=stage.getBoundingClientRect();return{x:e.clientX-r.left,y:e.clientY-r.top}}
 
   stage.addEventListener('pointerdown',e=>{
     if(!active||done)return;
@@ -27875,61 +27872,52 @@ async function startBowlingMob(p,humanIndex,runId){
     const pt=local(e);
     const dx=pt.x-drag.x;
     const dy=pt.y-drag.y;
-    const dt=Math.max(80,performance.now()-drag.t);
     drag=null;
 
-    if(dy>-40){
-      call.textContent='上へスワイプ！';
-      return;
-    }
+    if(dy>-40){call.textContent='上へスワイプ！';return}
 
-    active=false;
-    done=true;
-
-    const w=stage.clientWidth,h=stage.clientHeight;
+    active=false;done=true;
+    const w=stage.clientWidth;
     const pull=clamp(-dy,40,190);
     const speedQ=clamp(1-Math.abs(pull-132)/105,0,1);
     const endX=clamp(w*.5+dx*.78,18,w-18);
-    const pocketL=w*.47,pocketR=w*.53;
-    const pocketDist=Math.min(Math.abs(endX-pocketL),Math.abs(endX-pocketR));
+    const pocketDist=Math.min(Math.abs(endX-w*.47),Math.abs(endX-w*.53));
     const hitQ=clamp(1-pocketDist/(w*.18),0,1);
     const gutter=endX<w*.14||endX>w*.86;
 
     let knocked=0;
     if(!gutter){
-      if(hitQ>.91&&speedQ>.72)knocked=10;
-      else knocked=clamp(Math.floor(2.5+hitQ*5.9+speedQ*1.7),1,9);
+      knocked=(hitQ>.91&&speedQ>.72)?10:clamp(Math.floor(2.5+hitQ*5.9+speedQ*1.7),1,9);
     }
 
     const duration=clamp(980-pull*2.2,520,850);
-    ball.style.transition=`left ${duration}ms cubic-bezier(.16,.72,.22,1), top ${duration}ms linear, transform ${duration}ms linear`;
-    requestAnimationFrame(()=>{
-      ball.style.left=`${endX}px`;
-      ball.style.top='21%';
-      ball.style.transform='translate(-50%,-50%) rotate(720deg)';
-    });
-
-    call.textContent='ROLLING...';
-    beep(520,55,.015);
+    const launchDelay=190;
+    call.textContent='THROW!';
+    mob.classList.add('throw-v170');
+    beep(560,55,.016);
 
     setTimeout(()=>{
       if(!isGameRunValid(runId))return;
-      const sorted=pinPos
-        .map((q,i)=>({i,d:Math.abs((w*.5+q[0])-endX)+Math.abs(q[1])*.10}))
-        .sort((a,b)=>a.d-b.d);
-
-      sorted.slice(0,knocked).forEach((x,j)=>{
-        setTimeout(()=>{
-          const el=pinsEl[x.i];
-          el.classList.add(`fall-${j%3}-v169`);
-        },j*55);
+      ball.classList.add('rolling-v170');
+      ball.style.transition=`left ${duration}ms cubic-bezier(.16,.72,.22,1),top ${duration}ms linear,transform ${duration}ms linear`;
+      requestAnimationFrame(()=>{
+        ball.style.left=`${endX}px`;
+        ball.style.top='21%';
+        ball.style.transform='translate(-50%,-50%) rotate(720deg)';
       });
+      call.textContent='ROLLING...';
+    },launchDelay);
+
+    setTimeout(()=>{
+      if(!isGameRunValid(runId))return;
+      const sorted=pinPos.map((q,i)=>({i,d:Math.abs((w*.5+q[0])-endX)+Math.abs(q[1])*.10})).sort((a,b)=>a.d-b.d);
+      sorted.slice(0,knocked).forEach((x,j)=>setTimeout(()=>pins[x.i].classList.add(`fall-${j%3}-v170`),j*55));
 
       const score=knocked*10;
-      pinsCount.textContent=`${knocked} / 10`;
+      pinsEl.textContent=`${knocked} / 10`;
       scoreEl.textContent=score;
       call.textContent=knocked===10?'STRIKE!!':gutter?'GUTTER':`${knocked} PINS`;
-      call.className=`bowl-call-v169 ${knocked===10?'strike-v169':''}`;
+      call.className=`bowl-call-v170 ${knocked===10?'strike-v170':''}`;
       state.records.bowlingMob[p.id]=score;
       beep(knocked===10?1120:700,150,.035);
 
@@ -27938,7 +27926,7 @@ async function startBowlingMob(p,humanIndex,runId){
           recordScreen(gameIndex,p,humanIndex,`${score}<small>pt</small>`,knocked===10?'STRIKE!':`${knocked} / 10 PINS`);
         }
       },900);
-    },duration);
+    },launchDelay+duration);
   },{passive:false});
 
   if(!(await countdown('BOWLING',runId,{transparent:true})))return;
@@ -27952,54 +27940,47 @@ async function startBowlingMob(p,humanIndex,runId){
 async function startWaterSkip(p,humanIndex,runId){
   gameFit();
   const gameIndex=GAMES.findIndex(g=>g.key==='waterSkip');
-  const WORLD_W=2200;
+  const WORLD_W=2300;
 
   screen.innerHTML=`
-    <div class="skip-shell-v169 gameplay-fit">
+    <div class="skip-shell-v170 gameplay-fit">
       <div class="game-head">
-        <div><span class="kicker">${esc(p.name)}</span><h2>モブくん水切り</h2><p class="lead">SWIPE → / SPEED + SHALLOW ANGLE</p></div>
+        <div><span class="kicker">${esc(p.name)}</span><h2>モブくん水切り</h2><p class="lead">SPEED + ANGLE + WATER</p></div>
         <div class="game-badge">${playBadge(humanIndex)}</div>
       </div>
-      <div class="skip-hud-v169">
-        <div><span>SKIP</span><b id="skipCount169">0</b></div>
-        <div><span>DISTANCE</span><b id="skipDist169">0m</b></div>
-        <div><span>SCORE</span><b id="skipScore169">0</b></div>
+      <div class="skip-hud-v170">
+        <div><span>SKIP</span><b id="skipCount170">0</b></div>
+        <div><span>DISTANCE</span><b id="skipDist170">0m</b></div>
+        <div><span>WATER</span><b id="skipWater170">---</b></div>
       </div>
-      <div id="skipStage169" class="skip-stage-v169">
-        <div id="skipWorld169" class="skip-world-v169" style="width:${WORLD_W}px">
-          <div class="skip-sky-v169"></div>
-          <div class="skip-hills-v169"></div>
-          <div class="skip-water-v169"></div>
-          <div class="skip-lines-v169">${Array.from({length:28},(_,i)=>`<i style="left:${i*78}px"></i>`).join('')}</div>
-          <div class="skip-mob-v169"><img src="icon/01.png" draggable="false" alt=""></div>
-          <div id="skipStone169" class="skip-stone-v169"></div>
-          <div id="skipSplash169" class="skip-splash-v169"></div>
+      <div id="skipStage170" class="skip-stage-v170">
+        <div id="skipWorld170" class="skip-world-v170" style="width:${WORLD_W}px">
+          <div class="skip-sky-v170"></div><div class="skip-hills-v170"></div><div class="skip-water-v170"></div>
+          <div class="skip-lines-v170">${Array.from({length:30},(_,i)=>`<i style="left:${i*78}px"></i>`).join('')}</div>
+          <div class="skip-mob-v170"><img src="icon/01.png" draggable="false" alt=""></div>
+          <div id="skipStone170" class="skip-stone-v170"></div>
+          <div id="skipSplash170" class="skip-splash-v170"></div>
         </div>
-        <div id="skipCall169" class="skip-call-v169">SWIPE →</div>
+        <div id="skipCall170" class="skip-call-v170">SWIPE →</div>
       </div>
     </div>`;
 
-  const stage=document.getElementById('skipStage169');
-  const world=document.getElementById('skipWorld169');
-  const stone=document.getElementById('skipStone169');
-  const splash=document.getElementById('skipSplash169');
-  const call=document.getElementById('skipCall169');
-  const countEl=document.getElementById('skipCount169');
-  const distEl=document.getElementById('skipDist169');
-  const scoreEl=document.getElementById('skipScore169');
+  const stage=document.getElementById('skipStage170');
+  const world=document.getElementById('skipWorld170');
+  const stone=document.getElementById('skipStone170');
+  const splash=document.getElementById('skipSplash170');
+  const call=document.getElementById('skipCall170');
+  const countEl=document.getElementById('skipCount170');
+  const distEl=document.getElementById('skipDist170');
+  const waterEl=document.getElementById('skipWater170');
 
   let active=false,done=false,drag=null,raf=null,last=performance.now();
-  let x=92,y=(stage.clientHeight*.60||180),vx=0,vy=0,cameraX=0,skips=0,maxSkips=0,age=0;
+  let x=92,y=(stage.clientHeight*.60||180),vx=0,vy=0,cameraX=0,skips=0,targetSkips=0,age=0;
+  let waterBias=0,waterName='NORMAL';
 
-  function local(e){
-    const r=stage.getBoundingClientRect();
-    return {x:e.clientX-r.left,y:e.clientY-r.top};
-  }
-  function place(){
-    world.style.transform=`translate3d(${-cameraX}px,0,0)`;
-    stone.style.left=`${x}px`;
-    stone.style.top=`${y}px`;
-  }
+  function local(e){const r=stage.getBoundingClientRect();return{x:e.clientX-r.left,y:e.clientY-r.top}}
+  function place(){world.style.transform=`translate3d(${-cameraX}px,0,0)`;stone.style.left=`${x}px`;stone.style.top=`${y}px`}
+
   function finish(){
     if(done)return;
     done=true;active=false;
@@ -28009,12 +27990,11 @@ async function startWaterSkip(p,humanIndex,runId){
     state.records.waterSkip[p.id]=score;
     countEl.textContent=skips;
     distEl.textContent=`${distance}m`;
-    scoreEl.textContent=score;
     call.textContent=skips>=10?'SKIP MASTER!':`${skips} SKIPS`;
-    call.className='skip-call-v169 result-v169';
+    call.className='skip-call-v170 result-v170';
     setTimeout(()=>{
       if(isGameRunValid(runId)){
-        recordScreen(gameIndex,p,humanIndex,`${score}<small>pt</small>`,`SKIP ${skips} / DISTANCE ${distance}m`);
+        recordScreen(gameIndex,p,humanIndex,`${score}<small>pt</small>`,`SKIP ${skips} / ${distance}m / ${waterName}`);
       }
     },700);
   }
@@ -28024,7 +28004,7 @@ async function startWaterSkip(p,humanIndex,runId){
     e.preventDefault();
     const pt=local(e);
     stage.setPointerCapture?.(e.pointerId);
-    drag={id:e.pointerId,x:pt.x,y:pt.y,t:performance.now()};
+    drag={id:e.pointerId,x:pt.x,y:pt.y};
   },{passive:false});
 
   stage.addEventListener('pointerup',e=>{
@@ -28035,24 +28015,28 @@ async function startWaterSkip(p,humanIndex,runId){
     const dy=pt.y-drag.y;
     drag=null;
 
-    if(dx<45){
-      call.textContent='右へフリック！';
-      return;
-    }
+    if(dx<45){call.textContent='右へフリック！';return}
 
-    const speedQ=clamp((dx-45)/155,0,1);
+    const speedQ=clamp((dx-45)/165,0,1);
     const ratio=dy/Math.max(1,dx);
-    const angleQ=clamp(1-Math.abs(ratio+0.13)/.23,0,1);
-    maxSkips=clamp(Math.floor(2+speedQ*3+angleQ*7),1,12);
+    const angleQ=clamp(1-Math.abs(ratio+0.12)/.24,0,1);
 
-    vx=clamp(dx*4.2,310,760);
-    vy=clamp(dy*2.5,-220,80);
+    waterBias=rand(-1.8,1.8);
+    waterName=waterBias>.8?'SMOOTH':waterBias<-.8?'ROUGH':'NORMAL';
+    waterEl.textContent=waterName;
+
+    targetSkips=clamp(
+      Math.round(1.2+speedQ*4.4+angleQ*6.2+waterBias),
+      1,12
+    );
+
+    vx=clamp(dx*4.2,300,780);
+    vy=clamp(dy*2.5,-235,85);
     call.textContent='FOLLOW!';
     beep(620,60,.02);
   },{passive:false});
 
   place();
-
   if(!(await countdown('WATER SKIP',runId,{transparent:true})))return;
   active=true;
   last=performance.now();
@@ -28060,46 +28044,34 @@ async function startWaterSkip(p,humanIndex,runId){
   function frame(now){
     if(done||!isGameRunValid(runId))return;
     const dt=Math.min(.028,(now-last)/1000);
-    last=now;
-    age+=dt;
+    last=now;age+=dt;
 
     if(vx){
       vy+=720*dt;
       x+=vx*dt;
       y+=vy*dt;
-      vx*=Math.pow(.996,dt*60);
 
       if(y>=stage.clientHeight*.66&&vy>0){
         y=stage.clientHeight*.66;
-        if(skips<maxSkips&&vx>135){
+        if(skips<targetSkips&&vx>125){
           skips++;
           countEl.textContent=skips;
-          scoreEl.textContent=Math.min(100,skips*10);
-          splash.style.left=`${x}px`;
-          splash.style.top=`${y}px`;
-          splash.classList.remove('show-v169');
-          void splash.offsetWidth;
-          splash.classList.add('show-v169');
-          vy=-clamp(135+vx*.12,145,235);
-          vx*=.855;
-          beep(390+skips*24,28,.008);
+          splash.style.left=`${x}px`;splash.style.top=`${y}px`;
+          splash.classList.remove('show-v170');void splash.offsetWidth;splash.classList.add('show-v170');
+          vy=-clamp(132+vx*.12+rand(-12,12),142,238);
+          vx*=rand(.82,.90);
+          beep(390+skips*23,28,.008);
         }else{
-          finish();
-          return;
+          finish();return;
         }
       }
 
       cameraX=clamp(x-stage.clientWidth*.28,0,WORLD_W-stage.clientWidth);
-      const distance=Math.max(0,Math.round((x-92)*.22));
-      distEl.textContent=`${distance}m`;
+      distEl.textContent=`${Math.max(0,Math.round((x-92)*.22))}m`;
       place();
 
-      if(x>WORLD_W-70||age>8){
-        finish();
-        return;
-      }
+      if(x>WORLD_W-70||age>8){finish();return}
     }
-
     raf=requestAnimationFrame(frame);
   }
   raf=requestAnimationFrame(frame);
@@ -28114,91 +28086,73 @@ async function startTamaireMob(p,humanIndex,runId){
   const gameIndex=GAMES.findIndex(g=>g.key==='tamaireMob');
 
   screen.innerHTML=`
-    <div class="tama-shell-v169 gameplay-fit">
+    <div class="tama-shell-v170 gameplay-fit">
       <div class="game-head">
-        <div><span class="kicker">${esc(p.name)}</span><h2>モブくん玉入れ</h2><p class="lead">10 BALLS / SWIPE UP</p></div>
+        <div><span class="kicker">${esc(p.name)}</span><h2>モブくん玉入れ</h2><p class="lead">10 BALLS / CONTINUOUS THROW</p></div>
         <div class="game-badge">${playBadge(humanIndex)}</div>
       </div>
-      <div class="tama-hud-v169">
-        <div><span>BALL</span><b id="tamaBallCount169">1 / 10</b></div>
-        <div><span>IN</span><b id="tamaIn169">0</b></div>
-        <div><span>SCORE</span><b id="tamaScore169">0</b></div>
+      <div class="tama-hud-v170">
+        <div><span>THROWN</span><b id="tamaThrown170">0 / 10</b></div>
+        <div><span>IN</span><b id="tamaIn170">0</b></div>
+        <div><span>SCORE</span><b id="tamaScore170">0</b></div>
       </div>
-      <div id="tamaStage169" class="tama-stage-v169">
-        <div class="tama-field-v169"></div>
-        <div id="tamaBasket169" class="tama-basket-v169"><b></b><i></i></div>
-        <div class="tama-mob-v169"><img src="icon/01.png" draggable="false" alt=""></div>
-        <div id="tamaBall169" class="tama-ball-v169"></div>
-        <div id="tamaCall169" class="tama-call-v169">SWIPE ↑</div>
-        <div class="tama-zone-v169">THROW ZONE</div>
+      <div id="tamaStage170" class="tama-stage-v170">
+        <div class="tama-field-v170"></div>
+        <div id="tamaBasket170" class="tama-basket-v170"><b></b><i></i></div>
+        <div class="tama-mob-v170"><img src="icon/01.png" draggable="false" alt=""></div>
+        <div id="tamaReady170" class="tama-ready-v170"></div>
+        <div id="tamaLayer170" class="tama-layer-v170"></div>
+        <div id="tamaCall170" class="tama-call-v170">連投OK!</div>
+        <div class="tama-zone-v170">SWIPE UP / 10 BALLS</div>
       </div>
     </div>`;
 
-  const stage=document.getElementById('tamaStage169');
-  const basket=document.getElementById('tamaBasket169');
-  const ball=document.getElementById('tamaBall169');
-  const call=document.getElementById('tamaCall169');
-  const ballCount=document.getElementById('tamaBallCount169');
-  const inEl=document.getElementById('tamaIn169');
-  const scoreEl=document.getElementById('tamaScore169');
+  const stage=document.getElementById('tamaStage170');
+  const basket=document.getElementById('tamaBasket170');
+  const layer=document.getElementById('tamaLayer170');
+  const call=document.getElementById('tamaCall170');
+  const thrownEl=document.getElementById('tamaThrown170');
+  const inEl=document.getElementById('tamaIn170');
+  const scoreEl=document.getElementById('tamaScore170');
 
-  let active=false,finished=false,shot=0,ins=0,drag=null,flight=null,raf=null,last=performance.now(),startTime=0;
+  let active=false,finished=false,launched=0,resolved=0,ins=0,drag=null,flights=[],raf=null,last=performance.now(),startTime=0,canThrow=true;
   let basketX=0;
 
-  function local(e){
-    const r=stage.getBoundingClientRect();
-    return {x:e.clientX-r.left,y:e.clientY-r.top};
-  }
-  function resetBall(){
-    const w=stage.clientWidth,h=stage.clientHeight;
-    ball.style.left=`${w*.5}px`;
-    ball.style.top=`${h*.83}px`;
-    ball.style.transform='translate(-50%,-50%)';
-    ball.hidden=false;
-    flight=null;
-  }
-  function nextBall(success){
-    if(success){
-      ins++;
-      inEl.textContent=ins;
-      scoreEl.textContent=ins*10;
-      call.textContent='IN!';
-      call.className='tama-call-v169 in-v169';
-      beep(900,75,.025);
-    }else{
-      call.textContent='MISS';
-      call.className='tama-call-v169 miss-v169';
-      beep(240,55,.012);
-    }
+  function local(e){const r=stage.getBoundingClientRect();return{x:e.clientX-r.left,y:e.clientY-r.top}}
 
-    shot++;
-    if(shot>=10){
-      finished=true;
-      active=false;
-      const score=ins*10;
-      state.records.tamaireMob[p.id]=score;
-      setTimeout(()=>{
-        if(isGameRunValid(runId)){
-          recordScreen(gameIndex,p,humanIndex,`${score}<small>pt</small>`,`${ins} / 10 IN`);
-        }
-      },650);
-      return;
-    }
-
+  function finishIfReady(){
+    if(finished||launched<10||resolved<10)return;
+    finished=true;active=false;
+    if(raf)cancelAnimationFrame(raf);
+    const score=ins*10;
+    state.records.tamaireMob[p.id]=score;
+    call.textContent=ins===10?'10 / 10!!':'TAMAIRE FINISH!';
+    call.className='tama-call-v170 result-v170';
     setTimeout(()=>{
-      if(!isGameRunValid(runId))return;
-      ballCount.textContent=`${shot+1} / 10`;
-      call.textContent='SWIPE ↑';
-      call.className='tama-call-v169';
-      resetBall();
-      active=true;
-    },360);
+      if(isGameRunValid(runId)){
+        recordScreen(gameIndex,p,humanIndex,`${score}<small>pt</small>`,`${ins} / 10 IN`);
+      }
+    },650);
+  }
+
+  function resolveFlight(f,success){
+    if(f.dead)return;
+    f.dead=true;
+    f.el.remove();
+    resolved++;
+    if(success){
+      ins++;inEl.textContent=ins;scoreEl.textContent=ins*10;
+      call.textContent='IN!';
+      call.className='tama-call-v170 in-v170';
+      beep(900,70,.022);
+    }
+    finishIfReady();
   }
 
   stage.addEventListener('pointerdown',e=>{
-    if(!active||finished||flight)return;
+    if(!active||finished||launched>=10||!canThrow)return;
     const pt=local(e);
-    if(pt.y<stage.clientHeight*.61)return;
+    if(pt.y<stage.clientHeight*.60)return;
     e.preventDefault();
     stage.setPointerCapture?.(e.pointerId);
     drag={id:e.pointerId,x:pt.x,y:pt.y};
@@ -28212,28 +28166,32 @@ async function startTamaireMob(p,humanIndex,runId){
     const dy=pt.y-drag.y;
     drag=null;
 
-    if(dy>-38){
-      call.textContent='上へフリック！';
-      return;
-    }
+    if(dy>-35){call.textContent='上へフリック！';return}
 
     const w=stage.clientWidth,h=stage.clientHeight;
-    active=false;
-    flight={
-      x:w*.5,y:h*.83,
-      prevY:h*.83,
-      vx:clamp(dx*3.2,-280,280),
-      vy:-clamp(-dy,38,165)*4.6,
-      age:0
-    };
-    beep(560,45,.012);
+    const el=document.createElement('div');
+    el.className='tama-ball-v170';
+    layer.appendChild(el);
+
+    flights.push({
+      el,x:w*.5,y:h*.82,prevY:h*.82,
+      vx:clamp(dx*3.2,-285,285),
+      vy:-clamp(-dy,35,170)*4.65,
+      age:0,dead:false
+    });
+
+    launched++;
+    thrownEl.textContent=`${launched} / 10`;
+    call.textContent=launched<10?'NEXT!':'LAST BALL!';
+    call.className='tama-call-v170';
+    beep(560,40,.011);
+
+    canThrow=false;
+    setTimeout(()=>{if(isGameRunValid(runId))canThrow=true},120);
   },{passive:false});
 
-  resetBall();
-
   if(!(await countdown('TAMAIRE',runId,{transparent:true})))return;
-  active=true;
-  startTime=last=performance.now();
+  active=true;startTime=last=performance.now();
 
   function frame(now){
     if(finished||!isGameRunValid(runId))return;
@@ -28241,33 +28199,20 @@ async function startTamaireMob(p,humanIndex,runId){
     last=now;
     const w=stage.clientWidth,h=stage.clientHeight;
     const elapsed=(now-startTime)/1000;
-    const speed=1.25+shot*.07;
-    basketX=w*.5+Math.sin(elapsed*speed*2.4)*w*.29;
+    basketX=w*.5+Math.sin(elapsed*2.7)*w*.29;
     basket.style.left=`${basketX}px`;
 
-    if(flight){
-      const f=flight;
-      f.age+=dt;
-      f.prevY=f.y;
-      f.vy+=950*dt;
-      f.x+=f.vx*dt;
-      f.y+=f.vy*dt;
-      ball.style.left=`${f.x}px`;
-      ball.style.top=`${f.y}px`;
-      ball.style.transform=`translate(-50%,-50%) rotate(${f.age*500}deg)`;
+    for(const f of flights){
+      if(f.dead)continue;
+      f.age+=dt;f.prevY=f.y;f.vy+=950*dt;f.x+=f.vx*dt;f.y+=f.vy*dt;
+      f.el.style.left=`${f.x}px`;f.el.style.top=`${f.y}px`;f.el.style.transform=`translate(-50%,-50%) rotate(${f.age*500}deg)`;
 
       const mouthY=h*.25;
-      if(f.prevY<mouthY&&f.y>=mouthY&&f.vy>0){
-        if(Math.abs(f.x-basketX)<=31){
-          flight=null;
-          ball.hidden=true;
-          nextBall(true);
-        }
+      if(f.prevY<mouthY&&f.y>=mouthY&&f.vy>0&&Math.abs(f.x-basketX)<=31){
+        resolveFlight(f,true);continue;
       }
-
-      if(flight&&(f.y>h+28||f.x<-30||f.x>w+30||f.age>2.2)){
-        flight=null;
-        nextBall(false);
+      if(f.y>h+28||f.x<-30||f.x>w+30||f.age>2.3){
+        resolveFlight(f,false);
       }
     }
 
@@ -28283,186 +28228,166 @@ async function startTamaireMob(p,humanIndex,runId){
 async function startJengaMob(p,humanIndex,runId){
   gameFit();
   const gameIndex=GAMES.findIndex(g=>g.key==='jengaMob');
-  const blocks=Array.from({length:27},(_,i)=>({
-    i,
-    layer:Math.floor(i/3),
-    col:i%3,
-    alive:true
+  const LAYERS=12;
+  const blocks=Array.from({length:LAYERS*3},(_,i)=>({
+    i,layer:Math.floor(i/3),col:i%3,alive:true
   }));
 
   screen.innerHTML=`
-    <div class="jenga-shell-v169 gameplay-fit">
+    <div class="jenga-shell-v170 gameplay-fit">
       <div class="game-head">
-        <div><span class="kicker">${esc(p.name)}</span><h2>モブくんジェンガ</h2><p class="lead">3 BLOCKS / PULL STRAIGHT</p></div>
+        <div><span class="kicker">${esc(p.name)}</span><h2>モブくんジェンガ</h2><p class="lead">PULL UNTIL THE TOWER FALLS</p></div>
         <div class="game-badge">${playBadge(humanIndex)}</div>
       </div>
-      <div class="jenga-hud-v169">
-        <div><span>BLOCK</span><b id="jengaRound169">1 / 3</b></div>
-        <div><span>STABILITY</span><b id="jengaStab169">100</b></div>
-        <div><span>SCORE</span><b id="jengaScore169">0</b></div>
+      <div class="jenga-hud-v170">
+        <div><span>PULLED</span><b id="jengaPulled170">0</b></div>
+        <div><span>STABILITY</span><b id="jengaStab170">100</b></div>
+        <div><span>SCORE</span><b id="jengaScore170">0</b></div>
       </div>
-      <div id="jengaStage169" class="jenga-stage-v169">
-        <div class="jenga-table-v169"></div>
-        <div id="jengaTower169" class="jenga-tower-v169">
-          ${Array.from({length:9},(_,row)=>8-row).flatMap(layer=>
-            blocks.filter(b=>b.layer===layer).map(b=>
-              `<button type="button" class="jenga-block-v169" data-jenga="${b.i}" data-layer="${b.layer}" data-col="${b.col}"></button>`
-            )
-          ).join('')}
+      <div id="jengaStage170" class="jenga-stage-v170">
+        <div class="jenga-table-v170"></div>
+        <div id="jengaTower170" class="jenga-tower-v170">
+          ${Array.from({length:LAYERS},(_,row)=>LAYERS-1-row).map(layer=>`
+            <div class="jenga-layer-v170 ${layer%2?'cross-v170':'front-v170'}" data-jenga-layer="${layer}">
+              ${blocks.filter(b=>b.layer===layer).map(b=>`
+                <button type="button" class="jenga-block-v170" data-jenga="${b.i}" data-col="${b.col}"></button>
+              `).join('')}
+            </div>
+          `).join('')}
         </div>
-        <div id="jengaCall169" class="jenga-call-v169">READY</div>
+        <div id="jengaCall170" class="jenga-call-v170">READY</div>
       </div>
     </div>`;
 
-  const stage=document.getElementById('jengaStage169');
-  const tower=document.getElementById('jengaTower169');
-  const call=document.getElementById('jengaCall169');
-  const roundEl=document.getElementById('jengaRound169');
-  const stabEl=document.getElementById('jengaStab169');
-  const scoreEl=document.getElementById('jengaScore169');
+  const tower=document.getElementById('jengaTower170');
+  const call=document.getElementById('jengaCall170');
+  const pulledEl=document.getElementById('jengaPulled170');
+  const stabEl=document.getElementById('jengaStab170');
+  const scoreEl=document.getElementById('jengaScore170');
   const els=[...tower.querySelectorAll('[data-jenga]')];
 
-  let active=false,finished=false,round=0,successes=0,balance=100,lean=0,drag=null;
-  let provisional=0;
+  let active=false,finished=false,pulled=0,balance=100,lean=0,drag=null;
 
   function riskOf(b){
-    const lower=(8-b.layer)/8;
-    const side=b.col===1?.04:.15;
-    return clamp(lower*.30+side,.05,.45);
+    const low=(LAYERS-1-b.layer)/(LAYERS-1);
+    const side=b.col===1?.03:.12;
+    const layerAlive=blocks.filter(x=>x.layer===b.layer&&x.alive).length;
+    const scarcity=layerAlive<=2?.16:0;
+    return clamp(.05+low*.25+side+scarcity,.05,.58);
   }
 
   function chooseCandidates(){
-    els.forEach(el=>el.classList.remove('candidate-v169'));
-    const ranges=[
-      [5,8],
-      [3,7],
-      [1,6]
-    ][round];
-    let candidates=blocks.filter(b=>b.alive&&b.layer>=ranges[0]&&b.layer<=ranges[1]);
+    els.forEach(el=>el.classList.remove('candidate-v170'));
+    const candidates=blocks
+      .filter(b=>b.alive&&b.layer<LAYERS-2)
+      .filter(b=>blocks.filter(x=>x.layer===b.layer&&x.alive).length>=2)
+      .sort((a,b)=>riskOf(a)-riskOf(b));
 
-    candidates=shuffle(candidates).sort((a,b)=>riskOf(a)-riskOf(b)).slice(0,5);
-    candidates.forEach(b=>els[b.i].classList.add('candidate-v169'));
+    if(!candidates.length){
+      finish(false);
+      return;
+    }
+
+    shuffle(candidates.slice(0,Math.min(14,candidates.length)))
+      .slice(0,Math.min(6,candidates.length))
+      .forEach(b=>els[b.i].classList.add('candidate-v170'));
+
     call.textContent='光るブロックを横へ抜く';
     active=true;
   }
 
-  function finish(collapse=false,quality=0){
+  function finish(collapsed=true){
     if(finished)return;
-    finished=true;
-    active=false;
+    finished=true;active=false;
+    const score=clamp(pulled*10,0,100);
+    state.records.jengaMob[p.id]=score;
+    scoreEl.textContent=score;
 
-    let score;
-    if(collapse){
-      score=clamp(successes*30+Math.round(quality*10),0,89);
-      tower.classList.add(lean>=0?'fall-right-v169':'fall-left-v169');
+    if(collapsed){
+      tower.classList.add(lean>=0?'fall-right-v170':'fall-left-v170');
       call.textContent='TOWER DOWN!';
-      call.className='jenga-call-v169 down-v169';
+      call.className='jenga-call-v170 down-v170';
       beep(180,220,.04);
     }else{
-      score=clamp(90+Math.round(balance/100*10),90,100);
-      call.textContent=score>=98?'JENGA MASTER!':'3 BLOCK CLEAR!';
-      call.className='jenga-call-v169 clear-v169';
-      beep(1020,150,.035);
+      call.textContent='NO MORE BLOCKS!';
+      call.className='jenga-call-v170 clear-v170';
     }
-
-    provisional=score;
-    scoreEl.textContent=score;
-    state.records.jengaMob[p.id]=score;
 
     setTimeout(()=>{
       if(isGameRunValid(runId)){
-        recordScreen(gameIndex,p,humanIndex,`${score}<small>pt</small>`,`3本中 ${successes}本成功 / STABILITY ${Math.round(balance)}`);
+        recordScreen(gameIndex,p,humanIndex,`${score}<small>pt</small>`,`${pulled} BLOCKS / STABILITY ${Math.round(balance)}`);
       }
-    },collapse?950:700);
+    },collapsed?950:700);
   }
 
   tower.addEventListener('pointerdown',e=>{
     const el=e.target.closest('[data-jenga]');
-    if(!el||!active||finished||!el.classList.contains('candidate-v169'))return;
+    if(!el||!active||finished||!el.classList.contains('candidate-v170'))return;
     e.preventDefault();
     const idx=Number(el.dataset.jenga);
     const b=blocks[idx];
     tower.setPointerCapture?.(e.pointerId);
-    drag={
-      id:e.pointerId,idx,
-      el,b,
-      sx:e.clientX,sy:e.clientY,
-      lastX:e.clientX,
-      maxY:0,
-      start:performance.now()
-    };
+    drag={id:e.pointerId,idx,el,b,sx:e.clientX,sy:e.clientY,maxY:0,start:performance.now(),cx:e.clientX};
     active=false;
-    el.classList.add('drag-v169');
+    el.classList.add('drag-v170');
   },{passive:false});
 
   tower.addEventListener('pointermove',e=>{
     if(!drag||drag.id!==e.pointerId)return;
     e.preventDefault();
-    const dx=e.clientX-drag.sx;
-    const dy=e.clientY-drag.sy;
-    drag.lastX=e.clientX;
+    const dx=e.clientX-drag.sx,dy=e.clientY-drag.sy;
+    drag.cx=e.clientX;
     drag.maxY=Math.max(drag.maxY,Math.abs(dy));
-    drag.el.style.transform=`translate(${dx}px,${dy*.20}px)`;
+    drag.el.style.transform=`translate(${dx}px,${dy*.16}px)`;
   },{passive:false});
 
   tower.addEventListener('pointerup',e=>{
     if(!drag||drag.id!==e.pointerId||finished)return;
     e.preventDefault();
-
     const d=drag;
     const dx=e.clientX-d.sx;
-    const duration=Math.max(80,performance.now()-d.start);
     const distance=Math.abs(dx);
+    const duration=Math.max(80,performance.now()-d.start);
 
-    if(distance<70){
+    if(distance<66){
       d.el.style.transform='';
-      d.el.classList.remove('drag-v169');
-      drag=null;
-      active=true;
-      call.textContent='もっと横へ抜く';
+      d.el.classList.remove('drag-v170');
+      drag=null;active=true;call.textContent='もっと横へ抜く';
       return;
     }
 
     const speed=distance/(duration/1000);
-    const speedQ=clamp(1-Math.abs(speed-420)/430,0,1);
-    const straightQ=clamp(1-d.maxY/48,0,1);
-    const quality=straightQ*.58+speedQ*.42;
+    const speedQ=clamp(1-Math.abs(speed-400)/430,0,1);
+    const straightQ=clamp(1-d.maxY/46,0,1);
+    const quality=straightQ*.60+speedQ*.40;
     const risk=riskOf(d.b);
-    const penalty=risk*32+(1-quality)*43;
 
+    const penalty=4.5+risk*14+(1-quality)*13+Math.max(0,pulled-5)*.7;
     balance=clamp(balance-penalty,0,100);
-    lean+=dx>0?(d.b.col===0?-1.6:d.b.col===2?1.6:.5):(d.b.col===0?-1.2:d.b.col===2?1.2:-.5);
-    tower.style.setProperty('--lean',`${clamp(lean,-7,7)}deg`);
-    stabEl.textContent=Math.round(balance);
+    lean+=dx>0?(d.b.col===0?-1.0:d.b.col===2?1.25:.25):(d.b.col===0?-1.15:d.b.col===2?1.0:-.25);
+    tower.style.setProperty('--lean',`${clamp(lean,-12,12)}deg`);
 
     d.b.alive=false;
-    d.el.classList.remove('candidate-v169','drag-v169');
-    d.el.classList.add(dx>0?'out-right-v169':'out-left-v169');
-
-    const collapsed=quality<.22||balance<29;
+    d.el.classList.remove('candidate-v170','drag-v170');
+    d.el.classList.add(dx>0?'out-right-v170':'out-left-v170');
     drag=null;
 
+    pulled++;
+    pulledEl.textContent=pulled;
+    stabEl.textContent=Math.round(balance);
+    scoreEl.textContent=Math.min(100,pulled*10);
+    beep(700+Math.min(8,pulled)*30,65,.018);
+
+    const collapseThreshold=15+Math.min(13,pulled*1.15);
+    const collapsed=quality<.10||Math.abs(lean)>10.5||(pulled>=3&&balance<collapseThreshold);
+
     if(collapsed){
-      finish(true,quality);
+      setTimeout(()=>finish(true),260);
       return;
     }
 
-    successes++;
-    const currentBase=successes*30;
-    scoreEl.textContent=currentBase;
     call.textContent=`GOOD PULL ${Math.round(quality*100)}%`;
-    beep(700+successes*70,70,.02);
-
-    round++;
-    if(round>=3){
-      setTimeout(()=>finish(false,quality),520);
-      return;
-    }
-
-    roundEl.textContent=`${round+1} / 3`;
-    setTimeout(()=>{
-      if(isGameRunValid(runId))chooseCandidates();
-    },520);
+    setTimeout(()=>{if(isGameRunValid(runId))chooseCandidates()},380);
   },{passive:false});
 
   if(!(await countdown('JENGA',runId,{transparent:true})))return;
@@ -28473,196 +28398,280 @@ async function startJengaMob(p,humanIndex,runId){
 // =========================================================
 // V10.69 GAME — モブくん新聞配達
 // =========================================================
-async function startNewspaperMob(p,humanIndex,runId){
+
+
+// =========================================================
+// V10.70 GAME — モブくんトロッコ
+// =========================================================
+async function startMineCartMob(p,humanIndex,runId){
   gameFit();
-  const gameIndex=GAMES.findIndex(g=>g.key==='newspaperMob');
+  const gameIndex=GAMES.findIndex(g=>g.key==='mineCartMob');
+  const WORLD_W=2900;
+  const GOAL_X=2700;
+
+  const gaps=[];
+  let gx=390;
+  while(gx<2350){
+    const double=Math.random()<.28;
+    const w=rand(66,100);
+    gaps.push({x:gx,w});
+    if(double&&gx<2150){
+      gaps.push({x:gx+w+rand(42,68),w:rand(60,88)});
+      gx+=w+rand(175,235);
+    }else{
+      gx+=w+rand(210,300);
+    }
+  }
 
   screen.innerHTML=`
-    <div class="news-shell-v169 gameplay-fit">
+    <div class="cart-shell-v170 gameplay-fit">
       <div class="game-head">
-        <div><span class="kicker">${esc(p.name)}</span><h2>モブくん新聞配達</h2><p class="lead">10 HOUSES / FLICK LEFT or RIGHT</p></div>
+        <div><span class="kicker">${esc(p.name)}</span><h2>モブくんトロッコ</h2><p class="lead">TAP JUMP / MINE TIME ATTACK</p></div>
         <div class="game-badge">${playBadge(humanIndex)}</div>
       </div>
-      <div class="news-hud-v169">
-        <div><span>HOUSE</span><b id="newsHouseCount169">1 / 10</b></div>
-        <div><span>PERFECT</span><b id="newsPerfect169">0</b></div>
-        <div><span>SCORE</span><b id="newsScore169">0</b></div>
+      <div class="cart-hud-v170">
+        <div><span>DISTANCE</span><b id="cartDist170">0%</b></div>
+        <div><span>TIME</span><b id="cartTime170">0.00</b></div>
+        <div><span>FALL</span><b id="cartFall170">0</b></div>
       </div>
-      <div id="newsStage169" class="news-stage-v169">
-        <div class="news-road-v169"><i></i><i></i><i></i><i></i><i></i></div>
-        <div id="newsHouse169" class="news-house-v169 left-v169">
-          <b></b><span></span><em id="newsMailbox169"></em>
+      <div id="cartStage170" class="cart-stage-v170">
+        <div id="cartWorld170" class="cart-world-v170" style="width:${WORLD_W}px">
+          <div class="cart-cave-v170"></div>
+          <div class="cart-rails-v170">
+            ${gaps.map(g=>`<i class="cart-gap-v170" style="left:${g.x}px;width:${g.w}px"></i>`).join('')}
+            <b class="cart-goal-v170" style="left:${GOAL_X}px">GOAL</b>
+          </div>
+          <div class="cart-rocks-v170">${Array.from({length:26},(_,i)=>`<i style="left:${i*112+rand(15,70)}px;top:${rand(22,135)}px"></i>`).join('')}</div>
         </div>
-        <div class="news-rider-v169"><img src="icon/01.png" draggable="false" alt=""><i></i><b></b></div>
-        <div id="newsPaper169" class="news-paper-v169" hidden>MOB</div>
-        <div id="newsCall169" class="news-call-v169">FLICK</div>
-        <div class="news-zone-v169">FLICK LEFT / RIGHT</div>
+        <div id="cartActor170" class="cart-actor-v170">
+          <div class="cart-cart-v170"><i></i><i></i></div>
+          <img src="icon/01.png" draggable="false" alt="">
+        </div>
+        <div id="cartCall170" class="cart-call-v170">TAP JUMP</div>
       </div>
     </div>`;
 
-  const stage=document.getElementById('newsStage169');
-  const houseEl=document.getElementById('newsHouse169');
-  const mailbox=document.getElementById('newsMailbox169');
-  const paper=document.getElementById('newsPaper169');
-  const call=document.getElementById('newsCall169');
-  const houseCount=document.getElementById('newsHouseCount169');
-  const perfectEl=document.getElementById('newsPerfect169');
-  const scoreEl=document.getElementById('newsScore169');
+  const stage=document.getElementById('cartStage170');
+  const world=document.getElementById('cartWorld170');
+  const actor=document.getElementById('cartActor170');
+  const call=document.getElementById('cartCall170');
+  const distEl=document.getElementById('cartDist170');
+  const timeEl=document.getElementById('cartTime170');
+  const fallEl=document.getElementById('cartFall170');
 
-  let active=false,finished=false,index=0,total=0,perfects=0,side=-1,houseY=-65,speed=210,thrown=false,drag=null,flight=null,raf=null,last=performance.now();
+  let active=false,finished=false,raf=null,last=performance.now(),start=0;
+  let worldX=95,cameraX=0,jumpY=0,jumpV=0,falls=0,penaltyMs=0,stunUntil=0,ignoreGapUntil=0;
 
-  function local(e){
-    const r=stage.getBoundingClientRect();
-    return {x:e.clientX-r.left,y:e.clientY-r.top};
-  }
-
-  function spawnHouse(){
-    if(index>=10){
-      finish();
-      return;
-    }
-    side=Math.random()<.5?-1:1;
-    houseY=-62;
-    speed=205+index*5;
-    thrown=false;
-    flight=null;
-    paper.hidden=true;
-    houseEl.className=`news-house-v169 ${side<0?'left-v169':'right-v169'}`;
-    houseEl.style.top=`${houseY}px`;
-    houseCount.textContent=`${index+1} / 10`;
-    call.textContent=side<0?'LEFT HOUSE':'RIGHT HOUSE';
-    call.className='news-call-v169';
-    active=true;
-  }
-
-  function scoreHouse(points,label){
-    if(!active)return;
-    active=false;
-    total+=points;
-    if(points===10){
-      perfects++;
-      perfectEl.textContent=perfects;
-    }
-    scoreEl.textContent=total;
-    call.textContent=points?`${label} +${points}`:'MISS';
-    call.className=`news-call-v169 ${points?'good-v169':'miss-v169'}`;
-    beep(points===10?980:points?680:230,65,.02);
-
-    setTimeout(()=>{
-      if(!isGameRunValid(runId))return;
-      index++;
-      spawnHouse();
-    },360);
+  function currentGap(){
+    return gaps.find(g=>worldX>=g.x&&worldX<=g.x+g.w);
   }
 
   function finish(){
     if(finished)return;
-    finished=true;
-    active=false;
+    finished=true;active=false;
     if(raf)cancelAnimationFrame(raf);
-    state.records.newspaperMob[p.id]=clamp(total,0,100);
-    call.textContent=total>=90?'DELIVERY MASTER!':'DELIVERY FINISH!';
-    call.className='news-call-v169 result-v169';
+    const raw=Math.round((performance.now()-start)+penaltyMs);
+    state.records.mineCartMob[p.id]=raw;
+    timeEl.textContent=(raw/1000).toFixed(2);
+    call.textContent=falls?'GOAL!':'PERFECT RUN!';
+    call.className='cart-call-v170 result-v170';
+    beep(falls?820:1080,160,.035);
     setTimeout(()=>{
       if(isGameRunValid(runId)){
-        recordScreen(gameIndex,p,humanIndex,`${total}<small>pt</small>`,`PERFECT ${perfects} / 10`);
+        recordScreen(gameIndex,p,humanIndex,`${(raw/1000).toFixed(2)}<small>秒</small>`,`${falls} FALL`);
       }
-    },650);
+    },700);
   }
 
   stage.addEventListener('pointerdown',e=>{
-    if(!active||finished||thrown)return;
-    const pt=local(e);
-    if(pt.y<stage.clientHeight*.58)return;
+    if(!active||finished)return;
     e.preventDefault();
-    stage.setPointerCapture?.(e.pointerId);
-    drag={id:e.pointerId,x:pt.x,y:pt.y};
-  },{passive:false});
-
-  stage.addEventListener('pointerup',e=>{
-    if(!drag||drag.id!==e.pointerId||!active||finished||thrown)return;
-    e.preventDefault();
-    const pt=local(e);
-    const dx=pt.x-drag.x;
-    const dy=pt.y-drag.y;
-    drag=null;
-
-    if(Math.abs(dx)<35){
-      call.textContent='左右へフリック！';
-      return;
-    }
-
-    thrown=true;
-    const dir=dx<0?-1:1;
-    const w=stage.clientWidth,h=stage.clientHeight;
-    flight={
-      x:w*.5,y:h*.82,
-      vx:dir*clamp(Math.abs(dx)*4.6,250,600),
-      vy:-clamp(320+Math.abs(dy)*1.15,300,500),
-      age:0,
-      dir
-    };
-    paper.hidden=false;
-    paper.style.left=`${flight.x}px`;
-    paper.style.top=`${flight.y}px`;
-    beep(580,45,.012);
-
-    if(dir!==side){
-      setTimeout(()=>{
-        if(isGameRunValid(runId)&&active)scoreHouse(0,'WRONG SIDE');
-      },420);
+    const now=performance.now();
+    if(now<stunUntil)return;
+    if(jumpY<=1){
+      jumpV=455;
+      beep(670,45,.014);
     }
   },{passive:false});
 
-  if(!(await countdown('NEWSPAPER',runId,{transparent:true})))return;
-  spawnHouse();
-  last=performance.now();
+  if(!(await countdown('MINE CART',runId,{transparent:true})))return;
+  active=true;start=last=performance.now();
 
   function frame(now){
     if(finished||!isGameRunValid(runId))return;
-    const dt=Math.min(.028,(now-last)/1000);
+    const dt=Math.min(.030,(now-last)/1000);
     last=now;
 
-    if(active){
-      houseY+=speed*dt;
-      houseEl.style.top=`${houseY}px`;
-      if(houseY>stage.clientHeight*.76&&!thrown){
-        scoreHouse(0,'PASSED');
+    if(now>=stunUntil){
+      const speed=222;
+      worldX+=speed*dt;
+
+      if(jumpY>0||jumpV>0){
+        jumpV-=980*dt;
+        jumpY+=jumpV*dt;
+        if(jumpY<=0){jumpY=0;jumpV=0}
+      }
+
+      const gap=currentGap();
+      if(gap&&worldX>ignoreGapUntil&&jumpY<18){
+        falls++;
+        fallEl.textContent=falls;
+        penaltyMs+=1200;
+        stunUntil=now+620;
+        ignoreGapUntil=gap.x+gap.w+24;
+        worldX=gap.x+gap.w+24;
+        actor.classList.add('fall-v170');
+        call.textContent='+1.20s FALL!';
+        beep(180,160,.03);
+        setTimeout(()=>actor.classList.remove('fall-v170'),560);
       }
     }
 
-    if(flight&&active){
-      const f=flight;
-      f.age+=dt;
-      f.vy+=390*dt;
-      f.x+=f.vx*dt;
-      f.y+=f.vy*dt;
-      paper.style.left=`${f.x}px`;
-      paper.style.top=`${f.y}px`;
-      paper.style.transform=`translate(-50%,-50%) rotate(${f.age*f.dir*520}deg)`;
+    cameraX=clamp(worldX-95,0,WORLD_W-stage.clientWidth);
+    world.style.transform=`translate3d(${-cameraX}px,0,0)`;
+    actor.style.transform=`translateY(${-jumpY}px)`;
 
-      const targetX=side<0?stage.clientWidth*.13:stage.clientWidth*.87;
-      const mailboxY=houseY+78;
+    const pct=clamp(worldX/GOAL_X,0,1);
+    distEl.textContent=`${Math.round(pct*100)}%`;
+    timeEl.textContent=`${((now-start+penaltyMs)/1000).toFixed(2)}`;
 
-      const crossed=side<0?f.x<=targetX:f.x>=targetX;
-      if(crossed&&f.dir===side){
-        const d=Math.abs(f.y-mailboxY);
-        const pts=d<=15?10:d<=34?7:d<=58?3:0;
-        flight=null;
-        paper.hidden=true;
-        scoreHouse(pts,pts===10?'POST PERFECT':pts===7?'DOOR':pts===3?'YARD':'MISS');
-      }else if(f.y>stage.clientHeight+40||f.x<-40||f.x>stage.clientWidth+40||f.age>1.8){
-        flight=null;
-        paper.hidden=true;
-        if(active)scoreHouse(0,'MISS');
-      }
-    }
+    if(now>=stunUntil&&call.textContent.includes('FALL'))call.textContent='TAP JUMP';
 
+    if(worldX>=GOAL_X){finish();return}
     raf=requestAnimationFrame(frame);
   }
   raf=requestAnimationFrame(frame);
 }
 
+
+// =========================================================
+// V10.70 GAME — お掃除モブくん
+// =========================================================
+async function startCleaningMob(p,humanIndex,runId){
+  gameFit();
+  const gameIndex=GAMES.findIndex(g=>g.key==='cleaningMob');
+
+  const spots=[];
+  let guard=0;
+  while(spots.length<10&&guard<500){
+    guard++;
+    const a=rand(0,Math.PI*2);
+    const r=Math.sqrt(Math.random())*.82;
+    const x=.5+Math.cos(a)*r*.27;
+    const y=.50+Math.sin(a)*r*.34;
+    if(spots.every(s=>Math.hypot((s.x-x)*300,(s.y-y)*390)>42)){
+      spots.push({x,y,clean:0,done:false});
+    }
+  }
+
+  screen.innerHTML=`
+    <div class="clean-shell-v170 gameplay-fit">
+      <div class="game-head">
+        <div><span class="kicker">${esc(p.name)}</span><h2>お掃除モブくん</h2><p class="lead">7 SECONDS / RUB 10 DUST</p></div>
+        <div class="game-badge">${playBadge(humanIndex)}</div>
+      </div>
+      <div class="clean-hud-v170">
+        <div><span>TIME</span><b id="cleanTime170">7.00</b></div>
+        <div><span>CLEAN</span><b id="cleanCount170">0 / 10</b></div>
+        <div><span>SCORE</span><b id="cleanScore170">0</b></div>
+      </div>
+      <div id="cleanStage170" class="clean-stage-v170">
+        <div class="clean-room-v170"></div>
+        <div class="clean-plush-v170"><img src="icon/01.png" draggable="false" alt=""></div>
+        <div id="cleanDustLayer170" class="clean-dust-layer-v170">
+          ${spots.map((s,i)=>`<i data-dust="${i}" style="left:${s.x*100}%;top:${s.y*100}%"><b></b><b></b><b></b></i>`).join('')}
+        </div>
+        <div id="cleanCall170" class="clean-call-v170">埃を擦って消す！</div>
+      </div>
+    </div>`;
+
+  const stage=document.getElementById('cleanStage170');
+  const dustEls=[...stage.querySelectorAll('[data-dust]')];
+  const timeEl=document.getElementById('cleanTime170');
+  const countEl=document.getElementById('cleanCount170');
+  const scoreEl=document.getElementById('cleanScore170');
+  const call=document.getElementById('cleanCall170');
+
+  let active=false,finished=false,rubbing=false,pointerId=null,lastPt=null,cleaned=0,start=0,raf=null;
+
+  function local(e){const r=stage.getBoundingClientRect();return{x:e.clientX-r.left,y:e.clientY-r.top}}
+
+  function applyRub(pt,dist){
+    const w=stage.clientWidth,h=stage.clientHeight;
+    spots.forEach((s,i)=>{
+      if(s.done)return;
+      const sx=s.x*w,sy=s.y*h;
+      if(Math.hypot(pt.x-sx,pt.y-sy)<=38){
+        s.clean+=dist;
+        const el=dustEls[i];
+        const pct=clamp(s.clean/95,0,1);
+        el.style.opacity=String(1-pct*.82);
+        el.style.transform=`translate(-50%,-50%) scale(${1-pct*.35})`;
+        if(s.clean>=95){
+          s.done=true;
+          cleaned++;
+          el.classList.add('done-v170');
+          countEl.textContent=`${cleaned} / 10`;
+          scoreEl.textContent=cleaned*10;
+          beep(760+cleaned*18,35,.010);
+          if(cleaned===10)finish(true);
+        }
+      }
+    });
+  }
+
+  function finish(perfect=false){
+    if(finished)return;
+    finished=true;active=false;rubbing=false;
+    if(raf)cancelAnimationFrame(raf);
+    const score=cleaned*10;
+    state.records.cleaningMob[p.id]=score;
+    call.textContent=perfect?'ALL CLEAN!!':'TIME UP!';
+    call.className='clean-call-v170 result-v170';
+    beep(perfect?1080:650,140,.03);
+    setTimeout(()=>{
+      if(isGameRunValid(runId)){
+        recordScreen(gameIndex,p,humanIndex,`${score}<small>pt</small>`,`${cleaned} / 10 CLEAN`);
+      }
+    },650);
+  }
+
+  stage.addEventListener('pointerdown',e=>{
+    if(!active||finished)return;
+    e.preventDefault();
+    stage.setPointerCapture?.(e.pointerId);
+    rubbing=true;pointerId=e.pointerId;lastPt=local(e);
+    applyRub(lastPt,8);
+  },{passive:false});
+
+  stage.addEventListener('pointermove',e=>{
+    if(!rubbing||e.pointerId!==pointerId||finished)return;
+    e.preventDefault();
+    const pt=local(e);
+    const d=Math.hypot(pt.x-lastPt.x,pt.y-lastPt.y);
+    if(d>0)applyRub(pt,Math.min(24,d));
+    lastPt=pt;
+  },{passive:false});
+
+  const stopRub=e=>{
+    if(e.pointerId!==pointerId)return;
+    rubbing=false;pointerId=null;lastPt=null;
+  };
+  stage.addEventListener('pointerup',stopRub,{passive:false});
+  stage.addEventListener('pointercancel',stopRub,{passive:false});
+
+  if(!(await countdown('CLEANING',runId,{transparent:true})))return;
+  active=true;start=performance.now();
+
+  function frame(now){
+    if(finished||!isGameRunValid(runId))return;
+    const rem=7000-(now-start);
+    timeEl.textContent=(Math.max(0,rem)/1000).toFixed(2);
+    if(rem<=0){finish(false);return}
+    raf=requestAnimationFrame(frame);
+  }
+  raf=requestAnimationFrame(frame);
+}
 
 // =========================================================
 // V10.48 GAME 92 — モブくんは居合切りの達人
