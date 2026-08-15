@@ -327,7 +327,8 @@ const GAMES=[
   {no:89,key:"mobSpeedRacer",title:"モブくんは爆速レーサー",sub:"タッグ専用。1番手がタイヤ、2番手が機体を描き、1kmレースで勝負",legacy:93},
   {no:90,key:"summonMaster",title:"モブくんは召喚マスター",sub:"タッグ専用。4人が描いた魔物で2対2のオート召喚バトル",legacy:94},
   {no:91,key:"mobPinball",title:"モブくんピンボール",sub:"上から落としたボールをカメラで追い、10〜100点のスロットを狙う",legacy:95},
-  {no:92,key:"hurdleRun",title:"モブくんのハードル走",sub:"自動走行＋ジャンプで間隔を広げた8個のハードルを越える200mタイムアタック",legacy:96}
+  {no:92,key:"hurdleRun",title:"モブくんのハードル走",sub:"自動走行＋ジャンプで間隔を広げた8個のハードルを越える200mタイムアタック",legacy:96},
+  {no:93,key:"longJumpMob",title:"モブくんの走り幅跳び",sub:"高速ダッシュゲージを中央で止め、砂場ギリギリで踏み切って最大300m",legacy:97}
 ];
 
 function legacyGameIndex(gameIndex){
@@ -401,7 +402,7 @@ function freshState(){
         paperPlane:{},tankMob:{},curlingMob:{},bubbleMob:{},
         changeMob:{},baggageMob:{},treasureMob:{},rouletteMob:{},excavationMob:{},
         oldMaidDuel:{},robotMarch:{},monsterMaster:{},scoutMan:{},
-        atafutaSurvival:{},waveMaster:{},battleRoyaleMob:{},littleMobShot:{},monsterBoxMob:{},alienBattleMob:{},mobMusou:{},iaidoMaster:{},killLeaderMob:{},mobSpeedRacer:{},summonMaster:{},mobPinball:{},hurdleRun:{}
+        atafutaSurvival:{},waveMaster:{},battleRoyaleMob:{},littleMobShot:{},monsterBoxMob:{},alienBattleMob:{},mobMusou:{},iaidoMaster:{},killLeaderMob:{},mobSpeedRacer:{},summonMaster:{},mobPinball:{},hurdleRun:{},longJumpMob:{}
     },
     total:{},
     roundPoints:[],
@@ -511,7 +512,7 @@ function renderHome(){
     <section class="hero hero-v119">
       <div>
         <span class="kicker">SMARTPHONE PARTY GAME</span>
-        <h1>92 MINI<br>GAMES</h1>
+        <h1>93 MINI<br>GAMES</h1>
         <p>通常対戦は「チーム戦」「個人戦」。さらに8人/16人の「モブくんゲーム王決定戦」を遊べます。</p>
       </div>
       <div class="hero-mark">MOB</div>
@@ -536,7 +537,7 @@ function renderHome(){
     </section>
 
     <section class="panel flat">
-      <div class="panel-head"><h3>92 MINI GAMES</h3><span class="tag">GAME 1 → 92</span></div>
+      <div class="panel-head"><h3>93 MINI GAMES</h3><span class="tag">GAME 1 → 93</span></div>
       <div class="compact-game-grid home-compact-games-v119">
         ${GAMES.map(g=>`<div><b>${g.no}</b><span>${g.title}</span></div>`).join("")}
       </div>
@@ -556,7 +557,7 @@ function renderFreePlaySelect(){
   screen.innerHTML=`
     <div class="game-head">
       <div><span class="kicker">FREE PLAY</span><h2>1人で遊ぶ</h2><p class="lead">好きなゲームを1つ選んでプレイ。</p></div>
-      <div class="game-badge">92</div>
+      <div class="game-badge">93</div>
     </div>
 
     <button id="freeBack" class="secondary wizard-back-v119" type="button">← メインへ戻る</button>
@@ -594,7 +595,7 @@ function renderGameGuide(){
   screen.innerHTML=`
     <div class="game-head">
       <div><span class="kicker">GAME GUIDE</span><h2>各ゲームの説明</h2><p class="lead">内容と100点換算の目安を一覧で確認できます。</p></div>
-      <div class="game-badge">92</div>
+      <div class="game-badge">93</div>
     </div>
 
     <button id="guideBack" class="secondary wizard-back-v119" type="button">← メインへ戻る</button>
@@ -2030,7 +2031,7 @@ function renderPlayStyleSelect(){
       <button id="normalStyle" class="style-select-card normal" type="button">
         <span>NORMAL</span>
         <b>順番に全種目</b>
-        <small>GAME 1 → 92 を順番にプレイ</small>
+        <small>GAME 1 → 93 を順番にプレイ</small>
       </button>
       <button id="customStyle" class="style-select-card custom" type="button">
         <span>CUSTOM</span>
@@ -2040,7 +2041,7 @@ function renderPlayStyleSelect(){
     </div>
 
     <section class="panel flat">
-      <h3>92 MINI GAMES</h3>
+      <h3>93 MINI GAMES</h3>
       <div class="compact-game-grid">
         ${GAMES.map(g=>`<div><b>${g.no}</b><span>${g.title}</span></div>`).join("")}
       </div>
@@ -2324,7 +2325,8 @@ function scoreRuleForGame(index){
     "タッグ2対2専用 / 1km先のゴールへ先着したチームが勝利",
     "描いた魔物2対2 / 勝利チーム100点・敗北チーム0点",
     "10 / 20 / 30 / 40 / 50 / 60 / 70 / 80 / 90 / 100 の入ったスロットがそのまま得点",
-    "200m完走タイム / 8個のハードル / 10.00秒以下=100点 / 18.00秒以上=0点"
+    "200m完走タイム / 8個のハードル / 10.00秒以下=100点 / 18.00秒以上=0点",
+    "ダッシュゲージ中央 + 砂場直前の完璧な踏切で約300m=100点"
   ][legacyIndex];
 }
 
@@ -2528,9 +2530,11 @@ function showGameIntro(index){
   }else if(legacyIndex===94){
     rules=`<li>4人が1体ずつ魔物を描き、TEAM A 2体 VS TEAM B 2体で戦います。</li><li>ソロでは1P役と4P役を自分で描き、残り2体はCPUが描きます。</li>`;
   }else if(legacyIndex===95){
-    rules=`<li>上部を左右に動くボールをDROPして、長いピンボール盤を落としていきます。</li><li>カメラがボールを追従。最後に入った10〜100点のスロットがそのまま得点です。</li>`;
-  }else{
+    rules=`<li>上部を左右に動くボールをDROP。障害物・回転ファン・得点スロットは毎回ランダム配置です。</li><li>カメラがボールを追従。最後に入ったランダム配置の10〜100点がそのまま得点です。</li>`;
+  }else if(legacyIndex===96){
     rules=`<li>モブくんは自動で200mを走ります。JUMPで間隔を広げた8個のハードルを越えてください。</li><li>1台越えるたび加速。完走タイムが速いほど高得点で、最速は約10秒です。</li>`;
+  }else{
+    rules=`<li>最初に高速の矢印型DASHゲージを中央でSTOP。中央ほど走力が上がります。</li><li>自動で走り出したら砂場の踏切線ギリギリ手前でJUMP。両方完璧なら約300mです。</li>`;
   }
   const conciseRules=(rules.match(/<li>[\s\S]*?<\/li>/g)||[]).slice(0,2).join("");
   rules=conciseRules||`<li>${esc(g.sub)}</li>`;
@@ -2669,7 +2673,8 @@ function humanReady(gameIndex,humanIndex){
     else if(legacyIndex===93)startMobSpeedRacer(p,humanIndex,runId);
     else if(legacyIndex===94)startSummonMaster(p,humanIndex,runId);
     else if(legacyIndex===95)startMobPinball(p,humanIndex,runId);
-    else startHurdleRun(p,humanIndex,runId);
+    else if(legacyIndex===96)startHurdleRun(p,humanIndex,runId);
+    else startLongJumpMob(p,humanIndex,runId);
   },{once:true});
 }
 
@@ -26833,7 +26838,7 @@ function normalizeCpuRecordV152(gameIndex,p){
   if(typeof v!=='number'||!Number.isFinite(v))return;
 
   // Raw milliseconds and discrete measurements are stored as integers.
-  const tenths=new Set([20,22,23,26,29,33,34,35,36,50,57]);
+  const tenths=new Set([20,22,23,26,29,33,34,35,36,50,57,97]);
   const hundredths=new Set([44,58,60]);
   if(tenths.has(legacyIndex))v=Math.round(v*10)/10;
   else if(hundredths.has(legacyIndex))v=Math.round(v*100)/100;
@@ -27100,8 +27105,12 @@ function simulateOneCpu(gameIndex,p){
     state.records.summonMaster[p.id]=Math.random()<.5?100:0;
   }else if(legacyIndex===95){
     state.records.mobPinball[p.id]=[10,20,30,40,50,60,70,80,90,100][randi(0,9)];
-  }else{
+  }else if(legacyIndex===96){
     state.records.hurdleRun[p.id]=ultra?randi(9850,11250):randi(10800,15800);
+  }else{
+    state.records.longJumpMob[p.id]=ultra
+      ? Math.round(rand(2650,2990))/10
+      : Math.round(rand(1180,2760))/10;
   }
 
   softenCpuResultV121(
@@ -27276,6 +27285,9 @@ function performancePoints(gameIndex,v){
     if(v>=18000)return 0;
     return clamp(Math.round((18000-v)/8000*100),0,100);
   }
+  if(legacyIndex===97){
+    return clamp(Math.round(v/300*100),0,100);
+  }
   return clamp(Math.round(v),0,100);
 }
 
@@ -27376,6 +27388,7 @@ function formatRecord(gameIndex,v){
   if(legacyIndex===93)return `${(v/1000).toFixed(2)}秒`;
   if(legacyIndex===95)return `${Math.round(v)}pt`;
   if(legacyIndex===96)return `${(v/1000).toFixed(2)}秒`;
+  if(legacyIndex===97)return `${Number(v).toFixed(1)}m`;
   return `${Math.round(v)}pt`;
 }
 
@@ -27526,27 +27539,48 @@ async function startMobPinball(p,humanIndex,runId){
   gameFit();
 
   const gameIndex=GAMES.findIndex(g=>g.key==='mobPinball');
-  const SLOT_VALUES=[10,20,30,40,50,60,70,80,90,100];
+  const BASE_VALUES=[10,20,30,40,50,60,70,80,90,100];
+  const SLOT_VALUES=shuffle(BASE_VALUES);
   const W=360;
   const WORLD_H=1420;
   const VIEW_H=470;
   const SLOT_Y=1280;
   const BALL_R=15;
   const PEG_R=8;
-  const pegs=[];
 
-  for(let row=0;row<13;row++){
-    const count=row%2===0?7:8;
+  // Every play gets a different board.
+  // Peg count reduced from the previous version so the ball has more escape routes.
+  const pegs=[];
+  const rowYs=shuffle([170,260,350,455,565,675,790,905]).sort((a,b)=>a-b);
+
+  rowYs.forEach((y,row)=>{
+    const count=row%2===0?6:5;
     const gap=W/(count+1);
-    const y=150+row*78;
+    const jitter=rand(-13,13);
+
     for(let i=0;i<count;i++){
       pegs.push({
-        x:gap*(i+1),
-        y,
-        hot:(row%4===2&&i%3===1)
+        x:clamp(gap*(i+1)+jitter+rand(-8,8),30,W-30),
+        y:y+rand(-13,13),
+        hot:Math.random()<.16
       });
     }
-  }
+  });
+
+  // Familiar pinball-style rotating fan/bumpers.
+  const fans=[];
+  const fanYs=shuffle([305,520,745,980]).slice(0,3).sort((a,b)=>a-b);
+
+  fanYs.forEach((y,i)=>{
+    fans.push({
+      x:rand(78,282),
+      y:y+rand(-18,18),
+      r:31,
+      dir:Math.random()<.5?-1:1,
+      speed:rand(2.2,3.5),
+      phase:rand(0,Math.PI*2)
+    });
+  });
 
   screen.innerHTML=`
     <div class="pinball-shell-v160 gameplay-fit">
@@ -27554,7 +27588,7 @@ async function startMobPinball(p,humanIndex,runId){
         <div>
           <span class="kicker">${esc(p.name)}</span>
           <h2>モブくんピンボール</h2>
-          <p class="lead">DROPして、10〜100ポイントのスロットを狙え！</p>
+          <p class="lead">毎回変わるピン・回転ファン・ポイント配置を突破！</p>
         </div>
         <div class="game-badge">${playBadge(humanIndex)}</div>
       </div>
@@ -27566,13 +27600,35 @@ async function startMobPinball(p,humanIndex,runId){
 
       <div id="pinballStage160" class="pinball-stage-v160">
         <div class="pinball-stage-lights-v160"></div>
+
         <div id="pinballWorld160" class="pinball-world-v160">
-          <div class="pinball-board-title-v160">MOB PINBALL</div>
-          ${pegs.map((q,i)=>`<i class="pinball-peg-v160 ${q.hot?'hot-v160':''}" data-peg="${i}" style="left:${q.x}px;top:${q.y}px"></i>`).join('')}
+          <div class="pinball-board-title-v160">RANDOM MOB PINBALL</div>
+
+          ${pegs.map((q,i)=>`
+            <i
+              class="pinball-peg-v160 ${q.hot?'hot-v160':''}"
+              data-peg="${i}"
+              style="left:${q.x}px;top:${q.y}px"
+            ></i>`).join('')}
+
+          ${fans.map((f,i)=>`
+            <div
+              class="pinball-fan-v162"
+              data-fan="${i}"
+              style="left:${f.x}px;top:${f.y}px"
+            >
+              <i></i><i></i><i></i><b></b>
+            </div>`).join('')}
+
           <div class="pinball-slot-row-v160" style="top:${SLOT_Y}px">
-            ${SLOT_VALUES.map((v,i)=>`<div class="pinball-slot-v160" data-slot="${i}"><b>${v}</b><span>PT</span></div>`).join('')}
+            ${SLOT_VALUES.map((v,i)=>`
+              <div class="pinball-slot-v160" data-slot="${i}">
+                <b>${v}</b><span>PT</span>
+              </div>`).join('')}
           </div>
+
           <div class="pinball-bottom-v160" style="top:${SLOT_Y+104}px"></div>
+
           <div id="pinballBall160" class="pinball-ball-v160" style="left:180px;top:72px">
             <i>MOB</i>
           </div>
@@ -27590,13 +27646,14 @@ async function startMobPinball(p,humanIndex,runId){
       </button>
     </div>`;
 
-  const stage=document.getElementById('pinballStage160');
   const world=document.getElementById('pinballWorld160');
   const ballEl=document.getElementById('pinballBall160');
   const dropBtn=document.getElementById('pinballDrop160');
   const call=document.getElementById('pinballCall160');
   const depthEl=document.getElementById('pinballDepth160');
   const liveEl=document.getElementById('pinballLive160');
+
+  const fanEls=[...world.querySelectorAll('[data-fan]')];
 
   let active=false;
   let dropped=false;
@@ -27608,14 +27665,23 @@ async function startMobPinball(p,humanIndex,runId){
   let cameraY=0;
   let bestFallY=72;
   let stuckFor=0;
+  let elapsedPlay=0;
+
   const ball={x:180,y:72,vx:0,vy:0};
 
   function place(){
     ballEl.style.left=`${ball.x}px`;
     ballEl.style.top=`${ball.y}px`;
     world.style.transform=`translate3d(0,${-cameraY}px,0)`;
+
     const pct=clamp(ball.y/WORLD_H,0,1);
     depthEl.textContent=pct<.18?'TOP':pct<.70?'FOLLOW':'GOAL';
+
+    fans.forEach((f,i)=>{
+      const angle=(elapsedPlay*f.speed*f.dir+f.phase)*180/Math.PI;
+      const el=fanEls[i];
+      if(el)el.style.transform=`translate(-50%,-50%) rotate(${angle}deg)`;
+    });
   }
 
   function burstPeg(q){
@@ -27624,6 +27690,14 @@ async function startMobPinball(p,humanIndex,runId){
     peg.classList.remove('hit-v160');
     void peg.offsetWidth;
     peg.classList.add('hit-v160');
+  }
+
+  function bumpFan(i){
+    const el=fanEls[i];
+    if(!el)return;
+    el.classList.remove('hit-v162');
+    void el.offsetWidth;
+    el.classList.add('hit-v162');
   }
 
   function finish(slotIndex){
@@ -27638,8 +27712,7 @@ async function startMobPinball(p,humanIndex,runId){
     cameraY=clamp(SLOT_Y-300,0,WORLD_H-VIEW_H);
     place();
 
-    const slot=world.querySelector(`[data-slot="${slotIndex}"]`);
-    slot?.classList.add('selected-v160');
+    world.querySelector(`[data-slot="${slotIndex}"]`)?.classList.add('selected-v160');
     ballEl.classList.add('goal-v160');
     liveEl.textContent=`${score} PT`;
 
@@ -27660,16 +27733,25 @@ async function startMobPinball(p,humanIndex,runId){
       screen.insertAdjacentHTML('beforeend',`
         <div class="pinball-result-overlay-v160">
           <div class="pinball-result-card-v160">
-            <span>PINBALL RESULT</span>
+            <span>RANDOM PINBALL RESULT</span>
             <strong>${score}</strong>
             <b>POINT</b>
             <p>${comment}</p>
+
             <div class="pinball-result-slots-v160">
-              ${SLOT_VALUES.map(v=>`<i class="${v===score?'on-v160':''}">${v}</i>`).join('')}
+              ${SLOT_VALUES.map((v,i)=>`
+                <i class="${i===slotIndex?'on-v160':''}">${v}</i>
+              `).join('')}
             </div>
+
+            <small class="pinball-result-random-v162">
+              障害物・回転ファン・数字配置は今回のランダム配置
+            </small>
+
             <button id="pinballNext160" class="primary" type="button">RESULTへ</button>
           </div>
         </div>`);
+
       document.getElementById('pinballNext160').addEventListener('click',()=>{
         recordScreen(
           gameIndex,p,humanIndex,
@@ -27681,19 +27763,23 @@ async function startMobPinball(p,humanIndex,runId){
   }
 
   function physics(dt){
-    ball.vy+=700*dt;
+    elapsedPlay+=dt;
+
+    ball.vy+=715*dt;
     ball.x+=ball.vx*dt;
     ball.y+=ball.vy*dt;
 
     if(ball.x<BALL_R+12){
       ball.x=BALL_R+12;
-      ball.vx=Math.abs(ball.vx)*.78+12;
-    }
-    if(ball.x>W-BALL_R-12){
-      ball.x=W-BALL_R-12;
-      ball.vx=-Math.abs(ball.vx)*.78-12;
+      ball.vx=Math.abs(ball.vx)*.76+18;
     }
 
+    if(ball.x>W-BALL_R-12){
+      ball.x=W-BALL_R-12;
+      ball.vx=-Math.abs(ball.vx)*.76-18;
+    }
+
+    // Peg collision.
     for(let i=0;i<pegs.length;i++){
       const peg=pegs[i];
       const dx=ball.x-peg.x;
@@ -27710,39 +27796,64 @@ async function startMobPinball(p,humanIndex,runId){
         ball.y+=ny*overlap;
 
         const dot=ball.vx*nx+ball.vy*ny;
+        ball.vx-=1.78*dot*nx;
+        ball.vy-=1.48*dot*ny;
 
-        // 少しだけ反射を弱め、下方向へ抜けやすくする。
-        ball.vx-=1.82*dot*nx;
-        ball.vy-=1.58*dot*ny;
+        ball.vx+=rand(-42,42)+(peg.hot?rand(-48,48):0);
+        ball.vx*=peg.hot?.94:.84;
+        ball.vy=clamp(ball.vy*.74+(ny>0?28:52),-115,575);
 
-        ball.vx+=rand(-38,38)+(peg.hot?rand(-48,48):0);
-        ball.vx*=peg.hot?.94:.86;
-        ball.vy=clamp(ball.vy*.76+(ny>0?24:46),-125,560);
-
-        // ペグ真上でほぼ停止した時は、横へ逃がして落下を継続。
-        if(Math.abs(ball.vx)<28&&Math.abs(ball.vy)<72){
-          ball.vx+=Math.random()<.5?-86:86;
-          ball.vy=Math.max(ball.vy,120);
+        if(Math.abs(ball.vx)<26&&Math.abs(ball.vy)<76){
+          ball.vx+=Math.random()<.5?-92:92;
+          ball.vy=Math.max(ball.vy,130);
         }
 
         burstPeg(i);
-        beep(peg.hot?720:430,22,.007);
+        beep(peg.hot?710:410,20,.006);
       }
     }
 
-    // 進行が止まった場合のフェイルセーフ。
-    // 0.72秒以上ほぼ下へ進めていなければ自動で下方向へ抜く。
-    if(ball.y>bestFallY+7){
+    // Rotating fan collision.
+    for(let i=0;i<fans.length;i++){
+      const fan=fans[i];
+      const dx=ball.x-fan.x;
+      const dy=ball.y-fan.y;
+      const dist=Math.hypot(dx,dy);
+      const hitR=fan.r+BALL_R-5;
+
+      if(dist<hitR&&dist>.01){
+        const nx=dx/dist;
+        const ny=dy/dist;
+        const tx=-ny*fan.dir;
+        const ty=nx*fan.dir;
+        const push=235+fan.speed*34;
+
+        ball.x=fan.x+nx*hitR;
+        ball.y=fan.y+ny*hitR;
+
+        ball.vx+=tx*push+nx*105;
+        ball.vy+=ty*push+ny*85+82;
+
+        // Always preserve some downward progress after fan hits.
+        ball.vy=Math.max(ball.vy,85);
+
+        bumpFan(i);
+        beep(850,34,.012);
+      }
+    }
+
+    // Stronger anti-stall now that the board is randomized.
+    if(ball.y>bestFallY+8){
       bestFallY=ball.y;
       stuckFor=0;
     }else{
       stuckFor+=dt;
     }
 
-    if(stuckFor>=.72){
-      ball.vy=Math.max(ball.vy,235);
-      ball.vx+=Math.random()<.5?-115:115;
-      ball.y+=7;
+    if(stuckFor>=.58){
+      ball.vy=Math.max(ball.vy,255);
+      ball.vx+=Math.random()<.5?-125:125;
+      ball.y+=9;
       bestFallY=Math.max(bestFallY,ball.y);
       stuckFor=0;
     }
@@ -27761,18 +27872,22 @@ async function startMobPinball(p,humanIndex,runId){
     if(!active||dropped||finished)return;
 
     dropped=true;
-    ball.vx=launcherDir*rand(22,48)+rand(-24,24);
-    ball.vy=35;
+    ball.vx=launcherDir*rand(24,52)+rand(-26,26);
+    ball.vy=42;
+
     dropBtn.disabled=true;
     dropBtn.textContent='CAMERA FOLLOW';
+
     call.textContent='DROP!!';
     ballEl.classList.add('drop-v160');
+
     beep(760,80,.025);
   },{passive:false});
 
-  // Actors/world are already positioned before countdown.
+  // All objects are created and positioned before countdown.
   place();
-  if(!(await countdown('PINBALL',runId,{transparent:true})))return;
+
+  if(!(await countdown('RANDOM PINBALL',runId,{transparent:true})))return;
 
   active=true;
   dropBtn.disabled=false;
@@ -27787,8 +27902,17 @@ async function startMobPinball(p,humanIndex,runId){
 
     if(!dropped){
       launcherX+=launcherDir*118*dt;
-      if(launcherX>322){launcherX=322;launcherDir=-1;}
-      if(launcherX<38){launcherX=38;launcherDir=1;}
+
+      if(launcherX>322){
+        launcherX=322;
+        launcherDir=-1;
+      }
+
+      if(launcherX<38){
+        launcherX=38;
+        launcherDir=1;
+      }
+
       ball.x=launcherX;
       ball.y=72;
     }else{
@@ -28030,6 +28154,362 @@ async function startHurdleRun(p,humanIndex,runId){
       render();
       finishRace(elapsed);
       return;
+    }
+
+    render();
+    raf=requestAnimationFrame(frame);
+  }
+
+  raf=requestAnimationFrame(frame);
+}
+
+
+
+// =========================================================
+// V10.62 GAME — モブくんの走り幅跳び
+// =========================================================
+async function startLongJumpMob(p,humanIndex,runId){
+  gameFit();
+
+  const gameIndex=GAMES.findIndex(g=>g.key==='longJumpMob');
+
+  const RUNWAY_END=920;
+  const TAKEOFF_X=850;
+  const SAND_X=890;
+  const WORLD_W=1550;
+
+  screen.innerHTML=`
+    <div class="longjump-shell-v162 gameplay-fit">
+      <div class="game-head">
+        <div>
+          <span class="kicker">${esc(p.name)}</span>
+          <h2>モブくんの走り幅跳び</h2>
+          <p class="lead">DASH中央 → 砂場ギリギリ踏切！ 最大300m！</p>
+        </div>
+        <div class="game-badge">${playBadge(humanIndex)}</div>
+      </div>
+
+      <div class="longjump-hud-v162">
+        <div><span>DASH</span><b id="ljDashScore162">---</b></div>
+        <div><span>TAKE OFF</span><b id="ljTiming162">---</b></div>
+        <div><span>DISTANCE</span><b id="ljDistance162">---</b></div>
+      </div>
+
+      <div id="ljStage162" class="longjump-stage-v162">
+        <div class="longjump-sky-v162"></div>
+
+        <div class="longjump-stand-v162">
+          <b>MOB ATHLETICS</b>
+          <div class="longjump-crowd-v162">
+            ${Array.from({length:42},(_,i)=>`<i class="c${i%6}"></i>`).join('')}
+          </div>
+        </div>
+
+        <div id="ljWorld162" class="longjump-world-v162" style="width:${WORLD_W}px">
+          <div class="longjump-runway-v162"></div>
+          <div class="longjump-takeoff-v162" style="left:${TAKEOFF_X}px"></div>
+          <div class="longjump-sand-v162" style="left:${SAND_X}px">
+            ${Array.from({length:12},(_,i)=>`<i style="left:${i*42}px"></i>`).join('')}
+          </div>
+          <div id="ljLandingMark162" class="longjump-landing-mark-v162"></div>
+        </div>
+
+        <div id="ljPlayer162" class="longjump-player-v162">
+          <img src="icon/01.png" draggable="false" alt="モブくん">
+          <i></i><b></b>
+        </div>
+
+        <div id="ljMessage162" class="longjump-message-v162">DASH GAUGE</div>
+
+        <div id="ljGaugePanel162" class="longjump-gauge-panel-v162">
+          <span>ARROW DASH</span>
+
+          <div class="longjump-gauge-v162">
+            <i class="longjump-gauge-center-v162"></i>
+            <b id="ljGaugeNeedle162">➤</b>
+          </div>
+
+          <button id="ljAction162" class="primary longjump-action-v162" type="button" disabled>
+            DASH STOP
+          </button>
+        </div>
+      </div>
+    </div>`;
+
+  const world=document.getElementById('ljWorld162');
+  const player=document.getElementById('ljPlayer162');
+  const needle=document.getElementById('ljGaugeNeedle162');
+  const action=document.getElementById('ljAction162');
+  const panel=document.getElementById('ljGaugePanel162');
+  const msg=document.getElementById('ljMessage162');
+
+  const dashScoreEl=document.getElementById('ljDashScore162');
+  const timingEl=document.getElementById('ljTiming162');
+  const distanceEl=document.getElementById('ljDistance162');
+  const landingMark=document.getElementById('ljLandingMark162');
+
+  let phase='gauge';
+  let finished=false;
+  let raf=null;
+  let last=performance.now();
+  let gaugeStart=performance.now();
+  let gaugePos=.08;
+  let gaugeDir=1;
+  let dashQuality=0;
+
+  let runnerX=82;
+  let runSpeed=0;
+  let takeoffQuality=0;
+  let jumpDistance=0;
+  let cameraX=0;
+
+  let flightT=0;
+  let flightDuration=2.25;
+  let flightStartX=82;
+  let flightPeak=155;
+
+  function render(){
+    world.style.transform=`translate3d(${-cameraX}px,0,0)`;
+    player.style.left=`${82}px`;
+
+    if(phase==='gauge'){
+      needle.style.left=`${gaugePos*100}%`;
+    }
+  }
+
+  function dashLabel(q){
+    if(q>=.97)return 'PERFECT';
+    if(q>=.88)return 'GREAT';
+    if(q>=.72)return 'GOOD';
+    if(q>=.52)return 'OK';
+    return 'SLOW';
+  }
+
+  function timingLabel(q){
+    if(q>=.97)return 'PERFECT';
+    if(q>=.88)return 'GREAT';
+    if(q>=.70)return 'GOOD';
+    if(q>=.45)return 'EARLY';
+    return 'MISS';
+  }
+
+  function finishJump(){
+    if(finished)return;
+    finished=true;
+    phase='end';
+
+    if(raf)cancelAnimationFrame(raf);
+
+    const distance=clamp(
+      Math.round(jumpDistance*10)/10,
+      0,
+      300
+    );
+
+    state.records.longJumpMob[p.id]=distance;
+
+    distanceEl.textContent=`${distance.toFixed(1)}m`;
+
+    const resultText=
+      distance>=298?'300m級 PERFECT JUMP!!':
+      distance>=260?'MONSTER JUMP!!':
+      distance>=210?'BIG JUMP!':
+      distance>=150?'NICE JUMP!':
+      'KEEP TRYING!';
+
+    msg.textContent=resultText;
+    msg.classList.add('result-v162');
+
+    landingMark.style.display='block';
+    landingMark.style.left=`${SAND_X+Math.min(530,distance*1.72)}px`;
+
+    beep(distance>=298?1180:distance>=250?980:distance>=180?780:540,190,.045);
+
+    setTimeout(()=>{
+      if(!isGameRunValid(runId))return;
+
+      screen.insertAdjacentHTML('beforeend',`
+        <div class="longjump-result-overlay-v162">
+          <div class="longjump-result-card-v162">
+            <span>LONG JUMP RESULT</span>
+
+            <strong>${distance.toFixed(1)}</strong>
+            <b>METERS</b>
+
+            <div class="longjump-result-values-v162">
+              <div><span>DASH</span><b>${Math.round(dashQuality*100)}%</b></div>
+              <div><span>TAKE OFF</span><b>${Math.round(takeoffQuality*100)}%</b></div>
+            </div>
+
+            <p>${resultText}</p>
+
+            <div class="longjump-300bar-v162">
+              <i style="width:${clamp(distance/300*100,0,100)}%"></i>
+              <b>300m</b>
+            </div>
+
+            <button id="ljResultNext162" class="primary" type="button">RESULTへ</button>
+          </div>
+        </div>`);
+
+      document.getElementById('ljResultNext162').addEventListener('click',()=>{
+        recordScreen(
+          gameIndex,p,humanIndex,
+          `${distance.toFixed(1)}<small>m</small>`,
+          `DASH ${Math.round(dashQuality*100)}% / TAKE OFF ${Math.round(takeoffQuality*100)}%`
+        );
+      });
+    },900);
+  }
+
+  function beginFlight(){
+    phase='flight';
+    panel.classList.add('hidden-v162');
+
+    // Both dash power and take-off timing are important.
+    // Perfect + perfect is ~300m.
+    const combined=Math.pow(dashQuality,.48)*Math.pow(takeoffQuality,.52);
+
+    jumpDistance=clamp(
+      22 + combined*278,
+      0,
+      300
+    );
+
+    flightDuration=1.62+jumpDistance/300*.92;
+    flightPeak=92+jumpDistance/300*120;
+    flightT=0;
+    flightStartX=runnerX;
+
+    msg.textContent='JUMP!!';
+
+    player.classList.add('flying-v162');
+    beep(880,90,.03);
+  }
+
+  function doTakeoff(){
+    if(phase!=='run')return;
+
+    const error=Math.abs(runnerX-TAKEOFF_X);
+
+    // Ultra-giri just before the board is best.
+    // Late tap after the sand edge is treated as a foul/very poor take-off.
+    if(runnerX>SAND_X){
+      takeoffQuality=.03;
+    }else{
+      takeoffQuality=clamp(1-error/92,0,1);
+      if(runnerX<=TAKEOFF_X){
+        // Early jumps lose a little more than a late-but-still-legal jump.
+        takeoffQuality*=clamp(1-(TAKEOFF_X-runnerX)/185,0.42,1);
+      }
+    }
+
+    timingEl.textContent=`${timingLabel(takeoffQuality)} ${Math.round(takeoffQuality*100)}%`;
+
+    beginFlight();
+  }
+
+  action.addEventListener('pointerdown',e=>{
+    e.preventDefault();
+
+    if(finished)return;
+
+    if(phase==='gauge'){
+      const error=Math.abs(gaugePos-.5);
+      dashQuality=clamp(1-error/.5,0,1);
+
+      dashScoreEl.textContent=`${dashLabel(dashQuality)} ${Math.round(dashQuality*100)}%`;
+
+      phase='run';
+      panel.classList.add('run-v162');
+      panel.querySelector('span').textContent='RUN → TAKE OFF';
+      action.textContent='JUMP!';
+      msg.textContent='砂場ギリギリ手前でJUMP！';
+
+      runnerX=82;
+      runSpeed=250+dashQuality*115;
+
+      beep(dashQuality>=.95?1030:dashQuality>=.75?760:520,100,.028);
+      return;
+    }
+
+    if(phase==='run'){
+      doTakeoff();
+    }
+  },{passive:false});
+
+  // Player, runway and sand are all positioned before countdown.
+  render();
+
+  if(!(await countdown('LONG JUMP',runId,{transparent:true})))return;
+
+  action.disabled=false;
+  gaugeStart=last=performance.now();
+
+  function frame(now){
+    if(finished||!isGameRunValid(runId))return;
+
+    const dt=Math.min(.032,(now-last)/1000);
+    last=now;
+
+    if(phase==='gauge'){
+      // High-speed arrow gauge.
+      const speed=1.72;
+      gaugePos+=gaugeDir*speed*dt;
+
+      if(gaugePos>=1){
+        gaugePos=1;
+        gaugeDir=-1;
+      }
+
+      if(gaugePos<=0){
+        gaugePos=0;
+        gaugeDir=1;
+      }
+    }else if(phase==='run'){
+      runnerX+=runSpeed*dt;
+
+      // Camera follows the run.
+      cameraX=clamp(runnerX-82,0,RUNWAY_END-260);
+      player.style.transform='translate3d(0,0,0)';
+
+      if(runnerX>TAKEOFF_X-125&&runnerX<TAKEOFF_X+10){
+        msg.textContent='NOW!!';
+        msg.classList.add('now-v162');
+      }else{
+        msg.classList.remove('now-v162');
+      }
+
+      // If the user never taps, auto-foul jump after the sand edge.
+      if(runnerX>SAND_X+20){
+        takeoffQuality=.02;
+        timingEl.textContent='FOUL 2%';
+        beginFlight();
+      }
+    }else if(phase==='flight'){
+      flightT+=dt;
+
+      const t=clamp(flightT/flightDuration,0,1);
+      const arc=Math.sin(Math.PI*t);
+      const visualTravel=jumpDistance*1.72;
+
+      const visualX=TAKEOFF_X + visualTravel*t;
+      const jumpY=arc*flightPeak;
+
+      cameraX=clamp(
+        visualX-82,
+        0,
+        WORLD_W-360
+      );
+
+      player.style.transform=`translate3d(0,${-jumpY}px,0)`;
+
+      if(t>=1){
+        player.classList.remove('flying-v162');
+        player.style.transform='translate3d(0,0,0)';
+        finishJump();
+        return;
+      }
     }
 
     render();

@@ -26360,3 +26360,419 @@ canvas{
   height:100%;
   background:#e46152;
 }
+
+
+/* =========================================================
+   V10.62 — Pinball random rotating fans
+   ========================================================= */
+.pinball-fan-v162{
+  position:absolute;
+  z-index:12;
+  width:62px;
+  height:62px;
+  transform:translate(-50%,-50%);
+  transform-origin:50% 50%;
+  border:3px solid #13141c;
+  border-radius:50%;
+  background:#36425d;
+  will-change:transform;
+}
+.pinball-fan-v162>i{
+  position:absolute;
+  left:27px;
+  top:3px;
+  width:8px;
+  height:27px;
+  border:2px solid #11131a;
+  border-radius:8px 8px 3px 3px;
+  background:#82dcf7;
+  transform-origin:4px 28px;
+}
+.pinball-fan-v162>i:nth-child(2){
+  transform:rotate(120deg);
+}
+.pinball-fan-v162>i:nth-child(3){
+  transform:rotate(240deg);
+}
+.pinball-fan-v162>b{
+  position:absolute;
+  left:50%;
+  top:50%;
+  width:16px;
+  height:16px;
+  transform:translate(-50%,-50%);
+  border:3px solid #11131a;
+  border-radius:50%;
+  background:#ffe06d;
+}
+.pinball-fan-v162.hit-v162{
+  filter:brightness(1.45);
+}
+.pinball-result-random-v162{
+  font-size:8px;
+  font-weight:900;
+  opacity:.78;
+}
+
+/* =========================================================
+   V10.62 — MOB LONG JUMP
+   ========================================================= */
+.longjump-shell-v162{
+  height:100%;
+  display:flex;
+  flex-direction:column;
+  gap:7px;
+}
+.longjump-hud-v162{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:5px;
+}
+.longjump-hud-v162>div{
+  display:grid;
+  gap:2px;
+  padding:6px 4px;
+  border:3px solid var(--ink);
+  border-radius:11px;
+  background:#fff7df;
+  text-align:center;
+}
+.longjump-hud-v162 span{
+  font-size:6px;
+  font-weight:1000;
+}
+.longjump-hud-v162 b{
+  font-size:10px;
+}
+.longjump-stage-v162{
+  position:relative;
+  flex:1;
+  min-height:430px;
+  overflow:hidden;
+  border:4px solid var(--ink);
+  border-radius:20px;
+  background:#a9ddf2;
+  touch-action:none!important;
+}
+.longjump-sky-v162{
+  position:absolute;
+  inset:0;
+  background:#9fdbf3;
+}
+.longjump-stand-v162{
+  position:absolute;
+  z-index:2;
+  left:0;
+  right:0;
+  top:34px;
+  height:138px;
+  border-top:5px solid #29272d;
+  border-bottom:5px solid #29272d;
+  background:#d8d4c8;
+}
+.longjump-stand-v162>b{
+  position:absolute;
+  left:50%;
+  top:7px;
+  transform:translateX(-50%);
+  padding:3px 9px;
+  border:3px solid var(--ink);
+  border-radius:999px;
+  background:#fff;
+  font-size:8px;
+}
+.longjump-crowd-v162{
+  position:absolute;
+  left:7px;
+  right:7px;
+  top:40px;
+  display:grid;
+  grid-template-columns:repeat(14,1fr);
+  gap:5px 3px;
+}
+.longjump-crowd-v162 i{
+  position:relative;
+  height:18px;
+  border:2px solid var(--ink);
+  border-radius:8px 8px 4px 4px;
+  background:#efb871;
+}
+.longjump-crowd-v162 i:before{
+  content:"";
+  position:absolute;
+  left:50%;
+  top:-8px;
+  width:9px;
+  height:9px;
+  transform:translateX(-50%);
+  border:2px solid var(--ink);
+  border-radius:50%;
+  background:#ffe1b7;
+}
+.longjump-crowd-v162 i.c1{background:#7fc5e8}
+.longjump-crowd-v162 i.c2{background:#e99696}
+.longjump-crowd-v162 i.c3{background:#91ce87}
+.longjump-crowd-v162 i.c4{background:#c5a0dc}
+.longjump-crowd-v162 i.c5{background:#efd66c}
+.longjump-world-v162{
+  position:absolute;
+  z-index:6;
+  left:0;
+  bottom:0;
+  height:56%;
+  will-change:transform;
+}
+.longjump-runway-v162{
+  position:absolute;
+  left:0;
+  bottom:0;
+  width:920px;
+  height:150px;
+  border-top:6px solid #fff;
+  background:
+    repeating-linear-gradient(
+      0deg,
+      #bd5148 0 31px,
+      #f5e6e0 31px 35px,
+      #bd5148 35px 67px
+    );
+}
+.longjump-takeoff-v162{
+  position:absolute;
+  bottom:0;
+  width:16px;
+  height:150px;
+  border-left:4px solid var(--ink);
+  border-right:4px solid var(--ink);
+  background:#fff;
+}
+.longjump-sand-v162{
+  position:absolute;
+  bottom:0;
+  width:620px;
+  height:150px;
+  overflow:hidden;
+  border:5px solid #fff;
+  border-bottom:0;
+  background:#e9ca7e;
+}
+.longjump-sand-v162>i{
+  position:absolute;
+  top:0;
+  bottom:0;
+  width:2px;
+  background:rgba(100,77,37,.24);
+}
+.longjump-landing-mark-v162{
+  position:absolute;
+  z-index:9;
+  bottom:10px;
+  width:8px;
+  height:135px;
+  display:none;
+  border:3px solid var(--ink);
+  background:#ffe15f;
+}
+.longjump-player-v162{
+  position:absolute;
+  z-index:22;
+  left:82px;
+  bottom:58px;
+  width:52px;
+  height:62px;
+  transform-origin:50% 100%;
+  will-change:transform;
+}
+.longjump-player-v162 img{
+  position:absolute;
+  left:2px;
+  top:0;
+  width:48px;
+  height:48px;
+  object-fit:contain;
+}
+.longjump-player-v162>i,
+.longjump-player-v162>b{
+  position:absolute;
+  bottom:0;
+  width:6px;
+  height:18px;
+  border:2px solid var(--ink);
+  background:#fff;
+}
+.longjump-player-v162>i{left:14px}
+.longjump-player-v162>b{right:14px}
+.longjump-player-v162.flying-v162{
+  rotate:-8deg;
+}
+.longjump-message-v162{
+  position:absolute;
+  z-index:35;
+  left:50%;
+  top:48%;
+  transform:translate(-50%,-50%);
+  min-width:130px;
+  padding:6px 9px;
+  border:3px solid var(--ink);
+  border-radius:12px;
+  background:#fff4b2;
+  text-align:center;
+  font-size:14px;
+  font-weight:1000;
+  pointer-events:none;
+}
+.longjump-message-v162.now-v162{
+  background:#ffdb52;
+  font-size:22px;
+}
+.longjump-message-v162.result-v162{
+  top:34%;
+  background:#ffe15f;
+  font-size:20px;
+}
+.longjump-gauge-panel-v162{
+  position:absolute;
+  z-index:45;
+  left:12px;
+  right:12px;
+  bottom:12px;
+  display:grid;
+  gap:7px;
+  padding:10px;
+  border:4px solid var(--ink);
+  border-radius:17px;
+  background:#fff7df;
+}
+.longjump-gauge-panel-v162.hidden-v162{
+  opacity:.12;
+  pointer-events:none;
+}
+.longjump-gauge-panel-v162>span{
+  text-align:center;
+  font-size:9px;
+  font-weight:1000;
+}
+.longjump-gauge-v162{
+  position:relative;
+  height:42px;
+  overflow:hidden;
+  border:4px solid var(--ink);
+  border-radius:13px;
+  background:
+    linear-gradient(
+      90deg,
+      #df7772 0 18%,
+      #f0c86a 18% 36%,
+      #8bdb87 36% 47%,
+      #5fda8b 47% 53%,
+      #8bdb87 53% 64%,
+      #f0c86a 64% 82%,
+      #df7772 82% 100%
+    );
+}
+.longjump-gauge-center-v162{
+  position:absolute;
+  left:50%;
+  top:0;
+  bottom:0;
+  width:5px;
+  transform:translateX(-50%);
+  background:#fff;
+  box-shadow:0 0 0 2px #11131a;
+}
+.longjump-gauge-v162>b{
+  position:absolute;
+  left:8%;
+  top:50%;
+  transform:translate(-50%,-50%);
+  font-size:30px;
+  line-height:1;
+  filter:drop-shadow(0 2px 0 #fff);
+}
+.longjump-action-v162{
+  min-height:49px;
+}
+.longjump-result-overlay-v162{
+  position:fixed;
+  z-index:175;
+  inset:0;
+  display:grid;
+  place-items:center;
+  padding:18px;
+  background:rgba(18,18,25,.72);
+}
+.longjump-result-card-v162{
+  width:min(92vw,345px);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:5px;
+  padding:18px;
+  border:5px solid var(--ink);
+  border-radius:24px;
+  background:#fff2b3;
+  text-align:center;
+  animation:longJumpPop162 .5s ease;
+}
+@keyframes longJumpPop162{
+  from{scale:.75;opacity:0}
+  60%{scale:1.05;opacity:1}
+  to{scale:1}
+}
+.longjump-result-card-v162>span{
+  font-size:9px;
+  font-weight:1000;
+}
+.longjump-result-card-v162>strong{
+  font-size:52px;
+  line-height:.92;
+}
+.longjump-result-card-v162>b{
+  font-size:14px;
+}
+.longjump-result-values-v162{
+  width:100%;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:6px;
+}
+.longjump-result-values-v162>div{
+  display:grid;
+  gap:2px;
+  padding:7px;
+  border:3px solid var(--ink);
+  border-radius:11px;
+  background:#fff;
+}
+.longjump-result-values-v162 span{
+  font-size:7px;
+  font-weight:1000;
+}
+.longjump-result-values-v162 b{
+  font-size:15px;
+}
+.longjump-result-card-v162>p{
+  margin:4px 0;
+  font-weight:1000;
+}
+.longjump-300bar-v162{
+  position:relative;
+  width:100%;
+  height:21px;
+  overflow:hidden;
+  border:3px solid var(--ink);
+  border-radius:999px;
+  background:#fff;
+}
+.longjump-300bar-v162>i{
+  display:block;
+  height:100%;
+  background:#6fd691;
+}
+.longjump-300bar-v162>b{
+  position:absolute;
+  right:7px;
+  top:50%;
+  transform:translateY(-50%);
+  font-size:8px;
+}
