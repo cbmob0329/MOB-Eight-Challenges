@@ -331,10 +331,9 @@ const GAMES=[
   {no:93,key:"waterSkip",title:"モブくん水切り",sub:"速度・角度・水面の状態で毎回変化する水切り回数を競う",legacy:101},
   {no:94,key:"tamaireMob",title:"モブくん玉入れ",sub:"動くカゴへ10球をテンポよく連投。1個10点",legacy:102},
   {no:95,key:"mineCartMob",title:"モブくんトロッコ",sub:"長い鉱山コースを高速走行。穴・スロープ・トランポリン・マグマを2段ジャンプで突破",legacy:105},
-  {no:96,key:"airHockeyMob",title:"モブくんエアホッケー",sub:"8秒間パドルを直接動かし、壁反射と角度を使って上ゴールを狙う",legacy:107},
+  {no:96,key:"airHockeyMob",title:"モブくんエアホッケー",sub:"12秒間、2つのパックを同時にさばいて上ゴールを狙う",legacy:107},
   {no:97,key:"ropeSwingMob",title:"モブくんロープスイング",sub:"3本のロープをタイミングよく離して渡り、最後の着地点100点ゾーンを狙う",legacy:108},
-  {no:98,key:"wallJumpMob",title:"モブくん壁ジャンプ",sub:"画面タップで左右の壁を飛び移り、障害物を避けながら10秒で頂上を目指す",legacy:109},
-  {no:99,key:"billiardsMob",title:"モブくんビリヤード",sub:"白球を引いて離し、最大4ショットで3つの色球をポケットへ落とす",legacy:110}
+  {no:98,key:"billiardsMob",title:"モブくんビリヤード",sub:"モブくんがキューで白球を強く打ち、最大4ショットで3つの色球を落とす",legacy:110}
 ];
 
 function legacyGameIndex(gameIndex){
@@ -408,7 +407,7 @@ function freshState(){
         paperPlane:{},tankMob:{},curlingMob:{},bubbleMob:{},
         changeMob:{},baggageMob:{},treasureMob:{},rouletteMob:{},excavationMob:{},
         oldMaidDuel:{},robotMarch:{},monsterMaster:{},scoutMan:{},
-        atafutaSurvival:{},waveMaster:{},battleRoyaleMob:{},littleMobShot:{},monsterBoxMob:{},alienBattleMob:{},mobMusou:{},iaidoMaster:{},killLeaderMob:{},mobSpeedRacer:{},summonMaster:{},mobPinball:{},hurdleRun:{},longJumpMob:{},pkKicker:{},threePoint:{},bowlingMob:{},waterSkip:{},tamaireMob:{},mineCartMob:{},airHockeyMob:{},ropeSwingMob:{},wallJumpMob:{},billiardsMob:{}
+        atafutaSurvival:{},waveMaster:{},battleRoyaleMob:{},littleMobShot:{},monsterBoxMob:{},alienBattleMob:{},mobMusou:{},iaidoMaster:{},killLeaderMob:{},mobSpeedRacer:{},summonMaster:{},mobPinball:{},hurdleRun:{},longJumpMob:{},pkKicker:{},threePoint:{},bowlingMob:{},waterSkip:{},tamaireMob:{},mineCartMob:{},airHockeyMob:{},ropeSwingMob:{},billiardsMob:{}
     },
     total:{},
     roundPoints:[],
@@ -518,7 +517,7 @@ function renderHome(){
     <section class="hero hero-v119">
       <div>
         <span class="kicker">SMARTPHONE PARTY GAME</span>
-        <h1>99 MINI<br>GAMES</h1>
+        <h1>98 MINI<br>GAMES</h1>
         <p>通常対戦は「チーム戦」「個人戦」。さらに8人/16人の「モブくんゲーム王決定戦」を遊べます。</p>
       </div>
       <div class="hero-mark">MOB</div>
@@ -543,7 +542,7 @@ function renderHome(){
     </section>
 
     <section class="panel flat">
-      <div class="panel-head"><h3>99 MINI GAMES</h3><span class="tag">GAME 1 → 99</span></div>
+      <div class="panel-head"><h3>98 MINI GAMES</h3><span class="tag">GAME 1 → 98</span></div>
       <div class="compact-game-grid home-compact-games-v119">
         ${GAMES.map(g=>`<div><b>${g.no}</b><span>${g.title}</span></div>`).join("")}
       </div>
@@ -563,7 +562,7 @@ function renderFreePlaySelect(){
   screen.innerHTML=`
     <div class="game-head">
       <div><span class="kicker">FREE PLAY</span><h2>1人で遊ぶ</h2><p class="lead">好きなゲームを1つ選んでプレイ。</p></div>
-      <div class="game-badge">99</div>
+      <div class="game-badge">98</div>
     </div>
 
     <button id="freeBack" class="secondary wizard-back-v119" type="button">← メインへ戻る</button>
@@ -601,7 +600,7 @@ function renderGameGuide(){
   screen.innerHTML=`
     <div class="game-head">
       <div><span class="kicker">GAME GUIDE</span><h2>各ゲームの説明</h2><p class="lead">内容と100点換算の目安を一覧で確認できます。</p></div>
-      <div class="game-badge">99</div>
+      <div class="game-badge">98</div>
     </div>
 
     <button id="guideBack" class="secondary wizard-back-v119" type="button">← メインへ戻る</button>
@@ -2037,7 +2036,7 @@ function renderPlayStyleSelect(){
       <button id="normalStyle" class="style-select-card normal" type="button">
         <span>NORMAL</span>
         <b>順番に全種目</b>
-        <small>GAME 1 → 99 を順番にプレイ</small>
+        <small>GAME 1 → 98 を順番にプレイ</small>
       </button>
       <button id="customStyle" class="style-select-card custom" type="button">
         <span>CUSTOM</span>
@@ -2047,7 +2046,7 @@ function renderPlayStyleSelect(){
     </div>
 
     <section class="panel flat">
-      <h3>99 MINI GAMES</h3>
+      <h3>98 MINI GAMES</h3>
       <div class="compact-game-grid">
         ${GAMES.map(g=>`<div><b>${g.no}</b><span>${g.title}</span></div>`).join("")}
       </div>
@@ -2342,9 +2341,9 @@ function scoreRuleForGame(index){
     "",
     "長距離トロッコ完走タイム / 17.00秒以下=100点 / 27.00秒以上=0点 / 落下はタイム加算",
     "",
-    "8秒 / 相手ゴール+20点 / 自陣ゴール-10点 / 最大100点",
+    "12秒 / パック2個同時 / 相手ゴール+20点 / 自陣ゴール-10点 / 最大100点",
     "3本のロープを渡った後の着地点 / 100・80・60・40点 / 途中落下は到達度で記録",
-    "10秒 / 頂上到達=100点 / 途中終了はHEIGHT進行率を得点化",
+    "",
     "色球1個=25点 / 3球全部で75点 + ショット数ボーナス最大25点 / 最大4ショット"
   ][legacyIndex];
 }
@@ -2559,12 +2558,10 @@ function showGameIntro(index){
     }else if(legacyIndex===105){
     rules=`<li>高速トロッコをタップでJUMP、空中でもう一度タップでDOUBLE JUMP。長い鉱山を走り切ります。</li><li>穴・スロープ・トランポリン・マグマが出現。ギミックを使い分けて最速ゴールを狙います。</li>`;
   }else if(legacyIndex===107){
-    rules=`<li>画面下半分でパドルを直接ドラッグ。パックを上側ゴールへ入れると+20点です。</li><li>8秒勝負。自陣ゴールは-10点。パドルの端や移動速度で反射角が変わります。</li>`;
+    rules=`<li>画面下半分でパドルを直接ドラッグ。2つのパックを同時に上側ゴールへ入れると+20点です。</li><li>12秒勝負。自陣ゴールは-10点。2パック同士もぶつかります。</li>`;
   }else if(legacyIndex===108){
     rules=`<li>モブくんがロープで揺れています。画面タップで離し、次のロープへ飛び移ります。</li><li>3本目の後は着地点勝負。100点ゾーンを飛び越えても得点は下がります。</li>`;
-  }else if(legacyIndex===109){
-    rules=`<li>画面タップで反対側の壁へジャンプ。壁にいる間はゆっくり下へ滑ります。</li><li>障害物を避けて10秒以内に頂上へ。1回目の接触は落下、2回目で終了です。</li>`;
-  }else if(legacyIndex===110){
+    }else if(legacyIndex===110){
     rules=`<li>白球から後ろへ引っ張って離し、色球3個をポケットへ入れます。</li><li>最大4ショット。3球すべて落とすとショット数ボーナスが付き、2ショット以内なら100点です。</li>`;
   }else{
     rules=`<li>${esc(g.sub)}</li>`;
@@ -2712,7 +2709,6 @@ function humanReady(gameIndex,humanIndex){
     else if(legacyIndex===105)startMineCartMob(p,humanIndex,runId);
     else if(legacyIndex===107)startAirHockeyMob(p,humanIndex,runId);
     else if(legacyIndex===108)startRopeSwingMob(p,humanIndex,runId);
-    else if(legacyIndex===109)startWallJumpMob(p,humanIndex,runId);
     else if(legacyIndex===110)startBilliardsMob(p,humanIndex,runId);
     else{
       gameSessionActive=false;
@@ -25590,7 +25586,7 @@ function softenCpuResultV121(gameIndex,p,ultra){
 
   const specificallyTuned=new Set([
     50,51,54,59,62,63,
-    64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,95,96,97,98,99,100,101,102,105,107,108,109,110
+    64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,95,96,97,98,99,100,101,102,105,107,108,110
   ]);
 
   if(
@@ -25920,11 +25916,9 @@ function simulateOneCpu(gameIndex,p){
   }else if(legacyIndex===105){
     state.records.mineCartMob[p.id]=ultra?randi(16800,19200):randi(18800,26500);
   }else if(legacyIndex===107){
-    state.records.airHockeyMob[p.id]=ultra?randi(80,100):randi(20,90);
+    state.records.airHockeyMob[p.id]=ultra?randi(80,100):randi(30,100);
   }else if(legacyIndex===108){
     state.records.ropeSwingMob[p.id]=ultra?[80,100][randi(0,1)]:[10,30,40,60,80,100][randi(0,5)];
-  }else if(legacyIndex===109){
-    state.records.wallJumpMob[p.id]=ultra?randi(86,100):randi(30,92);
   }else if(legacyIndex===110){
     state.records.billiardsMob[p.id]=ultra?[93,100][randi(0,1)]:[25,50,75,85,93][randi(0,4)];
   }else{
@@ -26108,7 +26102,7 @@ function performancePoints(gameIndex,v){
     if(v>=27000)return 0;
     return clamp(Math.round((27000-v)/10000*100),0,100);
   }
-  if(legacyIndex>=107&&legacyIndex<=110){
+  if(legacyIndex===107||legacyIndex===108||legacyIndex===110){
     return clamp(Math.round(v),0,100);
   }
   return clamp(Math.round(v),0,100);
@@ -26219,7 +26213,6 @@ function formatRecord(gameIndex,v){
   if(legacyIndex===105)return `${(v/1000).toFixed(2)}秒`;
   if(legacyIndex===107)return `${Math.round(v)}pt`;
   if(legacyIndex===108)return `${Math.round(v)}pt`;
-  if(legacyIndex===109)return `${Math.round(v)}%`;
   if(legacyIndex===110)return `${Math.round(v)}pt`;
   return `${Math.round(v)}pt`;
 }
@@ -28651,41 +28644,41 @@ async function startAirHockeyMob(p,humanIndex,runId){
   const gameIndex=GAMES.findIndex(g=>g.key==='airHockeyMob');
 
   screen.innerHTML=`
-    <div class="airh-shell-v173 gameplay-fit">
+    <div class="airh-shell-v174 gameplay-fit">
       <div class="game-head">
-        <div><span class="kicker">${esc(p.name)}</span><h2>モブくんエアホッケー</h2><p class="lead">8 SECONDS / DIRECT PADDLE</p></div>
+        <div><span class="kicker">${esc(p.name)}</span><h2>モブくんエアホッケー</h2><p class="lead">12 SECONDS / 2 PUCKS</p></div>
         <div class="game-badge">${playBadge(humanIndex)}</div>
       </div>
 
-      <div class="airh-hud-v173">
-        <div><span>TIME</span><b id="airhTime173">8.00</b></div>
-        <div><span>GOAL</span><b id="airhGoal173">0</b></div>
-        <div><span>SCORE</span><b id="airhScore173">0</b></div>
+      <div class="airh-hud-v174">
+        <div><span>TIME</span><b id="airhTime174">12.00</b></div>
+        <div><span>GOAL</span><b id="airhGoal174">0</b></div>
+        <div><span>SCORE</span><b id="airhScore174">0</b></div>
       </div>
 
-      <div id="airhStage173" class="airh-stage-v173">
-        <div class="airh-rink-v173">
-          <div class="airh-line-v173"></div>
-          <div class="airh-circle-v173"></div>
-          <div class="airh-goal top-v173"></div>
-          <div class="airh-goal bottom-v173"></div>
+      <div id="airhStage174" class="airh-stage-v174">
+        <div class="airh-rink-v174">
+          <div class="airh-line-v174"></div>
+          <div class="airh-circle-v174"></div>
+          <div class="airh-goal top-v174"></div>
+          <div class="airh-goal bottom-v174"></div>
         </div>
 
-        <div id="airhDefense173" class="airh-defense-v173"></div>
-        <div id="airhPuck173" class="airh-puck-v173"></div>
-        <div id="airhPaddle173" class="airh-paddle-v173"><img src="icon/01.png" draggable="false" alt=""></div>
-        <div id="airhCall173" class="airh-call-v173">DRAG!</div>
+        <div id="airhDefense174" class="airh-defense-v174"></div>
+        <div id="airhPuckA174" class="airh-puck-v174 a-v174"></div>
+        <div id="airhPuckB174" class="airh-puck-v174 b-v174"></div>
+        <div id="airhPaddle174" class="airh-paddle-v174"><img src="icon/01.png" draggable="false" alt=""></div>
+        <div id="airhCall174" class="airh-call-v174">2 PUCKS!</div>
       </div>
     </div>`;
 
-  const stage=document.getElementById('airhStage173');
-  const puck=document.getElementById('airhPuck173');
-  const paddle=document.getElementById('airhPaddle173');
-  const defense=document.getElementById('airhDefense173');
-  const call=document.getElementById('airhCall173');
-  const timeEl=document.getElementById('airhTime173');
-  const goalEl=document.getElementById('airhGoal173');
-  const scoreEl=document.getElementById('airhScore173');
+  const stage=document.getElementById('airhStage174');
+  const paddle=document.getElementById('airhPaddle174');
+  const defense=document.getElementById('airhDefense174');
+  const call=document.getElementById('airhCall174');
+  const timeEl=document.getElementById('airhTime174');
+  const goalEl=document.getElementById('airhGoal174');
+  const scoreEl=document.getElementById('airhScore174');
 
   void stage.offsetHeight;
 
@@ -28696,100 +28689,137 @@ async function startAirHockeyMob(p,humanIndex,runId){
   const GOAL_HALF=48;
 
   let active=false,finished=false,dragId=null,raf=null,last=performance.now(),start=0;
-  let score=0,goals=0,resetUntil=0;
+  let score=0,goals=0;
   let px=W*.5,py=H*.72,pvx=0,pvy=0,prevMoveAt=performance.now();
-  let bx=W*.5,by=H*.5,bvx=rand(-95,95),bvy=250;
   let defenseX=W*.5,defenseDir=1;
+
+  const pucks=[
+    {
+      el:document.getElementById('airhPuckA174'),
+      x:W*.40,y:H*.44,vx:145,vy:260,resetUntil:0
+    },
+    {
+      el:document.getElementById('airhPuckB174'),
+      x:W*.60,y:H*.55,vx:-160,vy:-245,resetUntil:0
+    }
+  ];
 
   function local(e){
     const r=stage.getBoundingClientRect();
     return {x:e.clientX-r.left,y:e.clientY-r.top};
   }
 
-  function clampSpeed(){
-    const s=Math.hypot(bvx,bvy);
-    const max=720;
+  function clampPuckSpeed(puck){
+    const s=Math.hypot(puck.vx,puck.vy);
+    const max=735;
     if(s>max){
-      bvx=bvx/s*max;
-      bvy=bvy/s*max;
+      puck.vx=puck.vx/s*max;
+      puck.vy=puck.vy/s*max;
     }
-    if(s>0&&s<150){
-      bvx=bvx/s*150;
-      bvy=bvy/s*150;
+    if(s>0&&s<155){
+      puck.vx=puck.vx/s*155;
+      puck.vy=puck.vy/s*155;
     }
   }
 
-  function resetPuck(towardPlayer=true){
-    bx=W*.5+rand(-24,24);
-    by=H*.48;
-    bvx=rand(-125,125);
-    bvy=towardPlayer?rand(225,285):-rand(225,285);
-    resetUntil=performance.now()+230;
-    puck.style.opacity='.55';
+  function resetPuck(puck,towardPlayer=true,slot=0){
+    puck.x=W*(slot===0?.40:.60)+rand(-18,18);
+    puck.y=H*(slot===0?.45:.54);
+    puck.vx=(slot===0?1:-1)*rand(95,165);
+    puck.vy=towardPlayer?rand(225,290):-rand(225,290);
+    puck.resetUntil=performance.now()+210;
+    puck.el.style.opacity='.45';
   }
 
-  function resolvePaddle(){
-    const dx=bx-px,dy=by-py;
+  function resolvePaddle(puck){
+    const dx=puck.x-px,dy=puck.y-py;
     const dist=Math.hypot(dx,dy);
     const min=PUCK_R+PAD_R;
-
     if(dist<=0||dist>=min)return;
 
     const nx=dx/dist,ny=dy/dist;
-    bx=px+nx*(min+.5);
-    by=py+ny*(min+.5);
+    puck.x=px+nx*(min+.5);
+    puck.y=py+ny*(min+.5);
 
-    const rel=bvx*nx+bvy*ny;
+    const rel=puck.vx*nx+puck.vy*ny;
     const impact=Math.max(0,-rel);
 
-    bvx=bvx-(1.85*rel)*nx+pvx*.62;
-    bvy=bvy-(1.85*rel)*ny+pvy*.62;
+    puck.vx=puck.vx-(1.85*rel)*nx+pvx*.62;
+    puck.vy=puck.vy-(1.85*rel)*ny+pvy*.62;
 
     const boost=150+Math.min(250,Math.hypot(pvx,pvy)*.38)+impact*.12;
-    bvx+=nx*boost;
-    bvy+=ny*boost;
-
-    clampSpeed();
-    beep(520+Math.min(300,Math.hypot(bvx,bvy)*.4),24,.008);
+    puck.vx+=nx*boost;
+    puck.vy+=ny*boost;
+    clampPuckSpeed(puck);
+    beep(520+Math.min(300,Math.hypot(puck.vx,puck.vy)*.4),22,.007);
   }
 
-  function resolveDefense(){
+  function resolveDefense(puck){
     const barY=63;
     const halfW=46;
     const halfH=10;
 
     if(
-      by-PUCK_R<=barY+halfH&&
-      by+PUCK_R>=barY-halfH&&
-      bx>=defenseX-halfW-PUCK_R&&
-      bx<=defenseX+halfW+PUCK_R&&
-      bvy<0
+      puck.y-PUCK_R<=barY+halfH&&
+      puck.y+PUCK_R>=barY-halfH&&
+      puck.x>=defenseX-halfW-PUCK_R&&
+      puck.x<=defenseX+halfW+PUCK_R&&
+      puck.vy<0
     ){
-      by=barY+halfH+PUCK_R+1;
-      const edge=(bx-defenseX)/halfW;
-      bvy=Math.abs(bvy)*.94+65;
-      bvx+=edge*170+defenseDir*35;
-      clampSpeed();
-      beep(360,25,.007);
+      puck.y=barY+halfH+PUCK_R+1;
+      const edge=(puck.x-defenseX)/halfW;
+      puck.vy=Math.abs(puck.vy)*.94+65;
+      puck.vx+=edge*170+defenseDir*35;
+      clampPuckSpeed(puck);
+      beep(360,24,.006);
     }
   }
 
-  function scoreGoal(own=false){
+  function resolvePuckPair(a,b){
+    if(performance.now()<a.resetUntil||performance.now()<b.resetUntil)return;
+
+    const dx=b.x-a.x,dy=b.y-a.y;
+    const dist=Math.hypot(dx,dy);
+    const min=PUCK_R*2;
+    if(dist<=0||dist>=min)return;
+
+    const nx=dx/dist,ny=dy/dist;
+    const overlap=min-dist;
+    a.x-=nx*overlap*.5;
+    a.y-=ny*overlap*.5;
+    b.x+=nx*overlap*.5;
+    b.y+=ny*overlap*.5;
+
+    const rel=(a.vx-b.vx)*nx+(a.vy-b.vy)*ny;
+    if(rel<=0)return;
+
+    a.vx-=rel*nx;
+    a.vy-=rel*ny;
+    b.vx+=rel*nx;
+    b.vy+=rel*ny;
+
+    a.vx*=.98;a.vy*=.98;
+    b.vx*=.98;b.vy*=.98;
+    clampPuckSpeed(a);
+    clampPuckSpeed(b);
+    beep(440,18,.004);
+  }
+
+  function scoreGoal(puck,own=false,slot=0){
     if(own){
       score=Math.max(0,score-10);
       call.textContent='OWN GOAL -10';
-      call.className='airh-call-v173 bad-v173';
-      beep(180,100,.025);
-      resetPuck(false);
+      call.className='airh-call-v174 bad-v174';
+      beep(180,95,.023);
+      resetPuck(puck,false,slot);
     }else{
       goals++;
       score=Math.min(100,score+20);
       call.textContent='GOAL! +20';
-      call.className='airh-call-v173 goal-v173';
-      beep(990,100,.03);
-      resetPuck(true);
+      call.className='airh-call-v174 goal-v174';
+      beep(990,95,.028);
+      resetPuck(puck,true,slot);
     }
-
     goalEl.textContent=goals;
     scoreEl.textContent=score;
   }
@@ -28830,16 +28860,17 @@ async function startAirHockeyMob(p,humanIndex,runId){
     dragId=null;
     pvx*=.15;pvy*=.15;
   }
-
   stage.addEventListener('pointerup',stopDrag,{passive:false});
   stage.addEventListener('pointercancel',stopDrag,{passive:false});
 
   function render(){
     paddle.style.left=`${px}px`;
     paddle.style.top=`${py}px`;
-    puck.style.left=`${bx}px`;
-    puck.style.top=`${by}px`;
     defense.style.left=`${defenseX}px`;
+    pucks.forEach(puck=>{
+      puck.el.style.left=`${puck.x}px`;
+      puck.el.style.top=`${puck.y}px`;
+    });
   }
 
   render();
@@ -28848,66 +28879,66 @@ async function startAirHockeyMob(p,humanIndex,runId){
 
   active=true;
   start=last=performance.now();
-  call.textContent='GO!';
-  call.className='airh-call-v173';
+  call.textContent='2 PUCKS GO!';
+  call.className='airh-call-v174';
 
   function frame(now){
     if(finished||!isGameRunValid(runId))return;
-    const dt=Math.min(.024,(now-last)/1000);
+    const dt=Math.min(.022,(now-last)/1000);
     last=now;
 
     const elapsed=now-start;
-    const rem=Math.max(0,8000-elapsed);
+    const rem=Math.max(0,12000-elapsed);
     timeEl.textContent=(rem/1000).toFixed(2);
 
-    const defenseSpeed=elapsed>4000?185:150;
+    const defenseSpeed=elapsed>6000?195:155;
     defenseX+=defenseDir*defenseSpeed*dt;
     if(defenseX>W-72){defenseX=W-72;defenseDir=-1}
     if(defenseX<72){defenseX=72;defenseDir=1}
 
-    if(now>=resetUntil){
-      puck.style.opacity='1';
+    pucks.forEach((puck,slot)=>{
+      if(now<puck.resetUntil)return;
+      puck.el.style.opacity='1';
 
-      bx+=bvx*dt;
-      by+=bvy*dt;
+      puck.x+=puck.vx*dt;
+      puck.y+=puck.vy*dt;
 
-      if(bx<PUCK_R+7){
-        bx=PUCK_R+7;
-        bvx=Math.abs(bvx);
+      if(puck.x<PUCK_R+7){
+        puck.x=PUCK_R+7;
+        puck.vx=Math.abs(puck.vx);
       }
-      if(bx>W-PUCK_R-7){
-        bx=W-PUCK_R-7;
-        bvx=-Math.abs(bvx);
+      if(puck.x>W-PUCK_R-7){
+        puck.x=W-PUCK_R-7;
+        puck.vx=-Math.abs(puck.vx);
       }
 
-      const inGoal=Math.abs(bx-W*.5)<=GOAL_HALF;
+      const inGoal=Math.abs(puck.x-W*.5)<=GOAL_HALF;
 
-      if(by<PUCK_R+3){
-        if(inGoal){
-          scoreGoal(false);
-        }else{
-          by=PUCK_R+3;
-          bvy=Math.abs(bvy);
+      if(puck.y<PUCK_R+3){
+        if(inGoal)scoreGoal(puck,false,slot);
+        else{
+          puck.y=PUCK_R+3;
+          puck.vy=Math.abs(puck.vy);
         }
       }
 
-      if(by>H-PUCK_R-3){
-        if(inGoal){
-          scoreGoal(true);
-        }else{
-          by=H-PUCK_R-3;
-          bvy=-Math.abs(bvy);
+      if(puck.y>H-PUCK_R-3){
+        if(inGoal)scoreGoal(puck,true,slot);
+        else{
+          puck.y=H-PUCK_R-3;
+          puck.vy=-Math.abs(puck.vy);
         }
       }
 
-      resolveDefense();
-      resolvePaddle();
+      resolveDefense(puck);
+      resolvePaddle(puck);
 
-      bvx*=Math.pow(.9985,dt*60);
-      bvy*=Math.pow(.9985,dt*60);
-      clampSpeed();
-    }
+      puck.vx*=Math.pow(.9985,dt*60);
+      puck.vy*=Math.pow(.9985,dt*60);
+      clampPuckSpeed(puck);
+    });
 
+    resolvePuckPair(pucks[0],pucks[1]);
     render();
 
     if(rem<=0){
@@ -28917,11 +28948,11 @@ async function startAirHockeyMob(p,humanIndex,runId){
 
       state.records.airHockeyMob[p.id]=clamp(score,0,100);
       call.textContent=score>=80?'AIR HOCKEY MASTER!':'TIME UP!';
-      call.className='airh-call-v173 result-v173';
+      call.className='airh-call-v174 result-v174';
 
       setTimeout(()=>{
         if(isGameRunValid(runId)){
-          recordScreen(gameIndex,p,humanIndex,`${score}<small>pt</small>`,`${goals} GOALS / 8 SEC`);
+          recordScreen(gameIndex,p,humanIndex,`${score}<small>pt</small>`,`${goals} GOALS / 12 SEC / 2 PUCKS`);
         }
       },600);
       return;
@@ -28943,49 +28974,49 @@ async function startRopeSwingMob(p,humanIndex,runId){
   const WORLD_W=1320;
 
   screen.innerHTML=`
-    <div class="rsw-shell-v173 gameplay-fit">
+    <div class="rsw-shell-v174 gameplay-fit">
       <div class="game-head">
         <div><span class="kicker">${esc(p.name)}</span><h2>モブくんロープスイング</h2><p class="lead">TAP TO RELEASE / 3 ROPES</p></div>
         <div class="game-badge">${playBadge(humanIndex)}</div>
       </div>
 
-      <div class="rsw-hud-v173">
-        <div><span>ROPE</span><b id="rswRope173">1 / 3</b></div>
-        <div><span>STATUS</span><b id="rswStatus173">HOLD</b></div>
-        <div><span>SCORE</span><b id="rswScore173">---</b></div>
+      <div class="rsw-hud-v174">
+        <div><span>ROPE</span><b id="rswRope174">1 / 3</b></div>
+        <div><span>STATUS</span><b id="rswStatus174">HOLD</b></div>
+        <div><span>SCORE</span><b id="rswScore174">---</b></div>
       </div>
 
-      <div id="rswStage173" class="rsw-stage-v173">
-        <div id="rswWorld173" class="rsw-world-v173" style="width:${WORLD_W}px">
-          <div class="rsw-sky-v173"></div>
-          <div class="rsw-cliffs-v173"></div>
+      <div id="rswStage174" class="rsw-stage-v174">
+        <div id="rswWorld174" class="rsw-world-v174" style="width:${WORLD_W}px">
+          <div class="rsw-sky-v174"></div>
+          <div class="rsw-cliffs-v174"></div>
 
-          <div id="rswRopeA173" class="rsw-rope-v173"></div>
-          <div id="rswRopeB173" class="rsw-rope-v173"></div>
-          <div id="rswRopeC173" class="rsw-rope-v173"></div>
+          <div id="rswRopeA174" class="rsw-rope-v174"></div>
+          <div id="rswRopeB174" class="rsw-rope-v174"></div>
+          <div id="rswRopeC174" class="rsw-rope-v174"></div>
 
-          <div class="rsw-landing-v173">
+          <div class="rsw-landing-v174">
             <i class="z40">40</i><i class="z60">60</i><i class="z80">80</i><i class="z100">100</i><i class="z80b">80</i><i class="z60b">60</i><i class="z40b">40</i>
           </div>
         </div>
 
-        <div id="rswPlayer173" class="rsw-player-v173"><img src="icon/01.png" draggable="false" alt=""></div>
-        <div id="rswCall173" class="rsw-call-v173">TAP TO RELEASE</div>
+        <div id="rswPlayer174" class="rsw-player-v174"><img src="icon/01.png" draggable="false" alt=""></div>
+        <div id="rswCall174" class="rsw-call-v174">TAP TO RELEASE</div>
       </div>
     </div>`;
 
-  const stage=document.getElementById('rswStage173');
-  const world=document.getElementById('rswWorld173');
-  const player=document.getElementById('rswPlayer173');
+  const stage=document.getElementById('rswStage174');
+  const world=document.getElementById('rswWorld174');
+  const player=document.getElementById('rswPlayer174');
   const ropeEls=[
-    document.getElementById('rswRopeA173'),
-    document.getElementById('rswRopeB173'),
-    document.getElementById('rswRopeC173')
+    document.getElementById('rswRopeA174'),
+    document.getElementById('rswRopeB174'),
+    document.getElementById('rswRopeC174')
   ];
-  const ropeEl=document.getElementById('rswRope173');
-  const statusEl=document.getElementById('rswStatus173');
-  const scoreEl=document.getElementById('rswScore173');
-  const call=document.getElementById('rswCall173');
+  const ropeEl=document.getElementById('rswRope174');
+  const statusEl=document.getElementById('rswStatus174');
+  const scoreEl=document.getElementById('rswScore174');
+  const call=document.getElementById('rswCall174');
 
   void stage.offsetHeight;
 
@@ -29011,6 +29042,8 @@ async function startRopeSwingMob(p,humanIndex,runId){
   let mode='attached';
   let ropeIndex=0;
   let x=0,y=0,vx=0,vy=0,cameraX=0;
+  let catchState=null;
+
   const GRAVITY=450;
   const CATCH_R=64;
 
@@ -29035,6 +29068,13 @@ async function startRopeSwingMob(p,humanIndex,runId){
     });
   }
 
+  function renderPlayer(){
+    cameraX=clamp(x-stage.clientWidth*.30,0,WORLD_W-stage.clientWidth);
+    world.style.transform=`translate3d(${-cameraX}px,0,0)`;
+    player.style.left=`${x-cameraX}px`;
+    player.style.top=`${y}px`;
+  }
+
   function scoreLanding(px){
     const d=Math.abs(px-1045);
     if(d<=34)return 100;
@@ -29045,8 +29085,7 @@ async function startRopeSwingMob(p,humanIndex,runId){
 
   function finish(score,label){
     if(finished)return;
-    finished=true;
-    active=false;
+    finished=true;active=false;
     if(raf)cancelAnimationFrame(raf);
 
     score=clamp(Math.round(score),0,100);
@@ -29054,8 +29093,7 @@ async function startRopeSwingMob(p,humanIndex,runId){
     scoreEl.textContent=score;
     statusEl.textContent='FINISH';
     call.textContent=label;
-    call.className='rsw-call-v173 result-v173';
-
+    call.className='rsw-call-v174 result-v174';
     beep(score>=80?1020:620,130,.03);
 
     setTimeout(()=>{
@@ -29069,11 +29107,9 @@ async function startRopeSwingMob(p,humanIndex,runId){
     if(mode!=='attached')return;
 
     const st=ropeState(ropeIndex,t);
-    x=st.x;
-    y=st.y;
+    x=st.x;y=st.y;
 
-    const launchMul=2.25;
-    vx=st.vx*launchMul+70;
+    vx=st.vx*2.25+70;
     vy=st.vy*1.05;
 
     mode='flight';
@@ -29082,12 +29118,36 @@ async function startRopeSwingMob(p,humanIndex,runId){
     beep(690+ropeIndex*90,55,.016);
   }
 
+  function beginCatch(nextIndex,t){
+    mode='catching';
+    catchState={
+      nextIndex,
+      started:performance.now(),
+      duration:180,
+      fromX:x,
+      fromY:y
+    };
+    ropeEl.textContent=`${nextIndex+1} / 3`;
+    statusEl.textContent='CATCH';
+    call.textContent='CATCH!';
+    beep(930,70,.02);
+  }
+
   stage.addEventListener('pointerdown',e=>{
     if(!active||finished||mode!=='attached')return;
     e.preventDefault();
-    const t=(performance.now()-start)/1000;
-    release(t);
+    release((performance.now()-start)/1000);
   },{passive:false});
+
+  // Proper pre-countdown placement:
+  // every rope transform, player position and camera are rendered before countdown starts.
+  const preT=0;
+  updateRopes(preT);
+  const pre=ropeState(0,preT);
+  x=pre.x;y=pre.y;
+  renderPlayer();
+  call.textContent='TAP TO RELEASE';
+  statusEl.textContent='HOLD';
 
   if(!(await countdown('ROPE SWING',runId,{transparent:true})))return;
 
@@ -29107,7 +29167,7 @@ async function startRopeSwingMob(p,humanIndex,runId){
       const st=ropeState(ropeIndex,t);
       x=st.x;
       y=st.y;
-    }else{
+    }else if(mode==='flight'){
       vy+=GRAVITY*dt;
       x+=vx*dt;
       y+=vy*dt;
@@ -29118,14 +29178,7 @@ async function startRopeSwingMob(p,humanIndex,runId){
         const dist=Math.hypot(x-next.x,y-next.y);
 
         if(dist<=CATCH_R&&vx>40){
-          ropeIndex++;
-          mode='attached';
-          x=next.x;
-          y=next.y;
-          ropeEl.textContent=`${ropeIndex+1} / 3`;
-          statusEl.textContent='HOLD';
-          call.textContent='TAP TO RELEASE';
-          beep(930,70,.02);
+          beginCatch(ropeIndex+1,t);
         }else if(y>=FLOOR){
           finish(ropeIndex===0?10:30,ropeIndex===0?'MISS 2nd ROPE':'MISS 3rd ROPE');
           return;
@@ -29135,14 +29188,26 @@ async function startRopeSwingMob(p,humanIndex,runId){
         finish(s,`LANDING ${s}`);
         return;
       }
+    }else if(mode==='catching'&&catchState){
+      const target=ropeState(catchState.nextIndex,t);
+      const u=clamp((now-catchState.started)/catchState.duration,0,1);
+      const ease=1-Math.pow(1-u,3);
+
+      // Smoothly join the moving rope instead of snapping to its exact point.
+      x=catchState.fromX+(target.x-catchState.fromX)*ease;
+      y=catchState.fromY+(target.y-catchState.fromY)*ease;
+
+      if(u>=1){
+        ropeIndex=catchState.nextIndex;
+        catchState=null;
+        mode='attached';
+        x=target.x;y=target.y;
+        statusEl.textContent='HOLD';
+        call.textContent='TAP TO RELEASE';
+      }
     }
 
-    cameraX=clamp(x-stage.clientWidth*.30,0,WORLD_W-stage.clientWidth);
-    world.style.transform=`translate3d(${-cameraX}px,0,0)`;
-
-    player.style.left=`${x-cameraX}px`;
-    player.style.top=`${y}px`;
-
+    renderPlayer();
     raf=requestAnimationFrame(frame);
   }
 
@@ -29153,223 +29218,6 @@ async function startRopeSwingMob(p,humanIndex,runId){
 // =========================================================
 // V10.73 GAME — モブくん壁ジャンプ
 // =========================================================
-async function startWallJumpMob(p,humanIndex,runId){
-  gameFit();
-  const gameIndex=GAMES.findIndex(g=>g.key==='wallJumpMob');
-  const WORLD_H=1500;
-  const GOAL_Y=1260;
-
-  const obstacles=[
-    {y:145,side:'left',w:66},
-    {y:245,side:'right',w:74},
-    {y:350,side:'left',w:78},
-    {y:455,side:'right',w:60},
-    {y:560,side:'left',w:84},
-    {y:655,side:'right',w:76},
-    {y:750,side:'left',w:60},
-    {y:842,side:'right',w:84},
-    {y:930,side:'left',w:70},
-    {y:1018,side:'right',w:74},
-    {y:1100,side:'left',w:82},
-    {y:1180,side:'right',w:66}
-  ];
-
-  screen.innerHTML=`
-    <div class="wj-shell-v173 gameplay-fit">
-      <div class="game-head">
-        <div><span class="kicker">${esc(p.name)}</span><h2>モブくん壁ジャンプ</h2><p class="lead">TAP → OTHER WALL / 10 SEC</p></div>
-        <div class="game-badge">${playBadge(humanIndex)}</div>
-      </div>
-
-      <div class="wj-hud-v173">
-        <div><span>TIME</span><b id="wjTime173">10.00</b></div>
-        <div><span>HEIGHT</span><b id="wjHeight173">0%</b></div>
-        <div><span>HIT</span><b id="wjHit173">0 / 2</b></div>
-      </div>
-
-      <div id="wjStage173" class="wj-stage-v173">
-        <div id="wjWorld173" class="wj-world-v173" style="height:${WORLD_H}px">
-          <div class="wj-wall left-v173"></div>
-          <div class="wj-wall right-v173"></div>
-
-          ${obstacles.map((o,i)=>`
-            <i class="wj-obstacle-v173 ${o.side}-v173" data-obs="${i}"
-              style="bottom:${o.y}px;width:${o.w}px"></i>
-          `).join('')}
-
-          <div class="wj-goal-v173" style="bottom:${GOAL_Y}px">TOP</div>
-        </div>
-
-        <div id="wjPlayer173" class="wj-player-v173"><img src="icon/01.png" draggable="false" alt=""></div>
-        <div id="wjCall173" class="wj-call-v173">TAP JUMP</div>
-      </div>
-    </div>`;
-
-  const stage=document.getElementById('wjStage173');
-  const world=document.getElementById('wjWorld173');
-  const player=document.getElementById('wjPlayer173');
-  const call=document.getElementById('wjCall173');
-  const timeEl=document.getElementById('wjTime173');
-  const heightEl=document.getElementById('wjHeight173');
-  const hitEl=document.getElementById('wjHit173');
-
-  void stage.offsetHeight;
-
-  const W=stage.clientWidth;
-  const PLAYER_R=19;
-  const LEFT_X=28;
-  const RIGHT_X=W-28;
-
-  let active=false,finished=false,raf=null,last=performance.now(),start=0;
-  let side='left';
-  let x=LEFT_X;
-  let progress=38;
-  let vx=0,vy=0;
-  let airborne=false;
-  let hits=0;
-  let hitCooldown=0;
-  let cameraY=0;
-
-  function finish(label){
-    if(finished)return;
-
-    finished=true;
-    active=false;
-    if(raf)cancelAnimationFrame(raf);
-
-    const score=clamp(Math.round(progress/GOAL_Y*100),0,100);
-    state.records.wallJumpMob[p.id]=score;
-
-    call.textContent=label;
-    call.className='wj-call-v173 result-v173';
-    heightEl.textContent=`${score}%`;
-
-    beep(score>=90?1030:620,130,.03);
-
-    setTimeout(()=>{
-      if(isGameRunValid(runId)){
-        recordScreen(gameIndex,p,humanIndex,`${score}<small>%</small>`,`${hits} HIT / HEIGHT`);
-      }
-    },620);
-  }
-
-  function collideObstacle(){
-    if(performance.now()<hitCooldown)return false;
-
-    for(const o of obstacles){
-      if(Math.abs(progress-o.y)>25)continue;
-
-      const hitX=o.side==='left'
-        ? x-PLAYER_R<o.w
-        : x+PLAYER_R>W-o.w;
-
-      if(hitX){
-        hits++;
-        hitEl.textContent=`${hits} / 2`;
-        hitCooldown=performance.now()+620;
-
-        progress=Math.max(20,progress-72);
-        airborne=false;
-        vx=0;vy=0;
-        side=x<W*.5?'left':'right';
-        x=side==='left'?LEFT_X:RIGHT_X;
-
-        player.classList.add('hit-v173');
-        setTimeout(()=>player.classList.remove('hit-v173'),420);
-
-        call.textContent=hits>=2?'2nd HIT!':'HIT! -HEIGHT';
-        call.className='wj-call-v173 hit-v173';
-        beep(190,120,.025);
-
-        if(hits>=2){
-          finish('2 HITS!');
-        }
-        return true;
-      }
-    }
-
-    return false;
-  }
-
-  stage.addEventListener('pointerdown',e=>{
-    if(!active||finished||airborne)return;
-    e.preventDefault();
-
-    airborne=true;
-    const target=side==='left'?'right':'left';
-    vx=(target==='right'?1:-1)*(W-56)/.42;
-    vy=355;
-
-    call.textContent='JUMP!';
-    call.className='wj-call-v173';
-    beep(690,45,.014);
-  },{passive:false});
-
-  if(!(await countdown('WALL JUMP',runId,{transparent:true})))return;
-
-  active=true;
-  start=last=performance.now();
-
-  function frame(now){
-    if(finished||!isGameRunValid(runId))return;
-
-    const dt=Math.min(.026,(now-last)/1000);
-    last=now;
-
-    const rem=Math.max(0,10000-(now-start));
-    timeEl.textContent=(rem/1000).toFixed(2);
-
-    if(airborne){
-      x+=vx*dt;
-      progress+=vy*dt;
-      vy-=760*dt;
-
-      if(x<=LEFT_X){
-        x=LEFT_X;
-        side='left';
-        airborne=false;
-        vx=0;vy=0;
-        call.textContent='TAP JUMP';
-      }
-
-      if(x>=RIGHT_X){
-        x=RIGHT_X;
-        side='right';
-        airborne=false;
-        vx=0;vy=0;
-        call.textContent='TAP JUMP';
-      }
-    }else{
-      progress=Math.max(0,progress-17*dt);
-    }
-
-    if(collideObstacle())return;
-
-    if(progress>=GOAL_Y){
-      progress=GOAL_Y;
-      finish('TOP!');
-      return;
-    }
-
-    cameraY=Math.max(0,progress-stage.clientHeight*.58);
-    world.style.transform=`translateY(${cameraY}px)`;
-
-    player.style.left=`${x}px`;
-    player.style.bottom=`${progress-cameraY}px`;
-
-    heightEl.textContent=`${Math.round(clamp(progress/GOAL_Y,0,1)*100)}%`;
-
-    if(rem<=0){
-      finish('TIME UP!');
-      return;
-    }
-
-    raf=requestAnimationFrame(frame);
-  }
-
-  raf=requestAnimationFrame(frame);
-}
-
 
 // =========================================================
 // V10.73 GAME — モブくんビリヤード
@@ -29379,36 +29227,44 @@ async function startBilliardsMob(p,humanIndex,runId){
   const gameIndex=GAMES.findIndex(g=>g.key==='billiardsMob');
 
   screen.innerHTML=`
-    <div class="bil-shell-v173 gameplay-fit">
+    <div class="bil-shell-v174 gameplay-fit">
       <div class="game-head">
-        <div><span class="kicker">${esc(p.name)}</span><h2>モブくんビリヤード</h2><p class="lead">PULL CUE BALL / MAX 4 SHOTS</p></div>
+        <div><span class="kicker">${esc(p.name)}</span><h2>モブくんビリヤード</h2><p class="lead">MOB CUE SHOT / MAX 4 SHOTS</p></div>
         <div class="game-badge">${playBadge(humanIndex)}</div>
       </div>
 
-      <div class="bil-hud-v173">
-        <div><span>SHOT</span><b id="bilShot173">0 / 4</b></div>
-        <div><span>POCKET</span><b id="bilPocket173">0 / 3</b></div>
-        <div><span>SCORE</span><b id="bilScore173">0</b></div>
+      <div class="bil-hud-v174">
+        <div><span>SHOT</span><b id="bilShot174">0 / 4</b></div>
+        <div><span>POCKET</span><b id="bilPocket174">0 / 3</b></div>
+        <div><span>SCORE</span><b id="bilScore174">0</b></div>
       </div>
 
-      <div id="bilStage173" class="bil-stage-v173">
-        <div class="bil-rail-v173"></div>
-        <div class="bil-pocket-v173 p1"></div>
-        <div class="bil-pocket-v173 p2"></div>
-        <div class="bil-pocket-v173 p3"></div>
-        <div id="bilBallLayer173" class="bil-ball-layer-v173"></div>
-        <div id="bilAim173" class="bil-aim-v173" hidden><i></i></div>
-        <div id="bilCall173" class="bil-call-v173">PULL WHITE BALL</div>
+      <div id="bilStage174" class="bil-stage-v174">
+        <div class="bil-rail-v174"></div>
+        <div class="bil-pocket-v174 p1"></div>
+        <div class="bil-pocket-v174 p2"></div>
+        <div class="bil-pocket-v174 p3"></div>
+        <div id="bilBallLayer174" class="bil-ball-layer-v174"></div>
+
+        <div id="bilMob174" class="bil-mob-v174">
+          <img src="icon/01.png" draggable="false" alt="">
+          <i id="bilCue174" class="bil-cue-v174"></i>
+        </div>
+
+        <div id="bilAim174" class="bil-aim-v174" hidden><i></i></div>
+        <div id="bilCall174" class="bil-call-v174">PULL WHITE BALL</div>
       </div>
     </div>`;
 
-  const stage=document.getElementById('bilStage173');
-  const layer=document.getElementById('bilBallLayer173');
-  const aim=document.getElementById('bilAim173');
-  const call=document.getElementById('bilCall173');
-  const shotEl=document.getElementById('bilShot173');
-  const pocketEl=document.getElementById('bilPocket173');
-  const scoreEl=document.getElementById('bilScore173');
+  const stage=document.getElementById('bilStage174');
+  const layer=document.getElementById('bilBallLayer174');
+  const mob=document.getElementById('bilMob174');
+  const cueVisual=document.getElementById('bilCue174');
+  const aim=document.getElementById('bilAim174');
+  const call=document.getElementById('bilCall174');
+  const shotEl=document.getElementById('bilShot174');
+  const pocketEl=document.getElementById('bilPocket174');
+  const scoreEl=document.getElementById('bilScore174');
 
   void stage.offsetHeight;
 
@@ -29431,35 +29287,30 @@ async function startBilliardsMob(p,humanIndex,runId){
     [[.31,.38],[.60,.28],[.70,.48]],
     [[.29,.29],[.52,.44],[.73,.36]]
   ];
-
   const pattern=patterns[randi(0,patterns.length-1)];
 
   let shots=0,pocketed=0,active=false,finished=false,moving=false;
   let drag=null,raf=null,last=performance.now(),stillFor=0,cueFoul=false;
+  let aimUnit={x:0,y:1};
 
   const balls=[
     {id:'cue',x:W*.5,y:H*.79,vx:0,vy:0,active:true,cue:true},
     ...pattern.map((q,i)=>({
       id:`b${i}`,
-      x:W*q[0],
-      y:H*q[1],
-      vx:0,vy:0,active:true,cue:false
+      x:W*q[0],y:H*q[1],vx:0,vy:0,active:true,cue:false
     }))
   ];
 
   function makeBall(b){
     const el=document.createElement('div');
-    el.className=`bil-ball-v173 ${b.cue?'cue-v173':`target-${b.id.slice(1)}-v173`}`;
+    el.className=`bil-ball-v174 ${b.cue?'cue-v174':`target-${b.id.slice(1)}-v174`}`;
     el.dataset.ball=b.id;
     layer.appendChild(el);
     b.el=el;
   }
-
   balls.forEach(makeBall);
 
-  function cueBall(){
-    return balls[0];
-  }
+  function cueBall(){return balls[0]}
 
   function renderBalls(){
     for(const b of balls){
@@ -29473,6 +29324,24 @@ async function startBilliardsMob(p,humanIndex,runId){
     }
   }
 
+  function setMobReady(unit=aimUnit){
+    const cue=cueBall();
+    if(!cue.active){
+      mob.hidden=true;
+      return;
+    }
+    mob.hidden=false;
+
+    // Mob-kun stands behind the cue ball, on the pull side.
+    const mx=clamp(cue.x-unit.x*61,34,W-34);
+    const my=clamp(cue.y-unit.y*61,45,H-34);
+    mob.style.left=`${mx}px`;
+    mob.style.top=`${my}px`;
+
+    const angle=Math.atan2(unit.y,unit.x);
+    cueVisual.style.transform=`rotate(${angle}rad)`;
+  }
+
   function currentScore(){
     if(pocketed<3)return pocketed*25;
     const bonus=shots<=2?25:shots===3?18:10;
@@ -29481,9 +29350,7 @@ async function startBilliardsMob(p,humanIndex,runId){
 
   function finish(){
     if(finished)return;
-
-    finished=true;
-    active=false;
+    finished=true;active=false;
     if(raf)cancelAnimationFrame(raf);
 
     const score=clamp(currentScore(),0,100);
@@ -29493,7 +29360,7 @@ async function startBilliardsMob(p,humanIndex,runId){
     call.textContent=pocketed===3
       ? (score===100?'CLEAR IN 2!':'TABLE CLEAR!')
       : '4 SHOTS FINISH!';
-    call.className='bil-call-v173 result-v173';
+    call.className='bil-call-v174 result-v174';
 
     beep(score>=93?1030:650,140,.03);
 
@@ -29507,10 +29374,11 @@ async function startBilliardsMob(p,humanIndex,runId){
   function respawnCue(){
     const cue=cueBall();
     cue.active=true;
-    cue.x=W*.5;
-    cue.y=H*.79;
+    cue.x=W*.5;cue.y=H*.79;
     cue.vx=cue.vy=0;
     cueFoul=false;
+    aimUnit={x:0,y:-1};
+    setMobReady(aimUnit);
   }
 
   function allStopped(){
@@ -29524,15 +29392,24 @@ async function startBilliardsMob(p,humanIndex,runId){
 
   function updateAim(dx,dy){
     const cue=cueBall();
-    const pull=Math.min(110,Math.hypot(dx,dy));
-    const angle=Math.atan2(-dy,-dx);
+    const pull=Math.min(120,Math.hypot(dx,dy));
+    const len=Math.max(1,Math.hypot(dx,dy));
 
+    // Shot direction is opposite from pull direction.
+    const ux=-dx/len;
+    const uy=-dy/len;
+    aimUnit={x:ux,y:uy};
+
+    const angle=Math.atan2(uy,ux);
     aim.hidden=false;
     aim.style.left=`${cue.x}px`;
     aim.style.top=`${cue.y}px`;
-    aim.style.width=`${75+pull*.72}px`;
+    aim.style.width=`${82+pull*.78}px`;
     aim.style.transform=`rotate(${angle}rad)`;
-    aim.querySelector('i').style.width=`${Math.min(100,pull)}px`;
+    aim.querySelector('i').style.width=`${Math.min(112,pull)}px`;
+
+    setMobReady(aimUnit);
+    mob.classList.add('aiming-v174');
   }
 
   stage.addEventListener('pointerdown',e=>{
@@ -29542,10 +29419,11 @@ async function startBilliardsMob(p,humanIndex,runId){
     if(!cue.active)return;
 
     const pt=local(e);
-    if(Math.hypot(pt.x-cue.x,pt.y-cue.y)>62)return;
+    if(Math.hypot(pt.x-cue.x,pt.y-cue.y)>66)return;
 
     e.preventDefault();
     stage.setPointerCapture?.(e.pointerId);
+
     drag={id:e.pointerId,sx:cue.x,sy:cue.y,cx:pt.x,cy:pt.y};
     updateAim(pt.x-cue.x,pt.y-cue.y);
   },{passive:false});
@@ -29555,9 +29433,7 @@ async function startBilliardsMob(p,humanIndex,runId){
     e.preventDefault();
 
     const pt=local(e);
-    drag.cx=pt.x;
-    drag.cy=pt.y;
-
+    drag.cx=pt.x;drag.cy=pt.y;
     updateAim(pt.x-drag.sx,pt.y-drag.sy);
   },{passive:false});
 
@@ -29568,27 +29444,36 @@ async function startBilliardsMob(p,humanIndex,runId){
     const cue=cueBall();
     const dx=drag.cx-drag.sx;
     const dy=drag.cy-drag.sy;
-    const pull=Math.min(110,Math.hypot(dx,dy));
+    const pull=Math.min(120,Math.hypot(dx,dy));
     drag=null;
     aim.hidden=true;
+    mob.classList.remove('aiming-v174');
 
     if(pull<18){
       call.textContent='もっと引っ張る';
+      setMobReady(aimUnit);
       return;
     }
 
     shots++;
     shotEl.textContent=`${shots} / 4`;
 
-    const power=clamp(pull*4.65,120,510);
+    const power=clamp(pull*5.6,145,650);
     const len=Math.max(1,Math.hypot(dx,dy));
-    cue.vx=-dx/len*power;
-    cue.vy=-dy/len*power;
+    const ux=-dx/len;
+    const uy=-dy/len;
+
+    aimUnit={x:ux,y:uy};
+    cue.vx=ux*power;
+    cue.vy=uy*power;
 
     moving=true;
     stillFor=0;
-    call.textContent='SHOT!';
-    beep(620,45,.014);
+    mob.classList.add('shoot-v174');
+    setTimeout(()=>mob.classList.remove('shoot-v174'),300);
+
+    call.textContent='MOB SHOT!';
+    beep(690,55,.017);
   },{passive:false});
 
   function pocketBall(b){
@@ -29600,35 +29485,24 @@ async function startBilliardsMob(p,humanIndex,runId){
     if(b.cue){
       cueFoul=true;
       call.textContent='CUE FOUL';
-      call.className='bil-call-v173 foul-v173';
+      call.className='bil-call-v174 foul-v174';
+      mob.hidden=true;
       beep(190,90,.02);
     }else{
       pocketed++;
       pocketEl.textContent=`${pocketed} / 3`;
       scoreEl.textContent=currentScore();
       call.textContent=pocketed===3?'ALL POCKET!':'POCKET!';
-      call.className='bil-call-v173 pocket-v173';
+      call.className='bil-call-v174 pocket-v174';
       beep(910,80,.024);
     }
   }
 
   function resolveWalls(b){
-    if(b.x<PAD+R){
-      b.x=PAD+R;
-      b.vx=Math.abs(b.vx)*.88;
-    }
-    if(b.x>W-PAD-R){
-      b.x=W-PAD-R;
-      b.vx=-Math.abs(b.vx)*.88;
-    }
-    if(b.y<PAD+R){
-      b.y=PAD+R;
-      b.vy=Math.abs(b.vy)*.88;
-    }
-    if(b.y>H-PAD-R){
-      b.y=H-PAD-R;
-      b.vy=-Math.abs(b.vy)*.88;
-    }
+    if(b.x<PAD+R){b.x=PAD+R;b.vx=Math.abs(b.vx)*.89}
+    if(b.x>W-PAD-R){b.x=W-PAD-R;b.vx=-Math.abs(b.vx)*.89}
+    if(b.y<PAD+R){b.y=PAD+R;b.vy=Math.abs(b.vy)*.89}
+    if(b.y>H-PAD-R){b.y=H-PAD-R;b.vy=-Math.abs(b.vy)*.89}
   }
 
   function resolvePair(a,b){
@@ -29637,29 +29511,25 @@ async function startBilliardsMob(p,humanIndex,runId){
     const dx=b.x-a.x,dy=b.y-a.y;
     const dist=Math.hypot(dx,dy);
     const min=R*2;
-
     if(dist<=0||dist>=min)return;
 
     const nx=dx/dist,ny=dy/dist;
     const overlap=min-dist;
 
-    a.x-=nx*overlap*.5;
-    a.y-=ny*overlap*.5;
-    b.x+=nx*overlap*.5;
-    b.y+=ny*overlap*.5;
+    a.x-=nx*overlap*.5;a.y-=ny*overlap*.5;
+    b.x+=nx*overlap*.5;b.y+=ny*overlap*.5;
 
     const rel=(a.vx-b.vx)*nx+(a.vy-b.vy)*ny;
     if(rel<=0)return;
 
-    a.vx-=rel*nx;
-    a.vy-=rel*ny;
-    b.vx+=rel*nx;
-    b.vy+=rel*ny;
-
+    a.vx-=rel*nx;a.vy-=rel*ny;
+    b.vx+=rel*nx;b.vy+=rel*ny;
     beep(430,18,.004);
   }
 
   renderBalls();
+  aimUnit={x:0,y:-1};
+  setMobReady(aimUnit);
   active=false;
 
   if(!(await countdown('BILLIARDS',runId,{transparent:true})))return;
@@ -29686,18 +29556,15 @@ async function startBilliardsMob(p,humanIndex,runId){
             break;
           }
         }
-
         if(!b.active)continue;
 
         resolveWalls(b);
 
-        const damp=Math.pow(.976,dt*60);
+        const damp=Math.pow(.978,dt*60);
         b.vx*=damp;
         b.vy*=damp;
 
-        if(Math.hypot(b.vx,b.vy)<6){
-          b.vx=b.vy=0;
-        }
+        if(Math.hypot(b.vx,b.vy)<6)b.vx=b.vy=0;
       }
 
       for(let i=0;i<balls.length;i++){
@@ -29709,26 +29576,24 @@ async function startBilliardsMob(p,humanIndex,runId){
       if(allStopped()){
         stillFor+=dt;
 
-        if(stillFor>.26){
+        if(stillFor>.25){
           moving=false;
           stillFor=0;
 
-          if(cueFoul){
-            respawnCue();
-          }
+          if(cueFoul)respawnCue();
 
           if(pocketed>=3){
             finish();
             return;
           }
-
           if(shots>=4){
             finish();
             return;
           }
 
+          setMobReady(aimUnit);
           call.textContent='PULL WHITE BALL';
-          call.className='bil-call-v173';
+          call.className='bil-call-v174';
         }
       }else{
         stillFor=0;

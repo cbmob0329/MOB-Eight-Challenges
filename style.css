@@ -26059,176 +26059,162 @@ canvas{
 /* =========================================================
    V10.73 — Air Hockey / Rope Swing / Wall Jump / Billiards
    ========================================================= */
-.airh-shell-v173,.rsw-shell-v173,.wj-shell-v173,.bil-shell-v173{
+
+
+
+
+
+
+
+/* Air Hockey */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Rope Swing */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Wall Jump */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* Billiards */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+@media(max-height:700px){
+  
+}
+
+
+/* =========================================================
+   V10.74 — 2 Puck Air Hockey / Smooth Rope / Mob Billiards
+   ========================================================= */
+.airh-shell-v174,.rsw-shell-v174,.bil-shell-v174{
   height:100%;min-height:0;display:flex;flex-direction:column;gap:6px;overflow:hidden;
   -webkit-user-select:none;user-select:none;-webkit-touch-callout:none
 }
-.airh-stage-v173,.rsw-stage-v173,.wj-stage-v173,.bil-stage-v173{
+.airh-stage-v174,.rsw-stage-v174,.bil-stage-v174{
   position:relative;flex:1;min-height:285px;overflow:hidden;
   border:4px solid var(--ink);border-radius:20px;
   touch-action:none!important;-webkit-user-select:none!important;user-select:none!important;-webkit-touch-callout:none!important
 }
-.airh-hud-v173,.rsw-hud-v173,.wj-hud-v173,.bil-hud-v173{
+.airh-hud-v174,.rsw-hud-v174,.bil-hud-v174{
   display:grid;grid-template-columns:repeat(3,1fr);gap:5px
 }
-.airh-hud-v173>div,.rsw-hud-v173>div,.wj-hud-v173>div,.bil-hud-v173>div{
+.airh-hud-v174>div,.rsw-hud-v174>div,.bil-hud-v174>div{
   padding:5px 3px;border:3px solid var(--ink);border-radius:10px;background:#fff;text-align:center
 }
-.airh-hud-v173 span,.rsw-hud-v173 span,.wj-hud-v173 span,.bil-hud-v173 span{
-  display:block;font-size:6px;font-weight:1000
-}
-.airh-hud-v173 b,.rsw-hud-v173 b,.wj-hud-v173 b,.bil-hud-v173 b{font-size:12px}
+.airh-hud-v174 span,.rsw-hud-v174 span,.bil-hud-v174 span{display:block;font-size:6px;font-weight:1000}
+.airh-hud-v174 b,.rsw-hud-v174 b,.bil-hud-v174 b{font-size:12px}
 
 /* Air Hockey */
-.airh-stage-v173{
-  background:#dff4f4;
-  box-shadow:inset 0 0 0 7px #7ebfc7
-}
-.airh-rink-v173{position:absolute;inset:8px;border:4px solid #1e5961;border-radius:17px;background:#effafa}
-.airh-line-v173{position:absolute;left:5%;right:5%;top:50%;height:4px;background:#85c9d0;transform:translateY(-50%)}
-.airh-circle-v173{position:absolute;left:50%;top:50%;width:84px;height:84px;transform:translate(-50%,-50%);border:4px solid #85c9d0;border-radius:50%}
+.airh-stage-v174{background:#dff4f4;box-shadow:inset 0 0 0 7px #7ebfc7}
+.airh-rink-v174{position:absolute;inset:8px;border:4px solid #1e5961;border-radius:17px;background:#effafa}
+.airh-line-v174{position:absolute;left:5%;right:5%;top:50%;height:4px;background:#85c9d0;transform:translateY(-50%)}
+.airh-circle-v174{position:absolute;left:50%;top:50%;width:84px;height:84px;transform:translate(-50%,-50%);border:4px solid #85c9d0;border-radius:50%}
 .airh-goal{position:absolute;left:50%;width:96px;height:17px;transform:translateX(-50%);border:4px solid #1b3940;background:#c5d9db}
-.airh-goal.top-v173{top:-5px;border-radius:0 0 12px 12px}
-.airh-goal.bottom-v173{bottom:-5px;border-radius:12px 12px 0 0}
-.airh-defense-v173{
-  position:absolute;z-index:8;left:50%;top:63px;width:92px;height:20px;
-  transform:translate(-50%,-50%);border:4px solid var(--ink);border-radius:999px;background:#ef7b6d
-}
-.airh-puck-v173{
-  position:absolute;z-index:12;width:24px;height:24px;transform:translate(-50%,-50%);
-  border:4px solid var(--ink);border-radius:50%;background:#31343a;will-change:left,top
-}
-.airh-paddle-v173{
-  position:absolute;z-index:15;width:58px;height:58px;transform:translate(-50%,-50%);
-  border:4px solid var(--ink);border-radius:50%;background:#66bbd8;will-change:left,top
-}
-.airh-paddle-v173:after{
-  content:"";position:absolute;inset:9px;border:3px solid rgba(255,255,255,.65);border-radius:50%
-}
-.airh-paddle-v173 img{
-  position:absolute;z-index:2;left:50%;top:50%;width:38px;height:38px;transform:translate(-50%,-50%);object-fit:contain;pointer-events:none
-}
-.airh-call-v173{
-  position:absolute;z-index:23;left:50%;top:10px;transform:translateX(-50%);
-  padding:4px 9px;border:3px solid var(--ink);border-radius:999px;background:#fff4b0;
-  font-size:10px;font-weight:1000;white-space:nowrap;pointer-events:none
-}
-.airh-call-v173.goal-v173{background:#8ce08b}.airh-call-v173.bad-v173{background:#ef958e}.airh-call-v173.result-v173{background:#ffe15e}
+.airh-goal.top-v174{top:-5px;border-radius:0 0 12px 12px}
+.airh-goal.bottom-v174{bottom:-5px;border-radius:12px 12px 0 0}
+.airh-defense-v174{position:absolute;z-index:8;left:50%;top:63px;width:92px;height:20px;transform:translate(-50%,-50%);border:4px solid var(--ink);border-radius:999px;background:#ef7b6d}
+.airh-puck-v174{position:absolute;z-index:12;width:24px;height:24px;transform:translate(-50%,-50%);border:4px solid var(--ink);border-radius:50%;will-change:left,top}
+.airh-puck-v174.a-v174{background:#30343a}
+.airh-puck-v174.b-v174{background:#ffe05c}
+.airh-paddle-v174{position:absolute;z-index:15;width:58px;height:58px;transform:translate(-50%,-50%);border:4px solid var(--ink);border-radius:50%;background:#66bbd8;will-change:left,top}
+.airh-paddle-v174:after{content:"";position:absolute;inset:9px;border:3px solid rgba(255,255,255,.65);border-radius:50%}
+.airh-paddle-v174 img{position:absolute;z-index:2;left:50%;top:50%;width:38px;height:38px;transform:translate(-50%,-50%);object-fit:contain;pointer-events:none}
+.airh-call-v174{position:absolute;z-index:23;left:50%;top:10px;transform:translateX(-50%);padding:4px 9px;border:3px solid var(--ink);border-radius:999px;background:#fff4b0;font-size:10px;font-weight:1000;white-space:nowrap;pointer-events:none}
+.airh-call-v174.goal-v174{background:#8ce08b}.airh-call-v174.bad-v174{background:#ef958e}.airh-call-v174.result-v174{background:#ffe15e}
 
 /* Rope Swing */
-.rsw-stage-v173{background:#bfe5f2}
-.rsw-world-v173{position:absolute;left:0;top:0;height:100%;will-change:transform}
-.rsw-sky-v173{position:absolute;inset:0;background:#bfe5f2}
-.rsw-cliffs-v173{
-  position:absolute;left:0;right:0;bottom:0;height:17%;
-  background:repeating-linear-gradient(110deg,#8b6b4f 0 45px,#74573f 45px 90px);
-  border-top:5px solid #423326
-}
-.rsw-rope-v173{
-  position:absolute;z-index:7;width:7px;transform-origin:50% 0;
-  border:3px solid #2d2117;border-radius:999px;background:#b18b5c
-}
-.rsw-rope-v173:after{
-  content:"";position:absolute;left:50%;bottom:-8px;width:18px;height:18px;transform:translateX(-50%);
-  border:3px solid var(--ink);border-radius:50%;background:#d9ad6c
-}
-.rsw-player-v173{
-  position:absolute;z-index:18;width:58px;height:66px;transform:translate(-50%,-50%);
-  will-change:left,top
-}
-.rsw-player-v173 img{width:100%;height:100%;object-fit:contain}
-.rsw-landing-v173{
-  position:absolute;left:895px;bottom:5%;width:300px;height:34px;display:flex;border:4px solid var(--ink);border-radius:8px;overflow:hidden
-}
-.rsw-landing-v173 i{
-  flex:1;display:grid;place-items:center;font-size:8px;font-weight:1000;font-style:normal;border-right:2px solid var(--ink)
-}
-.rsw-landing-v173 .z40,.rsw-landing-v173 .z40b{background:#d9e0e5}
-.rsw-landing-v173 .z60,.rsw-landing-v173 .z60b{background:#b9dced}
-.rsw-landing-v173 .z80,.rsw-landing-v173 .z80b{background:#91d894}
-.rsw-landing-v173 .z100{background:#ffe15e}
-.rsw-call-v173{
-  position:absolute;z-index:25;left:50%;top:10px;transform:translateX(-50%);
-  padding:4px 9px;border:3px solid var(--ink);border-radius:999px;background:#fff4b1;
-  font-size:9px;font-weight:1000;white-space:nowrap;pointer-events:none
-}
-.rsw-call-v173.result-v173{background:#ffe15e}
-
-/* Wall Jump */
-.wj-stage-v173{background:#323b45}
-.wj-world-v173{
-  position:absolute;left:0;right:0;bottom:0;will-change:transform;
-  background:repeating-linear-gradient(0deg,#3b4651 0 70px,#343e48 70px 140px)
-}
-.wj-wall{
-  position:absolute;top:0;bottom:0;width:28px;
-  background:repeating-linear-gradient(0deg,#706155 0 26px,#5e5047 26px 52px);
-  border:4px solid #191d21
-}
-.wj-wall.left-v173{left:0}.wj-wall.right-v173{right:0}
-.wj-obstacle-v173{
-  position:absolute;z-index:8;height:30px;background:#996447;border:4px solid #1b1c1f;
-  clip-path:polygon(0 20%,70% 15%,100% 50%,70% 85%,0 80%)
-}
-.wj-obstacle-v173.left-v173{left:24px}
-.wj-obstacle-v173.right-v173{right:24px;transform:scaleX(-1)}
-.wj-goal-v173{
-  position:absolute;left:50%;width:130px;height:34px;transform:translateX(-50%);
-  border:4px solid #fff;border-radius:10px;background:#ffe15e;display:grid;place-items:center;
-  color:#12161b;font-size:10px;font-weight:1000
-}
-.wj-player-v173{
-  position:absolute;z-index:18;width:46px;height:52px;transform:translate(-50%,50%);
-  will-change:left,bottom
-}
-.wj-player-v173 img{width:100%;height:100%;object-fit:contain}
-.wj-player-v173.hit-v173{animation:wjHit173 .38s ease}
-@keyframes wjHit173{45%{scale:.86;rotate:12deg;opacity:.55}}
-.wj-call-v173{
-  position:absolute;z-index:25;left:50%;top:10px;transform:translateX(-50%);
-  padding:4px 9px;border:3px solid var(--ink);border-radius:999px;background:#fff4b0;
-  font-size:9px;font-weight:1000;white-space:nowrap;pointer-events:none
-}
-.wj-call-v173.hit-v173{background:#ef968f}.wj-call-v173.result-v173{background:#ffe15e}
+.rsw-stage-v174{background:#bfe5f2}
+.rsw-world-v174{position:absolute;left:0;top:0;height:100%;will-change:transform}
+.rsw-sky-v174{position:absolute;inset:0;background:#bfe5f2}
+.rsw-cliffs-v174{position:absolute;left:0;right:0;bottom:0;height:17%;background:repeating-linear-gradient(110deg,#8b6b4f 0 45px,#74573f 45px 90px);border-top:5px solid #423326}
+.rsw-rope-v174{position:absolute;z-index:7;width:7px;transform-origin:50% 0;border:3px solid #2d2117;border-radius:999px;background:#b18b5c}
+.rsw-rope-v174:after{content:"";position:absolute;left:50%;bottom:-8px;width:18px;height:18px;transform:translateX(-50%);border:3px solid var(--ink);border-radius:50%;background:#d9ad6c}
+.rsw-player-v174{position:absolute;z-index:18;width:58px;height:66px;transform:translate(-50%,-50%);will-change:left,top}
+.rsw-player-v174 img{width:100%;height:100%;object-fit:contain}
+.rsw-landing-v174{position:absolute;left:895px;bottom:5%;width:300px;height:34px;display:flex;border:4px solid var(--ink);border-radius:8px;overflow:hidden}
+.rsw-landing-v174 i{flex:1;display:grid;place-items:center;font-size:8px;font-weight:1000;font-style:normal;border-right:2px solid var(--ink)}
+.rsw-landing-v174 .z40,.rsw-landing-v174 .z40b{background:#d9e0e5}
+.rsw-landing-v174 .z60,.rsw-landing-v174 .z60b{background:#b9dced}
+.rsw-landing-v174 .z80,.rsw-landing-v174 .z80b{background:#91d894}
+.rsw-landing-v174 .z100{background:#ffe15e}
+.rsw-call-v174{position:absolute;z-index:25;left:50%;top:10px;transform:translateX(-50%);padding:4px 9px;border:3px solid var(--ink);border-radius:999px;background:#fff4b1;font-size:9px;font-weight:1000;white-space:nowrap;pointer-events:none}
+.rsw-call-v174.result-v174{background:#ffe15e}
 
 /* Billiards */
-.bil-stage-v173{
-  background:#2c8c62;
-  box-shadow:inset 0 0 0 16px #744d2f,inset 0 0 0 21px #2b1b12
-}
-.bil-rail-v173{position:absolute;inset:18px;border:3px solid rgba(255,255,255,.18);border-radius:8px;pointer-events:none}
-.bil-pocket-v173{
-  position:absolute;z-index:4;top:8px;width:42px;height:42px;border:5px solid #23170f;border-radius:50%;background:#080909
-}
-.bil-pocket-v173.p1{left:8px}.bil-pocket-v173.p2{left:50%;transform:translateX(-50%)}.bil-pocket-v173.p3{right:8px}
-.bil-ball-layer-v173{position:absolute;inset:0;pointer-events:none}
-.bil-ball-v173{
-  position:absolute;z-index:12;width:24px;height:24px;transform:translate(-50%,-50%);
-  border:3px solid #1b1c1f;border-radius:50%;will-change:left,top
-}
-.bil-ball-v173.cue-v173{background:#fff}
-.bil-ball-v173.target-0-v173{background:#ef695d}
-.bil-ball-v173.target-1-v173{background:#f3d85e}
-.bil-ball-v173.target-2-v173{background:#6e9fe3}
-.bil-aim-v173{
-  position:absolute;z-index:18;height:4px;transform-origin:0 50%;
-  background:rgba(255,255,255,.85);pointer-events:none
-}
-.bil-aim-v173:before{
-  content:"";position:absolute;left:0;top:50%;width:9px;height:9px;transform:translate(-50%,-50%);
-  border:2px solid #fff;border-radius:50%
-}
-.bil-aim-v173 i{
-  position:absolute;right:100%;top:50%;height:6px;transform:translateY(-50%);
-  border-radius:999px;background:#e0b98a
-}
-.bil-call-v173{
-  position:absolute;z-index:25;left:50%;bottom:8px;transform:translateX(-50%);
-  padding:4px 9px;border:3px solid var(--ink);border-radius:999px;background:#fff4b0;
-  font-size:9px;font-weight:1000;white-space:nowrap;pointer-events:none
-}
-.bil-call-v173.pocket-v173{background:#8ce08b}.bil-call-v173.foul-v173{background:#ef958e}.bil-call-v173.result-v173{background:#ffe15e}
+.bil-stage-v174{background:#2c8c62;box-shadow:inset 0 0 0 16px #744d2f,inset 0 0 0 21px #2b1b12}
+.bil-rail-v174{position:absolute;inset:18px;border:3px solid rgba(255,255,255,.18);border-radius:8px;pointer-events:none}
+.bil-pocket-v174{position:absolute;z-index:4;top:8px;width:42px;height:42px;border:5px solid #23170f;border-radius:50%;background:#080909}
+.bil-pocket-v174.p1{left:8px}.bil-pocket-v174.p2{left:50%;transform:translateX(-50%)}.bil-pocket-v174.p3{right:8px}
+.bil-ball-layer-v174{position:absolute;inset:0;pointer-events:none}
+.bil-ball-v174{position:absolute;z-index:12;width:24px;height:24px;transform:translate(-50%,-50%);border:3px solid #1b1c1f;border-radius:50%;will-change:left,top}
+.bil-ball-v174.cue-v174{background:#fff}.bil-ball-v174.target-0-v174{background:#ef695d}.bil-ball-v174.target-1-v174{background:#f3d85e}.bil-ball-v174.target-2-v174{background:#6e9fe3}
+.bil-aim-v174{position:absolute;z-index:18;height:4px;transform-origin:0 50%;background:rgba(255,255,255,.85);pointer-events:none}
+.bil-aim-v174:before{content:"";position:absolute;left:0;top:50%;width:9px;height:9px;transform:translate(-50%,-50%);border:2px solid #fff;border-radius:50%}
+.bil-aim-v174 i{position:absolute;right:100%;top:50%;height:6px;transform:translateY(-50%);border-radius:999px;background:#e0b98a}
+.bil-mob-v174{position:absolute;z-index:16;width:58px;height:64px;transform:translate(-50%,-50%);transform-origin:50% 80%;pointer-events:none;transition:left .15s ease,top .15s ease}
+.bil-mob-v174 img{position:absolute;left:50%;top:50%;width:52px;height:58px;transform:translate(-50%,-50%);object-fit:contain}
+.bil-cue-v174{position:absolute;z-index:-1;left:50%;top:50%;width:88px;height:5px;transform-origin:6px 50%;border:2px solid #3a2617;border-radius:999px;background:#d9ad70}
+.bil-mob-v174.aiming-v174{scale:1.03}
+.bil-mob-v174.shoot-v174{animation:bilMobShoot174 .28s ease}
+@keyframes bilMobShoot174{45%{scale:1.08;translate:7px -4px}100%{scale:1;translate:0 0}}
+.bil-call-v174{position:absolute;z-index:25;left:50%;bottom:8px;transform:translateX(-50%);padding:4px 9px;border:3px solid var(--ink);border-radius:999px;background:#fff4b0;font-size:9px;font-weight:1000;white-space:nowrap;pointer-events:none}
+.bil-call-v174.pocket-v174{background:#8ce08b}.bil-call-v174.foul-v174{background:#ef958e}.bil-call-v174.result-v174{background:#ffe15e}
 
 @media(max-height:700px){
-  .airh-stage-v173,.rsw-stage-v173,.wj-stage-v173,.bil-stage-v173{min-height:245px}
+  .airh-stage-v174,.rsw-stage-v174,.bil-stage-v174{min-height:245px}
 }
