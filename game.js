@@ -327,7 +327,7 @@ const GAMES=[
   {no:89,key:"mobSpeedRacer",title:"モブくんは爆速レーサー",sub:"タッグ専用。1番手がタイヤ、2番手が機体を描き、1kmレースで勝負",legacy:93},
   {no:90,key:"summonMaster",title:"モブくんは召喚マスター",sub:"タッグ専用。4人が描いた魔物で2対2のオート召喚バトル",legacy:94},
   {no:91,key:"mobPinball",title:"モブくんピンボール",sub:"上から落としたボールをカメラで追い、10〜100点のスロットを狙う",legacy:95},
-  {no:92,key:"hurdleRun",title:"モブくんのハードル走",sub:"自動走行＋ジャンプで10個のハードルを越える200mタイムアタック",legacy:96}
+  {no:92,key:"hurdleRun",title:"モブくんのハードル走",sub:"自動走行＋ジャンプで間隔を広げた8個のハードルを越える200mタイムアタック",legacy:96}
 ];
 
 function legacyGameIndex(gameIndex){
@@ -2324,7 +2324,7 @@ function scoreRuleForGame(index){
     "タッグ2対2専用 / 1km先のゴールへ先着したチームが勝利",
     "描いた魔物2対2 / 勝利チーム100点・敗北チーム0点",
     "10 / 20 / 30 / 40 / 50 / 60 / 70 / 80 / 90 / 100 の入ったスロットがそのまま得点",
-    "200m完走タイム / 10.00秒以下=100点 / 18.00秒以上=0点"
+    "200m完走タイム / 8個のハードル / 10.00秒以下=100点 / 18.00秒以上=0点"
   ][legacyIndex];
 }
 
@@ -2530,7 +2530,7 @@ function showGameIntro(index){
   }else if(legacyIndex===95){
     rules=`<li>上部を左右に動くボールをDROPして、長いピンボール盤を落としていきます。</li><li>カメラがボールを追従。最後に入った10〜100点のスロットがそのまま得点です。</li>`;
   }else{
-    rules=`<li>モブくんは自動で200mを走ります。JUMPで10個のハードルを越えてください。</li><li>1台越えるたび加速。完走タイムが速いほど高得点で、最速は約10秒です。</li>`;
+    rules=`<li>モブくんは自動で200mを走ります。JUMPで間隔を広げた8個のハードルを越えてください。</li><li>1台越えるたび加速。完走タイムが速いほど高得点で、最速は約10秒です。</li>`;
   }
   const conciseRules=(rules.match(/<li>[\s\S]*?<\/li>/g)||[]).slice(0,2).join("");
   rules=conciseRules||`<li>${esc(g.sub)}</li>`;
@@ -27606,6 +27606,8 @@ async function startMobPinball(p,humanIndex,runId){
   let launcherX=180;
   let launcherDir=1;
   let cameraY=0;
+  let bestFallY=72;
+  let stuckFor=0;
   const ball={x:180,y:72,vx:0,vy:0};
 
   function place(){
@@ -27679,7 +27681,7 @@ async function startMobPinball(p,humanIndex,runId){
   }
 
   function physics(dt){
-    ball.vy+=620*dt;
+    ball.vy+=700*dt;
     ball.x+=ball.vx*dt;
     ball.y+=ball.vy*dt;
 
@@ -27708,16 +27710,41 @@ async function startMobPinball(p,humanIndex,runId){
         ball.y+=ny*overlap;
 
         const dot=ball.vx*nx+ball.vy*ny;
-        ball.vx-=2*dot*nx;
-        ball.vy-=2*dot*ny;
 
-        ball.vx+=rand(-34,34)+(peg.hot?rand(-42,42):0);
-        ball.vx*=peg.hot?.96:.88;
-        ball.vy=Math.max(-250,ball.vy*.76-(peg.hot?42:0));
+        // 少しだけ反射を弱め、下方向へ抜けやすくする。
+        ball.vx-=1.82*dot*nx;
+        ball.vy-=1.58*dot*ny;
+
+        ball.vx+=rand(-38,38)+(peg.hot?rand(-48,48):0);
+        ball.vx*=peg.hot?.94:.86;
+        ball.vy=clamp(ball.vy*.76+(ny>0?24:46),-125,560);
+
+        // ペグ真上でほぼ停止した時は、横へ逃がして落下を継続。
+        if(Math.abs(ball.vx)<28&&Math.abs(ball.vy)<72){
+          ball.vx+=Math.random()<.5?-86:86;
+          ball.vy=Math.max(ball.vy,120);
+        }
 
         burstPeg(i);
         beep(peg.hot?720:430,22,.007);
       }
+    }
+
+    // 進行が止まった場合のフェイルセーフ。
+    // 0.72秒以上ほぼ下へ進めていなければ自動で下方向へ抜く。
+    if(ball.y>bestFallY+7){
+      bestFallY=ball.y;
+      stuckFor=0;
+    }else{
+      stuckFor+=dt;
+    }
+
+    if(stuckFor>=.72){
+      ball.vy=Math.max(ball.vy,235);
+      ball.vx+=Math.random()<.5?-115:115;
+      ball.y+=7;
+      bestFallY=Math.max(bestFallY,ball.y);
+      stuckFor=0;
     }
 
     cameraY=clamp(ball.y-170,0,WORLD_H-VIEW_H);
@@ -27786,7 +27813,7 @@ async function startHurdleRun(p,humanIndex,runId){
   const TOTAL_M=200;
   const PX_PER_M=7;
   const TRACK_W=TOTAL_M*PX_PER_M+260;
-  const hurdleMeters=Array.from({length:10},(_,i)=>20+i*18);
+  const hurdleMeters=[22,46,70,94,118,142,166,190];
   const hurdles=hurdleMeters.map((m,i)=>({m,i,hit:false,passed:false}));
 
   screen.innerHTML=`
@@ -27795,7 +27822,7 @@ async function startHurdleRun(p,humanIndex,runId){
         <div>
           <span class="kicker">${esc(p.name)}</span>
           <h2>モブくんのハードル走</h2>
-          <p class="lead">自動で走る！ 10個のハードルをJUMPで越えて200mへ！</p>
+          <p class="lead">自動で走る！ 8個のハードルをJUMPで越えて200mへ！</p>
         </div>
         <div class="game-badge">${playBadge(humanIndex)}</div>
       </div>
@@ -27875,7 +27902,7 @@ async function startHurdleRun(p,humanIndex,runId){
   function jump(){
     if(!active||finished||!onGround)return;
     onGround=false;
-    jumpV=430;
+    jumpV=490;
     player.classList.remove('jump-v160');
     void player.offsetWidth;
     player.classList.add('jump-v160');
@@ -27920,7 +27947,7 @@ async function startHurdleRun(p,humanIndex,runId){
             <span>200m HURDLE RESULT</span>
             <strong>${seconds}</strong>
             <b>SECONDS</b>
-            <p>NO HIT ${clean} / 10</p>
+            <p>NO HIT ${clean} / 8</p>
             <div class="hurdle-result-track-v160"><i style="width:100%"></i></div>
             <button id="hurdleNext160" class="primary" type="button">RESULTへ</button>
           </div>
@@ -27959,7 +27986,7 @@ async function startHurdleRun(p,humanIndex,runId){
 
     if(!onGround){
       jumpY+=jumpV*dt;
-      jumpV-=980*dt;
+      jumpV-=900*dt;
       if(jumpY<=0){
         jumpY=0;
         jumpV=0;
