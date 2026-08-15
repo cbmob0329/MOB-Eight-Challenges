@@ -265,7 +265,7 @@ const GAMES=[
   {no:27,key:"bomb",title:"爆弾チキンレース",sub:"0.000秒直前でSTOP",legacy:28},
   {no:28,key:"overlapMaster",title:"重なりモブくん",sub:"4つの円を同時に重ねる",legacy:29},
   {no:29,key:"jumpingMob",title:"ジャンピングモブくん",sub:"ホッピングで台を乗り継ぐ",legacy:30},
-  {no:30,key:"heroMaybe",title:"モブくんは勇者かも",sub:"10秒で勇者を育てる",legacy:31},
+  {no:30,key:"heroMaybe",title:"モブくんは勇者かも",sub:"11秒で勇者を育てる",legacy:31},
   {no:31,key:"popularGame",title:"アクションモブくん",sub:"モブくんでモグラ踏み",legacy:32},
   {no:32,key:"planetEnergy",title:"モブくんは破壊神",sub:"3回チャージして高層ビルを貫く",legacy:33},
   {no:33,key:"painter",title:"モブくんは画家志望",sub:"猫の顔型を1回で綺麗になぞる",legacy:34},
@@ -308,25 +308,26 @@ const GAMES=[
   {no:70,key:"bubbleMob",title:"モブくん巨大シャボン玉",sub:"画面中央の泡を見た目だけで限界まで膨らませる",legacy:73},
   {no:71,key:"changeMob",title:"モブくん何が変わった？",sub:"部屋の1ヶ所の変化を見抜く",legacy:74},
   {no:72,key:"baggageMob",title:"モブくん荷物検査",sub:"複数の箱が流れる検査ラインで「！」を1回勝負",legacy:75},
-  {no:73,key:"bridgeMob",title:"モブくん橋を作って！",sub:"自由に橋を描いてモブくんを渡らせる",legacy:76},
-  {no:74,key:"treasureMob",title:"モブくん宝箱どれだ!?",sub:"100点の宝箱をシャッフルから追いかける",legacy:77},
-  {no:75,key:"rouletteMob",title:"モブくんルーレットジャンプ",sub:"ジャンプして着地した床のポイントを獲得",legacy:78},
-  {no:76,key:"excavationMob",title:"モブくん地下発掘",sub:"9マスから3ヶ所掘って化石ポイントを獲得",legacy:79},
-  {no:77,key:"oldMaidDuel",title:"モブくんのババ抜き決闘",sub:"偽モブくんの2枚から引いて何回目で勝てるか",legacy:80},
-  {no:78,key:"robotMarch",title:"モブくんロボット大発進",sub:"何本でも自由に電池を描いて補給し巨大ロボを前進させる",legacy:81},
-  {no:79,key:"monsterMaster",title:"モブくんはモンスターマスター",sub:"3秒で自作ボールを描き、10秒間何個でも投げて10体を捕獲",legacy:82},
-  {no:80,key:"scoutMan",title:"モブくんはスカウトマン！",sub:"30000円で9ポジションを1秒判断でスカウト",legacy:83},
-  {no:81,key:"atafutaSurvival",title:"モブくんあたふたサバイバル",sub:"崩れる浮遊岩で9人の偽モブくんと最後の1人を目指す",legacy:84},
-  {no:82,key:"waveMaster",title:"モブくん波動を極める",sub:"魂ゲージと円型ゲージを極めて偽モブくんと波動を撃ち合う",legacy:85},
-  {no:83,key:"battleRoyaleMob",title:"モブくんFPSアリーナに挑戦",sub:"3対3のアリーナでスキルを使い敵チームを全滅させる",legacy:86},
-  {no:84,key:"littleMobShot",title:"Little MOB SHOT",sub:"レコードに乗って10秒間スライムを撃ちまくる縦シューティング",legacy:87},
-  {no:85,key:"monsterBoxMob",title:"モブくんモンスターボックスに挑む",sub:"ロイター板を踏んで15段から20段の跳び箱を越える",legacy:88},
-  {no:86,key:"alienBattleMob",title:"モブくんエイリアンと戦う",sub:"小型ロボ2機で地上の巨大エイリアンHP100を撃破する",legacy:89},
-  {no:87,key:"mobMusou",title:"モブくん無双",sub:"7秒で巨大武器を描き、10秒オートで大量スライムを無双する",legacy:90},
-  {no:88,key:"iaidoMaster",title:"モブくんは居合切りの達人",sub:"夜の草原でCPUと居合勝負。勝負！の瞬間を見抜く",legacy:91},
-  {no:89,key:"killLeaderMob",title:"モブくんの長い夜",sub:"夜の砂漠を進みながらゾンビ30体を倒し、最後に巨大ゾンビを撃破する横スクロールFPSアクション",legacy:92},
-  {no:90,key:"mobSpeedRacer",title:"モブくんは爆速レーサー",sub:"タッグ専用。1番手がタイヤ、2番手が機体を描き、1kmレースで勝負",legacy:93},
-  {no:91,key:"summonMaster",title:"モブくんは召喚マスター",sub:"タッグ専用。4人が描いた魔物で2対2のオート召喚バトル",legacy:94}
+  {no:73,key:"treasureMob",title:"モブくん宝箱どれだ!?",sub:"100点の宝箱をシャッフルから追いかける",legacy:77},
+  {no:74,key:"rouletteMob",title:"モブくんルーレットジャンプ",sub:"ジャンプして着地した床のポイントを獲得",legacy:78},
+  {no:75,key:"excavationMob",title:"モブくん地下発掘",sub:"9マスから3ヶ所掘って化石ポイントを獲得",legacy:79},
+  {no:76,key:"oldMaidDuel",title:"モブくんのババ抜き決闘",sub:"偽モブくんの3枚から引いて何回目で勝てるか",legacy:80},
+  {no:77,key:"robotMarch",title:"モブくんロボット大発進",sub:"何本でも自由に電池を描いて補給し巨大ロボを前進させる",legacy:81},
+  {no:78,key:"monsterMaster",title:"モブくんはモンスターマスター",sub:"3秒で円形ボールを描き、3・2・1後に12体のモンスターを捕獲",legacy:82},
+  {no:79,key:"scoutMan",title:"モブくんはスカウトマン！",sub:"31000円で9ポジションを1.15秒判断でスカウト",legacy:83},
+  {no:80,key:"atafutaSurvival",title:"モブくんあたふたサバイバル",sub:"崩れる浮遊岩で9人の偽モブくんと最後の1人を目指す",legacy:84},
+  {no:81,key:"waveMaster",title:"モブくん波動を極める",sub:"魂ゲージと円型ゲージを極めて偽モブくんと波動を撃ち合う",legacy:85},
+  {no:82,key:"battleRoyaleMob",title:"モブくんFPSアリーナに挑戦",sub:"3対3のアリーナでスキルを使い敵チームを全滅させる",legacy:86},
+  {no:83,key:"littleMobShot",title:"Little MOB SHOT",sub:"レコードに乗って10秒間スライムを撃ちまくる縦シューティング",legacy:87},
+  {no:84,key:"monsterBoxMob",title:"モブくんモンスターボックスに挑む",sub:"ロイター板を踏んで15段から20段の跳び箱を越える",legacy:88},
+  {no:85,key:"alienBattleMob",title:"モブくんエイリアンと戦う",sub:"小型ロボ2機で地上の巨大エイリアンHP100を撃破する",legacy:89},
+  {no:86,key:"mobMusou",title:"モブくん無双",sub:"7秒で巨大武器を描き、10秒オートで大量スライムを無双する",legacy:90},
+  {no:87,key:"iaidoMaster",title:"モブくんは居合切りの達人",sub:"夜の草原でCPUと居合勝負。勝負！の瞬間を見抜く",legacy:91},
+  {no:88,key:"killLeaderMob",title:"モブくんの長い夜",sub:"夜の砂漠を進みながらゾンビ30体を倒し、最後に巨大ゾンビを撃破する横スクロールFPSアクション",legacy:92},
+  {no:89,key:"mobSpeedRacer",title:"モブくんは爆速レーサー",sub:"タッグ専用。1番手がタイヤ、2番手が機体を描き、1kmレースで勝負",legacy:93},
+  {no:90,key:"summonMaster",title:"モブくんは召喚マスター",sub:"タッグ専用。4人が描いた魔物で2対2のオート召喚バトル",legacy:94},
+  {no:91,key:"mobPinball",title:"モブくんピンボール",sub:"上から落としたボールをカメラで追い、10〜100点のスロットを狙う",legacy:95},
+  {no:92,key:"hurdleRun",title:"モブくんのハードル走",sub:"自動走行＋ジャンプで10個のハードルを越える200mタイムアタック",legacy:96}
 ];
 
 function legacyGameIndex(gameIndex){
@@ -371,6 +372,7 @@ const MODES={
   customMix:{name:"人数自由バトル",short:"PLAYER / CPUを自由設定",participants:["p1","c2"],team:false,points:[3,0]},
   matchedVsCpu:{name:"プレイヤー VS CPU",short:"同人数チーム戦 / 1対1〜10対10",participants:["p1","c2"],team:true,points:[3,0],teams:{A:["p1"],B:["c2"]},teamNames:{A:"PLAYER TEAM",B:"CPU TEAM"}},
   configured:{name:"対戦",short:"",participants:["p1","c2"],team:false,points:[3,0],performance:false,teams:{},teamNames:{}},
+  tournament:{name:"モブくんゲーム王決定戦",short:"8人 / 16人 ノックアウトトーナメント",participants:["p1","c2"],team:false,points:[],performance:true,teams:{},teamNames:{}},
   free:{name:"1人フリープレイ",short:"好きなゲームだけ遊ぶ",participants:["p1"],team:false,points:[0]}
 };
 
@@ -397,14 +399,15 @@ function freshState(){
       crisis:{},factory:{},catcher:{},tidy:{},ski:{},slot:{},rope:{},pk:{},rhythm:{},cut:{},climb:{},errand:{},dontHitMob:{},mobStop:{},overlap:{},shutter:{},cup:{},darts:{},parachute:{},mobCount:{},brake:{},feint:{},bomb:{},overlapMaster:{},jumpingMob:{},heroMaybe:{},popularGame:{},planetEnergy:{},painter:{},bikeJump:{},trampoline:{},mobTrain:{},giantMob:{},wizardMob:{},brawlerMob:{},summonerMob:{},blackjackMob:{},mobIssen:{},crowEscape:{},dancingMob:{},guardianMob:{},mob50m:{},sniperMob:{},mobRacePredict:{},mobRocket:{},bossDuel:{},plushCatcher:{},toyOnOff:{},dodgeballMob:{},amidakujiMob:{},katanaSmith:{},homeRunMob:{},mobMisfortune:{},aimMob:{},balanceMob:{},mobDice:{},mobCombo:{},electricMaze:{},cardShop:{},
         pizzaChef:{},mobHammer:{},bungeeMob:{},waterSlide:{},pancakeMob:{},
         paperPlane:{},tankMob:{},curlingMob:{},bubbleMob:{},
-        changeMob:{},baggageMob:{},bridgeMob:{},treasureMob:{},rouletteMob:{},excavationMob:{},
+        changeMob:{},baggageMob:{},treasureMob:{},rouletteMob:{},excavationMob:{},
         oldMaidDuel:{},robotMarch:{},monsterMaster:{},scoutMan:{},
-        atafutaSurvival:{},waveMaster:{},battleRoyaleMob:{},littleMobShot:{},monsterBoxMob:{},alienBattleMob:{},mobMusou:{},iaidoMaster:{},killLeaderMob:{},mobSpeedRacer:{},summonMaster:{}
+        atafutaSurvival:{},waveMaster:{},battleRoyaleMob:{},littleMobShot:{},monsterBoxMob:{},alienBattleMob:{},mobMusou:{},iaidoMaster:{},killLeaderMob:{},mobSpeedRacer:{},summonMaster:{},mobPinball:{},hurdleRun:{}
     },
     total:{},
     roundPoints:[],
     cpuTier:{},
-    setup:null
+    setup:null,
+    tournament:null
   };
 }
 function pById(id){return PLAYERS.find(p=>p.id===id)}
@@ -508,8 +511,8 @@ function renderHome(){
     <section class="hero hero-v119">
       <div>
         <span class="kicker">SMARTPHONE PARTY GAME</span>
-        <h1>91 MINI<br>GAMES</h1>
-        <p>対戦モードは「チーム戦」「個人戦」の2種類。人数・ルール・ゲーム数を自由に設定できます。</p>
+        <h1>92 MINI<br>GAMES</h1>
+        <p>通常対戦は「チーム戦」「個人戦」。さらに8人/16人の「モブくんゲーム王決定戦」を遊べます。</p>
       </div>
       <div class="hero-mark">MOB</div>
     </section>
@@ -518,7 +521,7 @@ function renderHome(){
       <button id="openModeSelect" class="home-main-action-v119" type="button">
         <span>MODE SELECT</span>
         <b>モードセレクト</b>
-        <small>チーム戦 / 個人戦</small>
+        <small>チーム戦 / 個人戦 / ゲーム王決定戦</small>
       </button>
 
       <button id="openFreePlay" class="home-sub-action-v119" type="button">
@@ -533,7 +536,7 @@ function renderHome(){
     </section>
 
     <section class="panel flat">
-      <div class="panel-head"><h3>91 MINI GAMES</h3><span class="tag">GAME 1 → 91</span></div>
+      <div class="panel-head"><h3>92 MINI GAMES</h3><span class="tag">GAME 1 → 92</span></div>
       <div class="compact-game-grid home-compact-games-v119">
         ${GAMES.map(g=>`<div><b>${g.no}</b><span>${g.title}</span></div>`).join("")}
       </div>
@@ -553,7 +556,7 @@ function renderFreePlaySelect(){
   screen.innerHTML=`
     <div class="game-head">
       <div><span class="kicker">FREE PLAY</span><h2>1人で遊ぶ</h2><p class="lead">好きなゲームを1つ選んでプレイ。</p></div>
-      <div class="game-badge">91</div>
+      <div class="game-badge">92</div>
     </div>
 
     <button id="freeBack" class="secondary wizard-back-v119" type="button">← メインへ戻る</button>
@@ -591,7 +594,7 @@ function renderGameGuide(){
   screen.innerHTML=`
     <div class="game-head">
       <div><span class="kicker">GAME GUIDE</span><h2>各ゲームの説明</h2><p class="lead">内容と100点換算の目安を一覧で確認できます。</p></div>
-      <div class="game-badge">91</div>
+      <div class="game-badge">92</div>
     </div>
 
     <button id="guideBack" class="secondary wizard-back-v119" type="button">← メインへ戻る</button>
@@ -614,6 +617,836 @@ function renderGameGuide(){
   gameTop();
 }
 
+
+// =========================================================
+// V10.58 — モブくんゲーム王決定戦
+// =========================================================
+function tournamentRoundName(roundIndex){
+  const t=state.tournament;
+  const total=t?.totalRounds||3;
+
+  if(roundIndex===total-1)return "決勝";
+  if(roundIndex===total-2)return "準決勝";
+  if(total===4&&roundIndex===1)return "準々決勝";
+  return "1回戦";
+}
+
+function tournamentGamePool(){
+  // タッグ専用2ゲームは1対1トーナメントでは選出しない。
+  return GAMES
+    .map((g,i)=>({g,i}))
+    .filter(x=>x.g.key!=="mobSpeedRacer"&&x.g.key!=="summonMaster")
+    .map(x=>x.i);
+}
+
+function pickTournamentGame(exclude=[]){
+  const blocked=new Set(exclude);
+  let pool=tournamentGamePool().filter(i=>!blocked.has(i));
+
+  if(!pool.length){
+    pool=tournamentGamePool();
+  }
+
+  return pool[randi(0,pool.length-1)];
+}
+
+function seedTournamentEntrants(size,humanCount){
+  const humanIds=[
+    "p1","p2","p3","p4","p5",
+    "p6","p7","p8","p9","p10"
+  ].slice(0,humanCount);
+
+  const cpuIds=[
+    "c2","c3","c4","c5","c6","c7","c8","c9","c10","c11",
+    "c12","c13","c14","c15","c16","c17","c18","c19","c20","c21",
+    "c22","c23","c24","c25","c26","c27","c28","c29","c30","c31"
+  ].slice(0,size-humanCount);
+
+  // 1回戦でPLAYER同士が極力当たらないよう、
+  // まず各カードへ1人ずつPLAYERを配置。
+  const pairCount=size/2;
+  const pairs=Array.from({length:pairCount},()=>[null,null]);
+  const pairOrder=shuffle(Array.from({length:pairCount},(_,i)=>i));
+  const humans=[...humanIds];
+
+  const separated=Math.min(humans.length,pairCount);
+
+  for(let i=0;i<separated;i++){
+    const pairIndex=pairOrder[i];
+    const side=Math.random()<.5?0:1;
+    pairs[pairIndex][side]=humans.shift();
+  }
+
+  // PLAYERがカード数を超えた場合のみPLAYER同士対戦が発生。
+  while(humans.length){
+    const open=[];
+    pairs.forEach((pair,pi)=>{
+      pair.forEach((value,side)=>{
+        if(!value)open.push([pi,side]);
+      });
+    });
+
+    if(!open.length)break;
+
+    const [pi,side]=open.shift();
+    pairs[pi][side]=humans.shift();
+  }
+
+  const cpuQueue=shuffle(cpuIds);
+
+  pairs.forEach(pair=>{
+    for(let side=0;side<2;side++){
+      if(!pair[side]){
+        pair[side]=cpuQueue.shift();
+      }
+    }
+  });
+
+  return pairs;
+}
+
+function makeTournamentMatch(roundIndex,index,a,b){
+  return {
+    roundIndex,
+    index,
+    a,
+    b,
+    winner:null,
+    loser:null,
+    summary:"",
+    games:[],
+    results:[]
+  };
+}
+
+function renderTournamentSetup(config){
+  clearGameFit();
+  cancelActiveAnimation();
+  invalidateGameRun();
+  state=freshState();
+
+  config.size=config.size===16?16:8;
+  config.humanCount=clamp(config.humanCount||1,1,Math.min(10,config.size));
+
+  const cpuCount=config.size-config.humanCount;
+
+  screen.innerHTML=`
+    <div class="game-head">
+      <div>
+        <span class="kicker">GAME KING TOURNAMENT</span>
+        <h2>モブくんゲーム王決定戦</h2>
+        <p class="lead">1試合ごとに1ゲーム。勝者だけが次へ進む。</p>
+      </div>
+      <div class="game-badge">${config.size}人</div>
+    </div>
+
+    <section class="tournament-setup-v158">
+      <div class="tournament-size-select-v158">
+        <button data-tsize="8" class="${config.size===8?"selected":""}" type="button">
+          <span>8 PLAYER</span><b>8人トーナメント</b>
+        </button>
+        <button data-tsize="16" class="${config.size===16?"selected":""}" type="button">
+          <span>16 PLAYER</span><b>16人トーナメント</b>
+        </button>
+      </div>
+
+      <div class="wizard-counter-v119 tournament-player-counter-v158">
+        <span>PLAYER</span>
+        <div>
+          <button id="tHumanMinus" type="button">−</button>
+          <b id="tHumanCount">${config.humanCount}</b>
+          <button id="tHumanPlus" type="button">＋</button>
+        </div>
+        <small>PLAYER 1〜${Math.min(10,config.size)}人</small>
+      </div>
+
+      <div class="tournament-entry-summary-v158">
+        <div><span>PLAYER</span><b>${config.humanCount}</b></div>
+        <div><span>CPU</span><b>${cpuCount}</b></div>
+        <div><span>ENTRY</span><b>${config.size}</b></div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h3>RULE</h3>
+      <div class="tournament-rule-list-v158">
+        <p><b>通常試合</b><span>1試合1ゲーム / 0〜100スコアで高い方が勝利</span></p>
+        <p><b>同点</b><span>ゲームを変更して延長戦 / 勝者が決まるまで継続</span></p>
+        <p><b>決勝</b><span>3ゲーム合計スコア / 同点なら別ゲームで延長</span></p>
+        <p><b>組み合わせ</b><span>1回戦はPLAYER同士が極力当たらないよう自動抽選</span></p>
+      </div>
+    </section>
+
+    <button id="tournamentCreate" class="primary" type="button">
+      トーナメント表を作成
+    </button>
+    <button id="tournamentBack" class="secondary wizard-back-v119" type="button">
+      ← モード選択へ戻る
+    </button>
+  `;
+
+  const redraw=()=>{
+    config.humanCount=clamp(
+      config.humanCount,
+      1,
+      Math.min(10,config.size)
+    );
+    renderTournamentSetup(config);
+  };
+
+  screen.querySelectorAll("[data-tsize]").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      config.size=Number(btn.dataset.tsize);
+      config.humanCount=Math.min(config.humanCount,Math.min(10,config.size));
+      redraw();
+    });
+  });
+
+  document.getElementById("tHumanMinus").addEventListener("click",()=>{
+    config.humanCount=Math.max(1,config.humanCount-1);
+    redraw();
+  });
+
+  document.getElementById("tHumanPlus").addEventListener("click",()=>{
+    config.humanCount=Math.min(Math.min(10,config.size),config.humanCount+1);
+    redraw();
+  });
+
+  document.getElementById("tournamentCreate").addEventListener("click",()=>{
+    setupGameKingTournament(config);
+  });
+
+  document.getElementById("tournamentBack").addEventListener("click",renderBattleTypeSelect);
+  gameTop();
+}
+
+function setupGameKingTournament(config){
+  cancelActiveAnimation();
+  invalidateGameRun();
+
+  const pairs=seedTournamentEntrants(config.size,config.humanCount);
+  const firstRound=pairs.map((pair,i)=>makeTournamentMatch(0,i,pair[0],pair[1]));
+  const entrants=pairs.flat();
+
+  state.modeKey="tournament";
+  state.setup={...config,type:"tournament"};
+  state.playStyle="tournament";
+  state.playlist=[];
+  state.roundIndex=0;
+
+  MODES.tournament.participants=[...entrants];
+  MODES.tournament.performance=true;
+  MODES.tournament.team=false;
+  MODES.tournament.points=[];
+
+  state.tournament={
+    active:true,
+    size:config.size,
+    humanCount:config.humanCount,
+    entrants:[...entrants],
+    totalRounds:Math.log2(config.size),
+    bracket:[firstRound],
+    roundIndex:0,
+    matchIndex:0,
+    totalGamesPlayed:0,
+    usedGames:[],
+    current:null,
+    champion:null
+  };
+
+  renderTournamentWelcome();
+}
+
+function tournamentPlayerCard(id,cls=""){
+  const p=pById(id);
+  if(!p)return `<div class="tournament-person-v158 ${cls} empty">TBD</div>`;
+
+  return `
+    <div class="tournament-person-v158 ${cls} ${p.cpu?"cpu":"human"}">
+      ${imgTag(p,"tournament-avatar-v158")}
+      <div>
+        <b>${esc(p.name)}</b>
+        <span>${p.cpu?"CPU":`PLAYER ${p.no}`}</span>
+      </div>
+    </div>`;
+}
+
+function tournamentBracketHtml(){
+  const t=state.tournament;
+  const columns=[];
+
+  for(let round=0;round<t.totalRounds;round++){
+    const matches=t.bracket[round]||[];
+    const count=t.size/(2**(round+1));
+
+    const cards=[];
+
+    for(let i=0;i<count;i++){
+      const m=matches[i];
+
+      cards.push(`
+        <div class="tournament-bracket-match-v158 ${m?.winner?"complete":""}">
+          <span>${tournamentRoundName(round)} ${i+1}</span>
+          ${m
+            ? tournamentPlayerCard(m.a,m.winner===m.a?"winner":"")
+            : `<div class="tournament-person-v158 empty">TBD</div>`}
+          <i>VS</i>
+          ${m
+            ? tournamentPlayerCard(m.b,m.winner===m.b?"winner":"")
+            : `<div class="tournament-person-v158 empty">TBD</div>`}
+        </div>`);
+    }
+
+    columns.push(`
+      <section class="tournament-bracket-round-v158 ${round===t.totalRounds-1?"final":""}">
+        <h4>${tournamentRoundName(round)}</h4>
+        <div>${cards.join("")}</div>
+      </section>`);
+  }
+
+  return `<div class="tournament-bracket-v158">${columns.join("")}</div>`;
+}
+
+function tournamentCommentary(title,text,final=false){
+  return `
+    <div class="tournament-commentary-v158 ${final?"final":""}">
+      <span>実況</span>
+      <b>${title}</b>
+      <p>${text}</p>
+    </div>`;
+}
+
+function renderTournamentWelcome(){
+  clearGameFit();
+  const t=state.tournament;
+
+  MODES.tournament.participants=[...t.entrants];
+
+  screen.innerHTML=`
+    <div class="game-head">
+      <div>
+        <span class="kicker">GAME KING TOURNAMENT</span>
+        <h2>モブくんゲーム王決定戦</h2>
+        <p class="lead">${t.size}人ノックアウトトーナメント</p>
+      </div>
+      <div class="game-badge">${t.size}</div>
+    </div>
+
+    ${tournamentCommentary(
+      "モブパーティートーナメントへようこそ！",
+      "1位を目指して頑張ってください！ いよいよゲーム王を決める戦いが始まります！"
+    )}
+
+    <section class="panel tournament-bracket-panel-v158">
+      <div class="panel-head">
+        <h3>TOURNAMENT BRACKET</h3>
+        <span class="tag">${t.humanCount} PLAYER / ${t.size-t.humanCount} CPU</span>
+      </div>
+      ${tournamentBracketHtml()}
+    </section>
+
+    <button id="tournamentOpeningStart" class="primary tournament-main-btn-v158" type="button">
+      トーナメント開始！
+    </button>
+  `;
+
+  document.getElementById("tournamentOpeningStart").addEventListener("click",prepareTournamentMatch);
+  gameTop();
+}
+
+function prepareTournamentMatch(){
+  const t=state.tournament;
+  if(!t?.active)return;
+
+  let roundMatches=t.bracket[t.roundIndex];
+
+  if(t.matchIndex>=roundMatches.length){
+    const winners=roundMatches.map(m=>m.winner).filter(Boolean);
+
+    if(winners.length===1){
+      t.champion=winners[0];
+      renderTournamentChampion(winners[0]);
+      return;
+    }
+
+    const nextRound=[];
+    for(let i=0;i<winners.length;i+=2){
+      nextRound.push(
+        makeTournamentMatch(
+          t.roundIndex+1,
+          i/2,
+          winners[i],
+          winners[i+1]
+        )
+      );
+    }
+
+    t.bracket.push(nextRound);
+    t.roundIndex++;
+    t.matchIndex=0;
+    roundMatches=nextRound;
+  }
+
+  const match=roundMatches[t.matchIndex];
+  const isFinal=t.roundIndex===t.totalRounds-1;
+  const baseCount=isFinal?3:1;
+  const baseGames=[];
+  const localUsed=[];
+
+  for(let i=0;i<baseCount;i++){
+    const g=pickTournamentGame([...t.usedGames,...localUsed]);
+    baseGames.push(g);
+    localUsed.push(g);
+  }
+
+  match.games=[...baseGames];
+  match.results=[];
+  match.baseGames=[...baseGames];
+  match.basePlayed=0;
+  match.totalA=0;
+  match.totalB=0;
+  match.phase="base";
+  match.gameCursor=0;
+  match.usedGames=[...baseGames];
+
+  t.current=match;
+
+  renderTournamentMatchIntro();
+}
+
+function renderTournamentMatchIntro(extraText=""){
+  clearGameFit();
+  const t=state.tournament;
+  const m=t.current;
+  const a=pById(m.a);
+  const b=pById(m.b);
+  const isFinal=t.roundIndex===t.totalRounds-1;
+  const round=tournamentRoundName(t.roundIndex);
+
+  MODES.tournament.participants=[m.a,m.b];
+
+  const games=m.baseGames.map((idx,i)=>`
+    <div class="tournament-game-chip-v158">
+      <span>${isFinal?`決勝 ${i+1}`:"GAME"}</span>
+      <b>${GAMES[idx].title}</b>
+    </div>`).join("");
+
+  screen.innerHTML=`
+    <div class="game-head">
+      <div>
+        <span class="kicker">${isFinal?"FINAL MATCH":"TOURNAMENT MATCH"}</span>
+        <h2>${isFinal?"ゲーム王決定戦・決勝！":`${round} 第${t.matchIndex+1}試合`}</h2>
+      </div>
+      <div class="game-badge">${isFinal?"FINAL":`${t.matchIndex+1}`}</div>
+    </div>
+
+    ${tournamentCommentary(
+      isFinal
+        ? "ついに決勝戦！！"
+        : `${round}第${t.matchIndex+1}試合！`,
+      isFinal
+        ? `${a.name} vs ${b.name}！ ここまで勝ち抜いた2人が、3ゲーム合計スコアでゲーム王の座を争います！`
+        : `${a.name} vs ${b.name}！ 勝った方だけが次のステージへ進みます！`,
+      isFinal
+    )}
+
+    ${extraText?`<div class="tournament-extra-call-v158">${extraText}</div>`:""}
+
+    <div class="tournament-versus-v158 ${isFinal?"final":""}">
+      ${tournamentPlayerCard(m.a)}
+      <strong>VS</strong>
+      ${tournamentPlayerCard(m.b)}
+    </div>
+
+    <section class="panel">
+      <div class="panel-head">
+        <h3>${isFinal?"FINAL 3 GAMES":"SELECTED GAME"}</h3>
+        <span class="tag">${isFinal?"合計スコア":"1 GAME"}</span>
+      </div>
+      <div class="tournament-game-list-v158">${games}</div>
+    </section>
+
+    <button id="tournamentMatchStart" class="primary tournament-main-btn-v158" type="button">
+      ${isFinal?"決勝戦スタート！":"この試合を始める！"}
+    </button>
+  `;
+
+  document.getElementById("tournamentMatchStart").addEventListener("click",startTournamentCurrentGame);
+  gameTop();
+}
+
+function startTournamentCurrentGame(){
+  const t=state.tournament;
+  const m=t.current;
+  if(!t?.active||!m)return;
+
+  const gameIndex=m.phase==="base"
+    ? m.baseGames[m.basePlayed]
+    : m.overtimeGame;
+
+  if(gameIndex===undefined)return;
+
+  MODES.tournament.participants=[m.a,m.b];
+  MODES.tournament.performance=true;
+  MODES.tournament.team=false;
+  MODES.tournament.points=[];
+
+  state.modeKey="tournament";
+  state.gameIndex=gameIndex;
+  state.roundIndex=t.totalGamesPlayed;
+  state.playlist=[gameIndex];
+
+  const key=GAMES[gameIndex].key;
+  const rec=state.records[key];
+
+  if(rec){
+    delete rec[m.a];
+    delete rec[m.b];
+  }
+
+  showGameIntro(gameIndex);
+}
+
+function tournamentScoreFor(gameIndex,id){
+  const key=GAMES[gameIndex]?.key;
+  const raw=state.records[key]?.[id];
+
+  if(typeof raw!=="number"||!Number.isFinite(raw)){
+    return {raw:0,score:0};
+  }
+
+  return {
+    raw,
+    score:clamp(
+      Math.round(performancePoints(gameIndex,raw)),
+      0,
+      100
+    )
+  };
+}
+
+function finishTournamentGame(gameIndex){
+  const t=state.tournament;
+  const m=t?.current;
+
+  if(!t?.active||!m)return;
+
+  gameSessionActive=false;
+  activeGameIndex=-1;
+  cancelCountdown();
+  cancelActiveAnimation();
+  clearGameFit();
+
+  const a=tournamentScoreFor(gameIndex,m.a);
+  const b=tournamentScoreFor(gameIndex,m.b);
+
+  const result={
+    gameIndex,
+    rawA:a.raw,
+    rawB:b.raw,
+    scoreA:a.score,
+    scoreB:b.score,
+    overtime:m.phase==="overtime"
+  };
+
+  m.results.push(result);
+  t.totalGamesPlayed++;
+  t.usedGames.push(gameIndex);
+
+  let action="complete";
+  let nextGame=null;
+
+  if(m.phase==="base"){
+    m.totalA+=a.score;
+    m.totalB+=b.score;
+    m.basePlayed++;
+
+    if(m.basePlayed<m.baseGames.length){
+      action="nextBase";
+      nextGame=m.baseGames[m.basePlayed];
+    }else if(m.totalA===m.totalB){
+      action="overtime";
+      m.phase="overtime";
+      m.overtimeGame=pickTournamentGame([...t.usedGames,...m.usedGames]);
+      m.usedGames.push(m.overtimeGame);
+      nextGame=m.overtimeGame;
+    }
+  }else{
+    if(a.score===b.score){
+      action="overtime";
+      m.overtimeGame=pickTournamentGame([...t.usedGames,...m.usedGames]);
+      m.usedGames.push(m.overtimeGame);
+      nextGame=m.overtimeGame;
+    }
+  }
+
+  renderTournamentGameScore(result,action,nextGame);
+}
+
+function renderTournamentGameScore(result,action,nextGame){
+  clearGameFit();
+  const t=state.tournament;
+  const m=t.current;
+  const a=pById(m.a);
+  const b=pById(m.b);
+  const isFinal=t.roundIndex===t.totalRounds-1;
+
+  let commentaryTitle="";
+  let commentaryText="";
+  let buttonText="勝者発表へ";
+
+  if(result.overtime){
+    commentaryTitle="延長戦終了！";
+    commentaryText=result.scoreA===result.scoreB
+      ? `なんとまた同点！ ${a.name}も${b.name}も一歩も譲りません！ さらにゲームを変えて続行します！`
+      : `${a.name} ${result.scoreA}点、${b.name} ${result.scoreB}点！ ついに決着です！`;
+  }else if(isFinal){
+    commentaryTitle=`決勝 第${m.basePlayed}ゲーム終了！`;
+    commentaryText=`現在の合計は ${a.name} ${m.totalA}点、${b.name} ${m.totalB}点！ ゲーム王の座はまだ分かりません！`;
+  }else{
+    commentaryTitle=`${GAMES[result.gameIndex].title} 終了！`;
+    commentaryText=`${a.name} ${result.scoreA}点、${b.name} ${result.scoreB}点！`;
+  }
+
+  if(action==="nextBase"){
+    buttonText=`次のゲーム / ${GAMES[nextGame].title}`;
+  }else if(action==="overtime"){
+    buttonText=`延長戦 / ${GAMES[nextGame].title}`;
+  }
+
+  screen.innerHTML=`
+    <div class="game-head">
+      <div>
+        <span class="kicker">${result.overtime?"OVERTIME RESULT":"GAME SCORE"}</span>
+        <h2>${GAMES[result.gameIndex].title}</h2>
+      </div>
+      <div class="game-badge">${result.scoreA}-${result.scoreB}</div>
+    </div>
+
+    ${tournamentCommentary(commentaryTitle,commentaryText,isFinal)}
+
+    <div class="tournament-score-duel-v158">
+      <div class="${result.scoreA>result.scoreB?"lead":""}">
+        ${tournamentPlayerCard(m.a)}
+        <b>${result.scoreA}<small>pt</small></b>
+      </div>
+      <strong>VS</strong>
+      <div class="${result.scoreB>result.scoreA?"lead":""}">
+        ${tournamentPlayerCard(m.b)}
+        <b>${result.scoreB}<small>pt</small></b>
+      </div>
+    </div>
+
+    ${isFinal&&!result.overtime?`
+      <section class="tournament-final-total-v158">
+        <span>FINAL TOTAL</span>
+        <div><b>${a.name}</b><strong>${m.totalA}</strong></div>
+        <i>—</i>
+        <div><b>${b.name}</b><strong>${m.totalB}</strong></div>
+      </section>`:""}
+
+    ${action==="overtime"?`
+      <div class="tournament-overtime-v158">
+        <b>同点！ 延長戦！</b>
+        <span>ゲームを変更して1ゲーム勝負。勝者が決まるまで続きます。</span>
+      </div>`:""}
+
+    <button id="tournamentScoreNext" class="primary tournament-main-btn-v158" type="button">
+      ${buttonText}
+    </button>
+  `;
+
+  document.getElementById("tournamentScoreNext").addEventListener("click",()=>{
+    if(action==="nextBase"||action==="overtime"){
+      renderTournamentNextGameCall(nextGame,action==="overtime");
+    }else{
+      completeTournamentMatchFromCurrent();
+    }
+  });
+
+  gameTop();
+}
+
+function renderTournamentNextGameCall(gameIndex,overtime=false){
+  clearGameFit();
+  const t=state.tournament;
+  const m=t.current;
+  const a=pById(m.a);
+  const b=pById(m.b);
+  const isFinal=t.roundIndex===t.totalRounds-1;
+
+  screen.innerHTML=`
+    <div class="game-head">
+      <div>
+        <span class="kicker">${overtime?"OVERTIME":"NEXT GAME"}</span>
+        <h2>${overtime?"延長戦！":isFinal?`決勝 第${m.basePlayed+1}ゲーム`:"次のゲーム"}</h2>
+      </div>
+      <div class="game-badge">${overtime?"EX":"GO"}</div>
+    </div>
+
+    ${tournamentCommentary(
+      overtime?"両者一歩も譲らない！":"まだ勝負は終わっていません！",
+      overtime
+        ? `${a.name}と${b.name}は同点！ ゲームを「${GAMES[gameIndex].title}」に変更して延長戦です！`
+        : `次は「${GAMES[gameIndex].title}」！ 決勝の合計スコアに大きく影響する1ゲームです！`,
+      isFinal
+    )}
+
+    <div class="tournament-next-game-v158">
+      <span>${overtime?"SUDDEN DEATH":"NEXT"}</span>
+      <b>${GAMES[gameIndex].title}</b>
+      <small>${scoreRuleForGame(gameIndex)}</small>
+    </div>
+
+    <button id="tournamentNextGameStart" class="primary tournament-main-btn-v158" type="button">
+      ${overtime?"延長戦スタート！":"次のゲームスタート！"}
+    </button>
+  `;
+
+  document.getElementById("tournamentNextGameStart").addEventListener("click",startTournamentCurrentGame);
+  gameTop();
+}
+
+function completeTournamentMatchFromCurrent(){
+  const t=state.tournament;
+  const m=t.current;
+  const isFinal=t.roundIndex===t.totalRounds-1;
+
+  let winnerId;
+  let loserId;
+
+  if(m.phase==="overtime"){
+    const last=m.results.at(-1);
+    if(last.scoreA===last.scoreB){
+      // Safety: normally handled before reaching here.
+      m.overtimeGame=pickTournamentGame([...t.usedGames,...m.usedGames]);
+      m.usedGames.push(m.overtimeGame);
+      renderTournamentNextGameCall(m.overtimeGame,true);
+      return;
+    }
+    winnerId=last.scoreA>last.scoreB?m.a:m.b;
+  }else{
+    winnerId=m.totalA>m.totalB?m.a:m.b;
+  }
+
+  loserId=winnerId===m.a?m.b:m.a;
+
+  m.winner=winnerId;
+  m.loser=loserId;
+  m.summary=isFinal
+    ? `${m.totalA}-${m.totalB}`
+    : `${m.results[0].scoreA}-${m.results[0].scoreB}`;
+
+  renderTournamentMatchComplete(winnerId,loserId,isFinal);
+}
+
+function renderTournamentMatchComplete(winnerId,loserId,isFinal){
+  clearGameFit();
+  const t=state.tournament;
+  const winner=pById(winnerId);
+  const loser=pById(loserId);
+
+  if(isFinal){
+    t.champion=winnerId;
+    renderTournamentChampion(winnerId,loserId);
+    return;
+  }
+
+  screen.innerHTML=`
+    <div class="game-head">
+      <div>
+        <span class="kicker">MATCH COMPLETE</span>
+        <h2>${tournamentRoundName(t.roundIndex)} 第${t.matchIndex+1}試合終了</h2>
+      </div>
+      <div class="game-badge">WIN</div>
+    </div>
+
+    ${tournamentCommentary(
+      `勝者 ${winner.name}！`,
+      `負けてしまった${loser.name}も素晴らしかったです✨ 大きな拍手を！ ${winner.name}は次のステージへ進みます！`
+    )}
+
+    <div class="tournament-winner-card-v158">
+      ${imgTag(winner,"tournament-winner-avatar-v158")}
+      <span>WINNER</span>
+      <b>${esc(winner.name)}</b>
+    </div>
+
+    <section class="panel tournament-bracket-panel-v158">
+      <h3>TOURNAMENT BRACKET</h3>
+      ${tournamentBracketHtml()}
+    </section>
+
+    <button id="tournamentAfterMatch" class="primary tournament-main-btn-v158" type="button">
+      トーナメント表へ / 次の試合
+    </button>
+  `;
+
+  document.getElementById("tournamentAfterMatch").addEventListener("click",()=>{
+    t.matchIndex++;
+    prepareTournamentMatch();
+  });
+
+  gameTop();
+}
+
+function renderTournamentChampion(winnerId,runnerUpId=null){
+  clearGameFit();
+  const t=state.tournament;
+  const winner=pById(winnerId);
+  const runner=runnerUpId?pById(runnerUpId):null;
+
+  MODES.tournament.participants=[...t.entrants];
+
+  screen.innerHTML=`
+    <div class="tournament-champion-v158">
+      <div class="tournament-confetti-v158">
+        ${Array.from({length:36},(_,i)=>`<i style="--x:${(i*29)%100}%;--d:${(i%9)*.11}s;--r:${(i*47)%360}deg"></i>`).join("")}
+      </div>
+
+      <span>GAME KING CHAMPION</span>
+      <h2>モブくんゲーム王 誕生！！</h2>
+
+      ${imgTag(winner,"tournament-champion-avatar-v158")}
+
+      <strong>${esc(winner.name)}</strong>
+      <b>優勝！！</b>
+    </div>
+
+    ${tournamentCommentary(
+      "決着ーーー！！",
+      `${winner.name}がモブパーティートーナメントを制覇！ 初代ゲーム王の座に輝きました！！ ${runner?`${runner.name}も最後まで本当に素晴らしい戦いでした！`:""} 全選手に大きな拍手を！！`,
+      true
+    )}
+
+    <section class="panel tournament-bracket-panel-v158">
+      <div class="panel-head">
+        <h3>FINAL BRACKET</h3>
+        <span class="tag">CHAMPION ${esc(winner.name)}</span>
+      </div>
+      ${tournamentBracketHtml()}
+    </section>
+
+    <button id="tournamentReplay" class="primary" type="button">
+      同じ人数でもう一度
+    </button>
+    <div style="height:8px"></div>
+    <button id="tournamentModeBack" class="secondary" type="button">
+      モードセレクトへ
+    </button>
+  `;
+
+  document.getElementById("tournamentReplay").addEventListener("click",()=>{
+    renderTournamentSetup({
+      size:t.size,
+      humanCount:t.humanCount
+    });
+  });
+
+  document.getElementById("tournamentModeBack").addEventListener("click",renderBattleTypeSelect);
+  gameTop();
+}
+
 function renderBattleTypeSelect(){
   clearGameFit();
   cancelActiveAnimation();
@@ -622,8 +1455,8 @@ function renderBattleTypeSelect(){
 
   screen.innerHTML=`
     <div class="game-head">
-      <div><span class="kicker">MODE SELECT</span><h2>対戦形式を選択</h2><p class="lead">対戦モードはこの2つだけです。</p></div>
-      <div class="game-badge">2 MODES</div>
+      <div><span class="kicker">MODE SELECT</span><h2>対戦形式を選択</h2><p class="lead">通常対戦2種 + ノックアウトトーナメント。</p></div>
+      <div class="game-badge">3 MODES</div>
     </div>
 
     <div class="battle-type-grid-v119">
@@ -632,6 +1465,11 @@ function renderBattleTypeSelect(){
       </button>
       <button id="battleSolo" class="battle-type-card-v119 solo" type="button">
         <span>INDIVIDUAL</span><b>個人戦</b><small>PLAYER人数 + CPU人数で全員対戦</small>
+      </button>
+      <button id="battleTournament" class="battle-type-card-v119 tournament-v158" type="button">
+        <span>GAME KING TOURNAMENT</span>
+        <b>モブくんゲーム王決定戦</b>
+        <small>8人 / 16人・1試合1ゲーム・決勝3ゲーム</small>
       </button>
     </div>
 
@@ -649,6 +1487,10 @@ function renderBattleTypeSelect(){
     const config={type:'individual',humanCount:1,cpuCount:1,rule:null,length:null};
     state.setup=config;
     renderIndividualSetup(config);
+  });
+
+  document.getElementById('battleTournament').addEventListener('click',()=>{
+    renderTournamentSetup({size:8,humanCount:1});
   });
 
   document.getElementById('battleTypeBack').addEventListener('click',renderHome);
@@ -1165,7 +2007,13 @@ function pointsForCount(n){
   const table={2:[3,0],3:[4,2,0],4:[5,3,1,0],5:[7,5,3,1,0],6:[8,6,4,2,1,0],7:[9,7,5,3,2,1,0],8:[10,8,6,4,3,2,1,0]};
   return table[n]||Array.from({length:n},(_,i)=>Math.max(0,n-i-1));
 }
-function currentRoundLabel(){return state.freePlay?"SOLO":`ROUND ${state.roundIndex+1} / ${roundCount()}`}
+function currentRoundLabel(){
+  if(state.tournament?.active){
+    const t=state.tournament;
+    return `${tournamentRoundName(t.roundIndex)} 第${t.matchIndex+1}試合`;
+  }
+  return state.freePlay?"SOLO":`ROUND ${state.roundIndex+1} / ${roundCount()}`;
+}
 
 
 
@@ -1182,7 +2030,7 @@ function renderPlayStyleSelect(){
       <button id="normalStyle" class="style-select-card normal" type="button">
         <span>NORMAL</span>
         <b>順番に全種目</b>
-        <small>GAME 1 → 91 を順番にプレイ</small>
+        <small>GAME 1 → 92 を順番にプレイ</small>
       </button>
       <button id="customStyle" class="style-select-card custom" type="button">
         <span>CUSTOM</span>
@@ -1192,7 +2040,7 @@ function renderPlayStyleSelect(){
     </div>
 
     <section class="panel flat">
-      <h3>91 MINI GAMES</h3>
+      <h3>92 MINI GAMES</h3>
       <div class="compact-game-grid">
         ${GAMES.map(g=>`<div><b>${g.no}</b><span>${g.title}</span></div>`).join("")}
       </div>
@@ -1462,7 +2310,7 @@ function scoreRuleForGame(index){
     "3ヶ所から掘り出した化石ポイントの合計",
     "1回目で勝利=100点 / 2回目=90点 / 10回目=10点",
     "前進距離1000m=100点 / エネルギー切れまでの距離",
-    "3秒デザイン→10秒捕獲 / 捕獲したモンスター数×10点 / 10体GET=100点",
+    "3秒デザイン→3・2・1→10秒捕獲 / 12体GET=100点",
     "甲子園47校中の最終順位 / 1位=100点・47位=0点換算",
     "10人中の生存順位で0〜100点 / 最初に落下=0点 / 最後の1人=100点",
     "魂ゲージ55% + Z型ゲージ1回のなぞり45%で波動威力0〜100点",
@@ -1474,7 +2322,9 @@ function scoreRuleForGame(index){
     "1人目敗北0〜30 / 2人目敗北31〜60 / 3人目敗北61〜75 / 3人撃破80〜100",
     "ゾンビ30体＋巨大ゾンビ撃破までのクリアタイム / 速いほど高得点",
     "タッグ2対2専用 / 1km先のゴールへ先着したチームが勝利",
-    "描いた魔物2対2 / 勝利チーム100点・敗北チーム0点"
+    "描いた魔物2対2 / 勝利チーム100点・敗北チーム0点",
+    "10 / 20 / 30 / 40 / 50 / 60 / 70 / 80 / 90 / 100 の入ったスロットがそのまま得点",
+    "200m完走タイム / 10.00秒以下=100点 / 18.00秒以上=0点"
   ][legacyIndex];
 }
 
@@ -1550,7 +2400,7 @@ function showGameIntro(index){
   }else if(legacyIndex===30){
     rules=`<li>3・2・1後10秒。</li><li>モブくんはバネのホッピングマシーンに乗っています。</li><li>← →で左右移動、JUMPでジャンプ。</li><li>ランダムに並ぶ台を乗り継いで上へ。高い台ほど横幅が短くなります。</li><li>長距離はカメラが上方向へ追跡。500m以上で100点。</li>`;
   }else if(legacyIndex===31){
-    rules=`<li>「あなたは、、勇者様！？」のナレーションから3・2・1。</li><li>10秒間、4つの項目から1つを選び続けます。</li><li>選ぶたび4項目が全部入れ替わり、同じ項目は再登場しません。</li><li>強化と罠が合計50種。必ず1つ以上は強化。</li><li>勇者シリーズは高得点。弱点・呪いなどは弱体化。</li>`;
+    rules=`<li>「あなたは、、勇者様！？」のナレーションから3・2・1。</li><li>11秒間、4つの項目から1つを選び続けます。</li><li>選ぶたび4項目が全部入れ替わり、同じ項目は再登場しません。</li><li>強化と罠が合計50種。必ず1つ以上は強化。</li><li>勇者シリーズは高得点。弱点・呪いなどは弱体化。</li>`;
   }else if(legacyIndex===32){
     rules=`<li>3・2・1後10秒の横スクロールアクション。</li><li>← →で移動、JUMPでジャンプ。</li><li>モグラは最大4体。上から踏むと+1体、倒すと1体リポップ。</li><li>カメラはモブくんを左右に追跡。</li><li>20体踏みつけで100点。</li>`;
   }else if(legacyIndex===33){
@@ -1648,13 +2498,13 @@ function showGameIntro(index){
   }else if(legacyIndex===79){
     rules=`<li>地面の9マスから3ヶ所を選んで発掘します。</li><li>1ヶ所掘るたびに土が飛び、化石や石が出現。演出終了後に次を掘れます。</li><li>0 / 10 / 30 / 50 / 75 / 100ポイント。</li><li>3回の合計ポイントで競います。</li>`;
   }else if(legacyIndex===80){
-    rules=`<li>偽モブくんはジョーカーとスペードのA、こちらはダイヤのAを持って開始。</li><li>相手の2枚から1枚を選ぶたび「このカードを引きますか？」と確認が出ます。「はい」で確定、「いいえ」で選び直せます。</li><li>スペードのAを引けばAのペアが完成して勝利。ジョーカーなら相手へ戻り、2枚をシャッフルして次の挑戦。</li><li>何回目の「はい」で勝てたかを競います。1回目勝利が最高記録。</li>`;
+    rules=`<li>偽モブくんはジョーカー2枚とスペードのA、こちらはダイヤのAを持って開始。</li><li>相手の3枚から1枚を選ぶたび「このカードを引きますか？」と確認が出ます。「はい」で確定、「いいえ」で選び直せます。</li><li>スペードのAを引けばAのペアが完成して勝利。ジョーカーなら相手へ戻り、3枚をシャッフルして次の挑戦。</li><li>何回目の「はい」で勝てたかを競います。1回目勝利が最高記録。</li>`;
   }else if(legacyIndex===81){
     rules=`<li>モブくんが乗った巨大ロボは自動で前進し続け、前進中はENERGYが減り続けます。</li><li>右下のBATTERY枠へ好きな形を何本でも自由に描きます。描き終わったあと、絵を短くタップすると電池としてロボへ飛びます。</li><li>一筆だけでも送れますが補給量は少なめ。複数の線で大きく描くほど補給量が伸びます。</li><li>ENERGYが0になった瞬間に終了し、それまでの前進距離が記録です。</li>`;
   }else if(legacyIndex===82){
-    rules=`<li>中央〜上部では10体のモンスターがそれぞれ違う速度で左右に歩いています。</li><li>下の正方形BALL DESIGN枠で円と中のデザインを何本でも自由に描けます。</li><li>描いたボールを上方向へフリックすると、その方向と速さのままモンスターへ飛びます。命中すると吸い込み→揺れ→捕獲判定。</li><li>モンスターごとに捕まりやすさが異なります。10体すべてGETで100点です。</li>`;
+    rules=`<li>3秒間、下の円形BALL DESIGN枠へボールの模様を何本でも自由に描きます。</li><li>描き終わると3・2・1。12体のモンスターへ同じボールを上方向にフリックして捕獲します。</li>`;
   }else if(legacyIndex===83){
-    rules=`<li>所持金30000円で、P / C / 1B / 2B / 3B / SS / RF / LF / CFの9人をスカウトします。</li><li>各ポジションごとに5人が横一列へ表示され、選べる時間は1秒。選んだ選手を即購入します。</li><li>R=500円 / SR=1000円 / SSR=3000円 / UR=5000円 / MOB=10000円。時間切れまたは資金不足ならRが自動加入。</li><li>9人決定後にチーム一覧を確認し、「結果を観る」で47校中の甲子園順位を発表します。</li>`;
+    rules=`<li>所持金31000円で、9ポジションの選手をスカウトします。</li><li>各ポジションの選択時間は1.15秒。少しだけ判断しやすくなっています。</li>`;
   }else if(legacyIndex===84){
     rules=`<li>プレイヤーと9人の偽モブくんが、宙に浮く岩の足場からスタートします。</li><li>左右の矢印で移動、JUMPで最大2段ジャンプ。モブくん同士はぶつかるので、前をふさがれたらジャンプして越えます。</li><li>岩の足場は部分ごとにヒビが入り、時間とともにどんどん崩落します。落下したらその時点で終了です。</li><li>最初に落ちると0点。最後の1人まで生き残ればCLEARで100点です。</li>`;
   }else if(legacyIndex===85){
@@ -1675,8 +2525,12 @@ function showGameIntro(index){
     rules=`<li>夜の砂漠で固定戦車からガトリング・波動・爆撃を使います。</li><li>ゾンビ30体と巨大ゾンビ撃破までのタイムを競います。</li>`;
   }else if(legacyIndex===93){
     rules=`<li>1番手がタイヤ、2番手が機体を描きます。タイヤは何筆でも装飾できます。</li><li>2台同時スタート。1km先のゴールへ先着したチームが勝利です。</li>`;
-  }else{
+  }else if(legacyIndex===94){
     rules=`<li>4人が1体ずつ魔物を描き、TEAM A 2体 VS TEAM B 2体で戦います。</li><li>ソロでは1P役と4P役を自分で描き、残り2体はCPUが描きます。</li>`;
+  }else if(legacyIndex===95){
+    rules=`<li>上部を左右に動くボールをDROPして、長いピンボール盤を落としていきます。</li><li>カメラがボールを追従。最後に入った10〜100点のスロットがそのまま得点です。</li>`;
+  }else{
+    rules=`<li>モブくんは自動で200mを走ります。JUMPで10個のハードルを越えてください。</li><li>1台越えるたび加速。完走タイムが速いほど高得点で、最速は約10秒です。</li>`;
   }
   const conciseRules=(rules.match(/<li>[\s\S]*?<\/li>/g)||[]).slice(0,2).join("");
   rules=conciseRules||`<li>${esc(g.sub)}</li>`;
@@ -1796,7 +2650,6 @@ function humanReady(gameIndex,humanIndex){
     else if(legacyIndex===73)startBubbleMob(p,humanIndex,runId);
     else if(legacyIndex===74)startChangeMob(p,humanIndex,runId);
     else if(legacyIndex===75)startBaggageMob(p,humanIndex,runId);
-    else if(legacyIndex===76)startBridgeMob(p,humanIndex,runId);
     else if(legacyIndex===77)startTreasureMob(p,humanIndex,runId);
     else if(legacyIndex===78)startRouletteMob(p,humanIndex,runId);
     else if(legacyIndex===79)startExcavationMob(p,humanIndex,runId);
@@ -1814,7 +2667,9 @@ function humanReady(gameIndex,humanIndex){
     else if(legacyIndex===91)startIaidoMaster(p,humanIndex,runId);
     else if(legacyIndex===92)startKillLeaderMob(p,humanIndex,runId);
     else if(legacyIndex===93)startMobSpeedRacer(p,humanIndex,runId);
-    else startSummonMaster(p,humanIndex,runId);
+    else if(legacyIndex===94)startSummonMaster(p,humanIndex,runId);
+    else if(legacyIndex===95)startMobPinball(p,humanIndex,runId);
+    else startHurdleRun(p,humanIndex,runId);
   },{once:true});
 }
 
@@ -6707,7 +7562,7 @@ async function startHeroMaybe(p,humanIndex,runId){
     </div>
 
     <div class="hero-maybe-hud">
-      <div><span>TIME</span><b id="heroTime">10.00</b></div>
+      <div><span>TIME</span><b id="heroTime">11.00</b></div>
       <div><span>POWER</span><b id="heroScore">5</b></div>
     </div>
 
@@ -6777,7 +7632,7 @@ async function startHeroMaybe(p,humanIndex,runId){
 
     // Much harder: usually exactly one safe/positive option.
     const roll=Math.random();
-    const boostCount=roll<.66?1:roll<.94?2:3;
+    const boostCount=roll<.58?1:roll<.92?2:3;
     const opts=[];
 
     shuffle(availableBoosts).slice(0,boostCount).forEach(x=>opts.push(x));
@@ -6835,7 +7690,7 @@ async function startHeroMaybe(p,humanIndex,runId){
   wheelStarted=performance.now();
   wheelRAF=requestAnimationFrame(positionWheel);
 
-  endAt=performance.now()+10000;
+  endAt=performance.now()+11000;
 
   function finish(){
     if(finished)return;
@@ -16845,8 +17700,8 @@ async function startMobMisfortune(p,humanIndex,runId){
   function spawnRock(now,hard){
     const size=
       hard
-        ? rand(34,66)
-        : rand(28,54);
+        ? rand(33,62)
+        : rand(27,52);
 
     const el=document.createElement('div');
     el.className='misfortune-rock';
@@ -16862,8 +17717,8 @@ async function startMobMisfortune(p,humanIndex,runId){
       size,
       speed:
         hard
-          ? rand(340,520)
-          : rand(185,285),
+          ? rand(325,495)
+          : rand(180,275),
       spin:rand(-220,220)
     });
 
@@ -16932,7 +17787,7 @@ async function startMobMisfortune(p,humanIndex,runId){
     }
 
     playerX=clamp(
-      playerX+moveDir*270*dt,
+      playerX+moveDir*280*dt,
       32,
       w-32
     );
@@ -16941,12 +17796,12 @@ async function startMobMisfortune(p,humanIndex,runId){
 
     const spawnEvery=
       hard
-        ? 145
-        : clamp(500-elapsed*.035,285,500);
+        ? 160
+        : clamp(520-elapsed*.033,300,520);
 
     if(now-lastSpawn>=spawnEvery){
       const count=
-        hard&&Math.random()<.45
+        hard&&Math.random()<.38
           ? 2
           : 1;
 
@@ -16967,7 +17822,7 @@ async function startMobMisfortune(p,humanIndex,runId){
         rock.y>=h-82&&
         rock.y<=h-16&&
         Math.abs(rock.x-playerX)<
-          rock.size*.34+18
+          rock.size*.32+17
       ){
         finish(true,elapsed);
         return;
@@ -20240,20 +21095,6 @@ async function startBaggageMob(p,humanIndex,runId){
 
 
 // GAME 78 — モブくん橋を作って！
-async function startBridgeMob(p,humanIndex,runId){
-  gameFit();let active=false,drawing=false,finished=false,start=0,raf=null,strokes=[],current=null;
-  screen.innerHTML=`<div class="bridge-shell-v127"><div class="game-head"><div><span class="kicker">${esc(p.name)}</span><h2>モブくん橋を作って！</h2></div><div class="game-badge">${playBadge(humanIndex)}</div></div><div class="v125-hud"><div><span>DRAW</span><b id="bridgeTime127">7.00</b></div><div><span>GOAL</span><b>安全 + FUN</b></div></div><div id="bridgeStage127" class="bridge-stage-v127"><div class="bridge-cliff-v127 left">START</div><div class="bridge-cliff-v127 right">GOAL</div><div class="bridge-water-v127"></div><svg id="bridgeSvg127" viewBox="0 0 360 360" preserveAspectRatio="none"></svg><div id="bridgeMob127" class="bridge-mob-v127" style="background-image:url('icon/01.png')"></div><div id="bridgeFun127" class="bridge-fun-v127"></div><div id="bridgeMsg127" class="bridge-msg-v127">何本描いてもOK！ 床・手すり・支柱でモブくんを楽しませよう</div></div></div>`;
-  const stage=document.getElementById('bridgeStage127'),svg=document.getElementById('bridgeSvg127'),mob=document.getElementById('bridgeMob127'),funEl=document.getElementById('bridgeFun127'),timeEl=document.getElementById('bridgeTime127'),msg=document.getElementById('bridgeMsg127');
-  function local(e){const r=stage.getBoundingClientRect();return{x:clamp((e.clientX-r.left)/r.width*360,0,360),y:clamp((e.clientY-r.top)/r.height*360,0,360)};}
-  stage.addEventListener('pointerdown',e=>{if(!active||finished)return;e.preventDefault();drawing=true;current=[local(e)];const pl=document.createElementNS('http://www.w3.org/2000/svg','polyline');pl.setAttribute('class','bridge-stroke-v127');svg.appendChild(pl);current._el=pl;strokes.push(current);try{stage.setPointerCapture(e.pointerId)}catch(_){}},{passive:false});
-  stage.addEventListener('pointermove',e=>{if(!drawing||!active||finished)return;e.preventDefault();const q=local(e),a=current[current.length-1];if(Math.hypot(q.x-a.x,q.y-a.y)<3)return;current.push(q);current._el.setAttribute('points',current.map(p=>`${p.x},${p.y}`).join(' '));},{passive:false});
-  stage.addEventListener('pointerup',()=>{drawing=false;current=null});stage.addEventListener('pointercancel',()=>{drawing=false;current=null});
-  function metrics(){const valid=strokes.filter(s=>s.length>2);if(!valid.length)return null;const info=valid.map(s=>{const xs=s.map(q=>q.x);return{s,span:Math.max(...xs)-Math.min(...xs)}}).sort((a,b)=>b.span-a.span);let deck=[...info[0].s];if(deck[0].x>deck[deck.length-1].x)deck.reverse();const A={x:42,y:226},B={x:318,y:226};const sd=Math.hypot(deck[0].x-A.x,deck[0].y-A.y),ed=Math.hypot(deck[deck.length-1].x-B.x,deck[deck.length-1].y-B.y);let rough=0;for(let i=2;i<deck.length;i++){const a=Math.atan2(deck[i-1].y-deck[i-2].y,deck[i-1].x-deck[i-2].x),b=Math.atan2(deck[i].y-deck[i-1].y,deck[i].x-deck[i-1].x);rough+=Math.abs(Math.atan2(Math.sin(b-a),Math.cos(b-a)));}const spanScore=clamp(info[0].span/250*100,0,100),connect=clamp(100-(sd+ed)*.45,30,100),smooth=clamp(100-rough/Math.max(1,deck.length-2)*42,25,100);let extraLen=0;valid.slice(1).forEach(s=>{for(let i=1;i<s.length;i++)extraLen+=Math.hypot(s[i].x-s[i-1].x,s[i].y-s[i-1].y)});const fun=clamp(Math.round((valid.length-1)*8+extraLen/45),0,100);const safety=clamp(Math.round(spanScore*.40+connect*.34+smooth*.26),0,100);return{deck,A,B,safety,fun,total:clamp(Math.round(safety*.76+fun*.24),0,100),span:info[0].span};}
-  async function finish(){if(finished)return;finished=true;active=false;drawing=false;if(raf)cancelAnimationFrame(raf);const m=metrics();if(!m||m.span<120){state.records.bridgeMob[p.id]=0;msg.textContent='左右をつなぐ床を描こう！';await wait(500);if(isGameRunValid(runId))recordScreen(76,p,humanIndex,'0<small>pt</small>','NO BRIDGE');return;}const walk=[m.A,...m.deck,m.B];state.records.bridgeMob[p.id]=m.total;msg.textContent=`安全 ${m.safety} / FUN ${m.fun}　渡ります！`;let lastFun=false;for(let i=0;i<walk.length;i+=Math.max(1,Math.floor(walk.length/46))){if(!isGameRunValid(runId))return;const q=walk[Math.min(i,walk.length-1)];mob.style.left=`${q.x/360*100}%`;mob.style.top=`${q.y/360*100}%`;mob.classList.toggle('hop-v127',i%4===0);if(!lastFun&&i>walk.length*.45&&m.fun>=18){lastFun=true;funEl.textContent='FUN! ★';funEl.classList.add('show-v127');beep(880,70,.018);}await wait(78);}mob.style.left=`${m.B.x/360*100}%`;mob.style.top=`${m.B.y/360*100}%`;stage.classList.add('clear-v127');msg.textContent=`モブくん大満足！ ${m.total} POINT`;beep(m.total>=80?1060:760,180,.045);await wait(850);if(isGameRunValid(runId))recordScreen(76,p,humanIndex,`${m.total}<small>pt</small>`,`安全${m.safety} / FUN${m.fun}`);}
-  if(!(await countdown('BUILD BRIDGE',runId,{transparent:true})))return;active=true;start=performance.now();function frame(now){if(!active||finished||!isGameRunValid(runId))return;const rem=7000-(now-start);timeEl.textContent=(Math.max(0,rem)/1000).toFixed(2);if(rem<=0){finish();return;}raf=requestAnimationFrame(frame);}raf=requestAnimationFrame(frame);
-}
-
-
 // GAME 79 — モブくん宝箱どれだ!?
 async function startTreasureMob(p,humanIndex,runId){
   gameFit();const values=shuffle([20,40,60,80,100]),chests=values.map((value,i)=>({id:i,value,slot:i}));let active=false,finished=false;
@@ -20459,7 +21300,7 @@ async function startOldMaidDuel(p,humanIndex,runId){
   let busy=false;
   let selected=-1;
   let forcedWin=false;
-  let cards=['joker','spade'];
+  let cards=['joker','joker','spade'];
   let finished=false;
 
   screen.innerHTML=`<div class="maid-shell-v133">
@@ -20480,6 +21321,7 @@ async function startOldMaidDuel(p,humanIndex,runId){
       <div id="maidOpponent133" class="maid-opponent-v133">
         <button type="button" data-pos="0" class="maid-card-v133 back-v133"><span class="maid-card-back-v133">MOB</span></button>
         <button type="button" data-pos="1" class="maid-card-v133 back-v133"><span class="maid-card-back-v133">MOB</span></button>
+        <button type="button" data-pos="2" class="maid-card-v133 back-v133"><span class="maid-card-back-v133">MOB</span></button>
       </div>
 
       <div class="maid-player-v133">
@@ -20495,7 +21337,7 @@ async function startOldMaidDuel(p,humanIndex,runId){
       </div>
     </div>
 
-    <div id="maidStatus133" class="maid-status-v133">相手の2枚から1枚選んでください</div>
+    <div id="maidStatus133" class="maid-status-v133">相手の3枚から1枚選んでください</div>
   </div>`;
 
   const opponent=document.getElementById('maidOpponent133');
@@ -20525,7 +21367,12 @@ async function startOldMaidDuel(p,humanIndex,runId){
   }
 
   function shuffleCards(){
-    if(!forcedWin && Math.random()<.5)cards.reverse();
+    if(!forcedWin){
+      for(let i=cards.length-1;i>0;i--){
+        const j=randi(0,i);
+        [cards[i],cards[j]]=[cards[j],cards[i]];
+      }
+    }
 
     opponent.classList.remove('shuffle-v133');
     void opponent.offsetWidth;
@@ -20637,7 +21484,7 @@ async function startOldMaidDuel(p,humanIndex,runId){
       shuffleCards();
     }
 
-    status.textContent='もう一度、相手の2枚から選ぶ';
+    status.textContent='もう一度、相手の3枚から選ぶ';
 
     await wait(300);
     busy=false;
@@ -21073,7 +21920,7 @@ async function startMonsterMaster(p,humanIndex,runId){
 
     <div class="v125-hud">
       <div><span id="masterPhaseLabel135">DRAW</span><b id="masterTimer135">3.00</b></div>
-      <div><span>GET</span><b id="masterGet135">0 / 10</b></div>
+      <div><span>GET</span><b id="masterGet135">0 / 12</b></div>
     </div>
 
     <div id="masterHelp135" class="master-help-v135">
@@ -21108,11 +21955,11 @@ async function startMonsterMaster(p,humanIndex,runId){
   const phaseLabel=document.getElementById('masterPhaseLabel135');
   const getEl=document.getElementById('masterGet135');
 
-  const defs=Array.from({length:10},(_,i)=>({
+  const defs=Array.from({length:12},(_,i)=>({
     speed:rand(18,42),
     dir:Math.random()<.5?-1:1,
-    y:42+(i%5)*43+(i>=5?12:0),
-    catchRate:i===9?.34:i>=7?.48:.69,
+    y:38+(i%6)*38+(i>=6?10:0),
+    catchRate:i>=10?.34:i>=8?.48:.69,
     color:['#7bd26f','#74c8e7','#dc88d8','#efca61','#ed7e6c'][i%5]
   }));
 
@@ -21322,7 +22169,7 @@ async function startMonsterMaster(p,humanIndex,runId){
       monster.caught=true;
       caught++;
 
-      getEl.textContent=`${caught} / 10`;
+      getEl.textContent=`${caught} / 12`;
       capture.classList.add('get-v135');
       burst(x,y,'GET!!');
 
@@ -21345,7 +22192,7 @@ async function startMonsterMaster(p,humanIndex,runId){
     capture.remove();
     capturesInProgress--;
 
-    if(caught>=10){
+    if(caught>=12){
       catchTimeOver=true;
       phase='ending';
       tryFinishCatch();
@@ -21467,7 +22314,7 @@ async function startMonsterMaster(p,humanIndex,runId){
 
       <div class="master-result-title-v135">
         <b>MONSTER GET!</b>
-        <strong>${caughtList.length} / 10</strong>
+        <strong>${caughtList.length} / 12</strong>
       </div>
 
       <div class="master-collection-v135">
@@ -21490,8 +22337,8 @@ async function startMonsterMaster(p,humanIndex,runId){
     </div>`;
 
     beep(
-      caught>=8?1080:
-      caught>=5?760:
+      caught>=10?1080:
+      caught>=6?760:
       480,
       190,.045
     );
@@ -21517,7 +22364,7 @@ async function startMonsterMaster(p,humanIndex,runId){
       recordScreen(
         82,p,humanIndex,
         `${caught}<small>体</small>`,
-        `10秒で ${caught}体GET`
+        `12体中 ${caught}体GET`
       );
     }
   }
@@ -21555,7 +22402,20 @@ async function startMonsterMaster(p,humanIndex,runId){
         drawing=false;
         activeStroke=null;
         pointer=null;
-        beginCatchPhase(now);
+        phase='ready';
+        ensureDefaultBall();
+        designReady=false;
+        phaseLabel.textContent='READY';
+        helpEl.textContent='ボール完成！ 3・2・1で投げよう！';
+        stateEl.textContent='READY';
+        timerEl.textContent='3・2・1';
+
+        (async()=>{
+          const ok=await countdown('THROW',runId,{transparent:true});
+          if(ok&&isGameRunValid(runId)){
+            beginCatchPhase(performance.now());
+          }
+        })();
       }
     }else if(phase==='catch'){
       const elapsed=now-phaseStart;
@@ -21658,17 +22518,17 @@ async function startScoutMan(p,humanIndex,runId){
   gameFit();
   const positions=[['P','ピッチャー'],['C','キャッチャー'],['1B','ファースト'],['2B','セカンド'],['3B','サード'],['SS','ショート'],['RF','ライト'],['LF','レフト'],['CF','センター']];
   const info={R:{price:500,power:8},SR:{price:1000,power:14},SSR:{price:3000,power:23},UR:{price:5000,power:34},MOB:{price:10000,power:50}};
-  let money=30000,posIndex=0,active=false,chosen=false,timer=null,team=[],finished=false;
+  let money=31000,posIndex=0,active=false,chosen=false,timer=null,team=[],finished=false;
 
   screen.innerHTML=`<div class="scout-shell-v134">
     <div class="game-head"><div><span class="kicker">${esc(p.name)}</span><h2>モブくんはスカウトマン！</h2></div><div class="game-badge">${playBadge(humanIndex)}</div></div>
-    <div class="v125-hud"><div><span>BUDGET</span><b id="scoutMoney134">¥30,000</b></div><div><span>POSITION</span><b id="scoutPos134">P</b></div></div>
+    <div class="v125-hud"><div><span>BUDGET</span><b id="scoutMoney134">¥31,000</b></div><div><span>POSITION</span><b id="scoutPos134">P</b></div></div>
     <div id="scoutStage134" class="scout-stage-v134">
-      <div class="scout-title-v134"><b id="scoutPosName134">ピッチャー</b><span id="scoutClock134">1.0</span></div>
+      <div class="scout-title-v134"><b id="scoutPosName134">ピッチャー</b><span id="scoutClock134">1.15</span></div>
       <div id="scoutCards134" class="scout-cards-v134"></div>
       <div id="scoutNotice134" class="scout-notice-v134"></div>
     </div>
-    <div id="scoutFooter134" class="scout-footer-v134">1秒以内に1人タップして購入</div>
+    <div id="scoutFooter134" class="scout-footer-v134">1.15秒以内に1人タップして購入</div>
   </div>`;
 
   const stage=document.getElementById('scoutStage134'),cardsEl=document.getElementById('scoutCards134'),moneyEl=document.getElementById('scoutMoney134');
@@ -21703,8 +22563,8 @@ async function startScoutMan(p,humanIndex,runId){
   function startRound(){
     chosen=false;active=true;notice.textContent='';notice.className='scout-notice-v134';
     const [pos,name]=positions[posIndex];posEl.textContent=pos;posNameEl.textContent=name;cardsEl.innerHTML=candidates().map(card).join('');
-    const begin=performance.now();clockEl.textContent='1.0';if(timer)clearInterval(timer);
-    timer=setInterval(()=>{const rem=Math.max(0,1000-(performance.now()-begin));clockEl.textContent=(rem/1000).toFixed(1);if(rem<=0){clearInterval(timer);timer=null;timeout();}},25);
+    const begin=performance.now();clockEl.textContent='1.15';if(timer)clearInterval(timer);
+    timer=setInterval(()=>{const rem=Math.max(0,1150-(performance.now()-begin));clockEl.textContent=(rem/1000).toFixed(1);if(rem<=0){clearInterval(timer);timer=null;timeout();}},25);
   }
   function rank(power){
     const avg=power/9,luck=rand(-11,11),strength=avg*2.25+luck;
@@ -25861,7 +26721,20 @@ function recordScreen(gameIndex,p,humanIndex,main,sub=""){
     return;
   }
   const more=humanIndex+1<humans().length;
-  screen.innerHTML=`<div class="ready-wrap"><div class="ready-card">${imgTag(p,"ready-avatar")}<div class="record-label">${GAMES[gameIndex].title} / RECORD</div><div class="big-record">${main}</div>${sub?`<p class="lead">${sub}</p>`:""}<button id="nextHuman" class="primary">${more?"次のプレイヤー":cpus().length?"CPU高速処理へ":`ROUND ${state.roundIndex+1} RESULT`}</button></div></div>`;
+  const tournamentMode=state.tournament?.active;
+  const nextLabel=tournamentMode
+    ? more
+      ? "次の挑戦者"
+      : cpus().length
+        ? "CPUの挑戦へ"
+        : "スコア判定へ"
+    : more
+      ? "次のプレイヤー"
+      : cpus().length
+        ? "CPU高速処理へ"
+        : `ROUND ${state.roundIndex+1} RESULT`;
+
+  screen.innerHTML=`<div class="ready-wrap"><div class="ready-card">${imgTag(p,"ready-avatar")}<div class="record-label">${GAMES[gameIndex].title} / ${tournamentMode?"TOURNAMENT SCORE":"RECORD"}</div><div class="big-record">${main}</div>${sub?`<p class="lead">${sub}</p>`:""}<button id="nextHuman" class="primary">${nextLabel}</button></div></div>`;
   document.getElementById("nextHuman").addEventListener("click",()=>humanReady(gameIndex,humanIndex+1));
 }
 
@@ -25889,7 +26762,7 @@ async function simulateCpuThenResult(gameIndex){
 function cpuUltraDraw(gameIndex){
   const legacyIndex=legacyGameIndex(gameIndex);
   const luckOnly=new Set([
-    5,11,25,42,49,55,61,64,77,79,80
+    5,11,25,42,49,55,61,64,77,79,80,95
   ]);
 
   if(luckOnly.has(legacyIndex)){
@@ -25903,12 +26776,12 @@ function cpuUltraDraw(gameIndex){
 function softenCpuResultV121(gameIndex,p,ultra){
   const legacyIndex=legacyGameIndex(gameIndex);
   const luckOnly=new Set([
-    5,11,25,42,49,55,61,64,77,79,80
+    5,11,25,42,49,55,61,64,77,79,80,95
   ]);
 
   const specificallyTuned=new Set([
     50,51,54,59,62,63,
-    64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92
+    64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,95,96
   ]);
 
   if(
@@ -26171,8 +27044,6 @@ function simulateOneCpu(gameIndex,p){
     state.records.changeMob[p.id]=ultra?randi(82,97):randi(36,80);
   }else if(legacyIndex===75){
     state.records.baggageMob[p.id]=ultra?randi(88,97):randi(30,80);
-  }else if(legacyIndex===76){
-    state.records.bridgeMob[p.id]=ultra?randi(80,95):randi(36,79);
   }else if(legacyIndex===77){
     state.records.treasureMob[p.id]=[20,40,60,80,100][randi(0,4)];
   }else if(legacyIndex===78){
@@ -26187,7 +27058,7 @@ function simulateOneCpu(gameIndex,p){
   }else if(legacyIndex===81){
     state.records.robotMarch[p.id]=Math.round(ultra?rand(720,980):rand(280,760));
   }else if(legacyIndex===82){
-    state.records.monsterMaster[p.id]=ultra?randi(8,10):randi(3,8);
+    state.records.monsterMaster[p.id]=ultra?randi(9,12):randi(3,10);
   }else if(legacyIndex===83){
     state.records.scoutMan[p.id]=ultra?randi(1,10):randi(5,34);
   }else if(legacyIndex===84){
@@ -26223,8 +27094,14 @@ function simulateOneCpu(gameIndex,p){
     state.records.killLeaderMob[p.id]=ultra
       ? randi(28000,39000)
       : randi(39000,69000);
-  }else{
+  }else if(legacyIndex===93){
     state.records.mobSpeedRacer[p.id]=ultra?randi(7800,9400):randi(9000,12800);
+  }else if(legacyIndex===94){
+    state.records.summonMaster[p.id]=Math.random()<.5?100:0;
+  }else if(legacyIndex===95){
+    state.records.mobPinball[p.id]=[10,20,30,40,50,60,70,80,90,100][randi(0,9)];
+  }else{
+    state.records.hurdleRun[p.id]=ultra?randi(9850,11250):randi(10800,15800);
   }
 
   softenCpuResultV121(
@@ -26365,7 +27242,7 @@ function performancePoints(gameIndex,v){
   if(legacyIndex===79)return clamp(Math.round(v/225*100),0,100);
   if(legacyIndex===80)return clamp(110-Math.round(v)*10,0,100);
   if(legacyIndex===81)return clamp(Math.round(v/1000*100),0,100);
-  if(legacyIndex===82)return clamp(Math.round(v/10*100),0,100);
+  if(legacyIndex===82)return clamp(Math.round(v/12*100),0,100);
   if(legacyIndex===83)return clamp(Math.round((47-v)/46*100),0,100);
   if(legacyIndex===84)return clamp(Math.round(v),0,100);
   if(legacyIndex===85)return clamp(Math.round(v),0,100);
@@ -26393,12 +27270,18 @@ function performancePoints(gameIndex,v){
     if(v>=15000)return 1;
     return clamp(Math.round(100-(v-8000)/7000*99),1,100);
   }
+  if(legacyIndex===95)return clamp(Math.round(v),0,100);
+  if(legacyIndex===96){
+    if(v<=10000)return 100;
+    if(v>=18000)return 0;
+    return clamp(Math.round((18000-v)/8000*100),0,100);
+  }
   return clamp(Math.round(v),0,100);
 }
 
 function rankRecords(gameIndex){
   const legacyIndex=legacyGameIndex(gameIndex);
-  const key=GAMES[gameIndex].key,records=state.records[key],ascRaw=(legacyIndex===0||legacyIndex===2||legacyIndex===5||legacyIndex===14||legacyIndex===21||legacyIndex===23||legacyIndex===24||legacyIndex===25||legacyIndex===26||legacyIndex===27||legacyIndex===37||legacyIndex===40||legacyIndex===47||legacyIndex===51||legacyIndex===53||legacyIndex===63||legacyIndex===80||legacyIndex===83||legacyIndex===86||legacyIndex===89||legacyIndex===92||legacyIndex===93);
+  const key=GAMES[gameIndex].key,records=state.records[key],ascRaw=(legacyIndex===0||legacyIndex===2||legacyIndex===5||legacyIndex===14||legacyIndex===21||legacyIndex===23||legacyIndex===24||legacyIndex===25||legacyIndex===26||legacyIndex===27||legacyIndex===37||legacyIndex===40||legacyIndex===47||legacyIndex===51||legacyIndex===53||legacyIndex===63||legacyIndex===80||legacyIndex===83||legacyIndex===86||legacyIndex===89||legacyIndex===92||legacyIndex===93||legacyIndex===96);
   const arr=participants().map(p=>({p,value:records[p.id]}));
   if(mode().performance){
     arr.forEach(e=>e.points=performancePoints(gameIndex,e.value));
@@ -26491,6 +27374,8 @@ function formatRecord(gameIndex,v){
   if(legacyIndex===90)return `${Math.round(v)} KO`;
   if(legacyIndex===92)return v>=99999?`FAILED`:`${(v/1000).toFixed(2)}秒`;
   if(legacyIndex===93)return `${(v/1000).toFixed(2)}秒`;
+  if(legacyIndex===95)return `${Math.round(v)}pt`;
+  if(legacyIndex===96)return `${(v/1000).toFixed(2)}秒`;
   return `${Math.round(v)}pt`;
 }
 
@@ -26511,7 +27396,15 @@ function teamTotals(){
   });
   return out;
 }
-function finishGame(gameIndex){const ranked=rankRecords(gameIndex);applyPoints(gameIndex,ranked);renderGameResult(gameIndex,ranked)}
+function finishGame(gameIndex){
+  if(state.tournament?.active){
+    finishTournamentGame(gameIndex);
+    return;
+  }
+  const ranked=rankRecords(gameIndex);
+  applyPoints(gameIndex,ranked);
+  renderGameResult(gameIndex,ranked);
+}
 function renderGameResult(gameIndex,ranked){
   clearGameFit();
   const totals=competitionRankTotals(),tt=teamTotals(),g=GAMES[gameIndex],scoreMode=mode().performance;
@@ -26622,6 +27515,501 @@ function renderFinal(){
   });
 
   document.getElementById('modeChange').addEventListener('click',renderBattleTypeSelect);
+}
+
+
+
+// =========================================================
+// V10.60 GAME — モブくんピンボール
+// =========================================================
+async function startMobPinball(p,humanIndex,runId){
+  gameFit();
+
+  const gameIndex=GAMES.findIndex(g=>g.key==='mobPinball');
+  const SLOT_VALUES=[10,20,30,40,50,60,70,80,90,100];
+  const W=360;
+  const WORLD_H=1420;
+  const VIEW_H=470;
+  const SLOT_Y=1280;
+  const BALL_R=15;
+  const PEG_R=8;
+  const pegs=[];
+
+  for(let row=0;row<13;row++){
+    const count=row%2===0?7:8;
+    const gap=W/(count+1);
+    const y=150+row*78;
+    for(let i=0;i<count;i++){
+      pegs.push({
+        x:gap*(i+1),
+        y,
+        hot:(row%4===2&&i%3===1)
+      });
+    }
+  }
+
+  screen.innerHTML=`
+    <div class="pinball-shell-v160 gameplay-fit">
+      <div class="game-head">
+        <div>
+          <span class="kicker">${esc(p.name)}</span>
+          <h2>モブくんピンボール</h2>
+          <p class="lead">DROPして、10〜100ポイントのスロットを狙え！</p>
+        </div>
+        <div class="game-badge">${playBadge(humanIndex)}</div>
+      </div>
+
+      <div class="pinball-hud-v160">
+        <div><span>CAMERA</span><b id="pinballDepth160">TOP</b></div>
+        <div><span>RESULT</span><b id="pinballLive160">---</b></div>
+      </div>
+
+      <div id="pinballStage160" class="pinball-stage-v160">
+        <div class="pinball-stage-lights-v160"></div>
+        <div id="pinballWorld160" class="pinball-world-v160">
+          <div class="pinball-board-title-v160">MOB PINBALL</div>
+          ${pegs.map((q,i)=>`<i class="pinball-peg-v160 ${q.hot?'hot-v160':''}" data-peg="${i}" style="left:${q.x}px;top:${q.y}px"></i>`).join('')}
+          <div class="pinball-slot-row-v160" style="top:${SLOT_Y}px">
+            ${SLOT_VALUES.map((v,i)=>`<div class="pinball-slot-v160" data-slot="${i}"><b>${v}</b><span>PT</span></div>`).join('')}
+          </div>
+          <div class="pinball-bottom-v160" style="top:${SLOT_Y+104}px"></div>
+          <div id="pinballBall160" class="pinball-ball-v160" style="left:180px;top:72px">
+            <i>MOB</i>
+          </div>
+        </div>
+
+        <div class="pinball-camera-frame-v160">
+          <span>CAM</span><i></i><i></i><i></i><i></i>
+        </div>
+
+        <div id="pinballCall160" class="pinball-call-v160">READY</div>
+      </div>
+
+      <button id="pinballDrop160" class="primary pinball-drop-v160" type="button" disabled>
+        DROP!
+      </button>
+    </div>`;
+
+  const stage=document.getElementById('pinballStage160');
+  const world=document.getElementById('pinballWorld160');
+  const ballEl=document.getElementById('pinballBall160');
+  const dropBtn=document.getElementById('pinballDrop160');
+  const call=document.getElementById('pinballCall160');
+  const depthEl=document.getElementById('pinballDepth160');
+  const liveEl=document.getElementById('pinballLive160');
+
+  let active=false;
+  let dropped=false;
+  let finished=false;
+  let raf=null;
+  let last=performance.now();
+  let launcherX=180;
+  let launcherDir=1;
+  let cameraY=0;
+  const ball={x:180,y:72,vx:0,vy:0};
+
+  function place(){
+    ballEl.style.left=`${ball.x}px`;
+    ballEl.style.top=`${ball.y}px`;
+    world.style.transform=`translate3d(0,${-cameraY}px,0)`;
+    const pct=clamp(ball.y/WORLD_H,0,1);
+    depthEl.textContent=pct<.18?'TOP':pct<.70?'FOLLOW':'GOAL';
+  }
+
+  function burstPeg(q){
+    const peg=world.querySelector(`[data-peg="${q}"]`);
+    if(!peg)return;
+    peg.classList.remove('hit-v160');
+    void peg.offsetWidth;
+    peg.classList.add('hit-v160');
+  }
+
+  function finish(slotIndex){
+    if(finished)return;
+    finished=true;
+    active=false;
+    if(raf)cancelAnimationFrame(raf);
+
+    const score=SLOT_VALUES[slotIndex];
+    state.records.mobPinball[p.id]=score;
+
+    cameraY=clamp(SLOT_Y-300,0,WORLD_H-VIEW_H);
+    place();
+
+    const slot=world.querySelector(`[data-slot="${slotIndex}"]`);
+    slot?.classList.add('selected-v160');
+    ballEl.classList.add('goal-v160');
+    liveEl.textContent=`${score} PT`;
+
+    const comment=
+      score===100?'JACKPOT!! 100 POINT!!':
+      score>=80?'BIG SCORE!!':
+      score>=50?'NICE PINBALL!':
+      'PINBALL FINISH!';
+
+    call.textContent=comment;
+    call.classList.add('result-v160');
+
+    beep(score===100?1180:score>=80?980:score>=50?760:520,180,.045);
+
+    setTimeout(()=>{
+      if(!isGameRunValid(runId))return;
+
+      screen.insertAdjacentHTML('beforeend',`
+        <div class="pinball-result-overlay-v160">
+          <div class="pinball-result-card-v160">
+            <span>PINBALL RESULT</span>
+            <strong>${score}</strong>
+            <b>POINT</b>
+            <p>${comment}</p>
+            <div class="pinball-result-slots-v160">
+              ${SLOT_VALUES.map(v=>`<i class="${v===score?'on-v160':''}">${v}</i>`).join('')}
+            </div>
+            <button id="pinballNext160" class="primary" type="button">RESULTへ</button>
+          </div>
+        </div>`);
+      document.getElementById('pinballNext160').addEventListener('click',()=>{
+        recordScreen(
+          gameIndex,p,humanIndex,
+          `${score}<small>pt</small>`,
+          `${score}ポイントのスロットへIN！`
+        );
+      });
+    },900);
+  }
+
+  function physics(dt){
+    ball.vy+=620*dt;
+    ball.x+=ball.vx*dt;
+    ball.y+=ball.vy*dt;
+
+    if(ball.x<BALL_R+12){
+      ball.x=BALL_R+12;
+      ball.vx=Math.abs(ball.vx)*.78+12;
+    }
+    if(ball.x>W-BALL_R-12){
+      ball.x=W-BALL_R-12;
+      ball.vx=-Math.abs(ball.vx)*.78-12;
+    }
+
+    for(let i=0;i<pegs.length;i++){
+      const peg=pegs[i];
+      const dx=ball.x-peg.x;
+      const dy=ball.y-peg.y;
+      const dist=Math.hypot(dx,dy);
+      const min=BALL_R+PEG_R;
+
+      if(dist<min&&dist>.001){
+        const nx=dx/dist;
+        const ny=dy/dist;
+        const overlap=min-dist;
+
+        ball.x+=nx*overlap;
+        ball.y+=ny*overlap;
+
+        const dot=ball.vx*nx+ball.vy*ny;
+        ball.vx-=2*dot*nx;
+        ball.vy-=2*dot*ny;
+
+        ball.vx+=rand(-34,34)+(peg.hot?rand(-42,42):0);
+        ball.vx*=peg.hot?.96:.88;
+        ball.vy=Math.max(-250,ball.vy*.76-(peg.hot?42:0));
+
+        burstPeg(i);
+        beep(peg.hot?720:430,22,.007);
+      }
+    }
+
+    cameraY=clamp(ball.y-170,0,WORLD_H-VIEW_H);
+
+    if(ball.y>=SLOT_Y+50){
+      const slotWidth=W/10;
+      const slotIndex=clamp(Math.floor(ball.x/slotWidth),0,9);
+      finish(slotIndex);
+    }
+  }
+
+  dropBtn.addEventListener('pointerdown',e=>{
+    e.preventDefault();
+    if(!active||dropped||finished)return;
+
+    dropped=true;
+    ball.vx=launcherDir*rand(22,48)+rand(-24,24);
+    ball.vy=35;
+    dropBtn.disabled=true;
+    dropBtn.textContent='CAMERA FOLLOW';
+    call.textContent='DROP!!';
+    ballEl.classList.add('drop-v160');
+    beep(760,80,.025);
+  },{passive:false});
+
+  // Actors/world are already positioned before countdown.
+  place();
+  if(!(await countdown('PINBALL',runId,{transparent:true})))return;
+
+  active=true;
+  dropBtn.disabled=false;
+  call.textContent='DROP!';
+  last=performance.now();
+
+  function frame(now){
+    if(finished||!isGameRunValid(runId))return;
+
+    const dt=Math.min(.032,(now-last)/1000);
+    last=now;
+
+    if(!dropped){
+      launcherX+=launcherDir*118*dt;
+      if(launcherX>322){launcherX=322;launcherDir=-1;}
+      if(launcherX<38){launcherX=38;launcherDir=1;}
+      ball.x=launcherX;
+      ball.y=72;
+    }else{
+      physics(dt);
+    }
+
+    place();
+    raf=requestAnimationFrame(frame);
+  }
+
+  raf=requestAnimationFrame(frame);
+}
+
+
+// =========================================================
+// V10.60 GAME — モブくんのハードル走
+// =========================================================
+async function startHurdleRun(p,humanIndex,runId){
+  gameFit();
+
+  const gameIndex=GAMES.findIndex(g=>g.key==='hurdleRun');
+  const TOTAL_M=200;
+  const PX_PER_M=7;
+  const TRACK_W=TOTAL_M*PX_PER_M+260;
+  const hurdleMeters=Array.from({length:10},(_,i)=>20+i*18);
+  const hurdles=hurdleMeters.map((m,i)=>({m,i,hit:false,passed:false}));
+
+  screen.innerHTML=`
+    <div class="hurdle-shell-v160 gameplay-fit">
+      <div class="game-head">
+        <div>
+          <span class="kicker">${esc(p.name)}</span>
+          <h2>モブくんのハードル走</h2>
+          <p class="lead">自動で走る！ 10個のハードルをJUMPで越えて200mへ！</p>
+        </div>
+        <div class="game-badge">${playBadge(humanIndex)}</div>
+      </div>
+
+      <div class="hurdle-hud-v160">
+        <div><span>TIME</span><b id="hurdleTime160">0.00</b></div>
+        <div><span>DISTANCE</span><b id="hurdleDistance160">0m</b></div>
+        <div><span>SPEED</span><b id="hurdleSpeed160">17.0</b></div>
+      </div>
+
+      <div id="hurdleStage160" class="hurdle-stage-v160">
+        <div class="hurdle-sky-v160"></div>
+        <div class="hurdle-stand-v160">
+          <b>TRACK & FIELD</b>
+          <div class="hurdle-crowd-v160">
+            ${Array.from({length:42},(_,i)=>`<i class="c${i%6}"></i>`).join('')}
+          </div>
+        </div>
+
+        <div class="hurdle-track-v160"></div>
+
+        <div id="hurdleWorld160" class="hurdle-world-v160" style="width:${TRACK_W}px">
+          ${hurdles.map(h=>`
+            <div class="hurdle-gate-v160" data-hurdle="${h.i}" style="left:${h.m*PX_PER_M}px">
+              <i></i><i></i><b></b>
+            </div>`).join('')}
+
+          <div class="hurdle-finish-v160" style="left:${TOTAL_M*PX_PER_M}px">
+            <i></i><b>FINISH</b>
+          </div>
+        </div>
+
+        <div id="hurdlePlayer160" class="hurdle-player-v160">
+          <img src="icon/01.png" draggable="false" alt="モブくん">
+          <i></i><b></b>
+        </div>
+
+        <div id="hurdleMsg160" class="hurdle-msg-v160">READY</div>
+      </div>
+
+      <button id="hurdleJump160" class="primary hurdle-jump-v160" type="button">
+        JUMP
+      </button>
+    </div>`;
+
+  const stage=document.getElementById('hurdleStage160');
+  const world=document.getElementById('hurdleWorld160');
+  const player=document.getElementById('hurdlePlayer160');
+  const jumpBtn=document.getElementById('hurdleJump160');
+  const timeEl=document.getElementById('hurdleTime160');
+  const distanceEl=document.getElementById('hurdleDistance160');
+  const speedEl=document.getElementById('hurdleSpeed160');
+  const msg=document.getElementById('hurdleMsg160');
+
+  let active=false;
+  let finished=false;
+  let raf=null;
+  let last=0;
+  let start=0;
+  let distance=0;
+  let targetSpeed=17.0;
+  let speed=17.0;
+  let jumpY=0;
+  let jumpV=0;
+  let onGround=true;
+  let stumbleUntil=0;
+  let passedCount=0;
+
+  function render(){
+    const cameraX=distance*PX_PER_M-82;
+    world.style.transform=`translate3d(${-cameraX}px,0,0)`;
+    player.style.transform=`translate3d(0,${-jumpY}px,0)`;
+    distanceEl.textContent=`${Math.min(200,distance).toFixed(0)}m`;
+    speedEl.textContent=speed.toFixed(1);
+  }
+
+  function jump(){
+    if(!active||finished||!onGround)return;
+    onGround=false;
+    jumpV=430;
+    player.classList.remove('jump-v160');
+    void player.offsetWidth;
+    player.classList.add('jump-v160');
+    beep(620,55,.018);
+  }
+
+  jumpBtn.addEventListener('pointerdown',e=>{
+    e.preventDefault();
+    jump();
+  },{passive:false});
+
+  stage.addEventListener('pointerdown',e=>{
+    if(e.target.closest('button'))return;
+    e.preventDefault();
+    jump();
+  },{passive:false});
+
+  function finishRace(elapsed){
+    if(finished)return;
+    finished=true;
+    active=false;
+    if(raf)cancelAnimationFrame(raf);
+
+    const ms=Math.max(1,Math.round(elapsed));
+    state.records.hurdleRun[p.id]=ms;
+
+    msg.textContent='FINISH!!';
+    msg.classList.add('finish-v160');
+    player.classList.add('finish-v160');
+
+    const seconds=(ms/1000).toFixed(2);
+    const clean=hurdles.filter(h=>!h.hit).length;
+
+    beep(ms<=10500?1120:820,190,.045);
+
+    setTimeout(()=>{
+      if(!isGameRunValid(runId))return;
+
+      screen.insertAdjacentHTML('beforeend',`
+        <div class="hurdle-result-overlay-v160">
+          <div class="hurdle-result-card-v160">
+            <span>200m HURDLE RESULT</span>
+            <strong>${seconds}</strong>
+            <b>SECONDS</b>
+            <p>NO HIT ${clean} / 10</p>
+            <div class="hurdle-result-track-v160"><i style="width:100%"></i></div>
+            <button id="hurdleNext160" class="primary" type="button">RESULTへ</button>
+          </div>
+        </div>`);
+
+      document.getElementById('hurdleNext160').addEventListener('click',()=>{
+        recordScreen(
+          gameIndex,p,humanIndex,
+          `${seconds}<small>秒</small>`,
+          `200m完走 / ノーヒット ${clean}台`
+        );
+      });
+    },850);
+  }
+
+  // Player and all hurdles are already positioned before countdown.
+  render();
+  if(!(await countdown('200m HURDLE',runId,{transparent:true})))return;
+
+  active=true;
+  start=last=performance.now();
+  msg.textContent='GO!';
+  setTimeout(()=>{if(msg)msg.textContent='';},600);
+
+  function frame(now){
+    if(finished||!isGameRunValid(runId))return;
+
+    const dt=Math.min(.032,(now-last)/1000);
+    last=now;
+    const elapsed=now-start;
+
+    // Perfect run is balanced at roughly 9.8〜10.1 sec.
+    const penalty=now<stumbleUntil?.55:1;
+    speed+=(targetSpeed-speed)*Math.min(1,dt*5.5);
+    distance+=speed*penalty*dt;
+
+    if(!onGround){
+      jumpY+=jumpV*dt;
+      jumpV-=980*dt;
+      if(jumpY<=0){
+        jumpY=0;
+        jumpV=0;
+        onGround=true;
+      }
+    }
+
+    for(const h of hurdles){
+      if(!h.hit&&!h.passed&&Math.abs(distance-h.m)<1.25&&jumpY<40){
+        h.hit=true;
+        stumbleUntil=now+560;
+
+        const gate=world.querySelector(`[data-hurdle="${h.i}"]`);
+        gate?.classList.add('hit-v160');
+
+        msg.textContent='HIT!';
+        setTimeout(()=>{if(msg.textContent==='HIT!')msg.textContent='';},350);
+        beep(170,85,.025);
+      }
+
+      if(!h.passed&&distance>h.m+1.35){
+        h.passed=true;
+        passedCount++;
+        targetSpeed=Math.min(24.5,17+passedCount*.75);
+
+        const gate=world.querySelector(`[data-hurdle="${h.i}"]`);
+        gate?.classList.add('passed-v160');
+
+        if(!h.hit){
+          msg.textContent=`CLEAR ${passedCount}/10`;
+          setTimeout(()=>{if(msg.textContent.startsWith('CLEAR'))msg.textContent='';},320);
+          beep(780+passedCount*16,38,.011);
+        }
+      }
+    }
+
+    timeEl.textContent=(elapsed/1000).toFixed(2);
+
+    if(distance>=TOTAL_M){
+      distance=TOTAL_M;
+      render();
+      finishRace(elapsed);
+      return;
+    }
+
+    render();
+    raf=requestAnimationFrame(frame);
+  }
+
+  raf=requestAnimationFrame(frame);
 }
 
 
