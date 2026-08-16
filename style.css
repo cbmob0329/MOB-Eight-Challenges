@@ -26199,7 +26199,7 @@ canvas{
 .bil-stage-v174{background:#2c8c62;box-shadow:inset 0 0 0 16px #744d2f,inset 0 0 0 21px #2b1b12}
 .bil-rail-v174{position:absolute;inset:18px;border:3px solid rgba(255,255,255,.18);border-radius:8px;pointer-events:none}
 .bil-pocket-v174{position:absolute;z-index:4;top:8px;width:42px;height:42px;border:5px solid #23170f;border-radius:50%;background:#080909}
-.bil-pocket-v174.p1{left:8px}.bil-pocket-v174.p2{left:50%;transform:translateX(-50%)}.bil-pocket-v174.p3{right:8px}
+.bil-pocket-v174.p1{left:8px}.bil-pocket-v174.p2{left:50%;transform:translateX(-50%)}.bil-pocket-v174.p3{right:8px}.bil-pocket-v174.p4{left:50%;top:auto;bottom:8px;transform:translateX(-50%)}
 .bil-ball-layer-v174{position:absolute;inset:0;pointer-events:none}
 .bil-ball-v174{position:absolute;z-index:12;width:24px;height:24px;transform:translate(-50%,-50%);border:3px solid #1b1c1f;border-radius:50%;will-change:left,top}
 .bil-ball-v174.cue-v174{background:#fff}.bil-ball-v174.target-0-v174{background:#ef695d}.bil-ball-v174.target-1-v174{background:#f3d85e}.bil-ball-v174.target-2-v174{background:#6e9fe3}
@@ -26217,4 +26217,73 @@ canvas{
 
 @media(max-height:700px){
   .airh-stage-v174,.rsw-stage-v174,.bil-stage-v174{min-height:245px}
+}
+
+
+/* =========================================================
+   V10.76 — Guard Robot 3PT / Distance Rope Swing
+   ========================================================= */
+.tp-shell-v176,.rsw-shell-v176{
+  height:100%;min-height:0;display:flex;flex-direction:column;gap:6px;overflow:hidden;
+  -webkit-user-select:none;user-select:none;-webkit-touch-callout:none
+}
+.tp-stage-v176,.rsw-stage-v176{
+  position:relative;flex:1;min-height:285px;overflow:hidden;
+  border:4px solid var(--ink);border-radius:20px;
+  touch-action:none!important;-webkit-user-select:none!important;user-select:none!important;-webkit-touch-callout:none!important
+}
+.tp-hud-v176,.rsw-hud-v176{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:5px
+}
+.tp-hud-v176>div,.rsw-hud-v176>div{
+  padding:5px 3px;border:3px solid var(--ink);border-radius:10px;background:#fff;text-align:center
+}
+.tp-hud-v176 span,.rsw-hud-v176 span{display:block;font-size:6px;font-weight:1000}
+.tp-hud-v176 b,.rsw-hud-v176 b{font-size:12px}
+
+/* 3PT */
+.tp-stage-v176{background:#cde6f2}
+.tp-court-v176{position:absolute;left:0;right:0;bottom:0;height:55%;background:#d99d60;border-top:5px solid var(--ink)}
+.tp-board-v176{position:absolute;left:50%;top:8%;width:92px;height:64px;transform:translateX(-50%);border:5px solid var(--ink);background:#eef4f4}
+.tp-ring-v176{position:absolute;z-index:7;left:50%;top:23.5%;width:66px;height:15px;transform:translateX(-50%);border:5px solid #d65a46;border-radius:50%}
+.tp-net-v176{position:absolute;left:50%;top:26%;width:48px;height:44px;transform:translateX(-50%);border-left:3px solid #fff;border-right:3px solid #fff;border-bottom:3px solid #fff;border-radius:0 0 18px 18px}
+.tp-mob-v176{position:absolute;z-index:12;width:78px;height:90px;transform:translate(-50%,-50%);touch-action:none!important}
+.tp-mob-v176 img{width:66px;height:66px;object-fit:contain;display:block;margin:auto}
+.tp-mob-v176 i{display:block;margin-top:-2px;padding:2px;border:2px solid var(--ink);border-radius:999px;background:#fff5ae;text-align:center;font-size:7px;font-weight:1000;font-style:normal}
+.tp-mob-v176.drag-v176{scale:1.04}
+.tp-ball-v176{position:absolute;z-index:16;width:27px;height:27px;border:3px solid var(--ink);border-radius:50%;background:#df873b}
+.tp-guide-v176{position:absolute;z-index:10;height:4px;transform-origin:0 50%;background:#fff;border:1px solid var(--ink);pointer-events:none}
+.tp-call-v176{position:absolute;z-index:24;left:50%;top:52%;transform:translate(-50%,-50%);padding:4px 9px;border:3px solid var(--ink);border-radius:999px;background:#fff4af;font-size:10px;font-weight:1000;white-space:nowrap}
+.tp-call-v176.in-v176{background:#8ce08b}.tp-call-v176.miss-v176{background:#ef9991}.tp-call-v176.block-v176{background:#9fb4c9}.tp-call-v176.result-v176{background:#ffe15d}
+
+.tp-guard-v176{position:absolute;z-index:14;width:58px;height:60px;transform:translate(-50%,-50%);will-change:left,top;pointer-events:none}
+.tp-guard-v176 .body-v176{position:absolute;left:12px;right:12px;top:25px;height:28px;border:3px solid var(--ink);border-radius:8px;background:#778a99}
+.tp-guard-v176 .head-v176{position:absolute;left:12px;top:6px;width:34px;height:25px;border:3px solid var(--ink);border-radius:8px;background:#c1d1d8}
+.tp-guard-v176 .head-v176 em{position:absolute;top:8px;width:6px;height:6px;border-radius:50%;background:#293038}
+.tp-guard-v176 .head-v176 em:first-child{left:6px}.tp-guard-v176 .head-v176 em:last-child{right:6px}
+.tp-guard-v176 .antenna-v176{position:absolute;left:27px;top:0;width:4px;height:10px;background:var(--ink)}
+.tp-guard-v176 .antenna-v176:after{content:"";position:absolute;left:50%;top:-5px;width:8px;height:8px;transform:translateX(-50%);border:2px solid var(--ink);border-radius:50%;background:#ee6657}
+.tp-guard-v176 .arm{position:absolute;top:29px;width:18px;height:7px;border:3px solid var(--ink);border-radius:999px;background:#9aaab5}
+.tp-guard-v176 .arm.left-v176{left:-4px;transform:rotate(-18deg)}.tp-guard-v176 .arm.right-v176{right:-4px;transform:rotate(18deg)}
+.tp-guard-v176.block-v176{animation:tpGuardBlock176 .28s ease}
+@keyframes tpGuardBlock176{45%{scale:1.18;rotate:-5deg}100%{scale:1;rotate:0deg}}
+
+/* Rope distance */
+.rsw-stage-v176{background:#bfe5f2}
+.rsw-world-v176{position:absolute;left:0;top:0;height:100%;will-change:transform}
+.rsw-sky-v176{position:absolute;inset:0;background:#bfe5f2}
+.rsw-cliffs-v176{position:absolute;left:0;right:0;bottom:0;height:17%;background:repeating-linear-gradient(110deg,#8b6b4f 0 45px,#74573f 45px 90px);border-top:5px solid #423326}
+.rsw-rope-v176{position:absolute;z-index:7;width:7px;transform-origin:50% 0;border:3px solid #2d2117;border-radius:999px;background:#b18b5c}
+.rsw-rope-v176:after{content:"";position:absolute;left:50%;bottom:-8px;width:18px;height:18px;transform:translateX(-50%);border:3px solid var(--ink);border-radius:50%;background:#d9ad6c}
+.rsw-player-v176{position:absolute;z-index:18;width:58px;height:66px;transform:translate(-50%,-50%);will-change:left,top}
+.rsw-player-v176 img{width:100%;height:100%;object-fit:contain}
+.rsw-takeoff-v176{display:none;position:absolute;z-index:6;bottom:15%;width:5px;height:55px;background:#e9564c;border:2px solid var(--ink)}
+.rsw-takeoff-v176:after{content:"JUMP";position:absolute;left:7px;top:2px;padding:2px 4px;border:2px solid var(--ink);border-radius:5px;background:#fff;font-size:6px;font-weight:1000}
+.rsw-distance-ground-v176{position:absolute;left:0;right:0;bottom:5%;height:38px;border-top:4px solid var(--ink);background:#81c778}
+.rsw-distance-ground-v176 i{position:absolute;bottom:0;height:36px;border-left:3px solid rgba(20,20,25,.55);padding:3px 0 0 4px;font-size:7px;font-weight:1000;font-style:normal}
+.rsw-call-v176{position:absolute;z-index:25;left:50%;top:10px;transform:translateX(-50%);padding:4px 9px;border:3px solid var(--ink);border-radius:999px;background:#fff4b1;font-size:9px;font-weight:1000;white-space:nowrap;pointer-events:none}
+.rsw-call-v176.result-v176{background:#ffe15e}
+
+@media(max-height:700px){
+  .tp-stage-v176,.rsw-stage-v176{min-height:245px}
 }

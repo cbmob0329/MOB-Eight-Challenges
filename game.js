@@ -2333,7 +2333,7 @@ function scoreRuleForGame(index){
     "200m完走タイム / 8個のハードル / 10.00秒以下=100点 / 18.00秒以上=0点",
     "ダッシュゲージ中央 + 砂場直前の完璧な踏切で約300m=100点",
     "PK5本 / 1本最大20点 / 動く照準 + POWERの2回だけSTOP",
-    "3ポイント5球 / モブくんを引いて離す / SWISH20点×5球=100点",
+    "3ポイント5球 / 入れば種類を問わず1本20点 / 左右移動ガードロボットが妨害 / 5本=100点",
     "1投で倒したピン×10点 / STRIKE=100点",
     "水切り1回=10点 / 速度・角度・水面状態で回数が毎回変化 / 10回以上=100点",
     "10球を連投 / 1個IN=10点 / 10個=100点",
@@ -2342,7 +2342,7 @@ function scoreRuleForGame(index){
     "長距離トロッコ完走タイム / 17.00秒以下=100点 / 27.00秒以上=0点 / 落下はタイム加算",
     "",
     "12秒 / パック2個同時 / 相手ゴール+20点 / 自陣ゴール-10点 / 最大100点",
-    "3本のロープを渡った後の着地点 / 100・80・60・40点 / 途中落下は到達度で記録",
+    "3本目のロープから最後に飛んだ距離そのものを記録 / 長いほど上位",
     "",
     "色球1個=25点 / 3球全部で75点 + ショット数ボーナス最大25点 / 最大4ショット"
   ][legacyIndex];
@@ -2548,7 +2548,7 @@ function showGameIntro(index){
   }else if(legacyIndex===98){
     rules=`<li>動く照準をSTOPして狙いを決め、次にPOWERをSTOP。操作は1本につき2回だけです。</li><li>5本合計100点。四隅と適正POWERほど高得点です。</li>`;
   }else if(legacyIndex===99){
-    rules=`<li>中央のモブくんを下へ引っ張り、離すとボールを投げます。毎球中央から開始します。</li><li>5球勝負。SWISHは20点、リングIN・ボードINでも得点します。</li>`;
+    rules=`<li>中央のモブくんを下へ引っ張り、離すとシュート。5球とも中央から開始します。</li><li>入れば全部20点。リング前を左右移動するガードロボットに当たるとブロックされます。</li>`;
   }else if(legacyIndex===100){
     rules=`<li>モブくんの前から上へ1回スワイプ。モブくんが投球してボールがレーンを進みます。</li><li>10本すべて倒せばSTRIKEで100点です。</li>`;
   }else if(legacyIndex===101){
@@ -2560,9 +2560,9 @@ function showGameIntro(index){
   }else if(legacyIndex===107){
     rules=`<li>画面下半分でパドルを直接ドラッグ。2つのパックを同時に上側ゴールへ入れると+20点です。</li><li>12秒勝負。自陣ゴールは-10点。2パック同士もぶつかります。</li>`;
   }else if(legacyIndex===108){
-    rules=`<li>モブくんがロープで揺れています。画面タップで離し、次のロープへ飛び移ります。</li><li>3本目の後は着地点勝負。100点ゾーンを飛び越えても得点は下がります。</li>`;
+    rules=`<li>モブくんがロープで揺れています。画面タップで離し、次のロープへ飛び移ります。</li><li>3本目から最後に飛んだ距離をそのまま記録。着地点の点数ゾーンはありません。</li>`;
     }else if(legacyIndex===110){
-    rules=`<li>白球から後ろへ引っ張って離し、色球3個をポケットへ入れます。</li><li>最大4ショット。3球すべて落とすとショット数ボーナスが付き、2ショット以内なら100点です。</li>`;
+    rules=`<li>白球から後ろへ引っ張って離し、色球3個を4つのポケットへ入れます。下中央にもポケットがあります。</li><li>最大4ショット。3球すべて落とすとショット数ボーナスが付き、2ショット以内なら100点です。</li>`;
   }else{
     rules=`<li>${esc(g.sub)}</li>`;
   }
@@ -25906,7 +25906,7 @@ function simulateOneCpu(gameIndex,p){
   }else if(legacyIndex===98){
     state.records.pkKicker[p.id]=ultra?randi(88,100):randi(42,90);
   }else if(legacyIndex===99){
-    state.records.threePoint[p.id]=ultra?randi(82,100):randi(28,86);
+    state.records.threePoint[p.id]=ultra?[80,100][randi(0,1)]:[0,20,40,60,80,100][randi(0,5)];
   }else if(legacyIndex===100){
     state.records.bowlingMob[p.id]=ultra?[90,100][randi(0,1)]:randi(40,90);
   }else if(legacyIndex===101){
@@ -25918,7 +25918,7 @@ function simulateOneCpu(gameIndex,p){
   }else if(legacyIndex===107){
     state.records.airHockeyMob[p.id]=ultra?randi(80,100):randi(30,100);
   }else if(legacyIndex===108){
-    state.records.ropeSwingMob[p.id]=ultra?[80,100][randi(0,1)]:[10,30,40,60,80,100][randi(0,5)];
+    state.records.ropeSwingMob[p.id]=ultra?randi(150,190):randi(35,165);
   }else if(legacyIndex===110){
     state.records.billiardsMob[p.id]=ultra?[93,100][randi(0,1)]:[25,50,75,85,93][randi(0,4)];
   }else{
@@ -26102,8 +26102,11 @@ function performancePoints(gameIndex,v){
     if(v>=27000)return 0;
     return clamp(Math.round((27000-v)/10000*100),0,100);
   }
-  if(legacyIndex===107||legacyIndex===108||legacyIndex===110){
+  if(legacyIndex===107||legacyIndex===110){
     return clamp(Math.round(v),0,100);
+  }
+  if(legacyIndex===108){
+    return clamp(Math.round(v/180*100),0,100);
   }
   return clamp(Math.round(v),0,100);
 }
@@ -26212,7 +26215,7 @@ function formatRecord(gameIndex,v){
   if(legacyIndex===102)return `${Math.round(v/10)}/10`;
   if(legacyIndex===105)return `${(v/1000).toFixed(2)}秒`;
   if(legacyIndex===107)return `${Math.round(v)}pt`;
-  if(legacyIndex===108)return `${Math.round(v)}pt`;
+  if(legacyIndex===108)return `${Math.round(v)}m`;
   if(legacyIndex===110)return `${Math.round(v)}pt`;
   return `${Math.round(v)}pt`;
 }
@@ -27659,58 +27662,87 @@ async function startThreePoint(p,humanIndex,runId){
   const gameIndex=GAMES.findIndex(g=>g.key==='threePoint');
 
   screen.innerHTML=`
-    <div class="tp-shell-v171 gameplay-fit">
+    <div class="tp-shell-v176 gameplay-fit">
       <div class="game-head">
-        <div><span class="kicker">${esc(p.name)}</span><h2>モブくん3ポイント</h2><p class="lead">モブくんを引っ張ってシュート / 5 BALLS</p></div>
+        <div><span class="kicker">${esc(p.name)}</span><h2>モブくん3ポイント</h2><p class="lead">5 BALLS / 1 IN = 20pt</p></div>
         <div class="game-badge">${playBadge(humanIndex)}</div>
       </div>
-      <div class="tp-hud-v171">
-        <div><span>BALL</span><b id="tpCount171">1 / 5</b></div>
-        <div><span>SCORE</span><b id="tpScore171">0</b></div>
-        <div><span>SWISH</span><b id="tpSwish171">0</b></div>
+
+      <div class="tp-hud-v176">
+        <div><span>BALL</span><b id="tpCount176">1 / 5</b></div>
+        <div><span>SCORE</span><b id="tpScore176">0</b></div>
+        <div><span>BLOCK</span><b id="tpBlock176">0</b></div>
       </div>
-      <div id="tpStage171" class="tp-stage-v171">
-        <div class="tp-court-v171"></div>
-        <div class="tp-board-v171"></div>
-        <div class="tp-ring-v171"></div>
-        <div class="tp-net-v171"></div>
-        <div id="tpMob171" class="tp-mob-v171"><img src="icon/01.png" draggable="false" alt=""><i>↓ PULL</i></div>
-        <div id="tpBall171" class="tp-ball-v171"></div>
-        <div id="tpGuide171" class="tp-guide-v171" hidden></div>
-        <div id="tpCall171" class="tp-call-v171">モブくんを引っ張る</div>
+
+      <div id="tpStage176" class="tp-stage-v176">
+        <div class="tp-court-v176"></div>
+        <div class="tp-board-v176"></div>
+        <div class="tp-ring-v176"></div>
+        <div class="tp-net-v176"></div>
+
+        <div id="tpGuard176" class="tp-guard-v176">
+          <i class="antenna-v176"></i>
+          <b class="head-v176"><em></em><em></em></b>
+          <span class="body-v176"></span>
+          <u class="arm left-v176"></u><u class="arm right-v176"></u>
+        </div>
+
+        <div id="tpMob176" class="tp-mob-v176">
+          <img src="icon/01.png" draggable="false" alt="">
+          <i>↓ PULL</i>
+        </div>
+
+        <div id="tpBall176" class="tp-ball-v176"></div>
+        <div id="tpGuide176" class="tp-guide-v176" hidden></div>
+        <div id="tpCall176" class="tp-call-v176">モブくんを引っ張る</div>
       </div>
     </div>`;
 
-  const stage=document.getElementById('tpStage171');
-  const mob=document.getElementById('tpMob171');
-  const ball=document.getElementById('tpBall171');
-  const guide=document.getElementById('tpGuide171');
-  const call=document.getElementById('tpCall171');
-  const countEl=document.getElementById('tpCount171');
-  const scoreEl=document.getElementById('tpScore171');
-  const swishEl=document.getElementById('tpSwish171');
+  const stage=document.getElementById('tpStage176');
+  const mob=document.getElementById('tpMob176');
+  const ball=document.getElementById('tpBall176');
+  const guide=document.getElementById('tpGuide176');
+  const guard=document.getElementById('tpGuard176');
+  const call=document.getElementById('tpCall176');
+  const countEl=document.getElementById('tpCount176');
+  const scoreEl=document.getElementById('tpScore176');
+  const blockEl=document.getElementById('tpBlock176');
 
-  let shot=0,total=0,swishes=0,ready=false,drag=null,flight=null,raf=null,last=performance.now(),finished=false;
-  let startX=0,startY=0;
+  let shot=0,total=0,blockedCount=0,ready=false,drag=null,flight=null,raf=null,last=performance.now(),finished=false;
+  let startX=0,startY=0,guardX=0,guardY=0,guardStart=performance.now();
 
   function dims(){return {w:stage.clientWidth,h:stage.clientHeight}}
   function local(e){const r=stage.getBoundingClientRect();return{x:e.clientX-r.left,y:e.clientY-r.top}}
+
+  function updateGuard(now){
+    const {w,h}=dims();
+    const elapsed=(now-guardStart)/1000;
+    const speed=1.45+shot*.10;
+    guardX=w*.5+Math.sin(elapsed*speed*2.2)*w*.27;
+    guardY=h*.43;
+    guard.style.left=`${guardX}px`;
+    guard.style.top=`${guardY}px`;
+  }
 
   function setShot(){
     const {w,h}=dims();
     startX=w*.5;
     startY=h*.77;
+
     mob.style.transition='none';
     mob.style.left=`${startX}px`;
     mob.style.top=`${startY}px`;
     mob.style.transform='translate(-50%,-50%)';
+
     ball.style.left=`${startX+20}px`;
     ball.style.top=`${startY-24}px`;
     ball.style.transform='translate(-50%,-50%)';
     ball.hidden=false;
+
     call.textContent='モブくんを下へ引っ張る';
-    call.className='tp-call-v171';
+    call.className='tp-call-v176';
     countEl.textContent=`${shot+1} / 5`;
+
     flight=null;
     ready=true;
   }
@@ -27719,24 +27751,27 @@ async function startThreePoint(p,humanIndex,runId){
     ready=false;
     total+=points;
     scoreEl.textContent=total;
-    if(label==='SWISH'){swishes++;swishEl.textContent=swishes}
-    call.textContent=points?`${label} +${points}`:'MISS';
-    call.className=`tp-call-v171 ${points?'in-v171':'miss-v171'}`;
-    beep(points===20?1040:points?760:230,85,.024);
+
+    call.textContent=points?`${label} +20`:'MISS';
+    call.className=`tp-call-v176 ${points?'in-v176':'miss-v176'}`;
+    beep(points?920:230,85,.024);
 
     setTimeout(()=>{
       if(!isGameRunValid(runId))return;
+
       shot++;
 
       if(shot>=5){
         finished=true;
         if(raf)cancelAnimationFrame(raf);
         state.records.threePoint[p.id]=clamp(total,0,100);
-        call.textContent=total===100?'5 SWISH!!':'3 POINT FINISH!';
-        call.className='tp-call-v171 result-v171';
+
+        call.textContent=total===100?'5 / 5!!':'3 POINT FINISH!';
+        call.className='tp-call-v176 result-v176';
+
         setTimeout(()=>{
           if(isGameRunValid(runId)){
-            recordScreen(gameIndex,p,humanIndex,`${total}<small>pt</small>`,`SWISH ${swishes} / 5`);
+            recordScreen(gameIndex,p,humanIndex,`${total}<small>pt</small>`,`${Math.round(total/20)} / 5 IN / BLOCK ${blockedCount}`);
           }
         },650);
       }else{
@@ -27747,14 +27782,16 @@ async function startThreePoint(p,humanIndex,runId){
 
   stage.addEventListener('pointerdown',e=>{
     if(!ready||flight||finished)return;
+
     const pt=local(e);
     const dist=Math.hypot(pt.x-startX,pt.y-startY);
     if(dist>88)return;
 
     e.preventDefault();
     stage.setPointerCapture?.(e.pointerId);
+
     drag={id:e.pointerId,cx:pt.x,cy:pt.y};
-    mob.classList.add('drag-v171');
+    mob.classList.add('drag-v176');
     guide.hidden=false;
   },{passive:false});
 
@@ -27786,9 +27823,10 @@ async function startThreePoint(p,humanIndex,runId){
 
     const dx=drag.cx-startX;
     const dy=drag.cy-startY;
+
     drag=null;
     guide.hidden=true;
-    mob.classList.remove('drag-v171');
+    mob.classList.remove('drag-v176');
 
     if(dy<40){
       mob.style.left=`${startX}px`;
@@ -27800,6 +27838,7 @@ async function startThreePoint(p,humanIndex,runId){
     }
 
     ready=false;
+
     const {w,h}=dims();
     const hoopY=h*.245;
     const launchY=startY-24;
@@ -27816,35 +27855,63 @@ async function startThreePoint(p,humanIndex,runId){
       vy:-baseVy*launchScale,
       prevY:launchY,
       board:false,
+      blocked:false,
       age:0,w,h,gravity
     };
 
     mob.style.transition='left .18s ease,top .18s ease';
     mob.style.left=`${startX}px`;
     mob.style.top=`${startY}px`;
+
     call.textContent=pullQ>.88?'MAX POWER!':'SHOOT!';
     beep(620+pullQ*110,50,.016);
   },{passive:false});
 
   setShot();
   ready=false;
+  updateGuard(performance.now());
 
   if(!(await countdown('3 POINT',runId,{transparent:true})))return;
+
+  guardStart=performance.now();
   setShot();
   last=performance.now();
 
   function frame(now){
     if(finished||!isGameRunValid(runId))return;
+
     const dt=Math.min(.026,(now-last)/1000);
     last=now;
 
+    updateGuard(now);
+
     if(flight){
       const f=flight;
+
       f.age+=dt;
       f.prevY=f.y;
       f.vy+=f.gravity*dt;
       f.x+=f.vx*dt;
       f.y+=f.vy*dt;
+
+      // Robot blocks the rising shot in front of the hoop.
+      if(!f.blocked&&f.vy<0&&Math.abs(f.x-guardX)<=37&&Math.abs(f.y-guardY)<=31){
+        f.blocked=true;
+        blockedCount++;
+        blockEl.textContent=blockedCount;
+
+        const side=f.x<guardX?-1:1;
+        f.vx+=side*170;
+        f.vy=Math.abs(f.vy)*.45+175;
+
+        guard.classList.remove('block-v176');
+        void guard.offsetWidth;
+        guard.classList.add('block-v176');
+
+        call.textContent='ROBOT BLOCK!';
+        call.className='tp-call-v176 block-v176';
+        beep(210,100,.027);
+      }
 
       const hoopX=f.w*.5;
       const hoopY=f.h*.245;
@@ -27862,12 +27929,10 @@ async function startThreePoint(p,humanIndex,runId){
 
       if(f.prevY<hoopY&&f.y>=hoopY&&f.vy>0){
         const d=Math.abs(f.x-hoopX);
-        if(d<=11){
+
+        if(d<=22){
           flight=null;
-          endShot(f.board?16:20,f.board?'BOARD IN':'SWISH');
-        }else if(d<=22){
-          flight=null;
-          endShot(18,'RIM IN');
+          endShot(20,'IN!');
         }
       }
 
@@ -27879,6 +27944,7 @@ async function startThreePoint(p,humanIndex,runId){
 
     raf=requestAnimationFrame(frame);
   }
+
   raf=requestAnimationFrame(frame);
 }
 
@@ -28971,52 +29037,61 @@ async function startAirHockeyMob(p,humanIndex,runId){
 async function startRopeSwingMob(p,humanIndex,runId){
   gameFit();
   const gameIndex=GAMES.findIndex(g=>g.key==='ropeSwingMob');
-  const WORLD_W=1320;
+  const WORLD_W=1600;
 
   screen.innerHTML=`
-    <div class="rsw-shell-v174 gameplay-fit">
+    <div class="rsw-shell-v176 gameplay-fit">
       <div class="game-head">
-        <div><span class="kicker">${esc(p.name)}</span><h2>モブくんロープスイング</h2><p class="lead">TAP TO RELEASE / 3 ROPES</p></div>
+        <div><span class="kicker">${esc(p.name)}</span><h2>モブくんロープスイング</h2><p class="lead">FINAL JUMP DISTANCE</p></div>
         <div class="game-badge">${playBadge(humanIndex)}</div>
       </div>
 
-      <div class="rsw-hud-v174">
-        <div><span>ROPE</span><b id="rswRope174">1 / 3</b></div>
-        <div><span>STATUS</span><b id="rswStatus174">HOLD</b></div>
-        <div><span>SCORE</span><b id="rswScore174">---</b></div>
+      <div class="rsw-hud-v176">
+        <div><span>ROPE</span><b id="rswRope176">1 / 3</b></div>
+        <div><span>STATUS</span><b id="rswStatus176">HOLD</b></div>
+        <div><span>DISTANCE</span><b id="rswDistance176">---</b></div>
       </div>
 
-      <div id="rswStage174" class="rsw-stage-v174">
-        <div id="rswWorld174" class="rsw-world-v174" style="width:${WORLD_W}px">
-          <div class="rsw-sky-v174"></div>
-          <div class="rsw-cliffs-v174"></div>
+      <div id="rswStage176" class="rsw-stage-v176">
+        <div id="rswWorld176" class="rsw-world-v176" style="width:${WORLD_W}px">
+          <div class="rsw-sky-v176"></div>
+          <div class="rsw-cliffs-v176"></div>
 
-          <div id="rswRopeA174" class="rsw-rope-v174"></div>
-          <div id="rswRopeB174" class="rsw-rope-v174"></div>
-          <div id="rswRopeC174" class="rsw-rope-v174"></div>
+          <div id="rswRopeA176" class="rsw-rope-v176"></div>
+          <div id="rswRopeB176" class="rsw-rope-v176"></div>
+          <div id="rswRopeC176" class="rsw-rope-v176"></div>
 
-          <div class="rsw-landing-v174">
-            <i class="z40">40</i><i class="z60">60</i><i class="z80">80</i><i class="z100">100</i><i class="z80b">80</i><i class="z60b">60</i><i class="z40b">40</i>
+          <div id="rswTakeoff176" class="rsw-takeoff-v176"></div>
+
+          <div class="rsw-distance-ground-v176">
+            <i style="left:860px">50m</i>
+            <i style="left:980px">100m</i>
+            <i style="left:1100px">150m</i>
+            <i style="left:1220px">200m</i>
+            <i style="left:1340px">250m</i>
           </div>
         </div>
 
-        <div id="rswPlayer174" class="rsw-player-v174"><img src="icon/01.png" draggable="false" alt=""></div>
-        <div id="rswCall174" class="rsw-call-v174">TAP TO RELEASE</div>
+        <div id="rswPlayer176" class="rsw-player-v176"><img src="icon/01.png" draggable="false" alt=""></div>
+        <div id="rswCall176" class="rsw-call-v176">TAP TO RELEASE</div>
       </div>
     </div>`;
 
-  const stage=document.getElementById('rswStage174');
-  const world=document.getElementById('rswWorld174');
-  const player=document.getElementById('rswPlayer174');
+  const stage=document.getElementById('rswStage176');
+  const world=document.getElementById('rswWorld176');
+  const player=document.getElementById('rswPlayer176');
+  const takeoff=document.getElementById('rswTakeoff176');
+
   const ropeEls=[
-    document.getElementById('rswRopeA174'),
-    document.getElementById('rswRopeB174'),
-    document.getElementById('rswRopeC174')
+    document.getElementById('rswRopeA176'),
+    document.getElementById('rswRopeB176'),
+    document.getElementById('rswRopeC176')
   ];
-  const ropeEl=document.getElementById('rswRope174');
-  const statusEl=document.getElementById('rswStatus174');
-  const scoreEl=document.getElementById('rswScore174');
-  const call=document.getElementById('rswCall174');
+
+  const ropeEl=document.getElementById('rswRope176');
+  const statusEl=document.getElementById('rswStatus176');
+  const distanceEl=document.getElementById('rswDistance176');
+  const call=document.getElementById('rswCall176');
 
   void stage.offsetHeight;
 
@@ -29039,10 +29114,10 @@ async function startRopeSwingMob(p,humanIndex,runId){
   });
 
   let active=false,finished=false,raf=null,last=performance.now(),start=0;
-  let mode='attached';
-  let ropeIndex=0;
+  let mode='attached',ropeIndex=0;
   let x=0,y=0,vx=0,vy=0,cameraX=0;
   let catchState=null;
+  let finalReleaseX=null;
 
   const GRAVITY=450;
   const CATCH_R=64;
@@ -29075,30 +29150,26 @@ async function startRopeSwingMob(p,humanIndex,runId){
     player.style.top=`${y}px`;
   }
 
-  function scoreLanding(px){
-    const d=Math.abs(px-1045);
-    if(d<=34)return 100;
-    if(d<=77)return 80;
-    if(d<=126)return 60;
-    return 40;
-  }
-
-  function finish(score,label){
+  function finishDistance(distanceM,label){
     if(finished)return;
-    finished=true;active=false;
+
+    finished=true;
+    active=false;
     if(raf)cancelAnimationFrame(raf);
 
-    score=clamp(Math.round(score),0,100);
-    state.records.ropeSwingMob[p.id]=score;
-    scoreEl.textContent=score;
+    distanceM=Math.max(0,Math.round(distanceM));
+    state.records.ropeSwingMob[p.id]=distanceM;
+
+    distanceEl.textContent=`${distanceM}m`;
     statusEl.textContent='FINISH';
     call.textContent=label;
-    call.className='rsw-call-v174 result-v174';
-    beep(score>=80?1020:620,130,.03);
+    call.className='rsw-call-v176 result-v176';
+
+    beep(distanceM>=150?1020:620,130,.03);
 
     setTimeout(()=>{
       if(isGameRunValid(runId)){
-        recordScreen(gameIndex,p,humanIndex,`${score}<small>pt</small>`,label);
+        recordScreen(gameIndex,p,humanIndex,`${distanceM}<small>m</small>`,`FINAL JUMP DISTANCE`);
       }
     },650);
   }
@@ -29107,18 +29178,28 @@ async function startRopeSwingMob(p,humanIndex,runId){
     if(mode!=='attached')return;
 
     const st=ropeState(ropeIndex,t);
-    x=st.x;y=st.y;
+    x=st.x;
+    y=st.y;
 
     vx=st.vx*2.25+70;
     vy=st.vy*1.05;
 
+    if(ropeIndex===2){
+      finalReleaseX=x;
+      takeoff.style.display='block';
+      takeoff.style.left=`${finalReleaseX}px`;
+      call.textContent='FLY FAR!';
+      distanceEl.textContent='0m';
+    }else{
+      call.textContent='CATCH NEXT!';
+    }
+
     mode='flight';
     statusEl.textContent='FLY';
-    call.textContent=ropeIndex<2?'CATCH NEXT!':'LAND!';
     beep(690+ropeIndex*90,55,.016);
   }
 
-  function beginCatch(nextIndex,t){
+  function beginCatch(nextIndex){
     mode='catching';
     catchState={
       nextIndex,
@@ -29127,6 +29208,7 @@ async function startRopeSwingMob(p,humanIndex,runId){
       fromX:x,
       fromY:y
     };
+
     ropeEl.textContent=`${nextIndex+1} / 3`;
     statusEl.textContent='CATCH';
     call.textContent='CATCH!';
@@ -29139,15 +29221,14 @@ async function startRopeSwingMob(p,humanIndex,runId){
     release((performance.now()-start)/1000);
   },{passive:false});
 
-  // Proper pre-countdown placement:
-  // every rope transform, player position and camera are rendered before countdown starts.
+  // Full placement before countdown.
   const preT=0;
   updateRopes(preT);
   const pre=ropeState(0,preT);
-  x=pre.x;y=pre.y;
+  x=pre.x;
+  y=pre.y;
+  takeoff.style.display='none';
   renderPlayer();
-  call.textContent='TAP TO RELEASE';
-  statusEl.textContent='HOLD';
 
   if(!(await countdown('ROPE SWING',runId,{transparent:true})))return;
 
@@ -29167,6 +29248,7 @@ async function startRopeSwingMob(p,humanIndex,runId){
       const st=ropeState(ropeIndex,t);
       x=st.x;
       y=st.y;
+
     }else if(mode==='flight'){
       vy+=GRAVITY*dt;
       x+=vx*dt;
@@ -29178,22 +29260,30 @@ async function startRopeSwingMob(p,humanIndex,runId){
         const dist=Math.hypot(x-next.x,y-next.y);
 
         if(dist<=CATCH_R&&vx>40){
-          beginCatch(ropeIndex+1,t);
+          beginCatch(ropeIndex+1);
         }else if(y>=FLOOR){
-          finish(ropeIndex===0?10:30,ropeIndex===0?'MISS 2nd ROPE':'MISS 3rd ROPE');
+          finishDistance(0,ropeIndex===0?'MISS 2nd ROPE':'MISS 3rd ROPE');
           return;
         }
-      }else if(y>=FLOOR){
-        const s=scoreLanding(x);
-        finish(s,`LANDING ${s}`);
-        return;
+
+      }else{
+        if(finalReleaseX!==null){
+          const liveDistance=Math.max(0,Math.round((x-finalReleaseX)*.45));
+          distanceEl.textContent=`${liveDistance}m`;
+        }
+
+        if(y>=FLOOR){
+          const distanceM=Math.max(0,(x-finalReleaseX)*.45);
+          finishDistance(distanceM,`FLIGHT ${Math.round(distanceM)}m`);
+          return;
+        }
       }
+
     }else if(mode==='catching'&&catchState){
       const target=ropeState(catchState.nextIndex,t);
       const u=clamp((now-catchState.started)/catchState.duration,0,1);
       const ease=1-Math.pow(1-u,3);
 
-      // Smoothly join the moving rope instead of snapping to its exact point.
       x=catchState.fromX+(target.x-catchState.fromX)*ease;
       y=catchState.fromY+(target.y-catchState.fromY)*ease;
 
@@ -29201,7 +29291,8 @@ async function startRopeSwingMob(p,humanIndex,runId){
         ropeIndex=catchState.nextIndex;
         catchState=null;
         mode='attached';
-        x=target.x;y=target.y;
+        x=target.x;
+        y=target.y;
         statusEl.textContent='HOLD';
         call.textContent='TAP TO RELEASE';
       }
@@ -29244,6 +29335,7 @@ async function startBilliardsMob(p,humanIndex,runId){
         <div class="bil-pocket-v174 p1"></div>
         <div class="bil-pocket-v174 p2"></div>
         <div class="bil-pocket-v174 p3"></div>
+        <div class="bil-pocket-v174 p4"></div>
         <div id="bilBallLayer174" class="bil-ball-layer-v174"></div>
 
         <div id="bilMob174" class="bil-mob-v174">
@@ -29276,7 +29368,8 @@ async function startBilliardsMob(p,humanIndex,runId){
   const pockets=[
     {x:PAD+3,y:PAD+3},
     {x:W*.5,y:PAD},
-    {x:W-PAD-3,y:PAD+3}
+    {x:W-PAD-3,y:PAD+3},
+    {x:W*.5,y:H-PAD}
   ];
 
   const patterns=[
