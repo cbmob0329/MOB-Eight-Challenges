@@ -29458,7 +29458,7 @@ async function startBilliardsMob(p,humanIndex,runId){
     shots++;
     shotEl.textContent=`${shots} / 4`;
 
-    const power=clamp(pull*5.6,145,650);
+    const power=clamp(pull*7.25,180,870);
     const len=Math.max(1,Math.hypot(dx,dy));
     const ux=-dx/len;
     const uy=-dy/len;
@@ -29472,7 +29472,7 @@ async function startBilliardsMob(p,humanIndex,runId){
     mob.classList.add('shoot-v174');
     setTimeout(()=>mob.classList.remove('shoot-v174'),300);
 
-    call.textContent='MOB SHOT!';
+    call.textContent=pull>=105?'MAX POWER!':'MOB SHOT!';
     beep(690,55,.017);
   },{passive:false});
 
@@ -29499,10 +29499,10 @@ async function startBilliardsMob(p,humanIndex,runId){
   }
 
   function resolveWalls(b){
-    if(b.x<PAD+R){b.x=PAD+R;b.vx=Math.abs(b.vx)*.89}
-    if(b.x>W-PAD-R){b.x=W-PAD-R;b.vx=-Math.abs(b.vx)*.89}
-    if(b.y<PAD+R){b.y=PAD+R;b.vy=Math.abs(b.vy)*.89}
-    if(b.y>H-PAD-R){b.y=H-PAD-R;b.vy=-Math.abs(b.vy)*.89}
+    if(b.x<PAD+R){b.x=PAD+R;b.vx=Math.abs(b.vx)*.93}
+    if(b.x>W-PAD-R){b.x=W-PAD-R;b.vx=-Math.abs(b.vx)*.93}
+    if(b.y<PAD+R){b.y=PAD+R;b.vy=Math.abs(b.vy)*.93}
+    if(b.y>H-PAD-R){b.y=H-PAD-R;b.vy=-Math.abs(b.vy)*.93}
   }
 
   function resolvePair(a,b){
@@ -29560,7 +29560,7 @@ async function startBilliardsMob(p,humanIndex,runId){
 
         resolveWalls(b);
 
-        const damp=Math.pow(.978,dt*60);
+        const damp=Math.pow(.9835,dt*60);
         b.vx*=damp;
         b.vy*=damp;
 
