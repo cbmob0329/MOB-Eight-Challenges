@@ -332,8 +332,12 @@ const GAMES=[
   {no:94,key:"tamaireMob",title:"モブくん玉入れ",sub:"動くカゴへ10球をテンポよく連投。1個10点",legacy:102},
   {no:95,key:"mineCartMob",title:"モブくんトロッコ",sub:"長い鉱山コースを高速走行。穴・スロープ・トランポリン・マグマを2段ジャンプで突破",legacy:105},
   {no:96,key:"airHockeyMob",title:"モブくんエアホッケー",sub:"12秒間、2つのパックを同時にさばいて上ゴールを狙う",legacy:107},
-  {no:97,key:"ropeSwingMob",title:"モブくんロープスイング",sub:"3本のロープをタイミングよく離して渡り、最後の着地点100点ゾーンを狙う",legacy:108},
-  {no:98,key:"billiardsMob",title:"モブくんビリヤード",sub:"モブくんがキューで白球を強く打ち、最大4ショットで3つの色球を落とす",legacy:110}
+  {no:97,key:"ropeSwingMob",title:"モブくんロープスイング",sub:"3本のロープをタイミングよく離して渡り、最後に飛んだ距離を競う",legacy:108},
+  {no:98,key:"billiardsMob",title:"モブくんビリヤード",sub:"モブくんがキューで白球を強く打ち、最大4ショットで3つの色球を落とす",legacy:110},
+  {no:99,key:"billiardsBattleRoyale",title:"モブくんビリヤードバトルロイヤル",sub:"4人専用。白球1個と色球5個を順番に打ち、落とした球数で競う",legacy:111},
+  {no:100,key:"linkedCartBlast",title:"くっつきモブくんトロッコ大爆走",sub:"2対2タッグ専用。4人が描いたトロッコ2台ずつを連結し、残ったモブ人形20体で勝負",legacy:112},
+  {no:101,key:"soloCartBlast",title:"モブくんトロッコ大爆走",sub:"4人個人戦専用。描いたトロッコに20体を乗せ、同じコースで残存数を競う",legacy:113},
+  {no:102,key:"deathGameChallenge",title:"モブくんデスゲームにチャレンジ",sub:"4〜8人個人戦専用。固定ルーレット順で扉を選び、生き残った1人が優勝",legacy:114}
 ];
 
 function legacyGameIndex(gameIndex){
@@ -345,26 +349,64 @@ function currentIndexFromLegacy(legacy){
 }
 function tagRacerIndex(){return GAMES.findIndex(g=>g.key==='mobSpeedRacer')}
 function summonMasterIndex(){return GAMES.findIndex(g=>g.key==='summonMaster')}
-function isTagDuoGameEligible(){
-  if(state&&state.freePlay)return true;
+function isTwoByTwoTeamMode(){
   const m=mode();
   if(!m||!m.team)return false;
   const keys=Object.keys(m.teams||{});
-  if(keys.length!==2)return false;
-  if(!keys.every(k=>(m.teams[k]||[]).length===2))return false;
-  return humans().length>=1;
+  return keys.length===2&&keys.every(k=>(m.teams[k]||[]).length===2);
+}
+function isTagDuoGameEligible(){
+  if(state&&state.freePlay)return true;
+  return isTwoByTwoTeamMode()&&humans().length>=1;
 }
 function isTagRacerEligible(){return isTagDuoGameEligible()}
+function isBilliardsBattleRoyaleEligible(){
+  if(state&&state.freePlay)return true;
+  const m=mode();
+  if(!m||humans().length<1)return false;
+  if(m.team)return isTwoByTwoTeamMode();
+  return participants().length===4;
+}
+function isLinkedCartBlastEligible(){
+  if(state&&state.freePlay)return true;
+  return isTwoByTwoTeamMode()&&humans().length>=1;
+}
+function isSoloCartBlastEligible(){
+  if(state&&state.freePlay)return true;
+  const m=mode();
+  return !!m&&!m.team&&participants().length===4&&humans().length>=1&&!state.tournament?.active;
+}
+function isDeathGameChallengeEligible(){
+  if(state&&state.freePlay)return false;
+  const m=mode();
+  const n=participants().length;
+  return !!m&&!m.team&&!state.tournament?.active&&n>=4&&n<=8&&humans().length>=1;
+}
 function isGameEligibleForCurrentMode(gameIndex){
   const g=GAMES[gameIndex];
   if(!g)return false;
-  if(g.key!=='mobSpeedRacer'&&g.key!=='summonMaster')return true;
-  return isTagDuoGameEligible();
+  if(g.key==='mobSpeedRacer'||g.key==='summonMaster')return isTagDuoGameEligible();
+  if(g.key==='billiardsBattleRoyale')return isBilliardsBattleRoyaleEligible();
+  if(g.key==='linkedCartBlast')return isLinkedCartBlastEligible();
+  if(g.key==='soloCartBlast')return isSoloCartBlastEligible();
+  if(g.key==='deathGameChallenge')return isDeathGameChallengeEligible();
+  return true;
+}
+function gameEligibilityReason(gameIndex){
+  const g=GAMES[gameIndex];
+  if(!g)return 'このモードでは遊べません';
+  if(g.key==='mobSpeedRacer'||g.key==='summonMaster'||g.key==='linkedCartBlast')return '2対2タッグ専用 / 1人フリーでは全役を自分で操作';
+  if(g.key==='billiardsBattleRoyale')return '4人専用 / 個人4人 または 2対2タッグ';
+  if(g.key==='soloCartBlast')return '4人の個人戦専用';
+  if(g.key==='deathGameChallenge')return '4〜8人の個人戦専用';
+  return g.sub;
 }
 function eligibleGameIndices(){
   return GAMES.map((_,i)=>i).filter(isGameEligibleForCurrentMode);
 }
-
+function freePlayEligibleGameIndices(){
+  return GAMES.map((g,i)=>({g,i})).filter(x=>x.g.key!=='deathGameChallenge').map(x=>x.i);
+}
 
 const MODES={
   solo4:{name:"4人 個人戦",short:"プレイヤー4人",participants:["p1","p2","p3","p4"],team:false,points:[5,3,1,0]},
@@ -407,7 +449,7 @@ function freshState(){
         paperPlane:{},tankMob:{},curlingMob:{},bubbleMob:{},
         changeMob:{},baggageMob:{},treasureMob:{},rouletteMob:{},excavationMob:{},
         oldMaidDuel:{},robotMarch:{},monsterMaster:{},scoutMan:{},
-        atafutaSurvival:{},waveMaster:{},battleRoyaleMob:{},littleMobShot:{},monsterBoxMob:{},alienBattleMob:{},mobMusou:{},iaidoMaster:{},killLeaderMob:{},mobSpeedRacer:{},summonMaster:{},mobPinball:{},hurdleRun:{},longJumpMob:{},pkKicker:{},threePoint:{},bowlingMob:{},waterSkip:{},tamaireMob:{},mineCartMob:{},airHockeyMob:{},ropeSwingMob:{},billiardsMob:{}
+        atafutaSurvival:{},waveMaster:{},battleRoyaleMob:{},littleMobShot:{},monsterBoxMob:{},alienBattleMob:{},mobMusou:{},iaidoMaster:{},killLeaderMob:{},mobSpeedRacer:{},summonMaster:{},mobPinball:{},hurdleRun:{},longJumpMob:{},pkKicker:{},threePoint:{},bowlingMob:{},waterSkip:{},tamaireMob:{},mineCartMob:{},airHockeyMob:{},ropeSwingMob:{},billiardsMob:{},billiardsBattleRoyale:{},linkedCartBlast:{},soloCartBlast:{},deathGameChallenge:{}
     },
     total:{},
     roundPoints:[],
@@ -517,7 +559,7 @@ function renderHome(){
     <section class="hero hero-v119">
       <div>
         <span class="kicker">SMARTPHONE PARTY GAME</span>
-        <h1>98 MINI<br>GAMES</h1>
+        <h1>102 MINI<br>GAMES</h1>
         <p>通常対戦は「チーム戦」「個人戦」。さらに8人/16人の「モブくんゲーム王決定戦」を遊べます。</p>
       </div>
       <div class="hero-mark">MOB</div>
@@ -542,7 +584,7 @@ function renderHome(){
     </section>
 
     <section class="panel flat">
-      <div class="panel-head"><h3>98 MINI GAMES</h3><span class="tag">GAME 1 → 98</span></div>
+      <div class="panel-head"><h3>102 MINI GAMES</h3><span class="tag">GAME 1 → 102</span></div>
       <div class="compact-game-grid home-compact-games-v119">
         ${GAMES.map(g=>`<div><b>${g.no}</b><span>${g.title}</span></div>`).join("")}
       </div>
@@ -558,18 +600,19 @@ function renderHome(){
 function renderFreePlaySelect(){
   clearGameFit();
   invalidateGameRun();
+  const freeIndices=freePlayEligibleGameIndices();
 
   screen.innerHTML=`
     <div class="game-head">
-      <div><span class="kicker">FREE PLAY</span><h2>1人で遊ぶ</h2><p class="lead">好きなゲームを1つ選んでプレイ。</p></div>
-      <div class="game-badge">98</div>
+      <div><span class="kicker">FREE PLAY</span><h2>1人で遊ぶ</h2><p class="lead">好きなゲームを1つ選んでプレイ。タッグゲームは全員分を自分で操作します。</p></div>
+      <div class="game-badge">${freeIndices.length}/${GAMES.length}</div>
     </div>
 
     <button id="freeBack" class="secondary wizard-back-v119" type="button">← メインへ戻る</button>
 
     <section class="panel">
       <div class="free-game-grid">
-        ${GAMES.map((g,i)=>`<button class="free-game-card" data-free-game="${i}" type="button"><span>GAME ${g.no}</span><b>${g.title}</b><small>${g.sub}</small></button>`).join("")}
+        ${freeIndices.map(i=>{const g=GAMES[i];return `<button class="free-game-card" data-free-game="${i}" type="button"><span>GAME ${g.no}</span><b>${g.title}</b><small>${g.sub}</small></button>`}).join("")}
       </div>
     </section>
   `;
@@ -600,7 +643,7 @@ function renderGameGuide(){
   screen.innerHTML=`
     <div class="game-head">
       <div><span class="kicker">GAME GUIDE</span><h2>各ゲームの説明</h2><p class="lead">内容と100点換算の目安を一覧で確認できます。</p></div>
-      <div class="game-badge">98</div>
+      <div class="game-badge">102</div>
     </div>
 
     <button id="guideBack" class="secondary wizard-back-v119" type="button">← メインへ戻る</button>
@@ -638,11 +681,12 @@ function tournamentRoundName(roundIndex){
 }
 
 function tournamentGamePool(){
-  // タッグ専用2ゲームは1対1トーナメントでは選出しない。
-  return GAMES
-    .map((g,i)=>({g,i}))
-    .filter(x=>x.g.key!=="mobSpeedRacer"&&x.g.key!=="summonMaster")
-    .map(x=>x.i);
+  // 1対1トーナメントでは、複数人同時進行・タッグ専用ゲームを選出しない。
+  const blocked=new Set([
+    'mobSpeedRacer','summonMaster','billiardsBattleRoyale',
+    'linkedCartBlast','soloCartBlast','deathGameChallenge'
+  ]);
+  return GAMES.map((g,i)=>({g,i})).filter(x=>!blocked.has(x.g.key)).map(x=>x.i);
 }
 
 function pickTournamentGame(exclude=[]){
@@ -1467,7 +1511,7 @@ function renderBattleTypeSelect(){
 
     <div class="battle-type-grid-v119">
       <button id="battleTeam" class="battle-type-card-v119 team" type="button">
-        <span>TEAM BATTLE</span><b>チーム戦</b><small>最大4チーム / PLAYER最大10人・CPU最大30人</small>
+        <span>TEAM BATTLE</span><b>チーム戦</b><small>最大8チーム / 1チーム4人まで・4チーム時のみ8人まで</small>
       </button>
       <button id="battleSolo" class="battle-type-card-v119 solo" type="button">
         <span>INDIVIDUAL</span><b>個人戦</b><small>PLAYER人数 + CPU人数で全員対戦</small>
@@ -1509,14 +1553,15 @@ function renderTeamBasics(config){
   state.setup=config;
 
   function maxTeamSize(){
-    return Math.min(10,Math.floor(40/config.teamCount));
+    return config.teamCount===4?8:4;
   }
 
+  config.teamCount=clamp(config.teamCount,2,8);
   config.teamSize=clamp(config.teamSize,1,maxTeamSize());
 
   screen.innerHTML=`
     <div class="game-head">
-      <div><span class="kicker">TEAM BATTLE / 1</span><h2>チーム数と人数</h2><p class="lead">全チーム同じ人数。最大4チーム。</p></div>
+      <div><span class="kicker">TEAM BATTLE / 1</span><h2>チーム数と人数</h2><p class="lead">2〜8チーム。通常は1チーム4人まで、4チームだけ最大8人です。</p></div>
       <div class="game-badge" id="teamBasicTotal">${config.teamCount*config.teamSize}人</div>
     </div>
 
@@ -1524,7 +1569,7 @@ function renderTeamBasics(config){
       <div class="wizard-counter-v119">
         <span>TEAM COUNT</span>
         <div><button data-basic="team-" type="button">−</button><b id="teamCountValue">${config.teamCount}</b><button data-basic="team+" type="button">＋</button></div>
-        <small>2〜4チーム</small>
+        <small>2〜8チーム</small>
       </div>
       <div class="wizard-counter-v119">
         <span>MEMBERS / TEAM</span>
@@ -1553,7 +1598,7 @@ function renderTeamBasics(config){
   screen.querySelectorAll('[data-basic]').forEach(btn=>btn.addEventListener('click',()=>{
     const k=btn.dataset.basic;
     if(k==='team-')config.teamCount=Math.max(2,config.teamCount-1);
-    if(k==='team+')config.teamCount=Math.min(4,config.teamCount+1);
+    if(k==='team+')config.teamCount=Math.min(8,config.teamCount+1);
     if(k==='size-')config.teamSize=Math.max(1,config.teamSize-1);
     if(k==='size+')config.teamSize=Math.min(maxTeamSize(),config.teamSize+1);
     config.assignments=[];
@@ -1565,6 +1610,7 @@ function renderTeamBasics(config){
   redraw();
   gameTop();
 }
+
 
 function defaultTeamAssignments(teamCount,teamSize){
   const total=teamCount*teamSize;
@@ -1592,7 +1638,7 @@ function renderTeamAssignment(config){
     config.assignments=defaultTeamAssignments(config.teamCount,config.teamSize);
   }
 
-  const teamLetters=['A','B','C','D'];
+  const teamLetters=['A','B','C','D','E','F','G','H'];
 
   screen.innerHTML=`
     <div class="game-head">
@@ -1737,7 +1783,7 @@ function applyConfiguredBattle(config){
 
   if(config.type==='team'){
     let hp=0,cp=0;
-    const letters=['A','B','C','D'].slice(0,config.teamCount);
+    const letters=['A','B','C','D','E','F','G','H'].slice(0,config.teamCount);
     const all=[];
 
     letters.forEach((letter,i)=>{
@@ -2036,7 +2082,7 @@ function renderPlayStyleSelect(){
       <button id="normalStyle" class="style-select-card normal" type="button">
         <span>NORMAL</span>
         <b>順番に全種目</b>
-        <small>GAME 1 → 98 を順番にプレイ</small>
+        <small>GAME 1 → 102 を順番にプレイ</small>
       </button>
       <button id="customStyle" class="style-select-card custom" type="button">
         <span>CUSTOM</span>
@@ -2046,7 +2092,7 @@ function renderPlayStyleSelect(){
     </div>
 
     <section class="panel flat">
-      <h3>98 MINI GAMES</h3>
+      <h3>102 MINI GAMES</h3>
       <div class="compact-game-grid">
         ${GAMES.map(g=>`<div><b>${g.no}</b><span>${g.title}</span></div>`).join("")}
       </div>
@@ -2056,7 +2102,7 @@ function renderPlayStyleSelect(){
 
   document.getElementById("normalStyle").addEventListener("click",()=>{
     state.playStyle="normal";
-    state.playlist=GAMES.map((_,i)=>i);
+    state.playlist=eligibleGameIndices();
     state.roundIndex=0;
     renderModeLobby();
   });
@@ -2094,7 +2140,7 @@ function renderCustomPicker(){
     <section class="panel">
       <h3>追加するゲーム</h3>
       <div class="custom-game-grid">
-        ${GAMES.map((g,i)=>{const ok=isGameEligibleForCurrentMode(i);return `<button class="custom-game-add ${ok?'':'tag-locked-v152'}" data-add-game="${i}" type="button" ${ok?'':'disabled'}><span>GAME ${g.no}</span><b>${g.title}</b><small>${ok?g.sub:'タッグ2対2専用 / ソロ時はCPU自動補充'}</small></button>`}).join("")}
+        ${GAMES.map((g,i)=>{const ok=isGameEligibleForCurrentMode(i);return `<button class="custom-game-add ${ok?'':'tag-locked-v152'}" data-add-game="${i}" type="button" ${ok?'':'disabled'}><span>GAME ${g.no}</span><b>${g.title}</b><small>${ok?g.sub:gameEligibilityReason(i)}</small></button>`}).join("")}
       </div>
     </section>
 
@@ -2344,7 +2390,11 @@ function scoreRuleForGame(index){
     "12秒 / パック2個同時 / 相手ゴール+20点 / 自陣ゴール-10点 / 最大100点",
     "3本目のロープから最後に飛んだ距離そのものを記録 / 長いほど上位",
     "",
-    "色球1個=25点 / 3球全部で75点 + ショット数ボーナス最大25点 / 最大4ショット"
+    "色球1個=25点 / 3球全部で75点 + ショット数ボーナス最大25点 / 最大4ショット",
+    "4人専用 / 色球5個 / 落とした色球1個=20点 / 最大100点",
+    "2対2タッグ専用 / チーム20体スタート / ゴール時の残り1体=5点 / 最大100点",
+    "4人個人戦専用 / 1人20体スタート / ゴール時の残り1体=5点 / 最大100点",
+    "4〜8人個人戦専用 / 1位100点・2位70点・3位50点・4位以下0点"
   ][legacyIndex];
 }
 
@@ -2563,6 +2613,14 @@ function showGameIntro(index){
     rules=`<li>モブくんがロープで揺れています。画面タップで離し、次のロープへ飛び移ります。</li><li>3本目から最後に飛んだ距離をそのまま記録。着地点の点数ゾーンはありません。</li>`;
     }else if(legacyIndex===110){
     rules=`<li>白球から後ろへ引っ張って離し、色球3個を4つのポケットへ入れます。下中央にもポケットがあります。</li><li>最大4ショット。3球すべて落とすとショット数ボーナスが付き、2ショット以内なら100点です。</li>`;
+  }else if(legacyIndex===111){
+    rules=`<li>4人専用。白球1個・色球5個を1ショットずつ交代で打ち、落とした色球1個につき20点です。</li><li>個人戦はP1→P2→P3→P4、2対2タッグはP1→P3→P2→P4の順番です。</li>`;
+  }else if(legacyIndex===112){
+    rules=`<li>2対2タッグ専用。4人が7秒ずつ自由にトロッコを描き、各トロッコへ小さなモブ人形10体を乗せます。</li><li>同チーム2台は短いチェーンで連結。同じ1kmコースのギミック抽選で落下し、残り20体×5点で勝負します。</li>`;
+  }else if(legacyIndex===113){
+    rules=`<li>4人個人戦専用。各自7秒で自分のトロッコを描き、モブ人形20体を乗せます。</li><li>全員同じ1kmコース・同じ速度。ギミックごとの抽選後、残った人形1体=5点です。</li>`;
+  }else if(legacyIndex===114){
+    rules=`<li>4〜8人個人戦専用。最初のルーレットで決めた順番を最後まで固定し、1人ずつ空いている扉を選びます。</li><li>全員が入ったら3・2・1で扉が消滅。最後の1人が100点、2位70点、3位50点です。</li>`;
   }else{
     rules=`<li>${esc(g.sub)}</li>`;
   }
@@ -2710,6 +2768,10 @@ function humanReady(gameIndex,humanIndex){
     else if(legacyIndex===107)startAirHockeyMob(p,humanIndex,runId);
     else if(legacyIndex===108)startRopeSwingMob(p,humanIndex,runId);
     else if(legacyIndex===110)startBilliardsMob(p,humanIndex,runId);
+    else if(legacyIndex===111)startBilliardsBattleRoyale(p,humanIndex,runId);
+    else if(legacyIndex===112)startLinkedCartBlast(p,humanIndex,runId);
+    else if(legacyIndex===113)startSoloCartBlast(p,humanIndex,runId);
+    else if(legacyIndex===114)startDeathGameChallenge(p,humanIndex,runId);
     else{
       gameSessionActive=false;
       activeGameIndex=-1;
@@ -16606,7 +16668,7 @@ async function startAmidakujiMob(p,humanIndex,runId){
       <svg class="amida-trace-svg-v126" viewBox="0 0 600 ${worldH}" preserveAspectRatio="none"><polyline id="amidaTrace" points=""></polyline></svg>
       <div id="amidaMob" class="amida-mob amida-mob-v126" style="background-image:url('icon/01.png')"></div>
       <div class="amida-goals amida-goals-v126">${goalValues.map((v,i)=>`<b data-goal="${i}" style="left:${(i+.5)/lanes*100}%"><i>${v}</i><span>pt</span></b>`).join('')}</div>
-    </div><div id="amidaHint" class="amida-hint amida-hint-v126">GOALをチェック…</div>
+    </div><div class="amida-secret-banner-v177"><b>?</b><span>SECRET</span><b>?</b></div><div id="amidaHint" class="amida-hint amida-hint-v126">GOALをチェック…</div>
     <div id="amidaEntrances" class="amida-entrances amida-entrances-v126" hidden>${Array.from({length:lanes},(_,i)=>`<button type="button" data-amida="${i}"><span>${i+1}</span></button>`).join('')}</div></div></div>`;
   const viewport=document.getElementById('amidaViewport'),world=document.getElementById('amidaWorld'),svg=document.getElementById('amidaSvg'),trace=document.getElementById('amidaTrace'),mob=document.getElementById('amidaMob'),entrances=document.getElementById('amidaEntrances'),hint=document.getElementById('amidaHint');
   const xForLane=lane=>(lane+.5)/lanes*600;let markup='';
@@ -25921,6 +25983,14 @@ function simulateOneCpu(gameIndex,p){
     state.records.ropeSwingMob[p.id]=ultra?randi(150,190):randi(35,165);
   }else if(legacyIndex===110){
     state.records.billiardsMob[p.id]=ultra?[93,100][randi(0,1)]:[25,50,75,85,93][randi(0,4)];
+  }else if(legacyIndex===111){
+    state.records.billiardsBattleRoyale[p.id]=ultra?[60,80,100][randi(0,2)]:[0,20,40,60,80][randi(0,4)];
+  }else if(legacyIndex===112){
+    state.records.linkedCartBlast[p.id]=ultra?randi(75,100):randi(15,90);
+  }else if(legacyIndex===113){
+    state.records.soloCartBlast[p.id]=ultra?randi(75,100):randi(10,90);
+  }else if(legacyIndex===114){
+    state.records.deathGameChallenge[p.id]=[0,0,50,70,100][randi(0,4)];
   }else{
     const fallbackKey=GAMES[gameIndex]?.key;
     if(fallbackKey&&state.records[fallbackKey])state.records[fallbackKey][p.id]=0;
@@ -26102,7 +26172,7 @@ function performancePoints(gameIndex,v){
     if(v>=27000)return 0;
     return clamp(Math.round((27000-v)/10000*100),0,100);
   }
-  if(legacyIndex===107||legacyIndex===110){
+  if(legacyIndex===107||legacyIndex===110||(legacyIndex>=111&&legacyIndex<=114)){
     return clamp(Math.round(v),0,100);
   }
   if(legacyIndex===108){
@@ -26217,6 +26287,7 @@ function formatRecord(gameIndex,v){
   if(legacyIndex===107)return `${Math.round(v)}pt`;
   if(legacyIndex===108)return `${Math.round(v)}m`;
   if(legacyIndex===110)return `${Math.round(v)}pt`;
+  if(legacyIndex>=111&&legacyIndex<=114)return `${Math.round(v)}pt`;
   return `${Math.round(v)}pt`;
 }
 
@@ -26288,7 +26359,7 @@ function renderGameResult(gameIndex,ranked){
   });
 }
 
-function rankRow(p,rank,record,badge){const tier=p.cpu&&!state.freePlay?state.cpuTier[`${state.roundIndex}:${p.id}`]:null;return `<div class="rank-row"><div class="rank-place">${rank}位</div>${imgTag(p)}<div class="rank-name">${esc(p.name)}<span>${p.cpu?"CPU":`PLAYER ${p.no}`}${mode().team?` / ${teamName(p.id)}`:""}${tier==="SUPER"?" / SUPER CPU":""}</span></div><div class="rank-score"><b>${record}</b><span class="point-badge">${badge}</span></div></div>`}
+function rankRow(p,rank,record,badge){const tier=p.cpu&&!state.freePlay?state.cpuTier[`${state.roundIndex}:${p.id}`]:null;const tc=mode().team?teamClass(p.id):"";return `<div class="rank-row ${tc}"><div class="rank-place">${rank}位</div>${imgTag(p)}<div class="rank-name">${esc(p.name)}<span>${p.cpu?"CPU":`PLAYER ${p.no}`}${mode().team?` / ${teamName(p.id)}`:""}${tier==="SUPER"?" / SUPER CPU":""}</span></div><div class="rank-score"><b>${record}</b><span class="point-badge">${badge}</span></div></div>`}
 
 function renderFinal(){
   clearGameFit();
@@ -30600,8 +30671,8 @@ async function startMobSpeedRacer(p,humanIndex,runId){
     if(state.freePlay){
       // SOLOは A1 と B2 を自分が操作。
       return [
-        {key:'A',name:'TEAM A',ids:['p1','c2'],humanSlots:new Set([0])},
-        {key:'B',name:'TEAM B',ids:['c3','p1'],humanSlots:new Set([1])}
+        {key:'A',name:'TEAM A',ids:['p1','c2'],humanSlots:new Set([0,1])},
+        {key:'B',name:'TEAM B',ids:['c3','p1'],humanSlots:new Set([0,1])}
       ];
     }
 
@@ -31084,7 +31155,18 @@ async function startMobSpeedRacer(p,humanIndex,runId){
     strokes=[];
     pathLayer.innerHTML='';
 
-    const target=cpuSketch(kind,seed);
+    const rawTarget=cpuSketch(kind,seed);
+    const mirror=Math.random()<.5;
+    const sx=rand(.82,1.14),sy=rand(.84,1.13),shear=rand(-.10,.10),dx=rand(-14,14),dy=rand(-12,12);
+    const target=rawTarget.map(st=>st.map(q=>{
+      let x=170+(q.x-170)*sx+(q.y-135)*shear+dx+rand(-4.5,4.5);
+      let y=135+(q.y-135)*sy+dy+rand(-4.5,4.5);
+      if(mirror)x=340-x;
+      return {x:clamp(x,8,332),y:clamp(y,8,262)};
+    }));
+    if(kind==='body'&&Math.random()<.8){
+      target.push([{x:rand(70,120),y:rand(145,190)},{x:rand(220,300),y:rand(125,185)}]);
+    }
 
     for(const src of target){
       if(!isGameRunValid(runId))return;
@@ -31708,8 +31790,8 @@ async function startSummonMaster(p,humanIndex,runId){
     if(state.freePlay){
       // SOLO: 1P役と4P役を自分が描く。
       return [
-        {key:'A',name:'TEAM A',ids:['p1','c2'],humanSlots:new Set([0])},
-        {key:'B',name:'TEAM B',ids:['c3','p1'],humanSlots:new Set([1])}
+        {key:'A',name:'TEAM A',ids:['p1','c2'],humanSlots:new Set([0,1])},
+        {key:'B',name:'TEAM B',ids:['c3','p1'],humanSlots:new Set([0,1])}
       ];
     }
 
@@ -32232,8 +32314,20 @@ async function startSummonMaster(p,humanIndex,runId){
     strokes=[];
     pathLayer.innerHTML='';
 
-    const target=
-      cpuSketch(slot);
+    const rawTarget=cpuSketch(slot);
+    const mirror=Math.random()<.5;
+    const sx=rand(.78,1.18),sy=rand(.80,1.16),shear=rand(-.12,.12),dx=rand(-18,18),dy=rand(-14,14);
+    const target=rawTarget.map(st=>st.map(q=>{
+      let x=180+(q.x-180)*sx+(q.y-165)*shear+dx+rand(-6,6);
+      let y=165+(q.y-165)*sy+dy+rand(-6,6);
+      if(mirror)x=360-x;
+      return {x:clamp(x,8,352),y:clamp(y,8,322)};
+    }));
+    const extraCount=randi(1,4);
+    for(let e=0;e<extraCount;e++){
+      const x1=rand(70,290),y1=rand(80,270);
+      target.push([{x:x1,y:y1},{x:clamp(x1+rand(-70,70),8,352),y:clamp(y1+rand(-90,90),8,322)}]);
+    }
 
     for(const src of target){
       if(!isGameRunValid(runId))return;
@@ -33289,6 +33383,244 @@ async function startSummonMaster(p,humanIndex,runId){
   }
 }
 
+
+
+// =========================================================
+// V10.77 — shared multi-player helpers
+// =========================================================
+function finishGroupGameV177(gameIndex){
+  gameSessionActive=false;
+  activeGameIndex=-1;
+  cancelCountdown();
+  cancelActiveAnimation();
+  finishGame(gameIndex);
+}
+function slotLabelV177(slot){return `P${slot+1}`}
+function circleStrokeV177(cx,cy,rx,ry,n=34,phase=0){
+  return Array.from({length:n+1},(_,i)=>{const a=phase+i/n*Math.PI*2;return{x:cx+Math.cos(a)*rx,y:cy+Math.sin(a)*ry}});
+}
+function randomCartCpuStrokesV177(){
+  const bodyX=rand(54,88),bodyY=rand(112,145),bodyW=rand(185,238),bodyH=rand(55,88);
+  const roof=Math.random()<.55;
+  const outline=[
+    {x:bodyX,y:bodyY+bodyH*.75},{x:bodyX+12,y:bodyY+10},
+    ...(roof?[{x:bodyX+bodyW*.28,y:bodyY-rand(28,54)},{x:bodyX+bodyW*.68,y:bodyY-rand(26,48)}]:[]),
+    {x:bodyX+bodyW,y:bodyY+12},{x:bodyX+bodyW+rand(0,12),y:bodyY+bodyH*.78},
+    {x:bodyX+bodyW*.84,y:bodyY+bodyH},{x:bodyX+bodyW*.15,y:bodyY+bodyH},{x:bodyX,y:bodyY+bodyH*.75}
+  ];
+  const r=rand(25,34),wy=bodyY+bodyH+7;
+  const left=bodyX+bodyW*.24,right=bodyX+bodyW*.76;
+  const out=[outline,circleStrokeV177(left,wy,r,r*rand(.88,1.08),30,rand(0,.3)),circleStrokeV177(right,wy,r*rand(.9,1.07),r,30,rand(0,.3))];
+  const details=randi(1,5);
+  for(let i=0;i<details;i++){
+    const y=rand(bodyY+20,bodyY+bodyH-8);
+    out.push([{x:rand(bodyX+16,bodyX+bodyW*.45),y},{x:rand(bodyX+bodyW*.55,bodyX+bodyW-12),y:y+rand(-18,18)}]);
+  }
+  return out.map(st=>st.map(q=>({x:clamp(q.x+rand(-3,3),8,332),y:clamp(q.y+rand(-3,3),8,252)})));
+}
+function cartDrawingQualityV177(strokes){
+  const valid=strokes.filter(s=>s.length>=2);
+  const pts=valid.flat();
+  if(pts.length<12)return 0;
+  const xs=pts.map(q=>q.x),ys=pts.map(q=>q.y);
+  const minX=Math.min(...xs),maxX=Math.max(...xs),minY=Math.min(...ys),maxY=Math.max(...ys);
+  const w=maxX-minX,h=maxY-minY,area=w*h;
+  if(w<70||h<35||area<5000)return 0;
+  let length=0;
+  valid.forEach(s=>{for(let i=1;i<s.length;i++)length+=Math.hypot(s[i].x-s[i-1].x,s[i].y-s[i-1].y)});
+  const long=valid.slice().sort((a,b)=>b.length-a.length)[0];
+  const closure=long?.length>2?clamp(1-Math.hypot(long[0].x-long.at(-1).x,long[0].y-long.at(-1).y)/125,0,1):0;
+  const aspect=clamp(1-Math.abs(w/Math.max(1,h)-2.4)/2.4,0,1);
+  const size=clamp(area/42000,0,1);
+  const lengthQ=clamp(1-Math.abs(length-950)/1150,0,1);
+  const strokesQ=clamp(1-Math.abs(valid.length-4)/8,.2,1);
+  return clamp(closure*.25+aspect*.25+size*.22+lengthQ*.18+strokesQ*.10,0,1);
+}
+function cartSvgLinesV177(strokes,cls=''){return (strokes||[]).map(s=>s.length>=2?`<polyline class="${cls}" points="${s.map(q=>`${q.x.toFixed(1)},${q.y.toFixed(1)}`).join(' ')}"></polyline>`:'').join('')}
+async function collectCartDrawingV177(member,label,runId,human){
+  gameFit();
+  let enabled=false,pointer=null,current=null,strokes=[];
+  screen.innerHTML=`<div class="cartdraw-shell-v177 gameplay-fit">
+    <div class="game-head"><div><span class="kicker">${esc(label)}</span><h2>トロッコを描こう！</h2><p class="lead">7秒 / 何筆でも自由</p></div><div class="game-badge">${human?'PLAYER':'CPU'}</div></div>
+    <div class="cartdraw-owner-v177">${imgTag(member,'cartdraw-avatar-v177')}<b>${esc(member.name)}</b><span>${human?'あなたが描く':'CPU DRAW'}</span></div>
+    <div class="cartdraw-stage-v177"><svg id="cartDrawSvg177" viewBox="0 0 340 260"><rect x="4" y="4" width="332" height="252" rx="18"></rect><g id="cartDrawLines177"></g></svg><div id="cartDrawTime177" class="cartdraw-time-v177">${human?'7.0':'CPU'}</div><div class="cartdraw-guide-v177">車体・車輪・装飾を自由に描く</div></div>
+  </div>`;
+  const svg=document.getElementById('cartDrawSvg177'),layer=document.getElementById('cartDrawLines177'),timeEl=document.getElementById('cartDrawTime177');
+  const local=e=>{const r=svg.getBoundingClientRect();return{x:clamp((e.clientX-r.left)/r.width*340,8,332),y:clamp((e.clientY-r.top)/r.height*260,8,252)}};
+  const newLine=(points,cls='cartdraw-line-v177')=>{const el=document.createElementNS('http://www.w3.org/2000/svg','polyline');el.setAttribute('class',cls);el.setAttribute('points',points.map(q=>`${q.x},${q.y}`).join(' '));layer.appendChild(el);return el};
+  svg.addEventListener('pointerdown',e=>{if(!enabled||pointer!==null)return;e.preventDefault();pointer=e.pointerId;const q=local(e);current={pts:[q],el:newLine([q])};strokes.push(current.pts);try{svg.setPointerCapture(pointer)}catch(_){}},{passive:false});
+  svg.addEventListener('pointermove',e=>{if(!enabled||pointer!==e.pointerId||!current)return;e.preventDefault();const q=local(e),prev=current.pts.at(-1);if(Math.hypot(q.x-prev.x,q.y-prev.y)>2){current.pts.push(q);current.el.setAttribute('points',current.pts.map(v=>`${v.x.toFixed(1)},${v.y.toFixed(1)}`).join(' '))}},{passive:false});
+  const end=e=>{if(pointer!==e.pointerId)return;e.preventDefault();pointer=null;current=null};
+  svg.addEventListener('pointerup',end,{passive:false});svg.addEventListener('pointercancel',end,{passive:false});
+  await wait(420);if(!isGameRunValid(runId))return null;
+  if(human){
+    enabled=true;const st=performance.now();
+    await new Promise(resolve=>{const f=now=>{if(!isGameRunValid(runId)){resolve();return}const rem=7000-(now-st);timeEl.textContent=(Math.max(0,rem)/1000).toFixed(1);if(rem<=0){resolve();return}requestAnimationFrame(f)};requestAnimationFrame(f)});
+    enabled=false;pointer=null;current=null;
+  }else{
+    const target=randomCartCpuStrokesV177();
+    for(const src of target){if(!isGameRunValid(runId))return null;const dst=[];strokes.push(dst);const el=newLine(dst,'cartdraw-line-v177 cpu-v177');for(let i=0;i<src.length;i++){dst.push(src[i]);el.setAttribute('points',dst.map(v=>`${v.x.toFixed(1)},${v.y.toFixed(1)}`).join(' '));if(i%5===0)await wait(8)}await wait(20)}
+    await wait(180);
+  }
+  const saved=strokes.map(s=>s.map(q=>({...q})));
+  return {strokes:saved,q:cartDrawingQualityV177(saved)};
+}
+function dropDollsV177(cart,eventIndex){
+  if(cart.remaining<=0)return 0;
+  if(cart.q<.12){const n=cart.remaining;cart.remaining=0;return n}
+  const base=[.012,.018,.024,.030][eventIndex]??.025;
+  const chance=clamp(base+(1-cart.q)*.28,0,.62);
+  let drops=0;
+  for(let i=0;i<cart.remaining;i++)if(Math.random()<chance)drops++;
+  if(cart.q<.22)drops=Math.max(drops,Math.min(cart.remaining,3+eventIndex*2));
+  drops=Math.min(cart.remaining,drops);cart.remaining-=drops;return drops;
+}
+function dollsHtmlV177(n){return Array.from({length:n},()=>`<img src="icon/01.png" draggable="false" alt="">`).join('')}
+
+// =========================================================
+// GAME 99 — モブくんビリヤードバトルロイヤル
+// =========================================================
+async function startBilliardsBattleRoyale(p,humanIndex,runId){
+  gameFit();
+  const gameIndex=GAMES.findIndex(g=>g.key==='billiardsBattleRoyale');
+  let slots=[];
+  if(state.freePlay){
+    slots=['p1','c2','c3','c4'].map((id,i)=>({member:pById(id),human:true,label:`P${i+1}`,slot:i,score:0}));
+  }else if(mode().team){
+    const keys=teamKeys();const a=mode().teams[keys[0]],b=mode().teams[keys[1]];
+    const order=[a[0],b[0],a[1],b[1]];
+    slots=order.map((id,i)=>({member:pById(id),human:!pById(id).cpu,label:`P${[1,3,2,4][i]}`,slot:i,score:0}));
+  }else{
+    slots=participants().slice(0,4).map((m,i)=>({member:m,human:!m.cpu,label:`P${i+1}`,slot:i,score:0}));
+  }
+  if(slots.length!==4){if(state.freePlay)return recordScreen(gameIndex,p,0,'4 PLAYER ONLY','4人専用です');finishGroupGameV177(gameIndex);return}
+
+  screen.innerHTML=`<div class="brbil-shell-v177 gameplay-fit">
+    <div class="game-head"><div><span class="kicker">4 PLAYER BATTLE</span><h2>ビリヤードバトルロイヤル</h2><p class="lead">5 BALLS / 1 POCKET = 20pt</p></div><div class="game-badge">4P</div></div>
+    <div id="brbilScores177" class="brbil-scores-v177">${slots.map(s=>`<div data-slot-score="${s.slot}"><b>${s.label}</b><span>0</span></div>`).join('')}</div>
+    <div id="brbilTurn177" class="brbil-turn-v177">READY</div>
+    <div id="brbilStage177" class="brbil-stage-v177">
+      <i class="brbil-pocket-v177 p1"></i><i class="brbil-pocket-v177 p2"></i><i class="brbil-pocket-v177 p3"></i><i class="brbil-pocket-v177 p4"></i>
+      <div id="brbilLayer177"></div><div id="brbilAim177" class="brbil-aim-v177" hidden></div>
+    </div>
+  </div>`;
+  const stage=document.getElementById('brbilStage177'),layer=document.getElementById('brbilLayer177'),aim=document.getElementById('brbilAim177'),turnEl=document.getElementById('brbilTurn177');
+  void stage.offsetHeight;const W=stage.clientWidth,H=stage.clientHeight,R=11,PAD=18;
+  const pockets=[{x:PAD,y:PAD},{x:W*.5,y:PAD},{x:W-PAD,y:PAD},{x:W*.5,y:H-PAD}];
+  const positions=[[.25,.34],[.50,.31],[.75,.34],[.36,.50],[.64,.50]];
+  const balls=[{cue:true,x:W*.5,y:H*.78,vx:0,vy:0,active:true,owner:null},...positions.map((q,i)=>({cue:false,x:W*q[0],y:H*q[1],vx:0,vy:0,active:true,id:i}))];
+  balls.forEach((b,i)=>{const el=document.createElement('i');el.className=`brbil-ball-v177 ${b.cue?'cue-v177':`b${i}-v177`}`;layer.appendChild(el);b.el=el});
+  let turn=0,totalShots=0,moving=false,finished=false,drag=null,last=performance.now(),raf=null,still=0,turnOpen=false;
+  const cue=()=>balls[0];
+  function render(){balls.forEach(b=>{b.el.hidden=!b.active;if(b.active){b.el.style.left=`${b.x}px`;b.el.style.top=`${b.y}px`}})}
+  function refreshScores(){slots.forEach(s=>{document.querySelector(`[data-slot-score="${s.slot}"] span`).textContent=s.score})}
+  function allStopped(){return balls.every(b=>!b.active||Math.hypot(b.vx,b.vy)<7)}
+  function activeTargets(){return balls.filter(b=>!b.cue&&b.active)}
+  function local(e){const r=stage.getBoundingClientRect();return{x:e.clientX-r.left,y:e.clientY-r.top}}
+  function respawnCue(){const c=cue();c.active=true;c.x=W*.5;c.y=H*.78;c.vx=c.vy=0}
+  function finish(){if(finished)return;finished=true;turnOpen=false;if(raf)cancelAnimationFrame(raf);if(state.freePlay){const sum=slots.reduce((s,x)=>s+x.score,0);state.records.billiardsBattleRoyale[p.id]=sum;return recordScreen(gameIndex,p,0,`${sum}<small>pt</small>`,slots.map(s=>`${s.label}:${s.score}`).join(' / '))}slots.forEach(s=>state.records.billiardsBattleRoyale[s.member.id]=s.score);finishGroupGameV177(gameIndex)}
+  async function prepareTurn(){
+    if(finished)return;if(!activeTargets().length||totalShots>=12){finish();return}
+    const s=slots[turn%4];turnEl.textContent=`${s.label} ${s.member.cpu?'CPU':'PLAYER'} TURN`;
+    turnEl.className='brbil-turn-v177';
+    if(!cue().active)respawnCue();
+    if(s.human){turnOpen=true;turnEl.textContent=`${s.label} TURN / 白球を引いて離す`}
+    else{turnOpen=false;await wait(520);if(!isGameRunValid(runId)||finished)return;cpuShot(s)}
+  }
+  function launch(s,ux,uy,power){const c=cue();c.vx=ux*power;c.vy=uy*power;c.owner=s;moving=true;turnOpen=false;still=0;totalShots++;turnEl.textContent=`${s.label} SHOT!`;beep(660,45,.014)}
+  function cpuShot(s){const targets=activeTargets();if(!targets.length){finish();return}const target=targets[randi(0,targets.length-1)];const pocket=pockets.slice().sort((a,b)=>Math.hypot(target.x-a.x,target.y-a.y)-Math.hypot(target.x-b.x,target.y-b.y))[0];const pdx=pocket.x-target.x,pdy=pocket.y-target.y,pl=Math.max(1,Math.hypot(pdx,pdy));const contact={x:target.x-pdx/pl*R*2,y:target.y-pdy/pl*R*2};const c=cue(),dx=contact.x-c.x+rand(-12,12),dy=contact.y-c.y+rand(-12,12),l=Math.max(1,Math.hypot(dx,dy));launch(s,dx/l,dy/l,rand(520,720))}
+  stage.addEventListener('pointerdown',e=>{if(!turnOpen||moving||finished)return;const c=cue(),pt=local(e);if(Math.hypot(pt.x-c.x,pt.y-c.y)>60)return;e.preventDefault();drag={id:e.pointerId,sx:c.x,sy:c.y,x:pt.x,y:pt.y};stage.setPointerCapture?.(e.pointerId);aim.hidden=false},{passive:false});
+  stage.addEventListener('pointermove',e=>{if(!drag||e.pointerId!==drag.id)return;e.preventDefault();const pt=local(e);drag.x=pt.x;drag.y=pt.y;const dx=pt.x-drag.sx,dy=pt.y-drag.sy,len=Math.min(120,Math.hypot(dx,dy));aim.style.left=`${drag.sx}px`;aim.style.top=`${drag.sy}px`;aim.style.width=`${70+len}px`;aim.style.transform=`rotate(${Math.atan2(-dy,-dx)}rad)`},{passive:false});
+  stage.addEventListener('pointerup',e=>{if(!drag||e.pointerId!==drag.id)return;e.preventDefault();const s=slots[turn%4],dx=drag.x-drag.sx,dy=drag.y-drag.sy,l=Math.hypot(dx,dy);drag=null;aim.hidden=true;if(l<18){turnEl.textContent='もっと引っ張る';return}launch(s,-dx/l,-dy/l,clamp(l*6.8,180,820))},{passive:false});
+  function pocketBall(b){b.active=false;b.vx=b.vy=0;if(b.cue){turnEl.textContent='WHITE FOUL';beep(180,80,.02);return}const s=cue().owner||slots[turn%4];s.score+=20;refreshScores();turnEl.textContent=`${s.label} POCKET +20`;beep(940,70,.022)}
+  function wall(b){if(b.x<PAD+R){b.x=PAD+R;b.vx=Math.abs(b.vx)*.92}if(b.x>W-PAD-R){b.x=W-PAD-R;b.vx=-Math.abs(b.vx)*.92}if(b.y<PAD+R){b.y=PAD+R;b.vy=Math.abs(b.vy)*.92}if(b.y>H-PAD-R){b.y=H-PAD-R;b.vy=-Math.abs(b.vy)*.92}}
+  function pair(a,b){if(!a.active||!b.active)return;const dx=b.x-a.x,dy=b.y-a.y,d=Math.hypot(dx,dy),min=R*2;if(d<=0||d>=min)return;const nx=dx/d,ny=dy/d,over=min-d;a.x-=nx*over*.5;a.y-=ny*over*.5;b.x+=nx*over*.5;b.y+=ny*over*.5;const rel=(a.vx-b.vx)*nx+(a.vy-b.vy)*ny;if(rel>0){a.vx-=rel*nx;a.vy-=rel*ny;b.vx+=rel*nx;b.vy+=rel*ny}}
+  render();
+  if(!(await countdown('BILLIARDS BR',runId,{transparent:true})))return;
+  await prepareTurn();last=performance.now();
+  function frame(now){if(finished||!isGameRunValid(runId))return;const dt=Math.min(.022,(now-last)/1000);last=now;if(moving){for(const b of balls){if(!b.active)continue;b.x+=b.vx*dt;b.y+=b.vy*dt;for(const po of pockets){if(Math.hypot(b.x-po.x,b.y-po.y)<=21){pocketBall(b);break}}if(!b.active)continue;wall(b);const damp=Math.pow(.983,dt*60);b.vx*=damp;b.vy*=damp;if(Math.hypot(b.vx,b.vy)<6)b.vx=b.vy=0}for(let i=0;i<balls.length;i++)for(let j=i+1;j<balls.length;j++)pair(balls[i],balls[j]);if(allStopped()){still+=dt;if(still>.26){moving=false;still=0;if(!cue().active)respawnCue();turn=(turn+1)%4;prepareTurn()}}else still=0}render();raf=requestAnimationFrame(frame)}
+  raf=requestAnimationFrame(frame);
+}
+
+// =========================================================
+// GAME 100 — くっつきモブくんトロッコ大爆走
+// =========================================================
+async function startLinkedCartBlast(p,humanIndex,runId){
+  gameFit();const gameIndex=GAMES.findIndex(g=>g.key==='linkedCartBlast');
+  let teams;
+  if(state.freePlay){teams=[{key:'A',members:[pById('p1'),pById('c2')]},{key:'B',members:[pById('c3'),pById('c4')]}];teams.forEach(t=>t.allHuman=true)}
+  else{const ks=teamKeys().slice(0,2);teams=ks.map(k=>({key:k,members:(mode().teams[k]||[]).map(pById),allHuman:false}))}
+  if(teams.length!==2||teams.some(t=>t.members.length!==2)){if(state.freePlay)return recordScreen(gameIndex,p,0,'TAG ONLY','2対2専用');finishGroupGameV177(gameIndex);return}
+  for(const t of teams){t.carts=[];for(let i=0;i<2;i++){const m=t.members[i],human=t.allHuman||!m.cpu;const d=await collectCartDrawingV177(m,`TEAM ${t.key} / ${i+1}番手`,runId,human);if(!d)return;t.carts.push({...d,remaining:10,member:m})}}
+  screen.innerHTML=`<div class="cartblast-shell-v177 gameplay-fit"><div class="game-head"><div><span class="kicker">TAG 1km BLAST</span><h2>くっつきモブくんトロッコ大爆走</h2><p class="lead">20 MOB / SAME SPEED</p></div><div class="game-badge">2 VS 2</div></div><div id="cartBlastMsg177" class="cartblast-msg-v177">READY</div><div id="cartBlastStage177" class="cartblast-stage-v177">
+    ${['A','B'].map((k,ti)=>`<div class="cartblast-lane-v177 lane-${k.toLowerCase()}" data-lane="${ti}"><b>${k} COURSE</b><div class="cartblast-track-v177"><i class="slope"></i><i class="jump"></i><i class="magma"></i><i class="bump"></i></div><div class="cartblast-pair-v177" data-pair="${ti}">${teams[ti].carts.map((c,ci)=>`<div class="cartblast-cart-v177" data-cart="${ti}-${ci}"><svg viewBox="0 0 340 260">${cartSvgLinesV177(c.strokes,'cartblast-line-v177')}</svg><div class="cartblast-dolls-v177">${dollsHtmlV177(10)}</div></div>${ci===0?'<span class="cartblast-chain-v177">•••</span>':''}`).join('')}</div></div>`).join('')}
+  </div><div class="cartblast-score-v177">A <b id="cartA177">20</b> / B <b id="cartB177">20</b></div></div>`;
+  const stage=document.getElementById('cartBlastStage177'),msg=document.getElementById('cartBlastMsg177'),pairs=[...stage.querySelectorAll('[data-pair]')];
+  function refresh(){teams.forEach((t,ti)=>{t.carts.forEach((c,ci)=>{stage.querySelector(`[data-cart="${ti}-${ci}"] .cartblast-dolls-v177`).innerHTML=dollsHtmlV177(c.remaining)});document.getElementById(ti?'cartB177':'cartA177').textContent=t.carts.reduce((s,c)=>s+c.remaining,0)})}
+  refresh();if(!(await countdown('CART BLAST',runId,{transparent:true})))return;
+  const events=['SLOPE','JUMP','MAGMA','FINAL RAMP'];let eventIndex=0,progress=0,last=performance.now(),raf=null,pauseUntil=0;
+  await new Promise(resolve=>{const f=now=>{if(!isGameRunValid(runId)){resolve();return}const dt=Math.min(.035,(now-last)/1000);last=now;if(now>=pauseUntil){progress+=dt/8.0;const thresholds=[.22,.43,.65,.83];if(eventIndex<4&&progress>=thresholds[eventIndex]){msg.textContent=`${events[eventIndex]} 抽選！`;teams.forEach(t=>t.carts.forEach(c=>dropDollsV177(c,eventIndex)));refresh();beep(700-eventIndex*90,80,.02);eventIndex++;pauseUntil=now+520}pairs.forEach(el=>el.style.left=`${8+clamp(progress,0,1)*74}%`)}if(progress>=1){resolve();return}raf=requestAnimationFrame(f)};raf=requestAnimationFrame(f)});
+  if(!isGameRunValid(runId))return;const scores=teams.map(t=>t.carts.reduce((s,c)=>s+c.remaining,0)*5);msg.textContent=`GOAL! A ${scores[0]} / B ${scores[1]}`;beep(1040,150,.035);await wait(850);
+  if(state.freePlay){state.records.linkedCartBlast[p.id]=Math.max(...scores);return recordScreen(gameIndex,p,0,`${Math.max(...scores)}<small>pt</small>`,`TEAM A ${scores[0]} / TEAM B ${scores[1]}`)}
+  teams.forEach((t,ti)=>t.members.forEach(m=>state.records.linkedCartBlast[m.id]=scores[ti]));finishGroupGameV177(gameIndex);
+}
+
+// =========================================================
+// GAME 101 — モブくんトロッコ大爆走（個人）
+// =========================================================
+async function startSoloCartBlast(p,humanIndex,runId){
+  gameFit();const gameIndex=GAMES.findIndex(g=>g.key==='soloCartBlast');
+  const slots=state.freePlay?[{member:p,human:true,label:'P1'}]:participants().slice(0,4).map((m,i)=>({member:m,human:!m.cpu,label:`P${i+1}`}));
+  if(!state.freePlay&&slots.length!==4){finishGroupGameV177(gameIndex);return}
+  for(const s of slots){const d=await collectCartDrawingV177(s.member,`${s.label} / 自分のトロッコ`,runId,s.human);if(!d)return;Object.assign(s,d,{remaining:20})}
+  screen.innerHTML=`<div class="cartsolo-shell-v177 gameplay-fit"><div class="game-head"><div><span class="kicker">1 COURSE / SAME SPEED</span><h2>モブくんトロッコ大爆走</h2><p class="lead">20 MOB EACH / 1km</p></div><div class="game-badge">${slots.length} CART</div></div><div id="cartSoloMsg177" class="cartblast-msg-v177">READY</div><div id="cartSoloStage177" class="cartsolo-stage-v177"><div class="cartsolo-track-v177"><i class="slope"></i><i class="jump"></i><i class="magma"></i><i class="bump"></i></div>${slots.map((s,i)=>`<div class="cartsolo-cart-v177" data-solo-cart="${i}" style="--row:${i}"><b>${s.label}</b><svg viewBox="0 0 340 260">${cartSvgLinesV177(s.strokes,'cartblast-line-v177')}</svg><div class="cartblast-dolls-v177">${dollsHtmlV177(20)}</div></div>`).join('')}</div><div class="cartsolo-scores-v177">${slots.map((s,i)=>`<span>${s.label} <b id="soloRemain${i}177">20</b></span>`).join('')}</div></div>`;
+  const stage=document.getElementById('cartSoloStage177'),msg=document.getElementById('cartSoloMsg177');
+  function refresh(){slots.forEach((s,i)=>{stage.querySelector(`[data-solo-cart="${i}"] .cartblast-dolls-v177`).innerHTML=dollsHtmlV177(s.remaining);document.getElementById(`soloRemain${i}177`).textContent=s.remaining})}
+  refresh();if(!(await countdown('CART BLAST',runId,{transparent:true})))return;
+  const events=['SLOPE','JUMP','MAGMA','FINAL RAMP'],thresholds=[.22,.43,.65,.83];let eventIndex=0,progress=0,last=performance.now(),raf=null,pauseUntil=0;
+  await new Promise(resolve=>{const f=now=>{if(!isGameRunValid(runId)){resolve();return}const dt=Math.min(.035,(now-last)/1000);last=now;if(now>=pauseUntil){progress+=dt/8;if(eventIndex<4&&progress>=thresholds[eventIndex]){msg.textContent=`${events[eventIndex]} 抽選！`;slots.forEach(s=>dropDollsV177(s,eventIndex));refresh();beep(700-eventIndex*90,80,.02);eventIndex++;pauseUntil=now+520}[...stage.querySelectorAll('[data-solo-cart]')].forEach(el=>el.style.left=`${7+clamp(progress,0,1)*75}%`)}if(progress>=1){resolve();return}raf=requestAnimationFrame(f)};raf=requestAnimationFrame(f)});
+  if(!isGameRunValid(runId))return;const scores=slots.map(s=>s.remaining*5);msg.textContent=`GOAL! ${slots.map((s,i)=>`${s.label}:${scores[i]}`).join(' ')}`;await wait(800);
+  if(state.freePlay){state.records.soloCartBlast[p.id]=scores[0];return recordScreen(gameIndex,p,0,`${scores[0]}<small>pt</small>`,`${slots[0].remaining}/20 MOB`)}
+  slots.forEach((s,i)=>state.records.soloCartBlast[s.member.id]=scores[i]);finishGroupGameV177(gameIndex);
+}
+
+// =========================================================
+// GAME 102 — モブくんデスゲームにチャレンジ
+// =========================================================
+async function startDeathGameChallenge(p,humanIndex,runId){
+  gameFit();const gameIndex=GAMES.findIndex(g=>g.key==='deathGameChallenge');
+  const parts=participants().slice(0,8);if(parts.length<4||mode().team){finishGroupGameV177(gameIndex);return}
+  const slots=parts.map((m,i)=>({member:m,label:`P${i+1}`,index:i,alive:true,score:0}));
+  const order=shuffle(slots);
+  screen.innerHTML=`<div class="death-shell-v177 gameplay-fit"><div class="game-head"><div><span class="kicker">DEATH GAME</span><h2>モブくんデスゲームにチャレンジ</h2><p class="lead">ROULETTE ORDER IS FIXED</p></div><div class="game-badge">${slots.length}P</div></div><div id="deathOrder177" class="death-order-v177"></div><div id="deathMsg177" class="death-msg-v177">順番ルーレット</div><div id="deathDoors177" class="death-doors-v177">${Array.from({length:8},(_,i)=>`<button data-door="${i}" type="button"><b>${i+1}</b><span></span></button>`).join('')}</div></div>`;
+  const orderEl=document.getElementById('deathOrder177'),msg=document.getElementById('deathMsg177'),doors=[...document.querySelectorAll('[data-door]')];
+  for(let spin=0;spin<12;spin++){if(!isGameRunValid(runId))return;const temp=shuffle(slots);orderEl.innerHTML=temp.map(s=>`<i>${s.label}</i>`).join('');beep(390+spin*18,22,.005);await wait(85)}
+  orderEl.innerHTML=order.map((s,i)=>`<i><small>${i+1}</small>${s.label}</i>`).join('');msg.textContent='この順番で最後まで進行';await wait(650);
+  const fixedRank=new Map(order.map((s,i)=>[s.index,i]));
+  async function humanChoose(s,available){
+    msg.textContent=`${s.label} 扉を選択`;
+    doors.forEach((d,i)=>{d.disabled=!available.includes(i);d.classList.toggle('selectable-v177',available.includes(i))});
+    return await new Promise(resolve=>{const handler=e=>{const btn=e.target.closest('[data-door]');if(!btn)return;const idx=Number(btn.dataset.door);if(!available.includes(idx))return;e.preventDefault();doors.forEach(d=>d.removeEventListener('pointerdown',handler));resolve(idx)};doors.forEach(d=>d.addEventListener('pointerdown',handler,{passive:false}))});
+  }
+  function putInDoor(s,door){const d=doors[door];d.className='chosen-v177';d.querySelector('span').innerHTML=`${imgTag(s.member,'death-avatar-v177')}<em>${s.label}${s.member.cpu?' CPU':''}</em>`}
+  async function localCount(){for(const n of [3,2,1]){msg.textContent=n;beep(380+(3-n)*90,70,.02);await wait(470)}}
+  let round=0;
+  while(slots.filter(s=>s.alive).length>1){
+    const alive=order.filter(s=>s.alive);const available=[0,1,2,3,4,5,6,7];const selections=new Map();
+    doors.forEach((d,i)=>{d.disabled=true;d.className='';d.querySelector('span').innerHTML='';d.querySelector('b').textContent=i+1});
+    msg.textContent=`ROUND ${round+1} / 扉を選ぶ`;await wait(350);
+    for(const s of alive){let door;if(s.member.cpu){msg.textContent=`${s.label} CPUが選択`;await wait(320);door=available[randi(0,available.length-1)]}else door=await humanChoose(s,available);selections.set(s.index,door);available.splice(available.indexOf(door),1);putInDoor(s,door);beep(650,45,.012);await wait(180)}
+    doors.forEach(d=>{d.disabled=true;d.classList.remove('selectable-v177');if(d.classList.contains('chosen-v177'))d.classList.add('closed-v177')});msg.textContent='全員入室 / 扉CLOSE';await wait(650);await localCount();
+    const n=alive.length;let eliminate=n===3?2:(round===0?Math.min(2,n-3):Math.max(1,n-3));eliminate=clamp(eliminate,1,n-1);
+    const doomed=shuffle(alive).slice(0,eliminate);
+    for(let i=0;i<doomed.length;i++){const s=doomed[i],door=selections.get(s.index),d=doors[door];d.classList.add('vanish-v177');msg.textContent=`${s.label} 脱落！`;beep(160,130,.03);await wait(420);s.alive=false}
+    const survivors=slots.filter(s=>s.alive);
+    if(n===3&&survivors.length===1){const finalDoom=doomed.slice().sort((a,b)=>fixedRank.get(a.index)-fixedRank.get(b.index));finalDoom[0].score=50;finalDoom[1].score=70;survivors[0].score=100;break}
+    msg.textContent='生存者が扉から出てくる';doors.forEach(d=>d.classList.remove('closed-v177'));await wait(650);round++;
+  }
+  const winner=slots.find(s=>s.alive);msg.textContent=`${winner.label} 優勝！ 100 POINT`;msg.classList.add('winner-v177');beep(1120,190,.045);await wait(1000);
+  slots.forEach(s=>state.records.deathGameChallenge[s.member.id]=s.score);finishGroupGameV177(gameIndex);
+}
 
 renderHome();
 })();
