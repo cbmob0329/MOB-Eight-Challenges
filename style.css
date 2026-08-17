@@ -26325,3 +26325,375 @@ canvas{
 
 .death-order-v177{display:flex;gap:4px;overflow:hidden;min-height:40px}.death-order-v177 i{flex:1;min-width:34px;display:grid;place-items:center;border:3px solid var(--ink);border-radius:9px;background:#fff;font-style:normal;font-size:9px;font-weight:1000}.death-order-v177 i small{font-size:6px;color:#777}.death-msg-v177{padding:7px;border:4px solid var(--ink);border-radius:12px;background:#ffe16a;text-align:center;font-size:15px;font-weight:1000}.death-msg-v177.winner-v177{background:#9be296}.death-doors-v177{flex:1;min-height:360px;display:grid;grid-template-columns:repeat(4,1fr);grid-template-rows:repeat(2,1fr);gap:7px;padding:5px;border:4px solid var(--ink);border-radius:18px;background:#272d34}.death-doors-v177 button{position:relative;min-width:0;border:4px solid #11161b;border-radius:9px;background:#825f48;overflow:hidden;padding:3px;transition:transform .35s ease,opacity .35s ease}.death-doors-v177 button>b{position:absolute;right:4px;top:4px;width:24px;height:24px;display:grid;place-items:center;border:2px solid #111;border-radius:50%;background:#fff;font-size:10px}.death-doors-v177 button>span{position:absolute;inset:31px 3px 5px;display:flex;flex-direction:column;align-items:center;justify-content:center}.death-doors-v177 button.selectable-v177{background:#a98362;box-shadow:0 0 0 4px #ffe36d inset}.death-doors-v177 button.chosen-v177{background:#668198}.death-avatar-v177{width:45px;height:45px;object-fit:cover;border:3px solid #111;border-radius:10px;background:#fff}.death-doors-v177 em{font-size:8px;font-style:normal;font-weight:1000;color:#fff}.death-doors-v177 button.closed-v177>span{opacity:0}.death-doors-v177 button.closed-v177{background:#3b3029}.death-doors-v177 button.vanish-v177{transform:scale(.15) rotate(18deg);opacity:0}
 @media(max-height:700px){.cartdraw-stage-v177,.brbil-stage-v177,.cartblast-stage-v177,.cartsolo-stage-v177{min-height:250px}.death-doors-v177{min-height:300px}}
+
+
+/* =========================================================
+   V10.78 — Full drawing area + real side-scrolling cart races
+   ========================================================= */
+.cartdraw-shell-v178,
+.cartblast-shell-v178,
+.cartsolo-shell-v178{
+  height:100%;
+  min-height:0;
+  display:flex;
+  flex-direction:column;
+  gap:7px;
+  overflow:hidden;
+  -webkit-user-select:none;
+  user-select:none;
+  -webkit-touch-callout:none;
+}
+
+.cartdraw-owner-v178{
+  display:grid;
+  grid-template-columns:46px 1fr;
+  grid-template-rows:auto auto;
+  gap:1px 8px;
+  align-items:center;
+  border:3px solid var(--ink);
+  border-radius:13px;
+  background:#fff;
+  padding:6px
+}
+.cartdraw-owner-v178 img{
+  grid-row:1/3;
+  width:44px;
+  height:44px;
+  border:2px solid var(--ink);
+  border-radius:10px;
+  object-fit:cover
+}
+.cartdraw-owner-v178 b{font-size:12px}
+.cartdraw-owner-v178 span{font-size:8px;font-weight:900;color:var(--muted)}
+
+.cartdraw-stage-v178{
+  position:relative;
+  flex:1;
+  min-height:330px;
+  border:4px solid var(--ink);
+  border-radius:18px;
+  background:#fff;
+  overflow:hidden;
+  padding:0;
+  touch-action:none!important
+}
+.cartdraw-stage-v178 svg{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  touch-action:none!important;
+  -webkit-user-select:none!important;
+  user-select:none!important
+}
+.cartdraw-paper-v178{
+  fill:#fff;
+  stroke:#9a8c7b;
+  stroke-width:3;
+  stroke-dasharray:10 7;
+  vector-effect:non-scaling-stroke
+}
+.cartdraw-line-v178{
+  fill:none;
+  stroke:#1d2024;
+  stroke-width:8;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+  vector-effect:non-scaling-stroke
+}
+.cartdraw-line-v178.cpu-v178{stroke:#425c6e}
+
+.cartdraw-time-v178{
+  position:absolute;
+  right:12px;
+  top:12px;
+  z-index:8;
+  padding:5px 8px;
+  border:3px solid var(--ink);
+  border-radius:9px;
+  background:#ffe06b;
+  font-size:15px;
+  font-weight:1000;
+  pointer-events:none
+}
+.cartdraw-guide-v178{
+  position:absolute;
+  left:50%;
+  bottom:10px;
+  z-index:8;
+  transform:translateX(-50%);
+  padding:4px 8px;
+  border:3px solid var(--ink);
+  border-radius:999px;
+  background:rgba(255,243,177,.92);
+  font-size:8px;
+  font-weight:1000;
+  white-space:nowrap;
+  pointer-events:none
+}
+
+/* race */
+.cartblast-hud-v178,
+.cartsolo-hud-v178{
+  display:grid;
+  grid-template-columns:1fr auto 1fr;
+  align-items:center;
+  gap:5px;
+  padding:5px 7px;
+  border:3px solid var(--ink);
+  border-radius:11px;
+  background:#fff;
+  font-size:9px;
+  font-weight:1000
+}
+.cartblast-hud-v178 span:last-child,
+.cartsolo-hud-v178 span:last-child{text-align:right}
+.cartblast-hud-v178 strong,
+.cartsolo-hud-v178 strong{
+  padding:3px 7px;
+  border:2px solid var(--ink);
+  border-radius:999px;
+  background:#ffe36b;
+  font-size:11px
+}
+
+.cartblast-stage-v178,
+.cartsolo-stage-v178{
+  position:relative;
+  flex:1;
+  min-height:335px;
+  overflow:hidden;
+  background:#2e353d;
+  border-radius:18px;
+  touch-action:none!important
+}
+
+.cart-race-world-v178{
+  position:absolute;
+  left:0;
+  top:0;
+  height:100%;
+  will-change:transform
+}
+
+.cart-race-cave-v178{
+  position:absolute;
+  inset:0;
+  background:
+    radial-gradient(circle at 8% 20%,rgba(245,198,103,.10) 0 2%,transparent 2.3%),
+    radial-gradient(circle at 27% 35%,rgba(245,198,103,.08) 0 2.3%,transparent 2.6%),
+    repeating-linear-gradient(118deg,#3b444e 0 55px,#303741 55px 110px)
+}
+
+.cart-track-svg-v178{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  overflow:visible;
+  pointer-events:none
+}
+.cart-track-shadow-v178{
+  fill:none;
+  stroke:#171b20;
+  stroke-width:17;
+  stroke-linecap:round;
+  stroke-linejoin:round
+}
+.cart-track-main-v178{
+  fill:none;
+  stroke:#a3845d;
+  stroke-width:8;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+  stroke-dasharray:18 7
+}
+
+.cart-race-decor-v178,
+.cart-race-rock-layer-v178{
+  position:absolute;
+  inset:0;
+  pointer-events:none
+}
+.cart-race-rock-v178{
+  position:absolute;
+  display:block;
+  border:3px solid #1a1d21;
+  border-radius:45%;
+  background:#59626d
+}
+
+.cart-ramp-v178{
+  position:absolute;
+  z-index:3;
+  border:4px solid #171b20;
+  background:#90785d;
+  clip-path:polygon(0 100%,100% 0,100% 100%)
+}
+.cart-ramp-v178.jump-v178{background:#6faec1}
+.cart-ramp-v178.magma-ramp-v178{background:#c89255}
+.cart-ramp-v178.final-v178{background:#d2b455}
+
+.cart-magma-zone-v178{
+  position:absolute;
+  z-index:2;
+  height:30px;
+  transform:translateY(-12px);
+  border:4px solid #4d1e18;
+  border-radius:8px;
+  background:
+    radial-gradient(circle at 20% 55%,#ffe068 0 9px,transparent 10px),
+    radial-gradient(circle at 62% 44%,#ffc840 0 11px,transparent 12px),
+    linear-gradient(#ff7650,#d62f2b 58%,#8c1e21)
+}
+.cart-magma-zone-v178:after{
+  content:"";
+  position:absolute;
+  left:0;
+  right:0;
+  top:-8px;
+  height:15px;
+  background:repeating-radial-gradient(ellipse at 50% 100%,#ffdd53 0 7px,#f14b35 8px 15px)
+}
+
+.cart-distance-sign-v178{
+  position:absolute;
+  z-index:5;
+  padding:3px 5px;
+  border:3px solid var(--ink);
+  border-radius:7px;
+  background:#fff;
+  font-size:7px;
+  font-weight:1000;
+  font-style:normal
+}
+.cart-distance-sign-v178.goal-v178{background:#ffe15e}
+
+.cart-race-lane-label-v178{
+  position:absolute;
+  left:8px;
+  z-index:30;
+  padding:3px 6px;
+  border:3px solid var(--ink);
+  border-radius:7px;
+  background:#fff;
+  font-size:8px;
+  font-weight:1000;
+  pointer-events:none
+}
+.cart-race-lane-label-v178.top-v178{top:8px}
+.cart-race-lane-label-v178.bottom-v178{top:52%}
+
+.cart-race-pair-v178{
+  position:absolute;
+  z-index:16;
+  width:174px;
+  height:66px;
+  display:flex;
+  align-items:flex-end;
+  gap:4px;
+  transform-origin:50% 100%;
+  will-change:left,top,transform
+}
+
+/* Important: no generic cart box/frame during race. */
+.cart-race-drawn-v178,
+.cart-race-solo-v178{
+  position:relative;
+  width:74px;
+  height:62px;
+  overflow:visible;
+  background:transparent;
+  border:0;
+  box-shadow:none
+}
+.cart-race-drawn-v178 svg,
+.cart-race-solo-v178 svg{
+  position:absolute;
+  inset:-7px;
+  width:calc(100% + 14px);
+  height:calc(100% + 14px);
+  overflow:visible
+}
+.cart-race-line-v178{
+  fill:none;
+  stroke:#111820;
+  stroke-width:12;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+  vector-effect:non-scaling-stroke
+}
+
+.cart-race-chain-v178{
+  align-self:flex-end;
+  width:18px;
+  height:5px;
+  margin-bottom:14px;
+  border-top:4px dotted #dadada;
+  filter:drop-shadow(0 2px 0 #15191d)
+}
+
+.cart-race-dolls-v178{
+  position:absolute;
+  z-index:5;
+  left:5px;
+  right:5px;
+  top:4px;
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:center;
+  gap:0;
+  pointer-events:none
+}
+.cart-race-dolls-v178 img{
+  width:11px;
+  height:11px;
+  object-fit:contain;
+  transform-origin:50% 50%
+}
+.cart-race-dolls-v178.solo-dolls-v178 img{
+  width:10px;
+  height:10px
+}
+.cart-race-dolls-v178 img.drop-v178{
+  animation:cartDollDrop178 .62s cubic-bezier(.2,.65,.45,1) forwards
+}
+@keyframes cartDollDrop178{
+  0%{transform:translate(0,0) rotate(0);opacity:1}
+  100%{transform:translate(var(--drop-x),78px) rotate(var(--drop-r));opacity:0}
+}
+
+.cart-race-solo-v178{
+  position:absolute;
+  z-index:16;
+  width:88px;
+  height:70px;
+  transform-origin:50% 100%;
+  will-change:left,top,transform
+}
+
+.cart-race-call-v178{
+  position:absolute;
+  z-index:35;
+  left:50%;
+  top:10px;
+  transform:translateX(-50%);
+  padding:5px 10px;
+  border:3px solid var(--ink);
+  border-radius:999px;
+  background:#fff3a8;
+  font-size:10px;
+  font-weight:1000;
+  white-space:nowrap;
+  pointer-events:none
+}
+.cart-race-call-v178.go-v178{background:#9be296}
+.cart-race-call-v178.result-v178{background:#ffe15e}
+
+@media(max-height:700px){
+  .cartdraw-stage-v178,
+  .cartblast-stage-v178,
+  .cartsolo-stage-v178{
+    min-height:270px
+  }
+}

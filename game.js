@@ -335,8 +335,8 @@ const GAMES=[
   {no:97,key:"ropeSwingMob",title:"モブくんロープスイング",sub:"3本のロープをタイミングよく離して渡り、最後に飛んだ距離を競う",legacy:108},
   {no:98,key:"billiardsMob",title:"モブくんビリヤード",sub:"モブくんがキューで白球を強く打ち、最大4ショットで3つの色球を落とす",legacy:110},
   {no:99,key:"billiardsBattleRoyale",title:"モブくんビリヤードバトルロイヤル",sub:"4人専用。白球1個と色球5個を順番に打ち、落とした球数で競う",legacy:111},
-  {no:100,key:"linkedCartBlast",title:"くっつきモブくんトロッコ大爆走",sub:"2対2タッグ専用。4人が描いたトロッコ2台ずつを連結し、残ったモブ人形20体で勝負",legacy:112},
-  {no:101,key:"soloCartBlast",title:"モブくんトロッコ大爆走",sub:"4人個人戦専用。描いたトロッコに20体を乗せ、同じコースで残存数を競う",legacy:113},
+  {no:100,key:"linkedCartBlast",title:"くっつきモブくんトロッコ大爆走",sub:"2対2タッグ専用。描いたトロッコ2台を連結し、同じ1km横スクロールコースを同時大爆走",legacy:112},
+  {no:101,key:"soloCartBlast",title:"モブくんトロッコ大爆走",sub:"4人個人戦専用。描いたトロッコが1km横スクロールコースを実走し、残った人形数を競う",legacy:113},
   {no:102,key:"deathGameChallenge",title:"モブくんデスゲームにチャレンジ",sub:"4〜8人個人戦専用。固定ルーレット順で扉を選び、生き残った1人が優勝",legacy:114}
 ];
 
@@ -2616,9 +2616,9 @@ function showGameIntro(index){
   }else if(legacyIndex===111){
     rules=`<li>4人専用。白球1個・色球5個を1ショットずつ交代で打ち、落とした色球1個につき20点です。</li><li>個人戦はP1→P2→P3→P4、2対2タッグはP1→P3→P2→P4の順番です。</li>`;
   }else if(legacyIndex===112){
-    rules=`<li>2対2タッグ専用。4人が7秒ずつ自由にトロッコを描き、各トロッコへ小さなモブ人形10体を乗せます。</li><li>同チーム2台は短いチェーンで連結。同じ1kmコースのギミック抽選で落下し、残り20体×5点で勝負します。</li>`;
+    rules=`<li>2対2タッグ専用。4人が7秒ずつ自由に描いたトロッコを2台ずつ短いチェーンで連結します。</li><li>上下の同一1kmコースを同時に横スクロール大爆走。ギミック通過時の落下判定は裏で行い、残り20体×5点で勝負します。</li>`;
   }else if(legacyIndex===113){
-    rules=`<li>4人個人戦専用。各自7秒で自分のトロッコを描き、モブ人形20体を乗せます。</li><li>全員同じ1kmコース・同じ速度。ギミックごとの抽選後、残った人形1体=5点です。</li>`;
+    rules=`<li>4人個人戦専用。各自7秒で描いたトロッコにモブ人形20体を乗せます。</li><li>全員が同じ1km横スクロールコースを実走。スロープやジャンプ台を走り、残った人形1体=5点です。</li>`;
   }else if(legacyIndex===114){
     rules=`<li>4〜8人個人戦専用。最初のルーレットで決めた順番を最後まで固定し、1人ずつ空いている扉を選びます。</li><li>全員が入ったら3・2・1で扉が消滅。最後の1人が100点、2位70点、3位50点です。</li>`;
   }else{
@@ -33439,43 +33439,362 @@ function cartDrawingQualityV177(strokes){
 function cartSvgLinesV177(strokes,cls=''){return (strokes||[]).map(s=>s.length>=2?`<polyline class="${cls}" points="${s.map(q=>`${q.x.toFixed(1)},${q.y.toFixed(1)}`).join(' ')}"></polyline>`:'').join('')}
 async function collectCartDrawingV177(member,label,runId,human){
   gameFit();
-  let enabled=false,pointer=null,current=null,strokes=[];
-  screen.innerHTML=`<div class="cartdraw-shell-v177 gameplay-fit">
-    <div class="game-head"><div><span class="kicker">${esc(label)}</span><h2>トロッコを描こう！</h2><p class="lead">7秒 / 何筆でも自由</p></div><div class="game-badge">${human?'PLAYER':'CPU'}</div></div>
-    <div class="cartdraw-owner-v177">${imgTag(member,'cartdraw-avatar-v177')}<b>${esc(member.name)}</b><span>${human?'あなたが描く':'CPU DRAW'}</span></div>
-    <div class="cartdraw-stage-v177"><svg id="cartDrawSvg177" viewBox="0 0 340 260"><rect x="4" y="4" width="332" height="252" rx="18"></rect><g id="cartDrawLines177"></g></svg><div id="cartDrawTime177" class="cartdraw-time-v177">${human?'7.0':'CPU'}</div><div class="cartdraw-guide-v177">車体・車輪・装飾を自由に描く</div></div>
-  </div>`;
-  const svg=document.getElementById('cartDrawSvg177'),layer=document.getElementById('cartDrawLines177'),timeEl=document.getElementById('cartDrawTime177');
-  const local=e=>{const r=svg.getBoundingClientRect();return{x:clamp((e.clientX-r.left)/r.width*340,8,332),y:clamp((e.clientY-r.top)/r.height*260,8,252)}};
-  const newLine=(points,cls='cartdraw-line-v177')=>{const el=document.createElementNS('http://www.w3.org/2000/svg','polyline');el.setAttribute('class',cls);el.setAttribute('points',points.map(q=>`${q.x},${q.y}`).join(' '));layer.appendChild(el);return el};
-  svg.addEventListener('pointerdown',e=>{if(!enabled||pointer!==null)return;e.preventDefault();pointer=e.pointerId;const q=local(e);current={pts:[q],el:newLine([q])};strokes.push(current.pts);try{svg.setPointerCapture(pointer)}catch(_){}},{passive:false});
-  svg.addEventListener('pointermove',e=>{if(!enabled||pointer!==e.pointerId||!current)return;e.preventDefault();const q=local(e),prev=current.pts.at(-1);if(Math.hypot(q.x-prev.x,q.y-prev.y)>2){current.pts.push(q);current.el.setAttribute('points',current.pts.map(v=>`${v.x.toFixed(1)},${v.y.toFixed(1)}`).join(' '))}},{passive:false});
-  const end=e=>{if(pointer!==e.pointerId)return;e.preventDefault();pointer=null;current=null};
-  svg.addEventListener('pointerup',end,{passive:false});svg.addEventListener('pointercancel',end,{passive:false});
-  await wait(420);if(!isGameRunValid(runId))return null;
+
+  let enabled=false;
+  let pointer=null;
+  let current=null;
+  const strokes=[];
+
+  screen.innerHTML=`
+    <div class="cartdraw-shell-v178 gameplay-fit">
+      <div class="game-head">
+        <div>
+          <span class="kicker">${esc(label)}</span>
+          <h2>トロッコを描こう！</h2>
+          <p class="lead">7秒 / 何筆でも自由 / 枠いっぱい使用OK</p>
+        </div>
+        <div class="game-badge">${human?'PLAYER':'CPU'}</div>
+      </div>
+
+      <div class="cartdraw-owner-v178">
+        ${imgTag(member,'cartdraw-avatar-v178')}
+        <b>${esc(member.name)}</b>
+        <span>${human?'3・2・1の後に描く':'CPU DRAW'}</span>
+      </div>
+
+      <div class="cartdraw-stage-v178">
+        <svg id="cartDrawSvg178"
+          viewBox="0 0 340 260"
+          preserveAspectRatio="none"
+          draggable="false">
+          <rect class="cartdraw-paper-v178" x="1.5" y="1.5" width="337" height="257" rx="12"></rect>
+          <g id="cartDrawLines178"></g>
+        </svg>
+
+        <div id="cartDrawTime178" class="cartdraw-time-v178">${human?'READY':'CPU'}</div>
+        <div class="cartdraw-guide-v178">画面の端まで全部描けます</div>
+      </div>
+    </div>`;
+
+  const svg=document.getElementById('cartDrawSvg178');
+  const layer=document.getElementById('cartDrawLines178');
+  const timeEl=document.getElementById('cartDrawTime178');
+
+  const local=e=>{
+    const r=svg.getBoundingClientRect();
+    return {
+      x:clamp((e.clientX-r.left)/Math.max(1,r.width)*340,3,337),
+      y:clamp((e.clientY-r.top)/Math.max(1,r.height)*260,3,257)
+    };
+  };
+
+  const newLine=(points,cls='cartdraw-line-v178')=>{
+    const el=document.createElementNS('http://www.w3.org/2000/svg','polyline');
+    el.setAttribute('class',cls);
+    el.setAttribute('vector-effect','non-scaling-stroke');
+    el.setAttribute('points',points.map(q=>`${q.x},${q.y}`).join(' '));
+    layer.appendChild(el);
+    return el;
+  };
+
+  svg.addEventListener('pointerdown',e=>{
+    if(!enabled||pointer!==null)return;
+    e.preventDefault();
+    pointer=e.pointerId;
+    const q=local(e);
+    current={pts:[q],el:newLine([q])};
+    strokes.push(current.pts);
+    try{svg.setPointerCapture(pointer)}catch(_){}
+  },{passive:false});
+
+  svg.addEventListener('pointermove',e=>{
+    if(!enabled||pointer!==e.pointerId||!current)return;
+    e.preventDefault();
+
+    const q=local(e);
+    const prev=current.pts[current.pts.length-1];
+
+    if(Math.hypot(q.x-prev.x,q.y-prev.y)>1.6){
+      current.pts.push(q);
+      current.el.setAttribute(
+        'points',
+        current.pts.map(v=>`${v.x.toFixed(1)},${v.y.toFixed(1)}`).join(' ')
+      );
+    }
+  },{passive:false});
+
+  const end=e=>{
+    if(pointer!==e.pointerId)return;
+    e.preventDefault();
+    pointer=null;
+    current=null;
+  };
+
+  svg.addEventListener('pointerup',end,{passive:false});
+  svg.addEventListener('pointercancel',end,{passive:false});
+
   if(human){
-    enabled=true;const st=performance.now();
-    await new Promise(resolve=>{const f=now=>{if(!isGameRunValid(runId)){resolve();return}const rem=7000-(now-st);timeEl.textContent=(Math.max(0,rem)/1000).toFixed(1);if(rem<=0){resolve();return}requestAnimationFrame(f)};requestAnimationFrame(f)});
-    enabled=false;pointer=null;current=null;
+    timeEl.textContent='READY';
+
+    if(!(await countdown('CART DRAW',runId,{transparent:true}))){
+      return null;
+    }
+
+    if(!isGameRunValid(runId))return null;
+
+    enabled=true;
+    const st=performance.now();
+
+    await new Promise(resolve=>{
+      const frame=now=>{
+        if(!isGameRunValid(runId)){
+          resolve();
+          return;
+        }
+
+        const rem=7000-(now-st);
+        timeEl.textContent=(Math.max(0,rem)/1000).toFixed(1);
+
+        if(rem<=0){
+          resolve();
+          return;
+        }
+
+        requestAnimationFrame(frame);
+      };
+
+      requestAnimationFrame(frame);
+    });
+
+    enabled=false;
+    pointer=null;
+    current=null;
+    timeEl.textContent='TIME!';
   }else{
+    await wait(280);
+    if(!isGameRunValid(runId))return null;
+
     const target=randomCartCpuStrokesV177();
-    for(const src of target){if(!isGameRunValid(runId))return null;const dst=[];strokes.push(dst);const el=newLine(dst,'cartdraw-line-v177 cpu-v177');for(let i=0;i<src.length;i++){dst.push(src[i]);el.setAttribute('points',dst.map(v=>`${v.x.toFixed(1)},${v.y.toFixed(1)}`).join(' '));if(i%5===0)await wait(8)}await wait(20)}
-    await wait(180);
+
+    for(const src of target){
+      if(!isGameRunValid(runId))return null;
+
+      const dst=[];
+      strokes.push(dst);
+      const el=newLine(dst,'cartdraw-line-v178 cpu-v178');
+
+      for(let i=0;i<src.length;i++){
+        dst.push(src[i]);
+        el.setAttribute(
+          'points',
+          dst.map(v=>`${v.x.toFixed(1)},${v.y.toFixed(1)}`).join(' ')
+        );
+
+        if(i%5===0)await wait(8);
+      }
+
+      await wait(20);
+    }
+
+    await wait(160);
   }
+
   const saved=strokes.map(s=>s.map(q=>({...q})));
-  return {strokes:saved,q:cartDrawingQualityV177(saved)};
+
+  return {
+    strokes:saved,
+    q:cartDrawingQualityV177(saved)
+  };
 }
-function dropDollsV177(cart,eventIndex){
-  if(cart.remaining<=0)return 0;
-  if(cart.q<.12){const n=cart.remaining;cart.remaining=0;return n}
-  const base=[.012,.018,.024,.030][eventIndex]??.025;
-  const chance=clamp(base+(1-cart.q)*.28,0,.62);
-  let drops=0;
-  for(let i=0;i<cart.remaining;i++)if(Math.random()<chance)drops++;
-  if(cart.q<.22)drops=Math.max(drops,Math.min(cart.remaining,3+eventIndex*2));
-  drops=Math.min(cart.remaining,drops);cart.remaining-=drops;return drops;
+
+
+
+// =========================================================
+// V10.78 — real horizontal-scrolling cart race helpers
+// =========================================================
+const CART_BLAST_WORLD_W_V178=4200;
+const CART_BLAST_START_X_V178=150;
+const CART_BLAST_GOAL_X_V178=3920;
+const CART_BLAST_SPEED_V178=470;
+const CART_BLAST_EVENT_X_V178=[960,1660,2460,3370];
+
+function cartCourseStateV178(x){
+  let elev=0;
+  let slope=0;
+
+  // Long hill: cart follows the rail up and down.
+  if(x>=650&&x<=1220){
+    const t=(x-650)/(1220-650);
+    elev=Math.sin(t*Math.PI)*45;
+    const derivative=Math.cos(t*Math.PI)*Math.PI*45/(1220-650);
+    slope=-Math.atan(derivative)*180/Math.PI;
+  }
+
+  // First jump ramp.
+  if(x>=1500&&x<1660){
+    const t=(x-1500)/160;
+    elev=52*t;
+    slope=-18;
+  }
+
+  // Magma jump ramp.
+  if(x>=2340&&x<2460){
+    const t=(x-2340)/120;
+    elev=46*t;
+    slope=-21;
+  }
+
+  // Final big ramp.
+  if(x>=3200&&x<3370){
+    const t=(x-3200)/170;
+    elev=64*t;
+    slope=-20;
+  }
+
+  return {elev,slope};
 }
-function dollsHtmlV177(n){return Array.from({length:n},()=>`<img src="icon/01.png" draggable="false" alt="">`).join('')}
+
+function cartTrackPointsV178(baseY){
+  const pts=[];
+
+  for(let x=0;x<=CART_BLAST_WORLD_W_V178;x+=18){
+    const c=cartCourseStateV178(x);
+    pts.push(`${x},${(baseY-c.elev).toFixed(1)}`);
+  }
+
+  return pts.join(' ');
+}
+
+function cartRaceDecorV178(baseY){
+  return `
+    <div class="cart-ramp-v178 jump-v178"
+      style="left:1500px;top:${baseY-54}px;width:160px;height:56px"></div>
+
+    <div class="cart-ramp-v178 magma-ramp-v178"
+      style="left:2340px;top:${baseY-48}px;width:120px;height:50px"></div>
+
+    <div class="cart-magma-zone-v178"
+      style="left:2460px;top:${baseY-2}px;width:270px"></div>
+
+    <div class="cart-ramp-v178 final-v178"
+      style="left:3200px;top:${baseY-66}px;width:170px;height:68px"></div>
+
+    <i class="cart-distance-sign-v178" style="left:990px;top:${baseY-92}px">250m</i>
+    <i class="cart-distance-sign-v178" style="left:1930px;top:${baseY-92}px">500m</i>
+    <i class="cart-distance-sign-v178" style="left:2870px;top:${baseY-92}px">750m</i>
+    <i class="cart-distance-sign-v178 goal-v178" style="left:${CART_BLAST_GOAL_X_V178}px;top:${baseY-100}px">1km GOAL</i>
+  `;
+}
+
+function cartRaceRockHtmlV178(count=32){
+  return Array.from({length:count},(_,i)=>{
+    const x=180+i*125+rand(-25,35);
+    const y=rand(18,78);
+    const s=rand(10,23);
+    return `<i class="cart-race-rock-v178" style="left:${x}px;top:${y}px;width:${s}px;height:${s*.72}px"></i>`;
+  }).join('');
+}
+
+function createCartTrackSvgV178(svg,bases,stageH){
+  svg.setAttribute('viewBox',`0 0 ${CART_BLAST_WORLD_W_V178} ${stageH}`);
+
+  svg.innerHTML=bases.map((base,i)=>`
+    <polyline class="cart-track-shadow-v178 lane-${i}"
+      points="${cartTrackPointsV178(base+5)}"></polyline>
+    <polyline class="cart-track-main-v178 lane-${i}"
+      points="${cartTrackPointsV178(base)}"></polyline>
+  `).join('');
+}
+
+function cartDropVisualV178(cart,cartEl,dropped){
+  if(!cartEl||dropped<=0)return;
+
+  const layer=cartEl.querySelector('.cart-race-dolls-v178');
+  if(!layer)return;
+
+  const imgs=[...layer.querySelectorAll('img')];
+
+  for(let i=0;i<Math.min(dropped,imgs.length);i++){
+    const img=imgs[imgs.length-1-i];
+    img.classList.add('drop-v178');
+    img.style.setProperty('--drop-x',`${rand(-42,28)}px`);
+    img.style.setProperty('--drop-r',`${rand(-120,150)}deg`);
+    img.style.animationDelay=`${i*28}ms`;
+  }
+
+  setTimeout(()=>{
+    if(layer.isConnected){
+      layer.innerHTML=dollsHtmlV177(cart.remaining);
+    }
+  },650);
+}
+
+function cartEventDropV178(carts,eventIndex,cartElements){
+  carts.forEach((cart,i)=>{
+    const dropped=dropDollsV177(cart,eventIndex);
+    cartDropVisualV178(cart,cartElements[i],dropped);
+  });
+}
+
+function cartUpdateAirV178(motion,raceX,dt){
+  const launches=[
+    {x:1660,h:52,v:335},
+    {x:2460,h:46,v:370},
+    {x:3370,h:64,v:395}
+  ];
+
+  launches.forEach((launch,i)=>{
+    if(raceX>=launch.x&&!motion.launched.has(i)){
+      motion.launched.add(i);
+      motion.airY=Math.max(motion.airY,launch.h);
+      motion.airV=Math.max(motion.airV,launch.v);
+    }
+  });
+
+  if(motion.airY>0||motion.airV>0){
+    motion.airY+=motion.airV*dt;
+    motion.airV-=910*dt;
+
+    if(motion.airY<=0){
+      motion.airY=0;
+      motion.airV=0;
+    }
+  }
+}
+
+function cartPairHtmlV178(teamIndex,carts){
+  return `
+    <div class="cart-race-pair-v178" data-race-pair="${teamIndex}">
+      <div class="cart-race-drawn-v178 rear-v178" data-race-cart="${teamIndex}-0">
+        <svg viewBox="0 0 340 260" preserveAspectRatio="xMidYMid meet">
+          ${cartSvgLinesV177(carts[0].strokes,'cart-race-line-v178')}
+        </svg>
+        <div class="cart-race-dolls-v178">${dollsHtmlV177(carts[0].remaining)}</div>
+      </div>
+
+      <span class="cart-race-chain-v178"></span>
+
+      <div class="cart-race-drawn-v178 front-v178" data-race-cart="${teamIndex}-1">
+        <svg viewBox="0 0 340 260" preserveAspectRatio="xMidYMid meet">
+          ${cartSvgLinesV177(carts[1].strokes,'cart-race-line-v178')}
+        </svg>
+        <div class="cart-race-dolls-v178">${dollsHtmlV177(carts[1].remaining)}</div>
+      </div>
+    </div>
+  `;
+}
+
+function cartSoloHtmlV178(slotIndex,slot){
+  return `
+    <div class="cart-race-solo-v178" data-race-solo="${slotIndex}">
+      <svg viewBox="0 0 340 260" preserveAspectRatio="xMidYMid meet">
+        ${cartSvgLinesV177(slot.strokes,'cart-race-line-v178')}
+      </svg>
+      <div class="cart-race-dolls-v178 solo-dolls-v178">${dollsHtmlV177(slot.remaining)}</div>
+    </div>
+  `;
+}
+
 
 // =========================================================
 // GAME 99 — モブくんビリヤードバトルロイヤル
@@ -33546,43 +33865,479 @@ async function startBilliardsBattleRoyale(p,humanIndex,runId){
 // GAME 100 — くっつきモブくんトロッコ大爆走
 // =========================================================
 async function startLinkedCartBlast(p,humanIndex,runId){
-  gameFit();const gameIndex=GAMES.findIndex(g=>g.key==='linkedCartBlast');
+  gameFit();
+  const gameIndex=GAMES.findIndex(g=>g.key==='linkedCartBlast');
+
   let teams;
-  if(state.freePlay){teams=[{key:'A',members:[pById('p1'),pById('c2')]},{key:'B',members:[pById('c3'),pById('c4')]}];teams.forEach(t=>t.allHuman=true)}
-  else{const ks=teamKeys().slice(0,2);teams=ks.map(k=>({key:k,members:(mode().teams[k]||[]).map(pById),allHuman:false}))}
-  if(teams.length!==2||teams.some(t=>t.members.length!==2)){if(state.freePlay)return recordScreen(gameIndex,p,0,'TAG ONLY','2対2専用');finishGroupGameV177(gameIndex);return}
-  for(const t of teams){t.carts=[];for(let i=0;i<2;i++){const m=t.members[i],human=t.allHuman||!m.cpu;const d=await collectCartDrawingV177(m,`TEAM ${t.key} / ${i+1}番手`,runId,human);if(!d)return;t.carts.push({...d,remaining:10,member:m})}}
-  screen.innerHTML=`<div class="cartblast-shell-v177 gameplay-fit"><div class="game-head"><div><span class="kicker">TAG 1km BLAST</span><h2>くっつきモブくんトロッコ大爆走</h2><p class="lead">20 MOB / SAME SPEED</p></div><div class="game-badge">2 VS 2</div></div><div id="cartBlastMsg177" class="cartblast-msg-v177">READY</div><div id="cartBlastStage177" class="cartblast-stage-v177">
-    ${['A','B'].map((k,ti)=>`<div class="cartblast-lane-v177 lane-${k.toLowerCase()}" data-lane="${ti}"><b>${k} COURSE</b><div class="cartblast-track-v177"><i class="slope"></i><i class="jump"></i><i class="magma"></i><i class="bump"></i></div><div class="cartblast-pair-v177" data-pair="${ti}">${teams[ti].carts.map((c,ci)=>`<div class="cartblast-cart-v177" data-cart="${ti}-${ci}"><svg viewBox="0 0 340 260">${cartSvgLinesV177(c.strokes,'cartblast-line-v177')}</svg><div class="cartblast-dolls-v177">${dollsHtmlV177(10)}</div></div>${ci===0?'<span class="cartblast-chain-v177">•••</span>':''}`).join('')}</div></div>`).join('')}
-  </div><div class="cartblast-score-v177">A <b id="cartA177">20</b> / B <b id="cartB177">20</b></div></div>`;
-  const stage=document.getElementById('cartBlastStage177'),msg=document.getElementById('cartBlastMsg177'),pairs=[...stage.querySelectorAll('[data-pair]')];
-  function refresh(){teams.forEach((t,ti)=>{t.carts.forEach((c,ci)=>{stage.querySelector(`[data-cart="${ti}-${ci}"] .cartblast-dolls-v177`).innerHTML=dollsHtmlV177(c.remaining)});document.getElementById(ti?'cartB177':'cartA177').textContent=t.carts.reduce((s,c)=>s+c.remaining,0)})}
-  refresh();if(!(await countdown('CART BLAST',runId,{transparent:true})))return;
-  const events=['SLOPE','JUMP','MAGMA','FINAL RAMP'];let eventIndex=0,progress=0,last=performance.now(),raf=null,pauseUntil=0;
-  await new Promise(resolve=>{const f=now=>{if(!isGameRunValid(runId)){resolve();return}const dt=Math.min(.035,(now-last)/1000);last=now;if(now>=pauseUntil){progress+=dt/8.0;const thresholds=[.22,.43,.65,.83];if(eventIndex<4&&progress>=thresholds[eventIndex]){msg.textContent=`${events[eventIndex]} 抽選！`;teams.forEach(t=>t.carts.forEach(c=>dropDollsV177(c,eventIndex)));refresh();beep(700-eventIndex*90,80,.02);eventIndex++;pauseUntil=now+520}pairs.forEach(el=>el.style.left=`${8+clamp(progress,0,1)*74}%`)}if(progress>=1){resolve();return}raf=requestAnimationFrame(f)};raf=requestAnimationFrame(f)});
-  if(!isGameRunValid(runId))return;const scores=teams.map(t=>t.carts.reduce((s,c)=>s+c.remaining,0)*5);msg.textContent=`GOAL! A ${scores[0]} / B ${scores[1]}`;beep(1040,150,.035);await wait(850);
-  if(state.freePlay){state.records.linkedCartBlast[p.id]=Math.max(...scores);return recordScreen(gameIndex,p,0,`${Math.max(...scores)}<small>pt</small>`,`TEAM A ${scores[0]} / TEAM B ${scores[1]}`)}
-  teams.forEach((t,ti)=>t.members.forEach(m=>state.records.linkedCartBlast[m.id]=scores[ti]));finishGroupGameV177(gameIndex);
+
+  if(state.freePlay){
+    teams=[
+      {key:'A',members:[pById('p1'),pById('c2')]},
+      {key:'B',members:[pById('c3'),pById('c4')]}
+    ];
+    teams.forEach(t=>t.allHuman=true);
+  }else{
+    const ks=teamKeys().slice(0,2);
+
+    teams=ks.map(k=>({
+      key:k,
+      members:(mode().teams[k]||[]).map(pById),
+      allHuman:false
+    }));
+  }
+
+  if(teams.length!==2||teams.some(t=>t.members.length!==2)){
+    if(state.freePlay){
+      return recordScreen(gameIndex,p,0,'TAG ONLY','2対2専用');
+    }
+
+    finishGroupGameV177(gameIndex);
+    return;
+  }
+
+  // DRAW PHASE
+  for(const t of teams){
+    t.carts=[];
+
+    for(let i=0;i<2;i++){
+      const m=t.members[i];
+      const human=t.allHuman||!m.cpu;
+
+      const d=await collectCartDrawingV177(
+        m,
+        `TEAM ${t.key} / ${i+1}番手`,
+        runId,
+        human
+      );
+
+      if(!d)return;
+
+      t.carts.push({
+        ...d,
+        remaining:10,
+        member:m
+      });
+    }
+  }
+
+  // RACE PHASE — no cart frame: the actual drawing is the cart.
+  screen.innerHTML=`
+    <div class="cartblast-shell-v178 gameplay-fit">
+      <div class="game-head">
+        <div>
+          <span class="kicker">TAG 1km SIDE-SCROLL RACE</span>
+          <h2>くっつきモブくんトロッコ大爆走</h2>
+          <p class="lead">SAME COURSE / SAME SPEED / 20 MOB</p>
+        </div>
+        <div class="game-badge">2 VS 2</div>
+      </div>
+
+      <div class="cartblast-hud-v178">
+        <span>TEAM ${esc(teams[0].key)} <b id="cartTeamA178">20</b></span>
+        <strong id="cartBlastDist178">0m</strong>
+        <span>TEAM ${esc(teams[1].key)} <b id="cartTeamB178">20</b></span>
+      </div>
+
+      <div id="cartBlastStage178" class="cartblast-stage-v178">
+        <div class="cart-race-lane-label-v178 top-v178">TEAM ${esc(teams[0].key)}</div>
+        <div class="cart-race-lane-label-v178 bottom-v178">TEAM ${esc(teams[1].key)}</div>
+
+        <div id="cartBlastWorld178" class="cart-race-world-v178"
+          style="width:${CART_BLAST_WORLD_W_V178}px">
+
+          <div class="cart-race-cave-v178"></div>
+          <svg id="cartBlastTrackSvg178" class="cart-track-svg-v178"></svg>
+          <div id="cartBlastDecor178" class="cart-race-decor-v178"></div>
+          <div class="cart-race-rock-layer-v178">${cartRaceRockHtmlV178(34)}</div>
+
+          ${teams.map((t,ti)=>cartPairHtmlV178(ti,t.carts)).join('')}
+        </div>
+
+        <div id="cartBlastCall178" class="cart-race-call-v178">READY</div>
+      </div>
+    </div>`;
+
+  const stage=document.getElementById('cartBlastStage178');
+  const world=document.getElementById('cartBlastWorld178');
+  const trackSvg=document.getElementById('cartBlastTrackSvg178');
+  const decor=document.getElementById('cartBlastDecor178');
+  const call=document.getElementById('cartBlastCall178');
+  const distEl=document.getElementById('cartBlastDist178');
+
+  void stage.offsetHeight;
+
+  const H=stage.clientHeight;
+  const laneBases=[H*.44,H*.88];
+
+  createCartTrackSvgV178(trackSvg,laneBases,H);
+
+  decor.innerHTML=
+    cartRaceDecorV178(laneBases[0])+
+    cartRaceDecorV178(laneBases[1]);
+
+  const pairEls=[
+    stage.querySelector('[data-race-pair="0"]'),
+    stage.querySelector('[data-race-pair="1"]')
+  ];
+
+  const cartEls=teams.map((t,ti)=>
+    t.carts.map((c,ci)=>
+      stage.querySelector(`[data-race-cart="${ti}-${ci}"]`)
+    )
+  );
+
+  const motions=teams.map(()=>({
+    airY:0,
+    airV:0,
+    launched:new Set(),
+    eventIndex:0
+  }));
+
+  function refresh(){
+    document.getElementById('cartTeamA178').textContent=
+      teams[0].carts.reduce((s,c)=>s+c.remaining,0);
+
+    document.getElementById('cartTeamB178').textContent=
+      teams[1].carts.reduce((s,c)=>s+c.remaining,0);
+  }
+
+  function placePair(ti,raceX){
+    const motion=motions[ti];
+    const course=cartCourseStateV178(raceX);
+    const pair=pairEls[ti];
+
+    pair.style.left=`${raceX-95}px`;
+    pair.style.top=`${laneBases[ti]-course.elev-motion.airY-65}px`;
+    pair.style.transform=`rotate(${course.slope}deg)`;
+  }
+
+  refresh();
+
+  // Everything is positioned before the countdown.
+  placePair(0,CART_BLAST_START_X_V178);
+  placePair(1,CART_BLAST_START_X_V178);
+  world.style.transform='translate3d(0,0,0)';
+
+  if(!(await countdown('CART BLAST',runId,{transparent:true})))return;
+
+  call.textContent='GO!';
+  call.className='cart-race-call-v178 go-v178';
+
+  const raceStart=performance.now();
+  let last=raceStart;
+  let raf=null;
+  let raceX=CART_BLAST_START_X_V178;
+  let cameraX=0;
+
+  await new Promise(resolve=>{
+    const frame=now=>{
+      if(!isGameRunValid(runId)){
+        resolve();
+        return;
+      }
+
+      const dt=Math.min(.032,(now-last)/1000);
+      last=now;
+
+      raceX+=CART_BLAST_SPEED_V178*dt;
+
+      teams.forEach((t,ti)=>{
+        const motion=motions[ti];
+
+        cartUpdateAirV178(motion,raceX,dt);
+
+        while(
+          motion.eventIndex<CART_BLAST_EVENT_X_V178.length&&
+          raceX>=CART_BLAST_EVENT_X_V178[motion.eventIndex]
+        ){
+          cartEventDropV178(
+            t.carts,
+            motion.eventIndex,
+            cartEls[ti]
+          );
+
+          motion.eventIndex++;
+          refresh();
+        }
+
+        placePair(ti,raceX);
+      });
+
+      cameraX=clamp(
+        raceX-stage.clientWidth*.28,
+        0,
+        CART_BLAST_WORLD_W_V178-stage.clientWidth
+      );
+
+      world.style.transform=`translate3d(${-cameraX}px,0,0)`;
+
+      const meters=clamp(
+        Math.round(
+          (raceX-CART_BLAST_START_X_V178)/
+          (CART_BLAST_GOAL_X_V178-CART_BLAST_START_X_V178)*1000
+        ),
+        0,
+        1000
+      );
+
+      distEl.textContent=`${meters}m`;
+
+      if(raceX>=CART_BLAST_GOAL_X_V178){
+        resolve();
+        return;
+      }
+
+      raf=requestAnimationFrame(frame);
+    };
+
+    raf=requestAnimationFrame(frame);
+  });
+
+  if(raf)cancelAnimationFrame(raf);
+  if(!isGameRunValid(runId))return;
+
+  const scores=teams.map(t=>
+    t.carts.reduce((s,c)=>s+c.remaining,0)*5
+  );
+
+  call.textContent=`GOAL! ${teams[0].key} ${scores[0]} / ${teams[1].key} ${scores[1]}`;
+  call.className='cart-race-call-v178 result-v178';
+
+  beep(1040,150,.035);
+  await wait(850);
+
+  if(state.freePlay){
+    state.records.linkedCartBlast[p.id]=Math.max(...scores);
+
+    return recordScreen(
+      gameIndex,
+      p,
+      0,
+      `${Math.max(...scores)}<small>pt</small>`,
+      `TEAM ${teams[0].key} ${scores[0]} / TEAM ${teams[1].key} ${scores[1]}`
+    );
+  }
+
+  teams.forEach((t,ti)=>
+    t.members.forEach(m=>
+      state.records.linkedCartBlast[m.id]=scores[ti]
+    )
+  );
+
+  finishGroupGameV177(gameIndex);
 }
+
 
 // =========================================================
 // GAME 101 — モブくんトロッコ大爆走（個人）
 // =========================================================
 async function startSoloCartBlast(p,humanIndex,runId){
-  gameFit();const gameIndex=GAMES.findIndex(g=>g.key==='soloCartBlast');
-  const slots=state.freePlay?[{member:p,human:true,label:'P1'}]:participants().slice(0,4).map((m,i)=>({member:m,human:!m.cpu,label:`P${i+1}`}));
-  if(!state.freePlay&&slots.length!==4){finishGroupGameV177(gameIndex);return}
-  for(const s of slots){const d=await collectCartDrawingV177(s.member,`${s.label} / 自分のトロッコ`,runId,s.human);if(!d)return;Object.assign(s,d,{remaining:20})}
-  screen.innerHTML=`<div class="cartsolo-shell-v177 gameplay-fit"><div class="game-head"><div><span class="kicker">1 COURSE / SAME SPEED</span><h2>モブくんトロッコ大爆走</h2><p class="lead">20 MOB EACH / 1km</p></div><div class="game-badge">${slots.length} CART</div></div><div id="cartSoloMsg177" class="cartblast-msg-v177">READY</div><div id="cartSoloStage177" class="cartsolo-stage-v177"><div class="cartsolo-track-v177"><i class="slope"></i><i class="jump"></i><i class="magma"></i><i class="bump"></i></div>${slots.map((s,i)=>`<div class="cartsolo-cart-v177" data-solo-cart="${i}" style="--row:${i}"><b>${s.label}</b><svg viewBox="0 0 340 260">${cartSvgLinesV177(s.strokes,'cartblast-line-v177')}</svg><div class="cartblast-dolls-v177">${dollsHtmlV177(20)}</div></div>`).join('')}</div><div class="cartsolo-scores-v177">${slots.map((s,i)=>`<span>${s.label} <b id="soloRemain${i}177">20</b></span>`).join('')}</div></div>`;
-  const stage=document.getElementById('cartSoloStage177'),msg=document.getElementById('cartSoloMsg177');
-  function refresh(){slots.forEach((s,i)=>{stage.querySelector(`[data-solo-cart="${i}"] .cartblast-dolls-v177`).innerHTML=dollsHtmlV177(s.remaining);document.getElementById(`soloRemain${i}177`).textContent=s.remaining})}
-  refresh();if(!(await countdown('CART BLAST',runId,{transparent:true})))return;
-  const events=['SLOPE','JUMP','MAGMA','FINAL RAMP'],thresholds=[.22,.43,.65,.83];let eventIndex=0,progress=0,last=performance.now(),raf=null,pauseUntil=0;
-  await new Promise(resolve=>{const f=now=>{if(!isGameRunValid(runId)){resolve();return}const dt=Math.min(.035,(now-last)/1000);last=now;if(now>=pauseUntil){progress+=dt/8;if(eventIndex<4&&progress>=thresholds[eventIndex]){msg.textContent=`${events[eventIndex]} 抽選！`;slots.forEach(s=>dropDollsV177(s,eventIndex));refresh();beep(700-eventIndex*90,80,.02);eventIndex++;pauseUntil=now+520}[...stage.querySelectorAll('[data-solo-cart]')].forEach(el=>el.style.left=`${7+clamp(progress,0,1)*75}%`)}if(progress>=1){resolve();return}raf=requestAnimationFrame(f)};raf=requestAnimationFrame(f)});
-  if(!isGameRunValid(runId))return;const scores=slots.map(s=>s.remaining*5);msg.textContent=`GOAL! ${slots.map((s,i)=>`${s.label}:${scores[i]}`).join(' ')}`;await wait(800);
-  if(state.freePlay){state.records.soloCartBlast[p.id]=scores[0];return recordScreen(gameIndex,p,0,`${scores[0]}<small>pt</small>`,`${slots[0].remaining}/20 MOB`)}
-  slots.forEach((s,i)=>state.records.soloCartBlast[s.member.id]=scores[i]);finishGroupGameV177(gameIndex);
+  gameFit();
+  const gameIndex=GAMES.findIndex(g=>g.key==='soloCartBlast');
+
+  const slots=state.freePlay
+    ? [{member:p,human:true,label:'P1'}]
+    : participants().slice(0,4).map((m,i)=>({
+        member:m,
+        human:!m.cpu,
+        label:`P${i+1}`
+      }));
+
+  if(!state.freePlay&&slots.length!==4){
+    finishGroupGameV177(gameIndex);
+    return;
+  }
+
+  // DRAW PHASE
+  for(const s of slots){
+    const d=await collectCartDrawingV177(
+      s.member,
+      `${s.label} / 自分のトロッコ`,
+      runId,
+      s.human
+    );
+
+    if(!d)return;
+
+    Object.assign(s,d,{remaining:20});
+  }
+
+  // Each player runs the exact same single 1km course.
+  for(let si=0;si<slots.length;si++){
+    const s=slots[si];
+
+    screen.innerHTML=`
+      <div class="cartsolo-shell-v178 gameplay-fit">
+        <div class="game-head">
+          <div>
+            <span class="kicker">${esc(s.label)} / 1km SIDE-SCROLL RUN</span>
+            <h2>モブくんトロッコ大爆走</h2>
+            <p class="lead">DRAWN CART / 20 MOB / SAME COURSE</p>
+          </div>
+          <div class="game-badge">${si+1}/${slots.length}</div>
+        </div>
+
+        <div class="cartsolo-hud-v178">
+          <span>${esc(s.label)} <b id="soloRemain178">${s.remaining}</b> MOB</span>
+          <strong id="soloDistance178">0m</strong>
+          <span>SCORE <b id="soloScore178">${s.remaining*5}</b></span>
+        </div>
+
+        <div id="cartSoloStage178" class="cartsolo-stage-v178">
+          <div id="cartSoloWorld178" class="cart-race-world-v178"
+            style="width:${CART_BLAST_WORLD_W_V178}px">
+
+            <div class="cart-race-cave-v178"></div>
+            <svg id="cartSoloTrackSvg178" class="cart-track-svg-v178"></svg>
+            <div id="cartSoloDecor178" class="cart-race-decor-v178"></div>
+            <div class="cart-race-rock-layer-v178">${cartRaceRockHtmlV178(34)}</div>
+
+            ${cartSoloHtmlV178(si,s)}
+          </div>
+
+          <div id="cartSoloCall178" class="cart-race-call-v178">READY ${esc(s.label)}</div>
+        </div>
+      </div>`;
+
+    const stage=document.getElementById('cartSoloStage178');
+    const world=document.getElementById('cartSoloWorld178');
+    const trackSvg=document.getElementById('cartSoloTrackSvg178');
+    const decor=document.getElementById('cartSoloDecor178');
+    const cartEl=stage.querySelector(`[data-race-solo="${si}"]`);
+    const call=document.getElementById('cartSoloCall178');
+    const remainEl=document.getElementById('soloRemain178');
+    const distanceEl=document.getElementById('soloDistance178');
+    const scoreEl=document.getElementById('soloScore178');
+
+    void stage.offsetHeight;
+
+    const H=stage.clientHeight;
+    const baseY=H*.78;
+
+    createCartTrackSvgV178(trackSvg,[baseY],H);
+    decor.innerHTML=cartRaceDecorV178(baseY);
+
+    const motion={
+      airY:0,
+      airV:0,
+      launched:new Set(),
+      eventIndex:0
+    };
+
+    function refresh(){
+      remainEl.textContent=s.remaining;
+      scoreEl.textContent=s.remaining*5;
+    }
+
+    function placeCart(raceX){
+      const course=cartCourseStateV178(raceX);
+      cartEl.style.left=`${raceX-42}px`;
+      cartEl.style.top=`${baseY-course.elev-motion.airY-66}px`;
+      cartEl.style.transform=`rotate(${course.slope}deg)`;
+    }
+
+    refresh();
+    placeCart(CART_BLAST_START_X_V178);
+    world.style.transform='translate3d(0,0,0)';
+
+    if(!(await countdown(`${s.label} CART`,runId,{transparent:true})))return;
+
+    call.textContent='GO!';
+    call.className='cart-race-call-v178 go-v178';
+
+    let raceX=CART_BLAST_START_X_V178;
+    let cameraX=0;
+    let last=performance.now();
+    let raf=null;
+
+    await new Promise(resolve=>{
+      const frame=now=>{
+        if(!isGameRunValid(runId)){
+          resolve();
+          return;
+        }
+
+        const dt=Math.min(.032,(now-last)/1000);
+        last=now;
+
+        raceX+=CART_BLAST_SPEED_V178*dt;
+
+        cartUpdateAirV178(motion,raceX,dt);
+
+        while(
+          motion.eventIndex<CART_BLAST_EVENT_X_V178.length&&
+          raceX>=CART_BLAST_EVENT_X_V178[motion.eventIndex]
+        ){
+          const dropped=dropDollsV177(s,motion.eventIndex);
+          cartDropVisualV178(s,cartEl,dropped);
+          motion.eventIndex++;
+          refresh();
+        }
+
+        placeCart(raceX);
+
+        cameraX=clamp(
+          raceX-stage.clientWidth*.28,
+          0,
+          CART_BLAST_WORLD_W_V178-stage.clientWidth
+        );
+
+        world.style.transform=`translate3d(${-cameraX}px,0,0)`;
+
+        const meters=clamp(
+          Math.round(
+            (raceX-CART_BLAST_START_X_V178)/
+            (CART_BLAST_GOAL_X_V178-CART_BLAST_START_X_V178)*1000
+          ),
+          0,
+          1000
+        );
+
+        distanceEl.textContent=`${meters}m`;
+
+        if(raceX>=CART_BLAST_GOAL_X_V178){
+          resolve();
+          return;
+        }
+
+        raf=requestAnimationFrame(frame);
+      };
+
+      raf=requestAnimationFrame(frame);
+    });
+
+    if(raf)cancelAnimationFrame(raf);
+    if(!isGameRunValid(runId))return;
+
+    s.score=s.remaining*5;
+    refresh();
+
+    call.textContent=`GOAL! ${s.remaining}/20 MOB = ${s.score}pt`;
+    call.className='cart-race-call-v178 result-v178';
+
+    beep(1000,120,.03);
+    await wait(720);
+  }
+
+  if(state.freePlay){
+    state.records.soloCartBlast[p.id]=slots[0].remaining*5;
+
+    return recordScreen(
+      gameIndex,
+      p,
+      0,
+      `${slots[0].remaining*5}<small>pt</small>`,
+      `${slots[0].remaining}/20 MOB`
+    );
+  }
+
+  slots.forEach(s=>{
+    state.records.soloCartBlast[s.member.id]=s.remaining*5;
+  });
+
+  finishGroupGameV177(gameIndex);
 }
+
 
 // =========================================================
 // GAME 102 — モブくんデスゲームにチャレンジ
