@@ -33419,22 +33419,73 @@ function randomCartCpuStrokesV177(){
   return out.map(st=>st.map(q=>({x:clamp(q.x+rand(-3,3),8,332),y:clamp(q.y+rand(-3,3),8,252)})));
 }
 function cartDrawingQualityV177(strokes){
-  const valid=strokes.filter(s=>s.length>=2);
-  const pts=valid.flat();
-  if(pts.length<12)return 0;
-  const xs=pts.map(q=>q.x),ys=pts.map(q=>q.y);
-  const minX=Math.min(...xs),maxX=Math.max(...xs),minY=Math.min(...ys),maxY=Math.max(...ys);
-  const w=maxX-minX,h=maxY-minY,area=w*h;
-  if(w<70||h<35||area<5000)return 0;
+  const valid=(strokes||[]).filter(s=>s.length>=2);
+
+  let pointCount=0;
+  let minX=Infinity,maxX=-Infinity,minY=Infinity,maxY=-Infinity;
   let length=0;
-  valid.forEach(s=>{for(let i=1;i<s.length;i++)length+=Math.hypot(s[i].x-s[i-1].x,s[i].y-s[i-1].y)});
-  const long=valid.slice().sort((a,b)=>b.length-a.length)[0];
-  const closure=long?.length>2?clamp(1-Math.hypot(long[0].x-long.at(-1).x,long[0].y-long.at(-1).y)/125,0,1):0;
-  const aspect=clamp(1-Math.abs(w/Math.max(1,h)-2.4)/2.4,0,1);
+  let longest=null;
+
+  for(const s of valid){
+    if(!longest||s.length>longest.length)longest=s;
+
+    pointCount+=s.length;
+
+    for(let i=0;i<s.length;i++){
+      const q=s[i];
+
+      if(q.x<minX)minX=q.x;
+      if(q.x>maxX)maxX=q.x;
+      if(q.y<minY)minY=q.y;
+      if(q.y>maxY)maxY=q.y;
+
+      if(i>0){
+        const p=s[i-1];
+        length+=Math.hypot(q.x-p.x,q.y-p.y);
+      }
+    }
+  }
+
+  if(pointCount<12||!Number.isFinite(minX))return 0;
+
+  const w=maxX-minX;
+  const h=maxY-minY;
+  const area=w*h;
+
+  if(w<70||h<35||area<5000)return 0;
+
+  let closure=0;
+
+  if(longest&&longest.length>2){
+    const first=longest[0];
+    const last=longest[longest.length-1];
+
+    closure=clamp(
+      1-Math.hypot(first.x-last.x,first.y-last.y)/125,
+      0,
+      1
+    );
+  }
+
+  const aspect=clamp(
+    1-Math.abs(w/Math.max(1,h)-2.4)/2.4,
+    0,
+    1
+  );
+
   const size=clamp(area/42000,0,1);
   const lengthQ=clamp(1-Math.abs(length-950)/1150,0,1);
   const strokesQ=clamp(1-Math.abs(valid.length-4)/8,.2,1);
-  return clamp(closure*.25+aspect*.25+size*.22+lengthQ*.18+strokesQ*.10,0,1);
+
+  return clamp(
+    closure*.25+
+    aspect*.25+
+    size*.22+
+    lengthQ*.18+
+    strokesQ*.10,
+    0,
+    1
+  );
 }
 function cartSvgLinesV177(strokes,cls=''){return (strokes||[]).map(s=>s.length>=2?`<polyline class="${cls}" points="${s.map(q=>`${q.x.toFixed(1)},${q.y.toFixed(1)}`).join(' ')}"></polyline>`:'').join('')}
 async function collectCartDrawingV177(member,label,runId,human){
@@ -33569,7 +33620,7 @@ async function collectCartDrawingV177(member,label,runId,human){
     enabled=false;
     pointer=null;
     current=null;
-    timeEl.textContent='TIME!';
+    timeEl.textContent='GO TO RACE';
   }else{
     await wait(280);
     if(!isGameRunValid(runId))return null;
@@ -33608,6 +33659,45 @@ async function collectCartDrawingV177(member,label,runId,human){
 }
 
 
+
+
+function dropDollsV177(cart,eventIndex){
+  if(cart.remaining<=0)return 0;
+
+  if(cart.q<.12){
+    const n=cart.remaining;
+    cart.remaining=0;
+    return n;
+  }
+
+  const base=[.012,.018,.024,.030][eventIndex]??.025;
+  const chance=clamp(base+(1-cart.q)*.28,0,.62);
+
+  let drops=0;
+
+  for(let i=0;i<cart.remaining;i++){
+    if(Math.random()<chance)drops++;
+  }
+
+  if(cart.q<.22){
+    drops=Math.max(
+      drops,
+      Math.min(cart.remaining,3+eventIndex*2)
+    );
+  }
+
+  drops=Math.min(cart.remaining,drops);
+  cart.remaining-=drops;
+
+  return drops;
+}
+
+function dollsHtmlV177(n){
+  return Array.from(
+    {length:Math.max(0,Math.floor(n))},
+    ()=>`<img src="icon/01.png" draggable="false" alt="">`
+  ).join('');
+}
 
 // =========================================================
 // V10.78 — real horizontal-scrolling cart race helpers
