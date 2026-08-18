@@ -26736,3 +26736,62 @@ canvas{
   display:block;
   overflow:visible;
 }
+
+
+/* =========================================================
+   V10.81 — cart visuals
+   ========================================================= */
+.cart-race-body-v181{
+  background:rgba(255,246,214,.55) !important;
+  border:3px solid #2d1805 !important;
+  box-shadow:0 4px 0 rgba(0,0,0,.12) !important;
+}
+.cart-race-body-v181 .cart-race-drawn-v180{
+  left:4px !important;
+  right:4px !important;
+  top:3px !important;
+  bottom:10px !important;
+}
+.cart-jump-v178{
+  background:linear-gradient(180deg,#ffd767 0%,#ff9b31 55%,#de5d00 100%) !important;
+  border:3px solid #4a2400 !important;
+  clip-path:polygon(0 100%,100% 100%,100% 0) !important;
+  box-shadow:0 4px 0 rgba(0,0,0,.15) !important;
+}
+.cart-jump-v178::after{
+  content:'JUMP';
+  position:absolute;
+  left:50%;
+  top:38%;
+  transform:translate(-50%,-50%) rotate(-22deg);
+  font-weight:900;
+  font-size:12px;
+  color:#fff8d7;
+  text-shadow:0 2px 0 rgba(0,0,0,.35);
+}
+
+
+/* =========================================================
+   V10.81 — トコトコモブくんキャッチャー
+   ========================================================= */
+.ttk-shell-v181{display:flex;flex-direction:column;gap:10px;min-height:100%;padding:10px}
+.ttk-top-v181{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.ttk-pill-v181{background:#fff;border:2px solid #213041;border-radius:999px;padding:6px 12px;font-weight:900;font-size:12px}
+.ttk-pill-v181 span{margin-left:8px}
+.ttk-stage-v181{position:relative;flex:1;min-height:540px;background:linear-gradient(180deg,#eef7ff 0%,#d7efff 48%,#daf6d0 48.5%,#bde3aa 100%);border:4px solid #233141;border-radius:22px;overflow:hidden}
+.ttk-rail-v181{position:absolute;left:0;right:0;height:4px;background:rgba(34,52,77,.25)}
+.ttk-rail-v181.a{top:82px}.ttk-rail-v181.b{top:100px}.ttk-rail-v181.c{top:118px}
+.ttk-meter-v181{position:absolute;left:28px;right:28px;height:12px;border-radius:999px;background:rgba(0,0,0,.11);border:2px solid rgba(0,0,0,.18)}
+.ttk-meter-v181.top{top:130px}.ttk-meter-v181.bottom{bottom:70px}
+.ttk-target-v181{position:absolute;top:-2px;bottom:-2px;left:70%;width:4px;background:#fff;border-radius:999px;box-shadow:0 0 0 2px rgba(0,0,0,.12)}
+.ttk-meter-v181.bottom .ttk-target-v181{left:50%}
+.ttk-meter-v181 i{position:absolute;top:-5px;width:10px;height:18px;background:#0e3f85;border:2px solid #fff;border-radius:999px;transform:translateX(-50%)}
+.ttk-field-v181{position:absolute;left:14px;right:14px;top:170px;bottom:100px;border-radius:18px;background:rgba(255,255,255,.18)}
+.ttk-fig-v181{position:absolute;width:56px;height:72px;text-align:center;pointer-events:none;user-select:none}
+.ttk-fig-v181 img{width:52px;height:52px;object-fit:contain;pointer-events:none;user-select:none;-webkit-user-drag:none}
+.ttk-fig-v181 span{display:block;font-size:9px;font-weight:900;color:#12263a;background:rgba(255,255,255,.9);padding:2px 5px;border-radius:999px;white-space:nowrap}
+.ttk-claw-v181{position:absolute;left:50%;top:132px;width:0;height:0;z-index:9}
+.ttk-claw-core-v181{position:absolute;left:-12px;top:-28px;width:24px;height:32px;background:#f7f7f7;border:3px solid #1c2730;border-bottom:none;border-radius:8px 8px 0 0}
+.ttk-claw-arm-v181{position:absolute;top:6px;left:-5px;width:10px;background:#f7f7f7;border:3px solid #1c2730;border-top:none;border-radius:0 0 12px 12px;transform-origin:top center}
+.ttk-stop-v181{position:absolute;left:50%;bottom:12px;transform:translateX(-50%);min-width:180px;z-index:10}
+.ttk-note-v181{position:absolute;left:50%;bottom:48px;transform:translateX(-50%);background:rgba(255,255,255,.95);border:2px solid #213041;border-radius:999px;padding:6px 12px;font-size:12px;font-weight:900;white-space:nowrap;z-index:10}
