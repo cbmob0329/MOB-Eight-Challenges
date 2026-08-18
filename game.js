@@ -337,7 +337,8 @@ const GAMES=[
   {no:99,key:"billiardsBattleRoyale",title:"モブくんビリヤードバトルロイヤル",sub:"4人専用。白球1個と色球5個を順番に打ち、落とした球数で競う",legacy:111},
   {no:100,key:"linkedCartBlast",title:"くっつきモブくんトロッコ大爆走",sub:"2対2タッグ専用。描いたトロッコ2台を連結し、同じ1km横スクロールコースを同時大爆走",legacy:112},
   {no:101,key:"soloCartBlast",title:"モブくんトロッコ大爆走",sub:"4人個人戦専用。描いたトロッコが1km横スクロールコースを実走し、残った人形数を競う",legacy:113},
-  {no:102,key:"deathGameChallenge",title:"モブくんデスゲームにチャレンジ",sub:"4〜8人個人戦専用。固定ルーレット順で扉を選び、生き残った1人が優勝",legacy:114}
+  {no:102,key:"deathGameChallenge",title:"モブくんデスゲームにチャレンジ",sub:"4〜8人個人戦専用。固定ルーレット順で扉を選び、生き残った1人が優勝",legacy:114},
+  {no:103,key:"tokotokoCatcher",title:"トコトコモブくんキャッチャー",sub:"動き続ける5体を1つのSTOPボタンで狙う。3回チャンスで1体20点",legacy:115}
 ];
 
 function legacyGameIndex(gameIndex){
@@ -449,7 +450,7 @@ function freshState(){
         paperPlane:{},tankMob:{},curlingMob:{},bubbleMob:{},
         changeMob:{},baggageMob:{},treasureMob:{},rouletteMob:{},excavationMob:{},
         oldMaidDuel:{},robotMarch:{},monsterMaster:{},scoutMan:{},
-        atafutaSurvival:{},waveMaster:{},battleRoyaleMob:{},littleMobShot:{},monsterBoxMob:{},alienBattleMob:{},mobMusou:{},iaidoMaster:{},killLeaderMob:{},mobSpeedRacer:{},summonMaster:{},mobPinball:{},hurdleRun:{},longJumpMob:{},pkKicker:{},threePoint:{},bowlingMob:{},waterSkip:{},tamaireMob:{},mineCartMob:{},airHockeyMob:{},ropeSwingMob:{},billiardsMob:{},billiardsBattleRoyale:{},linkedCartBlast:{},soloCartBlast:{},deathGameChallenge:{}
+        atafutaSurvival:{},waveMaster:{},battleRoyaleMob:{},littleMobShot:{},monsterBoxMob:{},alienBattleMob:{},mobMusou:{},iaidoMaster:{},killLeaderMob:{},mobSpeedRacer:{},summonMaster:{},mobPinball:{},hurdleRun:{},longJumpMob:{},pkKicker:{},threePoint:{},bowlingMob:{},waterSkip:{},tamaireMob:{},mineCartMob:{},airHockeyMob:{},ropeSwingMob:{},billiardsMob:{},billiardsBattleRoyale:{},linkedCartBlast:{},soloCartBlast:{},deathGameChallenge:{},tokotokoCatcher:{}
     },
     total:{},
     roundPoints:[],
@@ -559,7 +560,7 @@ function renderHome(){
     <section class="hero hero-v119">
       <div>
         <span class="kicker">SMARTPHONE PARTY GAME</span>
-        <h1>102 MINI<br>GAMES</h1>
+        <h1>103 MINI<br>GAMES</h1>
         <p>通常対戦は「チーム戦」「個人戦」。さらに8人/16人の「モブくんゲーム王決定戦」を遊べます。</p>
       </div>
       <div class="hero-mark">MOB</div>
@@ -584,7 +585,7 @@ function renderHome(){
     </section>
 
     <section class="panel flat">
-      <div class="panel-head"><h3>102 MINI GAMES</h3><span class="tag">GAME 1 → 102</span></div>
+      <div class="panel-head"><h3>103 MINI GAMES</h3><span class="tag">GAME 1 → 103</span></div>
       <div class="compact-game-grid home-compact-games-v119">
         ${GAMES.map(g=>`<div><b>${g.no}</b><span>${g.title}</span></div>`).join("")}
       </div>
@@ -643,7 +644,7 @@ function renderGameGuide(){
   screen.innerHTML=`
     <div class="game-head">
       <div><span class="kicker">GAME GUIDE</span><h2>各ゲームの説明</h2><p class="lead">内容と100点換算の目安を一覧で確認できます。</p></div>
-      <div class="game-badge">102</div>
+      <div class="game-badge">103</div>
     </div>
 
     <button id="guideBack" class="secondary wizard-back-v119" type="button">← メインへ戻る</button>
@@ -2082,7 +2083,7 @@ function renderPlayStyleSelect(){
       <button id="normalStyle" class="style-select-card normal" type="button">
         <span>NORMAL</span>
         <b>順番に全種目</b>
-        <small>GAME 1 → 102 を順番にプレイ</small>
+        <small>GAME 1 → 103 を順番にプレイ</small>
       </button>
       <button id="customStyle" class="style-select-card custom" type="button">
         <span>CUSTOM</span>
@@ -2092,7 +2093,7 @@ function renderPlayStyleSelect(){
     </div>
 
     <section class="panel flat">
-      <h3>102 MINI GAMES</h3>
+      <h3>103 MINI GAMES</h3>
       <div class="compact-game-grid">
         ${GAMES.map(g=>`<div><b>${g.no}</b><span>${g.title}</span></div>`).join("")}
       </div>
@@ -2394,7 +2395,8 @@ function scoreRuleForGame(index){
     "4人専用 / 色球5個 / 落とした色球1個=20点 / 最大100点",
     "2対2タッグ専用 / チーム20体スタート / ゴール時の残り1体=5点 / 最大100点",
     "4人個人戦専用 / 1人20体スタート / ゴール時の残り1体=5点 / 最大100点",
-    "4〜8人個人戦専用 / 1位100点・2位70点・3位50点・4位以下0点"
+    "4〜8人個人戦専用 / 1位100点・2位70点・3位50点・4位以下0点",
+    "3回チャンス / 1体GET=20点 / 5体GET=100点 / 全5体GETで即終了"
   ][legacyIndex];
 }
 
@@ -2621,6 +2623,8 @@ function showGameIntro(index){
     rules=`<li>4人個人戦専用。各自7秒で描いたトロッコにモブ人形20体を乗せます。</li><li>全員が同じ1km横スクロールコースを実走。スロープやジャンプ台を走り、残った人形1体=5点です。</li>`;
   }else if(legacyIndex===114){
     rules=`<li>4〜8人個人戦専用。最初のルーレットで決めた順番を最後まで固定し、1人ずつ空いている扉を選びます。</li><li>全員が入ったら3・2・1で扉が消滅。最後の1人が100点、2位70点、3位50点です。</li>`;
+  }else if(legacyIndex===115){
+    rules=`<li>STOPは1つだけ。最初にアームの広さを止め、次に下降中のアームをフィギュア中央付近で止めます。</li><li>5体は全部違う速さで端から端まで動き続けます。掴んでもGET確定ではなく、1体20点・3回までです。</li>`;
   }else{
     rules=`<li>${esc(g.sub)}</li>`;
   }
@@ -2772,6 +2776,7 @@ function humanReady(gameIndex,humanIndex){
     else if(legacyIndex===112)startLinkedCartBlast(p,humanIndex,runId);
     else if(legacyIndex===113)startSoloCartBlast(p,humanIndex,runId);
     else if(legacyIndex===114)startDeathGameChallenge(p,humanIndex,runId);
+    else if(legacyIndex===115)startTokotokoCatcher(p,humanIndex,runId);
     else{
       gameSessionActive=false;
       activeGameIndex=-1;
@@ -25648,7 +25653,7 @@ function softenCpuResultV121(gameIndex,p,ultra){
 
   const specificallyTuned=new Set([
     50,51,54,59,62,63,
-    64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,95,96,97,98,99,100,101,102,105,107,108,110
+    64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,95,96,97,98,99,100,101,102,105,107,108,110,115
   ]);
 
   if(
@@ -25991,6 +25996,10 @@ function simulateOneCpu(gameIndex,p){
     state.records.soloCartBlast[p.id]=ultra?randi(75,100):randi(10,90);
   }else if(legacyIndex===114){
     state.records.deathGameChallenge[p.id]=[0,0,50,70,100][randi(0,4)];
+  }else if(legacyIndex===115){
+    state.records.tokotokoCatcher[p.id]=ultra
+      ? [60,80,100][randi(0,2)]
+      : [0,20,40,60,80,100][randi(0,5)];
   }else{
     const fallbackKey=GAMES[gameIndex]?.key;
     if(fallbackKey&&state.records[fallbackKey])state.records[fallbackKey][p.id]=0;
@@ -26287,7 +26296,7 @@ function formatRecord(gameIndex,v){
   if(legacyIndex===107)return `${Math.round(v)}pt`;
   if(legacyIndex===108)return `${Math.round(v)}m`;
   if(legacyIndex===110)return `${Math.round(v)}pt`;
-  if(legacyIndex>=111&&legacyIndex<=114)return `${Math.round(v)}pt`;
+  if(legacyIndex>=111&&legacyIndex<=115)return `${Math.round(v)}pt`;
   return `${Math.round(v)}pt`;
 }
 
@@ -34485,6 +34494,300 @@ async function startDeathGameChallenge(p,humanIndex,runId){
   slots.forEach(s=>state.records.deathGameChallenge[s.member.id]=s.score);finishGroupGameV177(gameIndex);
 }
 
+
+// =========================================================
+// GAME 103 — トコトコモブくんキャッチャー
+// =========================================================
+async function startTokotokoCatcher(p,humanIndex,runId){
+  gameFit();
+  const gameIndex=GAMES.findIndex(g=>g.key==='tokotokoCatcher');
+
+  screen.innerHTML=`
+    <div class="ttk-shell-v183 gameplay-fit">
+      <div class="game-head">
+        <div><span class="kicker">${esc(p.name)}</span><h2>トコトコモブくんキャッチャー</h2><p class="lead">ONE STOP BUTTON / 3 CHANCES</p></div>
+        <div class="game-badge">${playBadge(humanIndex)}</div>
+      </div>
+
+      <div class="ttk-hud-v183">
+        <div><span>TRY</span><b id="ttkTry183">1 / 3</b></div>
+        <div><span>GET</span><b id="ttkGet183">0 / 5</b></div>
+        <div><span>SCORE</span><b id="ttkScore183">0</b></div>
+      </div>
+
+      <div id="ttkStage183" class="ttk-stage-v183">
+        <div class="ttk-machine-v183"></div>
+
+        <div class="ttk-width-meter-v183">
+          <span class="ttk-width-target-v183"></span>
+          <i id="ttkWidthCursor183"></i>
+          <b>ARM WIDTH</b>
+        </div>
+
+        <div id="ttkClaw183" class="ttk-claw-v183">
+          <div class="ttk-cable-v183"></div>
+          <div class="ttk-claw-head-v183"></div>
+          <div id="ttkArmL183" class="ttk-claw-hand-v183 left-v183"></div>
+          <div id="ttkArmR183" class="ttk-claw-hand-v183 right-v183"></div>
+        </div>
+
+        <div id="ttkWalk183" class="ttk-walk-v183">
+          <div class="ttk-center-line-v183"></div>
+        </div>
+
+        <div id="ttkCall183" class="ttk-call-v183">70%の白線でSTOP!</div>
+        <button id="ttkStop183" class="primary ttk-stop-v183" type="button">STOP</button>
+      </div>
+    </div>`;
+
+  const stage=document.getElementById('ttkStage183');
+  const walk=document.getElementById('ttkWalk183');
+  const claw=document.getElementById('ttkClaw183');
+  const armL=document.getElementById('ttkArmL183');
+  const armR=document.getElementById('ttkArmR183');
+  const cursor=document.getElementById('ttkWidthCursor183');
+  const call=document.getElementById('ttkCall183');
+  const stopBtn=document.getElementById('ttkStop183');
+  const tryEl=document.getElementById('ttkTry183');
+  const getEl=document.getElementById('ttkGet183');
+  const scoreEl=document.getElementById('ttkScore183');
+
+  void stage.offsetHeight;
+
+  const W=stage.clientWidth;
+  const H=stage.clientHeight;
+  const START_Y=74;
+  const FIG_Y=H*.64;
+  const BEST_Y=FIG_Y-46;
+  const MAX_Y=Math.min(H*.78,BEST_Y+110);
+  const speeds=[275,205,145,92,50];
+  const labels=['超速い','速い','普通','遅い','とても遅い'];
+
+  let active=false,finished=false;
+  let phase='width';
+  let tries=0,got=0;
+  let widthPct=20,widthDir=1;
+  let clawY=START_Y;
+  let held=[];
+  let phaseAt=0;
+  let last=performance.now();
+  let raf=null;
+
+  const figs=labels.map((label,i)=>({
+    id:i,label,
+    x:32+(W-64)*(i/4),
+    y:FIG_Y,
+    dir:i%2?-1:1,
+    speed:speeds[i],
+    held:false,
+    removed:false,
+    offsetX:0,
+    el:null
+  }));
+
+  figs.forEach(f=>{
+    const el=document.createElement('div');
+    el.className='ttk-figure-v183';
+    el.innerHTML=`<img src="icon/01.png" draggable="false" alt=""><span>${f.label}</span>`;
+    walk.appendChild(el);
+    f.el=el;
+  });
+
+  function spread(){return 24+widthPct*.80}
+  function widthQ(){return clamp(1-Math.abs(widthPct-70)/55,0,1)}
+  function depthQ(){return clamp(1-Math.abs(clawY-BEST_Y)/90,0,1)}
+
+  function updateHud(){
+    tryEl.textContent=`${Math.min(tries+1,3)} / 3`;
+    getEl.textContent=`${got} / 5`;
+    scoreEl.textContent=got*20;
+  }
+
+  function renderClaw(){
+    const s=spread();
+    claw.style.left=`${W*.5}px`;
+    claw.style.top=`${clawY}px`;
+    cursor.style.left=`${widthPct}%`;
+    armL.style.transform=`translateX(${-s}px) rotate(${22+s*.12}deg)`;
+    armR.style.transform=`translateX(${s}px) rotate(${-22-s*.12}deg)`;
+  }
+
+  function renderFigures(now){
+    figs.forEach(f=>{
+      if(f.removed){
+        f.el.style.display='none';
+        return;
+      }
+
+      let x=f.x,y=f.y,rot=0;
+      if(f.held){
+        x=W*.5+f.offsetX;
+        y=clawY+55;
+        rot=Math.sin(now*.05+f.id)*7;
+      }
+
+      f.el.style.transform=`translate3d(${x-27}px,${y-29}px,0) rotate(${rot}deg)`;
+    });
+  }
+
+  function grip(now){
+    phase='grip';
+    phaseAt=now;
+    held=[];
+
+    const s=spread();
+
+    figs.forEach(f=>{
+      if(f.removed)return;
+      if(
+        Math.abs(f.x-W*.5)<=s*.68+22 &&
+        Math.abs(clawY-BEST_Y)<=90
+      ){
+        f.held=true;
+        f.offsetX=clamp(f.x-W*.5,-s*.58,s*.58);
+        held.push(f);
+      }
+    });
+
+    call.textContent=held.length?`${held.length}体つかんだ！`:'つかめなかった…';
+    call.className=`ttk-call-v183 ${held.length?'hold-v183':'miss-v183'}`;
+    stopBtn.disabled=true;
+    beep(held.length?860:190,held.length?80:120,.024);
+  }
+
+  function resolveHeld(){
+    const wq=widthQ();
+    const dq=depthQ();
+    const multi=held.length>=5?.12:held.length===4?.09:held.length===3?.05:0;
+    let success=0;
+
+    held.forEach((f,i)=>{
+      const chance=clamp(.22+wq*.23+dq*.27-multi-i*.018,.07,.72);
+      if(Math.random()<chance){
+        f.removed=true;
+        f.held=false;
+        got++;
+        success++;
+      }else{
+        f.held=false;
+        f.y=FIG_Y;
+        f.x=clamp(W*.5+f.offsetX,28,W-28);
+        f.dir=Math.random()<.5?-1:1;
+        f.el.classList.add('ttk-fall-v183');
+        setTimeout(()=>f.el?.classList.remove('ttk-fall-v183'),380);
+      }
+    });
+
+    held=[];
+    tries++;
+    updateHud();
+
+    call.textContent=success?`${success}体GET!`:'掴んだけど落ちた…';
+    call.className=`ttk-call-v183 ${success?'get-v183':'miss-v183'}`;
+
+    if(got>=5||tries>=3){
+      finished=true;
+      active=false;
+      if(raf)cancelAnimationFrame(raf);
+
+      state.records.tokotokoCatcher[p.id]=got*20;
+
+      setTimeout(()=>{
+        if(isGameRunValid(runId)){
+          recordScreen(
+            gameIndex,p,humanIndex,
+            `${got*20}<small>pt</small>`,
+            `${got} / 5 GET / ${tries} TRY`
+          );
+        }
+      },650);
+      return;
+    }
+
+    phase='reset';
+    phaseAt=performance.now();
+  }
+
+  function resetTry(){
+    phase='width';
+    widthPct=20;
+    widthDir=1;
+    clawY=START_Y;
+    stopBtn.disabled=false;
+    call.textContent='70%の白線でSTOP!';
+    call.className='ttk-call-v183';
+    updateHud();
+  }
+
+  stopBtn.addEventListener('pointerdown',e=>{
+    if(!active||finished)return;
+    e.preventDefault();
+
+    if(phase==='width'){
+      phase='descend';
+      call.textContent='フィギュアの真ん中でSTOP!';
+      call.className='ttk-call-v183';
+      beep(620,45,.014);
+    }else if(phase==='descend'){
+      grip(performance.now());
+    }
+  },{passive:false});
+
+  updateHud();
+  renderClaw();
+  renderFigures(performance.now());
+
+  if(!(await countdown('TOKOTOKO CATCHER',runId,{transparent:true})))return;
+
+  active=true;
+  last=performance.now();
+
+  function frame(now){
+    if(!isGameRunValid(runId)||finished)return;
+    const dt=Math.min(.03,(now-last)/1000);
+    last=now;
+
+    // Uncaught figures keep moving during every active phase.
+    figs.forEach(f=>{
+      if(f.removed||f.held)return;
+      f.x+=f.dir*f.speed*dt;
+      if(f.x<=28){f.x=28;f.dir=1}
+      else if(f.x>=W-28){f.x=W-28;f.dir=-1}
+    });
+
+    if(phase==='width'){
+      widthPct+=widthDir*82*dt;
+      if(widthPct>=100){widthPct=100;widthDir=-1}
+      else if(widthPct<=0){widthPct=0;widthDir=1}
+    }else if(phase==='descend'){
+      clawY+=165*dt;
+      if(clawY>=MAX_Y){
+        clawY=MAX_Y;
+        grip(now);
+      }
+    }else if(phase==='grip'){
+      if(now-phaseAt>=520){
+        phase='retract';
+        phaseAt=now;
+      }
+    }else if(phase==='retract'){
+      clawY-=225*dt;
+      if(clawY<=START_Y){
+        clawY=START_Y;
+        resolveHeld();
+      }
+    }else if(phase==='reset'){
+      if(now-phaseAt>=680)resetTry();
+    }
+
+    renderClaw();
+    renderFigures(now);
+    raf=requestAnimationFrame(frame);
+  }
+
+  raf=requestAnimationFrame(frame);
+}
+
 renderHome();
 })();
 
@@ -34612,267 +34915,3 @@ function cartSoloHtmlV178(draw){
     <div class="cart-race-dolls-v178">${dollsHtmlV177(20)}</div>
   </div>`;
 }
-
-
-
-// =========================================================
-// V10.81 — トコトコモブくんキャッチャー
-// =========================================================
-function tokotokoCharSrcV181(){ return 'icon/01.png'; }
-function tokotokoSpeedNameV181(i){ return ['超速い','速い','普通','遅い','とても遅い'][i]||'普通'; }
-
-function tokotokoCreateFiguresV181(stageW){
-  const speeds=[260,190,130,85,48];
-  const list=[];
-  for(let i=0;i<5;i++){
-    list.push({
-      id:i,
-      x:50 + (stageW-100)*(i/4),
-      y:180 + (i%2)*64,
-      dir:i%2?-1:1,
-      speed:speeds[i],
-      w:50,h:50,
-      label:tokotokoSpeedNameV181(i),
-      removed:false,
-      held:false,
-      el:null,
-      bob:Math.random()*6.28
-    });
-  }
-  return list;
-}
-function tokotokoUpdateFigureElsV181(field, figs){
-  field.innerHTML='';
-  figs.filter(f=>!f.removed).forEach(f=>{
-    const el=document.createElement('div');
-    el.className='ttk-fig-v181';
-    el.innerHTML=`<img src="${tokotokoCharSrcV181()}" draggable="false" alt=""><span>${f.label}</span>`;
-    field.appendChild(el);
-    f.el=el;
-  });
-}
-function tokotokoRenderFiguresV181(figs, t){
-  figs.forEach(f=>{
-    if(!f.el||f.removed) return;
-    const y=f.y + Math.sin(t*0.004+f.bob)*(f.held?1.8:3.2);
-    f.el.style.transform=`translate(${(f.x-f.w/2).toFixed(1)}px,${(y-f.h/2).toFixed(1)}px) scale(${f.held?1.04:1})`;
-  });
-}
-function tokotokoStageHtmlV181(){
-  return `
-  <div class="ttk-shell-v181 gameplay-fit">
-    <div class="game-head">
-      <div>
-        <span class="kicker">NEW GAME</span>
-        <h1>トコトコモブくんキャッチャー</h1>
-        <p>3回チャンス / 1体20pt / 全取りなら即終了</p>
-      </div>
-      <div class="game-badge">CATCH</div>
-    </div>
-    <div class="ttk-top-v181">
-      <div class="ttk-pill-v181">SCORE <span id="ttkScore181">0</span></div>
-      <div class="ttk-pill-v181">TRY <span id="ttkTry181">1 / 3</span></div>
-      <div class="ttk-pill-v181">LEFT <span id="ttkLeft181">5</span></div>
-    </div>
-    <div class="ttk-stage-v181" id="ttkStage181">
-      <div class="ttk-rail-v181 a"></div>
-      <div class="ttk-rail-v181 b"></div>
-      <div class="ttk-rail-v181 c"></div>
-
-      <div class="ttk-meter-v181 top" id="ttkMeterWidth181"><span class="ttk-target-v181"></span><i id="ttkCursorWidth181"></i></div>
-      <div class="ttk-claw-v181" id="ttkClaw181">
-        <div class="ttk-claw-core-v181"></div>
-        <div class="ttk-claw-arm-v181 left" id="ttkArmL181"></div>
-        <div class="ttk-claw-arm-v181 right" id="ttkArmR181"></div>
-      </div>
-      <div class="ttk-field-v181" id="ttkField181"></div>
-      <div class="ttk-meter-v181 bottom" id="ttkMeterDrop181"><span class="ttk-target-v181"></span><i id="ttkCursorDrop181"></i></div>
-      <div class="ttk-note-v181" id="ttkNote181">アームの広さを決めよう！</div>
-      <button class="big-btn ttk-stop-v181" id="ttkStop181">STOP</button>
-    </div>
-  </div>`;
-}
-async function playTokotokoCatcherV181(slot, gameIndex){
-  const runId=activeGameRunId;
-  screen.innerHTML=tokotokoStageHtmlV181();
-  gameFit();
-  const countOk=await showCountdown(['3','2','1'],{runId});
-  if(!countOk||!isGameRunValid(runId)) return;
-
-  const stage=document.getElementById('ttkStage181');
-  const field=document.getElementById('ttkField181');
-  const scoreEl=document.getElementById('ttkScore181');
-  const tryEl=document.getElementById('ttkTry181');
-  const leftEl=document.getElementById('ttkLeft181');
-  const note=document.getElementById('ttkNote181');
-  const stopBtn=document.getElementById('ttkStop181');
-  const claw=document.getElementById('ttkClaw181');
-  const armL=document.getElementById('ttkArmL181');
-  const armR=document.getElementById('ttkArmR181');
-  const cursorW=document.getElementById('ttkCursorWidth181');
-  const cursorD=document.getElementById('ttkCursorDrop181');
-
-  const W=stage.clientWidth||360;
-  const H=stage.clientHeight||560;
-  let figs=tokotokoCreateFiguresV181(W);
-  tokotokoUpdateFigureElsV181(field, figs);
-
-  let caught=0, tries=0;
-  let phase='width';
-  let widthVal=0, widthDir=1;
-  let dropVal=0, dropDir=1;
-  let clawX=W*0.5, clawY=132;
-  let descending=false, rising=false;
-  let currentHeld=[];
-  let last=performance.now();
-
-  function setArms(){
-    const spread=16 + widthVal*0.64;
-    armL.style.transform=`translate(${-spread}px,0) rotate(${18+spread*0.22}deg)`;
-    armR.style.transform=`translate(${spread}px,0) rotate(${-18-spread*0.22}deg)`;
-    const h=58 + (H*0.52-clawY)*0.42;
-    armL.style.height=`${h}px`;
-    armR.style.height=`${h}px`;
-    claw.style.left=`${clawX}px`;
-    claw.style.top=`${clawY}px`;
-  }
-  function updateUI(){
-    scoreEl.textContent=String(caught*20);
-    tryEl.textContent=`${Math.min(tries+1,3)} / 3`;
-    leftEl.textContent=String(figs.filter(f=>!f.removed).length);
-  }
-  updateUI();
-  setArms();
-
-  stopBtn.addEventListener('click', ()=>{
-    if(phase==='width'){
-      phase='drop';
-      note.textContent='降下位置を止めよう！';
-    }else if(phase==='drop'){
-      phase='grab';
-      descending=true;
-      note.textContent='キャッチ！';
-    }
-  }, {passive:true});
-
-  function resolveAttempt(){
-    const holdCount=currentHeld.length;
-    const centerScore=1 - Math.min(1,Math.abs(dropVal-50)/50);
-    const widthScore=1 - Math.min(1,Math.abs(widthVal-70)/70);
-    currentHeld.forEach((f, idx)=>{
-      const base=0.28 + widthScore*0.42 + centerScore*0.34 - idx*0.06;
-      const multiPenalty = holdCount>=4 ? 0.10 : holdCount===3 ? 0.05 : 0;
-      const success=Math.random() < Math.max(0.08, base-multiPenalty);
-      if(success){
-        caught++;
-        f.removed=true;
-        if(f.el){
-          f.el.style.transition='transform .45s ease, opacity .45s ease';
-          f.el.style.transform='translate(-999px,-999px) scale(.1)';
-          f.el.style.opacity='0';
-        }
-      }
-      f.held=false;
-    });
-    updateUI();
-    tries++;
-    const left=figs.filter(f=>!f.removed).length;
-    if(caught>=5 || left<=0 || tries>=3){
-      note.textContent='結果発表！';
-      setTimeout(()=>{
-        if(!isGameRunValid(runId)) return;
-        recordScoreForSlot(slot.slot, caught*20);
-        finishGroupGameV177(gameIndex);
-      }, 800);
-    }else{
-      note.textContent='もう一回！';
-      setTimeout(()=>{
-        if(!isGameRunValid(runId)) return;
-        phase='width';
-        widthVal=0; widthDir=1;
-        dropVal=0; dropDir=1;
-        clawX=W*0.5; clawY=132;
-        currentHeld=[];
-        note.textContent='アームの広さを決めよう！';
-        updateUI();
-      }, 750);
-    }
-  }
-
-  function tick(ts){
-    if(!isGameRunValid(runId)) return;
-    const dt=Math.min(0.033,(ts-last)/1000||0.016);
-    last=ts;
-
-    figs.forEach(f=>{
-      if(f.removed) return;
-      if(!f.held){
-        f.x += f.dir*f.speed*dt;
-        if(f.x<28){ f.x=28; f.dir=1; }
-        if(f.x>W-28){ f.x=W-28; f.dir=-1; }
-      }else{
-        f.x += (clawX-f.x)*Math.min(1,dt*10);
-        f.y += (clawY+52-f.y)*Math.min(1,dt*10);
-      }
-    });
-
-    if(phase==='width'){
-      widthVal += widthDir*120*dt;
-      if(widthVal>=100){ widthVal=100; widthDir=-1; }
-      if(widthVal<=0){ widthVal=0; widthDir=1; }
-      cursorW.style.left=`${widthVal}%`;
-    }else if(phase==='drop'){
-      dropVal += dropDir*140*dt;
-      if(dropVal>=100){ dropVal=100; dropDir=-1; }
-      if(dropVal<=0){ dropVal=0; dropDir=1; }
-      cursorD.style.left=`${dropVal}%`;
-      clawX = W*(0.1 + 0.8*(dropVal/100));
-    }else if(phase==='grab'){
-      if(descending){
-        clawY += 350*dt;
-        if(clawY >= H*0.56){
-          clawY = H*0.56;
-          descending=false;
-          currentHeld=[];
-          const reach=26 + widthVal*0.7;
-          figs.forEach(f=>{
-            if(f.removed) return;
-            if(Math.abs(f.x-clawX) < reach*0.5 + f.w*0.3 && Math.abs(f.y-(H*0.56-2)) < 78){
-              f.held=true;
-              currentHeld.push(f);
-            }
-          });
-          note.textContent=currentHeld.length ? 'つかんだ！プルプル...' : 'つかめず…';
-          setTimeout(()=>{ rising=true; }, 450);
-        }
-      }else if(rising){
-        clawY -= 280*dt;
-        if(clawY<=132){
-          clawY=132;
-          rising=false;
-          phase='resolve';
-          resolveAttempt();
-        }
-      }
-    }
-
-    setArms();
-    tokotokoRenderFiguresV181(figs, ts);
-    requestAnimationFrame(tick);
-  }
-  requestAnimationFrame(tick);
-}
-(function(){
-  try{
-    const target = (typeof miniGames!=='undefined' && Array.isArray(miniGames)) ? miniGames :
-                   (Array.isArray(window.miniGames) ? window.miniGames : null);
-    if(target && !target.some(g=>g && g.title==='トコトコモブくんキャッチャー')){
-      target.push({
-        title:'トコトコモブくんキャッチャー',
-        desc:'動く5体を3回チャンスで狙うキャッチャー。',
-        kind:'score',
-        handler:playTokotokoCatcherV181
-      });
-    }
-  }catch(e){}
-})();
