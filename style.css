@@ -26826,3 +26826,269 @@ canvas{
 .ttk-call-v183.hold-v183{background:#a7dbef}.ttk-call-v183.get-v183{background:#91df8e}.ttk-call-v183.miss-v183{background:#efa099}
 .ttk-stop-v183{position:absolute!important;z-index:31;left:50%!important;bottom:10px!important;width:min(78%,270px)!important;transform:translateX(-50%)!important;margin:0!important;touch-action:none!important}
 @media(max-height:700px){.ttk-stage-v183{min-height:280px}}
+
+
+/* =========================================================
+   V10.84 — トコトコキャッチャー / existing catcher architecture
+   ========================================================= */
+.ttk-shell-v184{
+  height:100%;
+  min-height:0;
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  overflow:hidden
+}
+.ttk-hud-v184{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:5px
+}
+.ttk-hud-v184>div{
+  padding:5px 3px;
+  border:3px solid var(--ink);
+  border-radius:10px;
+  background:#fff;
+  text-align:center
+}
+.ttk-hud-v184 span{
+  display:block;
+  font-size:6px;
+  font-weight:1000
+}
+.ttk-hud-v184 b{
+  font-size:12px
+}
+.ttk-cabinet-v184{
+  flex:1;
+  min-height:0
+}
+.ttk-marquee-v184{
+  font-size:11px
+}
+.ttk-stage-v184{
+  position:relative;
+  height:390px;
+  min-height:315px;
+  overflow:hidden
+}
+.ttk-floor-v184{
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  height:31%;
+  background:
+    repeating-linear-gradient(
+      90deg,
+      rgba(17,19,26,.05) 0 34px,
+      rgba(17,19,26,.09) 34px 37px
+    ),
+    #e6dfc7;
+  border-top:4px solid rgba(17,19,26,.7)
+}
+.ttk-width-meter-v184{
+  position:absolute;
+  z-index:32;
+  left:22px;
+  right:22px;
+  top:16px;
+  height:21px;
+  border:3px solid var(--ink);
+  border-radius:999px;
+  background:#344651
+}
+.ttk-width-meter-v184 b{
+  position:absolute;
+  left:50%;
+  top:25px;
+  transform:translateX(-50%);
+  font-size:7px;
+  font-weight:1000;
+  color:#26333a
+}
+.ttk-width-meter-v184>i{
+  position:absolute;
+  top:-5px;
+  width:9px;
+  height:27px;
+  transform:translateX(-50%);
+  border:2px solid var(--ink);
+  border-radius:999px;
+  background:#ffd85d
+}
+.ttk-width-target-v184{
+  position:absolute;
+  left:70%;
+  top:-4px;
+  bottom:-4px;
+  width:5px;
+  transform:translateX(-50%);
+  border-radius:999px;
+  background:#fff;
+  box-shadow:
+    0 0 0 2px rgba(17,19,26,.16),
+    0 0 8px rgba(255,255,255,.92)
+}
+.ttk-crane-v184{
+  top:0!important;
+  width:54px;
+  transform:translateX(-50%);
+  z-index:24
+}
+.ttk-cable-v184{
+  top:14px!important
+}
+.ttk-head-v184{
+  z-index:25
+}
+.ttk-arm-v184{
+  height:58px
+}
+.ttk-figure-v184{
+  position:absolute;
+  z-index:12;
+  width:54px;
+  height:62px;
+  text-align:center;
+  transform-origin:50% 50%;
+  will-change:transform;
+  pointer-events:none
+}
+.ttk-figure-v184 img{
+  width:47px;
+  height:47px;
+  object-fit:contain;
+  filter:drop-shadow(0 2px 0 rgba(17,19,26,.18))
+}
+.ttk-figure-v184 span{
+  display:block;
+  margin-top:-3px;
+  padding:1px 4px;
+  border:2px solid rgba(17,19,26,.72);
+  border-radius:999px;
+  background:rgba(255,255,255,.92);
+  font-size:6px;
+  font-weight:1000;
+  white-space:nowrap
+}
+.ttk-figure-v184.prize-drop-v184{
+  z-index:28
+}
+.ttk-chute-v184{
+  z-index:29;
+  width:90px!important;
+  height:78px!important;
+  overflow:hidden
+}
+.ttk-chute-v184.hit-v184{
+  animation:ttkChuteHit184 .28s ease
+}
+@keyframes ttkChuteHit184{
+  45%{scale:1.07;rotate:-2deg}
+}
+.ttk-chute-pile-v184{
+  position:absolute;
+  inset:0;
+  pointer-events:none
+}
+.ttk-chute-pile-v184 img{
+  position:absolute;
+  width:22px;
+  height:22px;
+  object-fit:contain;
+  filter:drop-shadow(0 1px 0 rgba(0,0,0,.35))
+}
+.ttk-call-v184{
+  position:absolute;
+  z-index:34;
+  left:50%;
+  bottom:88px;
+  transform:translateX(-50%);
+  padding:5px 10px;
+  border:3px solid var(--ink);
+  border-radius:999px;
+  background:#fff4b0;
+  font-size:9px;
+  font-weight:1000;
+  white-space:nowrap;
+  pointer-events:none
+}
+.ttk-call-v184.hold-v184{
+  background:#a8dcf0
+}
+.ttk-call-v184.carry-v184{
+  background:#c8b7ef
+}
+.ttk-call-v184.get-v184{
+  background:#95df91
+}
+.ttk-call-v184.miss-v184{
+  background:#efa29b
+}
+.ttk-call-v184.finish-v184{
+  background:#ffe15e
+}
+.ttk-panel-v184{
+  display:grid!important;
+  place-items:center!important;
+  min-height:72px
+}
+.ttk-stop-v184{
+  width:min(86%,300px)!important;
+  min-height:52px!important;
+  margin:0!important;
+  touch-action:none!important
+}
+.ttk-get-pop-v184{
+  position:absolute;
+  z-index:40;
+  transform:translate(-50%,-50%);
+  padding:4px 7px;
+  border:3px solid var(--ink);
+  border-radius:999px;
+  background:#ffe15d;
+  font-size:10px;
+  font-weight:1000;
+  pointer-events:none;
+  animation:ttkGetPop184 .70s ease forwards
+}
+@keyframes ttkGetPop184{
+  0%{
+    opacity:0;
+    translate:0 12px;
+    scale:.75
+  }
+  18%{
+    opacity:1;
+    translate:0 0;
+    scale:1.12
+  }
+  100%{
+    opacity:0;
+    translate:0 -36px;
+    scale:.94
+  }
+}
+@media(max-height:700px){
+  .ttk-stage-v184{
+    height:330px;
+    min-height:285px
+  }
+}
+
+
+/* =========================================================
+   V10.85 — トコトコ歩行調整
+   ========================================================= */
+.ttk-figure-v184{
+  width:56px!important;
+  height:56px!important;
+}
+.ttk-figure-v184 img{
+  width:50px!important;
+  height:50px!important;
+}
+.ttk-figure-v184 span{
+  display:none!important;
+}
