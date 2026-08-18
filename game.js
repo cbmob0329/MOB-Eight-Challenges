@@ -26342,7 +26342,16 @@ function renderGameResult(gameIndex,ranked){
       </div>
     </section>
 
-    ${tt?`<section class="panel"><h3>TEAM TOTAL</h3><div class="team-total multi-team-v119">${teamKeys().map((key,i)=>`<div class="team-box ${key.toLowerCase()}"><span>${mode().teamNames[key]}</span><b>${tt[key]}pt</b></div>`).join('')}</div></section>`:""}
+    ${tt?`<section class="panel"><h3>TEAM TOTAL</h3><div class="team-total multi-team-v119">${teamKeys()
+      .map(key=>({key,points:tt[key]??0}))
+      .sort((a,b)=>b.points-a.points||a.key.localeCompare(b.key))
+      .map((x,i,arr)=>{
+        const rank=i>0&&x.points===arr[i-1].points
+          ? (arr[i-1]._rank??i)
+          : i+1;
+        x._rank=rank;
+        return `<div class="team-box ${x.key.toLowerCase()}"><span>${rank}位 ${mode().teamNames[x.key]}</span><b>${x.points}pt</b></div>`;
+      }).join('')}</div></section>`:""}
 
     <button id="resultNext" class="primary">${hasNext?`NEXT / ${GAMES[state.playlist[state.roundIndex+1]].title}`:"FINAL RESULT"}</button>
   `;
@@ -26394,7 +26403,16 @@ function renderFinal(){
       </div>
     </section>
 
-    ${tt?`<section class="panel"><h3>FINAL TEAM RANKING</h3><div class="team-final-grid-v119">${teamKeys().map(key=>({key,points:tt[key]})).sort((a,b)=>b.points-a.points).map((x,i)=>`<div class="team-box ${x.key.toLowerCase()}"><span>${i+1}位 ${mode().teamNames[x.key]}</span><b>${x.points}pt</b></div>`).join('')}</div></section>`:''}
+    ${tt?`<section class="panel"><h3>FINAL TEAM RANKING</h3><div class="team-final-grid-v119">${teamKeys()
+      .map(key=>({key,points:tt[key]??0}))
+      .sort((a,b)=>b.points-a.points||a.key.localeCompare(b.key))
+      .map((x,i,arr)=>{
+        const rank=i>0&&x.points===arr[i-1].points
+          ? (arr[i-1]._rank??i)
+          : i+1;
+        x._rank=rank;
+        return `<div class="team-box ${x.key.toLowerCase()}"><span>${rank}位 ${mode().teamNames[x.key]}</span><b>${x.points}pt</b></div>`;
+      }).join('')}</div></section>`:''}
 
     <section class="panel">
       <h3>GAME SCORE</h3>
