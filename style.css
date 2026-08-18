@@ -26697,3 +26697,42 @@ canvas{
     min-height:270px
   }
 }
+
+
+/* =========================================================
+   V10.80 — cart visual fidelity override
+   ========================================================= */
+.cart-race-body-v180,
+.cart-solo-body-v180{
+  position:relative;
+  background:linear-gradient(180deg,#f8efc3 0%,#e3bd78 52%,#c88f45 100%);
+  border:4px solid #2d1805;
+  border-radius:22px 22px 26px 26px;
+  box-shadow:0 8px 0 rgba(0,0,0,.18);
+  overflow:visible;
+}
+.cart-race-body-v180{
+  width:200px;
+  height:116px;
+}
+.cart-solo-body-v180{
+  width:240px;
+  height:132px;
+}
+.cart-race-drawn-v180{
+  position:absolute;
+  left:8px;
+  right:8px;
+  top:6px;
+  bottom:12px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:visible;
+}
+.cart-race-drawn-v180 svg{
+  width:100%;
+  height:100%;
+  display:block;
+  overflow:visible;
+}

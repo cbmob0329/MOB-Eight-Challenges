@@ -34469,3 +34469,76 @@ async function startDeathGameChallenge(p,humanIndex,runId){
 
 renderHome();
 })();
+
+
+
+// =========================================================
+// V10.80 — cart visual fidelity override
+// 描いたトロッコを、よりそのままの形で走らせる
+// =========================================================
+function cartBoundsV180(strokes){
+  const valid=(strokes||[]).filter(s=>s&&s.length>=2);
+  let minX=Infinity,maxX=-Infinity,minY=Infinity,maxY=-Infinity,count=0;
+  for(const s of valid){
+    for(const p of s){
+      count++;
+      if(p.x<minX)minX=p.x;
+      if(p.x>maxX)maxX=p.x;
+      if(p.y<minY)minY=p.y;
+      if(p.y>maxY)maxY=p.y;
+    }
+  }
+  if(!count||!Number.isFinite(minX)) return {minX:0,maxX:260,minY:0,maxY:180,w:260,h:180,cy:90};
+  return {
+    minX,maxX,minY,maxY,
+    w:Math.max(1,maxX-minX),
+    h:Math.max(1,maxY-minY),
+    cy:(minY+maxY)/2
+  };
+}
+function cartRawSvgV180(strokes,strokeW=11){
+  const b=cartBoundsV180(strokes);
+  const pad=20;
+  const vbX=Math.floor(b.minX-pad);
+  const vbY=Math.floor(b.minY-pad);
+  const vbW=Math.ceil(b.w+pad*2);
+  const vbH=Math.ceil(b.h+pad*2);
+  const paths=(strokes||[])
+    .filter(s=>s&&s.length>=2)
+    .map(s=>`<polyline points="${s.map(p=>`${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ')}" fill="none" stroke="#2d1805" stroke-linecap="round" stroke-linejoin="round" stroke-width="${strokeW}"></polyline>`)
+    .join('');
+  return `<svg viewBox="${vbX} ${vbY} ${vbW} ${vbH}" preserveAspectRatio="xMidYMid meet" aria-hidden="true">${paths}</svg>`;
+}
+function cartPairHtmlV178(side,draw1,draw2){
+  return `
+  <div class="cart-race-pair-v178 ${side}">
+    <div class="cart-race-cart-v178">
+      <div class="cart-race-body-v180">
+        <div class="cart-race-drawn-v180">${cartRawSvgV180(draw1?.strokes||[])}</div>
+        <div class="cart-race-wheel-v178 left"></div>
+        <div class="cart-race-wheel-v178 right"></div>
+      </div>
+      <div class="cart-race-dolls-v178">${dollsHtmlV177(10)}</div>
+    </div>
+    <div class="cart-race-chain-v178"></div>
+    <div class="cart-race-cart-v178">
+      <div class="cart-race-body-v180">
+        <div class="cart-race-drawn-v180">${cartRawSvgV180(draw2?.strokes||[])}</div>
+        <div class="cart-race-wheel-v178 left"></div>
+        <div class="cart-race-wheel-v178 right"></div>
+      </div>
+      <div class="cart-race-dolls-v178">${dollsHtmlV177(10)}</div>
+    </div>
+  </div>`;
+}
+function cartSoloHtmlV178(draw){
+  return `
+  <div class="cart-solo-shell-v178">
+    <div class="cart-solo-body-v180">
+      <div class="cart-race-drawn-v180">${cartRawSvgV180(draw?.strokes||[])}</div>
+      <div class="cart-race-wheel-v178 left"></div>
+      <div class="cart-race-wheel-v178 right"></div>
+    </div>
+    <div class="cart-race-dolls-v178">${dollsHtmlV177(20)}</div>
+  </div>`;
+}
