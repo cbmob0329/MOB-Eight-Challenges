@@ -26946,11 +26946,17 @@ async function startHurdleRun(p,humanIndex,runId){
   gameFit();
 
   const gameIndex=GAMES.findIndex(g=>g.key==='hurdleRun');
-  const TOTAL_M=200;
-  const PX_PER_M=7;
-  const TRACK_W=TOTAL_M*PX_PER_M+260;
-  const hurdleMeters=[22,46,70,94,118,142,166,190];
-  const hurdles=hurdleMeters.map((m,i)=>({m,i,hit:false,passed:false}));
+
+  // Internal race distance is longer, while the HUD still represents a 200m race.
+  // This lets us raise actual world speed substantially without making the race end too soon.
+  const DISPLAY_M=200;
+  const COURSE_UNITS=286;
+  const PX_PER_UNIT=7.4;
+  const TRACK_W=COURSE_UNITS*PX_PER_UNIT+300;
+
+  const hurdleDisplayMeters=[22,46,70,94,118,142,166,190];
+  const hurdleUnits=hurdleDisplayMeters.map(m=>m/DISPLAY_M*COURSE_UNITS);
+  const hurdles=hurdleUnits.map((m,i)=>({m,i,hit:false,passed:false}));
 
   screen.innerHTML=`
     <div class="hurdle-shell-v160 gameplay-fit">
@@ -26966,7 +26972,7 @@ async function startHurdleRun(p,humanIndex,runId){
       <div class="hurdle-hud-v160">
         <div><span>TIME</span><b id="hurdleTime160">0.00</b></div>
         <div><span>DISTANCE</span><b id="hurdleDistance160">0m</b></div>
-        <div><span>SPEED</span><b id="hurdleSpeed160">17.0</b></div>
+        <div><span>SPEED</span><b id="hurdleSpeed160">24.0</b></div>
       </div>
 
       <div id="hurdleStage160" class="hurdle-stage-v160">
@@ -26982,11 +26988,11 @@ async function startHurdleRun(p,humanIndex,runId){
 
         <div id="hurdleWorld160" class="hurdle-world-v160" style="width:${TRACK_W}px">
           ${hurdles.map(h=>`
-            <div class="hurdle-gate-v160" data-hurdle="${h.i}" style="left:${h.m*PX_PER_M}px">
+            <div class="hurdle-gate-v160" data-hurdle="${h.i}" style="left:${h.m*PX_PER_UNIT}px">
               <i></i><i></i><b></b>
             </div>`).join('')}
 
-          <div class="hurdle-finish-v160" style="left:${TOTAL_M*PX_PER_M}px">
+          <div class="hurdle-finish-v160" style="left:${COURSE_UNITS*PX_PER_UNIT}px">
             <i></i><b>FINISH</b>
           </div>
         </div>
@@ -27019,8 +27025,8 @@ async function startHurdleRun(p,humanIndex,runId){
   let last=0;
   let start=0;
   let distance=0;
-  let targetSpeed=17.0;
-  let speed=17.0;
+  let targetSpeed=24.0;
+  let speed=24.0;
   let jumpY=0;
   let jumpV=0;
   let onGround=true;
@@ -27028,10 +27034,14 @@ async function startHurdleRun(p,humanIndex,runId){
   let passedCount=0;
 
   function render(){
-    const cameraX=distance*PX_PER_M-82;
+    const cameraX=distance*PX_PER_UNIT-82;
     world.style.transform=`translate3d(${-cameraX}px,0,0)`;
     player.style.transform=`translate3d(0,${-jumpY}px,0)`;
-    distanceEl.textContent=`${Math.min(200,distance).toFixed(0)}m`;
+
+    const displayDistance=
+      clamp(distance/COURSE_UNITS*DISPLAY_M,0,DISPLAY_M);
+
+    distanceEl.textContent=`${displayDistance.toFixed(0)}m`;
     speedEl.textContent=speed.toFixed(1);
   }
 
@@ -27115,9 +27125,9 @@ async function startHurdleRun(p,humanIndex,runId){
     last=now;
     const elapsed=now-start;
 
-    // Perfect run is balanced at roughly 9.8〜10.1 sec.
+    // Faster visual/physical pace, still balanced to roughly the same total race time.
     const penalty=now<stumbleUntil?.55:1;
-    speed+=(targetSpeed-speed)*Math.min(1,dt*5.5);
+    speed+=(targetSpeed-speed)*Math.min(1,dt*6.2);
     distance+=speed*penalty*dt;
 
     if(!onGround){
@@ -27146,13 +27156,13 @@ async function startHurdleRun(p,humanIndex,runId){
       if(!h.passed&&distance>h.m+1.35){
         h.passed=true;
         passedCount++;
-        targetSpeed=Math.min(24.5,17+passedCount*.75);
+        targetSpeed=Math.min(34.5,24+passedCount*1.05);
 
         const gate=world.querySelector(`[data-hurdle="${h.i}"]`);
         gate?.classList.add('passed-v160');
 
         if(!h.hit){
-          msg.textContent=`CLEAR ${passedCount}/10`;
+          msg.textContent=`CLEAR ${passedCount}/8`;
           setTimeout(()=>{if(msg.textContent.startsWith('CLEAR'))msg.textContent='';},320);
           beep(780+passedCount*16,38,.011);
         }
@@ -27161,8 +27171,8 @@ async function startHurdleRun(p,humanIndex,runId){
 
     timeEl.textContent=(elapsed/1000).toFixed(2);
 
-    if(distance>=TOTAL_M){
-      distance=TOTAL_M;
+    if(distance>=COURSE_UNITS){
+      distance=COURSE_UNITS;
       render();
       finishRace(elapsed);
       return;
@@ -34614,7 +34624,46 @@ async function startAmidakujiMasters(p,humanIndex,runId){
 
   svg.innerHTML=markup;
   const maxScroll=Math.max(0,worldH-viewport.clientHeight);
-  world.style.transform='translateY(0px)';
+
+  // Show the GOALs first, then scroll smoothly back to the entrances.
+  world.style.transform=`translateY(${-maxScroll}px)`;
+  entrances.hidden=true;
+  viewport.classList.add('goal-preview-v126');
+
+  beep(540,70,.018);
+  await wait(1050);
+
+  if(!isGameRunValid(runId))return;
+
+  await new Promise(resolve=>{
+    const st=performance.now();
+    const duration=1550;
+
+    const frame=now=>{
+      if(!isGameRunValid(runId)){
+        resolve();
+        return;
+      }
+
+      const t=clamp((now-st)/duration,0,1);
+      const e=1-Math.pow(1-t,3);
+
+      world.style.transform=
+        `translateY(${-maxScroll*(1-e)}px)`;
+
+      if(t<1)raf=requestAnimationFrame(frame);
+      else resolve();
+    };
+
+    raf=requestAnimationFrame(frame);
+  });
+
+  if(!isGameRunValid(runId))return;
+
+  viewport.classList.remove('goal-preview-v126');
+  hint.textContent='入口を1つ選べ！';
+  entrances.hidden=false;
+  entrances.classList.add('show-v126');
 
   function buildPath(startLane){
     let lane=startLane;
@@ -35138,6 +35187,17 @@ async function startTokotokoCatcher(p,humanIndex,runId){
   const W=stage.clientWidth,H=stage.clientHeight;
   const CENTER_X=W*.52,START_Y=18,FIG_Y=H*.84,MAX_HEAD_Y=H*.61;
   const CHUTE_X=54,CHUTE_Y=H-40;
+
+  // Treat the visible PRIZE box as a solid left wall.
+  const stageRect=stage.getBoundingClientRect();
+  const chuteRect=chute.getBoundingClientRect();
+  const WALK_MIN_X=clamp(
+    chuteRect.right-stageRect.left+30,
+    94,
+    W*.34
+  );
+  const WALK_MAX_X=W-28;
+
   const speeds=[62,60,64,58,61];
 
   let active=false,finished=false,phase='width',tries=0,got=0;
@@ -35146,7 +35206,7 @@ async function startTokotokoCatcher(p,humanIndex,runId){
   const now0=performance.now();
 
   const figs=speeds.map((speed,i)=>({
-    id:i,x:34+(W-68)*(i/4),y:FIG_Y,dir:Math.random()<.5?-1:1,speed,
+    id:i,x:WALK_MIN_X+(WALK_MAX_X-WALK_MIN_X)*(i/4),y:FIG_Y,dir:Math.random()<.5?-1:1,speed,
     nextTurn:now0+rand(700,1900),walkPhase:Math.random()*Math.PI*2,
     removed:false,held:false,falling:false,releasing:false,holdDX:0,holdDY:0,el:null
   }));
@@ -35238,7 +35298,7 @@ async function startTokotokoCatcher(p,humanIndex,runId){
   }
 
   async function fallBack(f){
-    const startX=craneX+f.holdDX,startY=craneY+f.holdDY,targetX=clamp(startX+rand(-55,55),30,W-30),targetY=FIG_Y;
+    const startX=craneX+f.holdDX,startY=craneY+f.holdDY,targetX=clamp(startX+rand(-55,55),WALK_MIN_X,WALK_MAX_X),targetY=FIG_Y;
     f.held=false;f.falling=true;f.el.style.transition='none';
     f.el.style.transform=`translate3d(${startX-27}px,${startY-29}px,0) rotate(0deg)`;void f.el.offsetWidth;
     f.el.style.transition='transform .72s cubic-bezier(.24,.68,.42,1.12)';
@@ -35379,8 +35439,15 @@ async function startTokotokoCatcher(p,humanIndex,runId){
       if(f.removed||f.held||f.falling||f.releasing)return;
       if(now>=f.nextTurn){f.dir=Math.random()<.5?-1:1;f.nextTurn=now+rand(750,2100)}
       f.x+=f.dir*f.speed*dt;
-      if(f.x<=28){f.x=28;f.dir=1;f.nextTurn=now+rand(650,1500)}
-      else if(f.x>=W-28){f.x=W-28;f.dir=-1;f.nextTurn=now+rand(650,1500)}
+      if(f.x<=WALK_MIN_X){
+        f.x=WALK_MIN_X;
+        f.dir=1;
+        f.nextTurn=now+rand(650,1500);
+      }else if(f.x>=WALK_MAX_X){
+        f.x=WALK_MAX_X;
+        f.dir=-1;
+        f.nextTurn=now+rand(650,1500);
+      }
     });
 
     if(phase==='width'){

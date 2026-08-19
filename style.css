@@ -27966,3 +27966,26 @@ canvas{
 .amida-master-mob-v188{width:24px!important;height:24px!important}
 
 @media(max-height:700px){.ttk-stage-v188{height:395px!important;min-height:340px!important}}
+
+
+/* V10.89 — hurdle speed feeling */
+.hurdle-stage-v160::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+  opacity:.17;
+  background:
+    repeating-linear-gradient(
+      0deg,
+      transparent 0 27px,
+      rgba(255,255,255,.8) 27px 29px,
+      transparent 29px 62px
+    );
+  transform:skewX(-18deg);
+  animation:hurdleSpeedLines189 .32s linear infinite;
+}
+@keyframes hurdleSpeedLines189{
+  from{translate:0 0}
+  to{translate:-34px 0}
+}
