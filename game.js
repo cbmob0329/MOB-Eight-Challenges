@@ -341,9 +341,8 @@ const GAMES=[
   {no:103,key:"tokotokoCatcher",title:"トコトコモブくんキャッチャー",sub:"アーム幅→左右位置→降下→STOP。動く7体を3回で狙う",legacy:115},
   {no:104,key:"amidakujiMasters",title:"モブくんのあみだくじマスターズ",sub:"16本のあみだくじ。決まった16種類のGOAL数字から到着点を競う",legacy:116},
   {no:105,key:"djMaster",title:"モブくんDJの達人",sub:"10秒で流れる20個の音符に合わせ、巨大ターンテーブルをスクラッチ",legacy:117},
-  {no:106,key:"rocketPunch",title:"モブくんロケットパンチ",sub:"長押しチャージで巨大ロケットパンチを発射。途中で1回BOOST",legacy:118},
-  {no:107,key:"flagRaise",title:"モブくん旗上げ",sub:"赤・両方・白の3ボタン。もう一度押せば旗を下げる",legacy:119},
-  {no:108,key:"coinTower",title:"モブくんコインタワー",sub:"左右に動くMOBコインをDROP。物理で積み上げて10秒勝負",legacy:120}
+  {no:106,key:"rocketPunch",title:"モブくんロケットパンチ",sub:"拳へパワーを溜めて巨大ロケットパンチ。DEAD / MAX / OVERのラインを狙う",legacy:118},
+  {no:107,key:"flagRaise",title:"モブくん旗上げ",sub:"赤・両方・白の3ボタン。もう一度押せば旗を下げる",legacy:119}
 ];
 
 function legacyGameIndex(gameIndex){
@@ -455,7 +454,7 @@ function freshState(){
         paperPlane:{},tankMob:{},curlingMob:{},bubbleMob:{},
         changeMob:{},baggageMob:{},treasureMob:{},rouletteMob:{},excavationMob:{},
         oldMaidDuel:{},robotMarch:{},monsterMaster:{},scoutMan:{},
-        atafutaSurvival:{},waveMaster:{},battleRoyaleMob:{},littleMobShot:{},monsterBoxMob:{},alienBattleMob:{},mobMusou:{},iaidoMaster:{},killLeaderMob:{},mobSpeedRacer:{},summonMaster:{},mobPinball:{},hurdleRun:{},longJumpMob:{},pkKicker:{},threePoint:{},bowlingMob:{},waterSkip:{},tamaireMob:{},mineCartMob:{},airHockeyMob:{},ropeSwingMob:{},billiardsMob:{},billiardsBattleRoyale:{},linkedCartBlast:{},soloCartBlast:{},deathGameChallenge:{},tokotokoCatcher:{},amidakujiMasters:{},djMaster:{},rocketPunch:{},flagRaise:{},coinTower:{}
+        atafutaSurvival:{},waveMaster:{},battleRoyaleMob:{},littleMobShot:{},monsterBoxMob:{},alienBattleMob:{},mobMusou:{},iaidoMaster:{},killLeaderMob:{},mobSpeedRacer:{},summonMaster:{},mobPinball:{},hurdleRun:{},longJumpMob:{},pkKicker:{},threePoint:{},bowlingMob:{},waterSkip:{},tamaireMob:{},mineCartMob:{},airHockeyMob:{},ropeSwingMob:{},billiardsMob:{},billiardsBattleRoyale:{},linkedCartBlast:{},soloCartBlast:{},deathGameChallenge:{},tokotokoCatcher:{},amidakujiMasters:{},djMaster:{},rocketPunch:{},flagRaise:{}
     },
     total:{},
     roundPoints:[],
@@ -565,7 +564,7 @@ function renderHome(){
     <section class="hero hero-v119">
       <div>
         <span class="kicker">SMARTPHONE PARTY GAME</span>
-        <h1>108 MINI<br>GAMES</h1>
+        <h1>107 MINI<br>GAMES</h1>
         <p>通常対戦は「チーム戦」「個人戦」。さらに8人/16人の「モブくんゲーム王決定戦」を遊べます。</p>
       </div>
       <div class="hero-mark">MOB</div>
@@ -590,7 +589,7 @@ function renderHome(){
     </section>
 
     <section class="panel flat">
-      <div class="panel-head"><h3>108 MINI GAMES</h3><span class="tag">GAME 1 → 108</span></div>
+      <div class="panel-head"><h3>107 MINI GAMES</h3><span class="tag">GAME 1 → 107</span></div>
       <div class="compact-game-grid home-compact-games-v119">
         ${GAMES.map(g=>`<div><b>${g.no}</b><span>${g.title}</span></div>`).join("")}
       </div>
@@ -649,7 +648,7 @@ function renderGameGuide(){
   screen.innerHTML=`
     <div class="game-head">
       <div><span class="kicker">GAME GUIDE</span><h2>各ゲームの説明</h2><p class="lead">内容と100点換算の目安を一覧で確認できます。</p></div>
-      <div class="game-badge">103</div>
+      <div class="game-badge">107</div>
     </div>
 
     <button id="guideBack" class="secondary wizard-back-v119" type="button">← メインへ戻る</button>
@@ -2088,7 +2087,7 @@ function renderPlayStyleSelect(){
       <button id="normalStyle" class="style-select-card normal" type="button">
         <span>NORMAL</span>
         <b>順番に全種目</b>
-        <small>GAME 1 → 108 を順番にプレイ</small>
+        <small>GAME 1 → 107 を順番にプレイ</small>
       </button>
       <button id="customStyle" class="style-select-card custom" type="button">
         <span>CUSTOM</span>
@@ -2098,7 +2097,7 @@ function renderPlayStyleSelect(){
     </div>
 
     <section class="panel flat">
-      <h3>108 MINI GAMES</h3>
+      <h3>107 MINI GAMES</h3>
       <div class="compact-game-grid">
         ${GAMES.map(g=>`<div><b>${g.no}</b><span>${g.title}</span></div>`).join("")}
       </div>
@@ -2404,9 +2403,8 @@ function scoreRuleForGame(index){
     "3回チャンス / 1体GET=20点 / 5体GET=100点 / 最大表示140点 / 順位評価は100点上限",
     "GOALの数字がそのまま得点 / 1・5・10・15・20・25・30・35・40・45・50・55・60・80・90・100",
     "20音符 / PERFECT=5点・NICE=4点・GOOD=2点 / 10秒 / 最大100点",
-    "横一直線のロケットパンチ / 到達1000m=100点 / 長押しチャージ + 飛行中BOOST1回",
-    "10秒 / 赤・両方・白の3ボタン / 正解数÷出題数を0〜100点化",
-    "10秒DROP / 終了時に同じタワーへ残ったコイン15枚以上=100点"
+    "横一直線のロケットパンチ / DEAD 0〜24・MAX 90〜100・100超OVERHEAT / 到達1000m=100点",
+    "10秒 / 赤・両方・白の3ボタン / 正解数÷出題数を0〜100点化"
   ][legacyIndex];
 }
 
@@ -2640,11 +2638,9 @@ function showGameIntro(index){
   }else if(legacyIndex===117){
     rules=`<li>上のラインを右から左へ流れる音符に合わせて、下の巨大ターンテーブルを左右へ擦ります。</li><li>10秒で20音符。タイミングでGOOD / NICE! / PERFECT!!が決まり、最大100点です。</li>`;
   }else if(legacyIndex===118){
-    rules=`<li>PUNCHを長押ししてチャージし、好きな瞬間に離して巨大ロケットグローブを横一直線へ発射します。</li><li>90〜100付近が強力。100を超えるとOVERHEAT。飛行中に1回だけ出るBOOSTも狙います。</li>`;
+    rules=`<li>PUNCH長押しで拳へパワーを集中。25未満と100超はDEAD ZONE、90〜100がMAXゾーンです。</li><li>離すと巨大な拳が横一直線へ発射。障害物を派手に粉砕し、飛行中に1回だけ出るBOOSTも狙います。</li>`;
   }else if(legacyIndex===119){
     rules=`<li>赤・両方・白の3ボタンだけ。上げている旗のボタンをもう一度押すと下がります。</li><li>10秒間、現在の旗状態に合った指示へ素早く対応。間違えても続行します。</li>`;
-  }else if(legacyIndex===120){
-    rules=`<li>左右へ動くMOBコインをDROPするだけ。着地後も固定せず、ぶつかる・滑る・回る・崩れる物理タワーです。</li><li>10秒終了時、同じタワーに残ったコイン枚数を競います。15枚以上で100点。</li>`;
   }else{
     rules=`<li>${esc(g.sub)}</li>`;
   }
@@ -2801,7 +2797,6 @@ function humanReady(gameIndex,humanIndex){
     else if(legacyIndex===117)startDjMaster(p,humanIndex,runId);
     else if(legacyIndex===118)startRocketPunch(p,humanIndex,runId);
     else if(legacyIndex===119)startFlagRaise(p,humanIndex,runId);
-    else if(legacyIndex===120)startCoinTower(p,humanIndex,runId);
     else{
       gameSessionActive=false;
       activeGameIndex=-1;
@@ -4200,7 +4195,7 @@ async function startCatcher(p,humanIndex,runId){
   const CHUTE_Y=H-40;
 
   // Real prize-pile physics.
-  const BODY_R=18;
+  const BODY_R=14.5;
   const PHYS_FLOOR_Y=H*.89;
   const PHYS_MIN_X=W*.17;
   const PHYS_MAX_X=W*.93;
@@ -4234,10 +4229,12 @@ async function startCatcher(p,humanIndex,runId){
       icon:randi(1,10),
       x:W*(.19+col/9*.71)+rand(-5,5),
       y:PHYS_FLOOR_Y-BODY_R-row*35+rand(-3,3),
-      vx:rand(-8,8),
+      vx:0,
       vy:0,
-      rot:rand(-18,18),
-      vr:rand(-18,18),
+      rot:rand(-14,14),
+      vr:0,
+      awake:false,
+      lastCraneHit:0,
       removed:false,
       held:false,
       el:null
@@ -4315,53 +4312,218 @@ async function startCatcher(p,humanIndex,runId){
     });
   }
 
-  function stepPrizePhysics(dt){
-    const live=prizes.filter(d=>!d.removed&&!d.held);
+  function hasSupport(d,live){
+    if(d.y+BODY_R>=PHYS_FLOOR_Y-1.5){
+      return true;
+    }
 
-    // Gravity + floor/wall response.
+    return live.some(o=>{
+      if(o===d||o.removed||o.held)return false;
+
+      const dx=Math.abs(o.x-d.x);
+      const dy=o.y-d.y;
+
+      return (
+        dy>BODY_R*.75 &&
+        dy<BODY_R*2.35 &&
+        dx<BODY_R*1.55
+      );
+    });
+  }
+
+  function applyCraneCollision(now,live){
+    if(
+      phase!=='descend'&&
+      phase!=='sequence'
+    )return;
+
+    const g=actualClawGeometry();
+
+    const left=
+      Math.min(
+        g.leftTipX,
+        g.rightTipX
+      )-24;
+
+    const right=
+      Math.max(
+        g.leftTipX,
+        g.rightTipX
+      )+24;
+
     live.forEach(d=>{
+      if(
+        now-d.lastCraneHit<120
+      )return;
+
+      const hitX=
+        d.x>=left-BODY_R &&
+        d.x<=right+BODY_R;
+
+      const dy=
+        d.y-g.centerY;
+
+      const hitY=
+        Math.abs(dy)<=52;
+
+      if(!hitX||!hitY)return;
+
+      d.lastCraneHit=now;
+      d.awake=true;
+
+      const side=
+        Math.abs(d.x-g.centerX)<3
+          ? (Math.random()<.5?-1:1)
+          : Math.sign(d.x-g.centerX);
+
+      const depth=
+        1-clamp(
+          Math.abs(dy)/52,
+          0,1
+        );
+
+      d.vx+=
+        side*
+        (38+depth*70)+
+        rand(-16,16);
+
+      d.vy-=
+        18+
+        depth*38;
+
+      d.vr+=
+        side*
+        rand(55,125);
+
+      // Small reaction on neighbors will propagate through body collisions.
+    });
+  }
+
+  function stepPrizePhysics(dt,now){
+    const live=
+      prizes.filter(
+        d=>!d.removed&&!d.held
+      );
+
+    applyCraneCollision(now,live);
+
+    live.forEach(d=>{
+      const supported=
+        hasSupport(d,live);
+
+      if(
+        !d.awake&&
+        supported
+      ){
+        d.vx=0;
+        d.vy=0;
+        d.vr=0;
+        return;
+      }
+
+      if(!supported){
+        d.awake=true;
+      }
+
+      if(!d.awake)return;
+
       d.vy+=520*dt;
       d.x+=d.vx*dt;
       d.y+=d.vy*dt;
       d.rot+=d.vr*dt;
 
-      d.vx*=Math.pow(.985,dt*60);
-      d.vr*=Math.pow(.982,dt*60);
+      d.vx*=
+        Math.pow(
+          .968,
+          dt*60
+        );
 
-      if(d.x-BODY_R<PHYS_MIN_X){
-        d.x=PHYS_MIN_X+BODY_R;
-        d.vx=Math.abs(d.vx)*.46;
-        d.vr+=rand(-34,34);
-      }else if(d.x+BODY_R>PHYS_MAX_X){
-        d.x=PHYS_MAX_X-BODY_R;
-        d.vx=-Math.abs(d.vx)*.46;
-        d.vr+=rand(-34,34);
+      d.vr*=
+        Math.pow(
+          .962,
+          dt*60
+        );
+
+      if(
+        d.x-BODY_R<
+        PHYS_MIN_X
+      ){
+        d.x=
+          PHYS_MIN_X+
+          BODY_R;
+
+        d.vx=
+          Math.abs(d.vx)*.38;
+
+        d.vr+=rand(-24,24);
+
+      }else if(
+        d.x+BODY_R>
+        PHYS_MAX_X
+      ){
+        d.x=
+          PHYS_MAX_X-
+          BODY_R;
+
+        d.vx=
+          -Math.abs(d.vx)*.38;
+
+        d.vr+=rand(-24,24);
       }
 
-      if(d.y+BODY_R>PHYS_FLOOR_Y){
-        d.y=PHYS_FLOOR_Y-BODY_R;
+      if(
+        d.y+BODY_R>
+        PHYS_FLOOR_Y
+      ){
+        d.y=
+          PHYS_FLOOR_Y-
+          BODY_R;
 
-        if(Math.abs(d.vy)>22){
-          d.vy=-Math.abs(d.vy)*.24;
-          d.vr+=d.vx*.28;
+        if(
+          Math.abs(d.vy)>26
+        ){
+          d.vy=
+            -Math.abs(d.vy)*.18;
+
+          d.vr+=
+            d.vx*.20;
         }else{
           d.vy=0;
         }
 
-        d.vx*=.86;
+        d.vx*=.72;
 
-        if(Math.abs(d.vx)<1.2)d.vx=0;
-        if(Math.abs(d.vr)<1.5)d.vr=0;
+        if(
+          Math.abs(d.vx)<1.3&&
+          Math.abs(d.vy)<1.3&&
+          Math.abs(d.vr)<2.0
+        ){
+          d.vx=0;
+          d.vy=0;
+          d.vr=0;
+          d.awake=false;
+        }
       }
     });
 
-    // Simple circular body collision so the pile rolls and settles.
+    // Resolve collisions only when at least one body is moving.
     for(let i=0;i<live.length;i++){
       for(let j=i+1;j<live.length;j++){
-        const a=live[i],b=live[j];
-        let dx=b.x-a.x,dy=b.y-a.y;
-        let dist=Math.hypot(dx,dy);
-        const minDist=BODY_R*1.72;
+        const a=live[i];
+        const b=live[j];
+
+        if(
+          !a.awake&&
+          !b.awake
+        )continue;
+
+        let dx=b.x-a.x;
+        let dy=b.y-a.y;
+        let dist=
+          Math.hypot(dx,dy);
+
+        const minDist=
+          BODY_R*1.82;
 
         if(dist>=minDist)continue;
 
@@ -4373,36 +4535,69 @@ async function startCatcher(p,humanIndex,runId){
 
         const nx=dx/dist;
         const ny=dy/dist;
-        const overlap=minDist-dist;
+        const overlap=
+          minDist-dist;
 
         a.x-=nx*overlap*.5;
         a.y-=ny*overlap*.5;
+
         b.x+=nx*overlap*.5;
         b.y+=ny*overlap*.5;
 
-        const rvx=b.vx-a.vx;
-        const rvy=b.vy-a.vy;
-        const rel=rvx*nx+rvy*ny;
+        const rvx=
+          b.vx-a.vx;
+
+        const rvy=
+          b.vy-a.vy;
+
+        const rel=
+          rvx*nx+
+          rvy*ny;
 
         if(rel<0){
-          const impulse=-(1+.32)*rel*.5;
+          const impulse=
+            -(1+.26)*
+            rel*.5;
+
           a.vx-=impulse*nx;
           a.vy-=impulse*ny;
+
           b.vx+=impulse*nx;
           b.vy+=impulse*ny;
         }
 
-        const tangentX=-ny;
-        const tangentY=nx;
-        const tangential=rvx*tangentX+rvy*tangentY;
+        const tx=-ny;
+        const ty=nx;
 
-        a.vr-=tangential*.18;
-        b.vr+=tangential*.18;
+        const tangential=
+          rvx*tx+
+          rvy*ty;
 
-        a.vx-=tangentX*tangential*.025;
-        b.vx+=tangentX*tangential*.025;
+        a.vr-=
+          tangential*.14;
+
+        b.vr+=
+          tangential*.14;
+
+        if(
+          Math.abs(rel)>5||
+          Math.abs(tangential)>7
+        ){
+          a.awake=true;
+          b.awake=true;
+        }
       }
     }
+
+    // Any unsupported sleeping body wakes and drops.
+    live.forEach(d=>{
+      if(
+        !d.awake&&
+        !hasSupport(d,live)
+      ){
+        d.awake=true;
+      }
+    });
   }
 
   function disturbPile(held){
@@ -4419,6 +4614,7 @@ async function startCatcher(p,humanIndex,runId){
         if(dist>78||dist<1)return;
 
         const power=(1-dist/78)*105;
+        d.awake=true;
         d.vx+=(dx/dist)*power+rand(-20,20);
         d.vy-=Math.max(8,power*.34);
         d.vr+=rand(-90,90);
@@ -4581,6 +4777,7 @@ async function startCatcher(p,humanIndex,runId){
 
     held.forEach((d,i)=>{
       d.held=true;
+      d.awake=false;
       d.vx=0;
       d.vy=0;
       d.el.style.zIndex='40';
@@ -4787,7 +4984,7 @@ async function startCatcher(p,humanIndex,runId){
       }
     }
 
-    stepPrizePhysics(dt);
+    stepPrizePhysics(dt,now);
     renderPrizes();
     renderCrane();
 
@@ -26406,10 +26603,6 @@ function simulateOneCpu(gameIndex,p){
     state.records.flagRaise[p.id]=ultra
       ? randi(88,100)
       : randi(55,92);
-  }else if(legacyIndex===120){
-    state.records.coinTower[p.id]=ultra
-      ? randi(13,18)
-      : randi(5,14);
   }else{
     const fallbackKey=GAMES[gameIndex]?.key;
     if(fallbackKey&&state.records[fallbackKey])state.records[fallbackKey][p.id]=0;
@@ -26599,7 +26792,6 @@ function performancePoints(gameIndex,v){
   }
   if(legacyIndex===118)return clamp(Math.round(v/1000*100),0,100);
   if(legacyIndex===119)return clamp(Math.round(v),0,100);
-  if(legacyIndex===120)return clamp(Math.round(v/15*100),0,100);
   return clamp(Math.round(v),0,100);
 }
 
@@ -26731,7 +26923,6 @@ function formatRecord(gameIndex,v){
   if(legacyIndex>=111&&legacyIndex<=117)return `${Math.round(v)}pt`;
   if(legacyIndex===118)return `${Math.round(v)}m`;
   if(legacyIndex===119)return `${Math.round(v)}pt`;
-  if(legacyIndex===120)return `${Math.round(v)}枚`;
   return `${Math.round(v)}pt`;
 }
 
@@ -35498,6 +35689,7 @@ async function startDjMaster(p,humanIndex,runId){
 // =========================================================
 async function startRocketPunch(p,humanIndex,runId){
   gameFit();
+
   const gameIndex=GAMES.findIndex(g=>g.key==='rocketPunch');
   const PX_PER_M=2.65;
   const WORLD_M=1080;
@@ -35514,213 +35706,562 @@ async function startRocketPunch(p,humanIndex,runId){
   ].map((x,i)=>({...x,i,hit:false,broken:false}));
 
   screen.innerHTML=`
-    <div class="rocketp-shell-v193 gameplay-fit">
+    <div class="rocketp-shell-v194 gameplay-fit">
       <div class="game-head">
-        <div><span class="kicker">${esc(p.name)}</span><h2>モブくんロケットパンチ</h2></div>
+        <div>
+          <span class="kicker">${esc(p.name)}</span>
+          <h2>モブくんロケットパンチ</h2>
+        </div>
         <div class="game-badge">${playBadge(humanIndex)}</div>
       </div>
 
-      <div class="rocketp-hud-v193">
-        <div><span>DISTANCE</span><b id="rocketDist193">0m</b></div>
-        <div><span>POWER</span><b id="rocketPower193">0</b></div>
-        <div><span>BOOST</span><b id="rocketBoostState193">WAIT</b></div>
+      <div class="rocketp-hud-v194">
+        <div><span>DISTANCE</span><b id="rocketDist194">0m</b></div>
+        <div><span>POWER</span><b id="rocketPower194">0</b></div>
+        <div><span>BOOST</span><b id="rocketBoostState194">WAIT</b></div>
       </div>
 
-      <div id="rocketViewport193" class="rocketp-viewport-v193">
-        <div id="rocketWorld193" class="rocketp-world-v193" style="width:${WORLD_W}px">
-          <div class="rocketp-skyline-v193"></div>
-          <div class="rocketp-ground-v193"></div>
-          <div class="rocketp-mob-v193" style="background-image:url('icon/01.png')"></div>
-          <div id="rocketGlove193" class="rocketp-glove-v193"><i></i><b>MOB</b></div>
-          ${obstacles.map(o=>`<div class="rocketp-obstacle-v193 ${o.cls}" data-rocket-ob="${o.i}" style="left:${o.m*PX_PER_M}px"><span>${o.label}</span></div>`).join('')}
-          <div class="rocketp-goal-v193" style="left:${1000*PX_PER_M}px"><b>1000m</b></div>
+      <div id="rocketViewport194" class="rocketp-viewport-v194">
+        <div id="rocketWorld194" class="rocketp-world-v194" style="width:${WORLD_W}px">
+          <div class="rocketp-skyline-v194"></div>
+          <div class="rocketp-ground-v194"></div>
+
+          <div id="rocketMob194" class="rocketp-mob-v194" style="background-image:url('icon/01.png')"></div>
+
+          <div id="rocketAura194" class="rocketp-charge-aura-v194">
+            <i></i><i></i><i></i>
+          </div>
+
+          <div id="rocketFist194" class="rocketp-fist-v194">
+            <div class="rocketp-knuckles-v194">
+              <i></i><i></i><i></i><i></i>
+            </div>
+            <div class="rocketp-palm-v194"></div>
+            <div class="rocketp-thumb-v194"></div>
+            <div class="rocketp-cuff-v194"><b>MOB</b></div>
+            <div class="rocketp-jet-v194"><i></i><i></i><i></i></div>
+          </div>
+
+          <div id="rocketTrail194" class="rocketp-trail-layer-v194"></div>
+
+          ${obstacles.map(o=>`
+            <div
+              class="rocketp-obstacle-v194 ${o.cls}"
+              data-rocket-ob="${o.i}"
+              style="left:${o.m*PX_PER_M}px">
+              <span>${o.label}</span>
+            </div>
+          `).join('')}
+
+          <div class="rocketp-goal-v194" style="left:${1000*PX_PER_M}px">
+            <b>1000m</b>
+          </div>
+        </div>
+
+        <div id="rocketChargeFx194" class="rocketp-charge-fx-v194"></div>
+        <div id="rocketLaunchCall194" class="rocketp-launch-call-v194"></div>
+      </div>
+
+      <div class="rocketp-power-panel-v194">
+        <div class="rocketp-power-labels-v194">
+          <span>DEAD</span>
+          <span>POWER</span>
+          <span>MAX</span>
+          <span>OVER</span>
+        </div>
+
+        <div id="rocketChargeTrack194" class="rocketp-charge-track-v194">
+          <span class="dead-zone-v194 left-v194"></span>
+          <span class="normal-zone-v194"></span>
+          <span class="max-zone-v194"></span>
+          <span class="dead-zone-v194 right-v194"></span>
+
+          <i class="dead-line-v194 left-v194"></i>
+          <i class="max-line-v194 start-v194"></i>
+          <i class="dead-line-v194 right-v194"></i>
+
+          <b id="rocketChargeFill194"></b>
+          <em id="rocketChargeCursor194"></em>
+        </div>
+
+        <div id="rocketChargeText194" class="rocketp-charge-text-v194">HOLD PUNCH</div>
+
+        <div class="rocketp-actions-v194">
+          <button id="rocketPunchBtn194" class="primary rocketp-punch-v194" type="button" disabled>
+            <span>HOLD</span><b>PUNCH!</b>
+          </button>
+
+          <button id="rocketBoostBtn194" class="rocketp-boost-v194" type="button" disabled>
+            BOOST!
+          </button>
         </div>
       </div>
 
-      <div class="rocketp-charge-v193">
-        <div class="rocketp-charge-track-v193">
-          <span class="sweet-v193"></span>
-          <i id="rocketChargeFill193"></i>
-          <b id="rocketChargeText193">HOLD PUNCH</b>
-        </div>
-        <button id="rocketPunchBtn193" class="primary rocketp-punch-v193" type="button" disabled>PUNCH</button>
-        <button id="rocketBoostBtn193" class="rocketp-boost-v193" type="button" disabled>BOOST!</button>
-      </div>
-
-      <div id="rocketCall193" class="rocketp-call-v193">長押し → 離して発射</div>
+      <div id="rocketCall194" class="rocketp-call-v194">長押しで拳にパワーを溜める</div>
     </div>`;
 
-  const viewport=document.getElementById('rocketViewport193');
-  const world=document.getElementById('rocketWorld193');
-  const glove=document.getElementById('rocketGlove193');
-  const distEl=document.getElementById('rocketDist193');
-  const powerEl=document.getElementById('rocketPower193');
-  const boostState=document.getElementById('rocketBoostState193');
-  const fill=document.getElementById('rocketChargeFill193');
-  const chargeText=document.getElementById('rocketChargeText193');
-  const punchBtn=document.getElementById('rocketPunchBtn193');
-  const boostBtn=document.getElementById('rocketBoostBtn193');
-  const call=document.getElementById('rocketCall193');
+  const viewport=document.getElementById('rocketViewport194');
+  const world=document.getElementById('rocketWorld194');
+  const mob=document.getElementById('rocketMob194');
+  const fist=document.getElementById('rocketFist194');
+  const aura=document.getElementById('rocketAura194');
+  const trailLayer=document.getElementById('rocketTrail194');
+  const chargeFx=document.getElementById('rocketChargeFx194');
+  const launchCall=document.getElementById('rocketLaunchCall194');
+
+  const distEl=document.getElementById('rocketDist194');
+  const powerEl=document.getElementById('rocketPower194');
+  const boostState=document.getElementById('rocketBoostState194');
+
+  const track=document.getElementById('rocketChargeTrack194');
+  const fill=document.getElementById('rocketChargeFill194');
+  const cursor=document.getElementById('rocketChargeCursor194');
+  const chargeText=document.getElementById('rocketChargeText194');
+
+  const punchBtn=document.getElementById('rocketPunchBtn194');
+  const boostBtn=document.getElementById('rocketBoostBtn194');
+  const call=document.getElementById('rocketCall194');
 
   let active=false;
   let charging=false;
   let launched=false;
   let finished=false;
+
   let charge=0;
   let chargeStart=0;
   let effectivePower=0;
+
   let distance=0;
   let speed=0;
   let energy=0;
-  let gloveRot=0;
-  let gloveY=0;
+  let fistRot=0;
+  let fistY=0;
+
   let flightStart=0;
   let last=performance.now();
   let raf=null;
+
   let boostUsed=false;
   let boostShown=false;
   let boostDeadline=0;
   const boostAt=rand(300,555);
 
+  let lastChargeSpark=0;
+  let lastTrail=0;
+
+  function setChargeClass(){
+    viewport.classList.remove(
+      'charge-low-v194',
+      'charge-hot-v194',
+      'charge-max-v194',
+      'charge-over-v194'
+    );
+
+    if(!charging)return;
+
+    if(charge>100){
+      viewport.classList.add('charge-over-v194');
+    }else if(charge>=90){
+      viewport.classList.add('charge-max-v194');
+    }else if(charge>=55){
+      viewport.classList.add('charge-hot-v194');
+    }else{
+      viewport.classList.add('charge-low-v194');
+    }
+  }
+
+  function spawnChargeSpark(now){
+    if(now-lastChargeSpark<76)return;
+    lastChargeSpark=now;
+
+    const count=
+      charge>=90?3:
+      charge>=55?2:1;
+
+    for(let i=0;i<count;i++){
+      const s=document.createElement('i');
+      s.className='rocketp-charge-spark-v194';
+      s.style.left=`${rand(36,68)}%`;
+      s.style.top=`${rand(36,68)}%`;
+      s.style.setProperty('--sx',`${rand(-45,45)}px`);
+      s.style.setProperty('--sy',`${rand(-52,28)}px`);
+      s.style.setProperty('--sr',`${rand(-120,120)}deg`);
+      chargeFx.appendChild(s);
+      setTimeout(()=>s.remove(),430);
+    }
+  }
+
+  function spawnTrail(gloveX){
+    const t=document.createElement('i');
+    t.className='rocketp-flight-streak-v194';
+    t.style.left=`${gloveX-112}px`;
+    t.style.top=`${142+fistY+rand(-10,10)}px`;
+    t.style.width=`${rand(70,125)}px`;
+    trailLayer.appendChild(t);
+
+    setTimeout(()=>t.remove(),360);
+  }
+
+  function impactBurst(o,broken){
+    const burst=document.createElement('div');
+    burst.className=`rocketp-impact-burst-v194 ${broken?'break-v194':'block-v194'}`;
+    burst.style.left=`${o.m*PX_PER_M+28}px`;
+    burst.style.bottom='132px';
+
+    for(let i=0;i<10;i++){
+      const p=document.createElement('i');
+      p.style.setProperty('--x',`${rand(-70,75)}px`);
+      p.style.setProperty('--y',`${rand(-75,55)}px`);
+      p.style.setProperty('--r',`${rand(-170,170)}deg`);
+      burst.appendChild(p);
+    }
+
+    world.appendChild(burst);
+    setTimeout(()=>burst.remove(),520);
+
+    viewport.classList.remove('impact-v194');
+    void viewport.offsetWidth;
+    viewport.classList.add('impact-v194');
+
+    setTimeout(()=>viewport.classList.remove('impact-v194'),190);
+  }
+
   function updateCharge(now){
     if(!charging)return;
-    charge=clamp((now-chargeStart)/1000*58,0,120);
+
+    charge=clamp(
+      (now-chargeStart)/1000*58,
+      0,
+      120
+    );
+
     const pct=charge/120*100;
+
     fill.style.width=`${pct}%`;
+    cursor.style.left=`${pct}%`;
     powerEl.textContent=Math.round(charge);
-    chargeText.textContent=charge>100?'OVERHEAT!':charge>=90?'MAX ZONE!':'CHARGING';
-    fill.classList.toggle('over-v193',charge>100);
+
+    chargeText.textContent=
+      charge>100
+        ? 'DEAD ZONE / OVERHEAT'
+        : charge>=90
+          ? 'MAX PUNCH!!'
+          : charge<25
+            ? 'DEAD ZONE'
+            : charge>=55
+              ? 'POWER RISING!'
+              : 'CHARGING...';
+
+    setChargeClass();
+    spawnChargeSpark(now);
+
+    const intensity=clamp(charge/100,0,1.15);
+    fist.style.setProperty('--charge-scale',`${1+intensity*.12}`);
+    aura.style.setProperty('--charge-power',`${intensity}`);
+
+    mob.classList.toggle('charging-v194',charge>=25);
+    fist.classList.toggle('charging-v194',true);
+    track.classList.toggle('over-v194',charge>100);
+  }
+
+  function launchBurst(){
+    viewport.classList.remove('launch-v194');
+    void viewport.offsetWidth;
+    viewport.classList.add('launch-v194');
+
+    launchCall.textContent='ROCKET PUNCH!!';
+    launchCall.classList.remove('show-v194');
+    void launchCall.offsetWidth;
+    launchCall.classList.add('show-v194');
+
+    for(let i=0;i<14;i++){
+      const s=document.createElement('i');
+      s.className='rocketp-launch-spark-v194';
+      s.style.left=`${rand(36,58)}%`;
+      s.style.top=`${rand(35,65)}%`;
+      s.style.setProperty('--x',`${rand(-90,110)}px`);
+      s.style.setProperty('--y',`${rand(-70,70)}px`);
+      chargeFx.appendChild(s);
+      setTimeout(()=>s.remove(),460);
+    }
+
+    setTimeout(()=>{
+      viewport.classList.remove('launch-v194');
+      launchCall.classList.remove('show-v194');
+    },500);
   }
 
   function launch(){
     if(!charging||launched||finished)return;
+
     charging=false;
     launched=true;
     punchBtn.disabled=true;
 
-    effectivePower=charge<=100
-      ? charge
-      : clamp(100-(charge-100)*2.2,42,100);
+    viewport.classList.remove(
+      'charge-low-v194',
+      'charge-hot-v194',
+      'charge-max-v194',
+      'charge-over-v194'
+    );
 
-    speed=108+effectivePower*1.78;
-    energy=46+effectivePower*.82;
+    fist.classList.remove('charging-v194');
+    mob.classList.remove('charging-v194');
+
+    effectivePower=
+      charge<25
+        ? clamp(charge*.55,4,14)
+        : charge<=100
+          ? charge
+          : clamp(100-(charge-100)*2.65,35,100);
+
+    speed=102+effectivePower*1.92;
+    energy=42+effectivePower*.88;
     flightStart=performance.now();
 
-    call.textContent=charge>100
-      ? `OVERHEAT ${Math.round(charge)} → 実効POWER ${Math.round(effectivePower)}`
-      : `ROCKET PUNCH!! POWER ${Math.round(effectivePower)}`;
+    call.textContent=
+      charge<25
+        ? `DEAD ZONE… POWER ${Math.round(effectivePower)}`
+        : charge>100
+          ? `OVERHEAT ${Math.round(charge)} → POWER ${Math.round(effectivePower)}`
+          : `PUNCH POWER ${Math.round(effectivePower)}!`;
 
-    glove.classList.add('flying-v193');
-    beep(180+effectivePower*7,130,.04);
+    fist.classList.add('flying-v194');
+    launchBurst();
+
+    beep(210+effectivePower*7,155,.05);
   }
 
   function showBoost(now){
     if(boostShown||boostUsed||distance<boostAt)return;
+
     boostShown=true;
     boostDeadline=now+1250;
+
     boostBtn.disabled=false;
-    boostBtn.classList.add('show-v193');
+    boostBtn.classList.add('show-v194');
+
     boostState.textContent='NOW!';
     call.textContent='BOOST!!';
+
     beep(1050,80,.03);
   }
 
   boostBtn.addEventListener('pointerdown',e=>{
-    if(!launched||finished||boostUsed||boostBtn.disabled)return;
+    if(
+      !launched||
+      finished||
+      boostUsed||
+      boostBtn.disabled
+    )return;
+
     e.preventDefault();
+
     boostUsed=true;
     boostBtn.disabled=true;
-    boostBtn.classList.remove('show-v193');
-    boostBtn.classList.add('used-v193');
+
+    boostBtn.classList.remove('show-v194');
+    boostBtn.classList.add('used-v194');
+
     boostState.textContent='USED';
-    speed+=72;
-    energy+=30;
-    glove.classList.remove('boost-v193');
-    void glove.offsetWidth;
-    glove.classList.add('boost-v193');
+
+    speed+=78;
+    energy+=32;
+
+    fist.classList.remove('boost-v194');
+    void fist.offsetWidth;
+    fist.classList.add('boost-v194');
+
+    viewport.classList.remove('boost-hit-v194');
+    void viewport.offsetWidth;
+    viewport.classList.add('boost-hit-v194');
+
     call.textContent='BOOST SUCCESS!';
+
     beep(1320,110,.045);
+
+    setTimeout(
+      ()=>viewport.classList.remove('boost-hit-v194'),
+      320
+    );
   },{passive:false});
 
   punchBtn.addEventListener('pointerdown',e=>{
-    if(!active||charging||launched||finished)return;
+    if(
+      !active||
+      charging||
+      launched||
+      finished
+    )return;
+
     e.preventDefault();
+
     charging=true;
     charge=0;
     chargeStart=performance.now();
-    punchBtn.classList.add('holding-v193');
-    call.textContent='離した瞬間に発射！';
-    try{punchBtn.setPointerCapture(e.pointerId)}catch(_){}
+
+    punchBtn.classList.add('holding-v194');
+
+    call.textContent='拳にエネルギー集中…';
+
+    try{
+      punchBtn.setPointerCapture(e.pointerId);
+    }catch(_){}
   },{passive:false});
 
   const releasePunch=e=>{
     if(!charging)return;
+
     e.preventDefault();
-    punchBtn.classList.remove('holding-v193');
+
+    punchBtn.classList.remove('holding-v194');
     launch();
   };
-  punchBtn.addEventListener('pointerup',releasePunch,{passive:false});
-  punchBtn.addEventListener('pointercancel',releasePunch,{passive:false});
+
+  punchBtn.addEventListener(
+    'pointerup',
+    releasePunch,
+    {passive:false}
+  );
+
+  punchBtn.addEventListener(
+    'pointercancel',
+    releasePunch,
+    {passive:false}
+  );
 
   function impact(o){
     if(o.hit)return;
-    o.hit=true;
-    const el=world.querySelector(`[data-rocket-ob="${o.i}"]`);
-    const force=energy-o.t*.70;
 
-    gloveRot+=rand(-22,22);
-    gloveY+=rand(2,8);
+    o.hit=true;
+
+    const el=
+      world.querySelector(
+        `[data-rocket-ob="${o.i}"]`
+      );
+
+    const force=
+      energy-o.t*.70;
+
+    fistRot+=rand(-15,15);
+    fistY+=rand(1,6);
 
     if(force>0){
       o.broken=true;
-      el?.classList.add('broken-v193');
-      energy=Math.max(0,energy-o.t*.58);
-      speed*=clamp(1-o.t/245,.64,.91);
-      call.textContent=`${o.label} BREAK!`;
-      beep(230+o.t*8,75,.028);
+
+      el?.classList.add('broken-v194');
+
+      energy=
+        Math.max(
+          0,
+          energy-o.t*.56
+        );
+
+      speed*=
+        clamp(
+          1-o.t/255,
+          .66,.92
+        );
+
+      call.textContent=
+        `${o.label} SMASH!!`;
+
+      impactBurst(o,true);
+
+      beep(280+o.t*9,85,.035);
+
     }else{
-      el?.classList.add('blocked-v193');
-      energy=Math.max(0,energy-o.t*.82);
-      speed*=.22;
-      call.textContent=`${o.label}で大減速！`;
-      beep(145,130,.035);
+      el?.classList.add('blocked-v194');
+
+      energy=
+        Math.max(
+          0,
+          energy-o.t*.84
+        );
+
+      speed*=.20;
+
+      call.textContent=
+        `${o.label} HEAVY HIT!`;
+
+      impactBurst(o,false);
+
+      beep(145,145,.04);
     }
   }
 
   async function finish(){
     if(finished)return;
+
     finished=true;
     active=false;
+
     punchBtn.disabled=true;
     boostBtn.disabled=true;
+
     if(raf)cancelAnimationFrame(raf);
 
-    const finalM=clamp(Math.round(distance),0,1000);
+    const finalM=
+      clamp(
+        Math.round(distance),
+        0,1000
+      );
+
     state.records.rocketPunch[p.id]=finalM;
+
     distEl.textContent=`${finalM}m`;
 
-    glove.classList.add('rolling-v193');
-    call.textContent=finalM>=1000?'1000m COMPLETE!!':`STOP ${finalM}m`;
-    beep(finalM>=1000?1220:390,160,.04);
+    fist.classList.add('rolling-v194');
 
-    await wait(720);
+    call.textContent=
+      finalM>=1000
+        ? '1000m COMPLETE!!'
+        : `STOP ${finalM}m`;
+
+    beep(
+      finalM>=1000?1220:390,
+      170,.045
+    );
+
+    await wait(760);
+
     if(isGameRunValid(runId)){
       recordScreen(
-        gameIndex,p,humanIndex,
+        gameIndex,
+        p,
+        humanIndex,
         `${finalM}<small>m</small>`,
-        finalM>=1000?'ROCKET PUNCH COMPLETE':'ROCKET PUNCH DISTANCE'
+        finalM>=1000
+          ? 'ROCKET PUNCH COMPLETE'
+          : 'ROCKET PUNCH DISTANCE'
       );
     }
   }
 
-  if(!(await countdown('ROCKET PUNCH',runId,{transparent:true})))return;
+  if(
+    !(await countdown(
+      'ROCKET PUNCH',
+      runId,
+      {transparent:true}
+    ))
+  )return;
+
   active=true;
   punchBtn.disabled=false;
   last=performance.now();
 
   function frame(now){
-    if(!isGameRunValid(runId)||finished)return;
-    const dt=Math.min(.03,(now-last)/1000);
+    if(
+      !isGameRunValid(runId)||
+      finished
+    )return;
+
+    const dt=
+      Math.min(
+        .03,
+        (now-last)/1000
+      );
+
     last=now;
 
     updateCharge(now);
@@ -35732,33 +36273,80 @@ async function startRocketPunch(p,humanIndex,runId){
     if(launched){
       showBoost(now);
 
-      if(boostShown&&!boostUsed&&now>=boostDeadline){
+      if(
+        boostShown&&
+        !boostUsed&&
+        now>=boostDeadline
+      ){
         boostBtn.disabled=true;
-        boostBtn.classList.remove('show-v193');
+        boostBtn.classList.remove('show-v194');
         boostState.textContent='MISS';
       }
 
       const prev=distance;
-      speed=Math.max(0,speed-8.2*dt);
+
+      speed=
+        Math.max(
+          0,
+          speed-8.2*dt
+        );
+
       distance+=speed*dt;
 
       obstacles.forEach(o=>{
-        if(!o.hit&&prev<o.m&&distance>=o.m)impact(o);
+        if(
+          !o.hit&&
+          prev<o.m&&
+          distance>=o.m
+        ){
+          impact(o);
+        }
       });
 
-      const elapsed=(now-flightStart)/1000;
-      gloveRot+=speed*.012*dt*60;
-      gloveY=Math.min(42,gloveY+elapsed*.013);
+      const elapsed=
+        (now-flightStart)/1000;
 
-      const gloveX=120+distance*PX_PER_M;
-      glove.style.left=`${gloveX}px`;
-      glove.style.transform=`translateY(${gloveY}px) rotate(${gloveRot}deg)`;
+      fistRot+=speed*.006*dt*60;
+      fistY=
+        Math.min(
+          34,
+          fistY+elapsed*.010
+        );
 
-      const cameraX=clamp(gloveX-viewport.clientWidth*.38,0,WORLD_W-viewport.clientWidth);
-      world.style.transform=`translate3d(${-cameraX}px,0,0)`;
+      const gloveX=
+        132+
+        distance*PX_PER_M;
 
-      distEl.textContent=`${Math.min(1000,Math.round(distance))}m`;
-      powerEl.textContent=Math.round(effectivePower);
+      fist.style.left=`${gloveX}px`;
+
+      fist.style.transform=
+        `translateY(${fistY}px) rotate(${fistRot}deg)`;
+
+      if(now-lastTrail>=64){
+        lastTrail=now;
+        spawnTrail(gloveX);
+      }
+
+      const cameraX=
+        clamp(
+          gloveX-
+          viewport.clientWidth*.36,
+          0,
+          WORLD_W-
+          viewport.clientWidth
+        );
+
+      world.style.transform=
+        `translate3d(${-cameraX}px,0,0)`;
+
+      distEl.textContent=
+        `${Math.min(
+          1000,
+          Math.round(distance)
+        )}m`;
+
+      powerEl.textContent=
+        Math.round(effectivePower);
 
       if(distance>=1000){
         distance=1000;
@@ -35766,7 +36354,10 @@ async function startRocketPunch(p,humanIndex,runId){
         return;
       }
 
-      if(speed<=16||energy<=0){
+      if(
+        speed<=16||
+        energy<=0
+      ){
         finish();
         return;
       }
@@ -35778,10 +36369,6 @@ async function startRocketPunch(p,humanIndex,runId){
   raf=requestAnimationFrame(frame);
 }
 
-
-// =========================================================
-// V10.93 GAME 107 — モブくん旗上げ
-// =========================================================
 async function startFlagRaise(p,humanIndex,runId){
   gameFit();
   const gameIndex=GAMES.findIndex(g=>g.key==='flagRaise');
@@ -36009,313 +36596,6 @@ async function startFlagRaise(p,humanIndex,runId){
     }
 
     if(left<=0){
-      finish();
-      return;
-    }
-
-    raf=requestAnimationFrame(frame);
-  }
-
-  raf=requestAnimationFrame(frame);
-}
-
-
-// =========================================================
-// V10.93 GAME 108 — モブくんコインタワー
-// =========================================================
-async function startCoinTower(p,humanIndex,runId){
-  gameFit();
-  const gameIndex=GAMES.findIndex(g=>g.key==='coinTower');
-
-  screen.innerHTML=`
-    <div class="coin-tower-shell-v193 gameplay-fit">
-      <div class="game-head">
-        <div><span class="kicker">${esc(p.name)}</span><h2>モブくんコインタワー</h2></div>
-        <div class="game-badge">${playBadge(humanIndex)}</div>
-      </div>
-
-      <div class="coin-tower-hud-v193">
-        <div><span>TIME</span><b id="coinTime193">10.00</b></div>
-        <div><span>TOWER</span><b id="coinTowerCount193">0</b></div>
-        <div><span>DROP</span><b id="coinDropCount193">0</b></div>
-      </div>
-
-      <div id="coinStage193" class="coin-tower-stage-v193">
-        <div class="coin-tower-bg-v193"></div>
-        <div id="coinCamera193" class="coin-camera-v193"></div>
-        <div class="coin-floor-v193"><b>MOB TOWER</b></div>
-        <div id="coinCall193" class="coin-tower-call-v193">DROP!</div>
-      </div>
-
-      <button id="coinDropBtn193" class="primary coin-drop-btn-v193" type="button" disabled>DROP</button>
-    </div>`;
-
-  const stage=document.getElementById('coinStage193');
-  const layer=document.getElementById('coinCamera193');
-  const timeEl=document.getElementById('coinTime193');
-  const towerEl=document.getElementById('coinTowerCount193');
-  const dropEl=document.getElementById('coinDropCount193');
-  const call=document.getElementById('coinCall193');
-  const dropBtn=document.getElementById('coinDropBtn193');
-
-  void stage.offsetHeight;
-  const W=stage.clientWidth;
-  const H=stage.clientHeight;
-  const COIN_W=84;
-  const COIN_H=18;
-  const FLOOR_Y=COIN_H/2;
-  const GRAVITY=980;
-
-  let running=false;
-  let finished=false;
-  let bodies=[];
-  let activeCoin=null;
-  let dropped=0;
-  let activeX=W*.5;
-  let activeDir=1;
-  let cameraBottom=0;
-  let nextSpawnAt=0;
-  let endAt=0;
-  let last=performance.now();
-  let raf=null;
-
-  function createCoinEl(kind='normal'){
-    const el=document.createElement('div');
-    el.className=`tower-coin-v193 ${kind}`;
-    el.innerHTML='<i></i><b>MOB</b>';
-    layer.appendChild(el);
-    return el;
-  }
-
-  function spawnActive(){
-    if(!running||finished||activeCoin)return;
-    const speed=112+dropped*7.5;
-    activeDir=Math.random()<.5?-1:1;
-    activeX=activeDir>0?COIN_W*.55:W-COIN_W*.55;
-    activeCoin={
-      x:activeX,
-      dir:activeDir,
-      speed,
-      el:createCoinEl('active-v193')
-    };
-    dropBtn.disabled=false;
-  }
-
-  function supportCount(){
-    const live=bodies.filter(b=>!b.lost);
-    if(!live.length)return 0;
-
-    const supported=new Set();
-    const bottoms=live.filter(b=>b.y<=FLOOR_Y+3&&b.x>COIN_W*.25&&b.x<W-COIN_W*.25);
-    bottoms.forEach(b=>supported.add(b.id));
-
-    let changed=true;
-    while(changed){
-      changed=false;
-      for(const upper of live){
-        if(supported.has(upper.id))continue;
-        for(const lower of live){
-          if(!supported.has(lower.id)||upper.id===lower.id)continue;
-          const dy=upper.y-lower.y;
-          const overlap=COIN_W-Math.abs(upper.x-lower.x);
-          if(dy>=COIN_H-4&&dy<=COIN_H+7&&overlap>=COIN_W*.28){
-            supported.add(upper.id);
-            changed=true;
-            break;
-          }
-        }
-      }
-    }
-    return supported.size;
-  }
-
-  function updateHud(now=performance.now()){
-    const tower=supportCount();
-    towerEl.textContent=tower;
-    dropEl.textContent=dropped;
-    if(running)timeEl.textContent=(Math.max(0,endAt-now)/1000).toFixed(2);
-  }
-
-  function render(){
-    const highest=bodies.reduce((m,b)=>b.lost?m:Math.max(m,b.y),0);
-    const target=Math.max(0,highest-H*.53);
-    cameraBottom+=(target-cameraBottom)*.08;
-
-    bodies.forEach(b=>{
-      if(b.lost){
-        b.el.style.display='none';
-        return;
-      }
-      const screenY=H-(b.y-cameraBottom)-COIN_H/2-28;
-      b.el.style.transform=`translate3d(${(b.x-COIN_W/2).toFixed(1)}px,${screenY.toFixed(1)}px,0) rotate(${b.rot.toFixed(1)}deg)`;
-    });
-
-    if(activeCoin){
-      const worldY=cameraBottom+H-54;
-      const screenY=H-(worldY-cameraBottom)-COIN_H/2-28;
-      activeCoin.el.style.transform=`translate3d(${(activeCoin.x-COIN_W/2).toFixed(1)}px,${screenY.toFixed(1)}px,0)`;
-    }
-  }
-
-  function physics(dt){
-    const live=bodies.filter(b=>!b.lost);
-
-    live.forEach(b=>{
-      b.vy-=GRAVITY*dt;
-      b.x+=b.vx*dt;
-      b.y+=b.vy*dt;
-      b.rot+=b.vr*dt;
-      b.vx*=Math.pow(.992,dt*60);
-      b.vr*=Math.pow(.988,dt*60);
-
-      if(b.x<-COIN_W||b.x>W+COIN_W||b.y<-120){
-        b.lost=true;
-        return;
-      }
-
-      if(b.y<FLOOR_Y){
-        b.y=FLOOR_Y;
-        if(Math.abs(b.vy)>30)b.vy=-b.vy*.12;
-        else b.vy=0;
-        b.vx*=.80;
-        b.vr*=.82;
-      }
-    });
-
-    // Wide, flat coin collisions. Impacts can push/rotate the existing tower.
-    for(let i=0;i<live.length;i++){
-      for(let j=0;j<live.length;j++){
-        if(i===j)continue;
-        const a=live[i],b=live[j];
-        if(a.lost||b.lost||a.y<=b.y)continue;
-
-        const dy=a.y-b.y;
-        if(dy>COIN_H+8||dy<1)continue;
-
-        const dx=a.x-b.x;
-        const overlap=COIN_W-Math.abs(dx);
-        if(overlap<=0)continue;
-
-        if(a.vy<=b.vy+30){
-          a.y=Math.max(a.y,b.y+COIN_H);
-          const impact=Math.abs(a.vy-b.vy);
-          a.vy=Math.max(b.vy,-a.vy*.08);
-
-          const offset=dx/COIN_W;
-          b.vx-=offset*impact*.075;
-          b.vr-=offset*impact*.34;
-          a.vr+=offset*impact*.52;
-
-          if(Math.abs(offset)>.34){
-            a.vx+=Math.sign(offset)*(30+Math.abs(offset)*85);
-          }else{
-            a.vx*=.62;
-          }
-        }
-      }
-    }
-  }
-
-  function dropActive(){
-    if(!running||finished||!activeCoin||dropBtn.disabled)return;
-    dropBtn.disabled=true;
-
-    const worldY=cameraBottom+H-54;
-    const b={
-      id:dropped,
-      x:activeCoin.x,
-      y:worldY,
-      vx:activeCoin.dir*(10+dropped*.45),
-      vy:0,
-      rot:rand(-3,3),
-      vr:activeCoin.dir*rand(8,22),
-      lost:false,
-      el:activeCoin.el
-    };
-
-    b.el.classList.remove('active-v193');
-    b.el.classList.add('falling-v193');
-    bodies.push(b);
-    activeCoin=null;
-    dropped++;
-    nextSpawnAt=performance.now()+430;
-    dropEl.textContent=dropped;
-    beep(540,35,.014);
-  }
-
-  dropBtn.addEventListener('pointerdown',e=>{
-    e.preventDefault();
-    dropActive();
-  },{passive:false});
-
-  async function finish(){
-    if(finished)return;
-    finished=true;
-    running=false;
-    dropBtn.disabled=true;
-    if(activeCoin){
-      activeCoin.el.remove();
-      activeCoin=null;
-    }
-
-    // Let the last impacts settle before measuring the connected tower.
-    const settleUntil=performance.now()+850;
-    await new Promise(resolve=>{
-      let prev=performance.now();
-      const settle=now=>{
-        if(!isGameRunValid(runId)){resolve();return}
-        const dt=Math.min(.03,(now-prev)/1000);prev=now;
-        physics(dt);render();
-        if(now<settleUntil)requestAnimationFrame(settle);
-        else resolve();
-      };
-      requestAnimationFrame(settle);
-    });
-
-    if(!isGameRunValid(runId))return;
-
-    const tower=supportCount();
-    state.records.coinTower[p.id]=tower;
-    towerEl.textContent=tower;
-    timeEl.textContent='0.00';
-    call.textContent=tower>=15?'TOWER MASTER!':`${tower} COINS`; 
-    beep(tower>=15?1120:tower>=10?850:540,140,.035);
-
-    await wait(520);
-    if(isGameRunValid(runId)){
-      recordScreen(
-        gameIndex,p,humanIndex,
-        `${tower}<small>枚</small>`,
-        tower>=15?'100 POINT TOWER':'COINS REMAINING'
-      );
-    }
-  }
-
-  if(!(await countdown('COIN TOWER',runId,{transparent:true})))return;
-  running=true;
-  endAt=performance.now()+10000;
-  last=performance.now();
-  spawnActive();
-
-  function frame(now){
-    if(!isGameRunValid(runId)||finished)return;
-    const dt=Math.min(.03,(now-last)/1000);
-    last=now;
-
-    if(activeCoin){
-      activeCoin.x+=activeCoin.dir*activeCoin.speed*dt;
-      const edge=COIN_W*.52;
-      if(activeCoin.x<=edge){activeCoin.x=edge;activeCoin.dir=1}
-      else if(activeCoin.x>=W-edge){activeCoin.x=W-edge;activeCoin.dir=-1}
-    }else if(now>=nextSpawnAt){
-      spawnActive();
-    }
-
-    physics(dt);
-    render();
-    updateHud(now);
-
-    if(now>=endAt){
       finish();
       return;
     }
