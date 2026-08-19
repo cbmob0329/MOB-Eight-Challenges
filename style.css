@@ -28298,3 +28298,65 @@ canvas{
 .classic-prize-v190 img{
   pointer-events:none;
 }
+
+
+/* =========================================================
+   V10.93 — GAME 106 Rocket Punch
+   ========================================================= */
+.rocketp-shell-v193{height:100%;display:flex;flex-direction:column;gap:7px;overflow:hidden}
+.rocketp-hud-v193,.flag-hud-v193,.coin-tower-hud-v193{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}
+.rocketp-hud-v193>div,.flag-hud-v193>div,.coin-tower-hud-v193>div{border:3px solid var(--ink);border-radius:10px;background:#fff;padding:5px 3px;text-align:center}
+.rocketp-hud-v193 span,.flag-hud-v193 span,.coin-tower-hud-v193 span{display:block;font-size:6px;font-weight:1000}
+.rocketp-hud-v193 b,.flag-hud-v193 b,.coin-tower-hud-v193 b{font-size:11px}
+.rocketp-viewport-v193{position:relative;height:360px;min-height:300px;overflow:hidden;border:4px solid var(--ink);border-radius:14px;background:#9bdff1}
+.rocketp-world-v193{position:absolute;left:0;top:0;height:100%;will-change:transform}
+.rocketp-skyline-v193{position:absolute;left:0;right:0;bottom:86px;height:90px;background:repeating-linear-gradient(90deg,#dbe6df 0 55px,#b9cac4 55px 95px,#e7d7a8 95px 150px);border-top:4px solid var(--ink);opacity:.72}
+.rocketp-ground-v193{position:absolute;left:0;right:0;bottom:0;height:90px;border-top:5px solid var(--ink);background:repeating-linear-gradient(90deg,#d1bd89 0 58px,#c6aa72 58px 62px)}
+.rocketp-mob-v193{position:absolute;left:28px;bottom:78px;width:92px;height:92px;background-size:contain;background-position:center;background-repeat:no-repeat;z-index:4}
+.rocketp-glove-v193{position:absolute;left:120px;bottom:112px;width:82px;height:60px;border:5px solid var(--ink);border-radius:46% 50% 42% 45%;background:#f04f4d;display:grid;place-items:center;z-index:8;transform-origin:45% 55%;filter:drop-shadow(0 5px 0 rgba(17,19,26,.18))}
+.rocketp-glove-v193 i{position:absolute;left:-34px;width:42px;height:25px;border:5px solid var(--ink);border-right:0;border-radius:18px 0 0 18px;background:#f6d15c}
+.rocketp-glove-v193 b{font-size:12px;font-weight:1000;color:#fff;text-shadow:2px 2px 0 var(--ink)}
+.rocketp-glove-v193.flying-v193{animation:rocketShake193 .11s linear infinite}
+.rocketp-glove-v193.boost-v193{animation:rocketBoost193 .30s ease,rocketShake193 .11s .30s linear infinite}
+.rocketp-glove-v193.rolling-v193{animation:rocketRoll193 .68s ease-out forwards}
+@keyframes rocketShake193{0%,100%{margin-top:0}50%{margin-top:2px}}
+@keyframes rocketBoost193{50%{scale:1.24}}
+@keyframes rocketRoll193{to{rotate:210deg;translate:30px 18px}}
+.rocketp-obstacle-v193{position:absolute;bottom:87px;width:58px;height:112px;border:5px solid var(--ink);display:grid;place-items:center;font-weight:1000;font-size:8px;z-index:5;transform-origin:50% 100%}
+.rocketp-obstacle-v193.box{background:#b88452;height:64px}.rocketp-obstacle-v193.brick{background:#d26952}.rocketp-obstacle-v193.sign{background:#f4d45a;height:92px}.rocketp-obstacle-v193.rock{background:#81888d;border-radius:48% 52% 28% 32%;height:75px}.rocketp-obstacle-v193.steel{background:#aeb9c0;height:120px}.rocketp-obstacle-v193.wall{background:#d2c5a6;height:150px}.rocketp-obstacle-v193.final{background:#7e6c63;height:180px;width:72px}
+.rocketp-obstacle-v193.broken-v193{animation:rocketBreak193 .45s ease forwards}.rocketp-obstacle-v193.blocked-v193{animation:rocketBlock193 .28s ease}
+@keyframes rocketBreak193{to{opacity:.12;rotate:28deg;translate:24px 35px;scale:.72}}
+@keyframes rocketBlock193{45%{translate:8px 0;rotate:4deg}}
+.rocketp-goal-v193{position:absolute;bottom:85px;width:6px;height:220px;background:#fff;border-left:4px solid var(--ink);z-index:3}.rocketp-goal-v193 b{position:absolute;left:-28px;top:-22px;padding:3px 6px;border:3px solid var(--ink);border-radius:8px;background:#fff;font-size:8px}
+.rocketp-charge-v193{display:grid;grid-template-columns:1fr 1fr;gap:6px}.rocketp-charge-track-v193{grid-column:1/-1;position:relative;height:30px;border:4px solid var(--ink);border-radius:999px;background:#263640;overflow:hidden}.rocketp-charge-track-v193>i{position:absolute;left:0;top:0;bottom:0;width:0;background:#f6d04d}.rocketp-charge-track-v193>i.over-v193{background:#ef645d}.rocketp-charge-track-v193 .sweet-v193{position:absolute;z-index:2;left:75%;width:9%;top:0;bottom:0;background:rgba(255,255,255,.72)}.rocketp-charge-track-v193>b{position:absolute;z-index:3;inset:0;display:grid;place-items:center;color:#fff;font-size:8px;text-shadow:2px 2px 0 #111}
+.rocketp-punch-v193,.rocketp-boost-v193{min-height:48px}.rocketp-boost-v193{border:4px solid var(--ink);border-radius:12px;background:#777;color:#fff;font-weight:1000;opacity:.38}.rocketp-boost-v193.show-v193{background:#53d9ee;opacity:1;animation:rocketBoostBtn193 .32s ease infinite alternate}.rocketp-boost-v193.used-v193{background:#7bd47a;opacity:.7}@keyframes rocketBoostBtn193{to{scale:1.05}}
+.rocketp-call-v193{min-height:25px;text-align:center;font-size:9px;font-weight:1000}
+
+/* =========================================================
+   V10.93 — GAME 107 Flag Raise
+   ========================================================= */
+.flag-shell-v193{height:100%;display:flex;flex-direction:column;gap:8px;overflow:hidden}
+.flag-stage-v193{position:relative;flex:1;min-height:330px;border:4px solid var(--ink);border-radius:16px;background:#d7f1d2;overflow:hidden}
+.flag-stage-v193::after{content:"";position:absolute;left:0;right:0;bottom:0;height:25%;border-top:4px solid var(--ink);background:#9fcf78}
+.flag-command-v193{position:absolute;z-index:20;left:50%;top:22px;transform:translateX(-50%);min-width:190px;padding:9px 14px;border:4px solid var(--ink);border-radius:13px;background:#fff;text-align:center;font-size:20px;font-weight:1000;white-space:nowrap}
+.flag-command-v193.pop-v193{animation:flagPop193 .18s ease}@keyframes flagPop193{50%{scale:1.08}}
+.flag-mob-v193{position:absolute;z-index:8;left:50%;bottom:54px;width:130px;height:145px;transform:translateX(-50%);background-size:contain;background-position:center bottom;background-repeat:no-repeat}
+.flag-arm-v193{position:absolute;z-index:9;bottom:118px;width:12px;height:105px;border:4px solid var(--ink);border-radius:999px;background:#d9d9d9;transform-origin:50% 100%;transition:transform .18s ease}
+.flag-arm-v193.red-v193{left:calc(50% - 70px);transform:rotate(-112deg)}.flag-arm-v193.white-v193{right:calc(50% - 70px);transform:rotate(112deg)}
+.flag-arm-v193.red-v193.up-v193{transform:rotate(-18deg)}.flag-arm-v193.white-v193.up-v193{transform:rotate(18deg)}
+.flag-arm-v193 i{position:absolute;top:-8px;width:52px;height:38px;border:4px solid var(--ink)}.flag-arm-v193.red-v193 i{left:5px;background:#e84443}.flag-arm-v193.white-v193 i{right:5px;background:#fff}
+.flag-arm-v193 b{position:absolute;top:2px;font-size:8px;font-weight:1000}.flag-arm-v193.red-v193 b{left:17px;color:#fff}.flag-arm-v193.white-v193 b{right:17px}
+.flag-judge-v193{position:absolute;z-index:25;left:50%;top:98px;transform:translateX(-50%);font-size:18px;font-weight:1000;text-shadow:2px 2px 0 #fff}.flag-judge-v193.good-v193{color:#249b42}.flag-judge-v193.miss-v193{color:#d43d3a}.flag-judge-v193.finish-v193{color:#6148a8}
+.flag-controls-v193{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}.flag-controls-v193 button{min-height:64px;border:4px solid var(--ink);border-radius:14px;font-size:18px;font-weight:1000;background:#fff}.flag-controls-v193 button:first-child{background:#e94a49;color:#fff}.flag-controls-v193 button:nth-child(2){background:#f0d95e}.flag-controls-v193 button:last-child{background:#fff}.flag-controls-v193 button.on-v193{box-shadow:inset 0 0 0 6px rgba(41,177,88,.30);translate:0 -2px}
+
+/* =========================================================
+   V10.93 — GAME 108 Coin Tower
+   ========================================================= */
+.coin-tower-shell-v193{height:100%;display:flex;flex-direction:column;gap:7px;overflow:hidden}
+.coin-tower-stage-v193{position:relative;flex:1;min-height:410px;border:4px solid var(--ink);border-radius:16px;background:#bfe8f0;overflow:hidden}
+.coin-tower-bg-v193{position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent 0 54px,rgba(255,255,255,.22) 54px 58px);opacity:.6}
+.coin-camera-v193{position:absolute;inset:0;z-index:8;pointer-events:none}
+.coin-floor-v193{position:absolute;z-index:5;left:0;right:0;bottom:0;height:31px;border-top:5px solid var(--ink);background:#c7a76a;display:grid;place-items:center}.coin-floor-v193 b{font-size:8px}
+.tower-coin-v193{position:absolute;left:0;top:0;width:84px;height:18px;border:4px solid var(--ink);border-radius:50%;background:#f0c84f;box-shadow:inset 0 -4px 0 #c49a32;display:grid;place-items:center;will-change:transform;transform-origin:50% 50%}.tower-coin-v193::before{content:"";position:absolute;inset:3px 9px;border:2px solid #8e6c20;border-radius:50%}.tower-coin-v193 i{position:absolute;left:12px;right:12px;top:-3px;height:5px;border-radius:999px;background:#ffe581}.tower-coin-v193 b{position:relative;z-index:2;font-size:7px;font-weight:1000;line-height:1}.tower-coin-v193.active-v193{filter:drop-shadow(0 3px 0 rgba(17,19,26,.2));animation:coinActive193 .35s ease infinite alternate}@keyframes coinActive193{to{scale:1.04}}
+.coin-tower-call-v193{position:absolute;z-index:30;left:50%;top:18px;transform:translateX(-50%);padding:5px 10px;border:3px solid var(--ink);border-radius:999px;background:#fff;font-size:9px;font-weight:1000}
+.coin-drop-btn-v193{min-height:62px;font-size:18px}
