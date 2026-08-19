@@ -339,7 +339,7 @@ const GAMES=[
   {no:101,key:"soloCartBlast",title:"モブくんトロッコ大爆走",sub:"4人個人戦専用。描いたトロッコが1km横スクロールコースを実走し、残った人形数を競う",legacy:113},
   {no:102,key:"deathGameChallenge",title:"モブくんデスゲームにチャレンジ",sub:"4〜8人個人戦専用。固定ルーレット順で扉を選び、生き残った1人が優勝",legacy:114},
   {no:103,key:"tokotokoCatcher",title:"トコトコモブくんキャッチャー",sub:"アーム幅→左右位置→降下→STOP。動く5体を3回で狙う",legacy:115},
-  {no:104,key:"amidakujiMasters",title:"モブくんのあみだくじマスターズ",sub:"1〜100の整数ポイントが出るあみだくじ。途中はSECRETで一部見えない",legacy:116},
+  {no:104,key:"amidakujiMasters",title:"モブくんのあみだくじマスターズ",sub:"16本のあみだくじ。決まった16種類のGOAL数字から到着点を競う",legacy:116},
   {no:105,key:"djMaster",title:"モブくんDJの達人",sub:"10秒で流れる20個の音符に合わせ、巨大ターンテーブルをスクラッチ",legacy:117}
 ];
 
@@ -2628,9 +2628,9 @@ function showGameIntro(index){
   }else if(legacyIndex===114){
     rules=`<li>4〜8人個人戦専用。最初のルーレットで決めた順番を最後まで固定し、1人ずつ空いている扉を選びます。</li><li>全員が入ったら3・2・1で扉が消滅。最後の1人が100点、2位70点、3位50点です。</li>`;
   }else if(legacyIndex===115){
-    rules=`<li>①アーム幅をSTOP → ②◀▶で位置 → ③降下 → ④下降中にSTOPの順で操作します。</li><li>5体は同じくらいのゆっくりした速さでトコトコ左右へランダム移動。掴んでもGET確定ではなく、1体20点・3回までです。</li>`;
+    rules=`<li>①アーム幅をSTOP → ②◀▶で位置 → ③降下 → ④下降中にSTOPの順で操作します。</li><li>5体はゆっくりトコトコ左右へランダム移動。クレーンのフックが実際に届いたフィギュアだけを挟めます。</li>`;
   }else if(legacyIndex===116){
-    rules=`<li>最初に16個のGOALを確認したあと、16本の入口から1つ選びます。途中はSECRETバナーで一部見えません。</li><li>GOALは1・5・10・15・20・25・30・35・40・45・50・55・60・80・90・100。到着した数字がそのまま得点です。</li>`;
+    rules=`<li>16本の入口から1つ選びます。マスターズでは途中を隠さず、あみだ全体を見ながら選べます。</li><li>GOALは1・5・10・15・20・25・30・35・40・45・50・55・60・80・90・100。数字は各縦線の一番下のGOALに配置されます。</li>`;
   }else if(legacyIndex===117){
     rules=`<li>上のラインを右から左へ流れる音符に合わせて、下の巨大ターンテーブルを左右へ擦ります。</li><li>10秒で20音符。タイミングでGOOD / NICE! / PERFECT!!が決まり、最大100点です。</li>`;
   }else{
@@ -34550,373 +34550,140 @@ async function startAmidakujiMasters(p,humanIndex,runId){
   gameFit();
   const gameIndex=GAMES.findIndex(g=>g.key==='amidakujiMasters');
 
-  const goalValues=
-    shuffle([1,5,10,15,20,25,30,35,40,45,50,55,60,80,90,100]);
-
-  const lanes=goalValues.length;
-  const worldW=960;
-  const worldH=1320;
-  const topY=105;
-  const bottomY=1220;
-
+  const goalValues=shuffle([1,5,10,15,20,25,30,35,40,45,50,55,60,80,90,100]);
+  const lanes=16,worldW=960,worldH=1320,topY=110,bottomY=1175,goalY=bottomY+28;
   const rows=[];
 
   for(let i=0;i<28;i++){
     let pair=randi(0,lanes-2);
-
-    if(
-      rows.length&&
-      rows[rows.length-1].pair===pair
-    ){
-      pair=(pair+1+randi(1,4))%(lanes-1);
-    }
-
-    rows.push({
-      y:topY+70+i*38,
-      pair
-    });
+    if(rows.length&&rows[rows.length-1].pair===pair)pair=(pair+1+randi(1,4))%(lanes-1);
+    rows.push({y:topY+66+i*36,pair});
   }
 
-  let selected=false;
-  let raf=null;
+  let selected=false,raf=null;
 
   screen.innerHTML=`
-    <div class="amida-shell amida-v126 amida-master-v187">
+    <div class="amida-shell amida-v126 amida-master-v188">
       <div class="game-head">
-        <div>
-          <span class="kicker">${esc(p.name)}</span>
-          <h2>モブくんのあみだくじマスターズ</h2>
-        </div>
+        <div><span class="kicker">${esc(p.name)}</span><h2>モブくんのあみだくじマスターズ</h2></div>
         <div class="game-badge">${playBadge(humanIndex)}</div>
       </div>
 
-      <div id="amidaMasterViewport187" class="amida-viewport amida-viewport-v126 amida-master-viewport-v187">
-        <div
-          id="amidaMasterWorld187"
-          class="amida-world amida-master-world-v187"
-          style="height:${worldH}px">
-
+      <div id="amidaMasterViewport188" class="amida-viewport amida-viewport-v126 amida-master-viewport-v188">
+        <div id="amidaMasterWorld188" class="amida-world amida-master-world-v188" style="height:${worldH}px">
           <div class="amida-light-v126"></div>
+          <svg id="amidaMasterSvg188" class="amida-svg" viewBox="0 0 ${worldW} ${worldH}" preserveAspectRatio="none"></svg>
+          <svg class="amida-trace-svg-v126" viewBox="0 0 ${worldW} ${worldH}" preserveAspectRatio="none"><polyline id="amidaMasterTrace188" points=""></polyline></svg>
+          <div id="amidaMasterMob188" class="amida-mob amida-mob-v126 amida-master-mob-v188" style="background-image:url('icon/01.png')"></div>
 
-          <svg
-            id="amidaMasterSvg187"
-            class="amida-svg"
-            viewBox="0 0 ${worldW} ${worldH}"
-            preserveAspectRatio="none"></svg>
-
-          <svg
-            class="amida-trace-svg-v126"
-            viewBox="0 0 ${worldW} ${worldH}"
-            preserveAspectRatio="none">
-            <polyline id="amidaMasterTrace187" points=""></polyline>
-          </svg>
-
-          <div
-            id="amidaMasterMob187"
-            class="amida-mob amida-mob-v126 amida-master-mob-v187"
-            style="background-image:url('icon/01.png')"></div>
-
-          <div class="amida-goals amida-goals-v126 amida-master-goals-v187">
-            ${goalValues.map((v,i)=>`
-              <b
-                data-master-goal="${i}"
-                style="left:${(i+.5)/lanes*100}%">
-                <i>${v}</i>
-              </b>
-            `).join('')}
-          </div>
+          ${goalValues.map((v,i)=>`
+            <div class="amida-master-goal-v188" data-master-goal="${i}" style="left:${(i+.5)/lanes*100}%;top:${goalY}px">
+              <span>${v}</span>
+            </div>`).join('')}
         </div>
 
-        <div class="amida-secret-banner-v177 amida-master-secret-v187">
-          <b>?</b><span>SECRET</span><b>?</b>
-        </div>
+        <div id="amidaMasterHint188" class="amida-hint amida-hint-v126">GOALを見て入口を選べ！</div>
 
-        <div id="amidaMasterHint187" class="amida-hint amida-hint-v126">
-          16個のGOALをチェック…
-        </div>
-
-        <div
-          id="amidaMasterEntrances187"
-          class="amida-entrances amida-entrances-v126 amida-master-entrances-v187"
-          hidden>
-          ${Array.from({length:lanes},(_,i)=>`
-            <button
-              type="button"
-              data-amida-master="${i}">
-              <span>${i+1}</span>
-            </button>
-          `).join('')}
+        <div id="amidaMasterEntrances188" class="amida-entrances amida-entrances-v126 amida-master-entrances-v188">
+          ${Array.from({length:lanes},(_,i)=>`<button type="button" data-amida-master="${i}"><span>${i+1}</span></button>`).join('')}
         </div>
       </div>
     </div>`;
 
-  const viewport=document.getElementById('amidaMasterViewport187');
-  const world=document.getElementById('amidaMasterWorld187');
-  const svg=document.getElementById('amidaMasterSvg187');
-  const trace=document.getElementById('amidaMasterTrace187');
-  const mob=document.getElementById('amidaMasterMob187');
-  const entrances=document.getElementById('amidaMasterEntrances187');
-  const hint=document.getElementById('amidaMasterHint187');
+  const viewport=document.getElementById('amidaMasterViewport188');
+  const world=document.getElementById('amidaMasterWorld188');
+  const svg=document.getElementById('amidaMasterSvg188');
+  const trace=document.getElementById('amidaMasterTrace188');
+  const mob=document.getElementById('amidaMasterMob188');
+  const entrances=document.getElementById('amidaMasterEntrances188');
+  const hint=document.getElementById('amidaMasterHint188');
 
-  const xForLane=
-    lane=>(lane+.5)/lanes*worldW;
-
+  const xForLane=lane=>(lane+.5)/lanes*worldW;
   let markup='';
 
   for(let lane=0;lane<lanes;lane++){
     const x=xForLane(lane);
-
-    markup+=`
-      <line
-        x1="${x}" y1="${topY}"
-        x2="${x}" y2="${bottomY}"
-        class="amida-vertical"/>`;
+    markup+=`<line x1="${x}" y1="${topY}" x2="${x}" y2="${bottomY}" class="amida-vertical"/>`;
+    markup+=`<line x1="${x}" y1="${bottomY}" x2="${x}" y2="${goalY-8}" class="amida-master-goal-stem-v188"/>`;
   }
 
   rows.forEach(row=>{
-    markup+=`
-      <line
-        x1="${xForLane(row.pair)}"
-        y1="${row.y}"
-        x2="${xForLane(row.pair+1)}"
-        y2="${row.y}"
-        class="amida-horizontal"/>`;
-
-    markup+=`
-      <circle
-        cx="${(xForLane(row.pair)+xForLane(row.pair+1))/2}"
-        cy="${row.y}"
-        r="4"
-        class="amida-node-v126"/>`;
+    markup+=`<line x1="${xForLane(row.pair)}" y1="${row.y}" x2="${xForLane(row.pair+1)}" y2="${row.y}" class="amida-horizontal"/>`;
+    markup+=`<circle cx="${(xForLane(row.pair)+xForLane(row.pair+1))/2}" cy="${row.y}" r="4" class="amida-node-v126"/>`;
   });
 
   svg.innerHTML=markup;
-
-  const maxScroll=
-    Math.max(0,worldH-viewport.clientHeight);
-
-  world.style.transform=`translateY(${-maxScroll}px)`;
-  viewport.classList.add("goal-preview-v126");
-
-  beep(540,70,.018);
-  await wait(1150);
-
-  if(!isGameRunValid(runId))return;
-
-  await new Promise(resolve=>{
-    const st=performance.now();
-    const duration=1500;
-
-    const f=now=>{
-      if(!isGameRunValid(runId)){
-        resolve();
-        return;
-      }
-
-      const t=clamp((now-st)/duration,0,1);
-      const e=1-Math.pow(1-t,3);
-
-      world.style.transform=
-        `translateY(${-maxScroll*(1-e)}px)`;
-
-      if(t<1)raf=requestAnimationFrame(f);
-      else resolve();
-    };
-
-    raf=requestAnimationFrame(f);
-  });
-
-  if(!isGameRunValid(runId))return;
-
-  viewport.classList.remove("goal-preview-v126");
-  hint.textContent='入口を1つ選べ！';
-  entrances.hidden=false;
-  entrances.classList.add("show-v126");
+  const maxScroll=Math.max(0,worldH-viewport.clientHeight);
+  world.style.transform='translateY(0px)';
 
   function buildPath(startLane){
     let lane=startLane;
-
-    const points=[
-      {x:xForLane(lane),y:topY}
-    ];
+    const points=[{x:xForLane(lane),y:topY}];
 
     rows.forEach(row=>{
-      points.push({
-        x:xForLane(lane),
-        y:row.y
-      });
-
-      if(row.pair===lane){
-        lane++;
-        points.push({
-          x:xForLane(lane),
-          y:row.y
-        });
-      }else if(row.pair+1===lane){
-        lane--;
-        points.push({
-          x:xForLane(lane),
-          y:row.y
-        });
-      }
+      points.push({x:xForLane(lane),y:row.y});
+      if(row.pair===lane){lane++;points.push({x:xForLane(lane),y:row.y})}
+      else if(row.pair+1===lane){lane--;points.push({x:xForLane(lane),y:row.y})}
     });
 
-    points.push({
-      x:xForLane(lane),
-      y:bottomY
-    });
-
-    return{
-      points,
-      finalLane:lane
-    };
+    points.push({x:xForLane(lane),y:bottomY});
+    return{points,finalLane:lane};
   }
 
   async function animatePath(path){
     mob.hidden=false;
-
     const traced=[path.points[0]];
-
-    trace.setAttribute(
-      "points",
-      `${path.points[0].x},${path.points[0].y}`
-    );
+    trace.setAttribute("points",`${path.points[0].x},${path.points[0].y}`);
 
     for(let i=1;i<path.points.length;i++){
       if(!isGameRunValid(runId))return;
-
-      const a=path.points[i-1];
-      const b=path.points[i];
-      const dist=Math.hypot(b.x-a.x,b.y-a.y);
-      const duration=clamp(dist*2.20,130,410);
-      const st=performance.now();
+      const a=path.points[i-1],b=path.points[i],dist=Math.hypot(b.x-a.x,b.y-a.y),duration=clamp(dist*2.15,125,400),st=performance.now();
 
       await new Promise(resolve=>{
         const f=now=>{
-          if(!isGameRunValid(runId)){
-            resolve();
-            return;
-          }
-
-          const t=clamp((now-st)/duration,0,1);
-          const e=
-            t<.5
-              ? 2*t*t
-              : 1-Math.pow(-2*t+2,2)/2;
-
-          const x=a.x+(b.x-a.x)*e;
-          const y=a.y+(b.y-a.y)*e;
-
-          mob.style.left=`${x/worldW*100}%`;
-          mob.style.top=`${y}px`;
-
-          trace.setAttribute(
-            "points",
-            [...traced,{x,y}]
-              .map(q=>`${q.x},${q.y}`)
-              .join(" ")
-          );
-
-          world.style.transform=
-            `translateY(${-clamp(
-              y-viewport.clientHeight*.42,
-              0,
-              maxScroll
-            )}px)`;
-
-          if(t<1)raf=requestAnimationFrame(f);
-          else resolve();
+          if(!isGameRunValid(runId)){resolve();return}
+          const t=clamp((now-st)/duration,0,1),e=t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2;
+          const x=a.x+(b.x-a.x)*e,y=a.y+(b.y-a.y)*e;
+          mob.style.left=`${x/worldW*100}%`;mob.style.top=`${y}px`;
+          trace.setAttribute("points",[...traced,{x,y}].map(q=>`${q.x},${q.y}`).join(" "));
+          world.style.transform=`translateY(${-clamp(y-viewport.clientHeight*.42,0,maxScroll)}px)`;
+          if(t<1)raf=requestAnimationFrame(f);else resolve();
         };
-
         raf=requestAnimationFrame(f);
       });
 
       traced.push(b);
-
-      if(Math.abs(b.x-a.x)>20){
-        beep(640,32,.011);
-      }
+      if(Math.abs(b.x-a.x)>20)beep(640,32,.011);
     }
   }
 
   entrances.addEventListener('pointerdown',async e=>{
-    const btn=
-      e.target.closest('[data-amida-master]');
+    const btn=e.target.closest('[data-amida-master]');
+    if(!btn||selected||!isGameRunValid(runId))return;
+    e.preventDefault();selected=true;
 
-    if(
-      !btn||
-      selected||
-      !isGameRunValid(runId)
-    )return;
-
-    e.preventDefault();
-    selected=true;
-
-    entrances
-      .querySelectorAll("button")
-      .forEach(b=>b.disabled=true);
-
+    entrances.querySelectorAll("button").forEach(b=>b.disabled=true);
     btn.classList.add("selected-v126");
 
-    const startLane=
-      Number(btn.dataset.amidaMaster);
+    const startLane=Number(btn.dataset.amidaMaster),path=buildPath(startLane);
+    mob.style.left=`${xForLane(startLane)/worldW*100}%`;mob.style.top=`${topY}px`;
+    hint.textContent=`${startLane+1}番 START!`;beep(720,80,.025);
 
-    const path=
-      buildPath(startLane);
-
-    mob.style.left=
-      `${xForLane(startLane)/worldW*100}%`;
-
-    mob.style.top=
-      `${topY}px`;
-
-    hint.textContent=
-      `${startLane+1}番 START!`;
-
-    beep(720,80,.025);
-
-    await wait(330);
-
+    await wait(300);
     entrances.hidden=true;
-
     await animatePath(path);
-
     if(!isGameRunValid(runId))return;
 
-    const score=
-      goalValues[path.finalLane];
-
+    const score=goalValues[path.finalLane];
     state.records.amidakujiMasters[p.id]=score;
-
-    document
-      .querySelector(`[data-master-goal="${path.finalLane}"]`)
-      ?.classList.add("goal-hit-v126");
-
+    document.querySelector(`[data-master-goal="${path.finalLane}"]`)?.classList.add("goal-hit-v188");
     viewport.classList.add("amida-goal-burst-v126");
 
-    hint.textContent=
-      score===100
-        ? '100 POINT JACKPOT!!'
-        : `GOAL ${score} POINT！`;
-
-    beep(
-      score>=90?1180:
-      score>=60?1020:
-      score>=35?820:
-      score>=15?600:
-      380,
-      180,.05
-    );
+    hint.textContent=score===100?'100 POINT JACKPOT!!':`GOAL ${score} POINT！`;
+    beep(score>=90?1180:score>=60?1020:score>=35?820:score>=15?600:380,180,.05);
 
     await wait(950);
-
-    if(isGameRunValid(runId)){
-      recordScreen(
-        gameIndex,p,humanIndex,
-        `${score}<small>pt</small>`,
-        `${startLane+1}番 → GOAL`
-      );
-    }
+    if(isGameRunValid(runId))recordScreen(gameIndex,p,humanIndex,`${score}<small>pt</small>`,`${startLane+1}番 → GOAL`);
   },{passive:false});
 }
 
@@ -34991,8 +34758,10 @@ async function startDjMaster(p,humanIndex,runId){
   let platterAngle=0;
   let pointer=null;
   let lastX=0;
-  let scratchAccum=0;
-  let scratchTriggered=false;
+  let scoringDir=0;
+  let scoringTravel=0;
+  let returnTravel=0;
+  let scratchArmed=true;
   let lastScratchAt=0;
   let last=performance.now();
   let raf=null;
@@ -35110,8 +34879,10 @@ async function startDjMaster(p,humanIndex,runId){
 
     pointer=e.pointerId;
     lastX=e.clientX;
-    scratchAccum=0;
-    scratchTriggered=false;
+    scoringDir=0;
+    scoringTravel=0;
+    returnTravel=0;
+    scratchArmed=true;
 
     try{
       deck.setPointerCapture(pointer);
@@ -35131,35 +34902,54 @@ async function startDjMaster(p,humanIndex,runId){
     lastX=e.clientX;
 
     platterAngle+=dx*1.6;
-    scratchAccum+=Math.abs(dx);
-
     platter.style.transform=
       `translate(-50%,-50%) rotate(${platterAngle}deg)`;
 
+    if(Math.abs(dx)<1.2)return;
+
+    const moveDir=dx>0?1:-1;
+    const travel=Math.abs(dx);
     const now=performance.now();
 
-    if(
-      !scratchTriggered&&
-      scratchAccum>=13&&
-      now-lastScratchAt>=95
-    ){
-      scratchTriggered=true;
-      scratchAccum=0;
-      lastScratchAt=now;
+    if(scoringDir===0)scoringDir=moveDir;
 
-      // One judgement per finger-down scratch.
-      // Returning the platter with the same touch is visual only.
-      attemptScratch(
-        (now-startTime)/1000
-      );
+    if(moveDir===scoringDir){
+      scoringTravel+=travel;
+      returnTravel=0;
+
+      if(
+        scratchArmed&&
+        scoringTravel>=14&&
+        now-lastScratchAt>=90
+      ){
+        scratchArmed=false;
+        scoringTravel=0;
+        lastScratchAt=now;
+
+        attemptScratch(
+          (now-startTime)/1000
+        );
+      }
+
+    }else{
+      // Return motion physically scratches the record but never judges.
+      returnTravel+=travel;
+      scoringTravel=0;
+
+      if(returnTravel>=12){
+        scratchArmed=true;
+        returnTravel=0;
+      }
     }
   },{passive:false});
 
   const endPointer=e=>{
     if(pointer!==e.pointerId)return;
     pointer=null;
-    scratchAccum=0;
-    scratchTriggered=false;
+    scoringDir=0;
+    scoringTravel=0;
+    returnTravel=0;
+    scratchArmed=true;
   };
 
   deck.addEventListener('pointerup',endPointer,{passive:false});
@@ -35267,182 +35057,115 @@ async function startTokotokoCatcher(p,humanIndex,runId){
   const gameIndex=GAMES.findIndex(g=>g.key==='tokotokoCatcher');
 
   screen.innerHTML=`
-    <div class="catcher-shell ufo-catcher-shell ttk-shell-v187 gameplay-fit">
+    <div class="catcher-shell ufo-catcher-shell ttk-shell-v188 gameplay-fit">
       <div class="game-head">
-        <div>
-          <span class="kicker">${esc(p.name)}</span>
-          <h2>トコトコモブくんキャッチャー</h2>
-          <p class="lead">ARM → POSITION → DROP → STOP</p>
-        </div>
+        <div><span class="kicker">${esc(p.name)}</span><h2>トコトコモブくんキャッチャー</h2><p class="lead">ARM → POSITION → DROP → STOP</p></div>
         <div class="game-badge">${playBadge(humanIndex)}</div>
       </div>
 
-      <div class="ttk-hud-v187">
-        <div><span>TRY</span><b id="ttkTry187">1 / 3</b></div>
-        <div><span>GET</span><b id="ttkGet187">0 / 5</b></div>
-        <div><span>SCORE</span><b id="ttkScore187">0</b></div>
+      <div class="ttk-hud-v188">
+        <div><span>TRY</span><b id="ttkTry188">1 / 3</b></div>
+        <div><span>GET</span><b id="ttkGet188">0 / 5</b></div>
+        <div><span>SCORE</span><b id="ttkScore188">0</b></div>
       </div>
 
-      <div class="ufo-cabinet ttk-cabinet-v187">
-        <div class="ufo-marquee ttk-marquee-v187">
-          <span>★</span><b>TOKOTOKO CATCHER</b><span>★</span>
-        </div>
+      <div class="ufo-cabinet ttk-cabinet-v188">
+        <div class="ufo-marquee"><span>★</span><b>TOKOTOKO CATCHER</b><span>★</span></div>
 
         <div class="ufo-glass-wrap">
-          <div class="ufo-side-post left"></div>
-          <div class="ufo-side-post right"></div>
-          <div class="ufo-top-beam"></div>
+          <div class="ufo-side-post left"></div><div class="ufo-side-post right"></div><div class="ufo-top-beam"></div>
 
-          <div id="ttkStage187" class="catcher-stage ufo-glass ttk-stage-v187">
+          <div id="ttkStage188" class="catcher-stage ufo-glass ttk-stage-v188">
             <div class="ufo-back-logo">MOB</div>
-            <div class="ttk-floor-v187"></div>
+            <div class="ttk-floor-v188"></div>
 
-            <div id="ttkChute187" class="catcher-chute ufo-chute ttk-chute-v187">
-              <b>PRIZE</b>
-              <span id="ttkChuteCount187">0</span>
-              <div id="ttkChutePile187" class="ttk-chute-pile-v187"></div>
+            <div id="ttkChute188" class="catcher-chute ufo-chute ttk-chute-v188">
+              <b>PRIZE</b><span id="ttkChuteCount188">0</span><div id="ttkChutePile188" class="ttk-chute-pile-v188"></div>
             </div>
 
-            <div class="ttk-width-meter-v187">
-              <span class="ttk-width-target-v187"></span>
-              <i id="ttkWidthCursor187"></i>
-              <b>ARM WIDTH</b>
+            <div class="ttk-width-meter-v188">
+              <span class="ttk-width-target-v188"></span><i id="ttkWidthCursor188"></i>
             </div>
 
-            <div class="ttk-crane-rail-v187"></div>
+            <div class="ttk-crane-rail-v188"></div>
 
-            <div id="ttkCrane187" class="crane ufo-crane ttk-crane-v187">
-              <div class="ttk-trolley-v187">
-                <i></i><i></i>
-              </div>
-              <div id="ttkCable187" class="crane-cable ufo-cable ttk-cable-v187"></div>
-
-              <div id="ttkHead187" class="ttk-claw-head-v187">
-                <div class="ttk-claw-light-v187"></div>
-
-                <div id="ttkArmL187" class="ttk-claw-finger-v187 left-v187">
-                  <i class="ttk-claw-hook-v187"></i>
-                </div>
-
-                <div id="ttkArmR187" class="ttk-claw-finger-v187 right-v187">
-                  <i class="ttk-claw-hook-v187"></i>
-                </div>
+            <div id="ttkCrane188" class="crane ttk-crane-v188">
+              <div class="ttk-trolley-v188"><i></i><i></i></div>
+              <div id="ttkCable188" class="crane-cable ttk-cable-v188"></div>
+              <div id="ttkHead188" class="ttk-claw-head-v188">
+                <div class="ttk-claw-light-v188"></div>
+                <div id="ttkArmL188" class="ttk-claw-finger-v188 left-v188"><i id="ttkHookL188" class="ttk-claw-hook-v188"></i></div>
+                <div id="ttkArmR188" class="ttk-claw-finger-v188 right-v188"><i id="ttkHookR188" class="ttk-claw-hook-v188"></i></div>
               </div>
             </div>
-
-            <div id="ttkCall187" class="ttk-call-v187">① 70%の白線でSTOP</div>
           </div>
         </div>
 
-        <div class="ufo-control-panel ttk-panel-v187">
-          <div class="catcher-controls ufo-controls ttk-controls-v187">
-            <button id="ttkLeft187" class="move" type="button" disabled>◀</button>
-            <button id="ttkRight187" class="move" type="button" disabled>▶</button>
-            <button id="ttkDrop187" class="drop" type="button" disabled>降下</button>
-            <button id="ttkStop187" class="stop" type="button">STOP</button>
+        <div class="ufo-control-panel ttk-panel-v188">
+          <div id="ttkCall188" class="ttk-guide-v188">① アーム幅を決める</div>
+          <div class="catcher-controls ufo-controls ttk-controls-v188">
+            <button id="ttkLeft188" class="move" type="button" disabled>◀</button>
+            <button id="ttkRight188" class="move" type="button" disabled>▶</button>
+            <button id="ttkDrop188" class="drop" type="button" disabled>降下</button>
+            <button id="ttkStop188" class="stop" type="button">STOP</button>
           </div>
         </div>
       </div>
     </div>`;
 
-  const stage=document.getElementById('ttkStage187');
-  const crane=document.getElementById('ttkCrane187');
-  const cable=document.getElementById('ttkCable187');
-  const head=document.getElementById('ttkHead187');
-  const armL=document.getElementById('ttkArmL187');
-  const armR=document.getElementById('ttkArmR187');
-  const cursor=document.getElementById('ttkWidthCursor187');
-  const call=document.getElementById('ttkCall187');
-
-  const leftBtn=document.getElementById('ttkLeft187');
-  const rightBtn=document.getElementById('ttkRight187');
-  const dropBtn=document.getElementById('ttkDrop187');
-  const stopBtn=document.getElementById('ttkStop187');
-
-  const tryEl=document.getElementById('ttkTry187');
-  const getEl=document.getElementById('ttkGet187');
-  const scoreEl=document.getElementById('ttkScore187');
-  const chute=document.getElementById('ttkChute187');
-  const chuteCount=document.getElementById('ttkChuteCount187');
-  const chutePile=document.getElementById('ttkChutePile187');
+  const stage=document.getElementById('ttkStage188');
+  const crane=document.getElementById('ttkCrane188');
+  const cable=document.getElementById('ttkCable188');
+  const head=document.getElementById('ttkHead188');
+  const armL=document.getElementById('ttkArmL188');
+  const armR=document.getElementById('ttkArmR188');
+  const hookL=document.getElementById('ttkHookL188');
+  const hookR=document.getElementById('ttkHookR188');
+  const cursor=document.getElementById('ttkWidthCursor188');
+  const call=document.getElementById('ttkCall188');
+  const leftBtn=document.getElementById('ttkLeft188');
+  const rightBtn=document.getElementById('ttkRight188');
+  const dropBtn=document.getElementById('ttkDrop188');
+  const stopBtn=document.getElementById('ttkStop188');
+  const tryEl=document.getElementById('ttkTry188');
+  const getEl=document.getElementById('ttkGet188');
+  const scoreEl=document.getElementById('ttkScore188');
+  const chute=document.getElementById('ttkChute188');
+  const chuteCount=document.getElementById('ttkChuteCount188');
+  const chutePile=document.getElementById('ttkChutePile188');
 
   void stage.offsetHeight;
-
-  const W=stage.clientWidth;
-  const H=stage.clientHeight;
-
-  const CENTER_X=W*.52;
-  const START_Y=34;
-  const FIG_Y=H*.765;
-  const CLAW_TIP_OFFSET=88;
-  const BEST_Y=FIG_Y-CLAW_TIP_OFFSET;
-  const MAX_Y=Math.min(H*.76,BEST_Y+60);
-  const CHUTE_X=54;
-  const CHUTE_Y=H-38;
-
+  const W=stage.clientWidth,H=stage.clientHeight;
+  const CENTER_X=W*.52,START_Y=18,FIG_Y=H*.84,MAX_HEAD_Y=H*.61;
+  const CHUTE_X=54,CHUTE_Y=H-40;
   const speeds=[62,60,64,58,61];
 
-  let active=false;
-  let finished=false;
-  let phase='width';
-  let tries=0;
-  let got=0;
-
-  let widthPct=10;
-  let widthDir=1;
-  let lockedWidth=10;
-
-  let craneX=CENTER_X;
-  let craneY=START_Y;
-  let gripClose=0;
-
-  let held=[];
-  let last=performance.now();
-  let raf=null;
-  let sequenceBusy=false;
-
+  let active=false,finished=false,phase='width',tries=0,got=0;
+  let widthPct=10,widthDir=1,lockedWidth=10,craneX=CENTER_X,craneY=START_Y,gripClose=0;
+  let held=[],last=performance.now(),raf=null,sequenceBusy=false;
   const now0=performance.now();
 
   const figs=speeds.map((speed,i)=>({
-    id:i,
-    x:34+(W-68)*(i/4),
-    y:FIG_Y,
-    dir:Math.random()<.5?-1:1,
-    speed,
-    nextTurn:now0+rand(700,1900),
-    walkPhase:Math.random()*Math.PI*2,
-    removed:false,
-    held:false,
-    falling:false,
-    releasing:false,
-    holdDX:0,
-    holdDY:0,
-    el:null
+    id:i,x:34+(W-68)*(i/4),y:FIG_Y,dir:Math.random()<.5?-1:1,speed,
+    nextTurn:now0+rand(700,1900),walkPhase:Math.random()*Math.PI*2,
+    removed:false,held:false,falling:false,releasing:false,holdDX:0,holdDY:0,el:null
   }));
 
   figs.forEach(f=>{
     const el=document.createElement('div');
-    el.className='ttk-figure-v187';
+    el.className='ttk-figure-v188';
     el.innerHTML=`<img src="icon/01.png" draggable="false" alt="">`;
-    stage.appendChild(el);
-    f.el=el;
+    stage.appendChild(el);f.el=el;
   });
 
-  // Large visible spread. 70% must look like a real open UFO claw.
-  function armSpread(){
-    return 40+lockedWidth*1.02;
-  }
+  const armSpread=()=>40+lockedWidth*1.02;
+  const widthQuality=()=>clamp(1-Math.abs(lockedWidth-70)/48,0,1);
 
-  function widthQuality(){
-    return clamp(1-Math.abs(lockedWidth-70)/48,0,1);
-  }
-
-  function clawTipY(){
-    return craneY+CLAW_TIP_OFFSET;
-  }
-
-  function depthQuality(){
-    return clamp(1-Math.abs(clawTipY()-FIG_Y)/34,0,1);
+  function actualClawGeometry(){
+    const sr=stage.getBoundingClientRect(),lr=hookL.getBoundingClientRect(),rr=hookR.getBoundingClientRect();
+    const leftTipX=lr.right-sr.left,rightTipX=rr.left-sr.left;
+    const hookTop=((lr.top+rr.top)/2)-sr.top,hookBottom=((lr.bottom+rr.bottom)/2)-sr.top;
+    return{leftTipX,rightTipX,centerX:(leftTipX+rightTipX)/2,hookTop,hookBottom,centerY:(hookTop+hookBottom)/2};
   }
 
   function updateHud(){
@@ -35453,406 +35176,183 @@ async function startTokotokoCatcher(p,humanIndex,runId){
   }
 
   function setControls(){
-    const widthPhase=phase==='width';
-    const positionPhase=phase==='position';
-    const descendPhase=phase==='descend';
-
-    leftBtn.disabled=!positionPhase;
-    rightBtn.disabled=!positionPhase;
-    dropBtn.disabled=!positionPhase;
-    stopBtn.disabled=!(widthPhase||descendPhase);
+    leftBtn.disabled=phase!=='position';
+    rightBtn.disabled=phase!=='position';
+    dropBtn.disabled=phase!=='position';
+    stopBtn.disabled=!(phase==='width'||phase==='descend');
   }
 
   function renderCrane(){
     crane.style.left=`${craneX}px`;
-
     cable.style.height=`${Math.max(16,craneY)}px`;
     head.style.top=`${Math.max(16,craneY)}px`;
-
     cursor.style.left=`${widthPct}%`;
 
-    const s=armSpread();
-    const live=s*(1-gripClose*.74);
-    const shift=live*.60;
-    const angle=15+live*.20;
-
-    armL.style.transform=
-      `translateX(${-shift}px) rotate(${-angle}deg)`;
-
-    armR.style.transform=
-      `translateX(${shift}px) rotate(${angle}deg)`;
+    const s=armSpread(),live=s*(1-gripClose*.74),shift=live*.60,angle=15+live*.20;
+    armL.style.transform=`translateX(${-shift}px) rotate(${-angle}deg)`;
+    armR.style.transform=`translateX(${shift}px) rotate(${angle}deg)`;
   }
 
   function renderFigures(now){
     figs.forEach(f=>{
-      if(f.removed){
-        f.el.style.display='none';
-        return;
-      }
-
+      if(f.removed){f.el.style.display='none';return}
       if(f.falling||f.releasing)return;
 
-      let x=f.x;
-      let y=f.y;
-      let rot=0;
-      let sx=1;
-      let sy=1;
+      let x=f.x,y=f.y,rot=0,sx=1,sy=1;
 
       if(f.held){
-        x=craneX+f.holdDX;
-        y=craneY+f.holdDY;
-        rot=Math.sin(now*.052+f.id*1.7)*7;
+        x=craneX+f.holdDX;y=craneY+f.holdDY;rot=Math.sin(now*.052+f.id*1.7)*7;
       }else{
-        const step=now*.0105+f.walkPhase;
-        const sway=Math.sin(step);
-        const bob=Math.abs(Math.sin(step))*3.8;
-
-        y-=bob;
-        rot=sway*5.3;
-        sx=1+sway*.018;
-        sy=1-Math.abs(sway)*.028;
+        const step=now*.0105+f.walkPhase,sway=Math.sin(step),bob=Math.abs(Math.sin(step))*3.8;
+        y-=bob;rot=sway*5.3;sx=1+sway*.018;sy=1-Math.abs(sway)*.028;
       }
 
-      f.el.style.transform=
-        `translate3d(${(x-27).toFixed(1)}px,${(y-27).toFixed(1)}px,0) rotate(${rot.toFixed(1)}deg) scale(${sx.toFixed(3)},${sy.toFixed(3)})`;
+      f.el.style.transform=`translate3d(${(x-27).toFixed(1)}px,${(y-27).toFixed(1)}px,0) rotate(${rot.toFixed(1)}deg) scale(${sx.toFixed(3)},${sy.toFixed(3)})`;
     });
   }
 
   function addPrizeMini(){
     const img=document.createElement('img');
-    img.src='icon/01.png';
-    img.draggable=false;
-    img.alt='';
-    img.style.left=`${18+Math.random()*48}px`;
-    img.style.top=`${30+Math.random()*28}px`;
-    img.style.transform=`rotate(${rand(-18,18)}deg)`;
-    chutePile.appendChild(img);
-
-    chute.classList.remove('hit-v187');
-    void chute.offsetWidth;
-    chute.classList.add('hit-v187');
+    img.src='icon/01.png';img.draggable=false;img.alt='';
+    img.style.left=`${18+Math.random()*48}px`;img.style.top=`${30+Math.random()*28}px`;img.style.transform=`rotate(${rand(-18,18)}deg)`;
+    chutePile.appendChild(img);chute.classList.remove('hit-v188');void chute.offsetWidth;chute.classList.add('hit-v188');
   }
 
   function getPop(){
     const pop=document.createElement('div');
-    pop.className='ttk-get-pop-v187';
-    pop.textContent='GET! +20';
-    pop.style.left=`${CHUTE_X+44}px`;
-    pop.style.top=`${CHUTE_Y-55}px`;
-    stage.appendChild(pop);
-    setTimeout(()=>pop.remove(),720);
+    pop.className='ttk-get-pop-v188';pop.textContent='GET! +20';
+    pop.style.left=`${CHUTE_X+44}px`;pop.style.top=`${CHUTE_Y-55}px`;
+    stage.appendChild(pop);setTimeout(()=>pop.remove(),720);
   }
 
   function animateValue(duration,update){
     return new Promise(resolve=>{
       const st=performance.now();
-
       const frame=now=>{
-        if(!isGameRunValid(runId)){
-          resolve(false);
-          return;
-        }
-
-        const t=clamp((now-st)/duration,0,1);
-        update(t);
-
-        if(t<1)requestAnimationFrame(frame);
-        else resolve(true);
+        if(!isGameRunValid(runId)){resolve(false);return}
+        const t=clamp((now-st)/duration,0,1);update(t);
+        if(t<1)requestAnimationFrame(frame);else resolve(true);
       };
-
       requestAnimationFrame(frame);
     });
   }
 
   async function fallBack(f){
-    const startX=craneX+f.holdDX;
-    const startY=craneY+f.holdDY;
-    const targetX=clamp(startX+rand(-55,55),30,W-30);
-    const targetY=FIG_Y;
-
-    f.held=false;
-    f.falling=true;
-    f.el.style.transition='none';
-    f.el.style.transform=`translate3d(${startX-27}px,${startY-29}px,0) rotate(0deg)`;
-    void f.el.offsetWidth;
-
-    // Slower visible fall than the previous build.
+    const startX=craneX+f.holdDX,startY=craneY+f.holdDY,targetX=clamp(startX+rand(-55,55),30,W-30),targetY=FIG_Y;
+    f.held=false;f.falling=true;f.el.style.transition='none';
+    f.el.style.transform=`translate3d(${startX-27}px,${startY-29}px,0) rotate(0deg)`;void f.el.offsetWidth;
     f.el.style.transition='transform .72s cubic-bezier(.24,.68,.42,1.12)';
     f.el.style.transform=`translate3d(${targetX-27}px,${targetY-29}px,0) rotate(${rand(-24,24)}deg)`;
-
-    await wait(735);
-    if(!isGameRunValid(runId))return;
-
-    f.x=targetX;
-    f.y=targetY;
-    f.dir=Math.random()<.5?-1:1;
-    f.nextTurn=performance.now()+rand(650,1700);
-    f.walkPhase=Math.random()*Math.PI*2;
-    f.falling=false;
-    f.el.style.transition='none';
+    await wait(735);if(!isGameRunValid(runId))return;
+    f.x=targetX;f.y=targetY;f.dir=Math.random()<.5?-1:1;f.nextTurn=performance.now()+rand(650,1700);f.walkPhase=Math.random()*Math.PI*2;f.falling=false;f.el.style.transition='none';
   }
 
   async function releaseToChute(f,delayMs){
-    if(delayMs)await wait(delayMs);
-    if(!isGameRunValid(runId))return;
-
-    const startX=craneX+f.holdDX;
-    const startY=craneY+f.holdDY;
-    const targetX=CHUTE_X+rand(-13,13);
-    const targetY=CHUTE_Y+rand(-5,8);
-
-    f.held=false;
-    f.releasing=true;
-    f.el.style.transition='none';
-    f.el.style.transform=`translate3d(${startX-27}px,${startY-29}px,0) rotate(0deg)`;
-    void f.el.offsetWidth;
-
-    f.el.style.transition=
-      'transform .68s cubic-bezier(.18,.70,.28,1.12), opacity .18s .58s';
-
-    f.el.style.transform=
-      `translate3d(${targetX-27}px,${targetY-29}px,0) rotate(${rand(65,125)}deg)`;
-
-    await wait(690);
-    if(!isGameRunValid(runId))return;
-
-    f.removed=true;
-    f.releasing=false;
-    f.el.style.display='none';
-
-    got++;
-    addPrizeMini();
-    getPop();
-    updateHud();
-    beep(900+got*20,65,.024);
+    if(delayMs)await wait(delayMs);if(!isGameRunValid(runId))return;
+    const startX=craneX+f.holdDX,startY=craneY+f.holdDY,targetX=CHUTE_X+rand(-13,13),targetY=CHUTE_Y+rand(-5,8);
+    f.held=false;f.releasing=true;f.el.style.transition='none';
+    f.el.style.transform=`translate3d(${startX-27}px,${startY-29}px,0) rotate(0deg)`;void f.el.offsetWidth;
+    f.el.style.transition='transform .68s cubic-bezier(.18,.70,.28,1.12), opacity .18s .58s';
+    f.el.style.transform=`translate3d(${targetX-27}px,${targetY-29}px,0) rotate(${rand(65,125)}deg)`;
+    await wait(690);if(!isGameRunValid(runId))return;
+    f.removed=true;f.releasing=false;f.el.style.display='none';got++;addPrizeMini();getPop();updateHud();beep(900+got*20,65,.024);
   }
 
   function captureAtStop(){
     held=[];
-
-    const s=armSpread();
-    const tipY=clawTipY();
+    const g=actualClawGeometry();
+    const minX=Math.min(g.leftTipX,g.rightTipX)-10,maxX=Math.max(g.leftTipX,g.rightTipX)+10;
 
     figs.forEach(f=>{
       if(f.removed||f.falling||f.releasing)return;
-
-      const dx=Math.abs(f.x-craneX);
-      const dy=Math.abs(f.y-tipY);
-
-      // Real envelope: if the fingertips do not physically reach the figure,
-      // it cannot be captured.
-      const horizontalLimit=s*.54+17;
-      const verticalLimit=29;
-
-      if(
-        dx<=horizontalLimit &&
-        dy<=verticalLimit
-      ){
-        f.held=true;
-        held.push(f);
-      }
+      const insideX=f.x>=minX-18&&f.x<=maxX+18;
+      const nearHook=Math.abs(f.y-g.centerY)<=29;
+      if(insideX&&nearHook){f.held=true;held.push(f)}
     });
 
     held.forEach((f,i)=>{
       const center=(held.length-1)/2;
       f.holdDX=(i-center)*20;
-      f.holdDY=54+(i%2)*9;
+      f.holdDY=96+(i%2)*8;
     });
   }
 
   async function completeAttempt(){
     if(sequenceBusy||finished||phase!=='descend')return;
 
-    sequenceBusy=true;
-    phase='sequence';
-    setControls();
+    sequenceBusy=true;phase='sequence';setControls();
+    const gBefore=actualClawGeometry();
+    const depthQ=clamp(1-Math.abs(gBefore.centerY-FIG_Y)/34,0,1);
 
-    await animateValue(190,t=>{
-      gripClose=t;
-    });
-
+    await animateValue(190,t=>{gripClose=t});
     if(!isGameRunValid(runId))return;
 
     captureAtStop();
-
-    call.textContent=held.length
-      ? `${held.length}体つかんだ！`
-      : '届いていない / つかめない';
-
-    call.className=
-      `ttk-call-v187 ${held.length?'hold-v187':'miss-v187'}`;
-
+    call.textContent=held.length?`${held.length}体つかんだ！`:'MISS';
+    call.className=`ttk-guide-v188 ${held.length?'hold-v188':'miss-v188'}`;
     beep(held.length?820:180,held.length?70:115,.022);
 
-    await wait(480);
-    if(!isGameRunValid(runId))return;
+    await wait(480);if(!isGameRunValid(runId))return;
 
     const liftStart=craneY;
-
-    await animateValue(720,t=>{
-      const e=1-Math.pow(1-t,3);
-      craneY=liftStart+(START_Y-liftStart)*e;
-    });
-
+    await animateValue(720,t=>{const e=1-Math.pow(1-t,3);craneY=liftStart+(START_Y-liftStart)*e});
     if(!isGameRunValid(runId))return;
 
-    const wq=widthQuality();
-    const dq=depthQuality();
-
-    const multi=
-      held.length>=5?.11:
-      held.length===4?.08:
-      held.length===3?.045:0;
-
-    const success=[];
-    const failed=[];
+    const wq=widthQuality(),multi=held.length>=5?.11:held.length===4?.08:held.length===3?.045:0;
+    const success=[],failed=[];
 
     held.forEach((f,i)=>{
-      const chance=clamp(
-        .18+wq*.30+dq*.31-multi-i*.015,
-        .05,.72
-      );
-
-      if(Math.random()<chance)success.push(f);
-      else failed.push(f);
+      const chance=clamp(.18+wq*.30+depthQ*.31-multi-i*.015,.05,.72);
+      (Math.random()<chance?success:failed).push(f);
     });
 
     const fallPromises=failed.map(f=>fallBack(f));
 
     if(success.length){
       const startX=craneX;
-
-      call.textContent=`${success.length}/${held.length}体をPRIZEへ運搬中`;
-      call.className='ttk-call-v187 carry-v187';
-
-      await animateValue(760,t=>{
-        const e=1-Math.pow(1-t,3);
-        craneX=startX+(CHUTE_X-startX)*e;
-      });
-
+      call.textContent=`${success.length}/${held.length}体をPRIZEへ`;call.className='ttk-guide-v188 carry-v188';
+      await animateValue(760,t=>{const e=1-Math.pow(1-t,3);craneX=startX+(CHUTE_X-startX)*e});
       if(!isGameRunValid(runId))return;
-
-      await animateValue(190,t=>{
-        gripClose=1-t;
-      });
-
-      await Promise.all(
-        success.map((f,i)=>releaseToChute(f,i*95))
-      );
-
+      await animateValue(190,t=>{gripClose=1-t});
+      await Promise.all(success.map((f,i)=>releaseToChute(f,i*95)));
       if(!isGameRunValid(runId))return;
-
-      call.textContent=`${success.length}体GET!`;
-      call.className='ttk-call-v187 get-v187';
-      await wait(280);
-
+      call.textContent=`${success.length}体GET!`;call.className='ttk-guide-v188 get-v188';await wait(280);
     }else{
-      await animateValue(190,t=>{
-        gripClose=1-t;
-      });
-
-      if(held.length){
-        call.textContent='掴んだけど全部落ちた…';
-        call.className='ttk-call-v187 miss-v187';
-      }
+      await animateValue(190,t=>{gripClose=1-t});
+      if(held.length){call.textContent='全部落ちた…';call.className='ttk-guide-v188 miss-v188'}
     }
 
-    await Promise.all(fallPromises);
-    if(!isGameRunValid(runId))return;
+    await Promise.all(fallPromises);if(!isGameRunValid(runId))return;
 
     const backStartX=craneX;
+    await animateValue(670,t=>{const e=1-Math.pow(1-t,3);craneX=backStartX+(CENTER_X-backStartX)*e});
 
-    await animateValue(670,t=>{
-      const e=1-Math.pow(1-t,3);
-      craneX=backStartX+(CENTER_X-backStartX)*e;
-    });
-
-    held.forEach(f=>{
-      if(!f.removed)f.held=false;
-    });
-
-    held=[];
-    tries++;
-    updateHud();
+    held.forEach(f=>{if(!f.removed)f.held=false});held=[];tries++;updateHud();
 
     if(got>=5||tries>=3){
-      finished=true;
-      active=false;
-      sequenceBusy=false;
-
-      if(raf)cancelAnimationFrame(raf);
-
+      finished=true;active=false;sequenceBusy=false;if(raf)cancelAnimationFrame(raf);
       state.records.tokotokoCatcher[p.id]=got*20;
-
-      call.textContent=
-        got>=5
-          ? 'COMPLETE! 100pt'
-          : `FINISH! ${got*20}pt`;
-
-      call.className='ttk-call-v187 finish-v187';
-
+      call.textContent=got>=5?'COMPLETE! 100pt':`FINISH! ${got*20}pt`;call.className='ttk-guide-v188 finish-v188';
       await wait(700);
-
-      if(isGameRunValid(runId)){
-        recordScreen(
-          gameIndex,p,humanIndex,
-          `${got*20}<small>pt</small>`,
-          `${got} / 5 GET / ${tries} TRY`
-        );
-      }
+      if(isGameRunValid(runId))recordScreen(gameIndex,p,humanIndex,`${got*20}<small>pt</small>`,`${got} / 5 GET / ${tries} TRY`);
       return;
     }
 
-    widthPct=10;
-    lockedWidth=10;
-    widthDir=1;
-    craneX=CENTER_X;
-    craneY=START_Y;
-    gripClose=0;
-    phase='width';
-    sequenceBusy=false;
-
-    call.textContent='① 70%の白線でSTOP';
-    call.className='ttk-call-v187';
-
-    setControls();
-    updateHud();
+    widthPct=10;lockedWidth=10;widthDir=1;craneX=CENTER_X;craneY=START_Y;gripClose=0;phase='width';sequenceBusy=false;
+    call.textContent='① アーム幅を決める';call.className='ttk-guide-v188';setControls();updateHud();
   }
 
   function moveCrane(dir){
     if(!active||phase!=='position'||sequenceBusy)return;
-
-    craneX=clamp(
-      craneX+dir*W*.065,
-      46,
-      W-46
-    );
-
-    renderCrane();
-    beep(450,25,.009);
+    craneX=clamp(craneX+dir*W*.065,48,W-48);renderCrane();beep(450,25,.009);
   }
 
-  leftBtn.addEventListener('pointerdown',e=>{
-    e.preventDefault();
-    moveCrane(-1);
-  },{passive:false});
-
-  rightBtn.addEventListener('pointerdown',e=>{
-    e.preventDefault();
-    moveCrane(1);
-  },{passive:false});
+  leftBtn.addEventListener('pointerdown',e=>{e.preventDefault();moveCrane(-1)},{passive:false});
+  rightBtn.addEventListener('pointerdown',e=>{e.preventDefault();moveCrane(1)},{passive:false});
 
   dropBtn.addEventListener('pointerdown',e=>{
     if(!active||phase!=='position'||sequenceBusy)return;
-
-    e.preventDefault();
-    phase='descend';
-    setControls();
-
-    call.textContent='③ ゆっくり降下中…中央でSTOP';
-    call.className='ttk-call-v187';
-
-    beep(650,55,.016);
+    e.preventDefault();phase='descend';setControls();call.textContent='③ 降下中…狙ってSTOP';call.className='ttk-guide-v188';beep(650,55,.016);
   },{passive:false});
 
   stopBtn.addEventListener('pointerdown',e=>{
@@ -35860,101 +35360,48 @@ async function startTokotokoCatcher(p,humanIndex,runId){
     e.preventDefault();
 
     if(phase==='width'){
-      lockedWidth=widthPct;
-      phase='position';
-
-      call.textContent='② ◀ ▶ で位置を決めて「降下」';
-      call.className='ttk-call-v187';
-
-      setControls();
-      beep(720,55,.018);
-      return;
+      lockedWidth=widthPct;phase='position';call.textContent='② ◀ ▶ で位置を決める';call.className='ttk-guide-v188';setControls();beep(720,55,.018);return;
     }
 
-    if(phase==='descend'){
-      completeAttempt();
-    }
+    if(phase==='descend')completeAttempt();
   },{passive:false});
 
-  updateHud();
-  setControls();
-  renderCrane();
-  renderFigures(performance.now());
-
+  updateHud();setControls();renderCrane();renderFigures(performance.now());
   if(!(await countdown('TOKOTOKO CATCHER',runId,{transparent:true})))return;
 
-  active=true;
-  last=performance.now();
+  active=true;last=performance.now();
 
   function frame(now){
     if(!isGameRunValid(runId)||finished)return;
-
-    const dt=Math.min(.03,(now-last)/1000);
-    last=now;
+    const dt=Math.min(.03,(now-last)/1000);last=now;
 
     figs.forEach(f=>{
-      if(
-        f.removed||
-        f.held||
-        f.falling||
-        f.releasing
-      )return;
-
-      if(now>=f.nextTurn){
-        f.dir=Math.random()<.5?-1:1;
-        f.nextTurn=now+rand(750,2100);
-      }
-
+      if(f.removed||f.held||f.falling||f.releasing)return;
+      if(now>=f.nextTurn){f.dir=Math.random()<.5?-1:1;f.nextTurn=now+rand(750,2100)}
       f.x+=f.dir*f.speed*dt;
-
-      if(f.x<=28){
-        f.x=28;
-        f.dir=1;
-        f.nextTurn=now+rand(650,1500);
-      }else if(f.x>=W-28){
-        f.x=W-28;
-        f.dir=-1;
-        f.nextTurn=now+rand(650,1500);
-      }
+      if(f.x<=28){f.x=28;f.dir=1;f.nextTurn=now+rand(650,1500)}
+      else if(f.x>=W-28){f.x=W-28;f.dir=-1;f.nextTurn=now+rand(650,1500)}
     });
 
     if(phase==='width'){
-      // Faster than V10.86 so 70% is not trivial.
       widthPct+=widthDir*158*dt;
-
-      if(widthPct>=100){
-        widthPct=100;
-        widthDir=-1;
-      }else if(widthPct<=0){
-        widthPct=0;
-        widthDir=1;
-      }
-
+      if(widthPct>=100){widthPct=100;widthDir=-1}
+      else if(widthPct<=0){widthPct=0;widthDir=1}
       lockedWidth=widthPct;
-
     }else if(phase==='descend'){
-      // Slow, readable descent.
-      craneY+=92*dt;
-
-      if(craneY>=MAX_Y){
-        craneY=MAX_Y;
-
-        // IMPORTANT: reaching the bottom never auto-grabs.
-        // The player still must press STOP.
-        call.textContent='STOPを押さないと掴みません';
-        call.className='ttk-call-v187 warn-v187';
+      craneY+=90*dt;
+      if(craneY>=MAX_HEAD_Y){
+        craneY=MAX_HEAD_Y;
+        call.textContent='③ STOPで挟む';
+        call.className='ttk-guide-v188';
       }
     }
 
-    renderCrane();
-    renderFigures(now);
-
-    raf=requestAnimationFrame(frame);
+    renderCrane();renderFigures(now);raf=requestAnimationFrame(frame);
   }
 
   raf=requestAnimationFrame(frame);
 }
-
 renderHome();
 })();
 
