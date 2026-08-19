@@ -28238,13 +28238,13 @@ canvas{
   position:absolute;
   left:0;
   top:0;
-  width:44px;
-  height:44px;
+  width:38px;
+  height:38px;
   will-change:transform;
 }
 .classic-prize-v190 img{
-  width:42px;
-  height:42px;
+  width:36px;
+  height:36px;
   object-fit:contain;
   filter:drop-shadow(0 2px 0 rgba(17,19,26,.16));
 }
@@ -28565,7 +28565,7 @@ canvas{
   animation:rocketFistRoll194 .74s ease-out forwards
 }
 @keyframes rocketFistRoll194{
-  to{rotate:225deg;translate:42px 24px}
+  to{translate:42px 24px}
 }
 
 /* charge rings */
@@ -28647,7 +28647,7 @@ canvas{
 }
 .rocketp-power-labels-v194{
   display:grid;
-  grid-template-columns:25fr 65fr 10fr 20fr;
+  grid-template-columns:25fr 71fr 4fr 20fr;
   margin-bottom:3px;
   font-size:6px;
   font-weight:1000;
@@ -28673,12 +28673,12 @@ canvas{
 }
 .rocketp-charge-track-v194 .normal-zone-v194{
   left:20.833%;
-  width:54.167%;
+  width:59.167%;
   background:#45636f
 }
 .rocketp-charge-track-v194 .max-zone-v194{
-  left:75%;
-  width:8.333%;
+  left:80%;
+  width:3.333%;
   background:#eee166
 }
 .rocketp-charge-track-v194 .dead-zone-v194.right-v194{
@@ -28692,15 +28692,15 @@ canvas{
   z-index:6;
   top:-3px;
   bottom:-3px;
-  width:4px;
+  width:2px;
   background:#fff;
-  box-shadow:0 0 0 2px #111
+  box-shadow:0 0 0 1px #111
 }
 .rocketp-charge-track-v194 .dead-line-v194.left-v194{
   left:20.833%
 }
 .rocketp-charge-track-v194 .max-line-v194.start-v194{
-  left:75%;
+  left:80%;
   background:#ffe45e
 }
 .rocketp-charge-track-v194 .dead-line-v194.right-v194{
@@ -28950,3 +28950,15 @@ canvas{
   30%{translate:-5px 0}
   60%{translate:6px 0}
 }
+
+
+/* V10.96 — 20 PLAYER BLOCK KING */
+.gameking-format-select-v196{display:grid;grid-template-columns:1fr 1fr;gap:8px}.gameking-format-select-v196 button{min-height:104px;display:grid;align-content:center;gap:4px;padding:8px;border:4px solid var(--ink);border-radius:18px;background:#fff;text-align:center;font-weight:1000}.gameking-format-select-v196 button.selected{background:#ffe272;box-shadow:inset 0 0 0 3px #fff7c7}.gameking-format-select-v196 span{font-size:8px}.gameking-format-select-v196 b{font-size:15px}.gameking-format-select-v196 small{font-size:8px}
+.blockking-road-v196{display:grid;gap:5px;padding:8px;border:4px solid var(--ink);border-radius:18px;background:#f7f2e6}.blockking-road-v196>div{display:grid;grid-template-columns:74px 1fr;align-items:center;gap:3px 8px;padding:7px 9px;border:3px solid var(--ink);border-radius:12px;background:#fff}.blockking-road-v196>div.final{background:#ffe272}.blockking-road-v196 b{font-size:12px}.blockking-road-v196 span{font-size:11px;font-weight:1000}.blockking-road-v196 small{grid-column:2;font-size:8px;font-weight:900;color:#665f67}.blockking-road-v196>i{text-align:center;font-style:normal;font-size:11px;font-weight:1000}
+.blockking-mini-road-v196{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}.blockking-mini-road-v196>div{min-width:0;padding:6px 3px;border:3px solid var(--ink);border-radius:10px;background:#ece7dc;text-align:center}.blockking-mini-road-v196>div.active{background:#ffe272;box-shadow:inset 0 0 0 2px #fff6b8}.blockking-mini-road-v196>div.done{background:#d9ffd7}.blockking-mini-road-v196 b,.blockking-mini-road-v196 span{display:block}.blockking-mini-road-v196 b{font-size:8px}.blockking-mini-road-v196 span{margin-top:2px;font-size:6px;font-weight:900}
+.blockking-block-grid-v196{display:grid;grid-template-columns:repeat(2,1fr);gap:7px}.blockking-block-card-v196{display:grid;gap:3px;padding:8px;border:3px solid var(--ink);border-radius:13px;background:#f8f4e9}.blockking-block-card-v196>span{padding-bottom:4px;border-bottom:2px solid var(--ink);font-size:10px;font-weight:1000}.blockking-block-card-v196>b{overflow:hidden;font-size:8px;white-space:nowrap;text-overflow:ellipsis}.blockking-block-card-v196>small{margin-top:3px;font-size:7px;font-weight:1000;color:#756873}
+.blockking-roster-v196{display:grid;gap:5px}.blockking-roster-row-v196{display:grid;grid-template-columns:38px 1fr;align-items:center;gap:7px;padding:6px;border:3px solid var(--ink);border-radius:12px;background:#f3eee3}.blockking-roster-row-v196.human{background:#dff2ff}.blockking-roster-row-v196.cpu{background:#f1e9f7}.blockking-avatar-v196{width:36px;height:36px;object-fit:contain}.blockking-roster-row-v196>div{min-width:0;display:grid}.blockking-roster-row-v196 b{overflow:hidden;font-size:10px;white-space:nowrap;text-overflow:ellipsis}.blockking-roster-row-v196 span{font-size:7px}
+.blockking-selected-game-v196{display:grid;gap:4px;padding:12px;border:4px solid var(--ink);border-radius:17px;background:#ffe272;text-align:center}.blockking-selected-game-v196 span{font-size:8px;font-weight:1000}.blockking-selected-game-v196 b{font-size:18px}.blockking-selected-game-v196 small{font-size:9px;font-weight:850}
+.blockking-result-table-v196{display:grid;gap:6px}.blockking-result-table-v196>div{display:grid;grid-template-columns:28px 40px 1fr 58px 64px;align-items:center;gap:5px;padding:7px;border:3px solid var(--ink);border-radius:13px;background:#eee9de}.blockking-result-table-v196>div.advance{background:#dcffd9}.blockking-result-table-v196>div.out{opacity:.68}.blockking-result-table-v196>div>span{text-align:center;font-size:19px;font-weight:1000}.blockking-result-avatar-v196{width:38px;height:38px;object-fit:contain}.blockking-result-table-v196>div>b{overflow:hidden;font-size:9px;white-space:nowrap;text-overflow:ellipsis}.blockking-result-table-v196>div>strong{text-align:right;font-size:18px}.blockking-result-table-v196>div>strong small{font-size:7px}.blockking-result-table-v196>div>em{padding:4px;border:2px solid var(--ink);border-radius:999px;background:#fff;text-align:center;font-size:7px;font-style:normal;font-weight:1000}.blockking-result-table-v196>div.advance>em{background:#a7efa4}
+.blockking-final-history-v196{display:grid;gap:5px}.blockking-final-history-v196>div{display:grid;grid-template-columns:28px 1fr auto;align-items:center;gap:6px;padding:7px;border:3px solid var(--ink);border-radius:11px;background:#f8f4e9}.blockking-final-history-v196 span{width:24px;height:24px;display:grid;place-items:center;border:2px solid var(--ink);border-radius:50%;background:#ffe272;font-size:8px;font-weight:1000}.blockking-final-history-v196 b{overflow:hidden;font-size:9px;white-space:nowrap;text-overflow:ellipsis}.blockking-final-history-v196 strong{font-size:12px}
+@media(max-width:360px){.blockking-result-table-v196>div{grid-template-columns:24px 34px 1fr 48px}.blockking-result-table-v196>div>em{grid-column:3/-1;width:max-content}}

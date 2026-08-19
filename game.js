@@ -244,7 +244,7 @@ const GAMES=[
   {no:6,key:"breakdance",title:"モブくん1990にチャレンジ",sub:"4択から1990を見抜く",legacy:5},
   {no:7,key:"crisis",title:"モブくん危機一髪",sub:"3体で足元エネルギーを連続回避",legacy:6},
   {no:8,key:"factory",title:"モブくん人形大人気",sub:"10秒で箱詰め・封印を量産",legacy:7},
-  {no:9,key:"catcher",title:"モブくんキャッチャー",sub:"30体のフィギュアを3回で何体取れるか。1体3点、全部GETで100点",legacy:8},
+  {no:9,key:"catcher",title:"モブくんキャッチャー",sub:"33体の小さめフィギュアを3回で何体取れるか。1体3点、全部GETで100点",legacy:8},
   {no:10,key:"tidy",title:"モブくん整理整頓",sub:"7体を見本の部屋へ近づける",legacy:9},
   {no:11,key:"ski",title:"モブくんスキージャンプ",sub:"踏切タイミングで最大1km",legacy:10},
   {no:12,key:"slot",title:"モブくんスロット",sub:"キャラクタースロットでコイン勝負",legacy:11},
@@ -341,7 +341,7 @@ const GAMES=[
   {no:103,key:"tokotokoCatcher",title:"トコトコモブくんキャッチャー",sub:"アーム幅→左右位置→降下→STOP。動く7体を3回で狙う",legacy:115},
   {no:104,key:"amidakujiMasters",title:"モブくんのあみだくじマスターズ",sub:"16本のあみだくじ。決まった16種類のGOAL数字から到着点を競う",legacy:116},
   {no:105,key:"djMaster",title:"モブくんDJの達人",sub:"10秒で流れる20個の音符に合わせ、巨大ターンテーブルをスクラッチ",legacy:117},
-  {no:106,key:"rocketPunch",title:"モブくんロケットパンチ",sub:"拳へパワーを溜めて巨大ロケットパンチ。DEAD / MAX / OVERのラインを狙う",legacy:118},
+  {no:106,key:"rocketPunch",title:"モブくんロケットパンチ",sub:"拳へパワーを溜めて巨大ロケットパンチ。狭いMAXゾーンから3000mを狙う",legacy:118},
   {no:107,key:"flagRaise",title:"モブくん旗上げ",sub:"赤・両方・白の3ボタン。もう一度押せば旗を下げる",legacy:119}
 ];
 
@@ -425,7 +425,7 @@ const MODES={
   customMix:{name:"人数自由バトル",short:"PLAYER / CPUを自由設定",participants:["p1","c2"],team:false,points:[3,0]},
   matchedVsCpu:{name:"プレイヤー VS CPU",short:"同人数チーム戦 / 1対1〜10対10",participants:["p1","c2"],team:true,points:[3,0],teams:{A:["p1"],B:["c2"]},teamNames:{A:"PLAYER TEAM",B:"CPU TEAM"}},
   configured:{name:"対戦",short:"",participants:["p1","c2"],team:false,points:[3,0],performance:false,teams:{},teamNames:{}},
-  tournament:{name:"モブくんゲーム王決定戦",short:"8人 / 16人 ノックアウトトーナメント",participants:["p1","c2"],team:false,points:[],performance:true,teams:{},teamNames:{}},
+  tournament:{name:"モブくんゲーム王決定戦",short:"8/16人ノックアウト + 20人ブロック王",participants:["p1","c2"],team:false,points:[],performance:true,teams:{},teamNames:{}},
   free:{name:"1人フリープレイ",short:"好きなゲームだけ遊ぶ",participants:["p1"],team:false,points:[0]}
 };
 
@@ -565,7 +565,7 @@ function renderHome(){
       <div>
         <span class="kicker">SMARTPHONE PARTY GAME</span>
         <h1>107 MINI<br>GAMES</h1>
-        <p>通常対戦は「チーム戦」「個人戦」。さらに8人/16人の「モブくんゲーム王決定戦」を遊べます。</p>
+        <p>通常対戦は「チーム戦」「個人戦」。モブくんゲーム王は8/16人ノックアウトと20人ブロック戦を遊べます。</p>
       </div>
       <div class="hero-mark">MOB</div>
     </section>
@@ -780,39 +780,56 @@ function renderTournamentSetup(config){
   invalidateGameRun();
   state=freshState();
 
-  config.size=config.size===16?16:8;
-  config.humanCount=clamp(config.humanCount||1,1,Math.min(10,config.size));
+  config={...config};
+  config.format=config.format==="block20"?"block20":"knockout";
+  if(config.format==="block20")config.size=20;
+  else config.size=config.size===16?16:8;
 
+  config.humanCount=clamp(config.humanCount||1,1,Math.min(10,config.size));
   const cpuCount=config.size-config.humanCount;
+  const blockMode=config.format==="block20";
 
   screen.innerHTML=`
     <div class="game-head">
       <div>
         <span class="kicker">GAME KING TOURNAMENT</span>
         <h2>モブくんゲーム王決定戦</h2>
-        <p class="lead">1試合ごとに1ゲーム。勝者だけが次へ進む。</p>
+        <p class="lead">${blockMode?"20人からブロック戦を勝ち抜き、最後の2人が3種目決勝。":"1試合ごとに1ゲーム。勝者だけが次へ進む。"}</p>
       </div>
       <div class="game-badge">${config.size}人</div>
     </div>
 
     <section class="tournament-setup-v158">
-      <div class="tournament-size-select-v158">
-        <button data-tsize="8" class="${config.size===8?"selected":""}" type="button">
-          <span>8 PLAYER</span><b>8人トーナメント</b>
+      <div class="gameking-format-select-v196">
+        <button data-tformat="knockout" class="${!blockMode?"selected":""}" type="button">
+          <span>KNOCKOUT</span><b>ノックアウト王</b><small>8人 / 16人</small>
         </button>
-        <button data-tsize="16" class="${config.size===16?"selected":""}" type="button">
-          <span>16 PLAYER</span><b>16人トーナメント</b>
+        <button data-tformat="block20" class="${blockMode?"selected":""}" type="button">
+          <span>20 PLAYER BLOCKS</span><b>ブロック王</b><small>5人組 → 3人組 → 準決勝</small>
         </button>
       </div>
 
+      ${blockMode?`
+        <div class="blockking-road-v196">
+          <div><b>1回戦</b><span>5人 × 4ブロック</span><small>各3人通過 → 12人</small></div>
+          <i>▼</i>
+          <div><b>2回戦</b><span>3人 × 4ブロック</span><small>各2人通過 → 8人</small></div>
+          <i>▼</i>
+          <div><b>準決勝</b><span>4人 × 2ブロック</span><small>各1人通過 → 2人</small></div>
+          <i>▼</i>
+          <div class="final"><b>決勝</b><span>2人 / 3種目</span><small>合計300点満点</small></div>
+        </div>
+      `:`
+        <div class="tournament-size-select-v158">
+          <button data-tsize="8" class="${config.size===8?"selected":""}" type="button"><span>8 PLAYER</span><b>8人トーナメント</b></button>
+          <button data-tsize="16" class="${config.size===16?"selected":""}" type="button"><span>16 PLAYER</span><b>16人トーナメント</b></button>
+        </div>
+      `}
+
       <div class="wizard-counter-v119 tournament-player-counter-v158">
         <span>PLAYER</span>
-        <div>
-          <button id="tHumanMinus" type="button">−</button>
-          <b id="tHumanCount">${config.humanCount}</b>
-          <button id="tHumanPlus" type="button">＋</button>
-        </div>
-        <small>PLAYER 1〜${Math.min(10,config.size)}人</small>
+        <div><button id="tHumanMinus" type="button">−</button><b id="tHumanCount">${config.humanCount}</b><button id="tHumanPlus" type="button">＋</button></div>
+        <small>PLAYER 1〜${Math.min(10,config.size)}人 / 残りはCPU</small>
       </div>
 
       <div class="tournament-entry-summary-v158">
@@ -825,52 +842,47 @@ function renderTournamentSetup(config){
     <section class="panel">
       <h3>RULE</h3>
       <div class="tournament-rule-list-v158">
-        <p><b>通常試合</b><span>1試合1ゲーム / 0〜100スコアで高い方が勝利</span></p>
-        <p><b>同点</b><span>ゲームを変更して延長戦 / 勝者が決まるまで継続</span></p>
-        <p><b>決勝</b><span>3ゲーム合計スコア / 同点なら別ゲームで延長</span></p>
-        <p><b>組み合わせ</b><span>1回戦はPLAYER同士が極力当たらないよう自動抽選</span></p>
+        ${blockMode?`
+          <p><b>1回戦</b><span>5人×4ブロック / 1ブロック1ゲーム / 上位3人通過</span></p>
+          <p><b>2回戦</b><span>3人×4ブロック / 1ブロック1ゲーム / 上位2人通過</span></p>
+          <p><b>準決勝</b><span>4人×2ブロック / 1ブロック1ゲーム / 各1位だけ決勝進出</span></p>
+          <p><b>決勝</b><span>2人で3種目。100点換算の3ゲーム合計 / 300点満点</span></p>
+          <p><b>同点</b><span>ブロックは完全同一記録なら抽選。決勝同点は第3→第2→第1種目で判定、全て同点なら抽選</span></p>
+        `:`
+          <p><b>通常試合</b><span>1試合1ゲーム / 0〜100スコアで高い方が勝利</span></p>
+          <p><b>同点</b><span>ゲームを変更して延長戦 / 勝者が決まるまで継続</span></p>
+          <p><b>決勝</b><span>3ゲーム合計スコア / 同点なら別ゲームで延長</span></p>
+          <p><b>組み合わせ</b><span>1回戦はPLAYER同士が極力当たらないよう自動抽選</span></p>
+        `}
       </div>
     </section>
 
-    <button id="tournamentCreate" class="primary" type="button">
-      トーナメント表を作成
-    </button>
-    <button id="tournamentBack" class="secondary wizard-back-v119" type="button">
-      ← モード選択へ戻る
-    </button>
+    <button id="tournamentCreate" class="primary" type="button">${blockMode?"20人ブロック戦を作成":"トーナメント表を作成"}</button>
+    <button id="tournamentBack" class="secondary wizard-back-v119" type="button">← モード選択へ戻る</button>
   `;
 
   const redraw=()=>{
-    config.humanCount=clamp(
-      config.humanCount,
-      1,
-      Math.min(10,config.size)
-    );
+    config.humanCount=clamp(config.humanCount,1,Math.min(10,config.size));
     renderTournamentSetup(config);
   };
 
-  screen.querySelectorAll("[data-tsize]").forEach(btn=>{
-    btn.addEventListener("click",()=>{
-      config.size=Number(btn.dataset.tsize);
-      config.humanCount=Math.min(config.humanCount,Math.min(10,config.size));
-      redraw();
-    });
-  });
-
-  document.getElementById("tHumanMinus").addEventListener("click",()=>{
-    config.humanCount=Math.max(1,config.humanCount-1);
+  screen.querySelectorAll("[data-tformat]").forEach(btn=>btn.addEventListener("click",()=>{
+    config.format=btn.dataset.tformat;
+    config.size=config.format==="block20"?20:(config.size===16?16:8);
     redraw();
-  });
+  }));
 
-  document.getElementById("tHumanPlus").addEventListener("click",()=>{
-    config.humanCount=Math.min(Math.min(10,config.size),config.humanCount+1);
+  screen.querySelectorAll("[data-tsize]").forEach(btn=>btn.addEventListener("click",()=>{
+    config.size=Number(btn.dataset.tsize);
+    config.humanCount=Math.min(config.humanCount,Math.min(10,config.size));
     redraw();
-  });
+  }));
 
+  document.getElementById("tHumanMinus").addEventListener("click",()=>{config.humanCount=Math.max(1,config.humanCount-1);redraw();});
+  document.getElementById("tHumanPlus").addEventListener("click",()=>{config.humanCount=Math.min(Math.min(10,config.size),config.humanCount+1);redraw();});
   document.getElementById("tournamentCreate").addEventListener("click",()=>{
-    setupGameKingTournament(config);
+    if(config.format==="block20")setupBlockKingTournament(config);else setupGameKingTournament(config);
   });
-
   document.getElementById("tournamentBack").addEventListener("click",renderBattleTypeSelect);
   gameTop();
 }
@@ -1182,8 +1194,14 @@ function tournamentScoreFor(gameIndex,id){
 
 function finishTournamentGame(gameIndex){
   const t=state.tournament;
-  const m=t?.current;
 
+  if(t?.active&&t.format==="block20"){
+    if(t.finalActive)finishBlockKingFinalGame(gameIndex);
+    else finishBlockKingGroupGame(gameIndex);
+    return;
+  }
+
+  const m=t?.current;
   if(!t?.active||!m)return;
 
   gameSessionActive=false;
@@ -1493,6 +1511,7 @@ function renderTournamentChampion(winnerId,runnerUpId=null){
 
   document.getElementById("tournamentReplay").addEventListener("click",()=>{
     renderTournamentSetup({
+      format:"knockout",
       size:t.size,
       humanCount:t.humanCount
     });
@@ -1500,6 +1519,144 @@ function renderTournamentChampion(winnerId,runnerUpId=null){
 
   document.getElementById("tournamentModeBack").addEventListener("click",renderBattleTypeSelect);
   gameTop();
+}
+
+// =========================================================
+// V10.96 — モブくん王 20 PLAYER BLOCK MODE
+// 20 → 12 → 8 → 2 → FINAL 3 GAMES
+// =========================================================
+function blockKingStageName(stageIndex){return ["1回戦","2回戦","準決勝","決勝"][stageIndex]||""}
+function blockKingGroupLabel(stageIndex,index){
+  if(stageIndex===0)return ["A","B","C","D"][index]||`${index+1}`;
+  if(stageIndex===1)return ["E","F","G","H"][index]||`${index+1}`;
+  if(stageIndex===2)return ["準決勝A","準決勝B"][index]||`${index+1}`;
+  return "FINAL";
+}
+function seedBlockKingEntrants(humanCount){
+  const humanIds=["p1","p2","p3","p4","p5","p6","p7","p8","p9","p10"].slice(0,humanCount);
+  const cpuIds=["c2","c3","c4","c5","c6","c7","c8","c9","c10","c11","c12","c13","c14","c15","c16","c17","c18","c19","c20","c21","c22","c23","c24","c25","c26","c27","c28","c29","c30","c31"];
+  const blocks=Array.from({length:4},()=>[]),order=shuffle([0,1,2,3]);
+  humanIds.forEach((id,i)=>blocks[order[i%4]].push(id));
+  const cpuQueue=shuffle(cpuIds).slice(0,20-humanCount); let c=0;
+  while(c<cpuQueue.length){
+    const candidates=[0,1,2,3].filter(i=>blocks[i].length<5).sort((a,b)=>blocks[a].length-blocks[b].length);
+    if(!candidates.length)break;
+    const min=blocks[candidates[0]].length,tied=candidates.filter(i=>blocks[i].length===min),bi=tied[randi(0,tied.length-1)];
+    blocks[bi].push(cpuQueue[c++]);
+  }
+  return blocks.map(b=>shuffle(b));
+}
+function makeBlockKingGroup(stageIndex,index,members,advanceCount){return{stageIndex,index,label:blockKingGroupLabel(stageIndex,index),members:[...members],advanceCount,gameIndex:null,results:[],qualified:[],complete:false}}
+function setupBlockKingTournament(config){
+  cancelActiveAnimation();invalidateGameRun();
+  const firstMembers=seedBlockKingEntrants(config.humanCount),firstGroups=firstMembers.map((m,i)=>makeBlockKingGroup(0,i,m,3)),entrants=firstMembers.flat();
+  state.modeKey="tournament";state.setup={...config,size:20,format:"block20",type:"tournament"};state.playStyle="tournament";state.playlist=[];state.roundIndex=0;
+  MODES.tournament.participants=[...entrants];MODES.tournament.performance=true;MODES.tournament.team=false;MODES.tournament.points=[];
+  state.tournament={active:true,format:"block20",size:20,humanCount:config.humanCount,entrants:[...entrants],stages:[firstGroups],stageIndex:0,groupIndex:0,currentGroup:null,totalGamesPlayed:0,usedGames:[],finalists:[],finalGames:[],finalCursor:0,finalTotals:{},finalResults:[],finalActive:false,champion:null};
+  renderBlockKingWelcome();
+}
+function blockKingRoadHtml(activeStage=0){
+  const x=[["1回戦","20 → 12"],["2回戦","12 → 8"],["準決勝","8 → 2"],["決勝","3種目"]];
+  return `<div class="blockking-mini-road-v196">${x.map((v,i)=>`<div class="${i===activeStage?"active":i<activeStage?"done":""}"><b>${v[0]}</b><span>${v[1]}</span></div>`).join("")}</div>`;
+}
+function blockKingGroupRoster(group){return `<div class="blockking-roster-v196">${group.members.map(id=>{const p=pById(id);return `<div class="blockking-roster-row-v196 ${p?.cpu?"cpu":"human"}">${p?imgTag(p,"blockking-avatar-v196"):""}<div><b>${p?esc(p.name):id}</b><span>${p?.cpu?"CPU":`PLAYER ${p?.no||""}`}</span></div></div>`}).join("")}</div>`}
+function renderBlockKingWelcome(){
+  clearGameFit();const t=state.tournament;MODES.tournament.participants=[...t.entrants];
+  screen.innerHTML=`<div class="game-head"><div><span class="kicker">20 PLAYER BLOCK KING</span><h2>モブくん王・ブロック戦</h2><p class="lead">20人から最後の2人へ。決勝だけ3種目合計。</p></div><div class="game-badge">20</div></div>
+  ${tournamentCommentary("20人のモブくん王決定戦、開幕！","1回戦は5人×4ブロック。各ブロック上位3人だけが2回戦へ進みます！")}${blockKingRoadHtml(0)}
+  <section class="panel"><div class="panel-head"><h3>FIRST ROUND BLOCKS</h3><span class="tag">${t.humanCount} PLAYER / ${20-t.humanCount} CPU</span></div><div class="blockking-block-grid-v196">${t.stages[0].map(g=>`<div class="blockking-block-card-v196"><span>BLOCK ${g.label}</span>${g.members.map(id=>`<b>${esc(pById(id)?.name||id)}</b>`).join("")}</div>`).join("")}</div></section>
+  <button id="blockKingStart196" class="primary tournament-main-btn-v158" type="button">1回戦スタート！</button>`;
+  document.getElementById("blockKingStart196").addEventListener("click",prepareBlockKingGroup);gameTop();
+}
+function prepareBlockKingGroup(){
+  const t=state.tournament;if(!t?.active||t.format!=="block20"||t.finalActive)return;const groups=t.stages[t.stageIndex]||[],group=groups[t.groupIndex];if(!group){advanceBlockKingStage();return}
+  if(group.gameIndex===null)group.gameIndex=pickTournamentGame(t.usedGames);t.currentGroup=group;MODES.tournament.participants=[...group.members];MODES.tournament.performance=true;MODES.tournament.team=false;MODES.tournament.points=[];renderBlockKingGroupIntro(group);
+}
+function renderBlockKingGroupIntro(group){
+  clearGameFit();const t=state.tournament,stage=blockKingStageName(t.stageIndex),game=GAMES[group.gameIndex];
+  screen.innerHTML=`<div class="game-head"><div><span class="kicker">${stage}</span><h2>${stage} / ${group.label}ブロック</h2><p class="lead">${group.members.length}人中 上位${group.advanceCount}人が通過</p></div><div class="game-badge">${t.groupIndex+1}/${t.stages[t.stageIndex].length}</div></div>${blockKingRoadHtml(t.stageIndex)}
+  ${tournamentCommentary(`${group.label}ブロック、ゲーム決定！`,`このブロックは「${game.title}」！ 100点換算スコアで順位を決めます。`)}
+  <section class="panel"><div class="panel-head"><h3>MEMBERS</h3><span class="tag">TOP ${group.advanceCount} ADVANCE</span></div>${blockKingGroupRoster(group)}</section>
+  <div class="blockking-selected-game-v196"><span>SELECTED GAME</span><b>${game.title}</b><small>${scoreRuleForGame(group.gameIndex)}</small></div>
+  <button id="blockKingGameStart196" class="primary tournament-main-btn-v158" type="button">${group.label}ブロック開始！</button>`;
+  document.getElementById("blockKingGameStart196").addEventListener("click",startBlockKingGroupGame);gameTop();
+}
+function startBlockKingGroupGame(){
+  const t=state.tournament,group=t?.currentGroup;if(!t?.active||!group)return;const gi=group.gameIndex;MODES.tournament.participants=[...group.members];MODES.tournament.performance=true;MODES.tournament.team=false;MODES.tournament.points=[];state.modeKey="tournament";state.gameIndex=gi;state.roundIndex=t.totalGamesPlayed;state.playlist=[gi];const rec=state.records[GAMES[gi].key];if(rec)group.members.forEach(id=>delete rec[id]);showGameIntro(gi);
+}
+function blockKingRankCurrentGroup(gameIndex,group){
+  MODES.tournament.participants=[...group.members];const ranked=rankRecords(gameIndex).map(e=>({id:e.p.id,p:e.p,raw:e.value,score:e.points}));
+  for(let i=0;i<ranked.length;){let j=i+1;while(j<ranked.length&&ranked[j].score===ranked[i].score&&ranked[j].raw===ranked[i].raw)j++;if(j-i>1)ranked.splice(i,j-i,...shuffle(ranked.slice(i,j)));i=j}
+  ranked.forEach((r,i)=>r.place=i+1);return ranked;
+}
+function finishBlockKingGroupGame(gameIndex){
+  const t=state.tournament,group=t?.currentGroup;if(!t?.active||!group)return;gameSessionActive=false;activeGameIndex=-1;cancelCountdown();cancelActiveAnimation();clearGameFit();const ranked=blockKingRankCurrentGroup(gameIndex,group);group.results=ranked;group.qualified=ranked.slice(0,group.advanceCount).map(r=>r.id);group.complete=true;t.totalGamesPlayed++;t.usedGames.push(gameIndex);renderBlockKingGroupResult(group);
+}
+function renderBlockKingGroupResult(group){
+  clearGameFit();const t=state.tournament,stage=blockKingStageName(t.stageIndex);
+  screen.innerHTML=`<div class="game-head"><div><span class="kicker">BLOCK RESULT</span><h2>${stage} / ${group.label}ブロック結果</h2></div><div class="game-badge">TOP ${group.advanceCount}</div></div>
+  ${tournamentCommentary(`${group.label}ブロック決着！`,`${group.advanceCount}人が次のステージへ進出。完全同一記録が並んだ場合だけ抽選で順位を決定します。`)}
+  <div class="blockking-result-table-v196">${group.results.map(r=>`<div class="${r.place<=group.advanceCount?"advance":"out"}"><span>${r.place}</span>${imgTag(r.p,"blockking-result-avatar-v196")}<b>${esc(r.p.name)}</b><strong>${r.score}<small>pt</small></strong><em>${r.place<=group.advanceCount?"ADVANCE":"OUT"}</em></div>`).join("")}</div>
+  <button id="blockKingAfterGroup196" class="primary tournament-main-btn-v158" type="button">${t.groupIndex+1<t.stages[t.stageIndex].length?"次のブロックへ":`${stage} 全ブロック終了`}</button>`;
+  document.getElementById("blockKingAfterGroup196").addEventListener("click",()=>{t.groupIndex++;if(t.groupIndex<t.stages[t.stageIndex].length)prepareBlockKingGroup();else advanceBlockKingStage()});gameTop();
+}
+function buildBlockKingSecondRound(prev){const q=prev.map(g=>g.qualified);return [makeBlockKingGroup(1,0,[q[0][0],q[1][1],q[2][2]],2),makeBlockKingGroup(1,1,[q[1][0],q[2][1],q[3][2]],2),makeBlockKingGroup(1,2,[q[2][0],q[3][1],q[0][2]],2),makeBlockKingGroup(1,3,[q[3][0],q[0][1],q[1][2]],2)]}
+function buildBlockKingSemifinals(prev){const q=prev.map(g=>g.qualified);return [makeBlockKingGroup(2,0,[q[0][0],q[1][1],q[2][0],q[3][1]],1),makeBlockKingGroup(2,1,[q[1][0],q[2][1],q[3][0],q[0][1]],1)]}
+function advanceBlockKingStage(){
+  const t=state.tournament,done=t.stages[t.stageIndex];
+  if(t.stageIndex===0){t.stages.push(buildBlockKingSecondRound(done));t.stageIndex=1;t.groupIndex=0;t.currentGroup=null;renderBlockKingStageTransition(12);return}
+  if(t.stageIndex===1){t.stages.push(buildBlockKingSemifinals(done));t.stageIndex=2;t.groupIndex=0;t.currentGroup=null;renderBlockKingStageTransition(8);return}
+  if(t.stageIndex===2){t.finalists=done.map(g=>g.qualified[0]);prepareBlockKingFinal()}
+}
+function renderBlockKingStageTransition(entryCount){
+  clearGameFit();const t=state.tournament,stage=blockKingStageName(t.stageIndex);
+  screen.innerHTML=`<div class="game-head"><div><span class="kicker">STAGE ADVANCE</span><h2>${stage}へ！</h2><p class="lead">${entryCount}人が新しい組み合わせで激突。</p></div><div class="game-badge">${entryCount}</div></div>${blockKingRoadHtml(t.stageIndex)}
+  ${tournamentCommentary(`${stage}の組み合わせ決定！`,t.stageIndex===1?"1回戦の順位を交差させて再編成。各3人から上位2人が準決勝へ進みます！":"2回戦の順位を交差させて4人×2ブロックへ。各ブロック1位だけが決勝へ進みます！")}
+  <section class="panel"><div class="blockking-block-grid-v196">${t.stages[t.stageIndex].map(g=>`<div class="blockking-block-card-v196"><span>${g.label}</span>${g.members.map(id=>`<b>${esc(pById(id)?.name||id)}</b>`).join("")}<small>TOP ${g.advanceCount} ADVANCE</small></div>`).join("")}</div></section>
+  <button id="blockKingStageStart196" class="primary tournament-main-btn-v158" type="button">${stage}スタート！</button>`;
+  document.getElementById("blockKingStageStart196").addEventListener("click",prepareBlockKingGroup);gameTop();
+}
+function prepareBlockKingFinal(){
+  const t=state.tournament;t.stageIndex=3;t.finalActive=true;t.finalCursor=0;t.finalResults=[];t.finalTotals={};t.finalists.forEach(id=>t.finalTotals[id]=0);const local=[];for(let i=0;i<3;i++){const g=pickTournamentGame([...t.usedGames,...local]);local.push(g)}t.finalGames=local;renderBlockKingFinalIntro();
+}
+function renderBlockKingFinalIntro(){
+  clearGameFit();const t=state.tournament,[a,b]=t.finalists,pa=pById(a),pb=pById(b);MODES.tournament.participants=[...t.finalists];
+  screen.innerHTML=`<div class="game-head"><div><span class="kicker">FINAL 3 GAMES</span><h2>モブくん王・決勝</h2><p class="lead">決勝だけ3種目。3ゲーム合計300点満点。</p></div><div class="game-badge">FINAL</div></div>${blockKingRoadHtml(3)}
+  ${tournamentCommentary("ついに最後の2人！",`${pa.name} vs ${pb.name}！ 決勝は3種目の100点換算合計でモブくん王を決めます！`,true)}
+  <div class="tournament-versus-v158 final">${tournamentPlayerCard(a)}<strong>VS</strong>${tournamentPlayerCard(b)}</div>
+  <section class="panel"><div class="panel-head"><h3>FINAL 3 GAMES</h3><span class="tag">TOTAL 300</span></div><div class="tournament-game-list-v158">${t.finalGames.map((idx,i)=>`<div class="tournament-game-chip-v158"><span>GAME ${i+1}</span><b>${GAMES[idx].title}</b></div>`).join("")}</div></section>
+  <button id="blockKingFinalStart196" class="primary tournament-main-btn-v158" type="button">決勝 第1種目スタート！</button>`;
+  document.getElementById("blockKingFinalStart196").addEventListener("click",startBlockKingFinalGame);gameTop();
+}
+function startBlockKingFinalGame(){
+  const t=state.tournament,gi=t.finalGames[t.finalCursor];if(gi===undefined)return;MODES.tournament.participants=[...t.finalists];MODES.tournament.performance=true;MODES.tournament.team=false;MODES.tournament.points=[];state.modeKey="tournament";state.gameIndex=gi;state.roundIndex=t.totalGamesPlayed;state.playlist=[gi];const rec=state.records[GAMES[gi].key];if(rec)t.finalists.forEach(id=>delete rec[id]);showGameIntro(gi);
+}
+function finishBlockKingFinalGame(gameIndex){
+  const t=state.tournament;if(!t?.active||!t.finalActive)return;gameSessionActive=false;activeGameIndex=-1;cancelCountdown();cancelActiveAnimation();clearGameFit();const [a,b]=t.finalists,sa=tournamentScoreFor(gameIndex,a).score,sb=tournamentScoreFor(gameIndex,b).score;t.finalTotals[a]+=sa;t.finalTotals[b]+=sb;t.finalResults.push({gameIndex,scoreA:sa,scoreB:sb});t.totalGamesPlayed++;t.usedGames.push(gameIndex);renderBlockKingFinalScore();
+}
+function renderBlockKingFinalScore(){
+  clearGameFit();const t=state.tournament,[a,b]=t.finalists,pa=pById(a),pb=pById(b),r=t.finalResults.at(-1),finished=t.finalResults.length>=3;
+  screen.innerHTML=`<div class="game-head"><div><span class="kicker">FINAL SCORE</span><h2>決勝 第${t.finalResults.length}種目終了</h2></div><div class="game-badge">${t.finalResults.length}/3</div></div>
+  ${tournamentCommentary(finished?"3種目すべて終了！":`第${t.finalResults.length}種目終了！`,`${GAMES[r.gameIndex].title}：${pa.name} ${r.scoreA}点 / ${pb.name} ${r.scoreB}点。現在合計 ${t.finalTotals[a]} - ${t.finalTotals[b]}！`,true)}
+  <div class="tournament-score-duel-v158"><div class="${r.scoreA>r.scoreB?"lead":""}">${tournamentPlayerCard(a)}<b>${r.scoreA}<small>pt</small></b></div><strong>VS</strong><div class="${r.scoreB>r.scoreA?"lead":""}">${tournamentPlayerCard(b)}<b>${r.scoreB}<small>pt</small></b></div></div>
+  <section class="tournament-final-total-v158"><span>FINAL TOTAL / 300</span><div><b>${esc(pa.name)}</b><strong>${t.finalTotals[a]}</strong></div><i>—</i><div><b>${esc(pb.name)}</b><strong>${t.finalTotals[b]}</strong></div></section>
+  <div class="blockking-final-history-v196">${t.finalResults.map((x,i)=>`<div><span>${i+1}</span><b>${GAMES[x.gameIndex].title}</b><strong>${x.scoreA} - ${x.scoreB}</strong></div>`).join("")}</div>
+  <button id="blockKingFinalNext196" class="primary tournament-main-btn-v158" type="button">${finished?"モブくん王を発表！":`決勝 第${t.finalResults.length+1}種目へ`}</button>`;
+  document.getElementById("blockKingFinalNext196").addEventListener("click",()=>{if(finished)completeBlockKingFinal();else{t.finalCursor++;renderBlockKingFinalNextCall()}});gameTop();
+}
+function renderBlockKingFinalNextCall(){
+  clearGameFit();const t=state.tournament,gi=t.finalGames[t.finalCursor];screen.innerHTML=`<div class="game-head"><div><span class="kicker">FINAL NEXT</span><h2>決勝 第${t.finalCursor+1}種目</h2></div><div class="game-badge">${t.finalCursor+1}/3</div></div>${tournamentCommentary("次の種目へ！",`次は「${GAMES[gi].title}」！ 3種目合計なので、最後まで逆転可能です！`,true)}<div class="tournament-next-game-v158"><span>NEXT GAME</span><b>${GAMES[gi].title}</b><small>${scoreRuleForGame(gi)}</small></div><button id="blockKingFinalNextStart196" class="primary tournament-main-btn-v158" type="button">第${t.finalCursor+1}種目スタート！</button>`;document.getElementById("blockKingFinalNextStart196").addEventListener("click",startBlockKingFinalGame);gameTop();
+}
+function completeBlockKingFinal(){
+  const t=state.tournament,[a,b]=t.finalists;let winnerId;if(t.finalTotals[a]!==t.finalTotals[b])winnerId=t.finalTotals[a]>t.finalTotals[b]?a:b;else{for(let i=t.finalResults.length-1;i>=0;i--){const r=t.finalResults[i];if(r.scoreA!==r.scoreB){winnerId=r.scoreA>r.scoreB?a:b;break}}if(!winnerId)winnerId=Math.random()<.5?a:b}const runnerId=winnerId===a?b:a;t.champion=winnerId;renderBlockKingChampion(winnerId,runnerId);
+}
+function renderBlockKingChampion(winnerId,runnerId){
+  clearGameFit();const t=state.tournament,w=pById(winnerId),r=pById(runnerId);MODES.tournament.participants=[...t.entrants];
+  screen.innerHTML=`<div class="tournament-champion-v158"><div class="tournament-confetti-v158">${Array.from({length:42},(_,i)=>`<i style="--x:${(i*23)%100}%;--d:${(i%9)*.10}s;--r:${(i*53)%360}deg"></i>`).join("")}</div><span>20 PLAYER BLOCK KING</span><h2>モブくん王 誕生！！</h2>${imgTag(w,"tournament-champion-avatar-v158")}<strong>${esc(w.name)}</strong><b>優勝！！</b></div>
+  ${tournamentCommentary("20人の頂点が決定！！",`${w.name}が1回戦・2回戦・準決勝を突破し、決勝3種目を制してモブくん王に！ ${r.name}も決勝まで勝ち上がった素晴らしい戦いでした！`,true)}
+  <section class="tournament-final-total-v158"><span>FINAL TOTAL / 300</span><div><b>${esc(w.name)}</b><strong>${t.finalTotals[winnerId]}</strong></div><i>—</i><div><b>${esc(r.name)}</b><strong>${t.finalTotals[runnerId]}</strong></div></section>${blockKingRoadHtml(3)}
+  <button id="blockKingReplay196" class="primary" type="button">20人ブロック王をもう一度</button><div style="height:8px"></div><button id="blockKingModeBack196" class="secondary" type="button">モードセレクトへ</button>`;
+  document.getElementById("blockKingReplay196").addEventListener("click",()=>renderTournamentSetup({format:"block20",size:20,humanCount:t.humanCount}));document.getElementById("blockKingModeBack196").addEventListener("click",renderBattleTypeSelect);gameTop();
 }
 
 function renderBattleTypeSelect(){
@@ -1510,7 +1667,7 @@ function renderBattleTypeSelect(){
 
   screen.innerHTML=`
     <div class="game-head">
-      <div><span class="kicker">MODE SELECT</span><h2>対戦形式を選択</h2><p class="lead">通常対戦2種 + ノックアウトトーナメント。</p></div>
+      <div><span class="kicker">MODE SELECT</span><h2>対戦形式を選択</h2><p class="lead">通常対戦2種 + モブくんゲーム王2形式。</p></div>
       <div class="game-badge">3 MODES</div>
     </div>
 
@@ -1524,7 +1681,7 @@ function renderBattleTypeSelect(){
       <button id="battleTournament" class="battle-type-card-v119 tournament-v158" type="button">
         <span>GAME KING TOURNAMENT</span>
         <b>モブくんゲーム王決定戦</b>
-        <small>8人 / 16人・1試合1ゲーム・決勝3ゲーム</small>
+        <small>8/16人ノックアウト または 20人ブロック戦・決勝3ゲーム</small>
       </button>
     </div>
 
@@ -1545,7 +1702,7 @@ function renderBattleTypeSelect(){
   });
 
   document.getElementById('battleTournament').addEventListener('click',()=>{
-    renderTournamentSetup({size:8,humanCount:1});
+    renderTournamentSetup({format:"knockout",size:8,humanCount:1});
   });
 
   document.getElementById('battleTypeBack').addEventListener('click',renderHome);
@@ -2403,7 +2560,7 @@ function scoreRuleForGame(index){
     "3回チャンス / 1体GET=20点 / 5体GET=100点 / 最大表示140点 / 順位評価は100点上限",
     "GOALの数字がそのまま得点 / 1・5・10・15・20・25・30・35・40・45・50・55・60・80・90・100",
     "20音符 / PERFECT=5点・NICE=4点・GOOD=2点 / 10秒 / 最大100点",
-    "横一直線のロケットパンチ / DEAD 0〜24・MAX 90〜100・100超OVERHEAT / 到達1000m=100点",
+    "横一直線のロケットパンチ / DEAD 0〜24・MAX 96〜100・100超OVERHEAT / 到達3000m=100点",
     "10秒 / 赤・両方・白の3ボタン / 正解数÷出題数を0〜100点化"
   ][legacyIndex];
 }
@@ -2434,7 +2591,7 @@ function showGameIntro(index){
   }else if(legacyIndex===7){
     rules=`<li>ベルトコンベアの箱を10秒で完成。</li><li>人形入り箱へさらに人形を入れると不良品として破棄。</li>`;
   }else if(legacyIndex===8){
-    rules=`<li>30体のフィギュアを3回のクレーン操作で何体取れるか挑戦します。</li><li>①アーム幅STOP → ②◀▶位置 → ③降下 → ④下降中STOP。1体3点、30体全部GETで100点です。</li>`;
+    rules=`<li>33体の小さめフィギュアを3回のクレーン操作で何体取れるか挑戦します。</li><li>①アーム幅STOP → ②◀▶位置 → ③降下 → ④下降中STOP。1体3点、33体全部GETで100点です。</li>`;
   }else if(legacyIndex===9){
     rules=`<li>上が毎回ランダムな見本、下が操作エリア。</li><li>7体は最初に中央へ集まっています。</li><li>自動吸着なし。10秒で見本へ近づけます。</li><li>判定はシビア。</li>`;
   }else if(legacyIndex===10){
@@ -2638,7 +2795,7 @@ function showGameIntro(index){
   }else if(legacyIndex===117){
     rules=`<li>上のラインを右から左へ流れる音符に合わせて、下の巨大ターンテーブルを左右へ擦ります。</li><li>10秒で20音符。タイミングでGOOD / NICE! / PERFECT!!が決まり、最大100点です。</li>`;
   }else if(legacyIndex===118){
-    rules=`<li>PUNCH長押しで拳へパワーを集中。25未満と100超はDEAD ZONE、90〜100がMAXゾーンです。</li><li>離すと巨大な拳が横一直線へ発射。障害物を派手に粉砕し、飛行中に1回だけ出るBOOSTも狙います。</li>`;
+    rules=`<li>PUNCH長押しで拳へパワーを集中。25未満と100超はDEAD ZONE、96〜100だけがMAXゾーンです。</li><li>離すと巨大な拳が横一直線へ発射。障害物を派手に粉砕し、飛行中に1回だけ出るBOOSTも狙います。</li>`;
   }else if(legacyIndex===119){
     rules=`<li>赤・両方・白の3ボタンだけ。上げている旗のボタンをもう一度押すと下がります。</li><li>10秒間、現在の旗状態に合った指示へ素早く対応。間違えても続行します。</li>`;
   }else{
@@ -4084,7 +4241,7 @@ async function startFactory(p,humanIndex,runId){
 async function startCatcher(p,humanIndex,runId){
   gameFit();
   const gameIndex=GAMES.findIndex(g=>g.key==='catcher');
-  const PRIZE_COUNT=30;
+  const PRIZE_COUNT=33;
   const MAX_ATTEMPTS=3;
 
   screen.innerHTML=`
@@ -4100,7 +4257,7 @@ async function startCatcher(p,humanIndex,runId){
 
       <div class="shared-catcher-hud-v190">
         <div><span>TRY</span><b id="catchTry191">1 / 3</b></div>
-        <div><span>GET</span><b id="catchGet191">0 / 30</b></div>
+        <div><span>GET</span><b id="catchGet191">0 / 33</b></div>
         <div><span>SCORE</span><b id="catchScore191">0</b></div>
       </div>
 
@@ -4195,7 +4352,7 @@ async function startCatcher(p,humanIndex,runId){
   const CHUTE_Y=H-40;
 
   // Real prize-pile physics.
-  const BODY_R=14.5;
+  const BODY_R=12.4;
   const PHYS_FLOOR_Y=H*.89;
   const PHYS_MIN_X=W*.17;
   const PHYS_MAX_X=W*.93;
@@ -4221,14 +4378,14 @@ async function startCatcher(p,humanIndex,runId){
   const prizes=[];
 
   for(let i=0;i<PRIZE_COUNT;i++){
-    const col=i%10;
-    const row=Math.floor(i/10);
+    const col=i%11;
+    const row=Math.floor(i/11);
 
     prizes.push({
       id:i,
       icon:randi(1,10),
-      x:W*(.19+col/9*.71)+rand(-5,5),
-      y:PHYS_FLOOR_Y-BODY_R-row*35+rand(-3,3),
+      x:W*(.18+col/10*.73)+rand(-4,4),
+      y:PHYS_FLOOR_Y-BODY_R-row*30+rand(-2,2),
       vx:0,
       vy:0,
       rot:rand(-14,14),
@@ -4307,7 +4464,7 @@ async function startCatcher(p,humanIndex,runId){
 
       if(!d.held){
         d.el.style.transform=
-          `translate3d(${(d.x-22).toFixed(1)}px,${(d.y-22).toFixed(1)}px,0) rotate(${d.rot.toFixed(1)}deg)`;
+          `translate3d(${(d.x-19).toFixed(1)}px,${(d.y-19).toFixed(1)}px,0) rotate(${d.rot.toFixed(1)}deg)`;
       }
     });
   }
@@ -4332,70 +4489,71 @@ async function startCatcher(p,humanIndex,runId){
   }
 
   function applyCraneCollision(now,live){
-    if(
-      phase!=='descend'&&
-      phase!=='sequence'
-    )return;
+    // Only the descending claw can bump prizes.
+    // Once STOP is pressed, do not scatter the pile before capture.
+    if(phase!=='descend')return;
 
     const g=actualClawGeometry();
 
-    const left=
+    const hookMin=
       Math.min(
         g.leftTipX,
         g.rightTipX
-      )-24;
+      );
 
-    const right=
+    const hookMax=
       Math.max(
         g.leftTipX,
         g.rightTipX
-      )+24;
+      );
 
     live.forEach(d=>{
-      if(
-        now-d.lastCraneHit<120
-      )return;
+      if(now-d.lastCraneHit<360)return;
 
-      const hitX=
-        d.x>=left-BODY_R &&
-        d.x<=right+BODY_R;
+      const dx=
+        d.x-g.centerX;
 
       const dy=
         d.y-g.centerY;
 
-      const hitY=
-        Math.abs(dy)<=52;
+      // Anything already inside the real catch envelope is protected:
+      // the claw closes around it instead of blasting it away.
+      const inCatchEnvelope=
+        d.x>=hookMin-18 &&
+        d.x<=hookMax+18 &&
+        Math.abs(dy)<=62;
 
-      if(!hitX||!hitY)return;
+      if(inCatchEnvelope)return;
+
+      // Only outer hook contact creates a small physical nudge.
+      const nearOuterHook=
+        (
+          Math.abs(d.x-hookMin)<=BODY_R+11 ||
+          Math.abs(d.x-hookMax)<=BODY_R+11
+        ) &&
+        Math.abs(dy)<=38;
+
+      if(!nearOuterHook)return;
 
       d.lastCraneHit=now;
       d.awake=true;
 
       const side=
-        Math.abs(d.x-g.centerX)<3
+        Math.abs(dx)<2
           ? (Math.random()<.5?-1:1)
-          : Math.sign(d.x-g.centerX);
+          : Math.sign(dx);
 
-      const depth=
-        1-clamp(
-          Math.abs(dy)/52,
-          0,1
-        );
-
+      // Gentle nudge: enough to visibly react, not enough to explode the pile.
       d.vx+=
         side*
-        (38+depth*70)+
-        rand(-16,16);
+        rand(11,24);
 
       d.vy-=
-        18+
-        depth*38;
+        rand(2,8);
 
       d.vr+=
         side*
-        rand(55,125);
-
-      // Small reaction on neighbors will propagate through body collisions.
+        rand(12,30);
     });
   }
 
@@ -4611,13 +4769,13 @@ async function startCatcher(p,humanIndex,runId){
         const dy=d.y-h.y;
         const dist=Math.hypot(dx,dy);
 
-        if(dist>78||dist<1)return;
+        if(dist>58||dist<1)return;
 
-        const power=(1-dist/78)*105;
+        const power=(1-dist/58)*44;
         d.awake=true;
-        d.vx+=(dx/dist)*power+rand(-20,20);
-        d.vy-=Math.max(8,power*.34);
-        d.vr+=rand(-90,90);
+        d.vx+=(dx/dist)*power+rand(-7,7);
+        d.vy-=Math.max(3,power*.18);
+        d.vr+=rand(-34,34);
       });
     });
   }
@@ -4680,7 +4838,7 @@ async function startCatcher(p,humanIndex,runId){
       });
 
     const capacity=
-      clamp(Math.round(2+widthQ*10),2,12);
+      clamp(Math.round(2+widthQ*11),2,13);
 
     return candidates.slice(0,capacity);
   }
@@ -4783,7 +4941,7 @@ async function startCatcher(p,humanIndex,runId){
       d.el.style.zIndex='40';
       d.el.style.transition='none';
       d.el.style.transform=
-        `translate3d(${(craneX-22+(i-(held.length-1)/2)*17).toFixed(1)}px,${(craneY+92).toFixed(1)}px,0)`;
+        `translate3d(${(craneX-19+(i-(held.length-1)/2)*17).toFixed(1)}px,${(craneY+92).toFixed(1)}px,0)`;
     });
 
     // Pulling prizes out kicks nearby figures, causing visible bumps/rolling.
@@ -4803,7 +4961,7 @@ async function startCatcher(p,humanIndex,runId){
 
       held.forEach((d,i)=>{
         d.el.style.transform=
-          `translate3d(${(craneX-22+(i-(held.length-1)/2)*17).toFixed(1)}px,${(craneY+92).toFixed(1)}px,0)`;
+          `translate3d(${(craneX-19+(i-(held.length-1)/2)*17).toFixed(1)}px,${(craneY+92).toFixed(1)}px,0)`;
       });
     });
 
@@ -4821,7 +4979,7 @@ async function startCatcher(p,humanIndex,runId){
 
         held.forEach((d,i)=>{
           d.el.style.transform=
-            `translate3d(${(craneX-22+(i-(held.length-1)/2)*17).toFixed(1)}px,${(craneY+92).toFixed(1)}px,0)`;
+            `translate3d(${(craneX-19+(i-(held.length-1)/2)*17).toFixed(1)}px,${(craneY+92).toFixed(1)}px,0)`;
         });
       });
 
@@ -4836,7 +4994,7 @@ async function startCatcher(p,humanIndex,runId){
           'transform .56s ease, opacity .18s .42s';
 
         d.el.style.transform=
-          `translate3d(${CHUTE_X-22+rand(-10,10)}px,${CHUTE_Y-22+rand(-4,8)}px,0) rotate(${rand(60,120)}deg)`;
+          `translate3d(${CHUTE_X-19+rand(-10,10)}px,${CHUTE_Y-19+rand(-4,8)}px,0) rotate(${rand(60,120)}deg)`;
 
         await wait(75);
 
@@ -26327,8 +26485,8 @@ function simulateOneCpu(gameIndex,p){
   }else if(legacyIndex===7){
     state.records.factory[p.id]=ultra?randi(23,28):randi(15,24);
   }else if(legacyIndex===8){
-    const caught=ultra?randi(20,30):randi(7,22);
-    state.records.catcher[p.id]=caught>=30?100:caught*3;
+    const caught=ultra?randi(23,33):randi(8,25);
+    state.records.catcher[p.id]=caught>=33?100:caught*3;
   }else if(legacyIndex===9){
     state.records.tidy[p.id]=ultra?randi(88,96):randi(55,84);
   }else if(legacyIndex===10){
@@ -26597,8 +26755,8 @@ function simulateOneCpu(gameIndex,p){
       : randi(28,92);
   }else if(legacyIndex===118){
     state.records.rocketPunch[p.id]=ultra
-      ? randi(840,1000)
-      : randi(390,900);
+      ? randi(2450,3000)
+      : randi(1050,2680);
   }else if(legacyIndex===119){
     state.records.flagRaise[p.id]=ultra
       ? randi(88,100)
@@ -26790,7 +26948,7 @@ function performancePoints(gameIndex,v){
   if(legacyIndex===108){
     return clamp(Math.round(v/180*100),0,100);
   }
-  if(legacyIndex===118)return clamp(Math.round(v/1000*100),0,100);
+  if(legacyIndex===118)return clamp(Math.round(v/3000*100),0,100);
   if(legacyIndex===119)return clamp(Math.round(v),0,100);
   return clamp(Math.round(v),0,100);
 }
@@ -35692,17 +35850,19 @@ async function startRocketPunch(p,humanIndex,runId){
 
   const gameIndex=GAMES.findIndex(g=>g.key==='rocketPunch');
   const PX_PER_M=2.65;
-  const WORLD_M=1080;
+  const WORLD_M=3180;
   const WORLD_W=WORLD_M*PX_PER_M;
 
   const obstacles=[
-    {m:145,t:18,label:'BOX',cls:'box'},
-    {m:285,t:25,label:'BRICK',cls:'brick'},
-    {m:430,t:31,label:'MOB',cls:'sign'},
-    {m:575,t:38,label:'ROCK',cls:'rock'},
-    {m:715,t:45,label:'STEEL',cls:'steel'},
-    {m:850,t:53,label:'WALL',cls:'wall'},
-    {m:965,t:62,label:'FINAL',cls:'final'}
+    {m:260,t:14,label:'BOX',cls:'box'},
+    {m:560,t:18,label:'BRICK',cls:'brick'},
+    {m:900,t:22,label:'MOB',cls:'sign'},
+    {m:1260,t:27,label:'ROCK',cls:'rock'},
+    {m:1630,t:31,label:'STEEL',cls:'steel'},
+    {m:1990,t:36,label:'WALL',cls:'wall'},
+    {m:2330,t:41,label:'STEEL',cls:'steel'},
+    {m:2630,t:47,label:'WALL',cls:'wall'},
+    {m:2890,t:54,label:'FINAL',cls:'final'}
   ].map((x,i)=>({...x,i,hit:false,broken:false}));
 
   screen.innerHTML=`
@@ -35753,8 +35913,8 @@ async function startRocketPunch(p,humanIndex,runId){
             </div>
           `).join('')}
 
-          <div class="rocketp-goal-v194" style="left:${1000*PX_PER_M}px">
-            <b>1000m</b>
+          <div class="rocketp-goal-v194" style="left:${3000*PX_PER_M}px">
+            <b>3000m</b>
           </div>
         </div>
 
@@ -35834,7 +35994,6 @@ async function startRocketPunch(p,humanIndex,runId){
   let distance=0;
   let speed=0;
   let energy=0;
-  let fistRot=0;
   let fistY=0;
 
   let flightStart=0;
@@ -35844,7 +36003,7 @@ async function startRocketPunch(p,humanIndex,runId){
   let boostUsed=false;
   let boostShown=false;
   let boostDeadline=0;
-  const boostAt=rand(300,555);
+  const boostAt=rand(980,1750);
 
   let lastChargeSpark=0;
   let lastTrail=0;
@@ -35861,7 +36020,7 @@ async function startRocketPunch(p,humanIndex,runId){
 
     if(charge>100){
       viewport.classList.add('charge-over-v194');
-    }else if(charge>=90){
+    }else if(charge>=96){
       viewport.classList.add('charge-max-v194');
     }else if(charge>=55){
       viewport.classList.add('charge-hot-v194');
@@ -35875,7 +36034,7 @@ async function startRocketPunch(p,humanIndex,runId){
     lastChargeSpark=now;
 
     const count=
-      charge>=90?3:
+      charge>=96?3:
       charge>=55?2:1;
 
     for(let i=0;i<count;i++){
@@ -36015,8 +36174,8 @@ async function startRocketPunch(p,humanIndex,runId){
           ? charge
           : clamp(100-(charge-100)*2.65,35,100);
 
-    speed=102+effectivePower*1.92;
-    energy=42+effectivePower*.88;
+    speed=300+effectivePower*4.05;
+    energy=72+effectivePower*1.48;
     flightStart=performance.now();
 
     call.textContent=
@@ -36143,7 +36302,6 @@ async function startRocketPunch(p,humanIndex,runId){
     const force=
       energy-o.t*.70;
 
-    fistRot+=rand(-15,15);
     fistY+=rand(1,6);
 
     if(force>0){
@@ -36214,12 +36372,12 @@ async function startRocketPunch(p,humanIndex,runId){
     fist.classList.add('rolling-v194');
 
     call.textContent=
-      finalM>=1000
-        ? '1000m COMPLETE!!'
+      finalM>=3000
+        ? '3000m COMPLETE!!'
         : `STOP ${finalM}m`;
 
     beep(
-      finalM>=1000?1220:390,
+      finalM>=3000?1220:390,
       170,.045
     );
 
@@ -36231,7 +36389,7 @@ async function startRocketPunch(p,humanIndex,runId){
         p,
         humanIndex,
         `${finalM}<small>m</small>`,
-        finalM>=1000
+        finalM>=3000
           ? 'ROCKET PUNCH COMPLETE'
           : 'ROCKET PUNCH DISTANCE'
       );
@@ -36288,7 +36446,7 @@ async function startRocketPunch(p,humanIndex,runId){
       speed=
         Math.max(
           0,
-          speed-8.2*dt
+          speed-5.0*dt
         );
 
       distance+=speed*dt;
@@ -36306,7 +36464,6 @@ async function startRocketPunch(p,humanIndex,runId){
       const elapsed=
         (now-flightStart)/1000;
 
-      fistRot+=speed*.006*dt*60;
       fistY=
         Math.min(
           34,
@@ -36320,7 +36477,7 @@ async function startRocketPunch(p,humanIndex,runId){
       fist.style.left=`${gloveX}px`;
 
       fist.style.transform=
-        `translateY(${fistY}px) rotate(${fistRot}deg)`;
+        `translateY(${fistY}px)`;
 
       if(now-lastTrail>=64){
         lastTrail=now;
@@ -36341,15 +36498,15 @@ async function startRocketPunch(p,humanIndex,runId){
 
       distEl.textContent=
         `${Math.min(
-          1000,
+          3000,
           Math.round(distance)
         )}m`;
 
       powerEl.textContent=
         Math.round(effectivePower);
 
-      if(distance>=1000){
-        distance=1000;
+      if(distance>=3000){
+        distance=3000;
         finish();
         return;
       }
