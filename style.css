@@ -27617,3 +27617,305 @@ canvas{
   .dj-stage-v186{min-height:310px}
   .dj-deck-v186{width:min(72vw,260px)}
 }
+
+
+/* =========================================================
+   V10.87 — Tokotoko real UFO claw
+   ========================================================= */
+.ttk-stage-v187{
+  height:390px;
+  min-height:315px
+}
+.ttk-floor-v187{
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  height:31%;
+  border-top:4px solid rgba(17,19,26,.7);
+  background:
+    repeating-linear-gradient(
+      90deg,
+      rgba(17,19,26,.05) 0 34px,
+      rgba(17,19,26,.09) 34px 37px
+    ),
+    #e6dfc7
+}
+.ttk-hud-v187{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:5px
+}
+.ttk-hud-v187>div{
+  padding:5px 3px;
+  border:3px solid var(--ink);
+  border-radius:10px;
+  background:#fff;
+  text-align:center
+}
+.ttk-hud-v187 span{display:block;font-size:6px;font-weight:1000}
+.ttk-hud-v187 b{font-size:12px}
+.ttk-width-meter-v187{
+  position:absolute;
+  z-index:34;
+  left:22px;
+  right:22px;
+  top:16px;
+  height:21px;
+  border:3px solid var(--ink);
+  border-radius:999px;
+  background:#344651
+}
+.ttk-width-meter-v187 b{
+  position:absolute;
+  left:50%;
+  top:25px;
+  transform:translateX(-50%);
+  font-size:7px;
+  font-weight:1000
+}
+.ttk-width-meter-v187>i{
+  position:absolute;
+  top:-5px;
+  width:9px;
+  height:27px;
+  transform:translateX(-50%);
+  border:2px solid var(--ink);
+  border-radius:999px;
+  background:#ffd85d
+}
+.ttk-width-target-v187{
+  position:absolute;
+  left:70%;
+  top:-4px;
+  bottom:-4px;
+  width:5px;
+  transform:translateX(-50%);
+  border-radius:999px;
+  background:#fff;
+  box-shadow:0 0 0 2px rgba(17,19,26,.16),0 0 8px #fff
+}
+.ttk-crane-rail-v187{
+  position:absolute;
+  z-index:20;
+  left:20px;
+  right:20px;
+  top:58px;
+  height:12px;
+  border:4px solid #111820;
+  border-radius:999px;
+  background:#687783
+}
+.ttk-crane-v187{
+  top:58px!important;
+  width:0!important;
+  height:0;
+  transform:none!important;
+  z-index:28
+}
+.ttk-trolley-v187{
+  position:absolute;
+  left:-28px;
+  top:-10px;
+  width:56px;
+  height:22px;
+  border:4px solid #111820;
+  border-radius:9px;
+  background:#d9e0e4
+}
+.ttk-trolley-v187 i{
+  position:absolute;
+  top:-8px;
+  width:13px;
+  height:13px;
+  border:3px solid #111820;
+  border-radius:50%;
+  background:#4c5c67
+}
+.ttk-trolley-v187 i:first-child{left:5px}
+.ttk-trolley-v187 i:last-child{right:5px}
+.ttk-cable-v187{
+  left:-3px!important;
+  top:12px!important;
+  width:6px!important;
+  background:#182127!important
+}
+.ttk-claw-head-v187{
+  position:absolute;
+  left:-24px;
+  width:48px;
+  height:42px;
+  border:4px solid #111820;
+  border-radius:15px 15px 10px 10px;
+  background:#e6ecef;
+  box-shadow:0 4px 0 rgba(17,24,32,.18);
+  z-index:30
+}
+.ttk-claw-light-v187{
+  position:absolute;
+  left:50%;
+  top:8px;
+  width:14px;
+  height:9px;
+  transform:translateX(-50%);
+  border:2px solid #111820;
+  border-radius:999px;
+  background:#ffe05c
+}
+.ttk-claw-finger-v187{
+  position:absolute;
+  top:30px;
+  width:13px;
+  height:60px;
+  border:4px solid #111820;
+  border-radius:0 0 14px 14px;
+  background:#c8d2d8;
+  transform-origin:50% 0;
+  z-index:29
+}
+.ttk-claw-finger-v187.left-v187{left:8px}
+.ttk-claw-finger-v187.right-v187{right:8px}
+.ttk-claw-hook-v187{
+  position:absolute;
+  bottom:-8px;
+  width:25px;
+  height:23px;
+  border:5px solid #111820;
+  border-top:0;
+  background:transparent
+}
+.ttk-claw-finger-v187.left-v187 .ttk-claw-hook-v187{
+  right:-5px;
+  border-left:0;
+  border-radius:0 0 16px 0
+}
+.ttk-claw-finger-v187.right-v187 .ttk-claw-hook-v187{
+  left:-5px;
+  border-right:0;
+  border-radius:0 0 0 16px
+}
+.ttk-figure-v187{
+  position:absolute;
+  z-index:12;
+  width:54px;
+  height:56px;
+  pointer-events:none;
+  transform-origin:50% 50%;
+  will-change:transform
+}
+.ttk-figure-v187 img{
+  width:50px;
+  height:50px;
+  object-fit:contain;
+  filter:drop-shadow(0 2px 0 rgba(17,19,26,.18))
+}
+.ttk-call-v187{
+  position:absolute;
+  z-index:38;
+  left:50%;
+  bottom:88px;
+  transform:translateX(-50%);
+  padding:5px 10px;
+  border:3px solid var(--ink);
+  border-radius:999px;
+  background:#fff4b0;
+  font-size:9px;
+  font-weight:1000;
+  white-space:nowrap;
+  pointer-events:none
+}
+.ttk-call-v187.hold-v187{background:#a8dcf0}
+.ttk-call-v187.carry-v187{background:#c8b7ef}
+.ttk-call-v187.get-v187{background:#95df91}
+.ttk-call-v187.miss-v187{background:#efa29b}
+.ttk-call-v187.finish-v187{background:#ffe15e}
+.ttk-call-v187.warn-v187{background:#ffd3a1}
+.ttk-controls-v187{
+  width:100%;
+  grid-template-columns:1fr 1fr 1.18fr 1.18fr!important
+}
+.ttk-controls-v187 button:disabled{
+  opacity:.35;
+  filter:grayscale(.75)
+}
+.ttk-chute-v187{
+  z-index:31;
+  width:90px!important;
+  height:78px!important;
+  overflow:hidden
+}
+.ttk-chute-v187.hit-v187{
+  animation:ttkChuteHit187 .28s ease
+}
+@keyframes ttkChuteHit187{
+  45%{scale:1.07;rotate:-2deg}
+}
+.ttk-chute-pile-v187{
+  position:absolute;
+  inset:0;
+  pointer-events:none
+}
+.ttk-chute-pile-v187 img{
+  position:absolute;
+  width:22px;
+  height:22px;
+  object-fit:contain
+}
+.ttk-get-pop-v187{
+  position:absolute;
+  z-index:42;
+  transform:translate(-50%,-50%);
+  padding:4px 7px;
+  border:3px solid var(--ink);
+  border-radius:999px;
+  background:#ffe15d;
+  font-size:10px;
+  font-weight:1000;
+  animation:ttkGetPop187 .70s ease forwards
+}
+@keyframes ttkGetPop187{
+  0%{opacity:0;translate:0 12px;scale:.75}
+  18%{opacity:1;translate:0 0;scale:1.12}
+  100%{opacity:0;translate:0 -36px;scale:.94}
+}
+
+/* =========================================================
+   V10.87 — Amida Masters 16 goals
+   ========================================================= */
+.amida-master-world-v187{
+  width:100%
+}
+.amida-master-goals-v187 b{
+  min-width:20px!important;
+  width:20px!important;
+  padding:2px 0!important;
+  transform:translateX(-50%)!important
+}
+.amida-master-goals-v187 b i{
+  font-size:8px!important;
+  line-height:1!important
+}
+.amida-master-entrances-v187{
+  display:grid!important;
+  grid-template-columns:repeat(16,1fr)!important;
+  gap:1px!important;
+  left:2px!important;
+  right:2px!important
+}
+.amida-master-entrances-v187 button{
+  min-width:0!important;
+  width:auto!important;
+  padding:2px 0!important;
+  border-width:2px!important;
+  border-radius:7px!important
+}
+.amida-master-entrances-v187 button span{
+  font-size:7px!important
+}
+.amida-master-mob-v187{
+  width:24px!important;
+  height:24px!important
+}
+.amida-master-secret-v187{
+  z-index:25
+}

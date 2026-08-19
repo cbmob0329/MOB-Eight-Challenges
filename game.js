@@ -2399,7 +2399,7 @@ function scoreRuleForGame(index){
     "4人個人戦専用 / 1人20体スタート / ゴール時の残り1体=5点 / 最大100点",
     "4〜8人個人戦専用 / 1位100点・2位70点・3位50点・4位以下0点",
     "3回チャンス / 1体GET=20点 / 5体GET=100点 / 全5体GETで即終了",
-    "GOALの数字がそのまま得点 / 1〜100点 / 1点刻み",
+    "GOALの数字がそのまま得点 / 1・5・10・15・20・25・30・35・40・45・50・55・60・80・90・100",
     "20音符 / PERFECT=5点・NICE=4点・GOOD=2点 / 10秒 / 最大100点"
   ][legacyIndex];
 }
@@ -2630,7 +2630,7 @@ function showGameIntro(index){
   }else if(legacyIndex===115){
     rules=`<li>①アーム幅をSTOP → ②◀▶で位置 → ③降下 → ④下降中にSTOPの順で操作します。</li><li>5体は同じくらいのゆっくりした速さでトコトコ左右へランダム移動。掴んでもGET確定ではなく、1体20点・3回までです。</li>`;
   }else if(legacyIndex===116){
-    rules=`<li>最初にGOALを確認したあと入口を1つ選びます。途中はSECRETバナーで一部見えません。</li><li>GOALは毎回1〜100の整数から6個。到着した数字がそのまま得点です。</li>`;
+    rules=`<li>最初に16個のGOALを確認したあと、16本の入口から1つ選びます。途中はSECRETバナーで一部見えません。</li><li>GOALは1・5・10・15・20・25・30・35・40・45・50・55・60・80・90・100。到着した数字がそのまま得点です。</li>`;
   }else if(legacyIndex===117){
     rules=`<li>上のラインを右から左へ流れる音符に合わせて、下の巨大ターンテーブルを左右へ擦ります。</li><li>10秒で20音符。タイミングでGOOD / NICE! / PERFECT!!が決まり、最大100点です。</li>`;
   }else{
@@ -26038,7 +26038,8 @@ function simulateOneCpu(gameIndex,p){
       ? [60,80,100][randi(0,2)]
       : [0,20,40,60,80,100][randi(0,5)];
   }else if(legacyIndex===116){
-    state.records.amidakujiMasters[p.id]=randi(1,100);
+    state.records.amidakujiMasters[p.id]=
+      [1,5,10,15,20,25,30,35,40,45,50,55,60,80,90,100][randi(0,15)];
   }else if(legacyIndex===117){
     state.records.djMaster[p.id]=ultra
       ? randi(82,100)
@@ -34549,29 +34550,29 @@ async function startAmidakujiMasters(p,humanIndex,runId){
   gameFit();
   const gameIndex=GAMES.findIndex(g=>g.key==='amidakujiMasters');
 
-  const lanes=6;
-  const worldH=1120;
-  const topY=95;
-  const bottomY=1030;
-
-  // Six unique integer goals, sampled from the full 1..100 range.
   const goalValues=
-    shuffle(Array.from({length:100},(_,i)=>i+1)).slice(0,lanes);
+    shuffle([1,5,10,15,20,25,30,35,40,45,50,55,60,80,90,100]);
+
+  const lanes=goalValues.length;
+  const worldW=960;
+  const worldH=1320;
+  const topY=105;
+  const bottomY=1220;
 
   const rows=[];
 
-  for(let i=0;i<13;i++){
+  for(let i=0;i<28;i++){
     let pair=randi(0,lanes-2);
 
     if(
       rows.length&&
       rows[rows.length-1].pair===pair
     ){
-      pair=(pair+1+randi(0,2))%(lanes-1);
+      pair=(pair+1+randi(1,4))%(lanes-1);
     }
 
     rows.push({
-      y:topY+80+i*64,
+      y:topY+70+i*38,
       pair
     });
   }
@@ -34580,7 +34581,7 @@ async function startAmidakujiMasters(p,humanIndex,runId){
   let raf=null;
 
   screen.innerHTML=`
-    <div class="amida-shell amida-v126 amida-master-v186">
+    <div class="amida-shell amida-v126 amida-master-v187">
       <div class="game-head">
         <div>
           <span class="kicker">${esc(p.name)}</span>
@@ -34589,38 +34590,59 @@ async function startAmidakujiMasters(p,humanIndex,runId){
         <div class="game-badge">${playBadge(humanIndex)}</div>
       </div>
 
-      <div id="amidaMasterViewport186" class="amida-viewport amida-viewport-v126">
-        <div id="amidaMasterWorld186" class="amida-world" style="height:${worldH}px">
+      <div id="amidaMasterViewport187" class="amida-viewport amida-viewport-v126 amida-master-viewport-v187">
+        <div
+          id="amidaMasterWorld187"
+          class="amida-world amida-master-world-v187"
+          style="height:${worldH}px">
+
           <div class="amida-light-v126"></div>
 
-          <svg id="amidaMasterSvg186" class="amida-svg" viewBox="0 0 600 ${worldH}" preserveAspectRatio="none"></svg>
+          <svg
+            id="amidaMasterSvg187"
+            class="amida-svg"
+            viewBox="0 0 ${worldW} ${worldH}"
+            preserveAspectRatio="none"></svg>
 
-          <svg class="amida-trace-svg-v126" viewBox="0 0 600 ${worldH}" preserveAspectRatio="none">
-            <polyline id="amidaMasterTrace186" points=""></polyline>
+          <svg
+            class="amida-trace-svg-v126"
+            viewBox="0 0 ${worldW} ${worldH}"
+            preserveAspectRatio="none">
+            <polyline id="amidaMasterTrace187" points=""></polyline>
           </svg>
 
-          <div id="amidaMasterMob186" class="amida-mob amida-mob-v126" style="background-image:url('icon/01.png')"></div>
+          <div
+            id="amidaMasterMob187"
+            class="amida-mob amida-mob-v126 amida-master-mob-v187"
+            style="background-image:url('icon/01.png')"></div>
 
-          <div class="amida-goals amida-goals-v126">
+          <div class="amida-goals amida-goals-v126 amida-master-goals-v187">
             ${goalValues.map((v,i)=>`
-              <b data-master-goal="${i}" style="left:${(i+.5)/lanes*100}%">
-                <i>${v}</i><span>pt</span>
+              <b
+                data-master-goal="${i}"
+                style="left:${(i+.5)/lanes*100}%">
+                <i>${v}</i>
               </b>
             `).join('')}
           </div>
         </div>
 
-        <div class="amida-secret-banner-v177 amida-master-secret-v186">
+        <div class="amida-secret-banner-v177 amida-master-secret-v187">
           <b>?</b><span>SECRET</span><b>?</b>
         </div>
 
-        <div id="amidaMasterHint186" class="amida-hint amida-hint-v126">
-          1〜100 GOALをチェック…
+        <div id="amidaMasterHint187" class="amida-hint amida-hint-v126">
+          16個のGOALをチェック…
         </div>
 
-        <div id="amidaMasterEntrances186" class="amida-entrances amida-entrances-v126" hidden>
+        <div
+          id="amidaMasterEntrances187"
+          class="amida-entrances amida-entrances-v126 amida-master-entrances-v187"
+          hidden>
           ${Array.from({length:lanes},(_,i)=>`
-            <button type="button" data-amida-master="${i}">
+            <button
+              type="button"
+              data-amida-master="${i}">
               <span>${i+1}</span>
             </button>
           `).join('')}
@@ -34628,20 +34650,22 @@ async function startAmidakujiMasters(p,humanIndex,runId){
       </div>
     </div>`;
 
-  const viewport=document.getElementById('amidaMasterViewport186');
-  const world=document.getElementById('amidaMasterWorld186');
-  const svg=document.getElementById('amidaMasterSvg186');
-  const trace=document.getElementById('amidaMasterTrace186');
-  const mob=document.getElementById('amidaMasterMob186');
-  const entrances=document.getElementById('amidaMasterEntrances186');
-  const hint=document.getElementById('amidaMasterHint186');
+  const viewport=document.getElementById('amidaMasterViewport187');
+  const world=document.getElementById('amidaMasterWorld187');
+  const svg=document.getElementById('amidaMasterSvg187');
+  const trace=document.getElementById('amidaMasterTrace187');
+  const mob=document.getElementById('amidaMasterMob187');
+  const entrances=document.getElementById('amidaMasterEntrances187');
+  const hint=document.getElementById('amidaMasterHint187');
 
-  const xForLane=lane=>(lane+.5)/lanes*600;
+  const xForLane=
+    lane=>(lane+.5)/lanes*worldW;
 
   let markup='';
 
   for(let lane=0;lane<lanes;lane++){
     const x=xForLane(lane);
+
     markup+=`
       <line
         x1="${x}" y1="${topY}"
@@ -34662,7 +34686,7 @@ async function startAmidakujiMasters(p,humanIndex,runId){
       <circle
         cx="${(xForLane(row.pair)+xForLane(row.pair+1))/2}"
         cy="${row.y}"
-        r="5"
+        r="4"
         class="amida-node-v126"/>`;
   });
 
@@ -34675,13 +34699,13 @@ async function startAmidakujiMasters(p,humanIndex,runId){
   viewport.classList.add("goal-preview-v126");
 
   beep(540,70,.018);
-  await wait(1000);
+  await wait(1150);
 
   if(!isGameRunValid(runId))return;
 
   await new Promise(resolve=>{
     const st=performance.now();
-    const duration=1450;
+    const duration=1500;
 
     const f=now=>{
       if(!isGameRunValid(runId)){
@@ -34711,6 +34735,7 @@ async function startAmidakujiMasters(p,humanIndex,runId){
 
   function buildPath(startLane){
     let lane=startLane;
+
     const points=[
       {x:xForLane(lane),y:topY}
     ];
@@ -34741,7 +34766,7 @@ async function startAmidakujiMasters(p,humanIndex,runId){
       y:bottomY
     });
 
-    return {
+    return{
       points,
       finalLane:lane
     };
@@ -34763,7 +34788,7 @@ async function startAmidakujiMasters(p,humanIndex,runId){
       const a=path.points[i-1];
       const b=path.points[i];
       const dist=Math.hypot(b.x-a.x,b.y-a.y);
-      const duration=clamp(dist*2.45,150,470);
+      const duration=clamp(dist*2.20,130,410);
       const st=performance.now();
 
       await new Promise(resolve=>{
@@ -34782,7 +34807,7 @@ async function startAmidakujiMasters(p,humanIndex,runId){
           const x=a.x+(b.x-a.x)*e;
           const y=a.y+(b.y-a.y)*e;
 
-          mob.style.left=`${x/600*100}%`;
+          mob.style.left=`${x/worldW*100}%`;
           mob.style.top=`${y}px`;
 
           trace.setAttribute(
@@ -34809,13 +34834,14 @@ async function startAmidakujiMasters(p,humanIndex,runId){
       traced.push(b);
 
       if(Math.abs(b.x-a.x)>20){
-        beep(640,34,.012);
+        beep(640,32,.011);
       }
     }
   }
 
   entrances.addEventListener('pointerdown',async e=>{
-    const btn=e.target.closest('[data-amida-master]');
+    const btn=
+      e.target.closest('[data-amida-master]');
 
     if(
       !btn||
@@ -34824,7 +34850,6 @@ async function startAmidakujiMasters(p,humanIndex,runId){
     )return;
 
     e.preventDefault();
-
     selected=true;
 
     entrances
@@ -34836,19 +34861,21 @@ async function startAmidakujiMasters(p,humanIndex,runId){
     const startLane=
       Number(btn.dataset.amidaMaster);
 
-    const path=buildPath(startLane);
+    const path=
+      buildPath(startLane);
 
     mob.style.left=
-      `${xForLane(startLane)/600*100}%`;
+      `${xForLane(startLane)/worldW*100}%`;
 
-    mob.style.top=`${topY}px`;
+    mob.style.top=
+      `${topY}px`;
 
     hint.textContent=
       `${startLane+1}番 START!`;
 
     beep(720,80,.025);
 
-    await wait(350);
+    await wait(330);
 
     entrances.hidden=true;
 
@@ -34874,9 +34901,9 @@ async function startAmidakujiMasters(p,humanIndex,runId){
 
     beep(
       score>=90?1180:
-      score>=70?1020:
-      score>=50?820:
-      score>=25?600:
+      score>=60?1020:
+      score>=35?820:
+      score>=15?600:
       380,
       180,.05
     );
@@ -34892,7 +34919,6 @@ async function startAmidakujiMasters(p,humanIndex,runId){
     }
   },{passive:false});
 }
-
 
 // =========================================================
 // GAME 105 — モブくんDJの達人
@@ -34966,6 +34992,7 @@ async function startDjMaster(p,humanIndex,runId){
   let pointer=null;
   let lastX=0;
   let scratchAccum=0;
+  let scratchTriggered=false;
   let lastScratchAt=0;
   let last=performance.now();
   let raf=null;
@@ -35084,6 +35111,7 @@ async function startDjMaster(p,humanIndex,runId){
     pointer=e.pointerId;
     lastX=e.clientX;
     scratchAccum=0;
+    scratchTriggered=false;
 
     try{
       deck.setPointerCapture(pointer);
@@ -35106,17 +35134,21 @@ async function startDjMaster(p,humanIndex,runId){
     scratchAccum+=Math.abs(dx);
 
     platter.style.transform=
-      `rotate(${platterAngle}deg)`;
+      `translate(-50%,-50%) rotate(${platterAngle}deg)`;
 
     const now=performance.now();
 
     if(
+      !scratchTriggered&&
       scratchAccum>=13&&
       now-lastScratchAt>=95
     ){
+      scratchTriggered=true;
       scratchAccum=0;
       lastScratchAt=now;
 
+      // One judgement per finger-down scratch.
+      // Returning the platter with the same touch is visual only.
       attemptScratch(
         (now-startTime)/1000
       );
@@ -35127,6 +35159,7 @@ async function startDjMaster(p,humanIndex,runId){
     if(pointer!==e.pointerId)return;
     pointer=null;
     scratchAccum=0;
+    scratchTriggered=false;
   };
 
   deck.addEventListener('pointerup',endPointer,{passive:false});
@@ -35189,7 +35222,7 @@ async function startDjMaster(p,humanIndex,runId){
     if(pointer===null){
       platterAngle+=24*dt;
       platter.style.transform=
-        `rotate(${platterAngle}deg)`;
+        `translate(-50%,-50%) rotate(${platterAngle}deg)`;
     }
 
     notes.forEach(note=>{
@@ -35234,7 +35267,7 @@ async function startTokotokoCatcher(p,humanIndex,runId){
   const gameIndex=GAMES.findIndex(g=>g.key==='tokotokoCatcher');
 
   screen.innerHTML=`
-    <div class="catcher-shell ufo-catcher-shell ttk-shell-v186 gameplay-fit">
+    <div class="catcher-shell ufo-catcher-shell ttk-shell-v187 gameplay-fit">
       <div class="game-head">
         <div>
           <span class="kicker">${esc(p.name)}</span>
@@ -35244,14 +35277,14 @@ async function startTokotokoCatcher(p,humanIndex,runId){
         <div class="game-badge">${playBadge(humanIndex)}</div>
       </div>
 
-      <div class="ttk-hud-v186">
-        <div><span>TRY</span><b id="ttkTry186">1 / 3</b></div>
-        <div><span>GET</span><b id="ttkGet186">0 / 5</b></div>
-        <div><span>SCORE</span><b id="ttkScore186">0</b></div>
+      <div class="ttk-hud-v187">
+        <div><span>TRY</span><b id="ttkTry187">1 / 3</b></div>
+        <div><span>GET</span><b id="ttkGet187">0 / 5</b></div>
+        <div><span>SCORE</span><b id="ttkScore187">0</b></div>
       </div>
 
-      <div class="ufo-cabinet ttk-cabinet-v186">
-        <div class="ufo-marquee ttk-marquee-v186">
+      <div class="ufo-cabinet ttk-cabinet-v187">
+        <div class="ufo-marquee ttk-marquee-v187">
           <span>★</span><b>TOKOTOKO CATCHER</b><span>★</span>
         </div>
 
@@ -35260,67 +35293,78 @@ async function startTokotokoCatcher(p,humanIndex,runId){
           <div class="ufo-side-post right"></div>
           <div class="ufo-top-beam"></div>
 
-          <div id="ttkStage186" class="catcher-stage ufo-glass ttk-stage-v186">
+          <div id="ttkStage187" class="catcher-stage ufo-glass ttk-stage-v187">
             <div class="ufo-back-logo">MOB</div>
-            <div class="ttk-floor-v186"></div>
+            <div class="ttk-floor-v187"></div>
 
-            <div id="ttkChute186" class="catcher-chute ufo-chute ttk-chute-v186">
+            <div id="ttkChute187" class="catcher-chute ufo-chute ttk-chute-v187">
               <b>PRIZE</b>
-              <span id="ttkChuteCount186">0</span>
-              <div id="ttkChutePile186" class="ttk-chute-pile-v186"></div>
+              <span id="ttkChuteCount187">0</span>
+              <div id="ttkChutePile187" class="ttk-chute-pile-v187"></div>
             </div>
 
-            <div class="ttk-width-meter-v186">
-              <span class="ttk-width-target-v186"></span>
-              <i id="ttkWidthCursor186"></i>
+            <div class="ttk-width-meter-v187">
+              <span class="ttk-width-target-v187"></span>
+              <i id="ttkWidthCursor187"></i>
               <b>ARM WIDTH</b>
             </div>
 
-            <div id="ttkCrane186" class="crane ufo-crane ttk-crane-v186">
-              <div class="ufo-trolley"><i></i><i></i></div>
-              <div id="ttkCable186" class="crane-cable ufo-cable ttk-cable-v186"></div>
-              <div id="ttkHead186" class="crane-head ufo-head ttk-head-v186">
-                <div class="ufo-head-light"></div>
-                <div id="ttkArmL186" class="crane-arm ufo-arm left ttk-arm-v186"><i></i></div>
-                <div id="ttkArmR186" class="crane-arm ufo-arm right ttk-arm-v186"><i></i></div>
+            <div class="ttk-crane-rail-v187"></div>
+
+            <div id="ttkCrane187" class="crane ufo-crane ttk-crane-v187">
+              <div class="ttk-trolley-v187">
+                <i></i><i></i>
+              </div>
+              <div id="ttkCable187" class="crane-cable ufo-cable ttk-cable-v187"></div>
+
+              <div id="ttkHead187" class="ttk-claw-head-v187">
+                <div class="ttk-claw-light-v187"></div>
+
+                <div id="ttkArmL187" class="ttk-claw-finger-v187 left-v187">
+                  <i class="ttk-claw-hook-v187"></i>
+                </div>
+
+                <div id="ttkArmR187" class="ttk-claw-finger-v187 right-v187">
+                  <i class="ttk-claw-hook-v187"></i>
+                </div>
               </div>
             </div>
 
-            <div id="ttkCall186" class="ttk-call-v186">① 70%の白線でSTOP</div>
+            <div id="ttkCall187" class="ttk-call-v187">① 70%の白線でSTOP</div>
           </div>
         </div>
 
-        <div class="ufo-control-panel ttk-panel-v186">
-          <div class="catcher-controls ufo-controls ttk-controls-v186">
-            <button id="ttkLeft186" class="move" type="button" disabled>◀</button>
-            <button id="ttkRight186" class="move" type="button" disabled>▶</button>
-            <button id="ttkDrop186" class="drop" type="button" disabled>降下</button>
-            <button id="ttkStop186" class="stop" type="button">STOP</button>
+        <div class="ufo-control-panel ttk-panel-v187">
+          <div class="catcher-controls ufo-controls ttk-controls-v187">
+            <button id="ttkLeft187" class="move" type="button" disabled>◀</button>
+            <button id="ttkRight187" class="move" type="button" disabled>▶</button>
+            <button id="ttkDrop187" class="drop" type="button" disabled>降下</button>
+            <button id="ttkStop187" class="stop" type="button">STOP</button>
           </div>
         </div>
       </div>
     </div>`;
 
-  const stage=document.getElementById('ttkStage186');
-  const crane=document.getElementById('ttkCrane186');
-  const cable=document.getElementById('ttkCable186');
-  const head=document.getElementById('ttkHead186');
-  const armL=document.getElementById('ttkArmL186');
-  const armR=document.getElementById('ttkArmR186');
-  const cursor=document.getElementById('ttkWidthCursor186');
-  const call=document.getElementById('ttkCall186');
+  const stage=document.getElementById('ttkStage187');
+  const crane=document.getElementById('ttkCrane187');
+  const cable=document.getElementById('ttkCable187');
+  const head=document.getElementById('ttkHead187');
+  const armL=document.getElementById('ttkArmL187');
+  const armR=document.getElementById('ttkArmR187');
+  const cursor=document.getElementById('ttkWidthCursor187');
+  const call=document.getElementById('ttkCall187');
 
-  const leftBtn=document.getElementById('ttkLeft186');
-  const rightBtn=document.getElementById('ttkRight186');
-  const dropBtn=document.getElementById('ttkDrop186');
-  const stopBtn=document.getElementById('ttkStop186');
+  const leftBtn=document.getElementById('ttkLeft187');
+  const rightBtn=document.getElementById('ttkRight187');
+  const dropBtn=document.getElementById('ttkDrop187');
+  const stopBtn=document.getElementById('ttkStop187');
 
-  const tryEl=document.getElementById('ttkTry186');
-  const getEl=document.getElementById('ttkGet186');
-  const scoreEl=document.getElementById('ttkScore186');
-  const chute=document.getElementById('ttkChute186');
-  const chuteCount=document.getElementById('ttkChuteCount186');
-  const chutePile=document.getElementById('ttkChutePile186');
+  const tryEl=document.getElementById('ttkTry187');
+  const getEl=document.getElementById('ttkGet187');
+  const scoreEl=document.getElementById('ttkScore187');
+  const chute=document.getElementById('ttkChute187');
+  const chuteCount=document.getElementById('ttkChuteCount187');
+  const chutePile=document.getElementById('ttkChutePile187');
 
   void stage.offsetHeight;
 
@@ -35328,10 +35372,11 @@ async function startTokotokoCatcher(p,humanIndex,runId){
   const H=stage.clientHeight;
 
   const CENTER_X=W*.52;
-  const START_Y=38;
-  const FIG_Y=H*.76;
-  const BEST_Y=FIG_Y-57;
-  const MAX_Y=Math.min(H*.80,BEST_Y+100);
+  const START_Y=34;
+  const FIG_Y=H*.765;
+  const CLAW_TIP_OFFSET=88;
+  const BEST_Y=FIG_Y-CLAW_TIP_OFFSET;
+  const MAX_Y=Math.min(H*.76,BEST_Y+60);
   const CHUTE_X=54;
   const CHUTE_Y=H-38;
 
@@ -35343,9 +35388,9 @@ async function startTokotokoCatcher(p,humanIndex,runId){
   let tries=0;
   let got=0;
 
-  let widthPct=12;
+  let widthPct=10;
   let widthDir=1;
-  let lockedWidth=12;
+  let lockedWidth=10;
 
   let craneX=CENTER_X;
   let craneY=START_Y;
@@ -35377,23 +35422,27 @@ async function startTokotokoCatcher(p,humanIndex,runId){
 
   figs.forEach(f=>{
     const el=document.createElement('div');
-    el.className='ttk-figure-v186';
+    el.className='ttk-figure-v187';
     el.innerHTML=`<img src="icon/01.png" draggable="false" alt="">`;
     stage.appendChild(el);
     f.el=el;
   });
 
-  // Wide physical range: at 70% the two hands are visibly far apart.
+  // Large visible spread. 70% must look like a real open UFO claw.
   function armSpread(){
-    return 34+lockedWidth*.92;
+    return 40+lockedWidth*1.02;
   }
 
   function widthQuality(){
-    return clamp(1-Math.abs(lockedWidth-70)/52,0,1);
+    return clamp(1-Math.abs(lockedWidth-70)/48,0,1);
+  }
+
+  function clawTipY(){
+    return craneY+CLAW_TIP_OFFSET;
   }
 
   function depthQuality(){
-    return clamp(1-Math.abs(craneY-BEST_Y)/88,0,1);
+    return clamp(1-Math.abs(clawTipY()-FIG_Y)/34,0,1);
   }
 
   function updateHud(){
@@ -35412,27 +35461,26 @@ async function startTokotokoCatcher(p,humanIndex,runId){
     rightBtn.disabled=!positionPhase;
     dropBtn.disabled=!positionPhase;
     stopBtn.disabled=!(widthPhase||descendPhase);
-
-    stopBtn.textContent=widthPhase?'STOP':'STOP';
   }
 
   function renderCrane(){
     crane.style.left=`${craneX}px`;
-    cable.style.height=`${Math.max(18,craneY)}px`;
-    head.style.top=`${Math.max(18,craneY)}px`;
+
+    cable.style.height=`${Math.max(16,craneY)}px`;
+    head.style.top=`${Math.max(16,craneY)}px`;
+
     cursor.style.left=`${widthPct}%`;
 
     const s=armSpread();
-    const live=s*(1-gripClose*.70);
-    const translate=live*.58;
-    const angle=18+live*.22;
+    const live=s*(1-gripClose*.74);
+    const shift=live*.60;
+    const angle=15+live*.20;
 
-    // Real widening: translation is large enough to visually match the gauge.
     armL.style.transform=
-      `translateX(${-translate}px) rotate(${-angle}deg)`;
+      `translateX(${-shift}px) rotate(${-angle}deg)`;
 
     armR.style.transform=
-      `translateX(${translate}px) rotate(${angle}deg)`;
+      `translateX(${shift}px) rotate(${angle}deg)`;
   }
 
   function renderFigures(now){
@@ -35480,14 +35528,14 @@ async function startTokotokoCatcher(p,humanIndex,runId){
     img.style.transform=`rotate(${rand(-18,18)}deg)`;
     chutePile.appendChild(img);
 
-    chute.classList.remove('hit-v186');
+    chute.classList.remove('hit-v187');
     void chute.offsetWidth;
-    chute.classList.add('hit-v186');
+    chute.classList.add('hit-v187');
   }
 
   function getPop(){
     const pop=document.createElement('div');
-    pop.className='ttk-get-pop-v186';
+    pop.className='ttk-get-pop-v187';
     pop.textContent='GET! +20';
     pop.style.left=`${CHUTE_X+44}px`;
     pop.style.top=`${CHUTE_Y-55}px`;
@@ -35528,10 +35576,11 @@ async function startTokotokoCatcher(p,humanIndex,runId){
     f.el.style.transform=`translate3d(${startX-27}px,${startY-29}px,0) rotate(0deg)`;
     void f.el.offsetWidth;
 
-    f.el.style.transition='transform .48s cubic-bezier(.24,.68,.42,1.18)';
+    // Slower visible fall than the previous build.
+    f.el.style.transition='transform .72s cubic-bezier(.24,.68,.42,1.12)';
     f.el.style.transform=`translate3d(${targetX-27}px,${targetY-29}px,0) rotate(${rand(-24,24)}deg)`;
 
-    await wait(500);
+    await wait(735);
     if(!isGameRunValid(runId))return;
 
     f.x=targetX;
@@ -35559,12 +35608,12 @@ async function startTokotokoCatcher(p,humanIndex,runId){
     void f.el.offsetWidth;
 
     f.el.style.transition=
-      'transform .56s cubic-bezier(.18,.70,.28,1.14), opacity .18s .46s';
+      'transform .68s cubic-bezier(.18,.70,.28,1.12), opacity .18s .58s';
 
     f.el.style.transform=
       `translate3d(${targetX-27}px,${targetY-29}px,0) rotate(${rand(65,125)}deg)`;
 
-    await wait(565);
+    await wait(690);
     if(!isGameRunValid(runId))return;
 
     f.removed=true;
@@ -35582,16 +35631,22 @@ async function startTokotokoCatcher(p,humanIndex,runId){
     held=[];
 
     const s=armSpread();
+    const tipY=clawTipY();
 
     figs.forEach(f=>{
       if(f.removed||f.falling||f.releasing)return;
 
       const dx=Math.abs(f.x-craneX);
-      const horizontalLimit=s*.72+20;
+      const dy=Math.abs(f.y-tipY);
+
+      // Real envelope: if the fingertips do not physically reach the figure,
+      // it cannot be captured.
+      const horizontalLimit=s*.54+17;
+      const verticalLimit=29;
 
       if(
         dx<=horizontalLimit &&
-        Math.abs(craneY-BEST_Y)<=92
+        dy<=verticalLimit
       ){
         f.held=true;
         held.push(f);
@@ -35601,7 +35656,7 @@ async function startTokotokoCatcher(p,humanIndex,runId){
     held.forEach((f,i)=>{
       const center=(held.length-1)/2;
       f.holdDX=(i-center)*20;
-      f.holdDY=50+(i%2)*9;
+      f.holdDY=54+(i%2)*9;
     });
   }
 
@@ -35612,7 +35667,7 @@ async function startTokotokoCatcher(p,humanIndex,runId){
     phase='sequence';
     setControls();
 
-    await animateValue(180,t=>{
+    await animateValue(190,t=>{
       gripClose=t;
     });
 
@@ -35622,19 +35677,19 @@ async function startTokotokoCatcher(p,humanIndex,runId){
 
     call.textContent=held.length
       ? `${held.length}体つかんだ！`
-      : 'つかめなかった…';
+      : '届いていない / つかめない';
 
     call.className=
-      `ttk-call-v186 ${held.length?'hold-v186':'miss-v186'}`;
+      `ttk-call-v187 ${held.length?'hold-v187':'miss-v187'}`;
 
     beep(held.length?820:180,held.length?70:115,.022);
 
-    await wait(430);
+    await wait(480);
     if(!isGameRunValid(runId))return;
 
     const liftStart=craneY;
 
-    await animateValue(620,t=>{
+    await animateValue(720,t=>{
       const e=1-Math.pow(1-t,3);
       craneY=liftStart+(START_Y-liftStart)*e;
     });
@@ -35643,6 +35698,7 @@ async function startTokotokoCatcher(p,humanIndex,runId){
 
     const wq=widthQuality();
     const dq=depthQuality();
+
     const multi=
       held.length>=5?.11:
       held.length===4?.08:
@@ -35653,8 +35709,8 @@ async function startTokotokoCatcher(p,humanIndex,runId){
 
     held.forEach((f,i)=>{
       const chance=clamp(
-        .20+wq*.28+dq*.29-multi-i*.015,
-        .07,.70
+        .18+wq*.30+dq*.31-multi-i*.015,
+        .05,.72
       );
 
       if(Math.random()<chance)success.push(f);
@@ -35667,37 +35723,37 @@ async function startTokotokoCatcher(p,humanIndex,runId){
       const startX=craneX;
 
       call.textContent=`${success.length}/${held.length}体をPRIZEへ運搬中`;
-      call.className='ttk-call-v186 carry-v186';
+      call.className='ttk-call-v187 carry-v187';
 
-      await animateValue(700,t=>{
+      await animateValue(760,t=>{
         const e=1-Math.pow(1-t,3);
         craneX=startX+(CHUTE_X-startX)*e;
       });
 
       if(!isGameRunValid(runId))return;
 
-      await animateValue(180,t=>{
+      await animateValue(190,t=>{
         gripClose=1-t;
       });
 
       await Promise.all(
-        success.map((f,i)=>releaseToChute(f,i*85))
+        success.map((f,i)=>releaseToChute(f,i*95))
       );
 
       if(!isGameRunValid(runId))return;
 
       call.textContent=`${success.length}体GET!`;
-      call.className='ttk-call-v186 get-v186';
-      await wait(250);
+      call.className='ttk-call-v187 get-v187';
+      await wait(280);
 
     }else{
-      await animateValue(180,t=>{
+      await animateValue(190,t=>{
         gripClose=1-t;
       });
 
       if(held.length){
         call.textContent='掴んだけど全部落ちた…';
-        call.className='ttk-call-v186 miss-v186';
+        call.className='ttk-call-v187 miss-v187';
       }
     }
 
@@ -35706,7 +35762,7 @@ async function startTokotokoCatcher(p,humanIndex,runId){
 
     const backStartX=craneX;
 
-    await animateValue(620,t=>{
+    await animateValue(670,t=>{
       const e=1-Math.pow(1-t,3);
       craneX=backStartX+(CENTER_X-backStartX)*e;
     });
@@ -35733,7 +35789,7 @@ async function startTokotokoCatcher(p,humanIndex,runId){
           ? 'COMPLETE! 100pt'
           : `FINISH! ${got*20}pt`;
 
-      call.className='ttk-call-v186 finish-v186';
+      call.className='ttk-call-v187 finish-v187';
 
       await wait(700);
 
@@ -35747,8 +35803,8 @@ async function startTokotokoCatcher(p,humanIndex,runId){
       return;
     }
 
-    widthPct=12;
-    lockedWidth=12;
+    widthPct=10;
+    lockedWidth=10;
     widthDir=1;
     craneX=CENTER_X;
     craneY=START_Y;
@@ -35757,7 +35813,7 @@ async function startTokotokoCatcher(p,humanIndex,runId){
     sequenceBusy=false;
 
     call.textContent='① 70%の白線でSTOP';
-    call.className='ttk-call-v186';
+    call.className='ttk-call-v187';
 
     setControls();
     updateHud();
@@ -35793,8 +35849,8 @@ async function startTokotokoCatcher(p,humanIndex,runId){
     phase='descend';
     setControls();
 
-    call.textContent='③ 降下中！フィギュア中央でSTOP';
-    call.className='ttk-call-v186';
+    call.textContent='③ ゆっくり降下中…中央でSTOP';
+    call.className='ttk-call-v187';
 
     beep(650,55,.016);
   },{passive:false});
@@ -35808,7 +35864,7 @@ async function startTokotokoCatcher(p,humanIndex,runId){
       phase='position';
 
       call.textContent='② ◀ ▶ で位置を決めて「降下」';
-      call.className='ttk-call-v186';
+      call.className='ttk-call-v187';
 
       setControls();
       beep(720,55,.018);
@@ -35863,7 +35919,8 @@ async function startTokotokoCatcher(p,humanIndex,runId){
     });
 
     if(phase==='width'){
-      widthPct+=widthDir*72*dt;
+      // Faster than V10.86 so 70% is not trivial.
+      widthPct+=widthDir*158*dt;
 
       if(widthPct>=100){
         widthPct=100;
@@ -35876,11 +35933,16 @@ async function startTokotokoCatcher(p,humanIndex,runId){
       lockedWidth=widthPct;
 
     }else if(phase==='descend'){
-      craneY+=150*dt;
+      // Slow, readable descent.
+      craneY+=92*dt;
 
       if(craneY>=MAX_Y){
         craneY=MAX_Y;
-        completeAttempt();
+
+        // IMPORTANT: reaching the bottom never auto-grabs.
+        // The player still must press STOP.
+        call.textContent='STOPを押さないと掴みません';
+        call.className='ttk-call-v187 warn-v187';
       }
     }
 
