@@ -244,7 +244,7 @@ const GAMES=[
   {no:6,key:"breakdance",title:"モブくん1990にチャレンジ",sub:"4択から1990を見抜く",legacy:5},
   {no:7,key:"crisis",title:"モブくん危機一髪",sub:"3体で足元エネルギーを連続回避",legacy:6},
   {no:8,key:"factory",title:"モブくん人形大人気",sub:"10秒で箱詰め・封印を量産",legacy:7},
-  {no:9,key:"catcher",title:"モブくんキャッチャー",sub:"多種モブくんをUFOキャッチ",legacy:8},
+  {no:9,key:"catcher",title:"モブくんキャッチャー",sub:"30体のフィギュアを3回で何体取れるか。1体3点、全部GETで100点",legacy:8},
   {no:10,key:"tidy",title:"モブくん整理整頓",sub:"7体を見本の部屋へ近づける",legacy:9},
   {no:11,key:"ski",title:"モブくんスキージャンプ",sub:"踏切タイミングで最大1km",legacy:10},
   {no:12,key:"slot",title:"モブくんスロット",sub:"キャラクタースロットでコイン勝負",legacy:11},
@@ -2430,7 +2430,7 @@ function showGameIntro(index){
   }else if(legacyIndex===7){
     rules=`<li>ベルトコンベアの箱を10秒で完成。</li><li>人形入り箱へさらに人形を入れると不良品として破棄。</li>`;
   }else if(legacyIndex===8){
-    rules=`<li>トコトコキャッチャーと同じく、①アーム幅STOP → ②◀▶位置 → ③降下 → ④下降中STOP。</li><li>大量のフィギュアから、実際に左右フックの間へ入った景品だけを取得。取ったフィギュアは景品フィールドから消えます。</li>`;
+    rules=`<li>30体のフィギュアを3回のクレーン操作で何体取れるか挑戦します。</li><li>①アーム幅STOP → ②◀▶位置 → ③降下 → ④下降中STOP。1体3点、30体全部GETで100点です。</li>`;
   }else if(legacyIndex===9){
     rules=`<li>上が毎回ランダムな見本、下が操作エリア。</li><li>7体は最初に中央へ集まっています。</li><li>自動吸着なし。10秒で見本へ近づけます。</li><li>判定はシビア。</li>`;
   }else if(legacyIndex===10){
@@ -4053,8 +4053,8 @@ async function startFactory(p,humanIndex,runId){
 async function startCatcher(p,humanIndex,runId){
   gameFit();
   const gameIndex=GAMES.findIndex(g=>g.key==='catcher');
-
-  const PRIZE_COUNT=72;
+  const PRIZE_COUNT=30;
+  const MAX_ATTEMPTS=3;
 
   screen.innerHTML=`
     <div class="catcher-shell ufo-catcher-shell shared-catcher-v190 gameplay-fit">
@@ -4062,97 +4062,95 @@ async function startCatcher(p,humanIndex,runId){
         <div>
           <span class="kicker">${esc(p.name)}</span>
           <h2>モブくんキャッチャー</h2>
-          <p class="lead">ARM → POSITION → DROP → STOP</p>
+          <p class="lead">3 CHANCES / 1 FIGURE = 3pt</p>
         </div>
         <div class="game-badge">${playBadge(humanIndex)}</div>
       </div>
 
       <div class="shared-catcher-hud-v190">
-        <div><span>PRIZE</span><b id="classicLeft190">${PRIZE_COUNT}</b></div>
-        <div><span>GET</span><b id="classicGet190">0</b></div>
-        <div><span>VALUE</span><b id="classicValue190">0</b></div>
+        <div><span>TRY</span><b id="catchTry191">1 / 3</b></div>
+        <div><span>GET</span><b id="catchGet191">0 / 30</b></div>
+        <div><span>SCORE</span><b id="catchScore191">0</b></div>
       </div>
 
       <div class="ufo-cabinet">
-        <div class="ufo-marquee">
-          <span>★</span><b>MOB CATCHER</b><span>★</span>
-        </div>
+        <div class="ufo-marquee"><span>★</span><b>MOB CATCHER</b><span>★</span></div>
 
         <div class="ufo-glass-wrap">
           <div class="ufo-side-post left"></div>
           <div class="ufo-side-post right"></div>
           <div class="ufo-top-beam"></div>
 
-          <div id="classicStage190" class="catcher-stage ufo-glass shared-catcher-stage-v190">
+          <div id="catchStage191" class="catcher-stage ufo-glass shared-catcher-stage-v190">
             <div class="ufo-back-logo">MOB</div>
             <div class="shared-catcher-floor-v190"></div>
 
-            <div id="classicChute190" class="catcher-chute ufo-chute shared-chute-v190">
+            <div class="catcher-chute ufo-chute shared-chute-v190">
               <b>PRIZE</b>
-              <span id="classicChuteCount190">0</span>
-              <div id="classicChutePile190" class="shared-chute-pile-v190"></div>
+              <span id="catchChuteCount191">0</span>
+              <div id="catchChutePile191" class="shared-chute-pile-v190"></div>
             </div>
 
             <div class="shared-width-meter-v190">
               <span class="shared-width-target-v190"></span>
-              <i id="classicWidthCursor190"></i>
+              <i id="catchWidthCursor191"></i>
             </div>
 
             <div class="shared-crane-rail-v190"></div>
 
-            <div id="classicCrane190" class="crane shared-crane-v190">
+            <div id="catchCrane191" class="crane shared-crane-v190">
               <div class="shared-trolley-v190"><i></i><i></i></div>
-              <div id="classicCable190" class="crane-cable shared-cable-v190"></div>
+              <div id="catchCable191" class="crane-cable shared-cable-v190"></div>
 
-              <div id="classicHead190" class="shared-claw-head-v190">
+              <div id="catchHead191" class="shared-claw-head-v190">
                 <div class="shared-claw-light-v190"></div>
-                <div id="classicArmL190" class="shared-claw-finger-v190 left-v190">
-                  <i id="classicHookL190" class="shared-claw-hook-v190"></i>
+                <div id="catchArmL191" class="shared-claw-finger-v190 left-v190">
+                  <i id="catchHookL191" class="shared-claw-hook-v190"></i>
                 </div>
-                <div id="classicArmR190" class="shared-claw-finger-v190 right-v190">
-                  <i id="classicHookR190" class="shared-claw-hook-v190"></i>
+                <div id="catchArmR191" class="shared-claw-finger-v190 right-v190">
+                  <i id="catchHookR191" class="shared-claw-hook-v190"></i>
                 </div>
               </div>
             </div>
 
-            <div id="classicPrizeLayer190" class="classic-prize-layer-v190"></div>
+            <div id="catchPrizeLayer191" class="classic-prize-layer-v190"></div>
           </div>
         </div>
 
         <div class="ufo-control-panel shared-panel-v190">
-          <div id="classicGuide190" class="shared-guide-v190">① アーム幅を決める</div>
-
+          <div id="catchGuide191" class="shared-guide-v190">① アーム幅を決める</div>
           <div class="catcher-controls ufo-controls shared-controls-v190">
-            <button id="classicLeft190" class="move" type="button" disabled>◀</button>
-            <button id="classicRight190" class="move" type="button" disabled>▶</button>
-            <button id="classicDrop190" class="drop" type="button" disabled>降下</button>
-            <button id="classicStop190" class="stop" type="button">STOP</button>
+            <button id="catchMoveLeft191" class="move" type="button" disabled>◀</button>
+            <button id="catchMoveRight191" class="move" type="button" disabled>▶</button>
+            <button id="catchDrop191" class="drop" type="button" disabled>降下</button>
+            <button id="catchStop191" class="stop" type="button">STOP</button>
           </div>
         </div>
       </div>
     </div>`;
 
-  const stage=document.getElementById('classicStage190');
-  const crane=document.getElementById('classicCrane190');
-  const cable=document.getElementById('classicCable190');
-  const head=document.getElementById('classicHead190');
-  const armL=document.getElementById('classicArmL190');
-  const armR=document.getElementById('classicArmR190');
-  const hookL=document.getElementById('classicHookL190');
-  const hookR=document.getElementById('classicHookR190');
-  const cursor=document.getElementById('classicWidthCursor190');
-  const guide=document.getElementById('classicGuide190');
-  const leftBtn=document.getElementById('classicLeft190');
-  const rightBtn=document.getElementById('classicRight190');
-  const dropBtn=document.getElementById('classicDrop190');
-  const stopBtn=document.getElementById('classicStop190');
-  const prizeLayer=document.getElementById('classicPrizeLayer190');
-  const leftEl=document.getElementById('classicLeft190');
-  const getEl=document.getElementById('classicGet190');
-  const valueEl=document.getElementById('classicValue190');
-  const chute=document.getElementById('classicChute190');
-  const chuteCount=document.getElementById('classicChuteCount190');
-  const chutePile=document.getElementById('classicChutePile190');
+  const stage=document.getElementById('catchStage191');
+  const crane=document.getElementById('catchCrane191');
+  const cable=document.getElementById('catchCable191');
+  const head=document.getElementById('catchHead191');
+  const armL=document.getElementById('catchArmL191');
+  const armR=document.getElementById('catchArmR191');
+  const hookL=document.getElementById('catchHookL191');
+  const hookR=document.getElementById('catchHookR191');
+  const cursor=document.getElementById('catchWidthCursor191');
+  const guide=document.getElementById('catchGuide191');
+
+  const leftBtn=document.getElementById('catchMoveLeft191');
+  const rightBtn=document.getElementById('catchMoveRight191');
+  const dropBtn=document.getElementById('catchDrop191');
+  const stopBtn=document.getElementById('catchStop191');
+
+  const tryEl=document.getElementById('catchTry191');
+  const getEl=document.getElementById('catchGet191');
+  const scoreEl=document.getElementById('catchScore191');
+  const chuteCount=document.getElementById('catchChuteCount191');
+  const chutePile=document.getElementById('catchChutePile191');
+  const prizeLayer=document.getElementById('catchPrizeLayer191');
 
   void stage.offsetHeight;
 
@@ -4166,36 +4164,34 @@ async function startCatcher(p,humanIndex,runId){
   const CHUTE_Y=H-40;
 
   let phase='width';
+  let active=false;
+  let finished=false;
+  let sequenceBusy=false;
+
+  let attempt=1;
+  let gotCount=0;
+
   let widthPct=10;
   let widthDir=1;
   let lockedWidth=10;
   let craneX=CENTER_X;
   let craneY=START_Y;
   let gripClose=0;
-  let active=false;
-  let finished=false;
-  let sequenceBusy=false;
-  let gotCount=0;
-  let totalValue=0;
+
   let raf=null;
   let last=performance.now();
 
   const prizes=[];
 
-  // A dense, clearly visible prize field.
   for(let i=0;i<PRIZE_COUNT;i++){
-    const rare=Math.random()<.10;
-    const icon=rare?randi(8,10):randi(1,7);
-    const col=i%12;
-    const row=Math.floor(i/12);
+    const col=i%10;
+    const row=Math.floor(i/10);
 
     prizes.push({
       id:i,
-      x:W*(.16+col/11*.77)+rand(-7,7),
-      y:PRIZE_Y-row*19+rand(-5,5),
-      icon,
-      rare,
-      value:rare?3:1,
+      icon:randi(1,10),
+      x:W*(.18+col/9*.73)+rand(-7,7),
+      y:PRIZE_Y-row*25+rand(-5,5),
       removed:false,
       held:false,
       el:null
@@ -4204,15 +4200,17 @@ async function startCatcher(p,humanIndex,runId){
 
   prizes.forEach(d=>{
     const el=document.createElement('div');
-    el.className=`classic-prize-v190 ${d.rare?'rare-v190':''}`;
-    el.dataset.id=d.id;
-    el.innerHTML=`
-      <img src="icon/${String(d.icon).padStart(2,'0')}.png" draggable="false" alt="">
-      ${d.rare?'<b>★3</b>':''}`;
-
+    el.className='classic-prize-v190';
+    el.innerHTML=`<img src="icon/${String(d.icon).padStart(2,'0')}.png" draggable="false" alt="">`;
     prizeLayer.appendChild(el);
     d.el=el;
   });
+
+  function scoreNow(){
+    return gotCount>=PRIZE_COUNT
+      ? 100
+      : gotCount*3;
+  }
 
   function armSpread(){
     return 40+lockedWidth*1.02;
@@ -4272,10 +4270,10 @@ async function startCatcher(p,humanIndex,runId){
   }
 
   function updateHud(){
-    leftEl.textContent=prizes.filter(d=>!d.removed).length;
-    getEl.textContent=gotCount;
-    valueEl.textContent=totalValue;
-    chuteCount.textContent=totalValue;
+    tryEl.textContent=`${attempt} / ${MAX_ATTEMPTS}`;
+    getEl.textContent=`${gotCount} / ${PRIZE_COUNT}`;
+    scoreEl.textContent=scoreNow();
+    chuteCount.textContent=gotCount;
   }
 
   function setControls(){
@@ -4316,34 +4314,88 @@ async function startCatcher(p,humanIndex,runId){
       .filter(d=>{
         if(d.removed)return false;
 
-        const insideX=
+        return (
           d.x>=minX-15 &&
-          d.x<=maxX+15;
-
-        const nearY=
-          Math.abs(d.y-g.centerY)<=26;
-
-        return insideX&&nearY;
+          d.x<=maxX+15 &&
+          Math.abs(d.y-g.centerY)<=27
+        );
       })
       .sort((a,b)=>
-        Math.abs(a.x-g.centerX)-Math.abs(b.x-g.centerX)
+        Math.abs(a.x-g.centerX)-
+        Math.abs(b.x-g.centerX)
       );
 
     const capacity=
-      clamp(Math.round(1+widthQ*7),1,8);
+      clamp(Math.round(1+widthQ*6),1,7);
 
     return candidates.slice(0,capacity);
   }
 
-  function addChutePrize(d){
+  function addToChute(d){
     const img=document.createElement('img');
     img.src=`icon/${String(d.icon).padStart(2,'0')}.png`;
-    img.alt='';
     img.draggable=false;
+    img.alt='';
     img.style.left=`${14+Math.random()*52}px`;
     img.style.top=`${26+Math.random()*35}px`;
     img.style.transform=`rotate(${rand(-20,20)}deg)`;
     chutePile.appendChild(img);
+  }
+
+  function resetAttempt(){
+    phase='width';
+    sequenceBusy=false;
+
+    widthPct=10;
+    widthDir=1;
+    lockedWidth=10;
+
+    craneX=CENTER_X;
+    craneY=START_Y;
+    gripClose=0;
+
+    guide.textContent='① アーム幅を決める';
+    guide.className='shared-guide-v190';
+
+    setControls();
+    renderCrane();
+    updateHud();
+  }
+
+  async function finishGame(){
+    finished=true;
+    active=false;
+    phase='finished';
+
+    if(raf)cancelAnimationFrame(raf);
+
+    const score=scoreNow();
+    state.records.catcher[p.id]=score;
+
+    guide.textContent=
+      gotCount>=PRIZE_COUNT
+        ? 'ALL GET! 100 POINT'
+        : `${gotCount}体GET　${score} POINT`;
+
+    guide.className='shared-guide-v190 finish-v190';
+
+    beep(
+      score===100?1080:
+      score>=60?860:
+      score>=30?650:
+      360,
+      150,.04
+    );
+
+    await wait(700);
+
+    if(isGameRunValid(runId)){
+      recordScreen(
+        gameIndex,p,humanIndex,
+        `${score}<small>pt</small>`,
+        `${gotCount} / ${PRIZE_COUNT} GET`
+      );
+    }
   }
 
   async function runGrab(){
@@ -4353,20 +4405,26 @@ async function startCatcher(p,humanIndex,runId){
     phase='sequence';
     setControls();
 
-    await animateValue(190,t=>{gripClose=t});
+    await animateValue(190,t=>{
+      gripClose=t;
+    });
+
     if(!isGameRunValid(runId))return;
 
     const held=captureAtStop();
 
-    guide.textContent=held.length
-      ? `${held.length}体つかんだ！`
-      : 'MISS';
+    guide.textContent=
+      held.length
+        ? `${held.length}体つかんだ！`
+        : 'MISS';
 
-    guide.className=`shared-guide-v190 ${held.length?'hold-v190':'miss-v190'}`;
+    guide.className=
+      `shared-guide-v190 ${held.length?'hold-v190':'miss-v190'}`;
 
     held.forEach((d,i)=>{
       d.held=true;
       d.el.style.zIndex='40';
+      d.el.style.transition='none';
       d.el.style.transform=
         `translate3d(${(craneX-22+(i-(held.length-1)/2)*17).toFixed(1)}px,${(craneY+92).toFixed(1)}px,0)`;
     });
@@ -4374,6 +4432,7 @@ async function startCatcher(p,humanIndex,runId){
     beep(held.length?820:180,held.length?70:115,.022);
 
     await wait(420);
+
     if(!isGameRunValid(runId))return;
 
     const liftStart=craneY;
@@ -4393,6 +4452,9 @@ async function startCatcher(p,humanIndex,runId){
     if(held.length){
       const startX=craneX;
 
+      guide.textContent='PRIZEへ運搬中';
+      guide.className='shared-guide-v190 carry-v190';
+
       await animateValue(760,t=>{
         const e=1-Math.pow(1-t,3);
         craneX=startX+(CHUTE_X-startX)*e;
@@ -4405,23 +4467,24 @@ async function startCatcher(p,humanIndex,runId){
 
       if(!isGameRunValid(runId))return;
 
-      await animateValue(190,t=>{gripClose=1-t});
+      await animateValue(190,t=>{
+        gripClose=1-t;
+      });
 
-      for(let i=0;i<held.length;i++){
-        const d=held[i];
+      for(const d of held){
+        d.el.style.transition=
+          'transform .56s ease, opacity .18s .42s';
 
-        d.el.style.transition='transform .56s ease, opacity .18s .42s';
         d.el.style.transform=
           `translate3d(${CHUTE_X-22+rand(-10,10)}px,${CHUTE_Y-22+rand(-4,8)}px,0) rotate(${rand(60,120)}deg)`;
 
         await wait(75);
 
-        // Collected figure is permanently removed from the field.
         d.removed=true;
         d.held=false;
         gotCount++;
-        totalValue+=d.value;
-        addChutePrize(d);
+
+        addToChute(d);
 
         setTimeout(()=>{
           if(d.el){
@@ -4432,27 +4495,34 @@ async function startCatcher(p,humanIndex,runId){
       }
 
       updateHud();
-      guide.textContent=`${held.length}体GET!`;
+
+      guide.textContent=
+        `${held.length}体GET! +${held.length*3}pt`;
+
       guide.className='shared-guide-v190 get-v190';
+
       beep(930,90,.03);
 
     }else{
-      await animateValue(190,t=>{gripClose=1-t});
+      await animateValue(190,t=>{
+        gripClose=1-t;
+      });
     }
 
-    state.records.catcher[p.id]=totalValue;
+    await wait(420);
 
-    await wait(520);
-
-    if(isGameRunValid(runId)){
-      recordScreen(
-        gameIndex,p,humanIndex,
-        `${totalValue}<small> VALUE</small>`,
-        held.length
-          ? `${held.length}体GET / 残り${prizes.filter(d=>!d.removed).length}体`
-          : 'MISS'
-      );
+    if(gotCount>=PRIZE_COUNT){
+      await finishGame();
+      return;
     }
+
+    if(attempt>=MAX_ATTEMPTS){
+      await finishGame();
+      return;
+    }
+
+    attempt++;
+    resetAttempt();
   }
 
   function moveCrane(dir){
@@ -4469,11 +4539,13 @@ async function startCatcher(p,humanIndex,runId){
   }
 
   leftBtn.addEventListener('pointerdown',e=>{
+    if(!active||phase!=='position')return;
     e.preventDefault();
     moveCrane(-1);
   },{passive:false});
 
   rightBtn.addEventListener('pointerdown',e=>{
+    if(!active||phase!=='position')return;
     e.preventDefault();
     moveCrane(1);
   },{passive:false});
@@ -4482,6 +4554,7 @@ async function startCatcher(p,humanIndex,runId){
     if(!active||phase!=='position'||sequenceBusy)return;
 
     e.preventDefault();
+
     phase='descend';
     setControls();
 
@@ -4502,6 +4575,7 @@ async function startCatcher(p,humanIndex,runId){
 
       guide.textContent='② ◀ ▶ で位置を決める';
       guide.className='shared-guide-v190';
+
       setControls();
       beep(720,55,.018);
       return;
@@ -25877,7 +25951,8 @@ function simulateOneCpu(gameIndex,p){
   }else if(legacyIndex===7){
     state.records.factory[p.id]=ultra?randi(23,28):randi(15,24);
   }else if(legacyIndex===8){
-    state.records.catcher[p.id]=ultra?randi(9,13):randi(4,10);
+    const caught=ultra?randi(20,30):randi(7,22);
+    state.records.catcher[p.id]=caught>=30?100:caught*3;
   }else if(legacyIndex===9){
     state.records.tidy[p.id]=ultra?randi(88,96):randi(55,84);
   }else if(legacyIndex===10){
@@ -26175,7 +26250,7 @@ function performancePoints(gameIndex,v){
   if(legacyIndex===5)return clamp(Math.round((40-v)/39*100),0,100);
   if(legacyIndex===6)return clamp(Math.round(v/20*100),0,100);
   if(legacyIndex===7)return clamp(Math.round(v/25*100),0,100);
-  if(legacyIndex===8)return clamp(Math.round(v/10*100),0,100);
+  if(legacyIndex===8)return clamp(Math.round(v),0,100);
   if(legacyIndex===9)return clamp(Math.round(v),0,100);
   if(legacyIndex===10)return clamp(Math.round(((v/10)-200)/800*100),0,100);
   if(legacyIndex===11)return clamp(Math.round(1+(v-500)/6000*99),1,100);
@@ -26377,7 +26452,7 @@ function formatRecord(gameIndex,v){
   if(legacyIndex===5)return `世界${v}位`;
   if(legacyIndex===6)return `${v}回`;
   if(legacyIndex===7)return `${v}箱`;
-  if(legacyIndex===8)return `${v} VALUE`;
+  if(legacyIndex===8)return `${Math.round(v)}pt`;
   if(legacyIndex===9)return `${v}%`;
   if(legacyIndex===10)return `${(v/10).toFixed(1)}m`;
   if(legacyIndex===11)return `${v} COIN`;
@@ -35325,7 +35400,7 @@ async function startTokotokoCatcher(p,humanIndex,runId){
   const now0=performance.now();
 
   const figs=speeds.map((speed,i)=>({
-    id:i,x:WALK_MIN_X+(WALK_MAX_X-WALK_MIN_X)*(i/4),y:FIG_Y,dir:Math.random()<.5?-1:1,speed,
+    id:i,x:WALK_MIN_X+(WALK_MAX_X-WALK_MIN_X)*(i/6),y:FIG_Y,dir:Math.random()<.5?-1:1,speed,
     nextTurn:now0+rand(700,1900),walkPhase:Math.random()*Math.PI*2,
     removed:false,held:false,falling:false,releasing:false,holdDX:0,holdDY:0,el:null
   }));
