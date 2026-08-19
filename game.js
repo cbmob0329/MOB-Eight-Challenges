@@ -264,7 +264,7 @@ const GAMES=[
   {no:26,key:"bomb",title:"爆弾チキンレース",sub:"0.000秒直前でSTOP",legacy:28},
   {no:27,key:"overlapMaster",title:"重なりモブくん",sub:"4つの円を同時に重ねる",legacy:29},
   {no:28,key:"jumpingMob",title:"ジャンピングモブくん",sub:"ホッピングで台を乗り継ぐ",legacy:30},
-  {no:29,key:"heroMaybe",title:"モブくんは勇者かも",sub:"11秒で勇者を育てる",legacy:31},
+  {no:29,key:"heroMaybe",title:"モブくんは勇者かも",sub:"13秒で勇者を育てる",legacy:31},
   {no:30,key:"popularGame",title:"アクションモブくん",sub:"モブくんでモグラ踏み",legacy:32},
   {no:31,key:"planetEnergy",title:"モブくんは破壊神",sub:"3回チャージして高層ビルを貫く",legacy:33},
   {no:32,key:"painter",title:"モブくんは画家志望",sub:"猫の顔型を1回で綺麗になぞる",legacy:34},
@@ -2424,7 +2424,7 @@ function showGameIntro(index){
   }else if(legacyIndex===4){
     rules=`<li>1体ずつつかんで積みます。</li><li>10秒。時間が経つほど風が強化。</li>`;
   }else if(legacyIndex===5){
-    rules=`<li>10秒間の4択。</li><li>左上・右上・左下・右下のどこか1つだけが1990。</li><li>1990=1周、5連続でBONUS +1周、罠は-1周。</li><li>15周以上で世界1位級。</li>`;
+    rules=`<li>12秒間の4択。以前より見分けやすい数字が多く出ます。</li><li>左上・右上・左下・右下のどこか1つだけが1990。罠の出現率も低下しています。</li>`;
   }else if(legacyIndex===6){
     rules=`<li>3体を少し近めの横一列に配置。</li><li>足元の小さいエネルギーをP1 → P2 → P3が順番にジャンプ。</li><li>成功するほど急激に高速化。</li>`;
   }else if(legacyIndex===7){
@@ -2474,7 +2474,7 @@ function showGameIntro(index){
   }else if(legacyIndex===30){
     rules=`<li>3・2・1後10秒。</li><li>モブくんはバネのホッピングマシーンに乗っています。</li><li>← →で左右移動、JUMPでジャンプ。</li><li>ランダムに並ぶ台を乗り継いで上へ。高い台ほど横幅が短くなります。</li><li>長距離はカメラが上方向へ追跡。500m以上で100点。</li>`;
   }else if(legacyIndex===31){
-    rules=`<li>「あなたは、、勇者様！？」のナレーションから3・2・1。</li><li>11秒間、4つの項目から1つを選び続けます。</li><li>選ぶたび4項目が全部入れ替わり、同じ項目は再登場しません。</li><li>強化と罠が合計50種。必ず1つ以上は強化。</li><li>勇者シリーズは高得点。弱点・呪いなどは弱体化。</li>`;
+    rules=`<li>「あなたは、、勇者様！？」のナレーションから3・2・1。</li><li>13秒間、4つの項目から1つを選び続けます。毎回2〜3個は強化項目です。</li>`;
   }else if(legacyIndex===32){
     rules=`<li>3・2・1後10秒の横スクロールアクション。</li><li>← →で移動、JUMPでジャンプ。</li><li>モグラは最大4体。上から踏むと+1体、倒すと1体リポップ。</li><li>カメラはモブくんを左右に追跡。</li><li>20体踏みつけで100点。</li>`;
   }else if(legacyIndex===33){
@@ -2572,7 +2572,7 @@ function showGameIntro(index){
   }else if(legacyIndex===82){
     rules=`<li>3秒間、下の円形BALL DESIGN枠へボールの模様を何本でも自由に描きます。</li><li>描き終わると3・2・1。12体のモンスターへ同じボールを上方向にフリックして捕獲します。</li>`;
   }else if(legacyIndex===83){
-    rules=`<li>所持金31000円で、9ポジションの選手をスカウトします。</li><li>各ポジションの選択時間は1.15秒。少しだけ判断しやすくなっています。</li>`;
+    rules=`<li>所持金36000円で、9ポジションの選手をスカウトします。</li><li>各ポジションの選択時間は1.70秒。高レア候補も以前より少し出やすくしています。</li>`;
   }else if(legacyIndex===84){
     rules=`<li>プレイヤーと9人の偽モブくんが、宙に浮く岩の足場からスタートします。</li><li>左右の矢印で移動、JUMPで最大2段ジャンプ。モブくん同士はぶつかるので、前をふさがれたらジャンプして越えます。</li><li>岩の足場は部分ごとにヒビが入り、時間とともにどんどん崩落します。落下したらその時点で終了です。</li><li>最初に落ちると0点。最後の1人まで生き残ればCLEARで100点です。</li>`;
   }else if(legacyIndex===85){
@@ -3431,7 +3431,7 @@ async function startStack(p,humanIndex,runId){
   if(!(await countdown("10 SECOND STACK",runId)))return;
   if(!document.body.contains(stage))return;
 
-  endAt=performance.now()+10000;
+  endAt=performance.now()+12000;
   spawnPiece();
 
   const timer=now=>{
@@ -3516,7 +3516,7 @@ async function startGanbareMob(p,humanIndex,runId){
     </div>
 
     <div class="ganbare-hud n1990-hud">
-      <div class="ganbare-time"><span>TIME</span><b id="ganbareTime">10.00</b></div>
+      <div class="ganbare-time"><span>TIME</span><b id="ganbareTime">12.00</b></div>
       <div class="ganbare-count"><span>1990</span><b id="hitCount">0周</b></div>
       <div class="ganbare-count"><span>STREAK</span><b id="streakCount">0</b></div>
     </div>
@@ -3543,7 +3543,28 @@ async function startGanbareMob(p,humanIndex,runId){
   }
 
   function newChoices(){
-    const decoys=shuffle(NINETEEN90_DECOYS).slice(0,3);
+    const easyPool=shuffle(
+      NINETEEN90_DECOYS.filter(x=>
+        !x.trap &&
+        !String(x.name).startsWith('199')
+      )
+    );
+
+    const safePool=shuffle(
+      NINETEEN90_DECOYS.filter(x=>!x.trap)
+    );
+
+    const trapPool=shuffle(
+      NINETEEN90_DECOYS.filter(x=>x.trap)
+    );
+
+    // Two clearly different decoys + one mostly-safe decoy.
+    const decoys=[
+      easyPool[0],
+      easyPool[1],
+      Math.random()<.22?trapPool[0]:safePool[0]
+    ];
+
     targetIndex=randi(0,3);
     currentChoices=[];
     let di=0;
@@ -3610,7 +3631,7 @@ async function startGanbareMob(p,humanIndex,runId){
     buttons.forEach(b=>b.disabled=true);
     setTimeout(()=>{
       if(running&&!finished)newChoices();
-    },78);
+    },135);
   }
 
   grid.addEventListener("pointerdown",e=>{
@@ -4163,6 +4184,12 @@ async function startCatcher(p,humanIndex,runId){
   const CHUTE_X=54;
   const CHUTE_Y=H-40;
 
+  // Real prize-pile physics.
+  const BODY_R=18;
+  const PHYS_FLOOR_Y=H*.89;
+  const PHYS_MIN_X=W*.17;
+  const PHYS_MAX_X=W*.93;
+
   let phase='width';
   let active=false;
   let finished=false;
@@ -4190,8 +4217,12 @@ async function startCatcher(p,humanIndex,runId){
     prizes.push({
       id:i,
       icon:randi(1,10),
-      x:W*(.18+col/9*.73)+rand(-7,7),
-      y:PRIZE_Y-row*25+rand(-5,5),
+      x:W*(.19+col/9*.71)+rand(-5,5),
+      y:PHYS_FLOOR_Y-BODY_R-row*35+rand(-3,3),
+      vx:rand(-8,8),
+      vy:0,
+      rot:rand(-18,18),
+      vr:rand(-18,18),
       removed:false,
       held:false,
       el:null
@@ -4264,8 +4295,119 @@ async function startCatcher(p,humanIndex,runId){
 
       if(!d.held){
         d.el.style.transform=
-          `translate3d(${(d.x-22).toFixed(1)}px,${(d.y-22).toFixed(1)}px,0) rotate(${((d.id%7)-3)*4}deg)`;
+          `translate3d(${(d.x-22).toFixed(1)}px,${(d.y-22).toFixed(1)}px,0) rotate(${d.rot.toFixed(1)}deg)`;
       }
+    });
+  }
+
+  function stepPrizePhysics(dt){
+    const live=prizes.filter(d=>!d.removed&&!d.held);
+
+    // Gravity + floor/wall response.
+    live.forEach(d=>{
+      d.vy+=520*dt;
+      d.x+=d.vx*dt;
+      d.y+=d.vy*dt;
+      d.rot+=d.vr*dt;
+
+      d.vx*=Math.pow(.985,dt*60);
+      d.vr*=Math.pow(.982,dt*60);
+
+      if(d.x-BODY_R<PHYS_MIN_X){
+        d.x=PHYS_MIN_X+BODY_R;
+        d.vx=Math.abs(d.vx)*.46;
+        d.vr+=rand(-34,34);
+      }else if(d.x+BODY_R>PHYS_MAX_X){
+        d.x=PHYS_MAX_X-BODY_R;
+        d.vx=-Math.abs(d.vx)*.46;
+        d.vr+=rand(-34,34);
+      }
+
+      if(d.y+BODY_R>PHYS_FLOOR_Y){
+        d.y=PHYS_FLOOR_Y-BODY_R;
+
+        if(Math.abs(d.vy)>22){
+          d.vy=-Math.abs(d.vy)*.24;
+          d.vr+=d.vx*.28;
+        }else{
+          d.vy=0;
+        }
+
+        d.vx*=.86;
+
+        if(Math.abs(d.vx)<1.2)d.vx=0;
+        if(Math.abs(d.vr)<1.5)d.vr=0;
+      }
+    });
+
+    // Simple circular body collision so the pile rolls and settles.
+    for(let i=0;i<live.length;i++){
+      for(let j=i+1;j<live.length;j++){
+        const a=live[i],b=live[j];
+        let dx=b.x-a.x,dy=b.y-a.y;
+        let dist=Math.hypot(dx,dy);
+        const minDist=BODY_R*1.72;
+
+        if(dist>=minDist)continue;
+
+        if(dist<.001){
+          dx=1;
+          dy=0;
+          dist=1;
+        }
+
+        const nx=dx/dist;
+        const ny=dy/dist;
+        const overlap=minDist-dist;
+
+        a.x-=nx*overlap*.5;
+        a.y-=ny*overlap*.5;
+        b.x+=nx*overlap*.5;
+        b.y+=ny*overlap*.5;
+
+        const rvx=b.vx-a.vx;
+        const rvy=b.vy-a.vy;
+        const rel=rvx*nx+rvy*ny;
+
+        if(rel<0){
+          const impulse=-(1+.32)*rel*.5;
+          a.vx-=impulse*nx;
+          a.vy-=impulse*ny;
+          b.vx+=impulse*nx;
+          b.vy+=impulse*ny;
+        }
+
+        const tangentX=-ny;
+        const tangentY=nx;
+        const tangential=rvx*tangentX+rvy*tangentY;
+
+        a.vr-=tangential*.18;
+        b.vr+=tangential*.18;
+
+        a.vx-=tangentX*tangential*.025;
+        b.vx+=tangentX*tangential*.025;
+      }
+    }
+  }
+
+  function disturbPile(held){
+    if(!held.length)return;
+
+    prizes.forEach(d=>{
+      if(d.removed||d.held)return;
+
+      held.forEach(h=>{
+        const dx=d.x-h.x;
+        const dy=d.y-h.y;
+        const dist=Math.hypot(dx,dy);
+
+        if(dist>78||dist<1)return;
+
+        const power=(1-dist/78)*105;
+        d.vx+=(dx/dist)*power+rand(-20,20);
+        d.vy-=Math.max(8,power*.34);
+        d.vr+=rand(-90,90);
+      });
     });
   }
 
@@ -4315,18 +4457,19 @@ async function startCatcher(p,humanIndex,runId){
         if(d.removed)return false;
 
         return (
-          d.x>=minX-15 &&
-          d.x<=maxX+15 &&
-          Math.abs(d.y-g.centerY)<=27
+          d.x>=minX-18 &&
+          d.x<=maxX+18 &&
+          Math.abs(d.y-g.centerY)<=62
         );
       })
-      .sort((a,b)=>
-        Math.abs(a.x-g.centerX)-
-        Math.abs(b.x-g.centerX)
-      );
+      .sort((a,b)=>{
+        const da=Math.hypot(a.x-g.centerX,a.y-g.centerY);
+        const db=Math.hypot(b.x-g.centerX,b.y-g.centerY);
+        return da-db;
+      });
 
     const capacity=
-      clamp(Math.round(1+widthQ*6),1,7);
+      clamp(Math.round(2+widthQ*10),2,12);
 
     return candidates.slice(0,capacity);
   }
@@ -4423,11 +4566,16 @@ async function startCatcher(p,humanIndex,runId){
 
     held.forEach((d,i)=>{
       d.held=true;
+      d.vx=0;
+      d.vy=0;
       d.el.style.zIndex='40';
       d.el.style.transition='none';
       d.el.style.transform=
         `translate3d(${(craneX-22+(i-(held.length-1)/2)*17).toFixed(1)}px,${(craneY+92).toFixed(1)}px,0)`;
     });
+
+    // Pulling prizes out kicks nearby figures, causing visible bumps/rolling.
+    disturbPile(held);
 
     beep(held.length?820:180,held.length?70:115,.022);
 
@@ -4624,7 +4772,10 @@ async function startCatcher(p,humanIndex,runId){
       }
     }
 
+    stepPrizePhysics(dt);
+    renderPrizes();
     renderCrane();
+
     raf=requestAnimationFrame(frame);
   }
 
@@ -7444,7 +7595,7 @@ async function startHeroMaybe(p,humanIndex,runId){
     </div>
 
     <div class="hero-maybe-hud">
-      <div><span>TIME</span><b id="heroTime">11.00</b></div>
+      <div><span>TIME</span><b id="heroTime">13.00</b></div>
       <div><span>POWER</span><b id="heroScore">5</b></div>
     </div>
 
@@ -7491,7 +7642,7 @@ async function startHeroMaybe(p,humanIndex,runId){
 
     const rect=choices.getBoundingClientRect();
     const radius=Math.max(62,Math.min(rect.width,rect.height)*.33);
-    const angle=(now-wheelStarted)/9000*Math.PI*2;
+    const angle=(now-wheelStarted)/11500*Math.PI*2;
 
     choiceBtns.forEach((btn,i)=>{
       const a=angle+i*Math.PI/2-Math.PI/2;
@@ -7512,9 +7663,9 @@ async function startHeroMaybe(p,humanIndex,runId){
     const availableBoosts=boosts.filter(x=>!usedHeroItems.has(x.name));
     const availableTraps=traps.filter(x=>!usedHeroItems.has(x.name));
 
-    // Much harder: usually exactly one safe/positive option.
+    // Easier balance: every set contains 2 or 3 positive choices.
     const roll=Math.random();
-    const boostCount=roll<.58?1:roll<.92?2:3;
+    const boostCount=roll<.35?2:3;
     const opts=[];
 
     shuffle(availableBoosts).slice(0,boostCount).forEach(x=>opts.push(x));
@@ -7572,7 +7723,7 @@ async function startHeroMaybe(p,humanIndex,runId){
   wheelStarted=performance.now();
   wheelRAF=requestAnimationFrame(positionWheel);
 
-  endAt=performance.now()+11000;
+  endAt=performance.now()+13000;
 
   function finish(){
     if(finished)return;
@@ -21601,17 +21752,17 @@ async function startScoutMan(p,humanIndex,runId){
   gameFit();
   const positions=[['P','ピッチャー'],['C','キャッチャー'],['1B','ファースト'],['2B','セカンド'],['3B','サード'],['SS','ショート'],['RF','ライト'],['LF','レフト'],['CF','センター']];
   const info={R:{price:500,power:8},SR:{price:1000,power:14},SSR:{price:3000,power:23},UR:{price:5000,power:34},MOB:{price:10000,power:50}};
-  let money=31000,posIndex=0,active=false,chosen=false,timer=null,team=[],finished=false;
+  let money=36000,posIndex=0,active=false,chosen=false,timer=null,team=[],finished=false;
 
   screen.innerHTML=`<div class="scout-shell-v134">
     <div class="game-head"><div><span class="kicker">${esc(p.name)}</span><h2>モブくんはスカウトマン！</h2></div><div class="game-badge">${playBadge(humanIndex)}</div></div>
-    <div class="v125-hud"><div><span>BUDGET</span><b id="scoutMoney134">¥31,000</b></div><div><span>POSITION</span><b id="scoutPos134">P</b></div></div>
+    <div class="v125-hud"><div><span>BUDGET</span><b id="scoutMoney134">¥36,000</b></div><div><span>POSITION</span><b id="scoutPos134">P</b></div></div>
     <div id="scoutStage134" class="scout-stage-v134">
       <div class="scout-title-v134"><b id="scoutPosName134">ピッチャー</b><span id="scoutClock134">1.15</span></div>
       <div id="scoutCards134" class="scout-cards-v134"></div>
       <div id="scoutNotice134" class="scout-notice-v134"></div>
     </div>
-    <div id="scoutFooter134" class="scout-footer-v134">1.15秒以内に1人タップして購入</div>
+    <div id="scoutFooter134" class="scout-footer-v134">1.70秒以内に1人タップして購入</div>
   </div>`;
 
   const stage=document.getElementById('scoutStage134'),cardsEl=document.getElementById('scoutCards134'),moneyEl=document.getElementById('scoutMoney134');
@@ -21619,8 +21770,21 @@ async function startScoutMan(p,humanIndex,runId){
   const notice=document.getElementById('scoutNotice134'),footer=document.getElementById('scoutFooter134');
 
   function candidates(){
-    const pick=()=>{const r=Math.random()*100;return r<38?'R':r<64?'SR':r<82?'SSR':r<95?'UR':'MOB';};
-    const a=Array.from({length:5},pick); if(!a.includes('R'))a[randi(0,4)]='R'; return shuffle(a);
+    const pick=()=>{
+      const r=Math.random()*100;
+      return r<30?'R':
+        r<54?'SR':
+        r<77?'SSR':
+        r<93?'UR':
+        'MOB';
+    };
+
+    const a=Array.from({length:5},pick);
+
+    // Keep at least one affordable fallback.
+    if(!a.includes('R'))a[randi(0,4)]='R';
+
+    return shuffle(a);
   }
   function card(r,i){
     const x=info[r],img=String((posIndex*5+i)%10+1).padStart(2,'0');
@@ -21646,8 +21810,8 @@ async function startScoutMan(p,humanIndex,runId){
   function startRound(){
     chosen=false;active=true;notice.textContent='';notice.className='scout-notice-v134';
     const [pos,name]=positions[posIndex];posEl.textContent=pos;posNameEl.textContent=name;cardsEl.innerHTML=candidates().map(card).join('');
-    const begin=performance.now();clockEl.textContent='1.15';if(timer)clearInterval(timer);
-    timer=setInterval(()=>{const rem=Math.max(0,1150-(performance.now()-begin));clockEl.textContent=(rem/1000).toFixed(1);if(rem<=0){clearInterval(timer);timer=null;timeout();}},25);
+    const begin=performance.now();clockEl.textContent='1.70';if(timer)clearInterval(timer);
+    timer=setInterval(()=>{const rem=Math.max(0,1700-(performance.now()-begin));clockEl.textContent=(rem/1000).toFixed(2);if(rem<=0){clearInterval(timer);timer=null;timeout();}},25);
   }
   function rank(power){
     const avg=power/9,luck=rand(-11,11),strength=avg*2.25+luck;

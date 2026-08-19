@@ -28288,3 +28288,13 @@ canvas{
     min-height:340px!important;
   }
 }
+
+
+/* V10.92 — MOB catcher pile physics */
+.classic-prize-v190{
+  transform-origin:50% 50%;
+  will-change:transform;
+}
+.classic-prize-v190 img{
+  pointer-events:none;
+}
