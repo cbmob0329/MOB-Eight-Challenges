@@ -338,7 +338,9 @@ const GAMES=[
   {no:100,key:"linkedCartBlast",title:"くっつきモブくんトロッコ大爆走",sub:"2対2タッグ専用。描いたトロッコ2台を連結し、同じ1km横スクロールコースを同時大爆走",legacy:112},
   {no:101,key:"soloCartBlast",title:"モブくんトロッコ大爆走",sub:"4人個人戦専用。描いたトロッコが1km横スクロールコースを実走し、残った人形数を競う",legacy:113},
   {no:102,key:"deathGameChallenge",title:"モブくんデスゲームにチャレンジ",sub:"4〜8人個人戦専用。固定ルーレット順で扉を選び、生き残った1人が優勝",legacy:114},
-  {no:103,key:"tokotokoCatcher",title:"トコトコモブくんキャッチャー",sub:"動き続ける5体を1つのSTOPボタンで狙う。3回チャンスで1体20点",legacy:115}
+  {no:103,key:"tokotokoCatcher",title:"トコトコモブくんキャッチャー",sub:"アーム幅→左右位置→降下→STOP。動く5体を3回で狙う",legacy:115},
+  {no:104,key:"amidakujiMasters",title:"モブくんのあみだくじマスターズ",sub:"1〜100の整数ポイントが出るあみだくじ。途中はSECRETで一部見えない",legacy:116},
+  {no:105,key:"djMaster",title:"モブくんDJの達人",sub:"10秒で流れる20個の音符に合わせ、巨大ターンテーブルをスクラッチ",legacy:117}
 ];
 
 function legacyGameIndex(gameIndex){
@@ -450,7 +452,7 @@ function freshState(){
         paperPlane:{},tankMob:{},curlingMob:{},bubbleMob:{},
         changeMob:{},baggageMob:{},treasureMob:{},rouletteMob:{},excavationMob:{},
         oldMaidDuel:{},robotMarch:{},monsterMaster:{},scoutMan:{},
-        atafutaSurvival:{},waveMaster:{},battleRoyaleMob:{},littleMobShot:{},monsterBoxMob:{},alienBattleMob:{},mobMusou:{},iaidoMaster:{},killLeaderMob:{},mobSpeedRacer:{},summonMaster:{},mobPinball:{},hurdleRun:{},longJumpMob:{},pkKicker:{},threePoint:{},bowlingMob:{},waterSkip:{},tamaireMob:{},mineCartMob:{},airHockeyMob:{},ropeSwingMob:{},billiardsMob:{},billiardsBattleRoyale:{},linkedCartBlast:{},soloCartBlast:{},deathGameChallenge:{},tokotokoCatcher:{}
+        atafutaSurvival:{},waveMaster:{},battleRoyaleMob:{},littleMobShot:{},monsterBoxMob:{},alienBattleMob:{},mobMusou:{},iaidoMaster:{},killLeaderMob:{},mobSpeedRacer:{},summonMaster:{},mobPinball:{},hurdleRun:{},longJumpMob:{},pkKicker:{},threePoint:{},bowlingMob:{},waterSkip:{},tamaireMob:{},mineCartMob:{},airHockeyMob:{},ropeSwingMob:{},billiardsMob:{},billiardsBattleRoyale:{},linkedCartBlast:{},soloCartBlast:{},deathGameChallenge:{},tokotokoCatcher:{},amidakujiMasters:{},djMaster:{}
     },
     total:{},
     roundPoints:[],
@@ -560,7 +562,7 @@ function renderHome(){
     <section class="hero hero-v119">
       <div>
         <span class="kicker">SMARTPHONE PARTY GAME</span>
-        <h1>103 MINI<br>GAMES</h1>
+        <h1>105 MINI<br>GAMES</h1>
         <p>通常対戦は「チーム戦」「個人戦」。さらに8人/16人の「モブくんゲーム王決定戦」を遊べます。</p>
       </div>
       <div class="hero-mark">MOB</div>
@@ -585,7 +587,7 @@ function renderHome(){
     </section>
 
     <section class="panel flat">
-      <div class="panel-head"><h3>103 MINI GAMES</h3><span class="tag">GAME 1 → 103</span></div>
+      <div class="panel-head"><h3>105 MINI GAMES</h3><span class="tag">GAME 1 → 105</span></div>
       <div class="compact-game-grid home-compact-games-v119">
         ${GAMES.map(g=>`<div><b>${g.no}</b><span>${g.title}</span></div>`).join("")}
       </div>
@@ -2083,7 +2085,7 @@ function renderPlayStyleSelect(){
       <button id="normalStyle" class="style-select-card normal" type="button">
         <span>NORMAL</span>
         <b>順番に全種目</b>
-        <small>GAME 1 → 103 を順番にプレイ</small>
+        <small>GAME 1 → 105 を順番にプレイ</small>
       </button>
       <button id="customStyle" class="style-select-card custom" type="button">
         <span>CUSTOM</span>
@@ -2093,7 +2095,7 @@ function renderPlayStyleSelect(){
     </div>
 
     <section class="panel flat">
-      <h3>103 MINI GAMES</h3>
+      <h3>105 MINI GAMES</h3>
       <div class="compact-game-grid">
         ${GAMES.map(g=>`<div><b>${g.no}</b><span>${g.title}</span></div>`).join("")}
       </div>
@@ -2396,7 +2398,9 @@ function scoreRuleForGame(index){
     "2対2タッグ専用 / チーム20体スタート / ゴール時の残り1体=5点 / 最大100点",
     "4人個人戦専用 / 1人20体スタート / ゴール時の残り1体=5点 / 最大100点",
     "4〜8人個人戦専用 / 1位100点・2位70点・3位50点・4位以下0点",
-    "3回チャンス / 1体GET=20点 / 5体GET=100点 / 全5体GETで即終了"
+    "3回チャンス / 1体GET=20点 / 5体GET=100点 / 全5体GETで即終了",
+    "GOALの数字がそのまま得点 / 1〜100点 / 1点刻み",
+    "20音符 / PERFECT=5点・NICE=4点・GOOD=2点 / 10秒 / 最大100点"
   ][legacyIndex];
 }
 
@@ -2624,7 +2628,11 @@ function showGameIntro(index){
   }else if(legacyIndex===114){
     rules=`<li>4〜8人個人戦専用。最初のルーレットで決めた順番を最後まで固定し、1人ずつ空いている扉を選びます。</li><li>全員が入ったら3・2・1で扉が消滅。最後の1人が100点、2位70点、3位50点です。</li>`;
   }else if(legacyIndex===115){
-    rules=`<li>STOPは1つだけ。最初にアームの広さを止め、次に下降中のアームをフィギュア中央付近で止めます。</li><li>5体は同じくらいのゆっくりした速さで、トコトコ揺れながら左右へランダム移動します。掴んでもGET確定ではなく、1体20点・3回までです。</li>`;
+    rules=`<li>①アーム幅をSTOP → ②◀▶で位置 → ③降下 → ④下降中にSTOPの順で操作します。</li><li>5体は同じくらいのゆっくりした速さでトコトコ左右へランダム移動。掴んでもGET確定ではなく、1体20点・3回までです。</li>`;
+  }else if(legacyIndex===116){
+    rules=`<li>最初にGOALを確認したあと入口を1つ選びます。途中はSECRETバナーで一部見えません。</li><li>GOALは毎回1〜100の整数から6個。到着した数字がそのまま得点です。</li>`;
+  }else if(legacyIndex===117){
+    rules=`<li>上のラインを右から左へ流れる音符に合わせて、下の巨大ターンテーブルを左右へ擦ります。</li><li>10秒で20音符。タイミングでGOOD / NICE! / PERFECT!!が決まり、最大100点です。</li>`;
   }else{
     rules=`<li>${esc(g.sub)}</li>`;
   }
@@ -2777,6 +2785,8 @@ function humanReady(gameIndex,humanIndex){
     else if(legacyIndex===113)startSoloCartBlast(p,humanIndex,runId);
     else if(legacyIndex===114)startDeathGameChallenge(p,humanIndex,runId);
     else if(legacyIndex===115)startTokotokoCatcher(p,humanIndex,runId);
+    else if(legacyIndex===116)startAmidakujiMasters(p,humanIndex,runId);
+    else if(legacyIndex===117)startDjMaster(p,humanIndex,runId);
     else{
       gameSessionActive=false;
       activeGameIndex=-1;
@@ -2864,27 +2874,54 @@ function playBadge(humanIndex){
 // GAME 1 -------------------------------------------------
 async function startReaction(p,humanIndex,runId){
   gameFit();
-  screen.innerHTML=`<section class="reaction-stage"><div><span class="kicker">${esc(p.name)}</span><h2>モブくんの反射神経</h2></div><div id="reactionZone" class="reaction-zone"><div class="wait-dots">•••</div></div><p class="hint">モブくんが出た瞬間にタップ。0.0001秒単位で表示します。</p></section>`;
+
+  screen.innerHTML=`
+    <section class="reaction-stage">
+      <div>
+        <span class="kicker">${esc(p.name)}</span>
+        <h2>モブくんの反射神経</h2>
+      </div>
+      <div id="reactionZone" class="reaction-zone">
+        <div class="wait-dots">•••</div>
+      </div>
+      <p class="hint">MOBが出た瞬間にタップ。0.0001秒単位で表示します。</p>
+    </section>`;
+
   if(!(await countdown("COUNTDOWN",runId)))return;
+
   const zone=document.getElementById("reactionZone");
   if(!zone)return;
-  await wait(rand(650,1900));
-  if(!document.body.contains(zone))return;
 
+  await wait(rand(650,1900));
+
+  if(!document.body.contains(zone)||!isGameRunValid(runId))return;
+
+  // Text-only target: no image decode/load delay can affect the appearance time.
   const btn=document.createElement("button");
   btn.type="button";
-  btn.className="mob-button mob-character-button";
-  const reactionIcon=randi(1,10);
-  btn.innerHTML=`<img draggable="false" src="icon/${String(reactionIcon).padStart(2,"0")}.png" alt="モブくん">`;
+  btn.className="mob-button reaction-graffiti-btn-v186";
+  btn.setAttribute("aria-label","MOB");
+  btn.innerHTML=`
+    <span class="reaction-graffiti-v186">
+      <i class="m-v186">M</i>
+      <i class="o-v186">O</i>
+      <i class="b-v186">B</i>
+    </span>`;
+
   zone.innerHTML="";
   zone.appendChild(btn);
 
   const t0=performance.now();
+
   btn.addEventListener("pointerdown",()=>{
     const ms=Math.max(.1,performance.now()-t0);
     state.records.reaction[p.id]=ms;
     beep(870,100);
-    recordScreen(0,p,humanIndex,`${(ms/1000).toFixed(4)}<small>秒</small>`);
+
+    recordScreen(
+      0,p,humanIndex,
+      `${(ms/1000).toFixed(4)}<small>秒</small>`
+    );
   },{once:true});
 }
 
@@ -26000,6 +26037,12 @@ function simulateOneCpu(gameIndex,p){
     state.records.tokotokoCatcher[p.id]=ultra
       ? [60,80,100][randi(0,2)]
       : [0,20,40,60,80,100][randi(0,5)];
+  }else if(legacyIndex===116){
+    state.records.amidakujiMasters[p.id]=randi(1,100);
+  }else if(legacyIndex===117){
+    state.records.djMaster[p.id]=ultra
+      ? randi(82,100)
+      : randi(28,92);
   }else{
     const fallbackKey=GAMES[gameIndex]?.key;
     if(fallbackKey&&state.records[fallbackKey])state.records[fallbackKey][p.id]=0;
@@ -26296,7 +26339,7 @@ function formatRecord(gameIndex,v){
   if(legacyIndex===107)return `${Math.round(v)}pt`;
   if(legacyIndex===108)return `${Math.round(v)}m`;
   if(legacyIndex===110)return `${Math.round(v)}pt`;
-  if(legacyIndex>=111&&legacyIndex<=115)return `${Math.round(v)}pt`;
+  if(legacyIndex>=111&&legacyIndex<=117)return `${Math.round(v)}pt`;
   return `${Math.round(v)}pt`;
 }
 
@@ -34498,29 +34541,717 @@ async function startDeathGameChallenge(p,humanIndex,runId){
 // =========================================================
 // GAME 103 — トコトコモブくんキャッチャー
 // =========================================================
+
+// =========================================================
+// GAME 104 — モブくんのあみだくじマスターズ
+// =========================================================
+async function startAmidakujiMasters(p,humanIndex,runId){
+  gameFit();
+  const gameIndex=GAMES.findIndex(g=>g.key==='amidakujiMasters');
+
+  const lanes=6;
+  const worldH=1120;
+  const topY=95;
+  const bottomY=1030;
+
+  // Six unique integer goals, sampled from the full 1..100 range.
+  const goalValues=
+    shuffle(Array.from({length:100},(_,i)=>i+1)).slice(0,lanes);
+
+  const rows=[];
+
+  for(let i=0;i<13;i++){
+    let pair=randi(0,lanes-2);
+
+    if(
+      rows.length&&
+      rows[rows.length-1].pair===pair
+    ){
+      pair=(pair+1+randi(0,2))%(lanes-1);
+    }
+
+    rows.push({
+      y:topY+80+i*64,
+      pair
+    });
+  }
+
+  let selected=false;
+  let raf=null;
+
+  screen.innerHTML=`
+    <div class="amida-shell amida-v126 amida-master-v186">
+      <div class="game-head">
+        <div>
+          <span class="kicker">${esc(p.name)}</span>
+          <h2>モブくんのあみだくじマスターズ</h2>
+        </div>
+        <div class="game-badge">${playBadge(humanIndex)}</div>
+      </div>
+
+      <div id="amidaMasterViewport186" class="amida-viewport amida-viewport-v126">
+        <div id="amidaMasterWorld186" class="amida-world" style="height:${worldH}px">
+          <div class="amida-light-v126"></div>
+
+          <svg id="amidaMasterSvg186" class="amida-svg" viewBox="0 0 600 ${worldH}" preserveAspectRatio="none"></svg>
+
+          <svg class="amida-trace-svg-v126" viewBox="0 0 600 ${worldH}" preserveAspectRatio="none">
+            <polyline id="amidaMasterTrace186" points=""></polyline>
+          </svg>
+
+          <div id="amidaMasterMob186" class="amida-mob amida-mob-v126" style="background-image:url('icon/01.png')"></div>
+
+          <div class="amida-goals amida-goals-v126">
+            ${goalValues.map((v,i)=>`
+              <b data-master-goal="${i}" style="left:${(i+.5)/lanes*100}%">
+                <i>${v}</i><span>pt</span>
+              </b>
+            `).join('')}
+          </div>
+        </div>
+
+        <div class="amida-secret-banner-v177 amida-master-secret-v186">
+          <b>?</b><span>SECRET</span><b>?</b>
+        </div>
+
+        <div id="amidaMasterHint186" class="amida-hint amida-hint-v126">
+          1〜100 GOALをチェック…
+        </div>
+
+        <div id="amidaMasterEntrances186" class="amida-entrances amida-entrances-v126" hidden>
+          ${Array.from({length:lanes},(_,i)=>`
+            <button type="button" data-amida-master="${i}">
+              <span>${i+1}</span>
+            </button>
+          `).join('')}
+        </div>
+      </div>
+    </div>`;
+
+  const viewport=document.getElementById('amidaMasterViewport186');
+  const world=document.getElementById('amidaMasterWorld186');
+  const svg=document.getElementById('amidaMasterSvg186');
+  const trace=document.getElementById('amidaMasterTrace186');
+  const mob=document.getElementById('amidaMasterMob186');
+  const entrances=document.getElementById('amidaMasterEntrances186');
+  const hint=document.getElementById('amidaMasterHint186');
+
+  const xForLane=lane=>(lane+.5)/lanes*600;
+
+  let markup='';
+
+  for(let lane=0;lane<lanes;lane++){
+    const x=xForLane(lane);
+    markup+=`
+      <line
+        x1="${x}" y1="${topY}"
+        x2="${x}" y2="${bottomY}"
+        class="amida-vertical"/>`;
+  }
+
+  rows.forEach(row=>{
+    markup+=`
+      <line
+        x1="${xForLane(row.pair)}"
+        y1="${row.y}"
+        x2="${xForLane(row.pair+1)}"
+        y2="${row.y}"
+        class="amida-horizontal"/>`;
+
+    markup+=`
+      <circle
+        cx="${(xForLane(row.pair)+xForLane(row.pair+1))/2}"
+        cy="${row.y}"
+        r="5"
+        class="amida-node-v126"/>`;
+  });
+
+  svg.innerHTML=markup;
+
+  const maxScroll=
+    Math.max(0,worldH-viewport.clientHeight);
+
+  world.style.transform=`translateY(${-maxScroll}px)`;
+  viewport.classList.add("goal-preview-v126");
+
+  beep(540,70,.018);
+  await wait(1000);
+
+  if(!isGameRunValid(runId))return;
+
+  await new Promise(resolve=>{
+    const st=performance.now();
+    const duration=1450;
+
+    const f=now=>{
+      if(!isGameRunValid(runId)){
+        resolve();
+        return;
+      }
+
+      const t=clamp((now-st)/duration,0,1);
+      const e=1-Math.pow(1-t,3);
+
+      world.style.transform=
+        `translateY(${-maxScroll*(1-e)}px)`;
+
+      if(t<1)raf=requestAnimationFrame(f);
+      else resolve();
+    };
+
+    raf=requestAnimationFrame(f);
+  });
+
+  if(!isGameRunValid(runId))return;
+
+  viewport.classList.remove("goal-preview-v126");
+  hint.textContent='入口を1つ選べ！';
+  entrances.hidden=false;
+  entrances.classList.add("show-v126");
+
+  function buildPath(startLane){
+    let lane=startLane;
+    const points=[
+      {x:xForLane(lane),y:topY}
+    ];
+
+    rows.forEach(row=>{
+      points.push({
+        x:xForLane(lane),
+        y:row.y
+      });
+
+      if(row.pair===lane){
+        lane++;
+        points.push({
+          x:xForLane(lane),
+          y:row.y
+        });
+      }else if(row.pair+1===lane){
+        lane--;
+        points.push({
+          x:xForLane(lane),
+          y:row.y
+        });
+      }
+    });
+
+    points.push({
+      x:xForLane(lane),
+      y:bottomY
+    });
+
+    return {
+      points,
+      finalLane:lane
+    };
+  }
+
+  async function animatePath(path){
+    mob.hidden=false;
+
+    const traced=[path.points[0]];
+
+    trace.setAttribute(
+      "points",
+      `${path.points[0].x},${path.points[0].y}`
+    );
+
+    for(let i=1;i<path.points.length;i++){
+      if(!isGameRunValid(runId))return;
+
+      const a=path.points[i-1];
+      const b=path.points[i];
+      const dist=Math.hypot(b.x-a.x,b.y-a.y);
+      const duration=clamp(dist*2.45,150,470);
+      const st=performance.now();
+
+      await new Promise(resolve=>{
+        const f=now=>{
+          if(!isGameRunValid(runId)){
+            resolve();
+            return;
+          }
+
+          const t=clamp((now-st)/duration,0,1);
+          const e=
+            t<.5
+              ? 2*t*t
+              : 1-Math.pow(-2*t+2,2)/2;
+
+          const x=a.x+(b.x-a.x)*e;
+          const y=a.y+(b.y-a.y)*e;
+
+          mob.style.left=`${x/600*100}%`;
+          mob.style.top=`${y}px`;
+
+          trace.setAttribute(
+            "points",
+            [...traced,{x,y}]
+              .map(q=>`${q.x},${q.y}`)
+              .join(" ")
+          );
+
+          world.style.transform=
+            `translateY(${-clamp(
+              y-viewport.clientHeight*.42,
+              0,
+              maxScroll
+            )}px)`;
+
+          if(t<1)raf=requestAnimationFrame(f);
+          else resolve();
+        };
+
+        raf=requestAnimationFrame(f);
+      });
+
+      traced.push(b);
+
+      if(Math.abs(b.x-a.x)>20){
+        beep(640,34,.012);
+      }
+    }
+  }
+
+  entrances.addEventListener('pointerdown',async e=>{
+    const btn=e.target.closest('[data-amida-master]');
+
+    if(
+      !btn||
+      selected||
+      !isGameRunValid(runId)
+    )return;
+
+    e.preventDefault();
+
+    selected=true;
+
+    entrances
+      .querySelectorAll("button")
+      .forEach(b=>b.disabled=true);
+
+    btn.classList.add("selected-v126");
+
+    const startLane=
+      Number(btn.dataset.amidaMaster);
+
+    const path=buildPath(startLane);
+
+    mob.style.left=
+      `${xForLane(startLane)/600*100}%`;
+
+    mob.style.top=`${topY}px`;
+
+    hint.textContent=
+      `${startLane+1}番 START!`;
+
+    beep(720,80,.025);
+
+    await wait(350);
+
+    entrances.hidden=true;
+
+    await animatePath(path);
+
+    if(!isGameRunValid(runId))return;
+
+    const score=
+      goalValues[path.finalLane];
+
+    state.records.amidakujiMasters[p.id]=score;
+
+    document
+      .querySelector(`[data-master-goal="${path.finalLane}"]`)
+      ?.classList.add("goal-hit-v126");
+
+    viewport.classList.add("amida-goal-burst-v126");
+
+    hint.textContent=
+      score===100
+        ? '100 POINT JACKPOT!!'
+        : `GOAL ${score} POINT！`;
+
+    beep(
+      score>=90?1180:
+      score>=70?1020:
+      score>=50?820:
+      score>=25?600:
+      380,
+      180,.05
+    );
+
+    await wait(950);
+
+    if(isGameRunValid(runId)){
+      recordScreen(
+        gameIndex,p,humanIndex,
+        `${score}<small>pt</small>`,
+        `${startLane+1}番 → GOAL`
+      );
+    }
+  },{passive:false});
+}
+
+
+// =========================================================
+// GAME 105 — モブくんDJの達人
+// =========================================================
+async function startDjMaster(p,humanIndex,runId){
+  gameFit();
+  const gameIndex=GAMES.findIndex(g=>g.key==='djMaster');
+
+  screen.innerHTML=`
+    <div class="dj-shell-v186 gameplay-fit">
+      <div class="game-head">
+        <div>
+          <span class="kicker">${esc(p.name)}</span>
+          <h2>モブくんDJの達人</h2>
+          <p class="lead">20 NOTES / 10 SEC / SCRATCH!</p>
+        </div>
+        <div class="game-badge">${playBadge(humanIndex)}</div>
+      </div>
+
+      <div class="dj-hud-v186">
+        <div><span>TIME</span><b id="djTime186">10.0</b></div>
+        <div><span>HIT</span><b id="djHit186">0 / 20</b></div>
+        <div><span>SCORE</span><b id="djScore186">0</b></div>
+      </div>
+
+      <div id="djStage186" class="dj-stage-v186">
+        <div class="dj-lane-v186" id="djLane186">
+          <span class="dj-hit-line-v186"></span>
+        </div>
+
+        <div id="djJudge186" class="dj-judge-v186"></div>
+
+        <div class="dj-console-v186">
+          <div id="djDeck186" class="dj-deck-v186">
+            <div id="djPlatter186" class="dj-platter-v186">
+              <div class="dj-vinyl-ring-v186 r1"></div>
+              <div class="dj-vinyl-ring-v186 r2"></div>
+              <div class="dj-label-v186">
+                <b>MOB</b>
+                <span>DJ</span>
+              </div>
+              <i class="dj-marker-v186"></i>
+            </div>
+            <div class="dj-tonearm-v186"></div>
+          </div>
+          <div class="dj-scratch-hint-v186">← 指で左右に SCRATCH →</div>
+        </div>
+      </div>
+    </div>`;
+
+  const stage=document.getElementById('djStage186');
+  const lane=document.getElementById('djLane186');
+  const deck=document.getElementById('djDeck186');
+  const platter=document.getElementById('djPlatter186');
+  const judge=document.getElementById('djJudge186');
+  const timeEl=document.getElementById('djTime186');
+  const hitEl=document.getElementById('djHit186');
+  const scoreEl=document.getElementById('djScore186');
+
+  void stage.offsetHeight;
+
+  const laneW=lane.clientWidth;
+  const HIT_X=laneW*.17;
+  const SPEED=245;
+
+  let active=false;
+  let finished=false;
+  let score=0;
+  let hits=0;
+  let platterAngle=0;
+  let pointer=null;
+  let lastX=0;
+  let scratchAccum=0;
+  let lastScratchAt=0;
+  let last=performance.now();
+  let raf=null;
+
+  // Random intervals, normalized so all 20 judgement points occur in 10 sec.
+  const rawGaps=
+    Array.from({length:20},()=>rand(.30,.68));
+
+  const rawTotal=
+    rawGaps.reduce((a,b)=>a+b,0);
+
+  let acc=0;
+
+  const notes=rawGaps.map((gap,i)=>{
+    acc+=gap;
+
+    const hitTime=
+      .65+
+      (acc/rawTotal)*8.55;
+
+    const el=document.createElement('div');
+    el.className='dj-note-v186';
+    el.innerHTML='<span>♪</span>';
+    lane.appendChild(el);
+
+    return {
+      id:i,
+      hitTime,
+      judged:false,
+      el
+    };
+  });
+
+  function showJudge(text,cls){
+    judge.textContent=text;
+    judge.className=`dj-judge-v186 ${cls}`;
+
+    clearTimeout(showJudge._t);
+
+    showJudge._t=setTimeout(()=>{
+      if(judge.isConnected){
+        judge.className='dj-judge-v186';
+      }
+    },420);
+  }
+
+  function sparkleNote(note){
+    note.el.classList.add('hit-v186');
+
+    setTimeout(()=>{
+      if(note.el.isConnected)note.el.remove();
+    },340);
+  }
+
+  function attemptScratch(elapsed){
+    if(!active||finished)return;
+
+    let best=null;
+    let bestDiff=Infinity;
+
+    notes.forEach(note=>{
+      if(note.judged)return;
+
+      const diff=Math.abs(elapsed-note.hitTime);
+
+      if(diff<bestDiff){
+        bestDiff=diff;
+        best=note;
+      }
+    });
+
+    if(!best||bestDiff>.18){
+      return;
+    }
+
+    best.judged=true;
+
+    let points=0;
+    let text='';
+    let cls='';
+
+    if(bestDiff<=.045){
+      points=5;
+      text='PERFECT!!';
+      cls='perfect-v186';
+      beep(1080,70,.028);
+
+    }else if(bestDiff<=.100){
+      points=4;
+      text='NICE!';
+      cls='nice-v186';
+      beep(860,60,.024);
+
+    }else{
+      points=2;
+      text='GOOD';
+      cls='good-v186';
+      beep(650,55,.020);
+    }
+
+    score+=points;
+    hits++;
+
+    scoreEl.textContent=score;
+    hitEl.textContent=`${hits} / 20`;
+
+    sparkleNote(best);
+    showJudge(text,cls);
+  }
+
+  deck.addEventListener('pointerdown',e=>{
+    if(!active||finished)return;
+
+    e.preventDefault();
+
+    pointer=e.pointerId;
+    lastX=e.clientX;
+    scratchAccum=0;
+
+    try{
+      deck.setPointerCapture(pointer);
+    }catch(_){}
+  },{passive:false});
+
+  deck.addEventListener('pointermove',e=>{
+    if(
+      !active||
+      finished||
+      pointer!==e.pointerId
+    )return;
+
+    e.preventDefault();
+
+    const dx=e.clientX-lastX;
+    lastX=e.clientX;
+
+    platterAngle+=dx*1.6;
+    scratchAccum+=Math.abs(dx);
+
+    platter.style.transform=
+      `rotate(${platterAngle}deg)`;
+
+    const now=performance.now();
+
+    if(
+      scratchAccum>=13&&
+      now-lastScratchAt>=95
+    ){
+      scratchAccum=0;
+      lastScratchAt=now;
+
+      attemptScratch(
+        (now-startTime)/1000
+      );
+    }
+  },{passive:false});
+
+  const endPointer=e=>{
+    if(pointer!==e.pointerId)return;
+    pointer=null;
+    scratchAccum=0;
+  };
+
+  deck.addEventListener('pointerup',endPointer,{passive:false});
+  deck.addEventListener('pointercancel',endPointer,{passive:false});
+
+  if(!(await countdown('DJ MASTER',runId,{transparent:true})))return;
+
+  active=true;
+  const startTime=performance.now();
+  last=startTime;
+
+  function finish(){
+    if(finished)return;
+
+    finished=true;
+    active=false;
+
+    if(raf)cancelAnimationFrame(raf);
+
+    notes.forEach(note=>{
+      if(note.el.isConnected)note.el.remove();
+    });
+
+    state.records.djMaster[p.id]=
+      clamp(score,0,100);
+
+    showJudge(
+      score>=90?'DJ MASTER!!':
+      score>=70?'GREAT MIX!':
+      score>=45?'NICE PLAY!':
+      'FINISH!',
+      score>=90?'perfect-v186':'nice-v186'
+    );
+
+    setTimeout(()=>{
+      if(isGameRunValid(runId)){
+        recordScreen(
+          gameIndex,p,humanIndex,
+          `${score}<small>pt</small>`,
+          `${hits} / 20 HIT`
+        );
+      }
+    },700);
+  }
+
+  function frame(now){
+    if(!isGameRunValid(runId)||finished)return;
+
+    const dt=Math.min(.03,(now-last)/1000);
+    last=now;
+
+    const elapsed=
+      (now-startTime)/1000;
+
+    const rem=Math.max(0,10-elapsed);
+
+    timeEl.textContent=rem.toFixed(1);
+
+    // Gentle idle spin. Scratch drag directly overrides angle too.
+    if(pointer===null){
+      platterAngle+=24*dt;
+      platter.style.transform=
+        `rotate(${platterAngle}deg)`;
+    }
+
+    notes.forEach(note=>{
+      if(note.judged)return;
+
+      const x=
+        HIT_X+
+        (note.hitTime-elapsed)*SPEED;
+
+      note.el.style.left=`${x}px`;
+
+      const visible=
+        x>=-28&&
+        x<=laneW+38;
+
+      note.el.style.visibility=
+        visible?'visible':'hidden';
+
+      if(elapsed>note.hitTime+.20){
+        note.judged=true;
+        note.el.classList.add('miss-v186');
+
+        setTimeout(()=>{
+          if(note.el.isConnected)note.el.remove();
+        },220);
+      }
+    });
+
+    if(elapsed>=10){
+      finish();
+      return;
+    }
+
+    raf=requestAnimationFrame(frame);
+  }
+
+  raf=requestAnimationFrame(frame);
+}
+
 async function startTokotokoCatcher(p,humanIndex,runId){
   gameFit();
   const gameIndex=GAMES.findIndex(g=>g.key==='tokotokoCatcher');
 
   screen.innerHTML=`
-    <div class="catcher-shell ufo-catcher-shell ttk-shell-v184 gameplay-fit">
+    <div class="catcher-shell ufo-catcher-shell ttk-shell-v186 gameplay-fit">
       <div class="game-head">
         <div>
           <span class="kicker">${esc(p.name)}</span>
           <h2>トコトコモブくんキャッチャー</h2>
-          <p class="lead">ONE STOP BUTTON / 3 CHANCES</p>
+          <p class="lead">ARM → POSITION → DROP → STOP</p>
         </div>
         <div class="game-badge">${playBadge(humanIndex)}</div>
       </div>
 
-      <div class="ttk-hud-v184">
-        <div><span>TRY</span><b id="ttkTry184">1 / 3</b></div>
-        <div><span>GET</span><b id="ttkGet184">0 / 5</b></div>
-        <div><span>SCORE</span><b id="ttkScore184">0</b></div>
+      <div class="ttk-hud-v186">
+        <div><span>TRY</span><b id="ttkTry186">1 / 3</b></div>
+        <div><span>GET</span><b id="ttkGet186">0 / 5</b></div>
+        <div><span>SCORE</span><b id="ttkScore186">0</b></div>
       </div>
 
-      <div class="ufo-cabinet ttk-cabinet-v184">
-        <div class="ufo-marquee ttk-marquee-v184">
+      <div class="ufo-cabinet ttk-cabinet-v186">
+        <div class="ufo-marquee ttk-marquee-v186">
           <span>★</span><b>TOKOTOKO CATCHER</b><span>★</span>
         </div>
 
@@ -34529,73 +35260,81 @@ async function startTokotokoCatcher(p,humanIndex,runId){
           <div class="ufo-side-post right"></div>
           <div class="ufo-top-beam"></div>
 
-          <div id="ttkStage184" class="catcher-stage ufo-glass ttk-stage-v184">
+          <div id="ttkStage186" class="catcher-stage ufo-glass ttk-stage-v186">
             <div class="ufo-back-logo">MOB</div>
-            <div class="ttk-floor-v184"></div>
+            <div class="ttk-floor-v186"></div>
 
-            <div id="ttkChute184" class="catcher-chute ufo-chute ttk-chute-v184">
+            <div id="ttkChute186" class="catcher-chute ufo-chute ttk-chute-v186">
               <b>PRIZE</b>
-              <span id="ttkChuteCount184">0</span>
-              <div id="ttkChutePile184" class="ttk-chute-pile-v184"></div>
+              <span id="ttkChuteCount186">0</span>
+              <div id="ttkChutePile186" class="ttk-chute-pile-v186"></div>
             </div>
 
-            <div class="ttk-width-meter-v184">
-              <span class="ttk-width-target-v184"></span>
-              <i id="ttkWidthCursor184"></i>
+            <div class="ttk-width-meter-v186">
+              <span class="ttk-width-target-v186"></span>
+              <i id="ttkWidthCursor186"></i>
               <b>ARM WIDTH</b>
             </div>
 
-            <div id="ttkClaw184" class="crane ufo-crane ttk-crane-v184">
+            <div id="ttkCrane186" class="crane ufo-crane ttk-crane-v186">
               <div class="ufo-trolley"><i></i><i></i></div>
-              <div id="ttkCable184" class="crane-cable ufo-cable ttk-cable-v184"></div>
-              <div id="ttkHead184" class="crane-head ufo-head ttk-head-v184">
+              <div id="ttkCable186" class="crane-cable ufo-cable ttk-cable-v186"></div>
+              <div id="ttkHead186" class="crane-head ufo-head ttk-head-v186">
                 <div class="ufo-head-light"></div>
-                <div id="ttkArmL184" class="crane-arm ufo-arm left ttk-arm-v184"><i></i></div>
-                <div id="ttkArmR184" class="crane-arm ufo-arm right ttk-arm-v184"><i></i></div>
+                <div id="ttkArmL186" class="crane-arm ufo-arm left ttk-arm-v186"><i></i></div>
+                <div id="ttkArmR186" class="crane-arm ufo-arm right ttk-arm-v186"><i></i></div>
               </div>
             </div>
 
-            <div id="ttkCall184" class="ttk-call-v184">70%の白線でSTOP!</div>
+            <div id="ttkCall186" class="ttk-call-v186">① 70%の白線でSTOP</div>
           </div>
         </div>
 
-        <div class="ufo-control-panel ttk-panel-v184">
-          <button id="ttkStop184" class="primary ttk-stop-v184" type="button">STOP</button>
+        <div class="ufo-control-panel ttk-panel-v186">
+          <div class="catcher-controls ufo-controls ttk-controls-v186">
+            <button id="ttkLeft186" class="move" type="button" disabled>◀</button>
+            <button id="ttkRight186" class="move" type="button" disabled>▶</button>
+            <button id="ttkDrop186" class="drop" type="button" disabled>降下</button>
+            <button id="ttkStop186" class="stop" type="button">STOP</button>
+          </div>
         </div>
       </div>
     </div>`;
 
-  const stage=document.getElementById('ttkStage184');
-  const claw=document.getElementById('ttkClaw184');
-  const cable=document.getElementById('ttkCable184');
-  const head=document.getElementById('ttkHead184');
-  const armL=document.getElementById('ttkArmL184');
-  const armR=document.getElementById('ttkArmR184');
-  const cursor=document.getElementById('ttkWidthCursor184');
-  const call=document.getElementById('ttkCall184');
-  const stopBtn=document.getElementById('ttkStop184');
-  const tryEl=document.getElementById('ttkTry184');
-  const getEl=document.getElementById('ttkGet184');
-  const scoreEl=document.getElementById('ttkScore184');
-  const chute=document.getElementById('ttkChute184');
-  const chuteCount=document.getElementById('ttkChuteCount184');
-  const chutePile=document.getElementById('ttkChutePile184');
+  const stage=document.getElementById('ttkStage186');
+  const crane=document.getElementById('ttkCrane186');
+  const cable=document.getElementById('ttkCable186');
+  const head=document.getElementById('ttkHead186');
+  const armL=document.getElementById('ttkArmL186');
+  const armR=document.getElementById('ttkArmR186');
+  const cursor=document.getElementById('ttkWidthCursor186');
+  const call=document.getElementById('ttkCall186');
+
+  const leftBtn=document.getElementById('ttkLeft186');
+  const rightBtn=document.getElementById('ttkRight186');
+  const dropBtn=document.getElementById('ttkDrop186');
+  const stopBtn=document.getElementById('ttkStop186');
+
+  const tryEl=document.getElementById('ttkTry186');
+  const getEl=document.getElementById('ttkGet186');
+  const scoreEl=document.getElementById('ttkScore186');
+  const chute=document.getElementById('ttkChute186');
+  const chuteCount=document.getElementById('ttkChuteCount186');
+  const chutePile=document.getElementById('ttkChutePile186');
 
   void stage.offsetHeight;
 
   const W=stage.clientWidth;
   const H=stage.clientHeight;
 
-  const CENTER_X=W*.5;
-  const START_Y=36;
+  const CENTER_X=W*.52;
+  const START_Y=38;
   const FIG_Y=H*.76;
   const BEST_Y=FIG_Y-57;
-  const MAX_Y=Math.min(H*.79,BEST_Y+100);
+  const MAX_Y=Math.min(H*.80,BEST_Y+100);
   const CHUTE_X=54;
   const CHUTE_Y=H-38;
 
-  // V10.85: all five move at a similarly slow, readable walking pace.
-  // Tiny variance keeps them from feeling mechanically synchronized.
   const speeds=[62,60,64,58,61];
 
   let active=false;
@@ -34604,12 +35343,12 @@ async function startTokotokoCatcher(p,humanIndex,runId){
   let tries=0;
   let got=0;
 
-  let widthPct=18;
+  let widthPct=12;
   let widthDir=1;
-  let lockedWidth=widthPct;
+  let lockedWidth=12;
 
-  let clawX=CENTER_X;
-  let clawY=START_Y;
+  let craneX=CENTER_X;
+  let craneY=START_Y;
   let gripClose=0;
 
   let held=[];
@@ -34618,6 +35357,7 @@ async function startTokotokoCatcher(p,humanIndex,runId){
   let sequenceBusy=false;
 
   const now0=performance.now();
+
   const figs=speeds.map((speed,i)=>({
     id:i,
     x:34+(W-68)*(i/4),
@@ -34637,14 +35377,15 @@ async function startTokotokoCatcher(p,humanIndex,runId){
 
   figs.forEach(f=>{
     const el=document.createElement('div');
-    el.className='ttk-figure-v184';
+    el.className='ttk-figure-v186';
     el.innerHTML=`<img src="icon/01.png" draggable="false" alt="">`;
     stage.appendChild(el);
     f.el=el;
   });
 
+  // Wide physical range: at 70% the two hands are visibly far apart.
   function armSpread(){
-    return 28+lockedWidth*.72;
+    return 34+lockedWidth*.92;
   }
 
   function widthQuality(){
@@ -34652,7 +35393,7 @@ async function startTokotokoCatcher(p,humanIndex,runId){
   }
 
   function depthQuality(){
-    return clamp(1-Math.abs(clawY-BEST_Y)/88,0,1);
+    return clamp(1-Math.abs(craneY-BEST_Y)/88,0,1);
   }
 
   function updateHud(){
@@ -34662,23 +35403,36 @@ async function startTokotokoCatcher(p,humanIndex,runId){
     chuteCount.textContent=got;
   }
 
-  function renderClaw(){
-    claw.style.left=`${clawX}px`;
+  function setControls(){
+    const widthPhase=phase==='width';
+    const positionPhase=phase==='position';
+    const descendPhase=phase==='descend';
 
-    cable.style.height=`${Math.max(18,clawY)}px`;
-    head.style.top=`${Math.max(18,clawY)}px`;
+    leftBtn.disabled=!positionPhase;
+    rightBtn.disabled=!positionPhase;
+    dropBtn.disabled=!positionPhase;
+    stopBtn.disabled=!(widthPhase||descendPhase);
 
+    stopBtn.textContent=widthPhase?'STOP':'STOP';
+  }
+
+  function renderCrane(){
+    crane.style.left=`${craneX}px`;
+    cable.style.height=`${Math.max(18,craneY)}px`;
+    head.style.top=`${Math.max(18,craneY)}px`;
     cursor.style.left=`${widthPct}%`;
 
-    const open=armSpread();
-    const liveSpread=open*(1-gripClose*.72);
-    const liveAngle=24+liveSpread*.16;
+    const s=armSpread();
+    const live=s*(1-gripClose*.70);
+    const translate=live*.58;
+    const angle=18+live*.22;
 
+    // Real widening: translation is large enough to visually match the gauge.
     armL.style.transform=
-      `rotate(${-liveAngle}deg) translateX(${-liveSpread*.10}px)`;
+      `translateX(${-translate}px) rotate(${-angle}deg)`;
 
     armR.style.transform=
-      `rotate(${liveAngle}deg) translateX(${liveSpread*.10}px)`;
+      `translateX(${translate}px) rotate(${angle}deg)`;
   }
 
   function renderFigures(now){
@@ -34693,27 +35447,26 @@ async function startTokotokoCatcher(p,humanIndex,runId){
       let x=f.x;
       let y=f.y;
       let rot=0;
-      let scaleX=1;
-      let scaleY=1;
+      let sx=1;
+      let sy=1;
 
       if(f.held){
-        x=clawX+f.holdDX;
-        y=clawY+f.holdDY;
+        x=craneX+f.holdDX;
+        y=craneY+f.holdDY;
         rot=Math.sin(now*.052+f.id*1.7)*7;
       }else{
-        // Cute "tokotoko" walk: small body sway + soft vertical bob.
         const step=now*.0105+f.walkPhase;
         const sway=Math.sin(step);
         const bob=Math.abs(Math.sin(step))*3.8;
 
         y-=bob;
         rot=sway*5.3;
-        scaleX=1+sway*.018;
-        scaleY=1-Math.abs(sway)*.028;
+        sx=1+sway*.018;
+        sy=1-Math.abs(sway)*.028;
       }
 
       f.el.style.transform=
-        `translate3d(${(x-27).toFixed(1)}px,${(y-27).toFixed(1)}px,0) rotate(${rot.toFixed(1)}deg) scale(${scaleX.toFixed(3)},${scaleY.toFixed(3)})`;
+        `translate3d(${(x-27).toFixed(1)}px,${(y-27).toFixed(1)}px,0) rotate(${rot.toFixed(1)}deg) scale(${sx.toFixed(3)},${sy.toFixed(3)})`;
     });
   }
 
@@ -34727,14 +35480,14 @@ async function startTokotokoCatcher(p,humanIndex,runId){
     img.style.transform=`rotate(${rand(-18,18)}deg)`;
     chutePile.appendChild(img);
 
-    chute.classList.remove('hit-v184');
+    chute.classList.remove('hit-v186');
     void chute.offsetWidth;
-    chute.classList.add('hit-v184');
+    chute.classList.add('hit-v186');
   }
 
   function getPop(){
     const pop=document.createElement('div');
-    pop.className='ttk-get-pop-v184';
+    pop.className='ttk-get-pop-v186';
     pop.textContent='GET! +20';
     pop.style.left=`${CHUTE_X+44}px`;
     pop.style.top=`${CHUTE_Y-55}px`;
@@ -34744,7 +35497,7 @@ async function startTokotokoCatcher(p,humanIndex,runId){
 
   function animateValue(duration,update){
     return new Promise(resolve=>{
-      const start=performance.now();
+      const st=performance.now();
 
       const frame=now=>{
         if(!isGameRunValid(runId)){
@@ -34752,7 +35505,7 @@ async function startTokotokoCatcher(p,humanIndex,runId){
           return;
         }
 
-        const t=clamp((now-start)/duration,0,1);
+        const t=clamp((now-st)/duration,0,1);
         update(t);
 
         if(t<1)requestAnimationFrame(frame);
@@ -34764,28 +35517,21 @@ async function startTokotokoCatcher(p,humanIndex,runId){
   }
 
   async function fallBack(f){
-    const startX=clawX+f.holdDX;
-    const startY=clawY+f.holdDY;
+    const startX=craneX+f.holdDX;
+    const startY=craneY+f.holdDY;
     const targetX=clamp(startX+rand(-55,55),30,W-30);
     const targetY=FIG_Y;
 
     f.held=false;
     f.falling=true;
-
     f.el.style.transition='none';
-    f.el.style.transform=
-      `translate3d(${startX-27}px,${startY-29}px,0) rotate(0deg)`;
-
+    f.el.style.transform=`translate3d(${startX-27}px,${startY-29}px,0) rotate(0deg)`;
     void f.el.offsetWidth;
 
-    f.el.style.transition=
-      'transform .48s cubic-bezier(.24,.68,.42,1.18)';
-
-    f.el.style.transform=
-      `translate3d(${targetX-27}px,${targetY-29}px,0) rotate(${rand(-24,24)}deg)`;
+    f.el.style.transition='transform .48s cubic-bezier(.24,.68,.42,1.18)';
+    f.el.style.transform=`translate3d(${targetX-27}px,${targetY-29}px,0) rotate(${rand(-24,24)}deg)`;
 
     await wait(500);
-
     if(!isGameRunValid(runId))return;
 
     f.x=targetX;
@@ -34801,21 +35547,17 @@ async function startTokotokoCatcher(p,humanIndex,runId){
     if(delayMs)await wait(delayMs);
     if(!isGameRunValid(runId))return;
 
-    const startX=clawX+f.holdDX;
-    const startY=clawY+f.holdDY;
+    const startX=craneX+f.holdDX;
+    const startY=craneY+f.holdDY;
     const targetX=CHUTE_X+rand(-13,13);
     const targetY=CHUTE_Y+rand(-5,8);
 
     f.held=false;
     f.releasing=true;
-
     f.el.style.transition='none';
-    f.el.style.transform=
-      `translate3d(${startX-27}px,${startY-29}px,0) rotate(0deg)`;
-
+    f.el.style.transform=`translate3d(${startX-27}px,${startY-29}px,0) rotate(0deg)`;
     void f.el.offsetWidth;
 
-    f.el.classList.add('prize-drop-v184');
     f.el.style.transition=
       'transform .56s cubic-bezier(.18,.70,.28,1.14), opacity .18s .46s';
 
@@ -34823,10 +35565,8 @@ async function startTokotokoCatcher(p,humanIndex,runId){
       `translate3d(${targetX-27}px,${targetY-29}px,0) rotate(${rand(65,125)}deg)`;
 
     await wait(565);
-
     if(!isGameRunValid(runId))return;
 
-    // Only now, after visibly entering the PRIZE chute, is the original removed.
     f.removed=true;
     f.releasing=false;
     f.el.style.display='none';
@@ -34842,17 +35582,16 @@ async function startTokotokoCatcher(p,humanIndex,runId){
     held=[];
 
     const s=armSpread();
-    const dq=depthQuality();
 
     figs.forEach(f=>{
       if(f.removed||f.falling||f.releasing)return;
 
-      const dx=Math.abs(f.x-clawX);
-      const horizontalLimit=s*.73+24;
+      const dx=Math.abs(f.x-craneX);
+      const horizontalLimit=s*.72+20;
 
       if(
         dx<=horizontalLimit &&
-        Math.abs(clawY-BEST_Y)<=92
+        Math.abs(craneY-BEST_Y)<=92
       ){
         f.held=true;
         held.push(f);
@@ -34864,48 +35603,47 @@ async function startTokotokoCatcher(p,humanIndex,runId){
       f.holdDX=(i-center)*20;
       f.holdDY=50+(i%2)*9;
     });
-
-    return dq;
   }
 
   async function completeAttempt(){
-    if(sequenceBusy||finished)return;
+    if(sequenceBusy||finished||phase!=='descend')return;
+
     sequenceBusy=true;
     phase='sequence';
-    stopBtn.disabled=true;
+    setControls();
 
-    // The unheld walkers keep moving while the claw closes.
     await animateValue(180,t=>{
       gripClose=t;
     });
 
     if(!isGameRunValid(runId))return;
 
-    const dq=captureAtStop();
+    captureAtStop();
 
     call.textContent=held.length
       ? `${held.length}体つかんだ！`
       : 'つかめなかった…';
 
     call.className=
-      `ttk-call-v184 ${held.length?'hold-v184':'miss-v184'}`;
+      `ttk-call-v186 ${held.length?'hold-v186':'miss-v186'}`;
 
     beep(held.length?820:180,held.length?70:115,.022);
 
-    // Held figures stay visible and tremble under the claw.
     await wait(430);
     if(!isGameRunValid(runId))return;
 
-    const liftStart=clawY;
+    const liftStart=craneY;
+
     await animateValue(620,t=>{
       const e=1-Math.pow(1-t,3);
-      clawY=liftStart+(START_Y-liftStart)*e;
+      craneY=liftStart+(START_Y-liftStart)*e;
     });
 
     if(!isGameRunValid(runId))return;
 
     const wq=widthQuality();
-    const multiPenalty=
+    const dq=depthQuality();
+    const multi=
       held.length>=5?.11:
       held.length===4?.08:
       held.length===3?.045:0;
@@ -34915,83 +35653,69 @@ async function startTokotokoCatcher(p,humanIndex,runId){
 
     held.forEach((f,i)=>{
       const chance=clamp(
-        .20+
-        wq*.28+
-        dq*.29-
-        multiPenalty-
-        i*.015,
-        .07,
-        .70
+        .20+wq*.28+dq*.29-multi-i*.015,
+        .07,.70
       );
 
       if(Math.random()<chance)success.push(f);
       else failed.push(f);
     });
 
-    // Failed figures visibly fall back into the play field and resume walking.
     const fallPromises=failed.map(f=>fallBack(f));
 
-    // Successful figures remain physically attached while the claw travels to PRIZE.
     if(success.length){
-      const startX=clawX;
+      const startX=craneX;
 
-      call.textContent=
-        `${success.length}/${held.length}体をPRIZEへ運搬中`;
-
-      call.className='ttk-call-v184 carry-v184';
+      call.textContent=`${success.length}/${held.length}体をPRIZEへ運搬中`;
+      call.className='ttk-call-v186 carry-v186';
 
       await animateValue(700,t=>{
         const e=1-Math.pow(1-t,3);
-        clawX=startX+(CHUTE_X-startX)*e;
+        craneX=startX+(CHUTE_X-startX)*e;
       });
 
       if(!isGameRunValid(runId))return;
 
-      // Open the arm only above the actual chute.
       await animateValue(180,t=>{
         gripClose=1-t;
       });
 
-      const releasePromises=
-        success.map((f,i)=>releaseToChute(f,i*85));
-
-      await Promise.all(releasePromises);
+      await Promise.all(
+        success.map((f,i)=>releaseToChute(f,i*85))
+      );
 
       if(!isGameRunValid(runId))return;
 
-      call.textContent=
-        `${success.length}体GET!`;
-
-      call.className='ttk-call-v184 get-v184';
-
+      call.textContent=`${success.length}体GET!`;
+      call.className='ttk-call-v186 get-v186';
       await wait(250);
-    }else if(held.length){
-      call.textContent='掴んだけど全部落ちた…';
-      call.className='ttk-call-v184 miss-v184';
-      await animateValue(180,t=>{
-        gripClose=1-t;
-      });
+
     }else{
       await animateValue(180,t=>{
         gripClose=1-t;
       });
+
+      if(held.length){
+        call.textContent='掴んだけど全部落ちた…';
+        call.className='ttk-call-v186 miss-v186';
+      }
     }
 
     await Promise.all(fallPromises);
-
     if(!isGameRunValid(runId))return;
 
-    const backStartX=clawX;
+    const backStartX=craneX;
+
     await animateValue(620,t=>{
       const e=1-Math.pow(1-t,3);
-      clawX=backStartX+(CENTER_X-backStartX)*e;
+      craneX=backStartX+(CENTER_X-backStartX)*e;
     });
 
     held.forEach(f=>{
       if(!f.removed)f.held=false;
     });
-    held=[];
 
+    held=[];
     tries++;
     updateHud();
 
@@ -35009,15 +35733,13 @@ async function startTokotokoCatcher(p,humanIndex,runId){
           ? 'COMPLETE! 100pt'
           : `FINISH! ${got*20}pt`;
 
-      call.className='ttk-call-v184 finish-v184';
+      call.className='ttk-call-v186 finish-v186';
 
       await wait(700);
 
       if(isGameRunValid(runId)){
         recordScreen(
-          gameIndex,
-          p,
-          humanIndex,
+          gameIndex,p,humanIndex,
           `${got*20}<small>pt</small>`,
           `${got} / 5 GET / ${tries} TRY`
         );
@@ -35025,34 +35747,71 @@ async function startTokotokoCatcher(p,humanIndex,runId){
       return;
     }
 
-    widthPct=18;
-    lockedWidth=18;
+    widthPct=12;
+    lockedWidth=12;
     widthDir=1;
-    clawX=CENTER_X;
-    clawY=START_Y;
+    craneX=CENTER_X;
+    craneY=START_Y;
     gripClose=0;
     phase='width';
     sequenceBusy=false;
-    stopBtn.disabled=false;
 
-    call.textContent='70%の白線でSTOP!';
-    call.className='ttk-call-v184';
+    call.textContent='① 70%の白線でSTOP';
+    call.className='ttk-call-v186';
+
+    setControls();
     updateHud();
   }
 
+  function moveCrane(dir){
+    if(!active||phase!=='position'||sequenceBusy)return;
+
+    craneX=clamp(
+      craneX+dir*W*.065,
+      46,
+      W-46
+    );
+
+    renderCrane();
+    beep(450,25,.009);
+  }
+
+  leftBtn.addEventListener('pointerdown',e=>{
+    e.preventDefault();
+    moveCrane(-1);
+  },{passive:false});
+
+  rightBtn.addEventListener('pointerdown',e=>{
+    e.preventDefault();
+    moveCrane(1);
+  },{passive:false});
+
+  dropBtn.addEventListener('pointerdown',e=>{
+    if(!active||phase!=='position'||sequenceBusy)return;
+
+    e.preventDefault();
+    phase='descend';
+    setControls();
+
+    call.textContent='③ 降下中！フィギュア中央でSTOP';
+    call.className='ttk-call-v186';
+
+    beep(650,55,.016);
+  },{passive:false});
+
   stopBtn.addEventListener('pointerdown',e=>{
-    if(!active||finished||sequenceBusy)return;
+    if(!active||sequenceBusy)return;
     e.preventDefault();
 
     if(phase==='width'){
       lockedWidth=widthPct;
-      phase='descend';
+      phase='position';
 
-      call.textContent=
-        '下降中！フィギュアの真ん中付近でSTOP!';
+      call.textContent='② ◀ ▶ で位置を決めて「降下」';
+      call.className='ttk-call-v186';
 
-      call.className='ttk-call-v184';
-      beep(620,45,.014);
+      setControls();
+      beep(720,55,.018);
       return;
     }
 
@@ -35062,10 +35821,10 @@ async function startTokotokoCatcher(p,humanIndex,runId){
   },{passive:false});
 
   updateHud();
-  renderClaw();
+  setControls();
+  renderCrane();
   renderFigures(performance.now());
 
-  // Existing catcher-style cabinet, chute, figures and claw are all visible before countdown.
   if(!(await countdown('TOKOTOKO CATCHER',runId,{transparent:true})))return;
 
   active=true;
@@ -35077,9 +35836,6 @@ async function startTokotokoCatcher(p,humanIndex,runId){
     const dt=Math.min(.03,(now-last)/1000);
     last=now;
 
-    // Five figures walk slowly at nearly the same pace.
-    // They independently choose left/right at random intervals instead of
-    // endlessly ping-ponging in a fixed pattern.
     figs.forEach(f=>{
       if(
         f.removed||
@@ -35107,7 +35863,7 @@ async function startTokotokoCatcher(p,humanIndex,runId){
     });
 
     if(phase==='width'){
-      widthPct+=widthDir*86*dt;
+      widthPct+=widthDir*72*dt;
 
       if(widthPct>=100){
         widthPct=100;
@@ -35120,15 +35876,15 @@ async function startTokotokoCatcher(p,humanIndex,runId){
       lockedWidth=widthPct;
 
     }else if(phase==='descend'){
-      clawY+=160*dt;
+      craneY+=150*dt;
 
-      if(clawY>=MAX_Y){
-        clawY=MAX_Y;
+      if(craneY>=MAX_Y){
+        craneY=MAX_Y;
         completeAttempt();
       }
     }
 
-    renderClaw();
+    renderCrane();
     renderFigures(now);
 
     raf=requestAnimationFrame(frame);
