@@ -27989,3 +27989,302 @@ canvas{
   from{translate:0 0}
   to{translate:-34px 0}
 }
+
+
+/* =========================================================
+   V10.90 — Shared Tokotoko catcher system
+   Used by: モブくんキャッチャー / ぬいぐるみ / トコトコ
+   ========================================================= */
+.shared-catcher-v190{
+  height:100%;
+  min-height:0;
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  overflow:hidden;
+}
+.shared-catcher-hud-v190{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:5px;
+}
+.shared-catcher-hud-v190>div{
+  padding:5px 3px;
+  border:3px solid var(--ink);
+  border-radius:10px;
+  background:#fff;
+  text-align:center;
+}
+.shared-catcher-hud-v190 span{
+  display:block;
+  font-size:6px;
+  font-weight:1000;
+}
+.shared-catcher-hud-v190 b{
+  font-size:12px;
+}
+.shared-catcher-stage-v190{
+  position:relative;
+  height:455px!important;
+  min-height:375px!important;
+  overflow:hidden;
+}
+.shared-catcher-floor-v190{
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  height:20%;
+  border-top:4px solid rgba(17,19,26,.72);
+  background:
+    repeating-linear-gradient(
+      90deg,
+      rgba(17,19,26,.05) 0 34px,
+      rgba(17,19,26,.09) 34px 37px
+    ),
+    #e6dfc7;
+}
+.shared-width-meter-v190{
+  position:absolute;
+  z-index:34;
+  left:28px;
+  right:28px;
+  top:10px;
+  height:18px;
+  border:3px solid var(--ink);
+  border-radius:999px;
+  background:#344651;
+}
+.shared-width-meter-v190>i{
+  position:absolute;
+  top:-5px;
+  width:9px;
+  height:24px;
+  transform:translateX(-50%);
+  border:2px solid var(--ink);
+  border-radius:999px;
+  background:#ffd85d;
+}
+.shared-width-target-v190{
+  position:absolute;
+  left:70%;
+  top:-4px;
+  bottom:-4px;
+  width:4px;
+  transform:translateX(-50%);
+  border-radius:999px;
+  background:#fff;
+  box-shadow:0 0 0 2px rgba(17,19,26,.12);
+}
+.shared-crane-rail-v190{
+  position:absolute;
+  z-index:20;
+  left:20px;
+  right:20px;
+  top:44px;
+  height:12px;
+  border:4px solid #111820;
+  border-radius:999px;
+  background:#687783;
+}
+.shared-crane-v190{
+  position:absolute;
+  top:44px!important;
+  width:0!important;
+  height:0;
+  transform:none!important;
+  z-index:28;
+}
+.shared-trolley-v190{
+  position:absolute;
+  left:-28px;
+  top:-10px;
+  width:56px;
+  height:22px;
+  border:4px solid #111820;
+  border-radius:9px;
+  background:#d9e0e4;
+}
+.shared-trolley-v190 i{
+  position:absolute;
+  top:-8px;
+  width:13px;
+  height:13px;
+  border:3px solid #111820;
+  border-radius:50%;
+  background:#4c5c67;
+}
+.shared-trolley-v190 i:first-child{left:5px}
+.shared-trolley-v190 i:last-child{right:5px}
+.shared-cable-v190{
+  position:absolute!important;
+  left:-3px!important;
+  top:12px!important;
+  width:6px!important;
+  background:#182127!important;
+}
+.shared-claw-head-v190{
+  position:absolute;
+  left:-24px;
+  width:48px;
+  height:42px;
+  border:4px solid #111820;
+  border-radius:15px 15px 10px 10px;
+  background:#e6ecef;
+  box-shadow:0 4px 0 rgba(17,24,32,.18);
+  z-index:30;
+}
+.shared-claw-light-v190{
+  position:absolute;
+  left:50%;
+  top:8px;
+  width:14px;
+  height:9px;
+  transform:translateX(-50%);
+  border:2px solid #111820;
+  border-radius:999px;
+  background:#ffe05c;
+}
+.shared-claw-finger-v190{
+  position:absolute;
+  top:30px;
+  width:13px;
+  height:60px;
+  border:4px solid #111820;
+  border-radius:0 0 14px 14px;
+  background:#c8d2d8;
+  transform-origin:50% 0;
+  z-index:29;
+}
+.shared-claw-finger-v190.left-v190{left:8px}
+.shared-claw-finger-v190.right-v190{right:8px}
+.shared-claw-hook-v190{
+  position:absolute;
+  bottom:-8px;
+  width:25px;
+  height:23px;
+  border:5px solid #111820;
+  border-top:0;
+  background:transparent;
+}
+.shared-claw-finger-v190.left-v190 .shared-claw-hook-v190{
+  right:-5px;
+  border-left:0;
+  border-radius:0 0 16px 0;
+}
+.shared-claw-finger-v190.right-v190 .shared-claw-hook-v190{
+  left:-5px;
+  border-right:0;
+  border-radius:0 0 0 16px;
+}
+.shared-panel-v190{
+  min-height:94px!important;
+  display:flex!important;
+  flex-direction:column;
+  gap:6px;
+  justify-content:center;
+}
+.shared-guide-v190{
+  min-height:24px;
+  margin:0 4px;
+  padding:3px 8px;
+  border:2px solid var(--ink);
+  border-radius:999px;
+  background:#fff4b0;
+  text-align:center;
+  font-size:8px;
+  font-weight:1000;
+  pointer-events:none;
+}
+.shared-guide-v190.hold-v190{background:#a8dcf0}
+.shared-guide-v190.carry-v190{background:#c8b7ef}
+.shared-guide-v190.get-v190{background:#95df91}
+.shared-guide-v190.miss-v190{background:#efa29b}
+.shared-guide-v190.finish-v190{background:#ffe15e}
+.shared-controls-v190{
+  width:100%;
+  grid-template-columns:1fr 1fr 1.18fr 1.18fr!important;
+}
+.shared-controls-v190 button:disabled{
+  opacity:.35;
+  filter:grayscale(.75);
+}
+.shared-chute-v190{
+  z-index:31;
+  width:90px!important;
+  height:78px!important;
+  overflow:hidden;
+}
+.shared-chute-pile-v190{
+  position:absolute;
+  inset:0;
+  pointer-events:none;
+}
+.shared-chute-pile-v190 img{
+  position:absolute;
+  width:22px;
+  height:22px;
+  object-fit:contain;
+}
+
+/* MOB catcher dense figure field */
+.classic-prize-layer-v190{
+  position:absolute;
+  inset:0;
+  z-index:11;
+  pointer-events:none;
+}
+.classic-prize-v190{
+  position:absolute;
+  left:0;
+  top:0;
+  width:44px;
+  height:44px;
+  will-change:transform;
+}
+.classic-prize-v190 img{
+  width:42px;
+  height:42px;
+  object-fit:contain;
+  filter:drop-shadow(0 2px 0 rgba(17,19,26,.16));
+}
+.classic-prize-v190 b{
+  position:absolute;
+  right:-3px;
+  top:-4px;
+  min-width:20px;
+  padding:1px 3px;
+  border:2px solid var(--ink);
+  border-radius:999px;
+  background:#ffe15d;
+  font-size:6px;
+  font-weight:1000;
+}
+.classic-prize-v190.rare-v190{
+  z-index:13;
+}
+
+/* Giant plush */
+.shared-giant-plush-v190{
+  position:absolute;
+  z-index:12;
+  left:0;
+  top:0;
+  width:92px;
+  height:96px;
+  pointer-events:none;
+  transform-origin:50% 50%;
+}
+.shared-giant-plush-v190 img{
+  width:90px;
+  height:90px;
+  object-fit:contain;
+  filter:drop-shadow(0 4px 0 rgba(17,19,26,.18));
+}
+
+@media(max-height:700px){
+  .shared-catcher-stage-v190{
+    height:395px!important;
+    min-height:340px!important;
+  }
+}
