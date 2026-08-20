@@ -28990,3 +28990,76 @@ canvas{
 
 /* GAME 111 Senryobako */
 .senryo-stage-v197{position:relative;flex:1;min-height:395px;border:4px solid var(--ink);border-radius:16px;background:#d8edf2;overflow:hidden}.senryo-sky-v197{position:absolute;inset:0;background:linear-gradient(#cceaf1 0 77%,#b99d66 77%);border-bottom:0}.senryo-box-v197{position:absolute;z-index:15;left:0;top:0;width:116px;height:68px;border:5px solid var(--ink);border-radius:8px 8px 17px 17px;background:#8b5632;display:grid;place-items:center;will-change:transform;transform-origin:50% 100%}.senryo-box-v197::before{content:"";position:absolute;left:-5px;right:-5px;top:-12px;height:18px;border:5px solid var(--ink);border-radius:7px;background:#a66d3b}.senryo-box-v197>span{position:relative;z-index:3;padding:2px 5px;border:2px solid var(--ink);background:#dfbd66;font-size:11px;font-weight:1000}.senryo-pile-v197{position:absolute;left:8px;right:8px;top:1px;height:38px;overflow:hidden}.senryo-pile-v197 i{position:absolute;width:15px;height:9px;border:2px solid var(--ink);border-radius:50%;background:#f1d24d}.senryo-coin-v197{position:absolute;z-index:10;left:0;top:0;width:34px;height:34px;border:4px solid var(--ink);border-radius:50%;background:#efc949;display:grid;place-items:center;opacity:0;will-change:transform}.senryo-coin-v197.show{opacity:1}.senryo-coin-v197.big{width:42px;height:42px;background:#f6df70}.senryo-coin-v197 b{font-size:6px}.senryo-coin-v197.caught{animation:senCoinCatch197 .25s ease forwards}@keyframes senCoinCatch197{to{scale:.18;opacity:0;translate:0 35px}}.senryo-controls-v197{display:grid;grid-template-columns:1fr 1fr;gap:7px}.senryo-controls-v197 button{min-height:62px;border:4px solid var(--ink);border-radius:14px;background:#eed159;font-size:25px;font-weight:1000}.senryo-weight-v197{display:grid;grid-template-columns:55px 1fr;align-items:center;gap:6px;font-size:7px;font-weight:1000}.senryo-weight-v197>div{height:16px;border:3px solid var(--ink);border-radius:999px;background:#fff;overflow:hidden}.senryo-weight-v197 i{display:block;width:0;height:100%;background:#bd7046}.senryo-judge-v197{position:absolute;z-index:30;left:50%;top:24%;translate:-50% -50%;font-size:20px;font-weight:1000;text-shadow:3px 3px 0 #fff;color:#8b5b18}.senryo-judge-v197.pop{animation:senPop197 .25s ease}@keyframes senPop197{50%{scale:1.18}}
+
+
+/* =========================================================
+   V10.98 — GAME 108-111 tuning + countdown placement rule
+   ========================================================= */
+/* Countdown placement is deliberate: actors are already at true start coordinates before GO. */
+.countdown-ready-v198{visibility:visible!important}
+
+/* 108: faster carpet control, slightly longer field */
+.carpet-stage-v198{min-height:400px}
+.carpet-actor-v198{will-change:transform}
+
+/* 109: much larger hammer + longer visual reach */
+.gatekeeper-guard-v198{width:126px;height:132px;overflow:visible}
+.gatekeeper-guard-v198 img{left:31px;bottom:0;width:66px;height:86px}
+.gatekeeper-hammer-v198{
+  left:50%;top:-2px;width:15px;height:98px;border-width:5px;
+  transform-origin:50% 77%;rotate:-88deg;z-index:7
+}
+.gatekeeper-hammer-v198::before{
+  left:-32px;top:-18px;width:78px;height:39px;border-width:5px;border-radius:10px
+}
+.gatekeeper-guard-v198.attack-left .gatekeeper-hammer-v198{animation:gateAttackL198 .24s ease}
+.gatekeeper-guard-v198.attack-right .gatekeeper-hammer-v198{animation:gateAttackR198 .24s ease}
+@keyframes gateAttackL198{50%{rotate:-151deg;translate:-14px 0}}
+@keyframes gateAttackR198{50%{rotate:55deg;translate:14px 0}}
+
+/* 110: Mob-kun visibly carries the basket */
+.fruit-stage-v198{min-height:420px}
+.fruit-carrier-v198{
+  position:absolute;z-index:14;left:0;top:0;width:128px;height:108px;
+  will-change:transform;transform-origin:50% 100%
+}
+.fruit-carrier-v198>img{
+  position:absolute;z-index:2;left:36px;bottom:0;width:58px;height:70px;object-fit:contain
+}
+.fruit-arm-v198{
+  position:absolute;z-index:5;top:46px;width:11px;height:38px;border:4px solid var(--ink);
+  border-radius:999px;background:#e8d5b8;transform-origin:50% 100%
+}
+.fruit-arm-v198.left{left:31px;rotate:-42deg}
+.fruit-arm-v198.right{right:31px;rotate:42deg}
+.fruit-basket-v198{
+  z-index:8;left:12px;top:5px;width:104px;height:50px
+}
+
+/* 111: Mob-kun carries the chest; four coin sizes */
+.senryo-stage-v198{min-height:410px}
+.senryo-carrier-v198{
+  position:absolute;z-index:15;left:0;top:0;width:138px;height:139px;
+  will-change:transform;transform-origin:50% 100%
+}
+.senryo-carrier-v198>img{
+  position:absolute;z-index:2;left:37px;bottom:0;width:64px;height:82px;object-fit:contain
+}
+.senryo-arm-v198{
+  position:absolute;z-index:7;top:54px;width:12px;height:46px;border:4px solid var(--ink);
+  border-radius:999px;background:#e8d5b8;transform-origin:50% 100%
+}
+.senryo-arm-v198.left{left:29px;rotate:-54deg}
+.senryo-arm-v198.right{right:29px;rotate:54deg}
+.senryo-box-v198{
+  position:absolute;z-index:8;left:11px;top:6px;width:116px;height:68px
+}
+.senryo-coin-v198.small{background:#e7bf45;border-width:3px}
+.senryo-coin-v198.normal{background:#efc949}
+.senryo-coin-v198.big{background:#f6df70;border-width:5px;filter:drop-shadow(0 3px 0 rgba(0,0,0,.12))}
+.senryo-coin-v198.giant{background:#ffe77b;border-width:6px;filter:drop-shadow(0 4px 0 rgba(0,0,0,.16))}
+.senryo-coin-v198.giant::before{
+  content:"";position:absolute;inset:6px;border:3px solid #b78c24;border-radius:50%
+}
+.senryo-coin-v198 b{position:relative;z-index:2;font-size:6px}
+.senryo-coin-v198.giant b{font-size:12px}

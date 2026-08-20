@@ -343,10 +343,10 @@ const GAMES=[
   {no:105,key:"djMaster",title:"モブくんDJの達人",sub:"10秒で流れる20個の音符に合わせ、巨大ターンテーブルをスクラッチ",legacy:117},
   {no:106,key:"rocketPunch",title:"モブくんロケットパンチ",sub:"拳へパワーを溜めて巨大ロケットパンチ。狭いMAXゾーンから3000mを狙う",legacy:118},
   {no:107,key:"flagRaise",title:"モブくん旗上げ",sub:"赤・両方・白の3ボタン。もう一度押せば旗を下げる",legacy:119},
-  {no:108,key:"flyingCarpet",title:"モブくん空飛ぶじゅうたん",sub:"▲▼でふわっと高度操作。12ゲートを抜けて障害物と風を攻略",legacy:121},
+  {no:108,key:"flyingCarpet",title:"モブくん空飛ぶじゅうたん",sub:"▲▼の高速高度操作。15秒・15ゲートの少し長い空中ステージ",legacy:121},
   {no:109,key:"gatekeeperMob",title:"モブくん巨大門番",sub:"左右から迫るスライムだけを撃退。味方モブくんは通す",legacy:122},
-  {no:110,key:"fruitCatchMob",title:"モブくんフルーツキャッチ",sub:"カゴを左右ドラッグ。フルーツを集めて岩を避ける10秒勝負",legacy:123},
-  {no:111,key:"senryobakoMob",title:"モブくん千両箱",sub:"小判を取るほど箱が重くなる。慣性を読んで左右操作",legacy:124}
+  {no:110,key:"fruitCatchMob",title:"モブくんフルーツキャッチ",sub:"モブくんが持つカゴを左右ドラッグ。14秒でフルーツを集める",legacy:123},
+  {no:111,key:"senryobakoMob",title:"モブくん千両箱",sub:"モブくんが千両箱を持って移動。4サイズの小判を16秒で集める",legacy:124}
 ];
 
 function legacyGameIndex(gameIndex){
@@ -2567,10 +2567,10 @@ function scoreRuleForGame(index){
     "横一直線のロケットパンチ / DEAD 0〜24・MAX 96〜100・100超OVERHEAT / 到達3000m=100点",
     "10秒 / 赤・両方・白の3ボタン / 正解数÷出題数を0〜100点化",
     "",
-    "12秒 / 12ゲート / PERFECT=8点・PASS=5点 / 衝突-8点 / ノーダメ+4点 / 最大100点",
+    "15秒 / 15ゲート / PERFECT=6点・PASS=4点 / 衝突-6点 / ノーダメ+10点 / 最大100点",
     "12秒 / 敵スライム撃退+5点 / 敵突破-5点 / 味方攻撃-10点 / 最大100点",
-    "10秒 / 通常フルーツ20個×4点 + ゴールド2個×10点 / 岩-6点 / 最大100点",
-    "12秒 / 小判25枚×3点 + 大判5枚×5点 / 最大100点 / 取るほど箱が重くなる"
+    "14秒 / 通常フルーツ25個×3点 + ゴールド5個×5点 / 岩-5点 / 最大100点",
+    "16秒 / 小20×2点・通常10×3点・大判4×5点・巨大1×10点 / 35枚で100点 / 取るほど重くなる"
   ][legacyIndex];
 }
 
@@ -2808,13 +2808,13 @@ function showGameIntro(index){
   }else if(legacyIndex===119){
     rules=`<li>赤・両方・白の3ボタンだけ。上げている旗のボタンをもう一度押すと下がります。</li><li>10秒間、現在の旗状態に合った指示へ素早く対応。間違えても続行します。</li>`;
   }else if(legacyIndex===121){
-    rules=`<li>▲ / ▼を押している間だけじゅうたんが加速。離すと慣性でふわっと流れます。</li><li>12個のゲートを中央近くで通過して得点。壁に当たると-8点、ノーダメ完走は+4点です。</li>`;
+    rules=`<li>▲ / ▼でじゅうたんを高速に上下操作。以前より加速・最高速度を上げています。</li><li>15秒・15ゲート。PERFECT+6、PASS+4、衝突-6、ノーダメ完走+10で最大100点です。</li>`;
   }else if(legacyIndex===122){
-    rules=`<li>左攻撃 / 右攻撃で、左右から門へ迫るスライムを撃退します。</li><li>味方モブくんは攻撃せず通すのが正解。敵撃退+5、敵突破-5、味方攻撃-10です。</li>`;
+    rules=`<li>左攻撃 / 右攻撃で、左右から門へ迫るスライムを大きなハンマーで撃退します。射程も長めです。</li><li>味方モブくんは攻撃せず通すのが正解。敵撃退+5、敵突破-5、味方攻撃-10です。</li>`;
   }else if(legacyIndex===123){
-    rules=`<li>画面下を左右ドラッグしてカゴを動かし、落ちてくるフルーツを集めます。</li><li>通常+4点、ゴールド+10点。岩を取ると-6点と短い操作低下。最大100点です。</li>`;
+    rules=`<li>モブくんが持っているカゴを左右ドラッグして、14秒間フルーツを集めます。</li><li>通常+3点、ゴールド+5点。岩は-5点と短い操作低下。フルーツ30個で最大100点です。</li>`;
   }else if(legacyIndex===124){
-    rules=`<li>◀ / ▶で千両箱を動かして小判を集めます。箱には加速・慣性・摩擦があります。</li><li>小判を取るほど箱が重くなり、加速と最高速度が低下。30枚全部で100点です。</li>`;
+    rules=`<li>◀ / ▶で千両箱を持ったモブくんを動かし、16秒間小判を集めます。箱には加速・慣性・摩擦があります。</li><li>小判は小・通常・大判・巨大の4サイズ。大きいほど高得点かつ重く、35枚全部で100点です。</li>`;
   }else{
     rules=`<li>${esc(g.sub)}</li>`;
   }
@@ -36810,6 +36810,8 @@ async function startFlagRaise(p,humanIndex,runId){
 async function startFlyingCarpet(p,humanIndex,runId){
   gameFit();
   const gameIndex=GAMES.findIndex(g=>g.key==='flyingCarpet');
+  const GAME_MS=15000;
+  const GATE_COUNT=15;
 
   screen.innerHTML=`
     <div class="carpet-shell-v197 gameplay-fit">
@@ -36818,16 +36820,16 @@ async function startFlyingCarpet(p,humanIndex,runId){
         <div class="game-badge">${playBadge(humanIndex)}</div>
       </div>
       <div class="carpet-hud-v197">
-        <div><span>TIME</span><b id="carpetTime197">12.00</b></div>
-        <div><span>GATE</span><b id="carpetGate197">0 / 12</b></div>
+        <div><span>TIME</span><b id="carpetTime197">15.00</b></div>
+        <div><span>GATE</span><b id="carpetGate197">0 / 15</b></div>
         <div><span>SCORE</span><b id="carpetScore197">0</b></div>
       </div>
-      <div id="carpetStage197" class="carpet-stage-v197">
+      <div id="carpetStage197" class="carpet-stage-v197 carpet-stage-v198">
         <div class="carpet-sky-v197"></div>
         <div class="carpet-cloud-v197 c1"></div><div class="carpet-cloud-v197 c2"></div><div class="carpet-cloud-v197 c3"></div>
         <div id="carpetWind197" class="carpet-wind-v197"></div>
         <div id="carpetObjects197" class="carpet-objects-v197"></div>
-        <div id="carpetActor197" class="carpet-actor-v197">
+        <div id="carpetActor197" class="carpet-actor-v197 carpet-actor-v198">
           <img src="icon/01.png" draggable="false" alt="">
           <div class="carpet-rug-v197"><i></i><i></i></div>
         </div>
@@ -36852,78 +36854,102 @@ async function startFlyingCarpet(p,humanIndex,runId){
 
   void stage.offsetHeight;
   const W=stage.clientWidth,H=stage.clientHeight;
-  const ACTOR_X=78;
+  const ACTOR_X=82;
   const actorH=66;
   let y=H*.50,vy=0;
   let up=false,down=false;
-  let active=false,finished=false,raf=null,last=performance.now(),endAt=0;
+  let active=false,finished=false,raf=null,last=performance.now(),start=0,endAt=0;
   let score=0,passed=0,hits=0,invulnUntil=0;
 
   const gates=[];
-  const gapH=Math.max(112,H*.31);
-  const startX=W+170;
-  const spacing=Math.max(205,W*.56);
-  for(let i=0;i<12;i++){
-    const center=H*(.27+((i*37)%47)/100); // deterministic varied heights
+  const gapH=Math.max(108,H*.29);
+  const startX=W+120;
+  const spacing=Math.max(220,W*.60);
+
+  for(let i=0;i<GATE_COUNT;i++){
+    const center=H*(.25+((i*37)%49)/100);
     const x=startX+i*spacing;
-    const gate={i,x,center,done:false,hit:false,el:null};
+    const gate={i,x,center,done:false,el:null};
     const el=document.createElement('div');
     el.className='carpet-gate-v197';
     el.style.left=`${x}px`;
     el.innerHTML=`<div class="top"></div><div class="bottom"></div><b>${i+1}</b>`;
-    layer.appendChild(el); gate.el=el; gates.push(gate);
+    layer.appendChild(el);
+    gate.el=el;
+    gates.push(gate);
   }
 
   function setGateVisual(g){
     const topH=Math.max(0,g.center-gapH/2);
     const bottomY=Math.min(H,g.center+gapH/2);
-    const top=g.el.querySelector('.top'),bottom=g.el.querySelector('.bottom');
+    const top=g.el.querySelector('.top');
+    const bottom=g.el.querySelector('.bottom');
     top.style.height=`${topH}px`;
     bottom.style.top=`${bottomY}px`;
     bottom.style.height=`${H-bottomY}px`;
+    g.el.style.transform='translateX(0px)';
   }
   gates.forEach(setGateVisual);
 
   const windWindows=[
-    {a:2.2,b:3.5,force:-56,label:'WIND ▲'},
-    {a:5.9,b:7.1,force:62,label:'WIND ▼'},
-    {a:9.0,b:10.2,force:-68,label:'WIND ▲'}
+    {a:3.0,b:4.3,force:-82,label:'WIND ▲'},
+    {a:7.2,b:8.5,force:88,label:'WIND ▼'},
+    {a:11.2,b:12.7,force:-94,label:'WIND ▲'}
   ];
 
   const hold=(btn,set)=>{
-    btn.addEventListener('pointerdown',e=>{if(!active)return;e.preventDefault();set(true);try{btn.setPointerCapture(e.pointerId)}catch(_){}} ,{passive:false});
+    btn.addEventListener('pointerdown',e=>{
+      if(!active)return;
+      e.preventDefault();set(true);
+      try{btn.setPointerCapture(e.pointerId)}catch(_){}
+    },{passive:false});
     const off=e=>{e.preventDefault();set(false)};
     btn.addEventListener('pointerup',off,{passive:false});
     btn.addEventListener('pointercancel',off,{passive:false});
   };
-  hold(upBtn,v=>up=v); hold(downBtn,v=>down=v);
+  hold(upBtn,v=>up=v);
+  hold(downBtn,v=>down=v);
+
+  function renderActor(){
+    actor.style.transform=`translate3d(${ACTOR_X-54}px,${y-actorH/2}px,0) rotate(${clamp(vy*.038,-8,8)}deg)`;
+  }
 
   function pop(text,good=true){
-    judge.textContent=text;judge.className=`carpet-judge-v197 ${good?'good':'bad'}`;
-    setTimeout(()=>{if(judge.textContent===text){judge.textContent='';judge.className='carpet-judge-v197'}},430);
+    judge.textContent=text;
+    judge.className=`carpet-judge-v197 ${good?'good':'bad'}`;
+    setTimeout(()=>{
+      if(judge.textContent===text){judge.textContent='';judge.className='carpet-judge-v197'}
+    },430);
   }
 
   async function finish(){
-    if(finished)return; finished=true; active=false; upBtn.disabled=true; downBtn.disabled=true;
+    if(finished)return;
+    finished=true;active=false;upBtn.disabled=true;downBtn.disabled=true;
     if(raf)cancelAnimationFrame(raf);
-    if(hits===0)score+=4;
+    if(hits===0)score+=10;
     score=clamp(Math.round(score),0,100);
     state.records.flyingCarpet[p.id]=score;
-    scoreEl.textContent=score; timeEl.textContent='0.00';
-    pop(hits===0?'NO DAMAGE +4!':`${passed}/12 GATES`,true);
+    scoreEl.textContent=score;timeEl.textContent='0.00';
+    pop(hits===0?'NO DAMAGE +10!':`${passed}/${GATE_COUNT} GATES`,true);
     beep(score>=90?1080:score>=60?760:480,150,.035);
     await wait(650);
-    if(isGameRunValid(runId))recordScreen(gameIndex,p,humanIndex,`${score}<small>pt</small>`,`${passed}/12 GATES / HIT ${hits}`);
+    if(isGameRunValid(runId))recordScreen(gameIndex,p,humanIndex,`${score}<small>pt</small>`,`${passed}/${GATE_COUNT} GATES / HIT ${hits}`);
   }
 
+  // ABSOLUTE RULE: real start pose must exist before countdown.
+  renderActor();
+  actor.classList.add('countdown-ready-v198');
+  void stage.offsetHeight;
+
   if(!(await countdown('FLYING CARPET',runId,{transparent:true})))return;
-  active=true;upBtn.disabled=false;downBtn.disabled=false;last=performance.now();endAt=last+12000;
-  const scrollSpeed=(startX+11*spacing+130-ACTOR_X)/12;
+  active=true;upBtn.disabled=false;downBtn.disabled=false;
+  last=performance.now();start=last;endAt=start+GAME_MS;
+  const scrollSpeed=(startX+(GATE_COUNT-1)*spacing+145-ACTOR_X)/(GAME_MS/1000);
 
   function frame(now){
     if(!isGameRunValid(runId)||finished)return;
     const dt=Math.min(.03,(now-last)/1000);last=now;
-    const elapsed=(now-(endAt-12000))/1000;
+    const elapsed=(now-start)/1000;
 
     let wind=0,label='';
     windWindows.forEach(w=>{if(elapsed>=w.a&&elapsed<=w.b){wind+=w.force;label=w.label}});
@@ -36931,212 +36957,456 @@ async function startFlyingCarpet(p,humanIndex,runId){
     windEl.classList.toggle('show',!!label);
 
     const input=(down?1:0)-(up?1:0);
-    vy+=input*255*dt + wind*dt;
-    vy*=Math.pow(.93,dt*60);
-    vy=clamp(vy,-150,150);
+    vy+=input*405*dt+wind*dt;
+    vy*=Math.pow(.945,dt*60);
+    vy=clamp(vy,-230,230);
     y+=vy*dt;
-    y=clamp(y,46,H-54);
-    if(y<=47||y>=H-55)vy*=-.22;
-    actor.style.transform=`translate3d(${ACTOR_X-54}px,${y-actorH/2}px,0) rotate(${clamp(vy*.045,-7,7)}deg)`;
+    y=clamp(y,44,H-52);
+    if(y<=45||y>=H-53)vy*=-.18;
+    renderActor();
 
     gates.forEach(g=>{
       const sx=g.x-scrollSpeed*elapsed;
       g.el.style.transform=`translateX(${(-scrollSpeed*elapsed).toFixed(1)}px)`;
       if(!g.done&&sx<=ACTOR_X+18){
-        g.done=true;passed++;gateEl.textContent=`${passed} / 12`;
+        g.done=true;passed++;gateEl.textContent=`${passed} / ${GATE_COUNT}`;
         const err=Math.abs(y-g.center);
         const safe=gapH/2-23;
-        if(err<=safe*.43){score+=8;pop('PERFECT +8');beep(960,50,.018)}
-        else if(err<=safe){score+=5;pop('PASS +5');beep(720,45,.014)}
-        else{
-          if(now>=invulnUntil){score-=8;hits++;invulnUntil=now+520;vy*=-.55;actor.classList.remove('hit');void actor.offsetWidth;actor.classList.add('hit');pop('HIT -8',false);beep(180,90,.025)}
+        if(err<=safe*.40){score+=6;pop('PERFECT +6');beep(960,50,.018)}
+        else if(err<=safe){score+=4;pop('PASS +4');beep(720,45,.014)}
+        else if(now>=invulnUntil){
+          score-=6;hits++;invulnUntil=now+500;vy*=-.46;
+          actor.classList.remove('hit');void actor.offsetWidth;actor.classList.add('hit');
+          pop('HIT -6',false);beep(180,90,.025);
         }
         score=clamp(score,0,100);scoreEl.textContent=score;
       }
     });
 
     const left=Math.max(0,endAt-now);timeEl.textContent=(left/1000).toFixed(2);
-    if(left<=0||passed>=12){finish();return}
+    if(left<=0||passed>=GATE_COUNT){finish();return}
     raf=requestAnimationFrame(frame);
   }
   raf=requestAnimationFrame(frame);
 }
 
-// =========================================================
-// V10.97 GAME 109 — モブくん巨大門番
-// Enemies are CSS-drawn slimes (not image assets).
-// =========================================================
 async function startGatekeeperMob(p,humanIndex,runId){
   gameFit();
   const gameIndex=GAMES.findIndex(g=>g.key==='gatekeeperMob');
+
   screen.innerHTML=`
     <div class="gatekeeper-shell-v197 gameplay-fit">
       <div class="game-head"><div><span class="kicker">${esc(p.name)}</span><h2>モブくん巨大門番</h2></div><div class="game-badge">${playBadge(humanIndex)}</div></div>
       <div class="gatekeeper-hud-v197"><div><span>TIME</span><b id="gateTime197">12.00</b></div><div><span>DEFEAT</span><b id="gateDefeat197">0 / 20</b></div><div><span>SCORE</span><b id="gateScore197">0</b></div></div>
-      <div id="gateStage197" class="gatekeeper-stage-v197">
+      <div id="gateStage197" class="gatekeeper-stage-v197 gatekeeper-stage-v198">
         <div class="gatekeeper-castle-v197"><i></i><b>MOB GATE</b></div>
-        <div id="gateGuard197" class="gatekeeper-guard-v197"><img src="icon/01.png" draggable="false" alt=""><div class="gatekeeper-hammer-v197"></div></div>
+        <div id="gateGuard197" class="gatekeeper-guard-v197 gatekeeper-guard-v198"><img src="icon/01.png" draggable="false" alt=""><div class="gatekeeper-hammer-v197 gatekeeper-hammer-v198"></div></div>
         <div id="gateActors197" class="gatekeeper-actors-v197"></div>
         <div id="gateJudge197" class="gatekeeper-judge-v197"></div>
       </div>
       <div class="gatekeeper-controls-v197"><button id="gateLeft197" type="button" disabled>←<small>左攻撃</small></button><button id="gateRight197" type="button" disabled>→<small>右攻撃</small></button></div>
     </div>`;
 
-  const stage=document.getElementById('gateStage197'),layer=document.getElementById('gateActors197'),guard=document.getElementById('gateGuard197');
-  const leftBtn=document.getElementById('gateLeft197'),rightBtn=document.getElementById('gateRight197');
-  const timeEl=document.getElementById('gateTime197'),defeatEl=document.getElementById('gateDefeat197'),scoreEl=document.getElementById('gateScore197'),judge=document.getElementById('gateJudge197');
-  void stage.offsetHeight; const W=stage.clientWidth,H=stage.clientHeight,center=W/2;
-  let active=false,finished=false,raf=null,last=performance.now(),endAt=0,score=0,defeated=0,cooldown=0;
+  const stage=document.getElementById('gateStage197');
+  const layer=document.getElementById('gateActors197');
+  const guard=document.getElementById('gateGuard197');
+  const leftBtn=document.getElementById('gateLeft197');
+  const rightBtn=document.getElementById('gateRight197');
+  const timeEl=document.getElementById('gateTime197');
+  const defeatEl=document.getElementById('gateDefeat197');
+  const scoreEl=document.getElementById('gateScore197');
+  const judge=document.getElementById('gateJudge197');
+
+  void stage.offsetHeight;
+  const W=stage.clientWidth,H=stage.clientHeight,center=W/2;
+  const ATTACK_RANGE=126;
+  let active=false,finished=false,raf=null,last=performance.now(),endAt=0,start=0,score=0,defeated=0,cooldown=0;
 
   const types=shuffle([...Array(20).fill('enemy'),...Array(4).fill('friend')]);
-  const actors=types.map((type,i)=>({type,side:(i%2===0?-1:1)*(Math.random()<.62?1:-1),spawn:430+i*470,x:0,active:false,done:false,el:null}));
-  // side randomization without creating long same-side streaks
-  actors.forEach((a,i)=>{a.side=(i%2===0?-1:1);if(Math.random()<.35)a.side*=-1});
+  const actors=types.map((type,i)=>({
+    type,
+    side:(i%2===0?-1:1),
+    spawn:i===0?0:300+i*395,
+    x:0,
+    active:false,
+    done:false,
+    el:null
+  }));
+  actors.forEach((a,i)=>{if(i>0&&Math.random()<.35)a.side*=-1});
 
-  function makeActor(a){
-    const el=document.createElement('div');el.className=`gate-runner-v197 ${a.type} ${a.side<0?'left':'right'}`;
+  function makeActor(a,i){
+    const el=document.createElement('div');
+    el.className=`gate-runner-v197 ${a.type} ${a.side<0?'left':'right'}`;
     if(a.type==='enemy'){
       el.innerHTML=`<div class="gate-slime-v197"><i class="eye e1"></i><i class="eye e2"></i><b></b></div>`;
     }else{
       el.innerHTML=`<img src="icon/01.png" draggable="false" alt="">`;
     }
     layer.appendChild(el);a.el=el;
+
+    // ABSOLUTE RULE: every runner has its real spawn coordinate before countdown.
+    a.x=i===0?(a.side<0?20:W-20):(a.side<0?-28:W+28);
+    el.style.transform=`translate3d(${a.x-30}px,${H-104}px,0)`;
+    if(i===0)el.classList.add('show','countdown-ready-v198');
   }
   actors.forEach(makeActor);
 
-  function pop(text,bad=false){judge.textContent=text;judge.className=`gatekeeper-judge-v197 ${bad?'bad':'good'}`;setTimeout(()=>{if(judge.textContent===text){judge.textContent='';judge.className='gatekeeper-judge-v197'}},400)}
+  function pop(text,bad=false){
+    judge.textContent=text;judge.className=`gatekeeper-judge-v197 ${bad?'bad':'good'}`;
+    setTimeout(()=>{if(judge.textContent===text){judge.textContent='';judge.className='gatekeeper-judge-v197'}},400);
+  }
 
   function attack(side,now){
-    if(!active||now<cooldown)return;cooldown=now+250;
-    guard.classList.remove('attack-left','attack-right');void guard.offsetWidth;guard.classList.add(side<0?'attack-left':'attack-right');
-    const candidates=actors.filter(a=>a.active&&!a.done&&a.side===side).sort((a,b)=>Math.abs(a.x-center)-Math.abs(b.x-center));
-    const target=candidates.find(a=>Math.abs(a.x-center)<=78);
+    if(!active||now<cooldown)return;
+    cooldown=now+250;
+    guard.classList.remove('attack-left','attack-right');void guard.offsetWidth;
+    guard.classList.add(side<0?'attack-left':'attack-right');
+
+    const candidates=actors
+      .filter(a=>a.active&&!a.done&&a.side===side)
+      .sort((a,b)=>Math.abs(a.x-center)-Math.abs(b.x-center));
+    const target=candidates.find(a=>Math.abs(a.x-center)<=ATTACK_RANGE);
+
     if(!target){pop('MISS',true);beep(220,45,.012);return}
-    target.done=true;target.el.classList.add(side<0?'fly-left':'fly-right');
-    if(target.type==='enemy'){score+=5;defeated++;defeatEl.textContent=`${defeated} / 20`;pop('SLIME HIT +5');beep(760,55,.018)}
-    else{score-=10;pop('FRIEND! -10',true);beep(150,110,.03)}
+
+    target.done=true;
+    target.el.classList.add(side<0?'fly-left':'fly-right');
+    if(target.type==='enemy'){
+      score+=5;defeated++;defeatEl.textContent=`${defeated} / 20`;pop('SLIME HIT +5');beep(760,55,.018);
+    }else{
+      score-=10;pop('FRIEND! -10',true);beep(150,110,.03);
+    }
     score=clamp(score,0,100);scoreEl.textContent=score;
   }
+
   leftBtn.addEventListener('pointerdown',e=>{e.preventDefault();attack(-1,performance.now())},{passive:false});
   rightBtn.addEventListener('pointerdown',e=>{e.preventDefault();attack(1,performance.now())},{passive:false});
 
   async function finish(){
-    if(finished)return;finished=true;active=false;leftBtn.disabled=true;rightBtn.disabled=true;if(raf)cancelAnimationFrame(raf);
+    if(finished)return;
+    finished=true;active=false;leftBtn.disabled=true;rightBtn.disabled=true;if(raf)cancelAnimationFrame(raf);
     score=clamp(Math.round(score),0,100);state.records.gatekeeperMob[p.id]=score;scoreEl.textContent=score;timeEl.textContent='0.00';
     pop(`${defeated}/20 SLIMES`);beep(score>=90?1050:score>=60?730:420,140,.03);await wait(620);
     if(isGameRunValid(runId))recordScreen(gameIndex,p,humanIndex,`${score}<small>pt</small>`,`${defeated}/20 SLIMES DEFEATED`);
   }
 
+  void stage.offsetHeight;
   if(!(await countdown('GATEKEEPER',runId,{transparent:true})))return;
-  active=true;leftBtn.disabled=false;rightBtn.disabled=false;last=performance.now();endAt=last+12000;const start=last;
+  active=true;leftBtn.disabled=false;rightBtn.disabled=false;last=performance.now();start=last;endAt=last+12000;
 
   function frame(now){
-    if(!isGameRunValid(runId)||finished)return;const dt=Math.min(.03,(now-last)/1000);last=now;const elapsed=now-start;
-    actors.forEach(a=>{
+    if(!isGameRunValid(runId)||finished)return;
+    const dt=Math.min(.03,(now-last)/1000);last=now;const elapsed=now-start;
+
+    actors.forEach((a,i)=>{
       if(a.done)return;
-      if(!a.active&&elapsed>=a.spawn){a.active=true;a.x=a.side<0?-42:W+42;a.el.classList.add('show')}
+      if(!a.active&&elapsed>=a.spawn){
+        a.active=true;
+        a.el.classList.add('show');
+      }
       if(!a.active)return;
-      const speed=105+(a.spawn/470)*1.4;
+      const speed=106+(a.spawn/395)*1.25;
       a.x+=a.side<0?speed*dt:-speed*dt;
       a.el.style.transform=`translate3d(${a.x-30}px,${H-104}px,0)`;
       if((a.side<0&&a.x>=center-18)||(a.side>0&&a.x<=center+18)){
         a.done=true;
-        if(a.type==='enemy'){score-=5;pop('BREAK THROUGH -5',true);beep(160,85,.022)}else{pop('SAFE!');beep(610,35,.010)}
+        if(a.type==='enemy'){
+          score-=5;pop('BREAK THROUGH -5',true);beep(160,85,.022);
+        }else{
+          pop('SAFE!');beep(610,35,.010);
+        }
         score=clamp(score,0,100);scoreEl.textContent=score;a.el.classList.add('enter');
       }
     });
+
     const left=Math.max(0,endAt-now);timeEl.textContent=(left/1000).toFixed(2);
-    if(left<=0){finish();return}raf=requestAnimationFrame(frame);
+    if(left<=0){finish();return}
+    raf=requestAnimationFrame(frame);
   }
   raf=requestAnimationFrame(frame);
 }
 
-// =========================================================
-// V10.97 GAME 110 — モブくんフルーツキャッチ
-// =========================================================
 async function startFruitCatchMob(p,humanIndex,runId){
-  gameFit();const gameIndex=GAMES.findIndex(g=>g.key==='fruitCatchMob');
+  gameFit();
+  const gameIndex=GAMES.findIndex(g=>g.key==='fruitCatchMob');
+  const GAME_MS=14000;
+  const GOOD_COUNT=30;
+
   screen.innerHTML=`
     <div class="fruit-shell-v197 gameplay-fit">
       <div class="game-head"><div><span class="kicker">${esc(p.name)}</span><h2>モブくんフルーツキャッチ</h2></div><div class="game-badge">${playBadge(humanIndex)}</div></div>
-      <div class="fruit-hud-v197"><div><span>TIME</span><b id="fruitTime197">10.00</b></div><div><span>GET</span><b id="fruitGet197">0</b></div><div><span>SCORE</span><b id="fruitScore197">0</b></div></div>
-      <div id="fruitStage197" class="fruit-stage-v197"><div class="fruit-bg-v197"></div><div id="fruitLayer197"></div><div id="fruitBasket197" class="fruit-basket-v197"><b>MOB</b></div><div id="fruitJudge197" class="fruit-judge-v197"></div></div>
-      <div class="fruit-hint-v197">画面内を左右ドラッグしてカゴを動かす</div>
+      <div class="fruit-hud-v197"><div><span>TIME</span><b id="fruitTime197">14.00</b></div><div><span>GET</span><b id="fruitGet197">0 / 30</b></div><div><span>SCORE</span><b id="fruitScore197">0</b></div></div>
+      <div id="fruitStage197" class="fruit-stage-v197 fruit-stage-v198">
+        <div class="fruit-bg-v197"></div>
+        <div id="fruitLayer197"></div>
+        <div id="fruitCarrier198" class="fruit-carrier-v198">
+          <img src="icon/01.png" draggable="false" alt="">
+          <i class="fruit-arm-v198 left"></i><i class="fruit-arm-v198 right"></i>
+          <div id="fruitBasket197" class="fruit-basket-v197 fruit-basket-v198"><b>MOB</b></div>
+        </div>
+        <div id="fruitJudge197" class="fruit-judge-v197"></div>
+      </div>
+      <div class="fruit-hint-v197">画面内を左右ドラッグしてモブくん＋カゴを動かす</div>
     </div>`;
-  const stage=document.getElementById('fruitStage197'),layer=document.getElementById('fruitLayer197'),basket=document.getElementById('fruitBasket197');
-  const timeEl=document.getElementById('fruitTime197'),getEl=document.getElementById('fruitGet197'),scoreEl=document.getElementById('fruitScore197'),judge=document.getElementById('fruitJudge197');
-  void stage.offsetHeight;const W=stage.clientWidth,H=stage.clientHeight;
-  let targetX=W/2,bx=W/2,active=false,finished=false,raf=null,last=performance.now(),endAt=0,start=0,score=0,got=0,slowUntil=0;
 
-  const schedule=shuffle([...Array(20).fill('fruit'),...Array(2).fill('gold'),...Array(5).fill('rock')]);
-  const objs=schedule.map((type,i)=>({type,spawn:180+i*345,x:rand(28,W-28),y:-35,vx:rand(-24,24),vy:rand(92,116),active:false,done:false,el:null}));
+  const stage=document.getElementById('fruitStage197');
+  const layer=document.getElementById('fruitLayer197');
+  const carrier=document.getElementById('fruitCarrier198');
+  const basket=document.getElementById('fruitBasket197');
+  const timeEl=document.getElementById('fruitTime197');
+  const getEl=document.getElementById('fruitGet197');
+  const scoreEl=document.getElementById('fruitScore197');
+  const judge=document.getElementById('fruitJudge197');
+
+  void stage.offsetHeight;
+  const W=stage.clientWidth,H=stage.clientHeight;
+  let targetX=W/2,bx=W/2;
+  let active=false,finished=false,raf=null,last=performance.now(),endAt=0,start=0,score=0,got=0,slowUntil=0;
+
+  const schedule=shuffle([...Array(25).fill('fruit'),...Array(5).fill('gold'),...Array(7).fill('rock')]);
+  const objs=schedule.map((type,i)=>({
+    type,
+    spawn:i===0?0:120+i*300,
+    x:rand(28,W-28),
+    y:i===0?10:-35,
+    vx:rand(-27,27),
+    vy:rand(96,124),
+    active:false,done:false,el:null
+  }));
   const fruitClasses=['apple','orange','grape','berry','lime'];
-  objs.forEach((o,i)=>{const el=document.createElement('div');el.className=`fall-item-v197 ${o.type} ${o.type==='fruit'?fruitClasses[i%fruitClasses.length]:''}`;el.innerHTML=o.type==='rock'?'<i></i>':o.type==='gold'?'<b>★</b>':'<i class="leaf"></i>';layer.appendChild(el);o.el=el});
 
-  function pointer(e){if(!active)return;const r=stage.getBoundingClientRect();targetX=clamp(e.clientX-r.left,40,W-40)}
+  objs.forEach((o,i)=>{
+    const el=document.createElement('div');
+    el.className=`fall-item-v197 ${o.type} ${o.type==='fruit'?fruitClasses[i%fruitClasses.length]:''}`;
+    el.innerHTML=o.type==='rock'?'<i></i>':o.type==='gold'?'<b>★</b>':'<i class="leaf"></i>';
+    layer.appendChild(el);o.el=el;
+    el.style.transform=`translate3d(${o.x-19}px,${o.y-19}px,0) rotate(0deg)`;
+    if(i===0)el.classList.add('show','countdown-ready-v198');
+  });
+
+  function renderCarrier(){
+    carrier.style.transform=`translate3d(${bx-64}px,${H-112}px,0)`;
+  }
+
+  function pointer(e){
+    if(!active)return;
+    const r=stage.getBoundingClientRect();
+    targetX=clamp(e.clientX-r.left,58,W-58);
+  }
   stage.addEventListener('pointerdown',e=>{e.preventDefault();pointer(e);try{stage.setPointerCapture(e.pointerId)}catch(_){}},{passive:false});
   stage.addEventListener('pointermove',e=>{if(e.buttons||e.pointerType==='touch')pointer(e)},{passive:false});
-  function pop(t,bad=false){judge.textContent=t;judge.className=`fruit-judge-v197 ${bad?'bad':'good'}`;setTimeout(()=>{if(judge.textContent===t){judge.textContent='';judge.className='fruit-judge-v197'}},320)}
 
-  async function finish(){if(finished)return;finished=true;active=false;if(raf)cancelAnimationFrame(raf);score=clamp(Math.round(score),0,100);state.records.fruitCatchMob[p.id]=score;scoreEl.textContent=score;timeEl.textContent='0.00';pop(`${got} GET`);beep(score>=90?1060:score>=60?730:420,140,.03);await wait(600);if(isGameRunValid(runId))recordScreen(gameIndex,p,humanIndex,`${score}<small>pt</small>`,`${got} ITEMS CAUGHT`)}
+  function pop(t,bad=false){
+    judge.textContent=t;judge.className=`fruit-judge-v197 ${bad?'bad':'good'}`;
+    setTimeout(()=>{if(judge.textContent===t){judge.textContent='';judge.className='fruit-judge-v197'}},320);
+  }
 
-  if(!(await countdown('FRUIT CATCH',runId,{transparent:true})))return;active=true;last=performance.now();start=last;endAt=start+10000;
+  async function finish(){
+    if(finished)return;
+    finished=true;active=false;if(raf)cancelAnimationFrame(raf);
+    score=clamp(Math.round(score),0,100);state.records.fruitCatchMob[p.id]=score;scoreEl.textContent=score;timeEl.textContent='0.00';
+    pop(`${got}/${GOOD_COUNT} GET`);beep(score>=90?1060:score>=60?730:420,140,.03);await wait(600);
+    if(isGameRunValid(runId))recordScreen(gameIndex,p,humanIndex,`${score}<small>pt</small>`,`${got}/${GOOD_COUNT} FRUIT CAUGHT`);
+  }
+
+  // ABSOLUTE RULE: carrier + first falling item are already placed during countdown.
+  renderCarrier();
+  carrier.classList.add('countdown-ready-v198');
+  void stage.offsetHeight;
+
+  if(!(await countdown('FRUIT CATCH',runId,{transparent:true})))return;
+  active=true;last=performance.now();start=last;endAt=start+GAME_MS;
+
   function frame(now){
-    if(!isGameRunValid(runId)||finished)return;const dt=Math.min(.03,(now-last)/1000);last=now;const elapsed=now-start;
-    const follow=now<slowUntil?4.0:9.5;bx+=(targetX-bx)*Math.min(1,dt*follow);basket.style.transform=`translate3d(${bx-52}px,${H-65}px,0)`;
-    objs.forEach(o=>{
-      if(o.done)return;if(!o.active&&elapsed>=o.spawn){o.active=true;o.el.classList.add('show')};if(!o.active)return;
-      o.vy+=42*dt;o.x+=o.vx*dt;o.y+=o.vy*dt;if(o.x<18||o.x>W-18)o.vx*=-1;o.el.style.transform=`translate3d(${o.x-19}px,${o.y-19}px,0) rotate(${o.y*.08}deg)`;
-      if(o.y>=H-82&&o.y<=H-40&&Math.abs(o.x-bx)<=58){o.done=true;o.el.classList.add('caught');got++;getEl.textContent=got;
-        if(o.type==='fruit'){score+=4;pop('+4');beep(720,30,.010)}else if(o.type==='gold'){score+=10;pop('GOLD +10');beep(1080,55,.018)}else{score-=6;slowUntil=now+650;basket.classList.remove('ouch');void basket.offsetWidth;basket.classList.add('ouch');pop('ROCK -6',true);beep(150,95,.026)}score=clamp(score,0,100);scoreEl.textContent=score;
-      }else if(o.y>H+40){o.done=true;o.el.style.display='none'}
+    if(!isGameRunValid(runId)||finished)return;
+    const dt=Math.min(.03,(now-last)/1000);last=now;const elapsed=now-start;
+    const follow=now<slowUntil?4.1:10.2;
+    bx+=(targetX-bx)*Math.min(1,dt*follow);
+    renderCarrier();
+
+    objs.forEach((o,i)=>{
+      if(o.done)return;
+      if(!o.active&&elapsed>=o.spawn){o.active=true;o.el.classList.add('show')}
+      if(!o.active)return;
+      o.vy+=42*dt;o.x+=o.vx*dt;o.y+=o.vy*dt;
+      if(o.x<18||o.x>W-18)o.vx*=-1;
+      o.el.style.transform=`translate3d(${o.x-19}px,${o.y-19}px,0) rotate(${o.y*.08}deg)`;
+
+      if(o.y>=H-99&&o.y<=H-49&&Math.abs(o.x-bx)<=62){
+        o.done=true;o.el.classList.add('caught');
+        if(o.type==='fruit'){
+          got++;score+=3;pop('+3');beep(720,30,.010);
+        }else if(o.type==='gold'){
+          got++;score+=5;pop('GOLD +5');beep(1080,55,.018);
+        }else{
+          score-=5;slowUntil=now+650;
+          basket.classList.remove('ouch');void basket.offsetWidth;basket.classList.add('ouch');
+          pop('ROCK -5',true);beep(150,95,.026);
+        }
+        getEl.textContent=`${got} / ${GOOD_COUNT}`;
+        score=clamp(score,0,100);scoreEl.textContent=score;
+      }else if(o.y>H+40){
+        o.done=true;o.el.style.display='none';
+      }
     });
-    const left=Math.max(0,endAt-now);timeEl.textContent=(left/1000).toFixed(2);if(left<=0){finish();return}raf=requestAnimationFrame(frame);
+
+    const left=Math.max(0,endAt-now);timeEl.textContent=(left/1000).toFixed(2);
+    if(left<=0){finish();return}
+    raf=requestAnimationFrame(frame);
   }
   raf=requestAnimationFrame(frame);
 }
 
-// =========================================================
-// V10.97 GAME 111 — モブくん千両箱
-// =========================================================
 async function startSenryobakoMob(p,humanIndex,runId){
-  gameFit();const gameIndex=GAMES.findIndex(g=>g.key==='senryobakoMob');
+  gameFit();
+  const gameIndex=GAMES.findIndex(g=>g.key==='senryobakoMob');
+  const GAME_MS=16000;
+  const COIN_COUNT=35;
+
   screen.innerHTML=`
     <div class="senryo-shell-v197 gameplay-fit">
       <div class="game-head"><div><span class="kicker">${esc(p.name)}</span><h2>モブくん千両箱</h2></div><div class="game-badge">${playBadge(humanIndex)}</div></div>
-      <div class="senryo-hud-v197"><div><span>TIME</span><b id="senTime197">12.00</b></div><div><span>COIN</span><b id="senCoin197">0 / 30</b></div><div><span>SCORE</span><b id="senScore197">0</b></div></div>
-      <div id="senStage197" class="senryo-stage-v197"><div class="senryo-sky-v197"></div><div id="senCoinLayer197"></div><div id="senBox197" class="senryo-box-v197"><span>千両</span><div id="senPile197" class="senryo-pile-v197"></div></div><div id="senJudge197" class="senryo-judge-v197"></div></div>
+      <div class="senryo-hud-v197"><div><span>TIME</span><b id="senTime197">16.00</b></div><div><span>COIN</span><b id="senCoin197">0 / 35</b></div><div><span>SCORE</span><b id="senScore197">0</b></div></div>
+      <div id="senStage197" class="senryo-stage-v197 senryo-stage-v198">
+        <div class="senryo-sky-v197"></div>
+        <div id="senCoinLayer197"></div>
+        <div id="senCarrier198" class="senryo-carrier-v198">
+          <img src="icon/01.png" draggable="false" alt="">
+          <i class="senryo-arm-v198 left"></i><i class="senryo-arm-v198 right"></i>
+          <div id="senBox197" class="senryo-box-v197 senryo-box-v198"><span>千両</span><div id="senPile197" class="senryo-pile-v197"></div></div>
+        </div>
+        <div id="senJudge197" class="senryo-judge-v197"></div>
+      </div>
       <div class="senryo-weight-v197"><span>WEIGHT</span><div><i id="senWeight197"></i></div></div>
       <div class="senryo-controls-v197"><button id="senLeft197" type="button" disabled>◀</button><button id="senRight197" type="button" disabled>▶</button></div>
     </div>`;
-  const stage=document.getElementById('senStage197'),layer=document.getElementById('senCoinLayer197'),box=document.getElementById('senBox197'),pile=document.getElementById('senPile197');
-  const leftBtn=document.getElementById('senLeft197'),rightBtn=document.getElementById('senRight197');
-  const timeEl=document.getElementById('senTime197'),coinEl=document.getElementById('senCoin197'),scoreEl=document.getElementById('senScore197'),weightEl=document.getElementById('senWeight197'),judge=document.getElementById('senJudge197');
-  void stage.offsetHeight;const W=stage.clientWidth,H=stage.clientHeight;
-  let bx=W/2,vx=0,left=false,right=false,active=false,finished=false,raf=null,last=performance.now(),start=0,endAt=0,score=0,caught=0;
-  const sequence=shuffle([...Array(25).fill('coin'),...Array(5).fill('big')]);
-  const coins=sequence.map((type,i)=>({type,spawn:140+i*385,x:W*(.12+((i*47)%77)/100),y:-25,vy:104+((i*13)%24),done:false,active:false,el:null}));
-  coins.forEach(c=>{const el=document.createElement('div');el.className=`senryo-coin-v197 ${c.type}`;el.innerHTML='<b>MOB</b>';layer.appendChild(el);c.el=el});
 
-  const bind=(btn,set)=>{btn.addEventListener('pointerdown',e=>{if(!active)return;e.preventDefault();set(true);try{btn.setPointerCapture(e.pointerId)}catch(_){}},{passive:false});const off=e=>{e.preventDefault();set(false)};btn.addEventListener('pointerup',off,{passive:false});btn.addEventListener('pointercancel',off,{passive:false})};
+  const stage=document.getElementById('senStage197');
+  const layer=document.getElementById('senCoinLayer197');
+  const carrier=document.getElementById('senCarrier198');
+  const box=document.getElementById('senBox197');
+  const pile=document.getElementById('senPile197');
+  const leftBtn=document.getElementById('senLeft197');
+  const rightBtn=document.getElementById('senRight197');
+  const timeEl=document.getElementById('senTime197');
+  const coinEl=document.getElementById('senCoin197');
+  const scoreEl=document.getElementById('senScore197');
+  const weightEl=document.getElementById('senWeight197');
+  const judge=document.getElementById('senJudge197');
+
+  void stage.offsetHeight;
+  const W=stage.clientWidth,H=stage.clientHeight;
+  let bx=W/2,vx=0,left=false,right=false;
+  let active=false,finished=false,raf=null,last=performance.now(),start=0,endAt=0,score=0,caught=0,load=0;
+
+  const defs={
+    small:{value:2,weight:1.0,size:26,vy:148,label:'小判'},
+    normal:{value:3,weight:1.4,size:34,vy:136,label:'小判'},
+    big:{value:5,weight:2.3,size:44,vy:124,label:'大判'},
+    giant:{value:10,weight:4.0,size:56,vy:112,label:'巨大'}
+  };
+  const TOTAL_LOAD=20*1+10*1.4+4*2.3+1*4;
+  const sequence=shuffle([...Array(20).fill('small'),...Array(10).fill('normal'),...Array(4).fill('big'),'giant']);
+  const coins=sequence.map((type,i)=>{
+    const d=defs[type];
+    return {
+      type,def:d,
+      spawn:i===0?0:110+i*330,
+      x:W*(.10+((i*47)%81)/100),
+      y:i===0?12:-65,
+      vy:d.vy+rand(-8,8),
+      done:false,active:false,el:null
+    };
+  });
+
+  coins.forEach((c,i)=>{
+    const el=document.createElement('div');
+    el.className=`senryo-coin-v197 senryo-coin-v198 ${c.type}`;
+    el.style.width=`${c.def.size}px`;
+    el.style.height=`${c.def.size}px`;
+    el.innerHTML=`<b>${c.type==='giant'?'大':'MOB'}</b>`;
+    layer.appendChild(el);c.el=el;
+    el.style.transform=`translate3d(${c.x-c.def.size/2}px,${c.y-c.def.size/2}px,0) rotate(0deg)`;
+    if(i===0)el.classList.add('show','countdown-ready-v198');
+  });
+
+  const bind=(btn,set)=>{
+    btn.addEventListener('pointerdown',e=>{if(!active)return;e.preventDefault();set(true);try{btn.setPointerCapture(e.pointerId)}catch(_){}},{passive:false});
+    const off=e=>{e.preventDefault();set(false)};
+    btn.addEventListener('pointerup',off,{passive:false});btn.addEventListener('pointercancel',off,{passive:false});
+  };
   bind(leftBtn,v=>left=v);bind(rightBtn,v=>right=v);
-  function pop(t){judge.textContent=t;judge.classList.remove('pop');void judge.offsetWidth;judge.classList.add('pop');setTimeout(()=>{if(judge.textContent===t)judge.textContent=''},330)}
-  function addPile(){const i=document.createElement('i');i.style.left=`${12+Math.random()*70}%`;i.style.top=`${7+Math.random()*48}%`;i.style.rotate=`${rand(-25,25)}deg`;pile.appendChild(i)}
-  async function finish(){if(finished)return;finished=true;active=false;leftBtn.disabled=true;rightBtn.disabled=true;if(raf)cancelAnimationFrame(raf);score=clamp(Math.round(score),0,100);state.records.senryobakoMob[p.id]=score;scoreEl.textContent=score;timeEl.textContent='0.00';pop(`${caught}/30 GET`);beep(score>=90?1080:score>=60?740:430,140,.03);await wait(600);if(isGameRunValid(runId))recordScreen(gameIndex,p,humanIndex,`${score}<small>pt</small>`,`${caught}/30 COINS`)}
 
-  if(!(await countdown('SENRYO BOX',runId,{transparent:true})))return;active=true;leftBtn.disabled=false;rightBtn.disabled=false;last=performance.now();start=last;endAt=start+12000;
+  function pop(t){
+    judge.textContent=t;judge.classList.remove('pop');void judge.offsetWidth;judge.classList.add('pop');
+    setTimeout(()=>{if(judge.textContent===t)judge.textContent=''},330);
+  }
+
+  function addPile(type){
+    const i=document.createElement('i');
+    const mini=type==='giant'?22:type==='big'?19:type==='normal'?16:13;
+    i.style.width=`${mini}px`;i.style.height=`${Math.max(8,mini*.58)}px`;
+    i.style.left=`${8+Math.random()*76}%`;i.style.top=`${5+Math.random()*50}%`;i.style.rotate=`${rand(-25,25)}deg`;
+    pile.appendChild(i);
+  }
+
+  function renderCarrier(){
+    const weight=clamp(load/TOTAL_LOAD,0,1);
+    carrier.style.transform=`translate3d(${bx-69}px,${H-139+weight*9}px,0) rotate(${clamp(vx*.009,-3.2,3.2)}deg)`;
+    weightEl.style.width=`${weight*100}%`;
+  }
+
+  async function finish(){
+    if(finished)return;
+    finished=true;active=false;leftBtn.disabled=true;rightBtn.disabled=true;if(raf)cancelAnimationFrame(raf);
+    score=clamp(Math.round(score),0,100);state.records.senryobakoMob[p.id]=score;scoreEl.textContent=score;timeEl.textContent='0.00';
+    pop(`${caught}/${COIN_COUNT} GET`);beep(score>=90?1080:score>=60?740:430,140,.03);await wait(600);
+    if(isGameRunValid(runId))recordScreen(gameIndex,p,humanIndex,`${score}<small>pt</small>`,`${caught}/${COIN_COUNT} COINS`);
+  }
+
+  // ABSOLUTE RULE: Mob-kun, box and first coin are at their true start position before countdown.
+  renderCarrier();
+  carrier.classList.add('countdown-ready-v198');
+  void stage.offsetHeight;
+
+  if(!(await countdown('SENRYO BOX',runId,{transparent:true})))return;
+  active=true;leftBtn.disabled=false;rightBtn.disabled=false;last=performance.now();start=last;endAt=start+GAME_MS;
+
   function frame(now){
-    if(!isGameRunValid(runId)||finished)return;const dt=Math.min(.03,(now-last)/1000);last=now;const elapsed=now-start;
-    const weight=clamp(caught/30,0,1);const accel=880+(420-880)*weight;const maxV=250+(125-250)*weight;const dir=(right?1:0)-(left?1:0);vx+=dir*accel*dt;vx*=Math.pow(.90,dt*60);vx=clamp(vx,-maxV,maxV);bx+=vx*dt;
-    if(bx<55){bx=55;vx=Math.abs(vx)*.22}else if(bx>W-55){bx=W-55;vx=-Math.abs(vx)*.22};box.style.transform=`translate3d(${bx-58}px,${H-73+weight*8}px,0) rotate(${clamp(vx*.012,-4,4)}deg)`;weightEl.style.width=`${weight*100}%`;
-    coins.forEach(c=>{if(c.done)return;if(!c.active&&elapsed>=c.spawn){c.active=true;c.el.classList.add('show')};if(!c.active)return;c.y+=c.vy*dt;c.el.style.transform=`translate3d(${c.x-17}px,${c.y-17}px,0) rotate(${c.y*.18}deg)`;
-      if(c.y>=H-91&&c.y<=H-42&&Math.abs(c.x-bx)<=61){c.done=true;c.el.classList.add('caught');caught++;coinEl.textContent=`${caught} / 30`;const add=c.type==='big'?5:3;score+=add;if(caught>=30)score=100;score=clamp(score,0,100);scoreEl.textContent=score;addPile();pop(c.type==='big'?'大判 +5':'+3');beep(c.type==='big'?1030:710,38,.012)}else if(c.y>H+35){c.done=true;c.el.style.display='none'}
+    if(!isGameRunValid(runId)||finished)return;
+    const dt=Math.min(.03,(now-last)/1000);last=now;const elapsed=now-start;
+    const weight=clamp(load/TOTAL_LOAD,0,1);
+    const accel=900+(405-900)*weight;
+    const maxV=258+(118-258)*weight;
+    const dir=(right?1:0)-(left?1:0);
+    vx+=dir*accel*dt;vx*=Math.pow(.90,dt*60);vx=clamp(vx,-maxV,maxV);bx+=vx*dt;
+    if(bx<62){bx=62;vx=Math.abs(vx)*.22}else if(bx>W-62){bx=W-62;vx=-Math.abs(vx)*.22}
+    renderCarrier();
+
+    coins.forEach((c,i)=>{
+      if(c.done)return;
+      if(!c.active&&elapsed>=c.spawn){c.active=true;c.el.classList.add('show')}
+      if(!c.active)return;
+      c.y+=c.vy*dt;
+      const s=c.def.size;
+      c.el.style.transform=`translate3d(${c.x-s/2}px,${c.y-s/2}px,0) rotate(${c.y*.16}deg)`;
+      const hitY=c.y>=H-129&&c.y<=H-69;
+      const hitX=Math.abs(c.x-bx)<=64+s*.18;
+      if(hitY&&hitX){
+        c.done=true;c.el.classList.add('caught');caught++;coinEl.textContent=`${caught} / ${COIN_COUNT}`;
+        score+=c.def.value;load+=c.def.weight;score=clamp(score,0,100);scoreEl.textContent=score;
+        addPile(c.type);pop(`${c.def.label} +${c.def.value}`);beep(c.type==='giant'?1160:c.type==='big'?1020:710,42,.014);
+      }else if(c.y>H+65){
+        c.done=true;c.el.style.display='none';
+      }
     });
-    const leftMs=Math.max(0,endAt-now);timeEl.textContent=(leftMs/1000).toFixed(2);if(leftMs<=0){finish();return}raf=requestAnimationFrame(frame);
+
+    const leftMs=Math.max(0,endAt-now);timeEl.textContent=(leftMs/1000).toFixed(2);
+    if(leftMs<=0){finish();return}
+    raf=requestAnimationFrame(frame);
   }
   raf=requestAnimationFrame(frame);
 }
-
 
 async function startTokotokoCatcher(p,humanIndex,runId){
   gameFit();
