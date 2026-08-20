@@ -343,10 +343,9 @@ const GAMES=[
   {no:105,key:"djMaster",title:"モブくんDJの達人",sub:"10秒で流れる20個の音符に合わせ、巨大ターンテーブルをスクラッチ",legacy:117},
   {no:106,key:"rocketPunch",title:"モブくんロケットパンチ",sub:"拳へパワーを溜めて巨大ロケットパンチ。狭いMAXゾーンから3000mを狙う",legacy:118},
   {no:107,key:"flagRaise",title:"モブくん旗上げ",sub:"赤・両方・白の3ボタン。もう一度押せば旗を下げる",legacy:119},
-  {no:108,key:"flyingCarpet",title:"モブくん空飛ぶじゅうたん",sub:"超高速の▲▼高度操作。18秒、上下に動く18個のトゲボールを避ける",legacy:121},
-  {no:109,key:"gatekeeperMob",title:"モブくん巨大門番",sub:"通常・高速・装甲・爆弾スライムと味方を瞬時に見分ける門番バトル",legacy:122},
-  {no:110,key:"fruitCatchMob",title:"モブくんフルーツキャッチ",sub:"15秒。フルーツを集めながら岩・爆弾・腐った実を避ける",legacy:123},
-  {no:111,key:"senryobakoMob",title:"モブくん千両箱",sub:"5連続GETでFEVER×2。全小判を取らなくても100点を狙える",legacy:124}
+  {no:108,key:"flyingCarpet",title:"モブくん空飛ぶじゅうたん",sub:"超高速の▲▼高度操作。15秒、上下に動く18個のトゲボールを避ける",legacy:121},
+  {no:109,key:"fruitCatchMob",title:"モブくんフルーツキャッチ",sub:"15秒。フルーツを集めながら岩・爆弾・腐った実を避ける",legacy:123},
+  {no:110,key:"senryobakoMob",title:"モブくん千両箱",sub:"5連続GETでFEVER×2。全小判を取らなくても100点を狙える",legacy:124}
 ];
 
 function legacyGameIndex(gameIndex){
@@ -458,7 +457,7 @@ function freshState(){
         paperPlane:{},tankMob:{},curlingMob:{},bubbleMob:{},
         changeMob:{},baggageMob:{},treasureMob:{},rouletteMob:{},excavationMob:{},
         oldMaidDuel:{},robotMarch:{},monsterMaster:{},scoutMan:{},
-        atafutaSurvival:{},waveMaster:{},battleRoyaleMob:{},littleMobShot:{},monsterBoxMob:{},alienBattleMob:{},mobMusou:{},iaidoMaster:{},killLeaderMob:{},mobSpeedRacer:{},summonMaster:{},mobPinball:{},hurdleRun:{},longJumpMob:{},pkKicker:{},threePoint:{},bowlingMob:{},waterSkip:{},tamaireMob:{},mineCartMob:{},airHockeyMob:{},ropeSwingMob:{},billiardsMob:{},billiardsBattleRoyale:{},linkedCartBlast:{},soloCartBlast:{},deathGameChallenge:{},tokotokoCatcher:{},amidakujiMasters:{},djMaster:{},rocketPunch:{},flagRaise:{},flyingCarpet:{},gatekeeperMob:{},fruitCatchMob:{},senryobakoMob:{}
+        atafutaSurvival:{},waveMaster:{},battleRoyaleMob:{},littleMobShot:{},monsterBoxMob:{},alienBattleMob:{},mobMusou:{},iaidoMaster:{},killLeaderMob:{},mobSpeedRacer:{},summonMaster:{},mobPinball:{},hurdleRun:{},longJumpMob:{},pkKicker:{},threePoint:{},bowlingMob:{},waterSkip:{},tamaireMob:{},mineCartMob:{},airHockeyMob:{},ropeSwingMob:{},billiardsMob:{},billiardsBattleRoyale:{},linkedCartBlast:{},soloCartBlast:{},deathGameChallenge:{},tokotokoCatcher:{},amidakujiMasters:{},djMaster:{},rocketPunch:{},flagRaise:{},flyingCarpet:{},fruitCatchMob:{},senryobakoMob:{}
     },
     total:{},
     roundPoints:[],
@@ -568,7 +567,7 @@ function renderHome(){
     <section class="hero hero-v119">
       <div>
         <span class="kicker">SMARTPHONE PARTY GAME</span>
-        <h1>111 MINI<br>GAMES</h1>
+        <h1>110 MINI<br>GAMES</h1>
         <p>通常対戦は「チーム戦」「個人戦」。モブくんゲーム王は8/16人ノックアウトと20人ブロック戦を遊べます。</p>
       </div>
       <div class="hero-mark">MOB</div>
@@ -593,7 +592,7 @@ function renderHome(){
     </section>
 
     <section class="panel flat">
-      <div class="panel-head"><h3>111 MINI GAMES</h3><span class="tag">GAME 1 → 111</span></div>
+      <div class="panel-head"><h3>110 MINI GAMES</h3><span class="tag">GAME 1 → 110</span></div>
       <div class="compact-game-grid home-compact-games-v119">
         ${GAMES.map(g=>`<div><b>${g.no}</b><span>${g.title}</span></div>`).join("")}
       </div>
@@ -652,7 +651,7 @@ function renderGameGuide(){
   screen.innerHTML=`
     <div class="game-head">
       <div><span class="kicker">GAME GUIDE</span><h2>各ゲームの説明</h2><p class="lead">内容と100点換算の目安を一覧で確認できます。</p></div>
-      <div class="game-badge">111</div>
+      <div class="game-badge">110</div>
     </div>
 
     <button id="guideBack" class="secondary wizard-back-v119" type="button">← メインへ戻る</button>
@@ -2248,7 +2247,7 @@ function renderPlayStyleSelect(){
       <button id="normalStyle" class="style-select-card normal" type="button">
         <span>NORMAL</span>
         <b>順番に全種目</b>
-        <small>GAME 1 → 111 を順番にプレイ</small>
+        <small>GAME 1 → 110 を順番にプレイ</small>
       </button>
       <button id="customStyle" class="style-select-card custom" type="button">
         <span>CUSTOM</span>
@@ -2258,7 +2257,7 @@ function renderPlayStyleSelect(){
     </div>
 
     <section class="panel flat">
-      <h3>111 MINI GAMES</h3>
+      <h3>110 MINI GAMES</h3>
       <div class="compact-game-grid">
         ${GAMES.map(g=>`<div><b>${g.no}</b><span>${g.title}</span></div>`).join("")}
       </div>
@@ -2808,10 +2807,8 @@ function showGameIntro(index){
   }else if(legacyIndex===119){
     rules=`<li>赤・両方・白の3ボタンだけ。上げている旗のボタンをもう一度押すと下がります。</li><li>10秒間、現在の旗状態に合った指示へ素早く対応。間違えても続行します。</li>`;
   }else if(legacyIndex===121){
-    rules=`<li>▲ / ▼でじゅうたんを超高速に上下操作。柱はなく、上下に動くトゲボール18個を18秒で避けます。</li><li>1個通過+5、接触-7、全てノーダメージなら+10。操作速度はトゲを見てからでも回避できる設定です。</li>`;
-  }else if(legacyIndex===122){
-    rules=`<li>左右の巨大ハンマーで通常・高速・装甲スライムを撃退。装甲は2回攻撃が必要です。</li><li>赤い爆弾スライムと味方モブくんは攻撃禁止。爆弾を殴ると-12、味方を殴ると-10です。</li>`;
-  }else if(legacyIndex===123){
+    rules=`<li>▲ / ▼でじゅうたんを超高速に上下操作。柱はなく、上下に動くトゲボール18個を15秒で避けます。</li><li>1個通過+5、接触-7、全てノーダメージなら+10。操作速度はトゲを見てからでも回避できる設定です。</li>`;
+}else if(legacyIndex===123){
     rules=`<li>モブくんが持つカゴを左右ドラッグして15秒。通常+3、ゴールド+5です。</li><li>岩-5、爆弾-10、腐った実-4。爆弾は大きく弾かれ、腐った実はしばらくカゴが重くなります。</li>`;
   }else if(legacyIndex===124){
     rules=`<li>◀ / ▶で千両箱を持ったモブくんを動かします。小判を取るほど箱が重くなります。</li><li>5枚連続GETごとにFEVERが発動し約2.4秒ポイント×2。巨大小判でもFEVERになるため、35枚全部を取らなくても100点を狙えます。</li>`;
@@ -2972,7 +2969,6 @@ function humanReady(gameIndex,humanIndex){
     else if(legacyIndex===118)startRocketPunch(p,humanIndex,runId);
     else if(legacyIndex===119)startFlagRaise(p,humanIndex,runId);
     else if(legacyIndex===121)startFlyingCarpet(p,humanIndex,runId);
-    else if(legacyIndex===122)startGatekeeperMob(p,humanIndex,runId);
     else if(legacyIndex===123)startFruitCatchMob(p,humanIndex,runId);
     else if(legacyIndex===124)startSenryobakoMob(p,humanIndex,runId);
     else{
@@ -17417,7 +17413,7 @@ async function startDodgeballMob(p,humanIndex,runId){
 // GAME 56 -------------------------------------------------
 async function startAmidakujiMob(p,humanIndex,runId){
   gameFit();
-  const lanes=6,worldH=1480,topY=95,bottomY=1390,goalValues=shuffle([0,15,30,50,75,100]);
+  const lanes=6,worldH=1500,topY=95,bottomY=1390,goalY=bottomY+28,goalValues=shuffle([0,15,30,50,75,100]);
   const rows=[];
   for(let i=0;i<26;i++){
     let pair=randi(0,lanes-2);
@@ -17432,12 +17428,12 @@ async function startAmidakujiMob(p,humanIndex,runId){
       <svg id="amidaSvg" class="amida-svg" viewBox="0 0 600 ${worldH}" preserveAspectRatio="none"></svg>
       <svg class="amida-trace-svg-v126" viewBox="0 0 600 ${worldH}" preserveAspectRatio="none"><polyline id="amidaTrace" points=""></polyline></svg>
       <div id="amidaMob" class="amida-mob amida-mob-v126" style="background-image:url('icon/01.png')"></div>
-      <div class="amida-goals amida-goals-v126">${goalValues.map((v,i)=>`<b data-goal="${i}" style="left:${(i+.5)/lanes*100}%"><i>${v}</i><span>pt</span></b>`).join('')}</div>
+      <div class="amida-goals amida-goals-v126" style="top:${goalY}px">${goalValues.map((v,i)=>`<b data-goal="${i}" style="left:${(i+.5)/lanes*100}%"><i>${v}</i><span>pt</span></b>`).join('')}</div>
     </div><div class="amida-secret-banner-v177"><b>?</b><span>SECRET</span><b>?</b></div><div id="amidaHint" class="amida-hint amida-hint-v126">GOALをチェック…</div>
     <div id="amidaEntrances" class="amida-entrances amida-entrances-v126" hidden>${Array.from({length:lanes},(_,i)=>`<button type="button" data-amida="${i}"><span>${i+1}</span></button>`).join('')}</div></div></div>`;
   const viewport=document.getElementById('amidaViewport'),world=document.getElementById('amidaWorld'),svg=document.getElementById('amidaSvg'),trace=document.getElementById('amidaTrace'),mob=document.getElementById('amidaMob'),entrances=document.getElementById('amidaEntrances'),hint=document.getElementById('amidaHint');
   const xForLane=lane=>(lane+.5)/lanes*600;let markup='';
-  for(let lane=0;lane<lanes;lane++){const x=xForLane(lane);markup+=`<line x1="${x}" y1="${topY}" x2="${x}" y2="${bottomY}" class="amida-vertical"/>`;}
+  for(let lane=0;lane<lanes;lane++){const x=xForLane(lane);markup+=`<line x1="${x}" y1="${topY}" x2="${x}" y2="${bottomY}" class="amida-vertical"/>`;markup+=`<line x1="${x}" y1="${bottomY}" x2="${x}" y2="${goalY-8}" class="amida-goal-stem-v200"/>`;}
   rows.forEach(row=>{markup+=`<line x1="${xForLane(row.pair)}" y1="${row.y}" x2="${xForLane(row.pair+1)}" y2="${row.y}" class="amida-horizontal"/>`;markup+=`<circle cx="${(xForLane(row.pair)+xForLane(row.pair+1))/2}" cy="${row.y}" r="5" class="amida-node-v126"/>`;});
   svg.innerHTML=markup;
   const maxScroll=Math.max(0,worldH-viewport.clientHeight);world.style.transform=`translateY(${-maxScroll}px)`;viewport.classList.add("goal-preview-v126");beep(540,70,.018);
@@ -26793,11 +26789,7 @@ function simulateOneCpu(gameIndex,p){
     state.records.flyingCarpet[p.id]=ultra
       ? randi(80,100)
       : randi(38,90);
-  }else if(legacyIndex===122){
-    state.records.gatekeeperMob[p.id]=ultra
-      ? randi(78,100)
-      : randi(30,88);
-  }else if(legacyIndex===123){
+}else if(legacyIndex===123){
     state.records.fruitCatchMob[p.id]=ultra
       ? randi(78,100)
       : randi(32,89);
@@ -36833,7 +36825,7 @@ async function startFlagRaise(p,humanIndex,runId){
 async function startFlyingCarpet(p,humanIndex,runId){
   gameFit();
   const gameIndex=GAMES.findIndex(g=>g.key==='flyingCarpet');
-  const GAME_MS=18000;
+  const GAME_MS=15000;
   const OBSTACLE_COUNT=18;
 
   screen.innerHTML=`
@@ -36843,7 +36835,7 @@ async function startFlyingCarpet(p,humanIndex,runId){
         <div class="game-badge">${playBadge(humanIndex)}</div>
       </div>
       <div class="carpet-hud-v197">
-        <div><span>TIME</span><b id="carpetTime199">18.00</b></div>
+        <div><span>TIME</span><b id="carpetTime199">15.00</b></div>
         <div><span>DODGE</span><b id="carpetDodge199">0 / 18</b></div>
         <div><span>SCORE</span><b id="carpetScore199">0</b></div>
       </div>
@@ -36911,9 +36903,9 @@ async function startFlyingCarpet(p,humanIndex,runId){
   });
 
   const windWindows=[
-    {a:4.0,b:5.2,force:-110,label:'WIND ▲'},
-    {a:9.0,b:10.2,force:118,label:'WIND ▼'},
-    {a:13.8,b:15.0,force:-126,label:'WIND ▲'}
+    {a:3.4,b:4.4,force:-110,label:'WIND ▲'},
+    {a:7.5,b:8.6,force:118,label:'WIND ▼'},
+    {a:11.8,b:12.9,force:-126,label:'WIND ▲'}
   ];
 
   const hold=(btn,set)=>{
@@ -37012,168 +37004,6 @@ async function startFlyingCarpet(p,humanIndex,runId){
 
     const left=Math.max(0,endAt-now);timeEl.textContent=(left/1000).toFixed(2);
     if(left<=0||dodged>=OBSTACLE_COUNT){finish();return}
-    raf=requestAnimationFrame(frame);
-  }
-  raf=requestAnimationFrame(frame);
-}
-
-async function startGatekeeperMob(p,humanIndex,runId){
-  gameFit();
-  const gameIndex=GAMES.findIndex(g=>g.key==='gatekeeperMob');
-  const GAME_MS=13000;
-
-  screen.innerHTML=`
-    <div class="gatekeeper-shell-v197 gameplay-fit">
-      <div class="game-head"><div><span class="kicker">${esc(p.name)}</span><h2>モブくん巨大門番</h2></div><div class="game-badge">${playBadge(humanIndex)}</div></div>
-      <div class="gatekeeper-hud-v197"><div><span>TIME</span><b id="gateTime199">13.00</b></div><div><span>DEFEAT</span><b id="gateDefeat199">0 / 21</b></div><div><span>SCORE</span><b id="gateScore199">0</b></div></div>
-      <div id="gateStage199" class="gatekeeper-stage-v197 gatekeeper-stage-v199">
-        <div class="gatekeeper-castle-v197"><i></i><b>MOB GATE</b></div>
-        <div id="gateGuard199" class="gatekeeper-guard-v197 gatekeeper-guard-v198"><img src="icon/01.png" draggable="false" alt=""><div class="gatekeeper-hammer-v197 gatekeeper-hammer-v198"></div></div>
-        <div id="gateActors199" class="gatekeeper-actors-v197"></div>
-        <div id="gateJudge199" class="gatekeeper-judge-v197"></div>
-      </div>
-      <div class="gatekeeper-controls-v197"><button id="gateLeft199" type="button" disabled>←<small>左攻撃</small></button><button id="gateRight199" type="button" disabled>→<small>右攻撃</small></button></div>
-    </div>`;
-
-  const stage=document.getElementById('gateStage199');
-  const layer=document.getElementById('gateActors199');
-  const guard=document.getElementById('gateGuard199');
-  const leftBtn=document.getElementById('gateLeft199');
-  const rightBtn=document.getElementById('gateRight199');
-  const timeEl=document.getElementById('gateTime199');
-  const defeatEl=document.getElementById('gateDefeat199');
-  const scoreEl=document.getElementById('gateScore199');
-  const judge=document.getElementById('gateJudge199');
-
-  void stage.offsetHeight;
-  const W=stage.clientWidth,H=stage.clientHeight,center=W/2;
-  const ATTACK_RANGE=138;
-  let active=false,finished=false,raf=null,last=performance.now(),endAt=0,start=0,score=0,defeated=0,cooldown=0;
-
-  const types=shuffle([
-    ...Array(13).fill('enemy'),
-    ...Array(4).fill('speed'),
-    ...Array(4).fill('armor'),
-    ...Array(4).fill('bomb'),
-    ...Array(5).fill('friend')
-  ]);
-
-  const actors=types.map((type,i)=>({
-    type,
-    side:(i%2===0?-1:1),
-    spawn:i===0?0:220+i*335,
-    x:0,
-    hp:type==='armor'?2:1,
-    active:false,done:false,el:null
-  }));
-  actors.forEach((a,i)=>{if(i>0&&Math.random()<.42)a.side*=-1});
-
-  function makeActor(a,i){
-    const el=document.createElement('div');
-    el.className=`gate-runner-v197 ${a.type} ${a.side<0?'left':'right'}`;
-    if(a.type==='friend'){
-      el.innerHTML=`<img src="icon/01.png" draggable="false" alt="">`;
-    }else{
-      el.innerHTML=`<div class="gate-slime-v197 gate-slime-v199 ${a.type}"><i class="eye e1"></i><i class="eye e2"></i>${a.type==='armor'?'<u class="shield-v199"></u>':''}${a.type==='bomb'?'<u class="fuse-v199"></u>':''}<b></b></div>`;
-    }
-    layer.appendChild(el);a.el=el;
-    // ABSOLUTE RULE: real spawn coordinate is assigned before countdown.
-    a.x=i===0?(a.side<0?18:W-18):(a.side<0?-32:W+32);
-    el.style.transform=`translate3d(${a.x-30}px,${H-104}px,0)`;
-    if(i===0)el.classList.add('show','countdown-ready-v198');
-  }
-  actors.forEach(makeActor);
-
-  function pop(text,bad=false){
-    judge.textContent=text;judge.className=`gatekeeper-judge-v197 ${bad?'bad':'good'}`;
-    setTimeout(()=>{if(judge.textContent===text){judge.textContent='';judge.className='gatekeeper-judge-v197'}},380);
-  }
-
-  function attack(side,now){
-    if(!active||now<cooldown)return;
-    cooldown=now+235;
-    guard.classList.remove('attack-left','attack-right');void guard.offsetWidth;
-    guard.classList.add(side<0?'attack-left':'attack-right');
-
-    const candidates=actors
-      .filter(a=>a.active&&!a.done&&a.side===side)
-      .sort((a,b)=>Math.abs(a.x-center)-Math.abs(b.x-center));
-    const target=candidates.find(a=>Math.abs(a.x-center)<=ATTACK_RANGE);
-
-    if(!target){pop('MISS',true);beep(220,45,.012);return}
-
-    if(target.type==='bomb'){
-      target.done=true;target.el.classList.add('explode-v199');score-=12;
-      pop('BOMB! -12',true);beep(120,150,.035);
-      score=clamp(score,0,100);scoreEl.textContent=score;return;
-    }
-
-    if(target.type==='friend'){
-      target.done=true;target.el.classList.add(side<0?'fly-left':'fly-right');score-=10;
-      pop('FRIEND! -10',true);beep(150,110,.03);
-      score=clamp(score,0,100);scoreEl.textContent=score;return;
-    }
-
-    if(target.type==='armor'&&target.hp>1){
-      target.hp=1;target.el.classList.add('cracked-v199');
-      target.x+=target.side<0?-15:15;
-      pop('ARMOR CRACK!');beep(470,70,.018);return;
-    }
-
-    target.done=true;
-    target.el.classList.add(side<0?'fly-left':'fly-right');
-    let add=5,label='SLIME +5';
-    if(target.type==='speed'){add=7;label='SPEED +7'}
-    if(target.type==='armor'){add=8;label='ARMOR +8'}
-    score+=add;defeated++;defeatEl.textContent=`${defeated} / 21`;pop(label);beep(760+add*20,55,.018);
-    score=clamp(score,0,100);scoreEl.textContent=score;
-  }
-
-  leftBtn.addEventListener('pointerdown',e=>{e.preventDefault();attack(-1,performance.now())},{passive:false});
-  rightBtn.addEventListener('pointerdown',e=>{e.preventDefault();attack(1,performance.now())},{passive:false});
-
-  async function finish(){
-    if(finished)return;
-    finished=true;active=false;leftBtn.disabled=true;rightBtn.disabled=true;if(raf)cancelAnimationFrame(raf);
-    score=clamp(Math.round(score),0,100);state.records.gatekeeperMob[p.id]=score;scoreEl.textContent=score;timeEl.textContent='0.00';
-    pop(`${defeated} SLIMES`);beep(score>=90?1050:score>=60?730:420,140,.03);await wait(620);
-    if(isGameRunValid(runId))recordScreen(gameIndex,p,humanIndex,`${score}<small>pt</small>`,`${defeated} SLIMES / TRAPS MIXED`);
-  }
-
-  void stage.offsetHeight;
-  if(!(await countdown('GATEKEEPER',runId,{transparent:true})))return;
-  active=true;leftBtn.disabled=false;rightBtn.disabled=false;last=performance.now();start=last;endAt=last+GAME_MS;
-
-  function frame(now){
-    if(!isGameRunValid(runId)||finished)return;
-    const dt=Math.min(.03,(now-last)/1000);last=now;const elapsed=now-start;
-
-    actors.forEach((a,i)=>{
-      if(a.done)return;
-      if(!a.active&&elapsed>=a.spawn){a.active=true;a.el.classList.add('show')}
-      if(!a.active)return;
-
-      const speed=a.type==='speed'?178:a.type==='bomb'?132:a.type==='armor'?107:a.type==='friend'?121:119;
-      a.x+=a.side<0?speed*dt:-speed*dt;
-      a.el.style.transform=`translate3d(${a.x-30}px,${H-104}px,0)`;
-
-      if((a.side<0&&a.x>=center-18)||(a.side>0&&a.x<=center+18)){
-        a.done=true;
-        if(a.type==='bomb'){
-          // Bomb slime is a trap: the correct play is to let it pass without attacking.
-          pop('BOMB SAFE!');beep(620,35,.010);a.el.classList.add('safe-bomb-v199');
-        }else if(a.type==='friend'){
-          pop('SAFE!');beep(610,35,.010);a.el.classList.add('enter');
-        }else{
-          const loss=a.type==='armor'?8:a.type==='speed'?6:5;
-          score-=loss;pop(`BREAK THROUGH -${loss}`,true);beep(160,85,.022);a.el.classList.add('enter');
-        }
-        score=clamp(score,0,100);scoreEl.textContent=score;
-      }
-    });
-
-    const left=Math.max(0,endAt-now);timeEl.textContent=(left/1000).toFixed(2);
-    if(left<=0){finish();return}
     raf=requestAnimationFrame(frame);
   }
   raf=requestAnimationFrame(frame);

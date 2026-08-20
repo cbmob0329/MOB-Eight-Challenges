@@ -28967,10 +28967,10 @@ canvas{
 /* =========================================================
    V10.97 — GAME 108 Flying Carpet
    ========================================================= */
-.carpet-shell-v197,.gatekeeper-shell-v197,.fruit-shell-v197,.senryo-shell-v197{height:100%;display:flex;flex-direction:column;gap:7px;overflow:hidden}
-.carpet-hud-v197,.gatekeeper-hud-v197,.fruit-hud-v197,.senryo-hud-v197{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}
-.carpet-hud-v197>div,.gatekeeper-hud-v197>div,.fruit-hud-v197>div,.senryo-hud-v197>div{border:3px solid var(--ink);border-radius:10px;background:#fff;padding:5px 3px;text-align:center}
-.carpet-hud-v197 span,.gatekeeper-hud-v197 span,.fruit-hud-v197 span,.senryo-hud-v197 span{display:block;font-size:6px;font-weight:1000}.carpet-hud-v197 b,.gatekeeper-hud-v197 b,.fruit-hud-v197 b,.senryo-hud-v197 b{font-size:11px}
+.carpet-shell-v197,.fruit-shell-v197,.senryo-shell-v197{height:100%;display:flex;flex-direction:column;gap:7px;overflow:hidden}
+.carpet-hud-v197,.fruit-hud-v197,.senryo-hud-v197{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}
+.carpet-hud-v197>div,.fruit-hud-v197>div,.senryo-hud-v197>div{border:3px solid var(--ink);border-radius:10px;background:#fff;padding:5px 3px;text-align:center}
+.carpet-hud-v197 span,.fruit-hud-v197 span,.senryo-hud-v197 span{display:block;font-size:6px;font-weight:1000}.carpet-hud-v197 b,.fruit-hud-v197 b,.senryo-hud-v197 b{font-size:11px}
 .carpet-stage-v197{position:relative;flex:1;min-height:385px;border:4px solid var(--ink);border-radius:16px;background:#98dbef;overflow:hidden;touch-action:none}
 .carpet-sky-v197{position:absolute;inset:0;background:linear-gradient(#87d8f2,#d6f1f5)}
 .carpet-cloud-v197{position:absolute;width:86px;height:28px;border:3px solid var(--ink);border-radius:999px;background:#fff;opacity:.85}.carpet-cloud-v197::before,.carpet-cloud-v197::after{content:"";position:absolute;border:3px solid var(--ink);border-bottom:0;border-radius:50% 50% 0 0;background:#fff}.carpet-cloud-v197::before{width:35px;height:27px;left:12px;top:-22px}.carpet-cloud-v197::after{width:27px;height:20px;right:12px;top:-15px}.carpet-cloud-v197.c1{left:42px;top:70px}.carpet-cloud-v197.c2{left:230px;top:160px;scale:.7}.carpet-cloud-v197.c3{left:130px;top:275px;scale:.55}
@@ -28978,11 +28978,6 @@ canvas{
 .carpet-actor-v197{position:absolute;z-index:12;left:0;top:0;width:108px;height:66px;will-change:transform;transform-origin:50% 65%}.carpet-actor-v197 img{position:absolute;left:30px;bottom:18px;width:54px;height:54px;object-fit:contain}.carpet-rug-v197{position:absolute;left:4px;right:0;bottom:5px;height:22px;border:4px solid var(--ink);border-radius:42% 58% 45% 55%;background:#8d5dcc}.carpet-rug-v197::before{content:"MOB";position:absolute;left:34px;top:3px;font-size:7px;font-weight:1000;color:#fff}.carpet-rug-v197 i{position:absolute;bottom:-10px;width:19px;height:13px;border:3px solid var(--ink);border-top:0;background:#e4c64e}.carpet-rug-v197 i:first-child{left:4px}.carpet-rug-v197 i:last-child{right:4px}.carpet-actor-v197.hit{animation:carpetHit197 .25s linear}@keyframes carpetHit197{25%{translate:-7px 2px}50%{translate:7px -2px}75%{translate:-4px 1px}}
 .carpet-controls-v197{display:grid;grid-template-columns:1fr 1fr;gap:7px}.carpet-controls-v197 button{min-height:60px;border:4px solid var(--ink);border-radius:14px;background:#f5e25c;font-size:24px;font-weight:1000}.carpet-controls-v197 button small{display:block;font-size:7px}.carpet-wind-v197{position:absolute;z-index:18;right:15px;top:15px;padding:5px 9px;border:3px solid var(--ink);border-radius:999px;background:#fff;font-size:9px;font-weight:1000;opacity:0}.carpet-wind-v197.show{opacity:1;animation:windPulse197 .35s ease infinite alternate}@keyframes windPulse197{to{translate:-5px 0}}
 .carpet-judge-v197{position:absolute;z-index:30;left:50%;top:32%;translate:-50% -50%;font-size:20px;font-weight:1000;text-shadow:3px 3px 0 #fff;white-space:nowrap}.carpet-judge-v197.good{color:#218b44}.carpet-judge-v197.bad{color:#d83d37}
-
-/* GAME 109 Gatekeeper — enemy slime is drawn entirely in CSS */
-.gatekeeper-stage-v197{position:relative;flex:1;min-height:390px;border:4px solid var(--ink);border-radius:16px;background:#d5ecd1;overflow:hidden}.gatekeeper-stage-v197::after{content:"";position:absolute;left:0;right:0;bottom:0;height:78px;border-top:4px solid var(--ink);background:#b9a16c}.gatekeeper-castle-v197{position:absolute;z-index:2;left:50%;bottom:60px;translate:-50% 0;width:130px;height:225px;border:5px solid var(--ink);border-bottom:0;background:#c8b992}.gatekeeper-castle-v197::before,.gatekeeper-castle-v197::after{content:"";position:absolute;top:-34px;width:48px;height:52px;border:5px solid var(--ink);background:#ad9d7c}.gatekeeper-castle-v197::before{left:-34px}.gatekeeper-castle-v197::after{right:-34px}.gatekeeper-castle-v197 i{position:absolute;left:50%;bottom:0;translate:-50% 0;width:75px;height:125px;border:5px solid var(--ink);border-bottom:0;border-radius:38px 38px 0 0;background:#49424a}.gatekeeper-castle-v197 b{position:absolute;left:50%;top:18px;translate:-50% 0;white-space:nowrap;font-size:9px}.gatekeeper-guard-v197{position:absolute;z-index:15;left:50%;bottom:55px;translate:-50% 0;width:88px;height:105px}.gatekeeper-guard-v197 img{position:absolute;left:13px;bottom:0;width:64px;height:82px;object-fit:contain}.gatekeeper-hammer-v197{position:absolute;left:50%;top:11px;width:11px;height:70px;border:4px solid var(--ink);border-radius:999px;background:#8b663d;transform-origin:50% 75%;rotate:-80deg}.gatekeeper-hammer-v197::before{content:"";position:absolute;left:-20px;top:-13px;width:48px;height:28px;border:4px solid var(--ink);border-radius:8px;background:#6f7780}.gatekeeper-guard-v197.attack-left .gatekeeper-hammer-v197{animation:gateAttackL197 .22s ease}.gatekeeper-guard-v197.attack-right .gatekeeper-hammer-v197{animation:gateAttackR197 .22s ease}@keyframes gateAttackL197{50%{rotate:-142deg}}@keyframes gateAttackR197{50%{rotate:42deg}}
-.gatekeeper-actors-v197{position:absolute;z-index:12;inset:0}.gate-runner-v197{position:absolute;left:0;top:0;width:60px;height:64px;opacity:0;will-change:transform}.gate-runner-v197.show{opacity:1}.gate-runner-v197.friend img{width:58px;height:58px;object-fit:contain}.gate-slime-v197{position:absolute;left:3px;bottom:2px;width:54px;height:44px;border:4px solid var(--ink);border-radius:52% 48% 39% 42% / 63% 64% 36% 37%;background:#70cc69}.gate-slime-v197::before{content:"";position:absolute;left:12px;top:-17px;width:25px;height:25px;border:4px solid var(--ink);border-bottom:0;border-radius:50% 50% 0 0;background:#70cc69;rotate:13deg}.gate-slime-v197 .eye{position:absolute;z-index:3;top:13px;width:8px;height:10px;border:3px solid var(--ink);border-radius:50%;background:#fff}.gate-slime-v197 .eye::after{content:"";position:absolute;left:2px;top:2px;width:2px;height:2px;border-radius:50%;background:var(--ink)}.gate-slime-v197 .e1{left:13px}.gate-slime-v197 .e2{right:13px}.gate-slime-v197 b{display:none}.gate-runner-v197.fly-left{animation:gateFlyL197 .55s ease-out forwards}.gate-runner-v197.fly-right{animation:gateFlyR197 .55s ease-out forwards}.gate-runner-v197.enter{opacity:.18}@keyframes gateFlyL197{to{translate:-150px -75px;rotate:-230deg;opacity:0}}@keyframes gateFlyR197{to{translate:150px -75px;rotate:230deg;opacity:0}}
-.gatekeeper-controls-v197{display:grid;grid-template-columns:1fr 1fr;gap:7px}.gatekeeper-controls-v197 button{min-height:65px;border:4px solid var(--ink);border-radius:14px;background:#e7d15b;font-size:22px;font-weight:1000}.gatekeeper-controls-v197 small{display:block;font-size:8px}.gatekeeper-judge-v197{position:absolute;z-index:30;left:50%;top:25%;translate:-50% -50%;font-size:18px;font-weight:1000;text-shadow:3px 3px 0 #fff;white-space:nowrap}.gatekeeper-judge-v197.good{color:#218f45}.gatekeeper-judge-v197.bad{color:#d63c37}
 
 /* GAME 110 Fruit Catch */
 .fruit-stage-v197{position:relative;flex:1;min-height:410px;border:4px solid var(--ink);border-radius:16px;background:#dff2ce;overflow:hidden;touch-action:none}.fruit-bg-v197{position:absolute;inset:0;background:linear-gradient(#d8f2fc 0 72%,#94cf78 72%);border-bottom:0}.fruit-basket-v197{position:absolute;z-index:14;left:0;top:0;width:104px;height:50px;border:5px solid var(--ink);border-radius:12px 12px 28px 28px;background:#b47b43;display:grid;place-items:center;will-change:transform}.fruit-basket-v197::before{content:"";position:absolute;left:13px;right:13px;top:-25px;height:37px;border:5px solid var(--ink);border-bottom:0;border-radius:30px 30px 0 0}.fruit-basket-v197 b{font-size:9px}.fruit-basket-v197.ouch{animation:basketOuch197 .24s linear}@keyframes basketOuch197{25%{rotate:-8deg}50%{rotate:8deg}75%{rotate:-4deg}}
@@ -29001,21 +28996,6 @@ canvas{
 /* 108: faster carpet control, slightly longer field */
 .carpet-stage-v198{min-height:400px}
 .carpet-actor-v198{will-change:transform}
-
-/* 109: much larger hammer + longer visual reach */
-.gatekeeper-guard-v198{width:126px;height:132px;overflow:visible}
-.gatekeeper-guard-v198 img{left:31px;bottom:0;width:66px;height:86px}
-.gatekeeper-hammer-v198{
-  left:50%;top:-2px;width:15px;height:98px;border-width:5px;
-  transform-origin:50% 77%;rotate:-88deg;z-index:7
-}
-.gatekeeper-hammer-v198::before{
-  left:-32px;top:-18px;width:78px;height:39px;border-width:5px;border-radius:10px
-}
-.gatekeeper-guard-v198.attack-left .gatekeeper-hammer-v198{animation:gateAttackL198 .24s ease}
-.gatekeeper-guard-v198.attack-right .gatekeeper-hammer-v198{animation:gateAttackR198 .24s ease}
-@keyframes gateAttackL198{50%{rotate:-151deg;translate:-14px 0}}
-@keyframes gateAttackR198{50%{rotate:55deg;translate:14px 0}}
 
 /* 110: Mob-kun visibly carries the basket */
 .fruit-stage-v198{min-height:420px}
@@ -29089,31 +29069,6 @@ canvas{
 .carpet-spikeball-v199.hit-v199{animation:spikeHit199 .25s linear}
 @keyframes spikeHit199{25%{scale:1.18}50%{scale:.92}75%{scale:1.08}}
 
-/* 109 Gatekeeper trap slimes */
-.gatekeeper-stage-v199{min-height:405px}
-.gate-slime-v199.speed{background:#9a62d4}
-.gate-slime-v199.speed::before{background:#9a62d4}
-.gate-slime-v199.armor{background:#6994b6}
-.gate-slime-v199.armor::before{background:#6994b6}
-.gate-slime-v199.bomb{background:#e65a4f}
-.gate-slime-v199.bomb::before{background:#e65a4f}
-.gate-slime-v199 .shield-v199{
-  position:absolute;z-index:6;left:-8px;top:8px;width:68px;height:38px;
-  border:4px solid var(--ink);border-radius:50%;background:rgba(216,238,244,.78);
-  box-shadow:inset 0 -5px 0 rgba(66,105,128,.18)
-}
-.gate-runner-v197.armor.cracked-v199 .shield-v199{opacity:.36;rotate:13deg;translate:8px 4px}
-.gate-slime-v199 .fuse-v199{
-  position:absolute;z-index:7;right:-2px;top:-30px;width:22px;height:20px;
-  border-left:4px solid var(--ink);border-top:4px solid var(--ink);border-radius:50% 0 0 0
-}
-.gate-slime-v199 .fuse-v199::after{
-  content:"";position:absolute;right:-7px;top:-7px;width:9px;height:9px;border:3px solid var(--ink);border-radius:50%;background:#f5d45a
-}
-.gate-runner-v197.explode-v199{animation:gateBomb199 .38s ease-out forwards}
-@keyframes gateBomb199{40%{scale:1.45;filter:brightness(1.45)}100%{scale:.2;opacity:0}}
-.gate-runner-v197.safe-bomb-v199{opacity:.18;scale:.72}
-
 /* 110 Fruit Catch: bomb + rotten traps */
 .fruit-stage-v199.bomb-hit-v199{animation:fruitBomb199 .26s linear}
 @keyframes fruitBomb199{25%{translate:-7px 2px}50%{translate:7px -2px}75%{translate:-4px 1px}}
@@ -29142,3 +29097,13 @@ canvas{
 
 /* 3 point: second upper robot, slightly smaller so the ring remains visible */
 .tp-guard-top-v199{z-index:15;scale:.86;filter:drop-shadow(0 3px 0 rgba(0,0,0,.12))}
+
+/* V11.00 — normal amidakuji: goal numbers sit at the real endpoints */
+.amida-v126 .amida-goals-v126{
+  height:58px;
+}
+.amida-v126 .amida-goal-stem-v200{
+  stroke:#26272b;
+  stroke-width:5;
+  stroke-linecap:round;
+}
