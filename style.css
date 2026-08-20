@@ -29063,3 +29063,82 @@ canvas{
 }
 .senryo-coin-v198 b{position:relative;z-index:2;font-size:6px}
 .senryo-coin-v198.giant b{font-size:12px}
+
+
+/* =========================================================
+   V10.99 — 108-111 traps, normal amidakuji density, 3PT upper robot
+   ========================================================= */
+
+/* 108 Flying Carpet: moving spike balls, faster-control field */
+.carpet-stage-v199{min-height:425px}
+.carpet-controls-v199 button{min-height:66px;font-size:28px}
+.carpet-spikeball-v199{
+  position:absolute;z-index:10;left:0;top:0;width:60px;height:60px;
+  border:5px solid var(--ink);border-radius:50%;background:#e15a58;
+  display:grid;place-items:center;will-change:transform;transform-origin:50% 50%;
+  box-shadow:inset 0 -7px 0 rgba(0,0,0,.12)
+}
+.carpet-spikeball-v199.size-1{width:66px;height:66px;background:#865fc5}
+.carpet-spikeball-v199.size-2{width:72px;height:72px;background:#4f8ea8}
+.carpet-spikeball-v199>b{position:relative;z-index:3;font-size:8px;color:#fff;text-shadow:2px 2px 0 var(--ink)}
+.carpet-spikeball-v199>i{
+  --r:0deg;position:absolute;z-index:-1;left:50%;top:50%;width:16px;height:25px;
+  border:4px solid var(--ink);background:#f1d35b;transform-origin:50% 34px;
+  transform:translate(-50%,-34px) rotate(var(--r));clip-path:polygon(50% 0,100% 100%,0 100%)
+}
+.carpet-spikeball-v199.hit-v199{animation:spikeHit199 .25s linear}
+@keyframes spikeHit199{25%{scale:1.18}50%{scale:.92}75%{scale:1.08}}
+
+/* 109 Gatekeeper trap slimes */
+.gatekeeper-stage-v199{min-height:405px}
+.gate-slime-v199.speed{background:#9a62d4}
+.gate-slime-v199.speed::before{background:#9a62d4}
+.gate-slime-v199.armor{background:#6994b6}
+.gate-slime-v199.armor::before{background:#6994b6}
+.gate-slime-v199.bomb{background:#e65a4f}
+.gate-slime-v199.bomb::before{background:#e65a4f}
+.gate-slime-v199 .shield-v199{
+  position:absolute;z-index:6;left:-8px;top:8px;width:68px;height:38px;
+  border:4px solid var(--ink);border-radius:50%;background:rgba(216,238,244,.78);
+  box-shadow:inset 0 -5px 0 rgba(66,105,128,.18)
+}
+.gate-runner-v197.armor.cracked-v199 .shield-v199{opacity:.36;rotate:13deg;translate:8px 4px}
+.gate-slime-v199 .fuse-v199{
+  position:absolute;z-index:7;right:-2px;top:-30px;width:22px;height:20px;
+  border-left:4px solid var(--ink);border-top:4px solid var(--ink);border-radius:50% 0 0 0
+}
+.gate-slime-v199 .fuse-v199::after{
+  content:"";position:absolute;right:-7px;top:-7px;width:9px;height:9px;border:3px solid var(--ink);border-radius:50%;background:#f5d45a
+}
+.gate-runner-v197.explode-v199{animation:gateBomb199 .38s ease-out forwards}
+@keyframes gateBomb199{40%{scale:1.45;filter:brightness(1.45)}100%{scale:.2;opacity:0}}
+.gate-runner-v197.safe-bomb-v199{opacity:.18;scale:.72}
+
+/* 110 Fruit Catch: bomb + rotten traps */
+.fruit-stage-v199.bomb-hit-v199{animation:fruitBomb199 .26s linear}
+@keyframes fruitBomb199{25%{translate:-7px 2px}50%{translate:7px -2px}75%{translate:-4px 1px}}
+.fall-item-v197.bomb{border-radius:50%;background:#3e4449}
+.fall-item-v197.bomb .fuse-v199{
+  position:absolute;right:1px;top:-15px;width:17px;height:17px;border-left:4px solid var(--ink);border-top:4px solid var(--ink);border-radius:50% 0 0 0
+}
+.fall-item-v197.bomb .fuse-v199::after{content:"";position:absolute;right:-5px;top:-6px;width:8px;height:8px;border:2px solid var(--ink);border-radius:50%;background:#f1cd49}
+.fall-item-v197.rotten{border-radius:48% 52% 45% 55%;background:#7c8b48}
+.fall-item-v197.rotten::after{content:"";position:absolute;left:7px;top:16px;width:20px;height:8px;border-radius:50%;background:#4d542e}
+.fall-item-v197.rotten .rot-leaf-v199{position:absolute;left:15px;top:-10px;width:15px;height:9px;border:3px solid var(--ink);border-radius:80% 0 80% 0;background:#665d33;rotate:24deg}
+
+/* 111 Senryobako FEVER system */
+.senryo-fever-v199{
+  position:absolute;z-index:28;left:50%;top:18px;translate:-50% 0;
+  padding:5px 10px;border:3px solid var(--ink);border-radius:999px;background:#fff;
+  font-size:9px;font-weight:1000;white-space:nowrap
+}
+.senryo-fever-v199.on-v199{background:#ffe260;animation:senFeverPulse199 .26s ease infinite alternate}
+@keyframes senFeverPulse199{to{scale:1.08}}
+.senryo-stage-v199.fever-hit-v199{box-shadow:inset 0 0 0 8px rgba(255,224,96,.48)}
+
+/* Normal amidakuji has 26 horizontal lines; keep them readable */
+.amida-v126 .amida-horizontal{stroke-width:5}
+.amida-v126 .amida-vertical{stroke-width:5}
+
+/* 3 point: second upper robot, slightly smaller so the ring remains visible */
+.tp-guard-top-v199{z-index:15;scale:.86;filter:drop-shadow(0 3px 0 rgba(0,0,0,.12))}

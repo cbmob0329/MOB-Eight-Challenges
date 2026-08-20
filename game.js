@@ -343,10 +343,10 @@ const GAMES=[
   {no:105,key:"djMaster",title:"モブくんDJの達人",sub:"10秒で流れる20個の音符に合わせ、巨大ターンテーブルをスクラッチ",legacy:117},
   {no:106,key:"rocketPunch",title:"モブくんロケットパンチ",sub:"拳へパワーを溜めて巨大ロケットパンチ。狭いMAXゾーンから3000mを狙う",legacy:118},
   {no:107,key:"flagRaise",title:"モブくん旗上げ",sub:"赤・両方・白の3ボタン。もう一度押せば旗を下げる",legacy:119},
-  {no:108,key:"flyingCarpet",title:"モブくん空飛ぶじゅうたん",sub:"▲▼の高速高度操作。15秒・15ゲートの少し長い空中ステージ",legacy:121},
-  {no:109,key:"gatekeeperMob",title:"モブくん巨大門番",sub:"左右から迫るスライムだけを撃退。味方モブくんは通す",legacy:122},
-  {no:110,key:"fruitCatchMob",title:"モブくんフルーツキャッチ",sub:"モブくんが持つカゴを左右ドラッグ。14秒でフルーツを集める",legacy:123},
-  {no:111,key:"senryobakoMob",title:"モブくん千両箱",sub:"モブくんが千両箱を持って移動。4サイズの小判を16秒で集める",legacy:124}
+  {no:108,key:"flyingCarpet",title:"モブくん空飛ぶじゅうたん",sub:"超高速の▲▼高度操作。18秒、上下に動く18個のトゲボールを避ける",legacy:121},
+  {no:109,key:"gatekeeperMob",title:"モブくん巨大門番",sub:"通常・高速・装甲・爆弾スライムと味方を瞬時に見分ける門番バトル",legacy:122},
+  {no:110,key:"fruitCatchMob",title:"モブくんフルーツキャッチ",sub:"15秒。フルーツを集めながら岩・爆弾・腐った実を避ける",legacy:123},
+  {no:111,key:"senryobakoMob",title:"モブくん千両箱",sub:"5連続GETでFEVER×2。全小判を取らなくても100点を狙える",legacy:124}
 ];
 
 function legacyGameIndex(gameIndex){
@@ -2692,7 +2692,7 @@ function showGameIntro(index){
   }else if(legacyIndex===54){
     rules=`<li>ドッジボール大好きなモブくんが10秒で何体倒せるか挑戦。</li><li>play/003.pngがプレイヤー。黒塗り反転モブくんが5体ずつ出現。</li><li>敵はそれぞれ上下移動し、必ず中央のボールラインを通過します。</li><li>THROWまたは画面タップで真っすぐボールを発射。1回投げるとリロード1秒。</li><li>5体全滅すると新しい5体が即登場。10秒終了時のKO数が記録。</li>`;
   }else if(legacyIndex===55){
-    rules=`<li>6本のあみだくじ。ゴールは0 / 15 / 30 / 50 / 75 / 100。</li><li>最初はゴール側からカメラが始まり、あみだの一部をヒントとして見せてから入口へ移動。</li><li>入口を1つ選ぶとモブくんが自動で線をたどり、カメラが追従してゴールへ。</li><li>あみだの横線・数字の配置は毎回ランダム。</li>`;
+    rules=`<li>6本のあみだくじ。横線を従来の約2倍、26本に増やしています。ゴールは0 / 15 / 30 / 50 / 75 / 100。</li><li>最初はゴール側からカメラが始まり、一部をヒントとして見せてから入口へ移動。横線・数字の配置は毎回ランダムです。</li>`;
   }else if(legacyIndex===56){
     rules=`<li>鍔・柄・柄頭は最初から完成済み。プレイヤーが描くのは刀身だけ。</li><li>刀は縦向き。黄色い根元から上へ、好きな形のカッコイイ刀身を7秒で描きます。</li><li>長さ・根元への接続・滑らかさ・中央バランスなどを採点。刀身の太さは自由です。</li><li>まっすぐでも少し曲がっていてもOK。1〜100点。</li>`;
   }else if(legacyIndex===57){
@@ -2808,13 +2808,13 @@ function showGameIntro(index){
   }else if(legacyIndex===119){
     rules=`<li>赤・両方・白の3ボタンだけ。上げている旗のボタンをもう一度押すと下がります。</li><li>10秒間、現在の旗状態に合った指示へ素早く対応。間違えても続行します。</li>`;
   }else if(legacyIndex===121){
-    rules=`<li>▲ / ▼でじゅうたんを高速に上下操作。以前より加速・最高速度を上げています。</li><li>15秒・15ゲート。PERFECT+6、PASS+4、衝突-6、ノーダメ完走+10で最大100点です。</li>`;
+    rules=`<li>▲ / ▼でじゅうたんを超高速に上下操作。柱はなく、上下に動くトゲボール18個を18秒で避けます。</li><li>1個通過+5、接触-7、全てノーダメージなら+10。操作速度はトゲを見てからでも回避できる設定です。</li>`;
   }else if(legacyIndex===122){
-    rules=`<li>左攻撃 / 右攻撃で、左右から門へ迫るスライムを大きなハンマーで撃退します。射程も長めです。</li><li>味方モブくんは攻撃せず通すのが正解。敵撃退+5、敵突破-5、味方攻撃-10です。</li>`;
+    rules=`<li>左右の巨大ハンマーで通常・高速・装甲スライムを撃退。装甲は2回攻撃が必要です。</li><li>赤い爆弾スライムと味方モブくんは攻撃禁止。爆弾を殴ると-12、味方を殴ると-10です。</li>`;
   }else if(legacyIndex===123){
-    rules=`<li>モブくんが持っているカゴを左右ドラッグして、14秒間フルーツを集めます。</li><li>通常+3点、ゴールド+5点。岩は-5点と短い操作低下。フルーツ30個で最大100点です。</li>`;
+    rules=`<li>モブくんが持つカゴを左右ドラッグして15秒。通常+3、ゴールド+5です。</li><li>岩-5、爆弾-10、腐った実-4。爆弾は大きく弾かれ、腐った実はしばらくカゴが重くなります。</li>`;
   }else if(legacyIndex===124){
-    rules=`<li>◀ / ▶で千両箱を持ったモブくんを動かし、16秒間小判を集めます。箱には加速・慣性・摩擦があります。</li><li>小判は小・通常・大判・巨大の4サイズ。大きいほど高得点かつ重く、35枚全部で100点です。</li>`;
+    rules=`<li>◀ / ▶で千両箱を持ったモブくんを動かします。小判を取るほど箱が重くなります。</li><li>5枚連続GETごとにFEVERが発動し約2.4秒ポイント×2。巨大小判でもFEVERになるため、35枚全部を取らなくても100点を狙えます。</li>`;
   }else{
     rules=`<li>${esc(g.sub)}</li>`;
   }
@@ -17417,8 +17417,15 @@ async function startDodgeballMob(p,humanIndex,runId){
 // GAME 56 -------------------------------------------------
 async function startAmidakujiMob(p,humanIndex,runId){
   gameFit();
-  const lanes=6,worldH=1120,topY=95,bottomY=1030,goalValues=shuffle([0,15,30,50,75,100]);
-  const rows=[];for(let i=0;i<13;i++){let pair=randi(0,lanes-2);if(rows.length&&rows[rows.length-1].pair===pair)pair=(pair+1+randi(0,2))%(lanes-1);rows.push({y:topY+80+i*64,pair});}
+  const lanes=6,worldH=1480,topY=95,bottomY=1390,goalValues=shuffle([0,15,30,50,75,100]);
+  const rows=[];
+  for(let i=0;i<26;i++){
+    let pair=randi(0,lanes-2);
+    if(rows.length&&rows[rows.length-1].pair===pair){
+      pair=(pair+1+randi(0,2))%(lanes-1);
+    }
+    rows.push({y:topY+62+i*48,pair});
+  }
   let selected=false,raf=null;
   screen.innerHTML=`<div class="amida-shell amida-v126"><div class="game-head"><div><span class="kicker">${esc(p.name)}</span><h2>モブくんのあみだくじ</h2></div><div class="game-badge">${playBadge(humanIndex)}</div></div>
     <div id="amidaViewport" class="amida-viewport amida-viewport-v126"><div id="amidaWorld" class="amida-world" style="height:${worldH}px"><div class="amida-light-v126"></div>
@@ -17435,13 +17442,13 @@ async function startAmidakujiMob(p,humanIndex,runId){
   svg.innerHTML=markup;
   const maxScroll=Math.max(0,worldH-viewport.clientHeight);world.style.transform=`translateY(${-maxScroll}px)`;viewport.classList.add("goal-preview-v126");beep(540,70,.018);
   await wait(1000);if(!isGameRunValid(runId))return;
-  await new Promise(resolve=>{const st=performance.now(),duration=1450;const f=now=>{if(!isGameRunValid(runId)){resolve();return;}const t=clamp((now-st)/duration,0,1),e=1-Math.pow(1-t,3);world.style.transform=`translateY(${-maxScroll*(1-e)}px)`;if(t<1)raf=requestAnimationFrame(f);else resolve();};raf=requestAnimationFrame(f);});
+  await new Promise(resolve=>{const st=performance.now(),duration=1650;const f=now=>{if(!isGameRunValid(runId)){resolve();return;}const t=clamp((now-st)/duration,0,1),e=1-Math.pow(1-t,3);world.style.transform=`translateY(${-maxScroll*(1-e)}px)`;if(t<1)raf=requestAnimationFrame(f);else resolve();};raf=requestAnimationFrame(f);});
   if(!isGameRunValid(runId))return;viewport.classList.remove("goal-preview-v126");hint.textContent='入口を1つ選べ！';entrances.hidden=false;entrances.classList.add("show-v126");
 
   function buildPath(startLane){let lane=startLane;const points=[{x:xForLane(lane),y:topY}];rows.forEach(row=>{points.push({x:xForLane(lane),y:row.y});if(row.pair===lane){lane++;points.push({x:xForLane(lane),y:row.y});}else if(row.pair+1===lane){lane--;points.push({x:xForLane(lane),y:row.y});}});points.push({x:xForLane(lane),y:bottomY});return{points,finalLane:lane};}
   async function animatePath(path){
     mob.hidden=false;const traced=[path.points[0]];trace.setAttribute("points",`${path.points[0].x},${path.points[0].y}`);
-    for(let i=1;i<path.points.length;i++){if(!isGameRunValid(runId))return;const a=path.points[i-1],b=path.points[i],dist=Math.hypot(b.x-a.x,b.y-a.y),duration=clamp(dist*2.45,150,470),st=performance.now();
+    for(let i=1;i<path.points.length;i++){if(!isGameRunValid(runId))return;const a=path.points[i-1],b=path.points[i],dist=Math.hypot(b.x-a.x,b.y-a.y),duration=clamp(dist*1.65,105,320),st=performance.now();
       await new Promise(resolve=>{const f=now=>{if(!isGameRunValid(runId)){resolve();return;}const t=clamp((now-st)/duration,0,1),e=t<.5?2*t*t:1-Math.pow(-2*t+2,2)/2,x=a.x+(b.x-a.x)*e,y=a.y+(b.y-a.y)*e;mob.style.left=`${x/600*100}%`;mob.style.top=`${y}px`;trace.setAttribute("points",[...traced,{x,y}].map(q=>`${q.x},${q.y}`).join(" "));world.style.transform=`translateY(${-clamp(y-viewport.clientHeight*.42,0,maxScroll)}px)`;if(t<1)raf=requestAnimationFrame(f);else resolve();};raf=requestAnimationFrame(f);});
       traced.push(b);if(Math.abs(b.x-a.x)>20)beep(640,34,.012);
     }
@@ -26784,20 +26791,20 @@ function simulateOneCpu(gameIndex,p){
       : randi(55,92);
   }else if(legacyIndex===121){
     state.records.flyingCarpet[p.id]=ultra
-      ? randi(83,100)
-      : randi(44,91);
+      ? randi(80,100)
+      : randi(38,90);
   }else if(legacyIndex===122){
     state.records.gatekeeperMob[p.id]=ultra
-      ? randi(82,100)
-      : randi(40,92);
+      ? randi(78,100)
+      : randi(30,88);
   }else if(legacyIndex===123){
     state.records.fruitCatchMob[p.id]=ultra
-      ? randi(82,100)
-      : randi(43,92);
+      ? randi(78,100)
+      : randi(32,89);
   }else if(legacyIndex===124){
     state.records.senryobakoMob[p.id]=ultra
-      ? randi(84,100)
-      : randi(45,93);
+      ? randi(82,100)
+      : randi(46,95);
   }else{
     const fallbackKey=GAMES[gameIndex]?.key;
     if(fallbackKey&&state.records[fallbackKey])state.records[fallbackKey][p.id]=0;
@@ -28611,6 +28618,13 @@ async function startThreePoint(p,humanIndex,runId){
         <div class="tp-ring-v176"></div>
         <div class="tp-net-v176"></div>
 
+        <div id="tpGuardTop199" class="tp-guard-v176 tp-guard-top-v199">
+          <i class="antenna-v176"></i>
+          <b class="head-v176"><em></em><em></em></b>
+          <span class="body-v176"></span>
+          <u class="arm left-v176"></u><u class="arm right-v176"></u>
+        </div>
+
         <div id="tpGuard176" class="tp-guard-v176">
           <i class="antenna-v176"></i>
           <b class="head-v176"><em></em><em></em></b>
@@ -28634,13 +28648,14 @@ async function startThreePoint(p,humanIndex,runId){
   const ball=document.getElementById('tpBall176');
   const guide=document.getElementById('tpGuide176');
   const guard=document.getElementById('tpGuard176');
+  const topGuard=document.getElementById('tpGuardTop199');
   const call=document.getElementById('tpCall176');
   const countEl=document.getElementById('tpCount176');
   const scoreEl=document.getElementById('tpScore176');
   const blockEl=document.getElementById('tpBlock176');
 
   let shot=0,total=0,blockedCount=0,ready=false,drag=null,flight=null,raf=null,last=performance.now(),finished=false;
-  let startX=0,startY=0,guardX=0,guardY=0,guardStart=performance.now();
+  let startX=0,startY=0,guardX=0,guardY=0,topGuardX=0,topGuardY=0,guardStart=performance.now();
 
   function dims(){return {w:stage.clientWidth,h:stage.clientHeight}}
   function local(e){const r=stage.getBoundingClientRect();return{x:e.clientX-r.left,y:e.clientY-r.top}}
@@ -28651,8 +28666,12 @@ async function startThreePoint(p,humanIndex,runId){
     const speed=1.45+shot*.10;
     guardX=w*.5+Math.sin(elapsed*speed*2.2)*w*.27;
     guardY=h*.43;
+    topGuardX=w*.5+Math.sin(elapsed*(speed+.26)*2.0+Math.PI)*w*.22;
+    topGuardY=h*.285;
     guard.style.left=`${guardX}px`;
     guard.style.top=`${guardY}px`;
+    topGuard.style.left=`${topGuardX}px`;
+    topGuard.style.top=`${topGuardY}px`;
   }
 
   function setShot(){
@@ -28825,23 +28844,27 @@ async function startThreePoint(p,humanIndex,runId){
       f.x+=f.vx*dt;
       f.y+=f.vy*dt;
 
-      // Robot blocks the rising shot in front of the hoop.
-      if(!f.blocked&&f.vy<0&&Math.abs(f.x-guardX)<=37&&Math.abs(f.y-guardY)<=31){
-        f.blocked=true;
-        blockedCount++;
-        blockEl.textContent=blockedCount;
-
-        const side=f.x<guardX?-1:1;
-        f.vx+=side*170;
-        f.vy=Math.abs(f.vy)*.45+175;
-
-        guard.classList.remove('block-v176');
-        void guard.offsetWidth;
-        guard.classList.add('block-v176');
-
-        call.textContent='ROBOT BLOCK!';
-        call.className='tp-call-v176 block-v176';
-        beep(210,100,.027);
+      // Two robots block the rising shot: one middle, one upper near the hoop.
+      if(!f.blocked&&f.vy<0){
+        const blockers=[
+          {el:guard,x:guardX,y:guardY,rx:37,ry:31},
+          {el:topGuard,x:topGuardX,y:topGuardY,rx:34,ry:28}
+        ];
+        const hit=blockers.find(g=>Math.abs(f.x-g.x)<=g.rx&&Math.abs(f.y-g.y)<=g.ry);
+        if(hit){
+          f.blocked=true;
+          blockedCount++;
+          blockEl.textContent=blockedCount;
+          const side=f.x<hit.x?-1:1;
+          f.vx+=side*170;
+          f.vy=Math.abs(f.vy)*.45+175;
+          hit.el.classList.remove('block-v176');
+          void hit.el.offsetWidth;
+          hit.el.classList.add('block-v176');
+          call.textContent='ROBOT BLOCK!';
+          call.className='tp-call-v176 block-v176';
+          beep(210,100,.027);
+        }
       }
 
       const hoopX=f.w*.5;
@@ -36810,8 +36833,8 @@ async function startFlagRaise(p,humanIndex,runId){
 async function startFlyingCarpet(p,humanIndex,runId){
   gameFit();
   const gameIndex=GAMES.findIndex(g=>g.key==='flyingCarpet');
-  const GAME_MS=15000;
-  const GATE_COUNT=15;
+  const GAME_MS=18000;
+  const OBSTACLE_COUNT=18;
 
   screen.innerHTML=`
     <div class="carpet-shell-v197 gameplay-fit">
@@ -36820,81 +36843,77 @@ async function startFlyingCarpet(p,humanIndex,runId){
         <div class="game-badge">${playBadge(humanIndex)}</div>
       </div>
       <div class="carpet-hud-v197">
-        <div><span>TIME</span><b id="carpetTime197">15.00</b></div>
-        <div><span>GATE</span><b id="carpetGate197">0 / 15</b></div>
-        <div><span>SCORE</span><b id="carpetScore197">0</b></div>
+        <div><span>TIME</span><b id="carpetTime199">18.00</b></div>
+        <div><span>DODGE</span><b id="carpetDodge199">0 / 18</b></div>
+        <div><span>SCORE</span><b id="carpetScore199">0</b></div>
       </div>
-      <div id="carpetStage197" class="carpet-stage-v197 carpet-stage-v198">
+      <div id="carpetStage199" class="carpet-stage-v197 carpet-stage-v199">
         <div class="carpet-sky-v197"></div>
         <div class="carpet-cloud-v197 c1"></div><div class="carpet-cloud-v197 c2"></div><div class="carpet-cloud-v197 c3"></div>
-        <div id="carpetWind197" class="carpet-wind-v197"></div>
-        <div id="carpetObjects197" class="carpet-objects-v197"></div>
-        <div id="carpetActor197" class="carpet-actor-v197 carpet-actor-v198">
+        <div id="carpetWind199" class="carpet-wind-v197"></div>
+        <div id="carpetObjects199" class="carpet-objects-v197"></div>
+        <div id="carpetActor199" class="carpet-actor-v197 carpet-actor-v199">
           <img src="icon/01.png" draggable="false" alt="">
           <div class="carpet-rug-v197"><i></i><i></i></div>
         </div>
-        <div id="carpetJudge197" class="carpet-judge-v197"></div>
+        <div id="carpetJudge199" class="carpet-judge-v197"></div>
       </div>
-      <div class="carpet-controls-v197">
-        <button id="carpetUp197" type="button" disabled>▲<small>UP</small></button>
-        <button id="carpetDown197" type="button" disabled>▼<small>DOWN</small></button>
+      <div class="carpet-controls-v197 carpet-controls-v199">
+        <button id="carpetUp199" type="button" disabled>▲<small>UP</small></button>
+        <button id="carpetDown199" type="button" disabled>▼<small>DOWN</small></button>
       </div>
     </div>`;
 
-  const stage=document.getElementById('carpetStage197');
-  const layer=document.getElementById('carpetObjects197');
-  const actor=document.getElementById('carpetActor197');
-  const upBtn=document.getElementById('carpetUp197');
-  const downBtn=document.getElementById('carpetDown197');
-  const timeEl=document.getElementById('carpetTime197');
-  const gateEl=document.getElementById('carpetGate197');
-  const scoreEl=document.getElementById('carpetScore197');
-  const judge=document.getElementById('carpetJudge197');
-  const windEl=document.getElementById('carpetWind197');
+  const stage=document.getElementById('carpetStage199');
+  const layer=document.getElementById('carpetObjects199');
+  const actor=document.getElementById('carpetActor199');
+  const upBtn=document.getElementById('carpetUp199');
+  const downBtn=document.getElementById('carpetDown199');
+  const timeEl=document.getElementById('carpetTime199');
+  const dodgeEl=document.getElementById('carpetDodge199');
+  const scoreEl=document.getElementById('carpetScore199');
+  const judge=document.getElementById('carpetJudge199');
+  const windEl=document.getElementById('carpetWind199');
 
   void stage.offsetHeight;
   const W=stage.clientWidth,H=stage.clientHeight;
-  const ACTOR_X=82;
+  const ACTOR_X=84;
   const actorH=66;
   let y=H*.50,vy=0;
   let up=false,down=false;
   let active=false,finished=false,raf=null,last=performance.now(),start=0,endAt=0;
-  let score=0,passed=0,hits=0,invulnUntil=0;
+  let score=0,dodged=0,hits=0,invulnUntil=0;
 
-  const gates=[];
-  const gapH=Math.max(108,H*.29);
-  const startX=W+120;
-  const spacing=Math.max(220,W*.60);
+  const startX=W+95;
+  const spacing=Math.max(205,W*.55);
+  const obstacles=[];
 
-  for(let i=0;i<GATE_COUNT;i++){
-    const center=H*(.25+((i*37)%49)/100);
+  for(let i=0;i<OBSTACLE_COUNT;i++){
+    const radius=27+(i%3)*3;
+    const base=H*(.26+((i*31)%46)/100);
+    const amp=H*(.13+((i*17)%12)/100);
+    const freq=1.35+(i%5)*.13;
+    const phase=(i*.91)%6.283;
     const x=startX+i*spacing;
-    const gate={i,x,center,done:false,el:null};
+    const o={i,x,base,amp,freq,phase,radius,done:false,hit:false,el:null};
     const el=document.createElement('div');
-    el.className='carpet-gate-v197';
-    el.style.left=`${x}px`;
-    el.innerHTML=`<div class="top"></div><div class="bottom"></div><b>${i+1}</b>`;
-    layer.appendChild(el);
-    gate.el=el;
-    gates.push(gate);
+    el.className=`carpet-spikeball-v199 size-${i%3}`;
+    el.innerHTML=`<b>MOB</b>${Array.from({length:10},(_,k)=>`<i style="--r:${k*36}deg"></i>`).join('')}`;
+    layer.appendChild(el);o.el=el;obstacles.push(o);
   }
 
-  function setGateVisual(g){
-    const topH=Math.max(0,g.center-gapH/2);
-    const bottomY=Math.min(H,g.center+gapH/2);
-    const top=g.el.querySelector('.top');
-    const bottom=g.el.querySelector('.bottom');
-    top.style.height=`${topH}px`;
-    bottom.style.top=`${bottomY}px`;
-    bottom.style.height=`${H-bottomY}px`;
-    g.el.style.transform='translateX(0px)';
-  }
-  gates.forEach(setGateVisual);
+  const ballY=(o,t)=>clamp(o.base+Math.sin(t*o.freq+o.phase)*o.amp,38,H-42);
+
+  // ABSOLUTE RULE: actor and every obstacle are placed at their true t=0 coordinates before countdown.
+  obstacles.forEach(o=>{
+    const by=ballY(o,0);
+    o.el.style.transform=`translate3d(${o.x-o.radius}px,${by-o.radius}px,0)`;
+  });
 
   const windWindows=[
-    {a:3.0,b:4.3,force:-82,label:'WIND ▲'},
-    {a:7.2,b:8.5,force:88,label:'WIND ▼'},
-    {a:11.2,b:12.7,force:-94,label:'WIND ▲'}
+    {a:4.0,b:5.2,force:-110,label:'WIND ▲'},
+    {a:9.0,b:10.2,force:118,label:'WIND ▼'},
+    {a:13.8,b:15.0,force:-126,label:'WIND ▲'}
   ];
 
   const hold=(btn,set)=>{
@@ -36911,7 +36930,7 @@ async function startFlyingCarpet(p,humanIndex,runId){
   hold(downBtn,v=>down=v);
 
   function renderActor(){
-    actor.style.transform=`translate3d(${ACTOR_X-54}px,${y-actorH/2}px,0) rotate(${clamp(vy*.038,-8,8)}deg)`;
+    actor.style.transform=`translate3d(${ACTOR_X-54}px,${y-actorH/2}px,0) rotate(${clamp(vy*.018,-7,7)}deg)`;
   }
 
   function pop(text,good=true){
@@ -36919,7 +36938,7 @@ async function startFlyingCarpet(p,humanIndex,runId){
     judge.className=`carpet-judge-v197 ${good?'good':'bad'}`;
     setTimeout(()=>{
       if(judge.textContent===text){judge.textContent='';judge.className='carpet-judge-v197'}
-    },430);
+    },390);
   }
 
   async function finish(){
@@ -36930,13 +36949,12 @@ async function startFlyingCarpet(p,humanIndex,runId){
     score=clamp(Math.round(score),0,100);
     state.records.flyingCarpet[p.id]=score;
     scoreEl.textContent=score;timeEl.textContent='0.00';
-    pop(hits===0?'NO DAMAGE +10!':`${passed}/${GATE_COUNT} GATES`,true);
+    pop(hits===0?'NO DAMAGE +10!':`${dodged}/${OBSTACLE_COUNT} DODGE`,true);
     beep(score>=90?1080:score>=60?760:480,150,.035);
     await wait(650);
-    if(isGameRunValid(runId))recordScreen(gameIndex,p,humanIndex,`${score}<small>pt</small>`,`${passed}/${GATE_COUNT} GATES / HIT ${hits}`);
+    if(isGameRunValid(runId))recordScreen(gameIndex,p,humanIndex,`${score}<small>pt</small>`,`${dodged}/${OBSTACLE_COUNT} DODGE / HIT ${hits}`);
   }
 
-  // ABSOLUTE RULE: real start pose must exist before countdown.
   renderActor();
   actor.classList.add('countdown-ready-v198');
   void stage.offsetHeight;
@@ -36944,7 +36962,7 @@ async function startFlyingCarpet(p,humanIndex,runId){
   if(!(await countdown('FLYING CARPET',runId,{transparent:true})))return;
   active=true;upBtn.disabled=false;downBtn.disabled=false;
   last=performance.now();start=last;endAt=start+GAME_MS;
-  const scrollSpeed=(startX+(GATE_COUNT-1)*spacing+145-ACTOR_X)/(GAME_MS/1000);
+  const scrollSpeed=(startX+(OBSTACLE_COUNT-1)*spacing+100-ACTOR_X)/(GAME_MS/1000);
 
   function frame(now){
     if(!isGameRunValid(runId)||finished)return;
@@ -36957,34 +36975,43 @@ async function startFlyingCarpet(p,humanIndex,runId){
     windEl.classList.toggle('show',!!label);
 
     const input=(down?1:0)-(up?1:0);
-    vy+=input*405*dt+wind*dt;
-    vy*=Math.pow(.945,dt*60);
-    vy=clamp(vy,-230,230);
+    // Very responsive vertical control: it must always be possible to dodge a visible ball.
+    vy+=input*1120*dt+wind*dt;
+    vy*=Math.pow(.972,dt*60);
+    vy=clamp(vy,-480,480);
     y+=vy*dt;
-    y=clamp(y,44,H-52);
-    if(y<=45||y>=H-53)vy*=-.18;
+    y=clamp(y,39,H-47);
+    if(y<=40||y>=H-48)vy*=-.10;
     renderActor();
 
-    gates.forEach(g=>{
-      const sx=g.x-scrollSpeed*elapsed;
-      g.el.style.transform=`translateX(${(-scrollSpeed*elapsed).toFixed(1)}px)`;
-      if(!g.done&&sx<=ACTOR_X+18){
-        g.done=true;passed++;gateEl.textContent=`${passed} / ${GATE_COUNT}`;
-        const err=Math.abs(y-g.center);
-        const safe=gapH/2-23;
-        if(err<=safe*.40){score+=6;pop('PERFECT +6');beep(960,50,.018)}
-        else if(err<=safe){score+=4;pop('PASS +4');beep(720,45,.014)}
-        else if(now>=invulnUntil){
-          score-=6;hits++;invulnUntil=now+500;vy*=-.46;
+    obstacles.forEach(o=>{
+      const sx=o.x-scrollSpeed*elapsed;
+      const by=ballY(o,elapsed);
+      o.el.style.transform=`translate3d(${sx-o.radius}px,${by-o.radius}px,0) rotate(${elapsed*115+o.i*23}deg)`;
+
+      if(!o.hit&&now>=invulnUntil){
+        const dx=Math.abs(sx-(ACTOR_X+28));
+        const dy=Math.abs(by-y);
+        if(dx<=o.radius+31&&dy<=o.radius+20){
+          o.hit=true;hits++;score-=7;invulnUntil=now+560;
+          vy+=(y<by?-1:1)*135;
           actor.classList.remove('hit');void actor.offsetWidth;actor.classList.add('hit');
-          pop('HIT -6',false);beep(180,90,.025);
+          o.el.classList.add('hit-v199');
+          pop('SPIKE HIT -7',false);beep(170,100,.027);
+          score=clamp(score,0,100);scoreEl.textContent=score;
         }
+      }
+
+      if(!o.done&&sx<ACTOR_X-60){
+        o.done=true;dodged++;score+=5;
+        dodgeEl.textContent=`${dodged} / ${OBSTACLE_COUNT}`;
+        if(!o.hit){pop('DODGE +5');beep(760,38,.012)}
         score=clamp(score,0,100);scoreEl.textContent=score;
       }
     });
 
     const left=Math.max(0,endAt-now);timeEl.textContent=(left/1000).toFixed(2);
-    if(left<=0||passed>=GATE_COUNT){finish();return}
+    if(left<=0||dodged>=OBSTACLE_COUNT){finish();return}
     raf=requestAnimationFrame(frame);
   }
   raf=requestAnimationFrame(frame);
@@ -36993,59 +37020,65 @@ async function startFlyingCarpet(p,humanIndex,runId){
 async function startGatekeeperMob(p,humanIndex,runId){
   gameFit();
   const gameIndex=GAMES.findIndex(g=>g.key==='gatekeeperMob');
+  const GAME_MS=13000;
 
   screen.innerHTML=`
     <div class="gatekeeper-shell-v197 gameplay-fit">
       <div class="game-head"><div><span class="kicker">${esc(p.name)}</span><h2>モブくん巨大門番</h2></div><div class="game-badge">${playBadge(humanIndex)}</div></div>
-      <div class="gatekeeper-hud-v197"><div><span>TIME</span><b id="gateTime197">12.00</b></div><div><span>DEFEAT</span><b id="gateDefeat197">0 / 20</b></div><div><span>SCORE</span><b id="gateScore197">0</b></div></div>
-      <div id="gateStage197" class="gatekeeper-stage-v197 gatekeeper-stage-v198">
+      <div class="gatekeeper-hud-v197"><div><span>TIME</span><b id="gateTime199">13.00</b></div><div><span>DEFEAT</span><b id="gateDefeat199">0 / 21</b></div><div><span>SCORE</span><b id="gateScore199">0</b></div></div>
+      <div id="gateStage199" class="gatekeeper-stage-v197 gatekeeper-stage-v199">
         <div class="gatekeeper-castle-v197"><i></i><b>MOB GATE</b></div>
-        <div id="gateGuard197" class="gatekeeper-guard-v197 gatekeeper-guard-v198"><img src="icon/01.png" draggable="false" alt=""><div class="gatekeeper-hammer-v197 gatekeeper-hammer-v198"></div></div>
-        <div id="gateActors197" class="gatekeeper-actors-v197"></div>
-        <div id="gateJudge197" class="gatekeeper-judge-v197"></div>
+        <div id="gateGuard199" class="gatekeeper-guard-v197 gatekeeper-guard-v198"><img src="icon/01.png" draggable="false" alt=""><div class="gatekeeper-hammer-v197 gatekeeper-hammer-v198"></div></div>
+        <div id="gateActors199" class="gatekeeper-actors-v197"></div>
+        <div id="gateJudge199" class="gatekeeper-judge-v197"></div>
       </div>
-      <div class="gatekeeper-controls-v197"><button id="gateLeft197" type="button" disabled>←<small>左攻撃</small></button><button id="gateRight197" type="button" disabled>→<small>右攻撃</small></button></div>
+      <div class="gatekeeper-controls-v197"><button id="gateLeft199" type="button" disabled>←<small>左攻撃</small></button><button id="gateRight199" type="button" disabled>→<small>右攻撃</small></button></div>
     </div>`;
 
-  const stage=document.getElementById('gateStage197');
-  const layer=document.getElementById('gateActors197');
-  const guard=document.getElementById('gateGuard197');
-  const leftBtn=document.getElementById('gateLeft197');
-  const rightBtn=document.getElementById('gateRight197');
-  const timeEl=document.getElementById('gateTime197');
-  const defeatEl=document.getElementById('gateDefeat197');
-  const scoreEl=document.getElementById('gateScore197');
-  const judge=document.getElementById('gateJudge197');
+  const stage=document.getElementById('gateStage199');
+  const layer=document.getElementById('gateActors199');
+  const guard=document.getElementById('gateGuard199');
+  const leftBtn=document.getElementById('gateLeft199');
+  const rightBtn=document.getElementById('gateRight199');
+  const timeEl=document.getElementById('gateTime199');
+  const defeatEl=document.getElementById('gateDefeat199');
+  const scoreEl=document.getElementById('gateScore199');
+  const judge=document.getElementById('gateJudge199');
 
   void stage.offsetHeight;
   const W=stage.clientWidth,H=stage.clientHeight,center=W/2;
-  const ATTACK_RANGE=126;
+  const ATTACK_RANGE=138;
   let active=false,finished=false,raf=null,last=performance.now(),endAt=0,start=0,score=0,defeated=0,cooldown=0;
 
-  const types=shuffle([...Array(20).fill('enemy'),...Array(4).fill('friend')]);
+  const types=shuffle([
+    ...Array(13).fill('enemy'),
+    ...Array(4).fill('speed'),
+    ...Array(4).fill('armor'),
+    ...Array(4).fill('bomb'),
+    ...Array(5).fill('friend')
+  ]);
+
   const actors=types.map((type,i)=>({
     type,
     side:(i%2===0?-1:1),
-    spawn:i===0?0:300+i*395,
+    spawn:i===0?0:220+i*335,
     x:0,
-    active:false,
-    done:false,
-    el:null
+    hp:type==='armor'?2:1,
+    active:false,done:false,el:null
   }));
-  actors.forEach((a,i)=>{if(i>0&&Math.random()<.35)a.side*=-1});
+  actors.forEach((a,i)=>{if(i>0&&Math.random()<.42)a.side*=-1});
 
   function makeActor(a,i){
     const el=document.createElement('div');
     el.className=`gate-runner-v197 ${a.type} ${a.side<0?'left':'right'}`;
-    if(a.type==='enemy'){
-      el.innerHTML=`<div class="gate-slime-v197"><i class="eye e1"></i><i class="eye e2"></i><b></b></div>`;
-    }else{
+    if(a.type==='friend'){
       el.innerHTML=`<img src="icon/01.png" draggable="false" alt="">`;
+    }else{
+      el.innerHTML=`<div class="gate-slime-v197 gate-slime-v199 ${a.type}"><i class="eye e1"></i><i class="eye e2"></i>${a.type==='armor'?'<u class="shield-v199"></u>':''}${a.type==='bomb'?'<u class="fuse-v199"></u>':''}<b></b></div>`;
     }
     layer.appendChild(el);a.el=el;
-
-    // ABSOLUTE RULE: every runner has its real spawn coordinate before countdown.
-    a.x=i===0?(a.side<0?20:W-20):(a.side<0?-28:W+28);
+    // ABSOLUTE RULE: real spawn coordinate is assigned before countdown.
+    a.x=i===0?(a.side<0?18:W-18):(a.side<0?-32:W+32);
     el.style.transform=`translate3d(${a.x-30}px,${H-104}px,0)`;
     if(i===0)el.classList.add('show','countdown-ready-v198');
   }
@@ -37053,12 +37086,12 @@ async function startGatekeeperMob(p,humanIndex,runId){
 
   function pop(text,bad=false){
     judge.textContent=text;judge.className=`gatekeeper-judge-v197 ${bad?'bad':'good'}`;
-    setTimeout(()=>{if(judge.textContent===text){judge.textContent='';judge.className='gatekeeper-judge-v197'}},400);
+    setTimeout(()=>{if(judge.textContent===text){judge.textContent='';judge.className='gatekeeper-judge-v197'}},380);
   }
 
   function attack(side,now){
     if(!active||now<cooldown)return;
-    cooldown=now+250;
+    cooldown=now+235;
     guard.classList.remove('attack-left','attack-right');void guard.offsetWidth;
     guard.classList.add(side<0?'attack-left':'attack-right');
 
@@ -37069,13 +37102,30 @@ async function startGatekeeperMob(p,humanIndex,runId){
 
     if(!target){pop('MISS',true);beep(220,45,.012);return}
 
+    if(target.type==='bomb'){
+      target.done=true;target.el.classList.add('explode-v199');score-=12;
+      pop('BOMB! -12',true);beep(120,150,.035);
+      score=clamp(score,0,100);scoreEl.textContent=score;return;
+    }
+
+    if(target.type==='friend'){
+      target.done=true;target.el.classList.add(side<0?'fly-left':'fly-right');score-=10;
+      pop('FRIEND! -10',true);beep(150,110,.03);
+      score=clamp(score,0,100);scoreEl.textContent=score;return;
+    }
+
+    if(target.type==='armor'&&target.hp>1){
+      target.hp=1;target.el.classList.add('cracked-v199');
+      target.x+=target.side<0?-15:15;
+      pop('ARMOR CRACK!');beep(470,70,.018);return;
+    }
+
     target.done=true;
     target.el.classList.add(side<0?'fly-left':'fly-right');
-    if(target.type==='enemy'){
-      score+=5;defeated++;defeatEl.textContent=`${defeated} / 20`;pop('SLIME HIT +5');beep(760,55,.018);
-    }else{
-      score-=10;pop('FRIEND! -10',true);beep(150,110,.03);
-    }
+    let add=5,label='SLIME +5';
+    if(target.type==='speed'){add=7;label='SPEED +7'}
+    if(target.type==='armor'){add=8;label='ARMOR +8'}
+    score+=add;defeated++;defeatEl.textContent=`${defeated} / 21`;pop(label);beep(760+add*20,55,.018);
     score=clamp(score,0,100);scoreEl.textContent=score;
   }
 
@@ -37086,13 +37136,13 @@ async function startGatekeeperMob(p,humanIndex,runId){
     if(finished)return;
     finished=true;active=false;leftBtn.disabled=true;rightBtn.disabled=true;if(raf)cancelAnimationFrame(raf);
     score=clamp(Math.round(score),0,100);state.records.gatekeeperMob[p.id]=score;scoreEl.textContent=score;timeEl.textContent='0.00';
-    pop(`${defeated}/20 SLIMES`);beep(score>=90?1050:score>=60?730:420,140,.03);await wait(620);
-    if(isGameRunValid(runId))recordScreen(gameIndex,p,humanIndex,`${score}<small>pt</small>`,`${defeated}/20 SLIMES DEFEATED`);
+    pop(`${defeated} SLIMES`);beep(score>=90?1050:score>=60?730:420,140,.03);await wait(620);
+    if(isGameRunValid(runId))recordScreen(gameIndex,p,humanIndex,`${score}<small>pt</small>`,`${defeated} SLIMES / TRAPS MIXED`);
   }
 
   void stage.offsetHeight;
   if(!(await countdown('GATEKEEPER',runId,{transparent:true})))return;
-  active=true;leftBtn.disabled=false;rightBtn.disabled=false;last=performance.now();start=last;endAt=last+12000;
+  active=true;leftBtn.disabled=false;rightBtn.disabled=false;last=performance.now();start=last;endAt=last+GAME_MS;
 
   function frame(now){
     if(!isGameRunValid(runId)||finished)return;
@@ -37100,22 +37150,25 @@ async function startGatekeeperMob(p,humanIndex,runId){
 
     actors.forEach((a,i)=>{
       if(a.done)return;
-      if(!a.active&&elapsed>=a.spawn){
-        a.active=true;
-        a.el.classList.add('show');
-      }
+      if(!a.active&&elapsed>=a.spawn){a.active=true;a.el.classList.add('show')}
       if(!a.active)return;
-      const speed=106+(a.spawn/395)*1.25;
+
+      const speed=a.type==='speed'?178:a.type==='bomb'?132:a.type==='armor'?107:a.type==='friend'?121:119;
       a.x+=a.side<0?speed*dt:-speed*dt;
       a.el.style.transform=`translate3d(${a.x-30}px,${H-104}px,0)`;
+
       if((a.side<0&&a.x>=center-18)||(a.side>0&&a.x<=center+18)){
         a.done=true;
-        if(a.type==='enemy'){
-          score-=5;pop('BREAK THROUGH -5',true);beep(160,85,.022);
+        if(a.type==='bomb'){
+          // Bomb slime is a trap: the correct play is to let it pass without attacking.
+          pop('BOMB SAFE!');beep(620,35,.010);a.el.classList.add('safe-bomb-v199');
+        }else if(a.type==='friend'){
+          pop('SAFE!');beep(610,35,.010);a.el.classList.add('enter');
         }else{
-          pop('SAFE!');beep(610,35,.010);
+          const loss=a.type==='armor'?8:a.type==='speed'?6:5;
+          score-=loss;pop(`BREAK THROUGH -${loss}`,true);beep(160,85,.022);a.el.classList.add('enter');
         }
-        score=clamp(score,0,100);scoreEl.textContent=score;a.el.classList.add('enter');
+        score=clamp(score,0,100);scoreEl.textContent=score;
       }
     });
 
@@ -37129,48 +37182,55 @@ async function startGatekeeperMob(p,humanIndex,runId){
 async function startFruitCatchMob(p,humanIndex,runId){
   gameFit();
   const gameIndex=GAMES.findIndex(g=>g.key==='fruitCatchMob');
-  const GAME_MS=14000;
+  const GAME_MS=15000;
   const GOOD_COUNT=30;
 
   screen.innerHTML=`
     <div class="fruit-shell-v197 gameplay-fit">
       <div class="game-head"><div><span class="kicker">${esc(p.name)}</span><h2>モブくんフルーツキャッチ</h2></div><div class="game-badge">${playBadge(humanIndex)}</div></div>
-      <div class="fruit-hud-v197"><div><span>TIME</span><b id="fruitTime197">14.00</b></div><div><span>GET</span><b id="fruitGet197">0 / 30</b></div><div><span>SCORE</span><b id="fruitScore197">0</b></div></div>
-      <div id="fruitStage197" class="fruit-stage-v197 fruit-stage-v198">
+      <div class="fruit-hud-v197"><div><span>TIME</span><b id="fruitTime199">15.00</b></div><div><span>GET</span><b id="fruitGet199">0 / 30</b></div><div><span>SCORE</span><b id="fruitScore199">0</b></div></div>
+      <div id="fruitStage199" class="fruit-stage-v197 fruit-stage-v198 fruit-stage-v199">
         <div class="fruit-bg-v197"></div>
-        <div id="fruitLayer197"></div>
-        <div id="fruitCarrier198" class="fruit-carrier-v198">
+        <div id="fruitLayer199"></div>
+        <div id="fruitCarrier199" class="fruit-carrier-v198">
           <img src="icon/01.png" draggable="false" alt="">
           <i class="fruit-arm-v198 left"></i><i class="fruit-arm-v198 right"></i>
-          <div id="fruitBasket197" class="fruit-basket-v197 fruit-basket-v198"><b>MOB</b></div>
+          <div id="fruitBasket199" class="fruit-basket-v197 fruit-basket-v198"><b>MOB</b></div>
         </div>
-        <div id="fruitJudge197" class="fruit-judge-v197"></div>
+        <div id="fruitJudge199" class="fruit-judge-v197"></div>
       </div>
-      <div class="fruit-hint-v197">画面内を左右ドラッグしてモブくん＋カゴを動かす</div>
+      <div class="fruit-hint-v197">フルーツを取る / 岩・爆弾・腐った実は避ける</div>
     </div>`;
 
-  const stage=document.getElementById('fruitStage197');
-  const layer=document.getElementById('fruitLayer197');
-  const carrier=document.getElementById('fruitCarrier198');
-  const basket=document.getElementById('fruitBasket197');
-  const timeEl=document.getElementById('fruitTime197');
-  const getEl=document.getElementById('fruitGet197');
-  const scoreEl=document.getElementById('fruitScore197');
-  const judge=document.getElementById('fruitJudge197');
+  const stage=document.getElementById('fruitStage199');
+  const layer=document.getElementById('fruitLayer199');
+  const carrier=document.getElementById('fruitCarrier199');
+  const basket=document.getElementById('fruitBasket199');
+  const timeEl=document.getElementById('fruitTime199');
+  const getEl=document.getElementById('fruitGet199');
+  const scoreEl=document.getElementById('fruitScore199');
+  const judge=document.getElementById('fruitJudge199');
 
   void stage.offsetHeight;
   const W=stage.clientWidth,H=stage.clientHeight;
   let targetX=W/2,bx=W/2;
-  let active=false,finished=false,raf=null,last=performance.now(),endAt=0,start=0,score=0,got=0,slowUntil=0;
+  let active=false,finished=false,raf=null,last=performance.now(),endAt=0,start=0,score=0,got=0,slowUntil=0,stickyUntil=0,blastUntil=0;
 
-  const schedule=shuffle([...Array(25).fill('fruit'),...Array(5).fill('gold'),...Array(7).fill('rock')]);
+  const schedule=shuffle([
+    ...Array(25).fill('fruit'),
+    ...Array(5).fill('gold'),
+    ...Array(7).fill('rock'),
+    ...Array(4).fill('bomb'),
+    ...Array(4).fill('rotten')
+  ]);
+
   const objs=schedule.map((type,i)=>({
     type,
-    spawn:i===0?0:120+i*300,
+    spawn:i===0?0:85+i*245,
     x:rand(28,W-28),
-    y:i===0?10:-35,
-    vx:rand(-27,27),
-    vy:rand(96,124),
+    y:i===0?10:-38,
+    vx:rand(-31,31),
+    vy:type==='bomb'?rand(116,142):type==='rock'?rand(108,134):rand(98,128),
     active:false,done:false,el:null
   }));
   const fruitClasses=['apple','orange','grape','berry','lime'];
@@ -37178,7 +37238,7 @@ async function startFruitCatchMob(p,humanIndex,runId){
   objs.forEach((o,i)=>{
     const el=document.createElement('div');
     el.className=`fall-item-v197 ${o.type} ${o.type==='fruit'?fruitClasses[i%fruitClasses.length]:''}`;
-    el.innerHTML=o.type==='rock'?'<i></i>':o.type==='gold'?'<b>★</b>':'<i class="leaf"></i>';
+    el.innerHTML=o.type==='rock'?'<i></i>':o.type==='gold'?'<b>★</b>':o.type==='bomb'?'<i class="fuse-v199"></i>':o.type==='rotten'?'<i class="rot-leaf-v199"></i>':'<i class="leaf"></i>';
     layer.appendChild(el);o.el=el;
     el.style.transform=`translate3d(${o.x-19}px,${o.y-19}px,0) rotate(0deg)`;
     if(i===0)el.classList.add('show','countdown-ready-v198');
@@ -37206,10 +37266,10 @@ async function startFruitCatchMob(p,humanIndex,runId){
     finished=true;active=false;if(raf)cancelAnimationFrame(raf);
     score=clamp(Math.round(score),0,100);state.records.fruitCatchMob[p.id]=score;scoreEl.textContent=score;timeEl.textContent='0.00';
     pop(`${got}/${GOOD_COUNT} GET`);beep(score>=90?1060:score>=60?730:420,140,.03);await wait(600);
-    if(isGameRunValid(runId))recordScreen(gameIndex,p,humanIndex,`${score}<small>pt</small>`,`${got}/${GOOD_COUNT} FRUIT CAUGHT`);
+    if(isGameRunValid(runId))recordScreen(gameIndex,p,humanIndex,`${score}<small>pt</small>`,`${got}/${GOOD_COUNT} FRUIT / TRAPS AVOIDED`);
   }
 
-  // ABSOLUTE RULE: carrier + first falling item are already placed during countdown.
+  // ABSOLUTE RULE: carrier + first falling object are already at their true coordinates during countdown.
   renderCarrier();
   carrier.classList.add('countdown-ready-v198');
   void stage.offsetHeight;
@@ -37220,17 +37280,17 @@ async function startFruitCatchMob(p,humanIndex,runId){
   function frame(now){
     if(!isGameRunValid(runId)||finished)return;
     const dt=Math.min(.03,(now-last)/1000);last=now;const elapsed=now-start;
-    const follow=now<slowUntil?4.1:10.2;
+    const follow=now<blastUntil?2.3:now<stickyUntil?2.8:now<slowUntil?4.4:10.8;
     bx+=(targetX-bx)*Math.min(1,dt*follow);
     renderCarrier();
 
-    objs.forEach((o,i)=>{
+    objs.forEach(o=>{
       if(o.done)return;
       if(!o.active&&elapsed>=o.spawn){o.active=true;o.el.classList.add('show')}
       if(!o.active)return;
-      o.vy+=42*dt;o.x+=o.vx*dt;o.y+=o.vy*dt;
+      o.vy+=44*dt;o.x+=o.vx*dt;o.y+=o.vy*dt;
       if(o.x<18||o.x>W-18)o.vx*=-1;
-      o.el.style.transform=`translate3d(${o.x-19}px,${o.y-19}px,0) rotate(${o.y*.08}deg)`;
+      o.el.style.transform=`translate3d(${o.x-19}px,${o.y-19}px,0) rotate(${o.y*.09}deg)`;
 
       if(o.y>=H-99&&o.y<=H-49&&Math.abs(o.x-bx)<=62){
         o.done=true;o.el.classList.add('caught');
@@ -37238,10 +37298,17 @@ async function startFruitCatchMob(p,humanIndex,runId){
           got++;score+=3;pop('+3');beep(720,30,.010);
         }else if(o.type==='gold'){
           got++;score+=5;pop('GOLD +5');beep(1080,55,.018);
-        }else{
-          score-=5;slowUntil=now+650;
+        }else if(o.type==='rock'){
+          score-=5;slowUntil=now+720;
           basket.classList.remove('ouch');void basket.offsetWidth;basket.classList.add('ouch');
           pop('ROCK -5',true);beep(150,95,.026);
+        }else if(o.type==='bomb'){
+          score-=10;blastUntil=now+520;targetX=clamp(bx+(Math.random()<.5?-55:55),58,W-58);
+          stage.classList.remove('bomb-hit-v199');void stage.offsetWidth;stage.classList.add('bomb-hit-v199');
+          pop('BOMB -10',true);beep(110,145,.035);
+        }else if(o.type==='rotten'){
+          score-=4;stickyUntil=now+1250;
+          pop('STICKY -4',true);beep(230,90,.022);
         }
         getEl.textContent=`${got} / ${GOOD_COUNT}`;
         score=clamp(score,0,100);scoreEl.textContent=score;
@@ -37266,38 +37333,39 @@ async function startSenryobakoMob(p,humanIndex,runId){
   screen.innerHTML=`
     <div class="senryo-shell-v197 gameplay-fit">
       <div class="game-head"><div><span class="kicker">${esc(p.name)}</span><h2>モブくん千両箱</h2></div><div class="game-badge">${playBadge(humanIndex)}</div></div>
-      <div class="senryo-hud-v197"><div><span>TIME</span><b id="senTime197">16.00</b></div><div><span>COIN</span><b id="senCoin197">0 / 35</b></div><div><span>SCORE</span><b id="senScore197">0</b></div></div>
-      <div id="senStage197" class="senryo-stage-v197 senryo-stage-v198">
+      <div class="senryo-hud-v197"><div><span>TIME</span><b id="senTime199">16.00</b></div><div><span>COIN</span><b id="senCoin199">0 / 35</b></div><div><span>SCORE</span><b id="senScore199">0</b></div></div>
+      <div id="senStage199" class="senryo-stage-v197 senryo-stage-v198 senryo-stage-v199">
         <div class="senryo-sky-v197"></div>
-        <div id="senCoinLayer197"></div>
-        <div id="senCarrier198" class="senryo-carrier-v198">
+        <div id="senCoinLayer199"></div>
+        <div id="senFever199" class="senryo-fever-v199">COMBO 0</div>
+        <div id="senCarrier199" class="senryo-carrier-v198">
           <img src="icon/01.png" draggable="false" alt="">
           <i class="senryo-arm-v198 left"></i><i class="senryo-arm-v198 right"></i>
-          <div id="senBox197" class="senryo-box-v197 senryo-box-v198"><span>千両</span><div id="senPile197" class="senryo-pile-v197"></div></div>
+          <div id="senBox199" class="senryo-box-v197 senryo-box-v198"><span>千両</span><div id="senPile199" class="senryo-pile-v197"></div></div>
         </div>
-        <div id="senJudge197" class="senryo-judge-v197"></div>
+        <div id="senJudge199" class="senryo-judge-v197"></div>
       </div>
-      <div class="senryo-weight-v197"><span>WEIGHT</span><div><i id="senWeight197"></i></div></div>
-      <div class="senryo-controls-v197"><button id="senLeft197" type="button" disabled>◀</button><button id="senRight197" type="button" disabled>▶</button></div>
+      <div class="senryo-weight-v197"><span>WEIGHT</span><div><i id="senWeight199"></i></div></div>
+      <div class="senryo-controls-v197"><button id="senLeft199" type="button" disabled>◀</button><button id="senRight199" type="button" disabled>▶</button></div>
     </div>`;
 
-  const stage=document.getElementById('senStage197');
-  const layer=document.getElementById('senCoinLayer197');
-  const carrier=document.getElementById('senCarrier198');
-  const box=document.getElementById('senBox197');
-  const pile=document.getElementById('senPile197');
-  const leftBtn=document.getElementById('senLeft197');
-  const rightBtn=document.getElementById('senRight197');
-  const timeEl=document.getElementById('senTime197');
-  const coinEl=document.getElementById('senCoin197');
-  const scoreEl=document.getElementById('senScore197');
-  const weightEl=document.getElementById('senWeight197');
-  const judge=document.getElementById('senJudge197');
+  const stage=document.getElementById('senStage199');
+  const layer=document.getElementById('senCoinLayer199');
+  const carrier=document.getElementById('senCarrier199');
+  const pile=document.getElementById('senPile199');
+  const leftBtn=document.getElementById('senLeft199');
+  const rightBtn=document.getElementById('senRight199');
+  const timeEl=document.getElementById('senTime199');
+  const coinEl=document.getElementById('senCoin199');
+  const scoreEl=document.getElementById('senScore199');
+  const weightEl=document.getElementById('senWeight199');
+  const judge=document.getElementById('senJudge199');
+  const feverEl=document.getElementById('senFever199');
 
   void stage.offsetHeight;
   const W=stage.clientWidth,H=stage.clientHeight;
   let bx=W/2,vx=0,left=false,right=false;
-  let active=false,finished=false,raf=null,last=performance.now(),start=0,endAt=0,score=0,caught=0,load=0;
+  let active=false,finished=false,raf=null,last=performance.now(),start=0,endAt=0,score=0,caught=0,load=0,combo=0,feverUntil=0;
 
   const defs={
     small:{value:2,weight:1.0,size:26,vy:148,label:'小判'},
@@ -37356,16 +37424,22 @@ async function startSenryobakoMob(p,humanIndex,runId){
     weightEl.style.width=`${weight*100}%`;
   }
 
+  function updateFever(now){
+    const fever=now<feverUntil;
+    feverEl.textContent=fever?`FEVER ×2  COMBO ${combo}`:`COMBO ${combo}`;
+    feverEl.classList.toggle('on-v199',fever);
+  }
+
   async function finish(){
     if(finished)return;
     finished=true;active=false;leftBtn.disabled=true;rightBtn.disabled=true;if(raf)cancelAnimationFrame(raf);
     score=clamp(Math.round(score),0,100);state.records.senryobakoMob[p.id]=score;scoreEl.textContent=score;timeEl.textContent='0.00';
     pop(`${caught}/${COIN_COUNT} GET`);beep(score>=90?1080:score>=60?740:430,140,.03);await wait(600);
-    if(isGameRunValid(runId))recordScreen(gameIndex,p,humanIndex,`${score}<small>pt</small>`,`${caught}/${COIN_COUNT} COINS`);
+    if(isGameRunValid(runId))recordScreen(gameIndex,p,humanIndex,`${score}<small>pt</small>`,`${caught}/${COIN_COUNT} COINS / MAX COMBO ${combo}`);
   }
 
-  // ABSOLUTE RULE: Mob-kun, box and first coin are at their true start position before countdown.
-  renderCarrier();
+  // ABSOLUTE RULE: Mob-kun, box and first coin are at true positions before countdown.
+  renderCarrier();updateFever(performance.now());
   carrier.classList.add('countdown-ready-v198');
   void stage.offsetHeight;
 
@@ -37381,9 +37455,9 @@ async function startSenryobakoMob(p,humanIndex,runId){
     const dir=(right?1:0)-(left?1:0);
     vx+=dir*accel*dt;vx*=Math.pow(.90,dt*60);vx=clamp(vx,-maxV,maxV);bx+=vx*dt;
     if(bx<62){bx=62;vx=Math.abs(vx)*.22}else if(bx>W-62){bx=W-62;vx=-Math.abs(vx)*.22}
-    renderCarrier();
+    renderCarrier();updateFever(now);
 
-    coins.forEach((c,i)=>{
+    coins.forEach(c=>{
       if(c.done)return;
       if(!c.active&&elapsed>=c.spawn){c.active=true;c.el.classList.add('show')}
       if(!c.active)return;
@@ -37394,10 +37468,17 @@ async function startSenryobakoMob(p,humanIndex,runId){
       const hitX=Math.abs(c.x-bx)<=64+s*.18;
       if(hitY&&hitX){
         c.done=true;c.el.classList.add('caught');caught++;coinEl.textContent=`${caught} / ${COIN_COUNT}`;
-        score+=c.def.value;load+=c.def.weight;score=clamp(score,0,100);scoreEl.textContent=score;
-        addPile(c.type);pop(`${c.def.label} +${c.def.value}`);beep(c.type==='giant'?1160:c.type==='big'?1020:710,42,.014);
+        combo++;
+        if(combo%5===0){feverUntil=Math.max(feverUntil,now+2400);stage.classList.remove('fever-hit-v199');void stage.offsetWidth;stage.classList.add('fever-hit-v199')}
+        if(c.type==='giant')feverUntil=Math.max(feverUntil,now+3200);
+        const mult=now<feverUntil?2:1;
+        const add=c.def.value*mult;
+        score+=add;load+=c.def.weight;score=clamp(score,0,100);scoreEl.textContent=score;
+        addPile(c.type);pop(`${c.def.label} +${add}${mult===2?' FEVER!':''}`);beep(c.type==='giant'?1160:c.type==='big'?1020:710,42,.014);
+        updateFever(now);
       }else if(c.y>H+65){
         c.done=true;c.el.style.display='none';
+        if(combo>0){combo=0;updateFever(now);pop('COMBO RESET')}
       }
     });
 
